@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     23.11.2007 20:24:20                                                        
+
+     SevenZipJBinding    
+     JBinding for 7-Zip
+                   
+     Boris Brodski                                                                
+     ====================================================================== -->
+<project name="SevenZipJBinding" default="default">
+	<property file="build.properties" />
+	<property name="workspace" location="${basedir}/.." />
+
+	<description>
+            JBinding for 7-Zip
+    </description>
+
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+	<target name="default" description="--> JBinding for 7-Zip">
+		<echo>Nothing to do</echo>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: build H-Files                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="buildH-Files">
+		<echo>Generating H-Files for SevenZipJBinding DLL</echo>
+<!--
+<echo>JavaH=${javah}</echo>
+-->
+		<exec executable="${javah}">
+			<arg value="-jni" />
+			<arg value="-d" />
+			<arg path="${workspace}/${sevenzip.javaheaders}" />
+			<arg value="-force" />
+			<arg value="-classpath" />
+			<arg path="${basedir}/bin" />
+			<arg value="net.sf.sevenzip.SevenZip" />
+			<arg value="net.sf.sevenzip.InArchive" />
+		</exec>
+	</target>
+
+</project>
