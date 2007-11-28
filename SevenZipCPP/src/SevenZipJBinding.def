@@ -1,0 +1,8 @@
+; 7-ZipFar.def : Declares the module parameters for the DLL.
+
+LIBRARY      "7-ZipJBinding"
+DESCRIPTION  '7-ZipJBinding Windows Dynamic Link Library'
+
+EXPORTS
+  Java_net_sf_sevenzip_SevenZip_openArchive = Java_net_sf_sevenzip_SevenZip_openArchive@12
+  Java_net_sf_sevenzip_SevenZip_initSevenZipLibrary = Java_net_sf_sevenzip_SevenZip_initSevenZipLibrary@8
