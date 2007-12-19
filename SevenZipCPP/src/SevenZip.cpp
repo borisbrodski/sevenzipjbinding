@@ -24,13 +24,63 @@ static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
 	return NULL;
 }
 
+/**
+ * Put name of the java class 'clazz'into the buffer 'buffer'
+ * Return: buffer
+ */
+char * GetClassName(JNIEnv * env, jclass clazz, char * buffer, int size)
+{
+	jclass reflectionClass = env->GetObjectClass(clazz);
+	jmethodID id = env->GetMethodID(reflectionClass, "getName", "()Ljava/lang/String;");
+	jstring string = (jstring)env->CallNonvirtualObjectMethod(clazz, reflectionClass, id);
+	
+	const char * cstr = env->GetStringUTFChars(string, NULL);
+	strncpy(buffer, cstr, size);
+	env->ReleaseStringUTFChars(string, cstr);
+	
+	return buffer;
+}
+
+jobject GetSimpleInstance(JNIEnv * env, jclass clazz)
+{
+	jmethodID defaultConstructor = env->GetMethodID(clazz, "<init>", "()V");
+	
+	if (defaultConstructor == NULL)
+	{
+		char classname[256];
+		printf("FATAL ERROR: Class '%s' has no default constructor\n", GetClassName(env, clazz, classname, sizeof(classname)));
+		fflush(stdout);
+		exit(1);
+	}
+
+	return env->NewObject(clazz, defaultConstructor);
+}
+
+/*
+ * Class:     net_sf_sevenzip_SevenZip
+ * Method:    openArchiveTest
+ * Signature: (Lnet/sf/sevenzip/SequentialInStream;)Lnet/sf/sevenzip/SevenZip;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
+  (JNIEnv * env, jclass clazz, jobject sequentialInStream)
+{
+	printf("Java_net_sf_sevenzip_SevenZip_openArchiveTest()\n");
+	fflush(stdout);
+	
+	
+
+	return GetSimpleInstance(env, clazz);
+}
+
+
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    openArchive
  * Signature: (Ljava/lang/String;)Lnet/sf/sevenzip/SevenZip;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchive
-  (JNIEnv * env, jclass thisclzz, jstring name) {
+  (JNIEnv * env, jclass thisclzz, jstring name)
+{
     
 	printf("Java_net_sf_sevenzip_SevenZip_openArchive()\n");
 	fflush(stdout);

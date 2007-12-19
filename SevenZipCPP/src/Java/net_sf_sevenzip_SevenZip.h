@@ -9,11 +9,11 @@ extern "C" {
 #endif
 /*
  * Class:     net_sf_sevenzip_SevenZip
- * Method:    openArchive
- * Signature: (Ljava/lang/String;)Lnet/sf/sevenzip/SevenZip;
+ * Method:    openArchiveTest
+ * Signature: (Lnet/sf/sevenzip/SequentialInStream;)Lnet/sf/sevenzip/SevenZip;
  */
-JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchive
-  (JNIEnv *, jclass, jstring);
+JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
+  (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     net_sf_sevenzip_SevenZip
