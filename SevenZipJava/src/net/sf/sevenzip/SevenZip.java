@@ -1,17 +1,34 @@
 package net.sf.sevenzip;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import net.sf.sevenzip.test.SequentialInStreamImpl;
+
 
 public class SevenZip {
-	@Deprecated
-	public static native SevenZip openArchive(String filename);
+	private int test = 123;
+	
+	public static native SevenZip openArchiveTest(SequentialInStream sequentialInStream);
 	
 	private static native String initSevenZipLibrary();
 
+	public SevenZip() {
+		
+	}
+	
 	static void init() {
 		System.loadLibrary("libSevenZip");
 		String errorMessage = initSevenZipLibrary();
 		if (errorMessage != null) {
 			throw new RuntimeException("Error initializing 7-Zip-JBinding: " + errorMessage);
+		}
+	
+		try {
+			SevenZip openArchiveTest = openArchiveTest(new SequentialInStreamImpl(new FileInputStream("C:\\setup.log")));
+			System.out.println("Object created! Test="+openArchiveTest.test);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 }
