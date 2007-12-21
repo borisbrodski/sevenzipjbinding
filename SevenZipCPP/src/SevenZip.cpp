@@ -5,6 +5,8 @@
 #include "SevenZipJBinding.h"
 
 #include "Java/net_sf_sevenzip_SevenZip.h"
+#include "JavaSequentialInStream.h"
+#include "jnitools.h"
 
 // Load 7-Zip DLL.
 // Return: NULL - ok, else error message
@@ -24,38 +26,6 @@ static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
 	return NULL;
 }
 
-/**
- * Put name of the java class 'clazz'into the buffer 'buffer'
- * Return: buffer
- */
-char * GetClassName(JNIEnv * env, jclass clazz, char * buffer, int size)
-{
-	jclass reflectionClass = env->GetObjectClass(clazz);
-	jmethodID id = env->GetMethodID(reflectionClass, "getName", "()Ljava/lang/String;");
-	jstring string = (jstring)env->CallNonvirtualObjectMethod(clazz, reflectionClass, id);
-	
-	const char * cstr = env->GetStringUTFChars(string, NULL);
-	strncpy(buffer, cstr, size);
-	env->ReleaseStringUTFChars(string, cstr);
-	
-	return buffer;
-}
-
-jobject GetSimpleInstance(JNIEnv * env, jclass clazz)
-{
-	jmethodID defaultConstructor = env->GetMethodID(clazz, "<init>", "()V");
-	
-	if (defaultConstructor == NULL)
-	{
-		char classname[256];
-		printf("FATAL ERROR: Class '%s' has no default constructor\n", GetClassName(env, clazz, classname, sizeof(classname)));
-		fflush(stdout);
-		exit(1);
-	}
-
-	return env->NewObject(clazz, defaultConstructor);
-}
-
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    openArchiveTest
@@ -67,7 +37,13 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
 	printf("Java_net_sf_sevenzip_SevenZip_openArchiveTest()\n");
 	fflush(stdout);
 	
+	JavaSequentialInStream * jsis = new JavaSequentialInStream(env, sequentialInStream);
 	
+	UInt32 psize;
+	char buffer[1024];
+	int result = jsis->Read(buffer, sizeof(buffer), &psize);
+	printf("Result: %i, psize: %u\n", result, psize);
+	printf("Buffer: %s\n", buffer);
 
 	return GetSimpleInstance(env, clazz);
 }
