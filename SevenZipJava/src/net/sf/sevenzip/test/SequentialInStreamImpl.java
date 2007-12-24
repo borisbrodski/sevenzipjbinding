@@ -18,14 +18,18 @@ public class SequentialInStreamImpl implements SequentialInStream {
 	 */
 	@Override
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
-		System.out.println("read()");
 		if (data.length == 0) {
 			processedSizeOneElementArray[0] = 0;
 			return 0;
 		}
 		
 		try {
-			processedSizeOneElementArray[0] = inputStream.read(data);
+			int read = inputStream.read(data);
+			if (read == -1) {
+				processedSizeOneElementArray[0] = 0;
+			} else {
+				processedSizeOneElementArray[0] = read;
+			}
 			return 0; // Ok
 		} catch (IOException e) {
 			e.printStackTrace();

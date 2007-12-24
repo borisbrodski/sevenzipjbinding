@@ -40,11 +40,21 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
 	JavaSequentialInStream * jsis = new JavaSequentialInStream(env, sequentialInStream);
 	
 	UInt32 psize;
-	char buffer[1024];
-	int result = jsis->Read(buffer, sizeof(buffer), &psize);
-	printf("Result: %i, psize: %u\n", result, psize);
-	printf("Buffer: %s\n", buffer);
-
+	char buffer[1024*64];
+	int read = 0;
+//	FILE * f = fopen("d:\\dump.bin", "wb");
+	do
+	{
+		int result = jsis->Read(buffer, sizeof(buffer), &psize);
+		if (result)
+			fatal("Error reading stream: %i\n", result);
+//		fwrite(buffer, 1, psize, f);
+		read += psize;
+	} while (psize > 0);
+//	fclose(f);
+	
+	printf("Complete. Read %i bytes\n", read);
+	
 	return GetSimpleInstance(env, clazz);
 }
 

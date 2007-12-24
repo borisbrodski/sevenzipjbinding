@@ -26,7 +26,7 @@ public class SevenZip {
 		}
 	
 		try {
-			SevenZip openArchiveTest = openArchiveTest(new SequentialInStreamImpl(new FileInputStream("C:\\setup.log")));
+			SevenZip openArchiveTest = openArchiveTest(new SequentialInStreamImpl(new FileInputStream("D:\\Download\\Torrent\\Transformers.HDDVDRip.720p.x264.HANSMER.mkv")));//"C:\\setup.log")));
 			System.out.println("Object created! Test="+openArchiveTest.test);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
