@@ -1,4 +1,4 @@
-package net.sf.sevenzip.test;
+package net.sf.sevenzip.tools;
 
 import java.io.IOException;
 import java.io.InputStream;

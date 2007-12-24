@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
 
-import net.sf.sevenzip.test.SequentialInStreamImpl;
+import net.sf.sevenzip.tools.SequentialInStreamImpl;
 
 
 public class SevenZip {
