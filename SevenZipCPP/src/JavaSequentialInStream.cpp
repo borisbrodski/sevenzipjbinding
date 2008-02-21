@@ -1,22 +1,16 @@
 #include <jni.h>
 #include "jnitools.h"
-
 #include "JavaSequentialInStream.h"
 
 
-void JavaSequentialInStream::Init(JNIEnv * env, jobject sequentialInStream)
+void JavaSequentialInStream::Init()
 {
 	char classname[1024];
 	
-	this->env = env;
-	this->SequentialInStream = sequentialInStream;
+	this->ReadMethodID = env->GetMethodID(javaImplementationClass, "read", "([B[I)I");
 	
-	jclass clazz = env->GetObjectClass(sequentialInStream);
-	this->ReadMethodID = env->GetMethodID(clazz, "read", "([B[I)I");
-	
-	FATALIF1(this->ReadMethodID == NULL, "'int read(byte [], int [])' in class %s method not found!",
-			GetJavaClassName(env, clazz, classname, sizeof(classname)));
-
+	FATALIF1(this->ReadMethodID == NULL, "'int read(byte [], int [])' method in class %s not found!",
+			GetJavaClassName(env, javaImplementationClass, classname, sizeof(classname)));
 }
 
 STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *processedSize)
@@ -27,7 +21,7 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	jintArray intArray = env->NewIntArray(1);
 	FATALIF(intArray == NULL, "Out of local resource of out of memory: intArray == NULL");
 	
-	jint result = env->CallIntMethod(SequentialInStream, ReadMethodID, byteArray, intArray);
+	jint result = env->CallIntMethod(javaImplementation, ReadMethodID, byteArray, intArray);
 		
 	if (result)
 	{
@@ -37,14 +31,17 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	}
 	
 	jint * read = env->GetIntArrayElements(intArray, NULL);
-	*processedSize = (UInt32)*read;
-	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
-	
-	if (*processedSize == 0)
+	if (processedSize)
 	{
-		env->DeleteLocalRef(byteArray);
-		env->DeleteLocalRef(intArray);
-		return 0;
+		*processedSize = (UInt32)*read;
+		env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
+		
+		if (*processedSize == 0)
+		{
+			env->DeleteLocalRef(byteArray);
+			env->DeleteLocalRef(intArray);
+			return 0;
+		}
 	}
 	
 	jbyte * buffer = env->GetByteArrayElements(byteArray, NULL);
@@ -54,6 +51,12 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	env->DeleteLocalRef(byteArray);
 	env->DeleteLocalRef(intArray);
 
+	for (size_t i = 0; i < 10; i++)
+		printf("%02X", *((char *)((((size_t)data) + i))));
+	printf("...\n");
+	fflush(stdout);
+
+	
 	return result;
 }
 

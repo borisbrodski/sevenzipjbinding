@@ -10,7 +10,7 @@ extern "C" {
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    openArchiveTest
- * Signature: (Lnet/sf/sevenzip/SequentialInStream;)Lnet/sf/sevenzip/SevenZip;
+ * Signature: (Lnet/sf/sevenzip/IInStream;)Lnet/sf/sevenzip/SevenZip;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
   (JNIEnv *, jclass, jobject);

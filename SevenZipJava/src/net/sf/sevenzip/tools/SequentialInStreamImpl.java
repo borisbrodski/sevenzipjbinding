@@ -37,4 +37,7 @@ public class SequentialInStreamImpl implements SequentialInStream {
 		}
 	}
 
+	public InputStream getInputStream() {
+		return inputStream;
+	}
 }

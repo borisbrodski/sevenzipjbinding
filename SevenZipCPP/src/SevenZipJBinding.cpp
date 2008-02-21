@@ -17,6 +17,7 @@ using namespace std;
 bool g_IsNT = false;
 
 
+
 // {23170F69-40C1-278A-1000-000110070000}
 DEFINE_GUID(CLSID_CFormat7z, 0x23170F69, 0x40C1, 0x278A, 0x10, 0x00, 0x00,
 		0x01, 0x10, /*0x07*/0x01, 0x00, 0x00);
@@ -69,10 +70,12 @@ int main() {
 		printf("Can not open archive file\n");
 		return 1;
 	}
+	
 	if (archive->Open(file, 0, 0) != S_OK) {
 		printf("Problems...");
 		return 0;
 	}
+	
 	/*
 	 UInt32 countOfProperties;
 	 archive->GetNumberOfArchiveProperties(&countOfProperties);

@@ -1,25 +1,25 @@
 #ifndef JAVASEQUENTIALINSTREAM_H_
 #define JAVASEQUENTIALINSTREAM_H_
 
+#include "JavaInterface.h"
 #include "7zip/Archive/IArchive.h"
 #include "Common/MyCom.h"
 
-class JavaSequentialInStream :
-	public ISequentialInStream,
+class JavaSequentialInStream : public JavaInterface,
+	public virtual ISequentialInStream,
 	public CMyUnknownImp {
 		
 private:
-	jobject SequentialInStream;
 	jmethodID ReadMethodID;
-	JNIEnv * env;
-	void Init(JNIEnv * env, jobject sequentialInStream);
+	void Init();
 	
 public:
 	MY_UNKNOWN_IMP
 
 	JavaSequentialInStream(JNIEnv * env, jobject sequentialInStream)
+		: JavaInterface(env, sequentialInStream)
 	{
-		Init(env, sequentialInStream);
+		Init();
 	}
 	
 	STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize);
