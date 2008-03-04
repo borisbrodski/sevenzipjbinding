@@ -20,7 +20,8 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	
 	jintArray intArray = env->NewIntArray(1);
 	FATALIF(intArray == NULL, "Out of local resource of out of memory: intArray == NULL");
-	
+
+	env->ExceptionClear();
 	jint result = env->CallIntMethod(javaImplementation, ReadMethodID, byteArray, intArray);
 		
 	if (result)
@@ -34,14 +35,6 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	if (processedSize)
 	{
 		*processedSize = (UInt32)*read;
-		env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
-		
-		if (*processedSize == 0)
-		{
-			env->DeleteLocalRef(byteArray);
-			env->DeleteLocalRef(intArray);
-			return 0;
-		}
 	}
 	
 	jbyte * buffer = env->GetByteArrayElements(byteArray, NULL);
@@ -50,13 +43,8 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	
 	env->DeleteLocalRef(byteArray);
 	env->DeleteLocalRef(intArray);
+	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
 
-	for (size_t i = 0; i < 10; i++)
-		printf("%02X", *((char *)((((size_t)data) + i))));
-	printf("...\n");
-	fflush(stdout);
-
-	
 	return result;
 }
 

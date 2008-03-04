@@ -7,6 +7,7 @@
 #define FATALIF3(cond, fmt, p1, p2, p3) { if (cond) fatal(fmt, p1, p2, p3); }
 #define FATALIF4(cond, fmt, p1, p2, p3, p4) { if (cond) fatal(fmt, p1, p2, p3, p4); }
 
+#define SEVEN_ZIP_EXCEPTION "net/sf/sevenzip/SevenZipException"
 
 /**
  * Fatal error
@@ -25,6 +26,10 @@ jobject GetSimpleInstance(JNIEnv * env, jclass clazz);
  */
 char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size);
 
+/**
+ * Throw SevenZipException with error message.
+ */
+void ThrowSevenZipException(JNIEnv * env, char * fmt, ...);
 
 
 #define __JNITOOLS_H__INCLUDED__

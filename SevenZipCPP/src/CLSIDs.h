@@ -6,7 +6,7 @@ DEFINE_GUID(CLSID_CArjHandler,
 
 // {23170F69-40C1-278A-1000-000110070000}
 DEFINE_GUID(CLSID_CFormat7z, 0x23170F69, 0x40C1, 0x278A, 0x10, 0x00, 0x00,
-		0x01, 0x10, /*0x07*/0x01, 0x00, 0x00);
+		0x01, 0x10, 0x07, 0x00, 0x00);
 
 //// {23170F69-40C1-278B-0402-020000000100}
 //DEFINE_GUID(CLSID_CCompressBZip2Encoder, 
@@ -145,11 +145,12 @@ DEFINE_GUID(CLSID_CZipHandler,
 
 #ifdef INITGUID
 	extern "C" const GUID guids[] = {SEVENZIP_ALL_HANDLERS};
+	extern "C" const int guidsCount = sizeof(guids) / sizeof(guids[0]);
 #else
 	extern "C" const GUID guids[];
+	extern "C" const int guidsCount;
 #endif
 
-#define SEVENZIP_HANDLES_COUNT (sizeof(guids) / sizeof(guids[0]))
 	
 #define __CLSIDS_H__INCLUDED__
 #endif // __CLSIDS_H__INCLUDED__

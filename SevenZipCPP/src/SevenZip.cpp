@@ -10,9 +10,14 @@
 #include "Java/net_sf_sevenzip_SevenZip.h"
 #include "JavaInStream.h"
 
+
+CreateObjectFunc createObjectFunc;
+
+
 // Load 7-Zip DLL.
 // Return: NULL - ok, else error message
-static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
+static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
+{
 	HINSTANCE lib = LoadLibraryA(DLLFILENAME);
 
 	if (NULL == lib)
@@ -31,86 +36,37 @@ static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
  * Method:    openArchiveTest
  * Signature: (Lnet/sf/sevenzip/SequentialInStream;)Lnet/sf/sevenzip/SevenZip;
  */
-JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchiveTest
-(JNIEnv * env, jclass clazz, jobject sequentialInStream)
+JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
+(JNIEnv * env, jclass clazz, jint format, jobject sequentialInStream)
 {
-	printf("Java_net_sf_sevenzip_SevenZip_openArchiveTest()\n");
-	fflush(stdout);
-
+	// Test format
+	if (format < 0 || format >= guidsCount)
+	{
+		ThrowSevenZipException(env, "Format %i out of range. There are only %i formats availible", format, guidsCount);
+		return NULL;
+	}
+	
 	JavaInStream * jis = new JavaInStream(env, sequentialInStream);
 
 	CMyComPtr<IInArchive> archive;
 
-	const GUID * tmpguid= &CLSID_CFormat7z;
-	
-	for (size_t i = 0; i < sizeof(tmpguid); i++)
-		printf("%02X", *((char *)(((size_t)&tmpguid + i))));
-	printf("\n");
-	fflush(stdout);
-	
-	// &guids[1]
-	if (createObjectFunc(tmpguid, &IID_IInArchive, (void **)&archive)
-			!= S_OK)
+	if (createObjectFunc(&guids[format], &IID_IInArchive, (void **)&archive) != S_OK)
 	{
 		fatal("Can not get class object");
 	}
 
-	printf("Opening archive file...\n\n");
-	fflush(stdout);
+//	printf("Opening archive file in format %i... ", (int)format);
+//	fflush(stdout);
 
 	if (archive->Open(jis, 0, 0) != S_OK)
-	fatal("Problems...");
-
-	printf("Success!!!\n");
-	fflush(stdout);
-
-	//	UInt32 psize;
-	//	char buffer[1024*64];
-	//	int read = 0;
-	////	FILE * f = fopen("d:\\dump.bin", "wb");
-	//	do
-	//	{
-	//		int result = jsis->Read(buffer, sizeof(buffer), &psize);
-	//		if (result)
-	//			fatal("Error reading stream: %i\n", result);
-	////		fwrite(buffer, 1, psize, f);
-	//		read += psize;
-	//	} while (psize > 0);
-	////	fclose(f);
-	//	
-	//	printf("Complete. Read %i bytes\n", read);
+	{
+		ThrowSevenZipException(env, "Archive file (format: %i) can't be opened", format);
+		return NULL;
+	}
 
 	return GetSimpleInstance(env, clazz);
 }
 
-/*
- * Class:     net_sf_sevenzip_SevenZip
- * Method:    openArchive
- * Signature: (Ljava/lang/String;)Lnet/sf/sevenzip/SevenZip;
- */
-JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_openArchive
-(JNIEnv * env, jclass thisclzz, jstring name)
-{
-
-	printf("Java_net_sf_sevenzip_SevenZip_openArchive()\n");
-	fflush(stdout);
-
-	const char *mfile = env->GetStringUTFChars(
-			name, NULL);
-
-	printf("Filename: '%s'\n", mfile);
-	fflush(stdout);
-
-	env->ReleaseStringUTFChars(name, mfile);
-
-	//	jb=(*env)->NewByteArray(env, finfo.st_size);
-	//	    (*env)->SetByteArrayRegion(env, jb, 0, 
-	//		finfo.st_size, (jbyte *)m);
-
-	return NULL;
-}
-
-CreateObjectFunc createObjectFunc;
 
 /*
  * Class:     net_sf_sevenzip_SevenZip
@@ -123,6 +79,8 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_initSevenZipLibrary
 	char * msg = load7ZipLibrary(&createObjectFunc);
 
 	if (msg)
-	return env->NewStringUTF(msg);
+	{
+    	return env->NewStringUTF(msg);
+	}
 	return NULL;
 }

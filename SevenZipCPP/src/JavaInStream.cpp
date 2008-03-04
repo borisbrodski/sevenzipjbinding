@@ -18,6 +18,7 @@ STDMETHODIMP JavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosi
 	jlongArray newPositionArray = env->NewLongArray(1);
 	FATALIF(newPositionArray == NULL, "Out of local resource of out of memory: newPositionArray == NULL");
 
+	env->ExceptionClear();
 	jint result = env->CallIntMethod(javaImplementation, SeekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
 
 	if (result)
