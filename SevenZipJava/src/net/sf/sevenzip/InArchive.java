@@ -12,7 +12,7 @@ public class InArchive implements IInArchive {
 	
 	private void checkResult(int errCode) throws SevenZipException {
 		if (errCode != 0) {
-			throw new SevenZipException(errCode);
+			throw new SevenZipException("Operation failed. ErrorCode: " + errCode);
 		}
 	}
 

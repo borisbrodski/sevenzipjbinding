@@ -1,19 +1,25 @@
 package net.sf.sevenzip;
 
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
-
-import net.sf.sevenzip.tools.InStreamImpl;
-
 public class SevenZip {
-	private int test = 123;
+	public enum Format {
+		ARJ, SEVEN_ZIP, BZIP_2, CAB, CHM, CPIO, CDEB, GZIP, //
+		ISO, LZH, NSIS, RAR, RPM, SPLIT, TAR, Z, ZIP
+	};
 
-	public static native SevenZip openArchiveTest(IInStream inStream);
+	private static native SevenZip nativeOpenArchive(int format,
+			IInStream inStream) throws SevenZipException;
 
 	private static native String initSevenZipLibrary();
 
-	public SevenZip() {
+	/**
+	 * Hide default constructor
+	 */
+	private SevenZip() {
 
+	}
+
+	static {
+		init();
 	}
 
 	static void init() {
@@ -23,13 +29,10 @@ public class SevenZip {
 			throw new RuntimeException("Error initializing 7-Zip-JBinding: "
 					+ errorMessage);
 		}
+	}
 
-		try {
-			SevenZip openArchiveTest = openArchiveTest(new InStreamImpl(
-					new RandomAccessFile("D:\\Private\\workspace\\SevenZipCPP\\test.7z", "r")));
-			System.out.println("Object created! Test=" + openArchiveTest.test);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+	public static SevenZip openArchive(Format f, IInStream inStream)
+			throws SevenZipException {
+		return nativeOpenArchive(f.ordinal(), inStream);
 	}
 }
