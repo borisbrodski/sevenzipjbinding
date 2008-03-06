@@ -1,5 +1,6 @@
 package net.sf.sevenzip;
 
+/*
 public class InArchive implements IInArchive {
 
 	static {
@@ -90,14 +91,6 @@ public class InArchive implements IInArchive {
 	
 	private native int nativeGetPropertyInfo(int index, PropertyInfo propertyInfo);
 
-	
-	/**
-	 * 
-	 * @param inStream
-	 * @param archiveOpenCallback
-	 * @return maxCheckStartPosition
-	 * @throws SevenZipException 
-	 */
 	public long open(IInStream inStream, IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
 		long[] maxCheckStartPosition = new long[1];
 		checkResult(nativeOpen(inStream, maxCheckStartPosition, archiveOpenCallback));
@@ -108,3 +101,4 @@ public class InArchive implements IInArchive {
 			long[] maxCheckStartPositionOneElementArray,
 			IArchiveOpenCallback openArchiveCallback);
 }
+*/

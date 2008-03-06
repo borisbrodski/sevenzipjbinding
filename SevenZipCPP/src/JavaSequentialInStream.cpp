@@ -1,4 +1,5 @@
-#include <jni.h>
+#include "StdAfx.h"
+
 #include "jnitools.h"
 #include "JavaSequentialInStream.h"
 

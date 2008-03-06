@@ -38,7 +38,7 @@
 			<arg value="-classpath" />
 			<arg path="${basedir}/bin" />
 			<arg value="net.sf.sevenzip.SevenZip" />
-			<arg value="net.sf.sevenzip.InArchive" />
+			<arg value="net.sf.sevenzip.impl.InArchiveImpl" />
 		</exec>
 	</target>
 

@@ -1,0 +1,83 @@
+package net.sf.sevenzip.impl;
+
+import net.sf.sevenzip.IArchiveExtractCallback;
+import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.PropertyInfo;
+import net.sf.sevenzip.SevenZipException;
+import net.sf.sevenzip.VarType;
+
+public class InArchiveImpl implements IInArchive {
+	private int sevenZipArchiveInstance;
+
+	@Override
+	public int extract(int[] indices, int testMode,
+			IArchiveExtractCallback extractCallback) throws SevenZipException {
+
+		return 0;
+	}
+
+	private native Object nativeGetArchiveProperty(int propID)
+			throws SevenZipException;
+
+	@Override
+	public Object getArchiveProperty(int propID) throws SevenZipException {
+
+		return nativeGetArchiveProperty(propID);
+	}
+
+	@Override
+	public void getArchivePropertyInfo(int index, String[] nameOneElementArray,
+			int[] propIDOneElementArray, VarType[] varTypeOneElementArray)
+			throws SevenZipException {
+
+	}
+
+	private native int nativeGetNumberOfArchiveProperties()
+			throws SevenZipException;
+
+	@Override
+	public int getNumberOfArchiveProperties() throws SevenZipException {
+		return nativeGetNumberOfArchiveProperties();
+	}
+
+	private native int nativeGetNumberOfProperties() throws SevenZipException;
+
+	@Override
+	public int getNumberOfProperties() throws SevenZipException {
+		return nativeGetNumberOfProperties();
+	}
+
+	private native PropertyInfo nativeGetPropertyInfo(int index) throws SevenZipException;
+	
+	@Override
+	public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
+		return nativeGetPropertyInfo(index);
+	}
+
+	private native void nativeClose() throws SevenZipException;
+
+	@Override
+	public void close() throws SevenZipException {
+		nativeClose();
+	}
+
+	private native int nativeGetNumberOfItems() throws SevenZipException;
+
+	@Override
+	public int getNumberOfItems() throws SevenZipException {
+		return nativeGetNumberOfItems();
+	}
+
+	private native Object nativeGetProperty(int index, int propID);
+
+	@Override
+	public Object getProperty(int index, int propID) throws SevenZipException {
+		return nativeGetProperty(index, propID);
+	}
+
+	public void test() {
+		System.out.println("Object: " + sevenZipArchiveInstance);
+
+	}
+
+}

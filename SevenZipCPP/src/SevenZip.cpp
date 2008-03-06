@@ -1,13 +1,11 @@
 #include "StdAfx.h"
 
-#include <windows.h>
-#include <jni.h>
 #include "jnitools.h"
 #include "CLSIDs.h"
 
 #include "SevenZipJBinding.h"
 
-#include "Java/net_sf_sevenzip_SevenZip.h"
+#include "Java/all.h"
 #include "JavaInStream.h"
 
 
@@ -55,7 +53,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 		fatal("Can not get class object");
 	}
 
-//	printf("Opening archive file in format %i... ", (int)format);
+//	printf("Opening archive file in format %i (%i)... ", (int)format, (size_t)(void*)archive);
 //	fflush(stdout);
 
 	if (archive->Open(jis, 0, 0) != S_OK)
@@ -64,7 +62,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 		return NULL;
 	}
 
-	return GetSimpleInstance(env, clazz);
+	jobject InArchiveImplObject = GetSimpleInstance(env, IN_ARCHIVE_IMPL);
+	SetIntegerAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
+			(size_t)(void*)(archive.Detach()));
+
+	
+	return InArchiveImplObject;
 }
 
 

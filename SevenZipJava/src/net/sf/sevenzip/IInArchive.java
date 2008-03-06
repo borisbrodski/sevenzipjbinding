@@ -1,33 +1,30 @@
 package net.sf.sevenzip;
 
 public interface IInArchive {
-/*	public int Open(IInStream stream,
-			long[] maxCheckStartPositionOneElementArray,
-			IArchiveOpenCallback[] openArchiveCallbackOneElementArray);
+	public void close() throws SevenZipException;
 
-	public void close();
+	public int getNumberOfItems() throws SevenZipException;
 
-	public int GetNumberOfItems(int[] numItemsOneElementArray);
-
-	public int GetProperty(int index, long propID, PropVariant value);
+	public Object getProperty(int index, int propID)
+			throws SevenZipException;
 
 	/**
 	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode !=
 	 * 0 means "test files operation"
-	 *
-	public int Extract(int[] indices, int testMode,
-			IArchiveExtractCallback extractCallback);
+	 */
+	public int extract(int[] indices, int testMode,
+			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
-	public int GetArchiveProperty(long propID, PropVariant value);
+	public Object getArchiveProperty(int propID) throws SevenZipException;
 
-	public int GetNumberOfProperties(int[] numPropertiesOneElementArray);
+	public int getNumberOfProperties() throws SevenZipException;
 
-	public int GetPropertyInfo(int index, String name,
-			long[] propIDOneElementArray, VarType[] varTypeOneElementArray);
+	public PropertyInfo getPropertyInfo(int index)
+			throws SevenZipException;
 
-	public int GetNumberOfArchiveProperties(int[] numPropertiesOneElementArray);
+	public int getNumberOfArchiveProperties() throws SevenZipException;
 
-	public int GetArchivePropertyInfo(int index, String[] nameOneElementArray,
-			long[] propIDOneElementArray, VarType[] varTypeOneElementArray);
-*/
+	public void getArchivePropertyInfo(int index, String[] nameOneElementArray,
+			int[] propIDOneElementArray, VarType[] varTypeOneElementArray) throws SevenZipException;
+
 }

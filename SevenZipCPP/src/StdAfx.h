@@ -2,7 +2,8 @@
 #define STDAFX_H_
 
 #include <stdio.h>
-
+#include <windows.h>
+#include <jni.h>
 
 
 #include "Common/StringConvert.h"

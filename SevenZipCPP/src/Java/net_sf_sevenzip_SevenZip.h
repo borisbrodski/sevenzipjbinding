@@ -10,7 +10,7 @@ extern "C" {
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeOpenArchive
- * Signature: (ILnet/sf/sevenzip/IInStream;)Lnet/sf/sevenzip/SevenZip;
+ * Signature: (ILnet/sf/sevenzip/IInStream;)Lnet/sf/sevenzip/IInArchive;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
   (JNIEnv *, jclass, jint, jobject);

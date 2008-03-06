@@ -1,5 +1,6 @@
 #ifndef __JAVA_IN_STREAM_H__INCLUDED__
 
+#include "StdAfx.h"
 #include "JavaSequentialInStream.h"
 
 class JavaInStream : public virtual IInStream, private JavaSequentialInStream
