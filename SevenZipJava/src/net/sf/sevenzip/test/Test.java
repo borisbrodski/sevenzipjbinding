@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
@@ -18,8 +19,8 @@ public class Test {
 
 		try {
 			IInArchive archive = SevenZip.openArchive(
-					SevenZip.Format.RAR, new InStreamImpl(
-							new RandomAccessFile(new File(testFilenames[2]),
+					SevenZip.Format.ZIP, new InStreamImpl(
+							new RandomAccessFile(new File(testFilenames[1]),
 									"r")));
 
 			System.out.println("Items: " + archive.getNumberOfItems());
@@ -28,12 +29,20 @@ public class Test {
 			System.out.println("NumberOfProperties: "
 					+ archive.getNumberOfProperties());
 
+			for (int i = 0; i < archive.getNumberOfArchiveProperties(); i++) {
+				PropertyInfo propertyInfo = archive.getArchivePropertyInfo(i);
+				System.out.println("ArchivePropertyInfo: " + propertyInfo);
+				Object object = archive.getArchiveProperty(propertyInfo.propID);
+				System.out.println("" + object);
+			}
+			
 			for (int i = 0; i < archive.getNumberOfProperties(); i++) {
 				PropertyInfo propertyInfo = archive.getPropertyInfo(i);
 				System.out.println("PropertyInfo: " + propertyInfo);
-				Object object = archive.getProperty(4, propertyInfo.propID);
-				System.out.println("" + object);
-
+				PropID propID = propertyInfo.propID;
+				Object object = archive.getProperty(4, propID);
+				System.out.println(propID.toString() + ": " + object);
+				
 			}
 
 			// archive.openArchive(f, inStream)

@@ -17,6 +17,14 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 
 /*
  * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeGetArchivePropertyInfo
+ * Signature: (I)Lnet/sf/sevenzip/PropertyInfo;
+ */
+JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchivePropertyInfo
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
  * Method:    nativeGetNumberOfArchiveProperties
  * Signature: ()I
  */

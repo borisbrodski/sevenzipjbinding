@@ -2,7 +2,7 @@ package net.sf.sevenzip;
 
 public class PropertyInfo {
 	public String name;
-	public int propID;
+	public PropID propID;
 	public Class<?> varType;
 	
 	@Override

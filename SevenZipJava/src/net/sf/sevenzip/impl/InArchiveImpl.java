@@ -2,9 +2,9 @@ package net.sf.sevenzip.impl;
 
 import net.sf.sevenzip.IArchiveExtractCallback;
 import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZipException;
-import net.sf.sevenzip.VarType;
 
 public class InArchiveImpl implements IInArchive {
 	private int sevenZipArchiveInstance;
@@ -20,16 +20,17 @@ public class InArchiveImpl implements IInArchive {
 			throws SevenZipException;
 
 	@Override
-	public Object getArchiveProperty(int propID) throws SevenZipException {
+	public Object getArchiveProperty(PropID propID) throws SevenZipException {
 
-		return nativeGetArchiveProperty(propID);
+		return nativeGetArchiveProperty(propID.getPropIDIndex());
 	}
+	
+	private native PropertyInfo nativeGetArchivePropertyInfo(int index);
 
 	@Override
-	public void getArchivePropertyInfo(int index, String[] nameOneElementArray,
-			int[] propIDOneElementArray, VarType[] varTypeOneElementArray)
+	public PropertyInfo getArchivePropertyInfo(int index)
 			throws SevenZipException {
-
+		return nativeGetArchivePropertyInfo(index);
 	}
 
 	private native int nativeGetNumberOfArchiveProperties()
@@ -71,8 +72,8 @@ public class InArchiveImpl implements IInArchive {
 	private native Object nativeGetProperty(int index, int propID);
 
 	@Override
-	public Object getProperty(int index, int propID) throws SevenZipException {
-		return nativeGetProperty(index, propID);
+	public Object getProperty(int index, PropID propID) throws SevenZipException {
+		return nativeGetProperty(index, propID.getPropIDIndex());
 	}
 
 	public void test() {

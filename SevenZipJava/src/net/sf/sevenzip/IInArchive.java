@@ -5,7 +5,7 @@ public interface IInArchive {
 
 	public int getNumberOfItems() throws SevenZipException;
 
-	public Object getProperty(int index, int propID)
+	public Object getProperty(int index, PropID propID)
 			throws SevenZipException;
 
 	/**
@@ -15,7 +15,7 @@ public interface IInArchive {
 	public int extract(int[] indices, int testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
-	public Object getArchiveProperty(int propID) throws SevenZipException;
+	public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
 	public int getNumberOfProperties() throws SevenZipException;
 
@@ -24,7 +24,6 @@ public interface IInArchive {
 
 	public int getNumberOfArchiveProperties() throws SevenZipException;
 
-	public void getArchivePropertyInfo(int index, String[] nameOneElementArray,
-			int[] propIDOneElementArray, VarType[] varTypeOneElementArray) throws SevenZipException;
+	public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException;
 
 }
