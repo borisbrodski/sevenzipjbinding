@@ -6,6 +6,8 @@
 
 #include "Java/all.h"
 
+#include "JavaArchiveExtractCallbackImpl.h"
+
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
 static jclass g_PropertyInfoClazz;
@@ -41,7 +43,8 @@ static void localinit(JNIEnv * env, jobject thiz)
 			"Ljava/lang/String;");
 	FATALIF1(g_PropertyInfo_name == NULL, "Can't find attribute 'name' in the class %s", PROPERTYINFO_CLASS);
 
-	g_PropertyInfo_propID = env->GetFieldID(g_PropertyInfoClazz, "propID", "L" PROPID_CLASS ";");
+	g_PropertyInfo_propID = env->GetFieldID(g_PropertyInfoClazz, "propID", 
+	"L" PROPID_CLASS ";");
 	FATALIF1(g_PropertyInfo_propID == NULL, "Can't find attribute 'propID' in the class %s", PROPERTYINFO_CLASS);
 
 	g_PropertyInfo_varType = env->GetFieldID(g_PropertyInfoClazz, "varType",
@@ -52,10 +55,11 @@ static void localinit(JNIEnv * env, jobject thiz)
 	g_PropIDClazz = env->FindClass(PROPID_CLASS);
 	FATALIF1(g_PropIDClazz == NULL, "Can't find class '%s'", PROPID_CLASS);
 	g_PropIDClazz = (jclass)env->NewGlobalRef(g_PropIDClazz);
-	
-	g_PropID_getPropIDByIndex = env->GetStaticMethodID(g_PropIDClazz, "getPropIDByIndex", "(I)L" PROPID_CLASS ";");
+
+	g_PropID_getPropIDByIndex = env->GetStaticMethodID(g_PropIDClazz,
+			"getPropIDByIndex", "(I)L" PROPID_CLASS ";");
 	FATALIF1(g_PropID_getPropIDByIndex == NULL, "Can't method 'getPropIDByIndex(int)' in class '%s'", PROPID_CLASS);
-	
+
 	initialized = 1;
 }
 
@@ -68,6 +72,44 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 	pointer = env->GetIntField(thiz, g_ObjectAttributeFieldID);
 
 	return (IInArchive *)(void *)pointer;
+}
+
+int CompareIndicies(const void *pi1, const void * pi2)
+{
+	UInt32 i1 = *(UInt32*)pi1;
+	UInt32 i2 = *(UInt32*)pi2;
+	return i1 > i2 ? 1 : (i1 < i2 ? -1 : 0);
+}
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeExtract
+ * Signature: ([IZLnet/sf/sevenzip/IArchiveExtractCallback;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
+(JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
+{
+	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+
+	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
+
+	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
+//		printf("Extracting indicies count: %i\n", env->GetArrayLength(indicesArray));
+//		for (int i = 0; i < env->GetArrayLength(indicesArray); i++)
+//		{
+//			printf("Index: %i\n", ((UInt32*)indices)[i]);
+//		}
+//		fflush(stdout);
+	//	UInt32 index = 4;
+	//	int result = archive->Extract(&index, 1, (Int32)testMode, 
+	int result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
+			new JavaArchiveExtractCallbackImpl(env, archiveExtractCallbackObject));
+	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+
+	if (result)
+	{
+		ThrowSevenZipException(env, result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
+	}
 }
 
 /*
@@ -95,8 +137,7 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
-	CMyComPtr<IInArchive> archive(
-			GetArchive(env, thiz));
+	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
 	CHECK_HRESULT(archive->Close(), "Error closing archive");
 }
@@ -124,7 +165,7 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
  * Signature: (I)Lnet/sf/sevenzip/PropertyInfo;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchivePropertyInfo
-  (JNIEnv * env, jobject thiz, jint index)
+(JNIEnv * env, jobject thiz, jint index)
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
@@ -149,7 +190,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
-	
+
 	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
 	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
 
@@ -245,7 +286,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
-	
+
 	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
 	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
 

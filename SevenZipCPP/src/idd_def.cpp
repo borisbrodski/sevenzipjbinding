@@ -1,9 +1,11 @@
 #define INITGUID
 #include <initguid.h>
 
-#include <windows.h>
-#include "JavaSequentialOutStream.h"
-#include "JavaArchiveExtractCallback.h"
+#include "StdAfx.h"
+
+#include "jnitools.h"
+#include "JavaSequentialOutStreamImpl.h"
+#include "JavaArchiveExtractCallbackImpl.h"
 
 #include "CLSIDs.h"
 

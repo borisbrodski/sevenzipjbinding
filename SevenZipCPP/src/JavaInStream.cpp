@@ -22,6 +22,12 @@ STDMETHODIMP JavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosi
 	env->ExceptionClear();
 	jint result = env->CallIntMethod(javaImplementation, SeekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
 
+	if (env->ExceptionCheck())
+	{
+		env->DeleteLocalRef(newPositionArray);
+		return S_FALSE;
+	}
+
 	if (result)
 	{
 		env->DeleteLocalRef(newPositionArray);
@@ -33,8 +39,8 @@ STDMETHODIMP JavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosi
 	{
 		*newPosition = (UInt64)*newPositionArrayData;
 	}
+	
 	env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
-		
 	env->DeleteLocalRef(newPositionArray);
 
 	return result;

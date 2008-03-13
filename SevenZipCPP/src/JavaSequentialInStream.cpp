@@ -25,6 +25,13 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	env->ExceptionClear();
 	jint result = env->CallIntMethod(javaImplementation, ReadMethodID, byteArray, intArray);
 		
+	if (env->ExceptionCheck())
+	{
+		env->DeleteLocalRef(byteArray);
+		env->DeleteLocalRef(intArray);
+		return S_FALSE;
+	}
+	
 	if (result)
 	{
 		env->DeleteLocalRef(byteArray);
@@ -46,6 +53,20 @@ STDMETHODIMP JavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *proce
 	env->DeleteLocalRef(intArray);
 	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
 
+//	printf("Success read %i\n", *processedSize);
+//	fflush(stdout);
+//	
+//	for (int i = 0; i < *processedSize; i++)
+//	{
+//		if (i%32==31)
+//		{
+//			printf("\n");
+//		}
+//		printf("%02X ", 0xFF & ((char*)data)[i]);
+//	}
+//	printf("\n");
+//	fflush(stdout);
+	
 	return result;
 }
 

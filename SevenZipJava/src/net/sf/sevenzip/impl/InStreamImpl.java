@@ -15,8 +15,7 @@ public class InStreamImpl implements IInStream {
 	@Override
 	public int seek(long offset, int seekOrigin,
 			long[] newPositionOneElementArray) {
-//		System.out.print("Seek: " + offset + ", origin: " + seekOrigin);
-
+//		System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
 		try {
 			switch (seekOrigin) {
 			case SEEK_SET:

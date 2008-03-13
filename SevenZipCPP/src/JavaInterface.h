@@ -10,7 +10,7 @@ protected:
 	JavaInterface(JNIEnv * env, jobject javaImplementation)
 	{
 		this->env = env;
-		this->javaImplementation = javaImplementation;
+		this->javaImplementation = env->NewGlobalRef(javaImplementation);
 		
 		Init();
 	}
@@ -20,6 +20,7 @@ private:
 	{
 		javaImplementationClass = env->GetObjectClass(javaImplementation);
 		FATALIF(javaImplementationClass == NULL, "Can't determine class for object");
+		javaImplementationClass = (jclass)env->NewGlobalRef(javaImplementationClass);
 	}
 };
 

@@ -160,6 +160,29 @@ void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
 }
 
 /**
+ * Throw SevenZipException with error message.
+ */
+void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...)
+{
+	jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
+	FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
+
+	char buffer[64 * 1024];
+	
+	snprintf(buffer, sizeof(buffer), "HRESULT: 0x%X (%s). ", (int)hresult, getSevenZipErrorMessage(hresult));
+	int beginIndex = strlen(buffer);
+	
+	va_list args;
+	va_start(args, fmt);
+	_vsnprintf(&buffer[beginIndex], sizeof(buffer) - beginIndex, fmt, args);
+	va_end(args);
+
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	env->ThrowNew(exceptionClass, buffer);
+}
+
+/**
  * Set integer attribute "attribute" of object "object" with value "value"
  */
 void SetIntegerAttribute(JNIEnv * env, jobject object, char * attribute,

@@ -52,6 +52,11 @@ char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size);
 void ThrowSevenZipException(JNIEnv * env, char * fmt, ...);
 
 /**
+ * Throw SevenZipException with error message.
+ */
+void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...);
+
+/**
  * Set integer attribute "attribute" of object "object" with value "value"
  */
 void SetIntegerAttribute(JNIEnv * env, jobject object, char * attribute, int value);

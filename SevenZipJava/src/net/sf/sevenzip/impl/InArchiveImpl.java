@@ -10,11 +10,14 @@ public class InArchiveImpl implements IInArchive {
 	private int sevenZipArchiveInstance;
 
 	@Override
-	public int extract(int[] indices, int testMode,
+	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException {
 
-		return 0;
+		nativeExtract(indices, testMode, extractCallback);
 	}
+
+	private native void nativeExtract(int[] indices, boolean testMode,
+			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
 	private native Object nativeGetArchiveProperty(int propID)
 			throws SevenZipException;

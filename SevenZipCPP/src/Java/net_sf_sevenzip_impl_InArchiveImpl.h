@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeExtract
+ * Signature: ([IZLnet/sf/sevenzip/IArchiveExtractCallback;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
+  (JNIEnv *, jobject, jintArray, jboolean, jobject);
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
  * Method:    nativeGetArchiveProperty
  * Signature: (I)Ljava/lang/Object;
  */

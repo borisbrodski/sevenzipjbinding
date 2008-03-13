@@ -13,9 +13,8 @@
 #include "Windows/PropVariant.h"
 #include "Windows/PropVariantConversions.h"
 
-#include "JavaSequentialOutStream.h"
-#include "JavaArchiveExtractCallback.h"
 #include "7zip/Archive/IArchive.h"
+#include "SevenZipJBinding.h"
 
 
 #endif /*STDAFX_H_*/
