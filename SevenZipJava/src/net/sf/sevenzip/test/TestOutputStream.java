@@ -1,8 +1,8 @@
 package net.sf.sevenzip.test;
 
-import net.sf.sevenzip.SequentialOutStream;
+import net.sf.sevenzip.ISequentialOutStream;
 
-public class TestOutputStream implements SequentialOutStream {
+public class TestOutputStream implements ISequentialOutStream {
 
 	@Override
 	public int write(byte[] data) {

@@ -1,6 +1,6 @@
 package net.sf.sevenzip;
 
-public interface SequentialOutStream {
+public interface ISequentialOutStream {
 	/**
 	 * if (size > 0) this function must write at least 1 byte. This function is
 	 * allowed to write less than "size". You must call Write function in loop,

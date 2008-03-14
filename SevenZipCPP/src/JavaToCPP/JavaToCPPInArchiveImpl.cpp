@@ -6,7 +6,7 @@
 
 #include "Java/all.h"
 
-#include "JavaArchiveExtractCallbackImpl.h"
+#include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 	//	UInt32 index = 4;
 	//	int result = archive->Extract(&index, 1, (Int32)testMode, 
 	int result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
-			new JavaArchiveExtractCallbackImpl(env, archiveExtractCallbackObject));
+			new CPPToJavaArchiveExtractCallback(env, archiveExtractCallbackObject));
 	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
 
 	if (result)
@@ -292,4 +292,3 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 
 	return propertInfo;
 }
-

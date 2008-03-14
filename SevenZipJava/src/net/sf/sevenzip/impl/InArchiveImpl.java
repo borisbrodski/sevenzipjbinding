@@ -4,9 +4,13 @@ import net.sf.sevenzip.IArchiveExtractCallback;
 import net.sf.sevenzip.IInArchive;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
+import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
 
 public class InArchiveImpl implements IInArchive {
+	static {
+		SevenZip.initSevenZipNativeLibrary();
+	}
 	private int sevenZipArchiveInstance;
 
 	@Override
@@ -83,5 +87,6 @@ public class InArchiveImpl implements IInArchive {
 		System.out.println("Object: " + sevenZipArchiveInstance);
 
 	}
+
 
 }

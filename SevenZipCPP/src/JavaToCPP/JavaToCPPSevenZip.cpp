@@ -6,27 +6,11 @@
 #include "SevenZipJBinding.h"
 
 #include "Java/all.h"
-#include "JavaInStream.h"
+#include "CPPToJava/CPPToJavaInStream.h"
 
 CreateObjectFunc createObjectFunc;
 
-// Load 7-Zip DLL.
-// Return: NULL - ok, else error message
-static char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
-{
-	HINSTANCE lib = LoadLibraryA(DLLFILENAME);
-
-	if (NULL == lib)
-		return "Error loading 7-Zip library: " DLLFILENAME;
-
-	*createObjectFunc = (CreateObjectFunc)GetProcAddress(lib, "CreateObject");
-
-	if (NULL == *createObjectFunc)
-		return "Not a 7-Zip Library. Missing 'CreateObject' export name";
-
-	return NULL;
-}
-
+/*
 class TestInStream : public IInStream, public CMyUnknownImp
 {
 private:
@@ -75,7 +59,6 @@ public:
 
 };
 
-/*
 class TestSequentialOutStream : public ISequentialOutStream,
 	public CMyUnknownImp
 {
@@ -151,6 +134,23 @@ class TestArchiveExctractCallback : public IArchiveExtractCallback,
 
 /*
  * Class:     net_sf_sevenzip_SevenZip
+ * Method:    nativeInitSevenZipLibrary
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSevenZipLibrary
+  (JNIEnv * env, jclass thiz)
+{
+	char * msg = load7ZipLibrary(&createObjectFunc);
+
+	if (msg)
+	{
+		return env->NewStringUTF(msg);
+	}
+	return NULL;
+}
+
+/*
+ * Class:     net_sf_sevenzip_SevenZip
  * Method:    openArchiveTest
  * Signature: (Lnet/sf/sevenzip/SequentialInStream;)Lnet/sf/sevenzip/SevenZip;
  */
@@ -174,7 +174,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 	//	printf("Opening archive file in format %i (%i)... ", (int)format, (size_t)(void*)archive);
 	//	fflush(stdout);
 
-	CMyComPtr<JavaInStream> jis = new JavaInStream(env, sequentialInStream);
+	CMyComPtr<IInStream> jis = new CPPToJavaInStream(env, sequentialInStream);
 
 	if (archive->Open(jis.Detach(), 0, 0) != S_OK)
 	{
@@ -198,19 +198,3 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 	return InArchiveImplObject;
 }
 
-/*
- * Class:     net_sf_sevenzip_SevenZip
- * Method:    initSevenZipLibrary
- * Signature: ()V
- */
-JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_initSevenZipLibrary
-(JNIEnv * env, jclass clazz)
-{
-	char * msg = load7ZipLibrary(&createObjectFunc);
-
-	if (msg)
-	{
-		return env->NewStringUTF(msg);
-	}
-	return NULL;
-}

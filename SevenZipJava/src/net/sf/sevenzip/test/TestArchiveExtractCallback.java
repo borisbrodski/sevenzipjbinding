@@ -3,12 +3,12 @@ package net.sf.sevenzip.test;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
-import net.sf.sevenzip.SequentialOutStream;
+import net.sf.sevenzip.ISequentialOutStream;
 
 public class TestArchiveExtractCallback implements IArchiveExtractCallback {
 
 	@Override
-	public SequentialOutStream getStream(int index,
+	public ISequentialOutStream getStream(int index,
 			ExtractAskMode extractAskMode) {
 		System.out.println("getStream(" + index + ", " + extractAskMode+ ")");
 		if (extractAskMode != ExtractAskMode.EXTRACT) {

@@ -1,18 +1,9 @@
 package net.sf.sevenzip;
 
-import net.sf.sevenzip.impl.InArchiveImpl;
 
 public class SevenZip {
-	public enum Format {
-		ARJ, SEVEN_ZIP, BZIP_2, CAB, CHM, CPIO, CDEB, GZIP, //
-		ISO, LZH, NSIS, RAR, RPM, SPLIT, TAR, Z, ZIP
-	};
-
-	private static native IInArchive nativeOpenArchive(int format,
-			IInStream inStream) throws SevenZipException;
-
-	private static native String initSevenZipLibrary();
-
+	
+	private static boolean initialized = false;
 	/**
 	 * Hide default constructor
 	 */
@@ -21,19 +12,29 @@ public class SevenZip {
 	}
 
 	static {
-		init();
+		initSevenZipNativeLibrary();
 	}
+	
+	private static native String nativeInitSevenZipLibrary();
 
-	static void init() {
+	public static void initSevenZipNativeLibrary() {
+		if (initialized) {
+			return;
+		}
+		initialized = true;
+		
 		System.loadLibrary("libSevenZip");
-		String errorMessage = initSevenZipLibrary();
+		String errorMessage = nativeInitSevenZipLibrary();
 		if (errorMessage != null) {
 			throw new RuntimeException("Error initializing 7-Zip-JBinding: "
 					+ errorMessage);
 		}
 	}
+	
+	private static native IInArchive nativeOpenArchive(int format,
+			IInStream inStream) throws SevenZipException;
 
-	public static IInArchive openArchive(Format f, IInStream inStream)
+	public static IInArchive openArchive(ArchiveFormat f, IInStream inStream)
 			throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream);
 	}

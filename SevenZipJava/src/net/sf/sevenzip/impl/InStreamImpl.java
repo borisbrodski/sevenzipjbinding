@@ -3,8 +3,12 @@ package net.sf.sevenzip.impl;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzip.IInStream;
+import net.sf.sevenzip.SevenZip;
 
 public class InStreamImpl implements IInStream {
+	static {
+		SevenZip.initSevenZipNativeLibrary();
+	}
 
 	private final RandomAccessFile randomAccessFile;
 

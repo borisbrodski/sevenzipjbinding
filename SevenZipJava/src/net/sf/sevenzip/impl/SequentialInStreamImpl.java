@@ -3,9 +3,13 @@ package net.sf.sevenzip.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sf.sevenzip.SequentialInStream;
+import net.sf.sevenzip.ISequentialInStream;
+import net.sf.sevenzip.SevenZip;
 
-public class SequentialInStreamImpl implements SequentialInStream {
+public class SequentialInStreamImpl implements ISequentialInStream {
+	static {
+		SevenZip.initSevenZipNativeLibrary();
+	}
 
 	private InputStream inputStream;
 	

@@ -1,6 +1,6 @@
 package net.sf.sevenzip;
 
-public interface SequentialInStream {
+public interface ISequentialInStream {
 	/**
 	  * Out: if <code>data.length</code> != 0,
 	  * return_value = 0 and

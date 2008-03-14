@@ -4,7 +4,7 @@ public interface IArchiveExtractCallback extends IProgress {
 	/**
 	 * Return sequential output stream for the file with index <code>index</code>.
 	 */
-	public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
+	public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
 	
 	/**
 	 * Decide to proccess with extraction of the file with index <code>index</code>

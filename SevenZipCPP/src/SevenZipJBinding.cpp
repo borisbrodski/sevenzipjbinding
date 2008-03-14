@@ -44,99 +44,65 @@ char * getSevenZipErrorMessage(HRESULT hresult)
 	return "Unknown error code";
 }
 
-#ifdef XXXX
-using namespace std;
-
-bool g_IsNT = false;
-
-// {23170F69-40C1-278A-1000-000110070000}
-DEFINE_GUID(CLSID_CFormat7z, 0x23170F69, 0x40C1, 0x278A, 0x10, 0x00, 0x00,
-		0x01, 0x10, /*0x07*/0x01, 0x00, 0x00);
-
-// {23170F69-40C1-278A-1000-000100030000}
-//DEFINE_GUID(CLSID_CAgentArchiveHandler, 
-//  0x23170F69, 0x40C1, 0x278A, 0x10, 0x00, 0x00, 0x01, 0x00, 0x03, 0x00, 0x00);
-
-
-//DEFINE_GUID(IID_XXX, 0x23170F69, 0x40C1, 0x278A, 0x00, 0x00, 0x00, 0x09, 0x00, 0x02, 0x00, 0x00);
-
-
-int main()
+/**
+ * Load 7-Zip DLL.
+ * 
+ * Return: NULL - ok, else error message
+ */
+char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
 {
-	CMyComPtr<IInArchive> archive;
-	/*
-	 CMyComPtr<CAgent> agent;
-	 
-	 int retcode = createObjectFunc(&CLSID_CAgentArchiveHandler, &IID_XXX, (void **)&agent);
-	 if (retcode != S_OK) {
-	 char * name;
-	 switch (retcode) {
-	 case  CLASS_E_CLASSNOTAVAILABLE:
-	 name = "CLASS_E_CLASSNOTAVAILABLE";
-	 break;
-	 case E_NOINTERFACE:
-	 name = "E_NOINTERFACE";
-	 break;
-	 default:
-	 name = "unknown";
-	 }
-	 printf("Can not get agent. Retcode: %08X (%s)\n", retcode, name);
-	 printf("Last error: %08X", GetLastError());
-	 return 1;
-	 }
-	 
-	 */
+	HINSTANCE lib = LoadLibraryA(DLLFILENAME);
 
-	if (createObjectFunc(&CLSID_CFormat7z, &IID_IInArchive, (void **)&archive)
-			!= S_OK)
-	{
-		printf("Can not get class object");
-		return 1;
-	}
+	if (NULL == lib)
+		return "Error loading 7-Zip library: " DLLFILENAME;
 
-	printf("Successfull!\n\n");
+	*createObjectFunc = (CreateObjectFunc)GetProcAddress(lib, "CreateObject");
 
-	CInFileStream *fileSpec = new CInFileStream;
-	CMyComPtr<IInStream> file = fileSpec;
+	if (NULL == *createObjectFunc)
+		return "Not a 7-Zip Library. Missing 'CreateObject' export name";
 
-	if (!fileSpec->Open("test.zip"))
-	{
-		printf("Can not open archive file\n");
-		return 1;
-	}
-
-	if (archive->Open(file, 0, 0) != S_OK)
-	{
-		printf("Problems...");
-		return 0;
-	}
-
-	/*
-	 UInt32 countOfProperties;
-	 archive->GetNumberOfArchiveProperties(&countOfProperties);
-	 for (UInt32 i = 0; i < countOfProperties; i++) {
-	 BSTR name;
-	 PROPID id;
-	 VARTYPE type;
-	 archive->GetArchivePropertyInfo(i, &name, &id, &type);
-	 printf("%i name: '%S'\n", i, name);
-	 }
-	 */
-
-	UInt32 numItems = 0;
-	archive->GetNumberOfItems(&numItems);
-	printf("Count of items: %i\n", numItems);
-	for (UInt32 i = 0; i < numItems; i++)
-	{
-		NWindows::NCOM::CPropVariant propVariant;
-		archive->GetProperty(i, kpidPath, &propVariant);
-		UString s = ConvertPropVariantToString(propVariant);
-		printf("%s\n", (LPCSTR)GetOemString(s));
-
-		JavaArchiveExtractCallback aec(new JavaSequentialOutStream);
-		archive->Extract(&i, 1, 0, &aec);
-	}
-
-	return 0;
+	return NULL;
 }
-#endif
+
+/**
+ * Throw SevenZipException with error message.
+ */
+void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
+{
+	jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
+	FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
+
+	char buffer[64 * 1024];
+	va_list args;
+	va_start(args, fmt);
+	_vsnprintf(buffer, sizeof(buffer), fmt, args);
+	va_end(args);
+
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	env->ThrowNew(exceptionClass, buffer);
+}
+
+/**
+ * Throw SevenZipException with error message.
+ */
+void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...)
+{
+	jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
+	FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
+
+	char buffer[64 * 1024];
+	
+	snprintf(buffer, sizeof(buffer), "HRESULT: 0x%X (%s). ", (int)hresult, getSevenZipErrorMessage(hresult));
+	int beginIndex = strlen(buffer);
+	
+	va_list args;
+	va_start(args, fmt);
+	_vsnprintf(&buffer[beginIndex], sizeof(buffer) - beginIndex, fmt, args);
+	va_end(args);
+
+	buffer[sizeof(buffer) - 1] = '\0';
+
+	env->ThrowNew(exceptionClass, buffer);
+}
+
