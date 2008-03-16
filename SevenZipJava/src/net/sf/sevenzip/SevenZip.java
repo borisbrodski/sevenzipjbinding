@@ -1,11 +1,9 @@
 package net.sf.sevenzip;
 
-import net.sf.sevenzip.impl.InStreamImpl;
-
-
 public class SevenZip {
-	
+
 	private static boolean initialized = false;
+
 	/**
 	 * Hide default constructor
 	 */
@@ -16,7 +14,7 @@ public class SevenZip {
 	static {
 		initSevenZipNativeLibrary();
 	}
-	
+
 	private static native String nativeInitSevenZipLibrary();
 
 	public static void initSevenZipNativeLibrary() {
@@ -24,25 +22,26 @@ public class SevenZip {
 			return;
 		}
 		initialized = true;
-		
-		System.loadLibrary("libSevenZip");
+
+		System.loadLibrary("7-Zip-JBinding");
 		String errorMessage = nativeInitSevenZipLibrary();
 		if (errorMessage != null) {
 			throw new RuntimeException("Error initializing 7-Zip-JBinding: "
 					+ errorMessage);
 		}
 	}
-	
-	private static native IInArchive nativeOpenArchive(int format,
-			IInStream inStream, IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
-	public static IInArchive openInArchive(ArchiveFormat f, IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
-			throws SevenZipException {
+	private static native IInArchive nativeOpenArchive(int format,
+			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
+			throws SevenZipException;
+
+	public static IInArchive openInArchive(ArchiveFormat f, IInStream inStream,
+			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream, archiveOpenCallback);
 	}
 
-	public static IInArchive openInArchive(ArchiveFormat f,
-			IInStream inStream) throws SevenZipException {
+	public static IInArchive openInArchive(ArchiveFormat f, IInStream inStream)
+			throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream, null);
 	}
 }

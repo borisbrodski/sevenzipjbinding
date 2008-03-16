@@ -1,7 +1,5 @@
 package net.sf.sevenzip;
 
 public enum FileTimeType {
-    WINDOWS,
-    UNIX,
-    DOS
+	WINDOWS, UNIX, DOS
 }

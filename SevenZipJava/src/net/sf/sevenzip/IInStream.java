@@ -8,5 +8,6 @@ public interface IInStream extends ISequentialInStream {
 	/**
 	 * 
 	 */
-	public int seek(long offset, int seekOrigin, long [] newPositionOneElementArray);
+	public int seek(long offset, int seekOrigin,
+			long[] newPositionOneElementArray);
 }

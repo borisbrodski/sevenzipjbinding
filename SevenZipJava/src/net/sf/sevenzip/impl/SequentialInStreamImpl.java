@@ -12,7 +12,7 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 	}
 
 	private InputStream inputStream;
-	
+
 	public SequentialInStreamImpl(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
@@ -20,13 +20,12 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
 		if (data.length == 0) {
 			processedSizeOneElementArray[0] = 0;
 			return 0;
 		}
-		
+
 		try {
 			int read = inputStream.read(data);
 			if (read == -1) {

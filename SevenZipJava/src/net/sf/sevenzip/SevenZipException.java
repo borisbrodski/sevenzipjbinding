@@ -19,5 +19,5 @@ public class SevenZipException extends Exception {
 	public SevenZipException(Throwable cause) {
 		super(cause);
 	}
-	
+
 }

@@ -13,7 +13,6 @@ public class InArchiveImpl implements IInArchive {
 	}
 	private int sevenZipArchiveInstance;
 
-	@Override
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException {
 
@@ -26,15 +25,13 @@ public class InArchiveImpl implements IInArchive {
 	private native Object nativeGetArchiveProperty(int propID)
 			throws SevenZipException;
 
-	@Override
 	public Object getArchiveProperty(PropID propID) throws SevenZipException {
 
 		return nativeGetArchiveProperty(propID.getPropIDIndex());
 	}
-	
+
 	private native PropertyInfo nativeGetArchivePropertyInfo(int index);
 
-	@Override
 	public PropertyInfo getArchivePropertyInfo(int index)
 			throws SevenZipException {
 		return nativeGetArchivePropertyInfo(index);
@@ -43,43 +40,39 @@ public class InArchiveImpl implements IInArchive {
 	private native int nativeGetNumberOfArchiveProperties()
 			throws SevenZipException;
 
-	@Override
 	public int getNumberOfArchiveProperties() throws SevenZipException {
 		return nativeGetNumberOfArchiveProperties();
 	}
 
 	private native int nativeGetNumberOfProperties() throws SevenZipException;
 
-	@Override
 	public int getNumberOfProperties() throws SevenZipException {
 		return nativeGetNumberOfProperties();
 	}
 
-	private native PropertyInfo nativeGetPropertyInfo(int index) throws SevenZipException;
-	
-	@Override
+	private native PropertyInfo nativeGetPropertyInfo(int index)
+			throws SevenZipException;
+
 	public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
 		return nativeGetPropertyInfo(index);
 	}
 
 	private native void nativeClose() throws SevenZipException;
 
-	@Override
 	public void close() throws SevenZipException {
 		nativeClose();
 	}
 
 	private native int nativeGetNumberOfItems() throws SevenZipException;
 
-	@Override
 	public int getNumberOfItems() throws SevenZipException {
 		return nativeGetNumberOfItems();
 	}
 
 	private native Object nativeGetProperty(int index, int propID);
 
-	@Override
-	public Object getProperty(int index, PropID propID) throws SevenZipException {
+	public Object getProperty(int index, PropID propID)
+			throws SevenZipException {
 		return nativeGetProperty(index, propID.getPropIDIndex());
 	}
 
@@ -87,6 +80,5 @@ public class InArchiveImpl implements IInArchive {
 		System.out.println("Object: " + sevenZipArchiveInstance);
 
 	}
-
 
 }

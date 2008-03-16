@@ -16,10 +16,9 @@ public class InStreamImpl implements IInStream {
 		this.randomAccessFile = randomAccessFile;
 	}
 
-	@Override
 	public int seek(long offset, int seekOrigin,
 			long[] newPositionOneElementArray) {
-//		System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
+		// System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
 		try {
 			switch (seekOrigin) {
 			case SEEK_SET:
@@ -40,7 +39,8 @@ public class InStreamImpl implements IInStream {
 			}
 
 			newPositionOneElementArray[0] = randomAccessFile.getFilePointer();
-//			System.out.println(", CurrPos: " + newPositionOneElementArray[0]);
+			// System.out.println(", CurrPos: " +
+			// newPositionOneElementArray[0]);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return 1;
@@ -49,9 +49,8 @@ public class InStreamImpl implements IInStream {
 		return 0;
 	}
 
-	@Override
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
-//		System.out.print("Reading " + data.length + " bytes, ");
+		// System.out.print("Reading " + data.length + " bytes, ");
 		try {
 			int read = randomAccessFile.read(data);
 			if (read == -1) {
@@ -59,12 +58,13 @@ public class InStreamImpl implements IInStream {
 			} else {
 				processedSizeOneElementArray[0] = read;
 			}
-//			System.out.println("was read: " + processedSizeOneElementArray[0]);
+			// System.out.println("was read: " +
+			// processedSizeOneElementArray[0]);
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return 1;
 		}
-		
+
 		return 0;
 	}
 

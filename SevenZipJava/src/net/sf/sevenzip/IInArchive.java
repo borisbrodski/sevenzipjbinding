@@ -19,11 +19,11 @@ public interface IInArchive {
 
 	public int getNumberOfProperties() throws SevenZipException;
 
-	public PropertyInfo getPropertyInfo(int index)
-			throws SevenZipException;
+	public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
 
 	public int getNumberOfArchiveProperties() throws SevenZipException;
 
-	public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException;
+	public PropertyInfo getArchivePropertyInfo(int index)
+			throws SevenZipException;
 
 }

@@ -8,17 +8,13 @@ package net.sf.sevenzip;
  * @version 1.0
  */
 public enum ExtractOperationResult {
-    OK,
-    UNSUPPORTEDMETHOD,
-    DATAERROR,
-    CRCERROR,
-    UNKNOWN_OPERATION_RESULT;
-    
-    public static ExtractOperationResult getOperationResult(int index) {
-    	if (index >= 0 && index < values().length) {
-    		return values()[index];
-    	}
-    	
-    	return UNKNOWN_OPERATION_RESULT;
-    }
+	OK, UNSUPPORTEDMETHOD, DATAERROR, CRCERROR, UNKNOWN_OPERATION_RESULT;
+
+	public static ExtractOperationResult getOperationResult(int index) {
+		if (index >= 0 && index < values().length) {
+			return values()[index];
+		}
+
+		return UNKNOWN_OPERATION_RESULT;
+	}
 }

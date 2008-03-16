@@ -42,5 +42,47 @@
 		</exec>
 	</target>
 
+	<target name="build-release" description="Builds a release. Use build.properties to confugure settings.">
+		<property name="release-zip-filename"
+			value="${workspace}/${project.sevenzipjava}/Releases/7-Zip-JBindind-${version.release}.zip"/>
+		
+		<property name="filename.jar" value="${builddir}\${jarname}"/>
+		<property name="filename.dll" value="${workspace}/${project.sevenzipcpp}/Release/${dllname}"/>
+
+		<echo>Build dir: ${builddir}</echo>
+		<echo>Release file: ${release-zip-filename}</echo>
+		<mkdir dir="${builddir}"/>
+		<delete dir="${builddir}/bin"/>
+		<delete file="${release-zip-filename}"/>
+		<mkdir dir="${builddir}/bin"/>
+		<javac encoding="ISO-8859-1" debug="no" deprecation="true"
+			srcdir="${workspace}/${project.sevenzipjava}/src"
+			destdir="${builddir}/bin"
+			compiler="modern"
+			classpath=""
+			source="${build.java.version}" />
+		
+		<jar destfile="${filename.jar}"
+			manifest="${workspace}/${project.sevenzipjava}/META-INF/MANIFEST.MF">
+			<fileset dir="${builddir}/bin" includes="**" excludes="net/sf/sevenzip/test/**">
+			</fileset>
+		</jar>
+		
+		<echo>JAR: ${filename.jar}, ${jarname}</echo>
+		<zip destfile="${release-zip-filename}" compress="yes">
+			<zipfileset dir="${workspace}/${project.sevenzipjava}">
+				<include name="readme.txt"/>
+				<include name="release-notes.txt"/>
+				<include name="7z.dll"/>
+			</zipfileset>
+
+			<zipfileset file="${filename.dll}"/>
+			<zipfileset dir="${builddir}">
+				<include name="*.jar"/>
+			</zipfileset>
+			<filename name="${filename.dll}"/>
+			<zipfileset dir="${workspace}/${project.sevenzipjava}/src" prefix="src"/>
+		</zip>
+	</target>
 	
 </project>

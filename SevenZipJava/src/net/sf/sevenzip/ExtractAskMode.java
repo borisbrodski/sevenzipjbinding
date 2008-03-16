@@ -7,16 +7,13 @@ package net.sf.sevenzip;
  * @version 1.0
  */
 public enum ExtractAskMode {
-    EXTRACT,
-    TEST,
-    SKIP,
-    UNKNOWN_ASK_MODE;
-    
-    public static ExtractAskMode getExtractAskModeByIndex(int index) {
-    	if (index >= 0 && index < values().length) {
-    		return values()[index];
-    	}
-    	
-    	return UNKNOWN_ASK_MODE;
-    }
+	EXTRACT, TEST, SKIP, UNKNOWN_ASK_MODE;
+
+	public static ExtractAskMode getExtractAskModeByIndex(int index) {
+		if (index >= 0 && index < values().length) {
+			return values()[index];
+		}
+
+		return UNKNOWN_ASK_MODE;
+	}
 }

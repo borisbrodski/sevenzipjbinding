@@ -3,7 +3,7 @@ package net.sf.sevenzip;
 public enum PropID {
 	NO_PROPERTY1, //
 	NO_PROPERTY2, //
-	
+
 	HANDLER_ITEM_INDEX, // = 2
 	PATH, //
 	NAME, //
@@ -43,7 +43,7 @@ public enum PropID {
 	PROVIDER(0x1201), //
 
 	USER_DEFINED(0x10000), //
-	
+
 	UNKNOWN(-1);
 
 	private final int propIDIndex;
@@ -59,19 +59,19 @@ public enum PropID {
 	public int getPropIDIndex() {
 		return propIDIndex;
 	}
-	
+
 	public static PropID getPropIDByIndex(int propIDIndex) {
-		if (propIDIndex >= 0 && propIDIndex < values().length &&
-				values()[propIDIndex].getPropIDIndex() == propIDIndex) {
+		if (propIDIndex >= 0 && propIDIndex < values().length
+				&& values()[propIDIndex].getPropIDIndex() == propIDIndex) {
 			return values()[propIDIndex];
 		}
-		
+
 		for (int i = values().length - 1; i != -1; i--) {
 			if (values()[i].getPropIDIndex() == propIDIndex) {
 				return values()[i];
 			}
 		}
-		
+
 		return UNKNOWN;
 	}
 }
