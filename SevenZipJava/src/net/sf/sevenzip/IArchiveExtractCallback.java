@@ -1,5 +1,13 @@
 package net.sf.sevenzip;
 
+/**
+ * If you want to provide a password to extract files,
+ * you should also implement {@link ICryptoGetTextPassword} within your
+ * IArchiveExtractCallback-implementation.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public interface IArchiveExtractCallback extends IProgress {
 	/**
 	 * Return sequential output stream for the file with index <code>index</code>.

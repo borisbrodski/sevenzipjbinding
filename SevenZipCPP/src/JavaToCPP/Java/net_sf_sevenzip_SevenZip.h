@@ -18,10 +18,10 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSevenZipLibrar
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeOpenArchive
- * Signature: (ILnet/sf/sevenzip/IInStream;)Lnet/sf/sevenzip/IInArchive;
+ * Signature: (ILnet/sf/sevenzip/IInStream;Lnet/sf/sevenzip/IArchiveOpenCallback;)Lnet/sf/sevenzip/IInArchive;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
-  (JNIEnv *, jclass, jint, jobject);
+  (JNIEnv *, jclass, jint, jobject, jobject);
 
 #ifdef __cplusplus
 }

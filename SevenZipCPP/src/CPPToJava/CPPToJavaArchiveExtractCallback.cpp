@@ -6,29 +6,45 @@
 
 void CPPToJavaArchiveExtractCallback::Init()
 {
+    _cryptoGetTextPasswordImpl = NULL;
+    
+    jclass cryptoGetTextPasswordClass = _env->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
+    FATALIF(cryptoGetTextPasswordClass == NULL,
+            "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
+
+    if (_env->IsInstanceOf(_javaImplementation, cryptoGetTextPasswordClass))
+    {
+        CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
+            new CPPToJavaCryptoGetTextPassword(_env, _javaImplementation);
+        _cryptoGetTextPasswordImpl = cryptoGetTextPasswordComPtr.Detach();
+    }
+    
+    
 	// public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
 	_getStreamMethodID = GetMethodId("getStream",
-			"(IL" EXTRACTASKMODE_CLASS ";)L" SEQUENTIALOUTSTREAM_CLASS ";");
+			"(I" EXTRACTASKMODE_CLASS_T ")" SEQUENTIALOUTSTREAM_CLASS_T);
 
 	// public boolean prepareOperation(ExtractAskMode extractAskMode);
 	_prepareOperationMethodID = GetMethodId("prepareOperation",
-			"(L" EXTRACTASKMODE_CLASS ";)Z");
+			"(" EXTRACTASKMODE_CLASS_T ")Z");
 
 	// public void setOperationResult(ExtractOperationResult extractOperationResult);
 	_setOperationResultMethodID = GetMethodId("setOperationResult",
-			"(L" EXTRACTOPERATIONRESULT_CLASS ";)V");
+			"(" EXTRACTOPERATIONRESULT_CLASS_T ")V");
 
 	_extractOperationResultClass = GetClass(EXTRACTOPERATIONRESULT_CLASS);
 
 	// public static ExtractOperationResult getOperationResult(int index)
 	_extractOperationResultGetOperationResultMethodID = 
-			GetStaticMethodId(_extractOperationResultClass, "getOperationResult", "(I)L" EXTRACTOPERATIONRESULT_CLASS ";");
+			GetStaticMethodId(_extractOperationResultClass,
+			        "getOperationResult", "(I)" EXTRACTOPERATIONRESULT_CLASS_T);
 	
 	_extractAskModeClass = GetClass(EXTRACTASKMODE_CLASS);
 
 	// public static ExtractAskMode getExtractAskModeByIndex(int index)
 	_extractAskModeGetExtractAskModeByIndexMethodID = 
-			GetStaticMethodId(_extractAskModeClass, "getExtractAskModeByIndex", "(I)L" EXTRACTASKMODE_CLASS ";");
+			GetStaticMethodId(_extractAskModeClass, "getExtractAskModeByIndex", 
+			        "(I)" EXTRACTASKMODE_CLASS_T);
 }
 
 /*
@@ -51,6 +67,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentia
 	jobject result = _env->CallObjectMethod(_javaImplementation, _getStreamMethodID, (jint)index, askExtractModeObject);
 	if (_env->ExceptionCheck())
 	{
+        SaveLastOccurredException(_env);
 		return S_FALSE;
 	}
 
@@ -75,6 +92,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
 
 	if (_env->ExceptionCheck() || !result)
 	{
+        SaveLastOccurredException(_env);
 		return S_FALSE;
 	}
 
@@ -91,6 +109,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOp
 
 	if (_env->ExceptionCheck())
 	{
+        SaveLastOccurredException(_env);
 		return S_FALSE;
 	}
 

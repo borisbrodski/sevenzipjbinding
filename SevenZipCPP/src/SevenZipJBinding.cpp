@@ -29,6 +29,9 @@ static struct
 		{ 0, NULL },
 };
 
+static jthrowable g_LastOccurredException = NULL;
+
+
 /*
  * Return error message from error code
  */
@@ -64,14 +67,29 @@ char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
 	return NULL;
 }
 
+static void _ThrowSevenZipException(JNIEnv * env, char * message)
+{
+    jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
+    FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
+    
+    jstring messageString = env->NewStringUTF(message);
+
+    jmethodID constructorId = env->GetMethodID(exceptionClass, "<init>", "(" JAVA_STRING_T JAVA_THROWABLE_T ")V");
+    FATALIF(constructorId == NULL, "Can't find " SEVEN_ZIP_EXCEPTION "(String, Throwable) constructor")
+        
+    jthrowable exception = (jthrowable)env->NewObject(exceptionClass, constructorId, messageString, g_LastOccurredException);
+    FATALIF(exception == NULL, SEVEN_ZIP_EXCEPTION " can't be created");
+
+    env->ReleaseStringUTFChars(messageString, message);
+    
+    env->Throw(exception);
+}
+
 /**
  * Throw SevenZipException with error message.
  */
 void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
 {
-	jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
-	FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
-
 	char buffer[64 * 1024];
 	va_list args;
 	va_start(args, fmt);
@@ -80,7 +98,7 @@ void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
 
 	buffer[sizeof(buffer) - 1] = '\0';
 
-	env->ThrowNew(exceptionClass, buffer);
+	_ThrowSevenZipException(env, buffer);
 }
 
 /**
@@ -88,9 +106,6 @@ void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
  */
 void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...)
 {
-	jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
-	FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
-
 	char buffer[64 * 1024];
 	
 	snprintf(buffer, sizeof(buffer), "HRESULT: 0x%X (%s). ", (int)hresult, getSevenZipErrorMessage(hresult));
@@ -103,6 +118,32 @@ void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...)
 
 	buffer[sizeof(buffer) - 1] = '\0';
 
-	env->ThrowNew(exceptionClass, buffer);
+    _ThrowSevenZipException(env, buffer);
+}
+
+/**
+ * Save last occurred exception '_env->ExceptionOccurred()'
+ * in global variable. Next call to ThrowSevenZipException(...) will set
+ * 'lastOccurredException' as cause.
+ * 
+ * If _env->ExceptionOccurred() returns NULL,
+ * last occurred exception will be set to NULL. 
+ */
+void SaveLastOccurredException(JNIEnv * env)
+{
+    if (g_LastOccurredException)
+    {
+        env->DeleteGlobalRef(g_LastOccurredException);
+    }
+    
+    jthrowable lastOccurredException = env->ExceptionOccurred();
+    if (lastOccurredException)
+    {
+        g_LastOccurredException = (jthrowable)env->NewGlobalRef(lastOccurredException);
+    }
+    else
+    {
+        g_LastOccurredException = NULL;
+    }
 }
 

@@ -12,6 +12,7 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
 	_env->ExceptionClear();
 	jint result = _env->CallIntMethod(_javaImplementation, _writeMethodID, dataArray);
 	if (_env->ExceptionCheck()) {
+        SaveLastOccurredException(_env);
 		return S_FALSE;
 	}
 	*processedSize = (UInt32)result;

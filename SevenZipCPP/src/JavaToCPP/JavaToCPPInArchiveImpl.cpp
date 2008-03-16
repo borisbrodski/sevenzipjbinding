@@ -40,7 +40,7 @@ static void localinit(JNIEnv * env, jobject thiz)
 	g_PropertyInfoClazz = (jclass)env->NewGlobalRef(g_PropertyInfoClazz);
 
 	g_PropertyInfo_name = env->GetFieldID(g_PropertyInfoClazz, "name",
-			"Ljava/lang/String;");
+			"L" JAVA_STRING ";");
 	FATALIF1(g_PropertyInfo_name == NULL, "Can't find attribute 'name' in the class %s", PROPERTYINFO_CLASS);
 
 	g_PropertyInfo_propID = env->GetFieldID(g_PropertyInfoClazz, "propID", 
@@ -57,7 +57,7 @@ static void localinit(JNIEnv * env, jobject thiz)
 	g_PropIDClazz = (jclass)env->NewGlobalRef(g_PropIDClazz);
 
 	g_PropID_getPropIDByIndex = env->GetStaticMethodID(g_PropIDClazz,
-			"getPropIDByIndex", "(I)L" PROPID_CLASS ";");
+			"getPropIDByIndex", "(I)" PROPID_CLASS_T);
 	FATALIF1(g_PropID_getPropIDByIndex == NULL, "Can't method 'getPropIDByIndex(int)' in class '%s'", PROPID_CLASS);
 
 	initialized = 1;

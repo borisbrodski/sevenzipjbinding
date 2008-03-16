@@ -2,11 +2,15 @@
 #define CPPTOJAVAARCHIVEEXTRACTCALLBACK_H_
 
 #include "CPPToJavaProgress.h"
+#include "CPPToJavaCryptoGetTextPassword.h"
 
 class CPPToJavaArchiveExtractCallback : public virtual IArchiveExtractCallback,
+    public virtual ICryptoGetTextPassword,
 	public virtual CPPToJavaProgress
 {
 private:
+    ICryptoGetTextPassword * _cryptoGetTextPasswordImpl;
+    
 	jmethodID _getStreamMethodID;
 	jmethodID _prepareOperationMethodID;
 	jmethodID _setOperationResultMethodID;
@@ -31,10 +35,21 @@ public:
 	{
 		_env->DeleteGlobalRef(_extractOperationResultClass);
 		_env->DeleteGlobalRef(_extractAskModeClass);
+		if (_cryptoGetTextPasswordImpl)
+		{
+		    _cryptoGetTextPasswordImpl->Release();
+		}
 	}
 	
 	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
 	{
+	    if (refguid == IID_ICryptoGetTextPassword && _cryptoGetTextPasswordImpl)
+	    {
+	        *p = (void *)(ICryptoGetTextPassword *)this;
+	        AddRef();
+	        return S_OK;
+	    }
+
 		return CPPToJavaProgress::QueryInterface(refguid, p);
 	}
 
@@ -54,9 +69,20 @@ public:
 	}
 	
 	STDMETHOD(SetCompleted)(const UInt64 *completeValue)
+    {
+        return CPPToJavaProgress::SetCompleted(completeValue);
+    }
+	
+	STDMETHOD(CryptoGetTextPassword)(BSTR *password)
 	{
-		return CPPToJavaProgress::SetCompleted(completeValue);
+	    if (_cryptoGetTextPasswordImpl)
+	    {
+	        return _cryptoGetTextPasswordImpl->CryptoGetTextPassword(password);
+	    }
+	    
+		return E_NOINTERFACE;
 	}
+	
 	
 	STDMETHOD(GetStream)(UInt32 index, ISequentialOutStream **outStream,
 			Int32 askExtractMode);

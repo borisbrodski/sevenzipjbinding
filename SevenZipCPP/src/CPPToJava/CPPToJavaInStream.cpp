@@ -14,6 +14,7 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
 
 	if (_env->ExceptionCheck())
 	{
+        SaveLastOccurredException(_env);
 		_env->DeleteLocalRef(newPositionArray);
 		return S_FALSE;
 	}

@@ -17,6 +17,7 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 		
 	if (_env->ExceptionCheck())
 	{
+        SaveLastOccurredException(_env);
 		_env->DeleteLocalRef(byteArray);
 		_env->DeleteLocalRef(intArray);
 		return S_FALSE;

@@ -17,8 +17,8 @@ public:
 	CPPToJavaProgress(JNIEnv * env, jobject progress) :
 		CPPToJavaAbstract(env, progress)
 	{
-		_setTotalMethodID = GetMethodId("setCompleted", "(J)V");
-		_setCompletedMethodID = GetMethodId("setTotal", "(J)V");
+		_setTotalMethodID = GetMethodId("setTotal", "(J)V");
+		_setCompletedMethodID = GetMethodId("setCompleted", "(J)V");
 	}
 
 	STDMETHOD(SetTotal)(UInt64 total) PURE;

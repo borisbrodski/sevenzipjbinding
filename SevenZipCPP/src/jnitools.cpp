@@ -30,7 +30,7 @@ static void localinit(JNIEnv * env)
 		return;
 	}
 
-	g_IntegerClass = env->FindClass("java/lang/Integer");
+	g_IntegerClass = env->FindClass(JAVA_INTEGER);
 	FATALIF(g_IntegerClass == NULL, "Can't find Integer class");
 	g_IntegerClass = (jclass)env->NewGlobalRef(g_IntegerClass);
 
@@ -38,28 +38,28 @@ static void localinit(JNIEnv * env)
 			"(I)Ljava/lang/Integer;");
 	FATALIF(g_IntegerValueOf == NULL, "Can't find Integer.valueOf() method");
 
-	g_LongClass = env->FindClass("java/lang/Long");
+	g_LongClass = env->FindClass(JAVA_LONG);
 	FATALIF(g_LongClass == NULL, "Can't find Long class");
 	g_LongClass = (jclass)env->NewGlobalRef(g_LongClass);
 	g_LongValueOf = env->GetStaticMethodID(g_LongClass, "valueOf",
-			"(J)Ljava/lang/Long;");
+			"(J)L" JAVA_LONG ";");
 	FATALIF(g_LongValueOf == NULL, "Can't find Long.valueOf() method");
 
-	g_DoubleClass = env->FindClass("java/lang/Double");
+	g_DoubleClass = env->FindClass(JAVA_DOUBLE);
 	FATALIF(g_DoubleClass == NULL, "Can't find Double class");
 	g_DoubleClass = (jclass)env->NewGlobalRef(g_DoubleClass);
 	g_DoubleValueOf = env->GetStaticMethodID(g_DoubleClass, "valueOf",
 			"(D)Ljava/lang/Double;");
 	FATALIF(g_DoubleValueOf == NULL, "Can't find Double.valueOf() method");
 
-	g_BooleanClass = env->FindClass("java/lang/Boolean");
+	g_BooleanClass = env->FindClass(JAVA_BOOLEAN);
 	FATALIF(g_BooleanClass == NULL, "Can't find Boolean class");
 	g_BooleanClass = (jclass)env->NewGlobalRef(g_BooleanClass);
 	g_BooleanValueOf = env->GetStaticMethodID(g_BooleanClass, "valueOf",
 			"(Z)Ljava/lang/Boolean;");
 	FATALIF(g_BooleanValueOf == NULL, "Can't find Boolean.valueOf() method");
 
-	g_StringClass = env->FindClass("java/lang/String");
+	g_StringClass = env->FindClass(JAVA_STRING);
 	FATALIF(g_StringClass == NULL, "Can't find String class");
 	g_StringClass = (jclass)env->NewGlobalRef(g_StringClass);
 
@@ -159,47 +159,77 @@ void SetIntegerAttribute(JNIEnv * env, jobject object, char * attribute,
 
 }
 
-static jobject BooleanToObject(JNIEnv * env, int value)
+/**
+ * Get java.lang.Boolean object from boolean value
+ */
+jobject BooleanToObject(JNIEnv * env, int value)
 {
-	jobject result = env->CallStaticObjectMethod(g_BooleanClass,
+    localinit(env);
+
+    jobject result = env->CallStaticObjectMethod(g_BooleanClass,
 			g_BooleanValueOf, (jint)value);
 	FATALIF1(result == NULL, "Error getting Boolean object for value %i", value);
 	return result;
 }
 
-static jobject IntToObject(JNIEnv * env, int value)
+/**
+ * Get java.lang.Integer object from int value
+ */
+jobject IntToObject(JNIEnv * env, int value)
 {
-	jobject result = env->CallStaticObjectMethod(g_IntegerClass,
+    localinit(env);
+
+    jobject result = env->CallStaticObjectMethod(g_IntegerClass,
 			g_IntegerValueOf, (jint)value);
 	FATALIF1(result == NULL, "Error getting Integer object for value %i", value);
 	return result;
 }
 
-static jobject LongToObject(JNIEnv * env, LONGLONG value)
+/**
+ * Get java.lang.Long object from long value
+ */
+jobject LongToObject(JNIEnv * env, LONGLONG value)
 {
-	jobject result = env->CallStaticObjectMethod(g_LongClass, g_LongValueOf,
+    localinit(env);
+
+    jobject result = env->CallStaticObjectMethod(g_LongClass, g_LongValueOf,
 			(jlong)value);
 	FATALIF1(result == NULL, "Error getting Long object for value %li", value);
 	return result;
 }
 
-static jobject DoubleToObject(JNIEnv * env, double value)
+/**
+ * Get java.lang.Double object from double value
+ */
+jobject DoubleToObject(JNIEnv * env, double value)
 {
-	jobject result = env->CallStaticObjectMethod(g_DoubleClass,
+    localinit(env);
+
+    jobject result = env->CallStaticObjectMethod(g_DoubleClass,
 			g_DoubleValueOf, (jint)value);
 	FATALIF1(result == NULL, "Error getting Double object for value %f", value);
 	return result;
 }
 
-static jobject BSTRToObject(JNIEnv * env, BSTR value)
+/**
+ * Get java.lang.String object from BSTR string
+ */
+jobject BSTRToObject(JNIEnv * env, BSTR value)
 {
-	CMyComBSTR str(value);
+    localinit(env);
+
+    CMyComBSTR str(value);
 	return env->NewString((jchar *)(BSTR)str, str.Length());
 }
 
-static jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime)
+/**
+ * Get java.util.Date object from date in FILETIME format
+ */
+jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime)
 {
-	LONGLONG time = (((LONGLONG)filetime.dwHighDateTime) << 32) | filetime.dwLowDateTime;
+    localinit(env);
+
+    LONGLONG time = (((LONGLONG)filetime.dwHighDateTime) << 32) | filetime.dwLowDateTime;
 	LONGLONG javaTime = (time - (((LONGLONG)0x19db1de)<<32 | 0xd53e8000)) / 10000;
 	
 	jobject dateObject = env->NewObject(g_DateClass, g_DateConstructor, (jlong)javaTime);
@@ -208,11 +238,11 @@ static jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime)
 }
 
 /**
- * Convert PropVariant into java object: Integer, Double, String
+ * Convert PropVariant into java object: Integer, Double, String and Date
  */
 jobject PropVariantToObject(JNIEnv * env, PROPVARIANT * propVariant)
 {
-	localinit(env);
+    localinit(env);
 
 	if (propVariant->vt & VT_VECTOR || propVariant->vt & VT_ARRAY
 			|| propVariant->vt & VT_BYREF)

@@ -3,9 +3,11 @@ package net.sf.sevenzip.test;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
+import net.sf.sevenzip.ICryptoGetTextPassword;
 import net.sf.sevenzip.ISequentialOutStream;
+import net.sf.sevenzip.SevenZipException;
 
-public class TestArchiveExtractCallback implements IArchiveExtractCallback {
+public class TestArchiveExtractCallback implements IArchiveExtractCallback, ICryptoGetTextPassword {
 
 	@Override
 	public ISequentialOutStream getStream(int index,
@@ -37,6 +39,12 @@ public class TestArchiveExtractCallback implements IArchiveExtractCallback {
 	@Override
 	public void setTotal(long total) {
 		System.out.println("setTotal(" + total + ")");
+	}
+
+	@Override
+	public String cryptoGetTextPassword() throws SevenZipException {
+		System.out.println("TestArchiveExtractCallback.cryptoGetTextPassword()");
+		return "123";
 	}
 
 }
