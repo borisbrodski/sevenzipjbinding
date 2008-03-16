@@ -1,0 +1,23 @@
+7-Zip-JBinding Release Notes
+============================
+
+Release - 0.1 (alpha, extraction only)
+	* Minimal amount of code, that can be testet by open source community!
+	
+	* Base extraction functionality for all archive formats:
+		- All interfaces/methods for extraction
+		- Enums with possible values of such parameters, as "extract ask mode"
+		- Extended error handling
+
+	* Implemented operations:
+		- Open an archive in specified archive format.
+		  Supports:
+			- Progress information
+			- Archive catalog password
+			- Semi-support for archive volumes (not tested)
+		- Query most of archive item information (name, size, creation date ...)
+		- Extract multiple items
+		  Supports:
+			- Progress information
+			- Archive item password
+ 
