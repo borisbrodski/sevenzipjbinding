@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>Welcome to 7-Zip-JBinding project</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head><body>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+<!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+
+<div class="menubox">
+<a href="http://sevenzipjbind.sourceforge.net/">Home</a> |
+<a href="http://sourceforge.net/projects/sevenzipjbind/">SF-Home</a> |
+<a href="http://sourceforge.net/project/showfiles.php?group_id=210915"><b>Download</b></a> |
+<a href="http://sourceforge.net/forum/?group_id=210915">Forum</a> |
+<a href="http://sourceforge.net/tracker/?group_id=210915">Tracker</a> |
+<a href="http://sevenzipjbind.wiki.sourceforge.net/">Wiki</a>
+</div><br>
+
+<center><h1>Welcome to 7-Zip-JBinding project</h1><br><br>
+
+
+<table width="600" border="0"><tr><td>
+
+<h2>News</h2>
+<div class="infobox">
+<!--
+	<h2> News </h2>
+	<hr class="hr">
+ 	</div><div class="infobox">
+ -->
+<b>7-Zip-JBinding first release: 0.1</b><br><br>
+7-Zip-JBinding is in "alpha" stage! 
+The first release was made and can be test.<br> 
+ 
+Implemented features: 
+<ul>
+<li>query archive and archive item information
+<li>extraction of different types of archives (including progress information and password providing)
+</ul>
+</div>
+<br>
+
+<h2>First Steps</h2>
+Print count of items in archive:
+<div class="fragment"><pre class="fragment">
+IInArchive archive = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+	<b>new</b> InStreamImpl(new RandomAccessFile(<b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+System.out.println(<font color="blue">"Archive contains "</font>
+		+ archive.archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+</pre></div><br>
+For more information see readme.txt or wiki page "First Steps"
+</table>
+</center>
+</html>
