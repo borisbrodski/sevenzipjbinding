@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     18.03.2008 22:03:07                                                        
+
+     7-Zip-JBinding Test project    
+     
+    Tests functionality of 7-Zip-JBinding
+                   
+     Boris Brodski                                                                
+     ====================================================================== -->
+<project name="SevenZipJBindingTest" default="default">
+	<property file="build.properties" />
+
+	<description>
+            Tests functionality of 7-Zip-JBinding
+    </description>
+
+	<!-- ================================= 
+          target: default              
+         ================================= -->
+	<target name="default" description="--> description">
+		<echo>no default target action</echo>
+	</target>
+
+
+	<!-- ================================= 
+          target: create-archive-files-from-content              
+         ================================= -->
+	<target name="create-archive-files-from-content" description="Creates archive files (zip, 7zip) from ArchiveContent folders">
+		<property name="testid" value="1" />
+		<property name="archiveprog" value="7z" />
+		<delete>
+			<fileset includes="${testarchives.dir}/**"/>
+		</delete>
+		<antcall target="create-archive-7z" />
+	</target>
+
+	<macrodef name="propertycopy">
+	  <attribute name="name"/>
+	  <attribute name="from"/>
+	  <sequential>
+	    <property name="@{name}" value="${@{from}}"/>
+	  </sequential>
+	</macrodef>
+
+	<target name="create-archive-7z">
+		<exec executable="${archiveprog.7z}">
+			<arg value="a"/>
+			<arg value="-r"/>
+			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}.7z"/>
+			<arg value="${basedir}/${archivecontents.dir}/ContentArchive${testid}/*"/>
+		</exec>
+	</target>
+
+
+</project>
