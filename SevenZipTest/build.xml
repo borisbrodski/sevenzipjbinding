@@ -32,6 +32,7 @@
 		<delete>
 			<fileset includes="${testarchives.dir}/**"/>
 		</delete>
+		
 		<antcall target="create-archive-7z" />
 	</target>
 
