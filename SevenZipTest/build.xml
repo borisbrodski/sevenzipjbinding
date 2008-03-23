@@ -27,31 +27,90 @@
           target: create-archive-files-from-content              
          ================================= -->
 	<target name="create-archive-files-from-content" description="Creates archive files (zip, 7zip) from ArchiveContent folders">
-		<property name="testid" value="1" />
-		<property name="archiveprog" value="7z" />
+
 		<delete>
-			<fileset includes="${testarchives.dir}/**"/>
+			<fileset dir="${basedir}${testarchives.dir}" includes="Test*" />
 		</delete>
-		
-		<antcall target="create-archive-7z" />
+
+		<antcall target="create-archive-files-for-test-id">
+			<param name="testid" value="1"/>
+		</antcall>
+		<antcall target="create-archive-files-for-test-id">
+			<param name="testid" value="2"/>
+		</antcall>
+		<antcall target="create-archive-files-for-test-id">
+			<param name="testid" value="3"/>
+		</antcall>
+		<antcall target="create-archive-files-for-test-id">
+			<param name="testid" value="4"/>
+		</antcall>
+		<antcall target="create-archive-files-for-test-id">
+			<param name="testid" value="5"/>
+		</antcall>
+
+		<delete file="${7z-output}"/>
 	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: create-archive-files-for-test-id                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="create-archive-files-for-test-id">
+		<antcall target="extract-test-archive-content"/>
+		<antcall target="create-archive-7z">
+			<param name="archive-format" value="7z" />
+		</antcall>
+		<antcall target="create-archive-7z">
+			<param name="archive-format" value="zip" />
+		</antcall>
+		<antcall target="create-archive-7z">
+			<param name="archive-format" value="tar" />
+		</antcall>
+    </target>
+
 
 	<macrodef name="propertycopy">
-	  <attribute name="name"/>
-	  <attribute name="from"/>
-	  <sequential>
-	    <property name="@{name}" value="${@{from}}"/>
-	  </sequential>
+		<attribute name="name" />
+		<attribute name="from" />
+		<sequential>
+			<property name="@{name}" value="${@{from}}" />
+		</sequential>
 	</macrodef>
 
-	<target name="create-archive-7z">
-		<exec executable="${archiveprog.7z}">
-			<arg value="a"/>
-			<arg value="-r"/>
-			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}.7z"/>
-			<arg value="${basedir}/${archivecontents.dir}/ContentArchive${testid}/*"/>
-		</exec>
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: extract-test-archive-content                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="extract-test-archive-content">
+		<delete dir="${builddir}" />
+		<mkdir dir="${builddir}" />
+		<unzip src="${basedir}/${archivecontents.dir}/ArchiveContent${testid}.zip" dest="${builddir}">
+		</unzip>
 	</target>
 
-
+	<target name="create-archive-7z">
+		<echo>Test #${testid} Creating ${archive-format}-file: 'TestArchive${testid}.${archive-format}'</echo>
+		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
+			
+			<arg value="a" />
+			<arg value="-r" />
+			<arg value="-t${archive-format}"/>
+			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}.${archive-format}" />
+			<arg value="${builddir}/ArchiveContent${testid}/*" />
+		</exec>
+		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
+			<arg value="a" />
+			<arg value="-r" />
+			<arg value="-t${archive-format}"/>
+			<arg value="-ppassword" />
+			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}-password.${archive-format}" />
+			<arg value="${builddir}/ArchiveContent${testid}/*" />
+		</exec>
+		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
+			<arg value="a" />
+			<arg value="-r" />
+			<arg value="-t${archive-format}"/>
+			<arg value="-v1000k" />
+			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}-volumes.${archive-format}" />
+			<arg value="${builddir}/ArchiveContent${testid}/*" />
+		</exec>
+	</target>
 </project>
