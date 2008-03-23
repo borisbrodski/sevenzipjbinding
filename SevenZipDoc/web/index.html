@@ -45,10 +45,10 @@ Implemented features:
 Print count of items in archive:
 <div class="fragment"><pre class="fragment">
 IInArchive archive = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-	<b>new</b> InStreamImpl(new RandomAccessFile(<b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+	<b>new</b> InStreamImpl(<b>new</b> RandomAccessFile(<b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
 
-System.out.println(<font color="blue">"Archive contains "</font>
-		+ archive.archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+System.<i>out</i>.println(<font color="blue">"Archive contains "</font>
+		+ archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
 </pre></div><br>
 For more information see readme.txt or wiki page "First Steps"
 </table>
