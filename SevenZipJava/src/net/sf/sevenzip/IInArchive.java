@@ -11,6 +11,7 @@ public interface IInArchive {
 	/**
 	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode !=
 	 * 0 means "test files operation"
+	 * 
 	 */
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;

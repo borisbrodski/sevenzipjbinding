@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.sf.sevenzip.ExtractAskMode;
+import net.sf.sevenzip.ExtractOperationResult;
+import net.sf.sevenzip.IArchiveExtractCallback;
 import net.sf.sevenzip.IInArchive;
 import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.PropID;
@@ -45,62 +48,79 @@ public class ZipContentComparator {
 
 	private void compare() {
 		try {
-		errorMessages = new ArrayList<String>();
-		List<UniversalFileEntryInfo> expectedFileNames;
-		List<UniversalFileEntryInfo> actualFileNames;
+			errorMessages = new ArrayList<String>();
+			List<UniversalFileEntryInfo> expectedFileNames;
+			List<UniversalFileEntryInfo> actualFileNames;
 
-		expectedFileNames = getExpectedFileNameList();
-		actualFileNames = getActualFileNameList();
+			expectedFileNames = getExpectedFileNameList();
+			actualFileNames = getActualFileNameList();
 
-		Collections.sort(expectedFileNames);
-		Collections.sort(actualFileNames);
+			Collections.sort(expectedFileNames);
+			Collections.sort(actualFileNames);
 
-		if (expectedFileNames.size() != actualFileNames.size()) {
-			errorMessages
-					.add("Difference in count of files in archive: expected "
-							+ expectedFileNames.size() + ", found "
-							+ actualFileNames.size());
-			return;
-		}
-
-		for (int i = 0; i < actualFileNames.size(); i++) {
-			UniversalFileEntryInfo actualInfo = actualFileNames.get(i);
-			UniversalFileEntryInfo expectedInfo = expectedFileNames.get(i);
-
-			if (!actualInfo.filename.equalsIgnoreCase(expectedInfo.filename)) {
-				error("Filename missmatch: expected '" + expectedInfo.filename
-						+ "', actual '" + actualInfo.filename + "'");
+			if (expectedFileNames.size() != actualFileNames.size()) {
+				errorMessages
+						.add("Difference in count of files in archive: expected "
+								+ expectedFileNames.size()
+								+ ", found "
+								+ actualFileNames.size());
+				return;
 			}
 
-			if (actualInfo.realSize != expectedInfo.realSize) {
-				error("Real file size missmatch for file '"
-						+ expectedInfo.filename + "': expected "
-						+ expectedInfo.realSize + ", actual "
-						+ actualInfo.realSize);
+			for (int i = 0; i < actualFileNames.size(); i++) {
+				UniversalFileEntryInfo actualInfo = actualFileNames.get(i);
+				UniversalFileEntryInfo expectedInfo = expectedFileNames.get(i);
+
+				if (!actualInfo.filename
+						.equalsIgnoreCase(expectedInfo.filename)) {
+					error("Filename missmatch: expected '"
+							+ expectedInfo.filename + "', actual '"
+							+ actualInfo.filename + "'");
+				}
+
+				if (actualInfo.realSize != expectedInfo.realSize) {
+					error("Real file size missmatch for file '"
+							+ expectedInfo.filename + "': expected "
+							+ expectedInfo.realSize + ", actual "
+							+ actualInfo.realSize);
+				}
+
+				if (!actualInfo.fileLastModificationTime
+						.equals(expectedInfo.fileLastModificationTime)) {
+					error("Last modification time missmatch for file '"
+							+ expectedInfo.filename + "': expected "
+							+ expectedInfo.fileLastModificationTime
+							+ ", actual " + actualInfo.fileLastModificationTime);
+				}
 			}
 
-			if (!actualInfo.fileLastModificationTime
-					.equals(expectedInfo.fileLastModificationTime)) {
-				error("Last modification time missmatch for file '"
-						+ expectedInfo.filename + "': expected "
-						+ expectedInfo.fileLastModificationTime + ", actual "
-						+ actualInfo.fileLastModificationTime);
+			String[] itemIdToItemName = new String[actualSevenZipArchive
+					.getNumberOfItems()];
+
+			for (int i = 0; i < actualFileNames.size(); i++) {
+				UniversalFileEntryInfo actualInfo = actualFileNames.get(i);
+				UniversalFileEntryInfo expectedInfo = expectedFileNames.get(i);
+
+				itemIdToItemName[actualInfo.itemId] = expectedInfo.itemIdString;
 			}
-		}
+			// InputStream inputStream = expectedZipFile
+			// .getInputStream(expectedZipFile
+			// .getEntry(expectedInfo.itemIdString));
 
-		for (int i = 0; i < actualFileNames.size(); i++) {
-			UniversalFileEntryInfo actualInfo = actualFileNames.get(i);
-			UniversalFileEntryInfo expectedInfo = expectedFileNames.get(i);
-
-			InputStream inputStream = expectedZipFile
-					.getInputStream(expectedZipFile
-							.getEntry(expectedInfo.itemIdString));
-			ISequentialOutStream outStream = new TestSequentialOutStream(
-					expectedInfo.filename, inputStream);
 			long start = System.currentTimeMillis();
-			actualSevenZipArchive.extract(actualInfo.itemId, outStream);
-			System.out.println("Extraction in " + (System.currentTimeMillis() - start) / 1000.0 + " sec (size: " + expectedInfo.realSize + ")");
-		}
+			IArchiveExtractCallback archiveExtractCallback = new TestArchiveExtractCallback(
+					itemIdToItemName);
+
+			int[] indices = new int[actualFileNames.size()];
+			for (int i = 0; i < actualFileNames.size(); i++) {
+				indices[i] = actualFileNames.get(i).itemId;
+			}
+
+			actualSevenZipArchive.extract(indices, false,
+					archiveExtractCallback);
+			System.out.println("Extraction in "
+					+ (System.currentTimeMillis() - start) / 1000.0 + " sec ("
+					+ actualFileNames.size() + " items)");
 		} catch (Exception e) {
 			e.printStackTrace();
 			error("Exception occurs: " + e);
@@ -242,29 +262,99 @@ public class ZipContentComparator {
 			this.inputStream = inputStream;
 		}
 
-		@Override
 		public int write(byte[] data) {
 			try {
 				if (inputStream.available() < data.length) {
 					error("More data as expected for file '" + filename + "'");
-					throw new RuntimeException("More data as expected for file '" + filename + "'");
+					throw new RuntimeException(
+							"More data as expected for file '" + filename + "'");
 				} else {
+					// for (int i = 0; i < data.length; i++) {
+					// int read = inputStream.read();
+					// if (data[i] != (byte) read) {
+					// error("Extracted data missmatched for file '"
+					// + filename + "'");
+					// throw new RuntimeException(
+					// "Extracted data missmatched for file '"
+					// + filename + "'");
+					// }
+					// }
 					byte[] expectedData = new byte[data.length];
-					inputStream.read(expectedData);
+					int readBytes = 0;
+					int i = 0;
+					do {
+						if (inputStream.available() == 0) {
+							error("More data as expected for file '" + filename
+									+ "'");
+							throw new RuntimeException(
+									"More data as expected for file '"
+											+ filename + "'");
+						}
+
+						readBytes += inputStream.read(expectedData, readBytes,
+								data.length - readBytes);
+					} while (readBytes < data.length);
 
 					if (!Arrays.equals(expectedData, data)) {
 						error("Extracted data missmatched for file '"
 								+ filename + "'");
-						throw new RuntimeException("Extracted data missmatched for file '"
-								+ filename + "'");
+						throw new RuntimeException(
+								"Extracted data missmatched for file '"
+										+ filename + "'");
 					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				error("Unexpected exception: " + e);
-				throw new RuntimeException("Unexpected exception: " + e,e);
+				throw new RuntimeException("Unexpected exception: " + e, e);
 			}
 			return data.length;
+		}
+	}
+
+	public class TestArchiveExtractCallback implements IArchiveExtractCallback {
+		private final String[] itemIdToItemName;
+
+		public TestArchiveExtractCallback(String[] itemIdToItemName) {
+			this.itemIdToItemName = itemIdToItemName;
+		}
+
+		@Override
+		public ISequentialOutStream getStream(int index,
+				ExtractAskMode extractAskMode) {
+
+			if (!extractAskMode.equals(ExtractAskMode.EXTRACT)) {
+				return null;
+			}
+
+			try {
+				String filename = itemIdToItemName[index];
+				InputStream inputStream = expectedZipFile
+						.getInputStream(expectedZipFile.getEntry(filename));
+				return new TestSequentialOutStream(filename, inputStream);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
+		}
+
+		@Override
+		public boolean prepareOperation(ExtractAskMode extractAskMode) {
+			return true;
+		}
+
+		@Override
+		public void setOperationResult(
+				ExtractOperationResult extractOperationResult) {
+		}
+
+		@Override
+		public void setCompleted(long completeValue) {
+		}
+
+		@Override
+		public void setTotal(long total) {
 		}
 
 	}
