@@ -89,13 +89,13 @@
 	<target name="create-archive-7z">
 		<echo>Test #${testid} Creating ${archive-format}-file: 'TestArchive${testid}.${archive-format}'</echo>
 		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
-			
 			<arg value="a" />
 			<arg value="-r" />
 			<arg value="-t${archive-format}"/>
 			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}.${archive-format}" />
 			<arg value="${builddir}/ArchiveContent${testid}/*" />
 		</exec>
+		<echo>Test #${testid} Creating ${archive-format}-file: 'TestArchive${testid}-password.${archive-format}'</echo>
 		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
 			<arg value="a" />
 			<arg value="-r" />
@@ -104,6 +104,7 @@
 			<arg value="${basedir}/${testarchives.dir}/TestArchive${testid}-password.${archive-format}" />
 			<arg value="${builddir}/ArchiveContent${testid}/*" />
 		</exec>
+		<echo>Test #${testid} Creating ${archive-format}-file: 'TestArchive${testid}-volumes.${archive-format}.XXX'</echo>
 		<exec executable="${archiveprog.7z}" failifexecutionfails="true" failonerror="true" output="${7z-output}">
 			<arg value="a" />
 			<arg value="-r" />

@@ -1,0 +1,5 @@
+7-Zip-JBinding TODO-List
+------------------------
+
+[ ]  1. Implement custom init method for loading 7-Zip-JBinding.dll and 7z.dll
+		(see tests) for example of setting "java.library.path"

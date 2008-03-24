@@ -530,14 +530,14 @@
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.330299288" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.2102315639" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release">
-<option defaultValue="true" id="gnu.c.link.option.shared.453803755" superClass="gnu.c.link.option.shared" valueType="boolean"/>
+<option defaultValue="true" id="gnu.c.link.option.shared.453803755" name="Shared (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release.248563874" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release">
 <option id="gnu.cpp.link.option.libs.630284367" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 <listOptionValue builtIn="false" value="ole32"/>
 <listOptionValue builtIn="false" value="oleaut32"/>
 </option>
-<option defaultValue="true" id="gnu.cpp.link.option.shared.563407759" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
+<option defaultValue="true" id="gnu.cpp.link.option.shared.563407759" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1644957346" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 <additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 <additionalInput kind="additionalinput" paths="$(LIBS)"/>

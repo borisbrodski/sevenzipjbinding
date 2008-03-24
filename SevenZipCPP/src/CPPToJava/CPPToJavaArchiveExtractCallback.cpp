@@ -47,18 +47,14 @@ void CPPToJavaArchiveExtractCallback::Init()
 			        "(I)" EXTRACTASKMODE_CLASS_T);
 }
 
-/*
- STDMETHODIMP JavaArchiveExtractCallbackImpl::CryptoGetTextPassword(BSTR *password)
- {
- printf("> Asked for password!\n");
- *password = L"test1";
- return S_OK;
- }
- */
-
 STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentialOutStream **outStream,
 		Int32 askExtractMode)
 {
+//    if (askExtractMode) {
+//        *outStream = NULL;
+//        return S_OK;
+//    }
+    
 	jobject askExtractModeObject = _env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID,
 			(jint)askExtractMode);
 	
@@ -84,6 +80,8 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentia
 
 STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractMode)
 {
+//    return S_OK;
+    
 	jobject askExtractModeObject = _env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID, (jint)askExtractMode);
 
 	// public boolean prepareOperation(ExtractAskMode extractAskMode);
@@ -101,7 +99,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
 
 STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOperationResult)
 {
-	jobject resultEOperationResultObject = _env->CallStaticObjectMethod(_extractOperationResultClass, _extractOperationResultGetOperationResultMethodID, (jint)resultEOperationResult);
+//    return S_OK;
+
+    jobject resultEOperationResultObject = _env->CallStaticObjectMethod(_extractOperationResultClass, _extractOperationResultGetOperationResultMethodID, (jint)resultEOperationResult);
 
 	// public void setOperationResult(ExtractOperationResult extractOperationResult);
 	_env->ExceptionClear();

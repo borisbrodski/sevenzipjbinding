@@ -15,6 +15,8 @@ public interface IInArchive {
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
+	public void extract(int index, ISequentialOutStream outStream) throws SevenZipException;
+	
 	public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
 	public int getNumberOfProperties() throws SevenZipException;
