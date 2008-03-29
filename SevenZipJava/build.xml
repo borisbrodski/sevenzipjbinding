@@ -71,17 +71,20 @@
 		<echo>JAR: ${filename.jar}, ${jarname}</echo>
 		<zip destfile="${release-zip-filename}" compress="yes">
 			<zipfileset dir="${workspace}/${project.sevenzipjava}">
-				<include name="readme.txt"/>
-				<include name="release-notes.txt"/>
 				<include name="7z.dll"/>
 			</zipfileset>
-
+			<zipfileset dir="${workspace}/${project.sevenzipdoc}">
+				<include name="readme.txt"/>
+				<include name="release-notes.txt"/>
+				<include name="copying.txt"/>
+			</zipfileset>
 			<zipfileset file="${filename.dll}"/>
 			<zipfileset dir="${builddir}">
 				<include name="*.jar"/>
 			</zipfileset>
 			<filename name="${filename.dll}"/>
-			<zipfileset dir="${workspace}/${project.sevenzipjava}/src" prefix="src"/>
+			<zipfileset dir="${workspace}/${project.sevenzipjava}/src" prefix="java-src"/>
+			<zipfileset dir="${workspace}/${project.sevenzipcpp}/src" prefix="cpp-src"/>
 		</zip>
 	</target>
 	

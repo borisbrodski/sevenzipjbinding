@@ -8,6 +8,21 @@ public interface IInArchive {
 	public Object getProperty(int index, PropID propID)
 			throws SevenZipException;
 
+	/**
+	 * Return property content in human readable form. Example for
+	 * {@link PropID#ATTRIBUTES}: <code>D</code> for a directory.
+	 * 
+	 * @param index
+	 *            index of item in archive to get property of
+	 * @param propID
+	 *            property to return
+	 * @return property <code>propID</code> of item with id <code>index</code>
+	 *         in human readable form.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
+	 *             exception message for more information.
+	 */
 	public String getStringProperty(int index, PropID propID)
 			throws SevenZipException;
 
@@ -24,6 +39,17 @@ public interface IInArchive {
 
 	public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
+	/**
+	 * Return property content in human readable form.
+	 * 
+	 * @param propID
+	 *            property to return
+	 * @return property <code>propID</code> of archive in human readable form.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
+	 *             exception message for more information.
+	 */
 	public String getStringArchiveProperty(PropID propID)
 			throws SevenZipException;
 

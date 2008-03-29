@@ -128,10 +128,4 @@ public class InArchiveImpl implements IInArchive {
 			throws SevenZipException {
 		return nativeGetStringProperty(index, propID.getPropIDIndex());
 	}
-
-	public void test() {
-		System.out.println("Object: " + sevenZipArchiveInstance);
-
-	}
-
 }

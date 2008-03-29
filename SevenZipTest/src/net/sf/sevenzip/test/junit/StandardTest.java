@@ -30,7 +30,7 @@ public abstract class StandardTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		System.setProperty("java.library.path", "..\\SevenZipCPP\\Debug\\");
+		System.setProperty("java.library.path", "..\\SevenZipCPP\\Release\\");
 		reloadLibPath();
 	}
 
@@ -46,10 +46,10 @@ public abstract class StandardTest {
 		test(ArchiveFormat.ZIP, "zip");
 	}
 
-	@Test
-	public void simpleTest_tar() throws Exception {
-		test(ArchiveFormat.TAR, "tar");
-	}
+	// @Test
+	// public void simpleTest_tar() throws Exception {
+	// test(ArchiveFormat.TAR, "tar");
+	// }
 
 	private void test(ArchiveFormat archiveFormat, String format)
 			throws Exception {

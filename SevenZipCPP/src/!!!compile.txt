@@ -1,0 +1,19 @@
+This is a copy of eclipse source folder. To compile this project
+please use Eclipse with CDT plugin. You can checkout project from
+SVN repository:
+
+	http://sevenzipjbind.svn.sourceforge.net/svnroot/sevenzipjbind
+	
+To bind this project within Eclipse you will have to set followind CDT environment 
+variables in menu Windows - Preferences - C/C++ - Environment:
+
+	 "JDK" 				- path to your jdk, for example
+	 					  "C:\Programme\Java\jdk1.6.0_03\"
+	 					  
+	 "SevenZipSource" 	- path to SevenZip source code, for example
+	 					  "D:\SevenZip\"
+	 					  
+Note: the both paths must end with backslash '\'
+
+If you expirience any trouble, please start a put a message in developers forum:
+https://sourceforge.net/forum/forum.php?forum_id=757966
