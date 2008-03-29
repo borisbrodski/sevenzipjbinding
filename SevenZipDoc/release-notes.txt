@@ -1,6 +1,15 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Release - 0.2 (alpha, extraction only)
+	* Major bug in release build configuration was fixed
+	
+	* JUnit Tests for extraction of different 7-Zip & Zip files
+	
+	* New interface methods to get human readable content (String) of proeprties 
+		- IInArchive.getStringArchiveProperty     for archive properties
+		- IInArchive.getStringProperty            for archive item properties
+
 Release - 0.1 (alpha, extraction only)
 	* Minimal amount of code, that can be testet by open source community!
 	
