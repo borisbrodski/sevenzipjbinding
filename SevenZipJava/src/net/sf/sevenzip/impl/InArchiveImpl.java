@@ -22,29 +22,39 @@ public class InArchiveImpl implements IInArchive {
 		nativeExtract(indices, testMode, extractCallback);
 	}
 
-	public void extract(int index, ISequentialOutStream outStream) throws SevenZipException {
-		nativeExtract(new int[] {index}, false, new IArchiveExtractCallback() {
-			ISequentialOutStream sequentialOutStreamParam;
-			public void setTotal(long total) {
-			}
-			public IArchiveExtractCallback setSequentialOutStream(
-					ISequentialOutStream sequentialOutStream) {
-				this.sequentialOutStreamParam= sequentialOutStream;
-				return this;
-			}
-			public void setCompleted(long completeValue) {
-			}
-		
-			public void setOperationResult(ExtractOperationResult extractOperationResult) {
-			}
-			public boolean prepareOperation(ExtractAskMode extractAskMode) {
-				return true;
-			}
-			public ISequentialOutStream getStream(int index,
-					ExtractAskMode extractAskMode) {
-				return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam : null;
-			}
-		}.setSequentialOutStream(outStream));
+	public void extract(int index, ISequentialOutStream outStream)
+			throws SevenZipException {
+		nativeExtract(new int[] { index }, false,
+				new IArchiveExtractCallback() {
+					ISequentialOutStream sequentialOutStreamParam;
+
+					public void setTotal(long total) {
+					}
+
+					public IArchiveExtractCallback setSequentialOutStream(
+							ISequentialOutStream sequentialOutStream) {
+						this.sequentialOutStreamParam = sequentialOutStream;
+						return this;
+					}
+
+					public void setCompleted(long completeValue) {
+					}
+
+					public void setOperationResult(
+							ExtractOperationResult extractOperationResult) {
+					}
+
+					public boolean prepareOperation(
+							ExtractAskMode extractAskMode) {
+						return true;
+					}
+
+					public ISequentialOutStream getStream(int index,
+							ExtractAskMode extractAskMode) {
+						return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam
+								: null;
+					}
+				}.setSequentialOutStream(outStream));
 	}
 
 	private native void nativeExtract(int[] indices, boolean testMode,
@@ -56,6 +66,14 @@ public class InArchiveImpl implements IInArchive {
 	public Object getArchiveProperty(PropID propID) throws SevenZipException {
 
 		return nativeGetArchiveProperty(propID.getPropIDIndex());
+	}
+
+	private native String nativeGetStringArchiveProperty(int propID)
+			throws SevenZipException;
+
+	public String getStringArchiveProperty(PropID propID)
+			throws SevenZipException {
+		return nativeGetStringArchiveProperty(propID.getPropIDIndex());
 	}
 
 	private native PropertyInfo nativeGetArchivePropertyInfo(int index);
@@ -104,8 +122,16 @@ public class InArchiveImpl implements IInArchive {
 		return nativeGetProperty(index, propID.getPropIDIndex());
 	}
 
+	private native String nativeGetStringProperty(int index, int propID);
+
+	public String getStringProperty(int index, PropID propID)
+			throws SevenZipException {
+		return nativeGetStringProperty(index, propID.getPropIDIndex());
+	}
+
 	public void test() {
 		System.out.println("Object: " + sevenZipArchiveInstance);
 
 	}
+
 }

@@ -25,6 +25,14 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 
 /*
  * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeGetStringArchiveProperty
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringArchiveProperty
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
  * Method:    nativeGetArchivePropertyInfo
  * Signature: (I)Lnet/sf/sevenzip/PropertyInfo;
  */
@@ -77,6 +85,14 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
  * Signature: (II)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetProperty
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeGetStringProperty
+ * Signature: (II)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringProperty
   (JNIEnv *, jobject, jint, jint);
 
 #ifdef __cplusplus

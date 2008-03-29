@@ -167,7 +167,7 @@ jobject BooleanToObject(JNIEnv * env, int value)
     localinit(env);
 
     jobject result = env->CallStaticObjectMethod(g_BooleanClass,
-			g_BooleanValueOf, (jint)value);
+			g_BooleanValueOf, (jboolean)(value != VARIANT_FALSE));
 	FATALIF1(result == NULL, "Error getting Boolean object for value %i", value);
 	return result;
 }
@@ -238,9 +238,19 @@ jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime)
 }
 
 /**
+ * Convert PropVariant into java string
+ */
+jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant)
+{
+    
+    UString string = ConvertPropertyToString(propVariant, propID, true);
+    return env->NewString((jchar *)(const wchar_t*)string, string.Length());
+}
+
+/**
  * Convert PropVariant into java object: Integer, Double, String and Date
  */
-jobject PropVariantToObject(JNIEnv * env, PROPVARIANT * propVariant)
+jobject PropVariantToObject(JNIEnv * env, NWindows::NCOM::CPropVariant * propVariant)
 {
     localinit(env);
 
@@ -329,7 +339,7 @@ jobject PropVariantToObject(JNIEnv * env, PROPVARIANT * propVariant)
 	case VT_CF:
 	case VT_CLSID:
 	case VT_BSTR_BLOB:
-
+	default:
 		ThrowSevenZipException(env,
 				"Unsupported PropVariant type. VarType: %i", propVariant->vt);
 

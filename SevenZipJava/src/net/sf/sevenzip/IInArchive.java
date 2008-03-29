@@ -8,6 +8,9 @@ public interface IInArchive {
 	public Object getProperty(int index, PropID propID)
 			throws SevenZipException;
 
+	public String getStringProperty(int index, PropID propID)
+			throws SevenZipException;
+
 	/**
 	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode !=
 	 * 0 means "test files operation"
@@ -16,9 +19,13 @@ public interface IInArchive {
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
-	public void extract(int index, ISequentialOutStream outStream) throws SevenZipException;
-	
+	public void extract(int index, ISequentialOutStream outStream)
+			throws SevenZipException;
+
 	public Object getArchiveProperty(PropID propID) throws SevenZipException;
+
+	public String getStringArchiveProperty(PropID propID)
+			throws SevenZipException;
 
 	public int getNumberOfProperties() throws SevenZipException;
 

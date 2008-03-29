@@ -33,6 +33,7 @@
 <option id="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level.1755320976" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.1500001073" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src/7ZipUtils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${SevenZipSource}.&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include\win32&quot;"/>
@@ -42,6 +43,7 @@
 <tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug.815833769" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.debug">
 <option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.mingw.exe.debug.option.optimization.level.1986024303" name="Optimization Level" superClass="gnu.c.compiler.mingw.exe.debug.option.optimization.level" valueType="enumerated"/>
 <option id="gnu.c.compiler.mingw.exe.debug.option.debugging.level.307540278" name="Debug Level" superClass="gnu.c.compiler.mingw.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+<option id="gnu.c.compiler.option.include.paths.234532367" superClass="gnu.c.compiler.option.include.paths" valueType="includePath"/>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.175593805" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug.679827813" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug">
@@ -521,12 +523,16 @@
 <listOptionValue builtIn="false" value="&quot;${SevenZipSource}.&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include\win32&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src/7ZipUtils}&quot;"/>
 </option>
 <inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.55380913" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release.1937304318" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.exe.release">
 <option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.mingw.exe.release.option.optimization.level.1331485399" name="Optimization Level" superClass="gnu.c.compiler.mingw.exe.release.option.optimization.level" valueType="enumerated"/>
 <option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.569693078" name="Debug Level" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+<option id="gnu.c.compiler.option.include.paths.721579738" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src/7ZipUtils}&quot;"/>
+</option>
 <inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.330299288" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 </tool>
 <tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release.2102315639" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release">

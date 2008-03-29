@@ -91,7 +91,12 @@ void SetIntegerAttribute(JNIEnv * env, jobject object, char * attribute, int val
 /**
  * Convert PropVariant into java object: Integer, Double, String
  */
-jobject PropVariantToObject(JNIEnv * env, PROPVARIANT * propVariant);
+jobject PropVariantToObject(JNIEnv * env, NWindows::NCOM::CPropVariant * propVariant);
+
+/**
+ * Convert PropVariant into java string
+ */
+jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant);
 
 /**
  * Return Java-Class corresponding to the PropVariant Type 'vt'

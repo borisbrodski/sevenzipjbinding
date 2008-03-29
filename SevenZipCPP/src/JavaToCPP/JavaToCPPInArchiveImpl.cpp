@@ -94,14 +94,6 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
 
 	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
-//		printf("Extracting indicies count: %i\n", env->GetArrayLength(indicesArray));
-//		for (int i = 0; i < env->GetArrayLength(indicesArray); i++)
-//		{
-//			printf("Index: %i\n", ((UInt32*)indices)[i]);
-//		}
-//		fflush(stdout);
-	//	UInt32 index = 4;
-	//	int result = archive->Extract(&index, 1, (Int32)testMode, 
 	int result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
 			new CPPToJavaArchiveExtractCallback(env, archiveExtractCallbackObject));
 	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
@@ -209,15 +201,29 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 	CMyComPtr<IInArchive> archive(
 			GetArchive(env, thiz));
 
-	PROPVARIANT PropVariant;
-	memset(&PropVariant, 0, sizeof(PropVariant));
+	NWindows::NCOM::CPropVariant PropVariant;
 
 	CHECK_HRESULT1(archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
-	printf("%%%%%%%% Type: %i\n", PropVariant.vt);
-	fflush(stdout);
-
 	return PropVariantToObject(env, &PropVariant);
+}
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeGetStringArchiveProperty
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringArchiveProperty
+  (JNIEnv * env, jobject thiz, jint propID)
+{
+    CMyComPtr<IInArchive> archive(
+            GetArchive(env, thiz));
+
+    NWindows::NCOM::CPropVariant PropVariant;
+
+    CHECK_HRESULT1(archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
+
+    return PropVariantToString(env, propID, PropVariant);
 }
 
 /*
@@ -247,12 +253,28 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	PROPVARIANT PropVariant;
-	memset(&PropVariant, 0, sizeof(PropVariant));
+	NWindows::NCOM::CPropVariant propVariant;
 
-	CHECK_HRESULT2(archive->GetProperty(index, propID, &PropVariant), "Error getting property with propID=%lu for item %i", propID, index);
+	CHECK_HRESULT2(archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
-	return PropVariantToObject(env, &PropVariant);;
+	return PropVariantToObject(env, &propVariant);
+}
+
+/*
+ * Class:     net_sf_sevenzip_impl_InArchiveImpl
+ * Method:    nativeGetStringProperty
+ * Signature: (II)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringProperty
+    (JNIEnv * env, jobject thiz, jint index, jint propID)
+{
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+
+    NWindows::NCOM::CPropVariant propVariant;
+
+    CHECK_HRESULT2(archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+
+    return PropVariantToString(env, propID, propVariant);
 }
 
 /*

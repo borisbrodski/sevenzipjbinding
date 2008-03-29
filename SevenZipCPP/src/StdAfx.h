@@ -8,6 +8,7 @@
 
 #include "Common/StringConvert.h"
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
+#include "7zip/UI/Common/PropIDUtils.h"
 
 #include "7zip/Common/FileStreams.h"
 #include "Windows/PropVariant.h"
