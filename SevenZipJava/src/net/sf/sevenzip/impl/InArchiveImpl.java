@@ -107,6 +107,7 @@ public class InArchiveImpl implements IInArchive {
 
 	public void close() throws SevenZipException {
 		nativeClose();
+		sevenZipArchiveInstance = 0;
 	}
 
 	private native int nativeGetNumberOfItems() throws SevenZipException;

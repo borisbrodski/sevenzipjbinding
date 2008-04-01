@@ -71,6 +71,11 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 
 	pointer = env->GetIntField(thiz, g_ObjectAttributeFieldID);
 
+	if (pointer == NULL)
+	{
+        ThrowSevenZipException(env, "Can't preform action. Archive already closed.");
+	}
+	
 	return (IInArchive *)(void *)pointer;
 }
 
@@ -90,12 +95,20 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+	
+	if (archive == NULL)
+	{
+	    return;
+	}
 
 	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
 
 	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
+	
+	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(env, archiveExtractCallbackObject);
+	
 	int result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
-			new CPPToJavaArchiveExtractCallback(env, archiveExtractCallbackObject));
+	        archiveExtractCallback);
 	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
 
 	if (result)
@@ -114,7 +127,12 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	UInt32 result;
+    if (archive == NULL)
+    {
+        return 0;
+    }
+
+    UInt32 result;
 
 	CHECK_HRESULT(archive->GetNumberOfItems(&result), "Error getting number of items from archive");
 
@@ -131,7 +149,17 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	CHECK_HRESULT(archive->Close(), "Error closing archive");
+    if (archive == NULL)
+    {
+        return;
+    }
+
+    CHECK_HRESULT(archive->Close(), "Error closing archive");
+    archive->Release();
+//	IInArchive * a = archive.Detach();
+//	printf("Releasing Archive: %i\n", a->Release());
+//	printf("Releasing Archive: %i\n", a->Release());
+//	fflush(stdout);
 }
 
 /*
@@ -143,11 +171,17 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 (JNIEnv * env, jobject thiz)
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+	if (archive == NULL)
+	{
+	    return 0;
+	}
 
 	UInt32 result;
 
 	CHECK_HRESULT(archive->GetNumberOfArchiveProperties(&result), "Error getting number of archive properties");
 
+	// archive->Release();
+	
 	return result;
 }
 
@@ -161,6 +195,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
+    if (archive == NULL)
+    {
+        return NULL;
+    }
+    
 	VARTYPE type;
 	CMyComBSTR name;
 	unsigned long propID;
@@ -201,7 +240,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 	CMyComPtr<IInArchive> archive(
 			GetArchive(env, thiz));
 
-	NWindows::NCOM::CPropVariant PropVariant;
+    if (archive == NULL)
+    {
+        return NULL;
+    }
+
+    NWindows::NCOM::CPropVariant PropVariant;
 
 	CHECK_HRESULT1(archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
@@ -218,6 +262,11 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStrin
 {
     CMyComPtr<IInArchive> archive(
             GetArchive(env, thiz));
+
+    if (archive == NULL)
+    {
+        return NULL;
+    }
 
     NWindows::NCOM::CPropVariant PropVariant;
 
@@ -236,7 +285,12 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	UInt32 result;
+    if (archive == NULL)
+    {
+        return 0;
+    }
+
+    UInt32 result;
 
 	CHECK_HRESULT(archive->GetNumberOfProperties(&result), "Error getting number of properties");
 
@@ -253,7 +307,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	NWindows::NCOM::CPropVariant propVariant;
+    if (archive == NULL)
+    {
+        return NULL;
+    }
+
+    NWindows::NCOM::CPropVariant propVariant;
 
 	CHECK_HRESULT2(archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
@@ -269,6 +328,11 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStrin
     (JNIEnv * env, jobject thiz, jint index, jint propID)
 {
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+
+    if (archive == NULL)
+    {
+        return NULL;
+    }
 
     NWindows::NCOM::CPropVariant propVariant;
 
@@ -287,7 +351,12 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 {
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-	VARTYPE type;
+    if (archive == NULL)
+    {
+        return NULL;
+    }
+
+    VARTYPE type;
 	CMyComBSTR name;
 	unsigned long propID;
 

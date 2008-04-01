@@ -7,10 +7,13 @@ import java.util.zip.ZipFile;
 import net.sf.sevenzip.ArchiveFormat;
 import net.sf.sevenzip.IInArchive;
 import net.sf.sevenzip.SevenZip;
+import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.impl.InStreamImpl;
 import net.sf.sevenzip.test.ZipContentComparator;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -46,10 +49,22 @@ public abstract class StandardTest {
 		test(ArchiveFormat.ZIP, "zip");
 	}
 
-	// @Test
-	// public void simpleTest_tar() throws Exception {
-	// test(ArchiveFormat.TAR, "tar");
-	// }
+	@Test
+	public void simpleTest_tar() throws Exception {
+		test(ArchiveFormat.TAR, "tar");
+	}
+
+	@Before
+	public void print1() {
+		System.out.println(">>> -----------------------------------");
+		System.out.flush();
+	}
+
+	@After
+	public void print2() {
+		System.out.println("<<< -----------------------------------");
+		System.out.flush();
+	}
 
 	private void test(ArchiveFormat archiveFormat, String format)
 			throws Exception {
@@ -61,10 +76,26 @@ public abstract class StandardTest {
 						new RandomAccessFile("TestArchives/TestArchive"
 								+ testId + "." + format, "r")));
 
-		ZipContentComparator contentComparator = new ZipContentComparator(
+		ZipContentComparator contentComparator1 = new ZipContentComparator(
 				sevenZipArchive, zipFile);
-		Assert.assertTrue(contentComparator.getErrorMessage(),
-				contentComparator.isEqual());
 
+		Assert.assertTrue(contentComparator1.getErrorMessage(),
+				contentComparator1.isEqual());
+
+		ZipContentComparator contentComparator2 = new ZipContentComparator(
+				sevenZipArchive, zipFile);
+
+		Assert.assertTrue(contentComparator2.getErrorMessage(),
+				contentComparator2.isEqual());
+
+		sevenZipArchive.close();
+
+		try {
+			sevenZipArchive.getNumberOfItems();
+			Assert.fail("Can call methods of closed archive!");
+		} catch (SevenZipException sevenZipException) {
+			Assert.assertTrue(sevenZipException.getMessage().equals(
+					"Can't preform action. Archive already closed."));
+		}
 	}
 }

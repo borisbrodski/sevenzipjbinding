@@ -175,7 +175,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
     //	printf("Opening archive file in format %i (%i)... ", (int)format, (size_t)(void*)archive);
     //	fflush(stdout);
 
-    CMyComPtr<IInStream> jis = new CPPToJavaInStream(env, inStream);
+    CMyComPtr<IInStream> jis = NULL; // new CPPToJavaInStream(env, inStream);
 
     IArchiveOpenCallback * archiveOpenCallback = NULL;
     if (archiveOpenCallbackImpl)
@@ -185,9 +185,16 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 
         archiveOpenCallback = archiveOpenCallbackComPtr.Detach();
     }
-
+//    printf("Deattaching...\n");
+//    fflush(stdout);
+//    IInStream * stream = jis.Detach();
+//    printf("Opening...\n");
+//    fflush(stdout);
+    IInStream * stream = new CPPToJavaInStream(env, inStream);
+    
+    
     UInt64 maxCheckStartPosition = 0;
-    HRESULT openResult = archive->Open(jis.Detach(), &maxCheckStartPosition, archiveOpenCallback);
+    HRESULT openResult = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
     if (openResult != S_OK)
     {
         ThrowSevenZipException(env, openResult, "Archive file (format: %i) can't be opened", format);

@@ -1,5 +1,10 @@
 package net.sf.sevenzip;
 
+/**
+ * 
+ * @author Boris Brodski
+ * @since 0.1
+ */
 public class SevenZipException extends Exception {
 
 	private static final long serialVersionUID = 42L;

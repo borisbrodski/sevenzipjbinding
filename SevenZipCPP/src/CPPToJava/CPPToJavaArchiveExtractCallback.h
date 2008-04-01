@@ -29,10 +29,15 @@ public:
 				CPPToJavaProgress(env, archiveExtractCallbackImpl)
 	{
 		Init();
+//        printf("Creating CPPToJavaArchiveExtractCallback\n");
+//        fflush(stdout);
 	}
 
 	~CPPToJavaArchiveExtractCallback()
 	{
+//        printf("Deleting CPPToJavaArchiveExtractCallback\n");
+//        fflush(stdout);
+        
 		_env->DeleteGlobalRef(_extractOperationResultClass);
 		_env->DeleteGlobalRef(_extractAskModeClass);
 		if (_cryptoGetTextPasswordImpl)
