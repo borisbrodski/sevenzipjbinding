@@ -357,6 +357,5 @@ public class ZipContentComparator {
 		@Override
 		public void setTotal(long total) {
 		}
-
 	}
 }

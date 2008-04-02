@@ -63,6 +63,7 @@ public abstract class StandardTest {
 	@After
 	public void print2() {
 		System.out.println("<<< -----------------------------------");
+		System.gc();
 		System.out.flush();
 	}
 

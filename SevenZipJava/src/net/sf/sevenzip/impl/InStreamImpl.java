@@ -67,5 +67,4 @@ public class InStreamImpl implements IInStream {
 
 		return 0;
 	}
-
 }

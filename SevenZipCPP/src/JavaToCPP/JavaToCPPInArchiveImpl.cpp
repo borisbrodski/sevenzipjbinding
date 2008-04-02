@@ -71,12 +71,19 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 
 	pointer = env->GetIntField(thiz, g_ObjectAttributeFieldID);
 
-	if (pointer == NULL)
+	if (!pointer)
 	{
         ThrowSevenZipException(env, "Can't preform action. Archive already closed.");
 	}
 	
 	return (IInArchive *)(void *)pointer;
+}
+
+static void SetArchive(JNIEnv * env, jobject thiz, jint pointer)
+{
+	localinit(env, thiz);
+
+	env->SetIntField(thiz, g_ObjectAttributeFieldID, pointer);
 }
 
 int CompareIndicies(const void *pi1, const void * pi2)
@@ -156,6 +163,8 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 
     CHECK_HRESULT(archive->Close(), "Error closing archive");
     archive->Release();
+    
+    SetArchive(env, thiz, 0);
 //	IInArchive * a = archive.Detach();
 //	printf("Releasing Archive: %i\n", a->Release());
 //	printf("Releasing Archive: %i\n", a->Release());
