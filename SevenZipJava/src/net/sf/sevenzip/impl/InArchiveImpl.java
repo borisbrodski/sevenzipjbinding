@@ -3,14 +3,14 @@ package net.sf.sevenzip.impl;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
-import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
 
-public class InArchiveImpl implements IInArchive {
+public class InArchiveImpl implements ISevenZipInArchive {
 	static {
 		SevenZip.initSevenZipNativeLibrary();
 	}

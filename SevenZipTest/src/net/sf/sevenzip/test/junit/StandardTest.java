@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.util.zip.ZipFile;
 
 import net.sf.sevenzip.ArchiveFormat;
-import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.impl.InStreamImpl;
@@ -72,7 +72,7 @@ public abstract class StandardTest {
 		int testId = getTestId();
 		ZipFile zipFile = new ZipFile("ArchiveContents/ArchiveContent" + testId
 				+ ".zip");
-		IInArchive sevenZipArchive = SevenZip.openInArchive(archiveFormat,
+		ISevenZipInArchive sevenZipArchive = SevenZip.openInArchive(archiveFormat,
 				new InStreamImpl(
 						new RandomAccessFile("TestArchives/TestArchive"
 								+ testId + "." + format, "r")));

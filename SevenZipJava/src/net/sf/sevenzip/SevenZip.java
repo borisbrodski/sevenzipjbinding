@@ -31,16 +31,16 @@ public class SevenZip {
 		}
 	}
 
-	private static native IInArchive nativeOpenArchive(int format,
+	private static native ISevenZipInArchive nativeOpenArchive(int format,
 			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
 			throws SevenZipException;
 
-	public static IInArchive openInArchive(ArchiveFormat f, IInStream inStream,
+	public static ISevenZipInArchive openInArchive(ArchiveFormat f, IInStream inStream,
 			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream, archiveOpenCallback);
 	}
 
-	public static IInArchive openInArchive(ArchiveFormat f, IInStream inStream)
+	public static ISevenZipInArchive openInArchive(ArchiveFormat f, IInStream inStream)
 			throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream, null);
 	}

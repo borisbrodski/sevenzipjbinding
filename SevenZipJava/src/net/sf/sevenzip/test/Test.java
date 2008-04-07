@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzip.ArchiveFormat;
-import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZip;
@@ -23,7 +23,7 @@ public class Test {
 	public static void main(String[] args) {
 
 		try {
-			IInArchive archive = SevenZip.openInArchive(
+			ISevenZipInArchive archive = SevenZip.openInArchive(
 					ArchiveFormat.SEVEN_ZIP, new InStreamImpl(
 							new RandomAccessFile(new File(
 									cryptedTestFilenames[0]), "r")),

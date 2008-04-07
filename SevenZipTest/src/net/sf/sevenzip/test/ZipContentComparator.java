@@ -14,7 +14,7 @@ import java.util.zip.ZipFile;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
-import net.sf.sevenzip.IInArchive;
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.SevenZipException;
@@ -37,10 +37,10 @@ public class ZipContentComparator {
 	private final ZipFile expectedZipFile;
 	private Enumeration<? extends ZipEntry> expectedZipEntries;
 
-	private final IInArchive actualSevenZipArchive;
+	private final ISevenZipInArchive actualSevenZipArchive;
 	List<String> errorMessages = null;
 
-	public ZipContentComparator(IInArchive sevenZipArchive, ZipFile zipFile) {
+	public ZipContentComparator(ISevenZipInArchive sevenZipArchive, ZipFile zipFile) {
 		this.actualSevenZipArchive = sevenZipArchive;
 		this.expectedZipFile = zipFile;
 		expectedZipEntries = zipFile.entries();
@@ -139,7 +139,7 @@ public class ZipContentComparator {
 		errorMessages.add(message);
 	}
 
-	private String getStringProperty(IInArchive sevenZip, int index,
+	private String getStringProperty(ISevenZipInArchive sevenZip, int index,
 			PropID propID) throws SevenZipException {
 		String string = (String) sevenZip.getProperty(index, propID);
 		if (string == null) {

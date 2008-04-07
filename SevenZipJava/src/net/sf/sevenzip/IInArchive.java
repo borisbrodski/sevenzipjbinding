@@ -1,65 +1,34 @@
 package net.sf.sevenzip;
 
+/**
+ * Simplified interface for C++ <code>IInArchive</code>. For binding of
+ * original 7-Zip C++ interface see {@link ISevenZipInArchive}.
+ * 
+ * 
+ * @author Boris Brodski
+ * @since 0.3
+ */
 public interface IInArchive {
+	/**
+	 * Close archive. No more archive operations are possible.<br>
+	 * <b>Note</b>: This method should be always called to free system
+	 * resources.
+	 * 
+	 * @throws SevenZipException
+	 *             intern error occurs. See
+	 *             {@link SevenZipException#getMessage()} for details.
+	 */
 	public void close() throws SevenZipException;
 
+	/**
+	 * Return count of items in archive.
+	 * 
+	 * @return count of item in archive.
+	 * 
+	 * @throws SevenZipException
+	 *             intern error occurs. See
+	 *             {@link SevenZipException#getMessage()} for details.
+	 */
 	public int getNumberOfItems() throws SevenZipException;
-
-	public Object getProperty(int index, PropID propID)
-			throws SevenZipException;
-
-	/**
-	 * Return property content in human readable form. Example for
-	 * {@link PropID#ATTRIBUTES}: <code>D</code> for a directory.
-	 * 
-	 * @param index
-	 *            index of item in archive to get property of
-	 * @param propID
-	 *            property to return
-	 * @return property <code>propID</code> of item with id <code>index</code>
-	 *         in human readable form.
-	 * 
-	 * @throws SevenZipException
-	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
-	 *             exception message for more information.
-	 */
-	public String getStringProperty(int index, PropID propID)
-			throws SevenZipException;
-
-	/**
-	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode !=
-	 * 0 means "test files operation"
-	 * 
-	 */
-	public void extract(int[] indices, boolean testMode,
-			IArchiveExtractCallback extractCallback) throws SevenZipException;
-
-	public void extract(int index, ISequentialOutStream outStream)
-			throws SevenZipException;
-
-	public Object getArchiveProperty(PropID propID) throws SevenZipException;
-
-	/**
-	 * Return property content in human readable form.
-	 * 
-	 * @param propID
-	 *            property to return
-	 * @return property <code>propID</code> of archive in human readable form.
-	 * 
-	 * @throws SevenZipException
-	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
-	 *             exception message for more information.
-	 */
-	public String getStringArchiveProperty(PropID propID)
-			throws SevenZipException;
-
-	public int getNumberOfProperties() throws SevenZipException;
-
-	public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
-
-	public int getNumberOfArchiveProperties() throws SevenZipException;
-
-	public PropertyInfo getArchivePropertyInfo(int index)
-			throws SevenZipException;
 
 }
