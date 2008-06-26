@@ -1,4 +1,7 @@
-package net.sf.sevenzip;
+package net.sf.sevenzip.simple;
+
+import net.sf.sevenzip.ISevenZipInArchive;
+import net.sf.sevenzip.SevenZipException;
 
 /**
  * Simplified interface for C++ <code>IInArchive</code>. For binding of
@@ -31,4 +34,10 @@ public interface IInArchive {
 	 */
 	public int getNumberOfItems() throws SevenZipException;
 
+	/**
+	 * Return array of archive items with {@link #getNumberOfItems()} elements.
+	 * 
+	 * @return array of archive items
+	 */
+	public IInArchiveItem[] getArchiveItems();
 }
