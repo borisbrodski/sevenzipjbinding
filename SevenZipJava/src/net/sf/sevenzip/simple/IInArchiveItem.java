@@ -2,6 +2,8 @@ package net.sf.sevenzip.simple;
 
 import java.util.Date;
 
+import net.sf.sevenzip.SevenZipException;
+
 /**
  * This java interface represents a archive item. There are no corresponding
  * interface in original SevenZip api.<br>
@@ -29,8 +31,12 @@ public interface IInArchiveItem {
 	 * @return name of item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getPath();
+	public String getPath() throws SevenZipException;
 
 	/**
 	 * Original size of the item. <code>-1</code> is returned, if no size
@@ -45,8 +51,12 @@ public interface IInArchiveItem {
 	 * @return Original size of the item or <code>-1</code> <br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Long getSize();
+	public Long getSize() throws SevenZipException;
 
 	/**
 	 * Packed size of item in archive.<br>
@@ -60,8 +70,12 @@ public interface IInArchiveItem {
 	 * @return packed size of item in archive<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Long getPackedSize();
+	public Long getPackedSize() throws SevenZipException;
 
 	/**
 	 * Return <code>true</code> if item represents a folder, otherwise
@@ -71,8 +85,12 @@ public interface IInArchiveItem {
 	 *         <code>false</code><br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Boolean isFolder();
+	public Boolean isFolder() throws SevenZipException;
 
 	/**
 	 * Return item attributes.<br>
@@ -89,8 +107,12 @@ public interface IInArchiveItem {
 	 * @return attributes of item<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Integer getAttributes();
+	public Integer getAttributes() throws SevenZipException;
 
 	/**
 	 * Return creation date and time of the item.<br>
@@ -104,8 +126,12 @@ public interface IInArchiveItem {
 	 * @return creation date and time of the item<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Date getCreationTime();
+	public Date getCreationTime() throws SevenZipException;
 
 	/**
 	 * Return last access date and time of the item.<br>
@@ -119,8 +145,12 @@ public interface IInArchiveItem {
 	 * @return last access date and time of the item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Date getLastAccessTime();
+	public Date getLastAccessTime() throws SevenZipException;
 
 	/**
 	 * Return last write date and time of the item.<br>
@@ -137,8 +167,12 @@ public interface IInArchiveItem {
 	 * @return last write date and time of the item<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Date getLastWriteTime();
+	public Date getLastWriteTime() throws SevenZipException;
 
 	/**
 	 * Return encryption status of the item.
@@ -147,8 +181,12 @@ public interface IInArchiveItem {
 	 *         <code>false</code>.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Boolean isEncrypted();
+	public Boolean isEncrypted() throws SevenZipException;
 
 	/**
 	 * Return <code>true</code> if item was commented, otherwise
@@ -158,8 +196,12 @@ public interface IInArchiveItem {
 	 *         <code>false</code>.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Boolean isCommented();
+	public Boolean isCommented() throws SevenZipException;
 
 	/**
 	 * Return CRC checksum of the item content.
@@ -167,8 +209,12 @@ public interface IInArchiveItem {
 	 * @return CRC checksum of the item content<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Integer getCRC();
+	public Integer getCRC() throws SevenZipException;
 
 	/**
 	 * Return string title of item compress method.
@@ -176,15 +222,23 @@ public interface IInArchiveItem {
 	 * @return string title of item compress method<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getMethod();
+	public String getMethod() throws SevenZipException;
 
 	/**
 	 * TODO: the purpose of position isn't clear
 	 * 
 	 * @return
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public Integer getPosition();
+	public Integer getPosition() throws SevenZipException;
 
 	/**
 	 * Return host OS of item. TODO: The meening of the hostOS property is
@@ -193,8 +247,12 @@ public interface IInArchiveItem {
 	 * @return host OS of item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getHostOS();
+	public String getHostOS() throws SevenZipException;
 
 	/**
 	 * Return parent user of the item.
@@ -202,8 +260,12 @@ public interface IInArchiveItem {
 	 * @return parent user of the item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getUser();
+	public String getUser() throws SevenZipException;
 
 	/**
 	 * Return parent group of the item.
@@ -211,8 +273,12 @@ public interface IInArchiveItem {
 	 * @return parent group of the item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getGroup();
+	public String getGroup() throws SevenZipException;
 
 	/**
 	 * Return comments for the item.
@@ -220,6 +286,10 @@ public interface IInArchiveItem {
 	 * @return comments for the item.<br>
 	 *         <code>null</code> will be returnd, if current archiv type
 	 *         doesn't support this property.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
-	public String getComment();
+	public String getComment() throws SevenZipException;
 }

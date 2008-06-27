@@ -20,8 +20,8 @@ public interface ISevenZipInArchive {
 	 *         in human readable form.
 	 * 
 	 * @throws SevenZipException
-	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
-	 *             exception message for more information.
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
 	public String getStringProperty(int index, PropID propID)
 			throws SevenZipException;
@@ -47,8 +47,8 @@ public interface ISevenZipInArchive {
 	 * @return property <code>propID</code> of archive in human readable form.
 	 * 
 	 * @throws SevenZipException
-	 *             7-Zip or 7-Zip-JBinding intern error occur. You can check
-	 *             exception message for more information.
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
 	public String getStringArchiveProperty(PropID propID)
 			throws SevenZipException;

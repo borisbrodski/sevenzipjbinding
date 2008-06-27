@@ -38,6 +38,9 @@ public interface IInArchive {
 	 * Return array of archive items with {@link #getNumberOfItems()} elements.
 	 * 
 	 * @return array of archive items
+	 * @throws SevenZipException
+	 *             intern error occurs. See
+	 *             {@link SevenZipException#getMessage()} for details.
 	 */
-	public IInArchiveItem[] getArchiveItems();
+	public IInArchiveItem[] getArchiveItems() throws SevenZipException;
 }
