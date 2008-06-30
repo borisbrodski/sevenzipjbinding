@@ -1,15 +1,22 @@
 package net.sf.sevenzip.simple.impl;
 
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.simple.IInArchive;
 import net.sf.sevenzip.simple.IInArchiveItem;
 
 public class InArchiveImpl implements IInArchive {
+	private final ISevenZipInArchive sevenZipInArchive;
+	private boolean wasClosed = false;
+
+	public InArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
+		this.sevenZipInArchive = sevenZipInArchive;
+	}
 
 	@Override
 	public void close() throws SevenZipException {
-		// TODO Auto-generated method stub
-
+		sevenZipInArchive.close();
+		wasClosed = true;
 	}
 
 	/**
@@ -29,8 +36,21 @@ public class InArchiveImpl implements IInArchive {
 	 */
 	@Override
 	public int getNumberOfItems() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return 0;
+		return testAndGetSafeSevenZipInArchive().getNumberOfItems();
 	}
 
+	/**
+	 * Tests, if 7-Zip In archive interface can be accessed safely.
+	 * 
+	 * @return 7-Zip In archive interface
+	 * @throws SevenZipException
+	 *             archive can't be accessed any more
+	 */
+	public ISevenZipInArchive testAndGetSafeSevenZipInArchive()
+			throws SevenZipException {
+		if (wasClosed) {
+			throw new SevenZipException("Archive was closed");
+		}
+		return sevenZipInArchive;
+	}
 }

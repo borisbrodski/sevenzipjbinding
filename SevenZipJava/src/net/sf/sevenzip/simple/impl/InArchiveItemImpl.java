@@ -2,7 +2,7 @@ package net.sf.sevenzip.simple.impl;
 
 import java.util.Date;
 
-import net.sf.sevenzip.ISevenZipInArchive;
+import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.simple.IInArchiveItem;
@@ -11,7 +11,6 @@ public class InArchiveItemImpl implements IInArchiveItem {
 
 	private final InArchiveImpl inArchiveImpl;
 	private final int index;
-	private final ISevenZipInArchive sevenZipInArchive = null;
 
 	public InArchiveItemImpl(InArchiveImpl inArchiveImpl, int index) {
 		this.inArchiveImpl = inArchiveImpl;
@@ -23,7 +22,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getPath() throws SevenZipException {
-		return sevenZipInArchive.getStringProperty(index, PropID.PATH);
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.PATH);
 	}
 
 	/**
@@ -31,7 +31,7 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Integer getAttributes() throws SevenZipException {
-		return (Integer) sevenZipInArchive
+		return (Integer) inArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.ATTRIBUTES);
 	}
 
@@ -40,8 +40,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Integer getCRC() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Integer) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.ATTRIBUTES);
 	}
 
 	/**
@@ -49,7 +49,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getComment() throws SevenZipException {
-		return sevenZipInArchive.getStringProperty(index, PropID.COMMENT);
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.COMMENT);
 	}
 
 	/**
@@ -57,8 +58,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Date getCreationTime() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Date) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.CREATION_TIME);
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getGroup() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.GROUP);
 	}
 
 	/**
@@ -75,8 +76,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getHostOS() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.HOST_OS);
 	}
 
 	/**
@@ -84,8 +85,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Date getLastAccessTime() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Date) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.LAST_ACCESS_TIME);
 	}
 
 	/**
@@ -93,8 +94,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Date getLastWriteTime() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Date) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.LAST_WRITE_TIME);
 	}
 
 	/**
@@ -102,8 +103,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getMethod() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.METHOD);
 	}
 
 	/**
@@ -111,8 +112,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Long getPackedSize() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Long) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.PACKED_SIZE);
 	}
 
 	/**
@@ -120,8 +121,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Integer getPosition() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Integer) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.POSITION);
 	}
 
 	/**
@@ -129,8 +130,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Long getSize() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Long) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.SIZE);
 	}
 
 	/**
@@ -138,8 +139,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public String getUser() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getStringProperty(index, PropID.USER);
 	}
 
 	/**
@@ -147,8 +148,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Boolean isCommented() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Boolean) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.COMMENTED);
 	}
 
 	/**
@@ -156,8 +157,8 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Boolean isEncrypted() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Boolean) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.ENCRYPTED);
 	}
 
 	/**
@@ -165,7 +166,14 @@ public class InArchiveItemImpl implements IInArchiveItem {
 	 */
 	@Override
 	public Boolean isFolder() throws SevenZipException {
-		// TODO Auto-generated method stub
-		return null;
+		return (Boolean) inArchiveImpl.testAndGetSafeSevenZipInArchive()
+				.getProperty(index, PropID.IS_FOLDER);
+	}
+
+	public void extractSlow(ISequentialOutStream outStream)
+			throws SevenZipException {
+		inArchiveImpl.testAndGetSafeSevenZipInArchive().extract(index,
+				outStream);
+
 	}
 }
