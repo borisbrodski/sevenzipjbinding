@@ -11,7 +11,7 @@ import net.sf.sevenzip.SevenZipException;
  * @author Boris Brodski
  * @since 0.3
  */
-public interface IInArchive {
+public interface ISimpleInArchive {
 	/**
 	 * Close archive. No more archive operations are possible.<br>
 	 * <b>Note</b>: This method should be always called to free system
@@ -42,5 +42,5 @@ public interface IInArchive {
 	 *             intern error occurs. See
 	 *             {@link SevenZipException#getMessage()} for details.
 	 */
-	public IInArchiveItem[] getArchiveItems() throws SevenZipException;
+	public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException;
 }

@@ -18,6 +18,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public abstract class StandardTest {
+	protected enum Testart {
+		USE_STANDARD_INTERFACE, //
+		USE_SIMPLE_INTERFACE,
+	}
+
 	private static void reloadLibPath() throws Exception {
 		// Reset the "sys_paths" field of the ClassLoader to null.
 		Class<?> clazz = ClassLoader.class;
@@ -40,18 +45,36 @@ public abstract class StandardTest {
 	protected abstract int getTestId();
 
 	@Test
-	public void simpleTest_7z() throws Exception {
-		test(ArchiveFormat.SEVEN_ZIP, "7z");
+	public void simpleTest_7z_standardInterface() throws Exception {
+		test(ArchiveFormat.SEVEN_ZIP, "7z", Testart.USE_STANDARD_INTERFACE);
 	}
 
 	@Test
-	public void simpleTest_zip() throws Exception {
-		test(ArchiveFormat.ZIP, "zip");
+	public void simpleTest_7z_simpleInterface() throws Exception {
+		if (getTestId() == 1) {
+			return;
+		}
+		test(ArchiveFormat.SEVEN_ZIP, "7z", Testart.USE_SIMPLE_INTERFACE);
 	}
 
 	@Test
-	public void simpleTest_tar() throws Exception {
-		test(ArchiveFormat.TAR, "tar");
+	public void simpleTest_zip_standardInterface() throws Exception {
+		test(ArchiveFormat.ZIP, "zip", Testart.USE_STANDARD_INTERFACE);
+	}
+
+	@Test
+	public void simpleTest_zip_simpleInterface() throws Exception {
+		test(ArchiveFormat.ZIP, "zip", Testart.USE_SIMPLE_INTERFACE);
+	}
+
+	@Test
+	public void simpleTest_tar_standardInterface() throws Exception {
+		test(ArchiveFormat.TAR, "tar", Testart.USE_STANDARD_INTERFACE);
+	}
+
+	@Test
+	public void simpleTest_tar_simpleInterface() throws Exception {
+		test(ArchiveFormat.TAR, "tar", Testart.USE_SIMPLE_INTERFACE);
 	}
 
 	@Before
@@ -67,24 +90,27 @@ public abstract class StandardTest {
 		System.out.flush();
 	}
 
-	private void test(ArchiveFormat archiveFormat, String format)
-			throws Exception {
+	private void test(ArchiveFormat archiveFormat, String format,
+			Testart testart) throws Exception {
 		int testId = getTestId();
 		ZipFile zipFile = new ZipFile("ArchiveContents/ArchiveContent" + testId
 				+ ".zip");
-		ISevenZipInArchive sevenZipArchive = SevenZip.openInArchive(archiveFormat,
-				new InStreamImpl(
+		ISevenZipInArchive sevenZipArchive = SevenZip.openInArchive(
+				archiveFormat, new InStreamImpl(
 						new RandomAccessFile("TestArchives/TestArchive"
 								+ testId + "." + format, "r")));
 
+		boolean useSimpleInterface = testart == null
+				|| testart.equals(Testart.USE_SIMPLE_INTERFACE);
+
 		ZipContentComparator contentComparator1 = new ZipContentComparator(
-				sevenZipArchive, zipFile);
+				sevenZipArchive, zipFile, useSimpleInterface);
 
 		Assert.assertTrue(contentComparator1.getErrorMessage(),
 				contentComparator1.isEqual());
 
 		ZipContentComparator contentComparator2 = new ZipContentComparator(
-				sevenZipArchive, zipFile);
+				sevenZipArchive, zipFile, useSimpleInterface);
 
 		Assert.assertTrue(contentComparator2.getErrorMessage(),
 				contentComparator2.isEqual());

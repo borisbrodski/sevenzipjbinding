@@ -2,6 +2,7 @@ package net.sf.sevenzip.simple;
 
 import java.util.Date;
 
+import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.SevenZipException;
 
 /**
@@ -12,11 +13,11 @@ import net.sf.sevenzip.SevenZipException;
  * This interface is a part of simplified 7-Zip interface.
  * 
  * 
- * @see IInArchive
+ * @see ISimpleInArchive
  * @author Boris Brodski
  * @since 0.3
  */
-public interface IInArchiveItem {
+public interface ISimpleInArchiveItem {
 
 	/**
 	 * Return path, name and extenstion of the file (item) in archive.<br>
@@ -292,4 +293,23 @@ public interface IInArchiveItem {
 	 *             message for more information.
 	 */
 	public String getComment() throws SevenZipException;
+
+	/**
+	 * Extract one archive item. Use <code>sequentialOutStream</code> to
+	 * output data.<br>
+	 * <br>
+	 * <b>WARNING:</b> this is very slow operation
+	 * 
+	 * @param outStream
+	 * @throws SevenZipException
+	 */
+	public void extractSlow(ISequentialOutStream sequentialOutStream)
+			throws SevenZipException;
+
+	/**
+	 * Returns the archive item index
+	 * 
+	 * @return the archive item index
+	 */
+	public int getItemIndex();
 }

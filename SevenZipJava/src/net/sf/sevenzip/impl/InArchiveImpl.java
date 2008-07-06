@@ -9,20 +9,36 @@ import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
+import net.sf.sevenzip.simple.ISimpleInArchive;
+import net.sf.sevenzip.simple.impl.SimpleInArchiveImpl;
 
+/**
+ * Implementation of {@link ISevenZipInArchive}.
+ * 
+ * @author Boris Brodski
+ * 
+ */
 public class InArchiveImpl implements ISevenZipInArchive {
 	static {
 		SevenZip.initSevenZipNativeLibrary();
 	}
+
+	@SuppressWarnings("unused")
 	private int sevenZipArchiveInstance;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException {
 
 		nativeExtract(indices, testMode, extractCallback);
 	}
 
-	public void extract(int index, ISequentialOutStream outStream)
+	/**
+	 * {@inheritDoc}
+	 */
+	public void extractSlow(int index, ISequentialOutStream outStream)
 			throws SevenZipException {
 		nativeExtract(new int[] { index }, false,
 				new IArchiveExtractCallback() {
@@ -63,6 +79,9 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	private native Object nativeGetArchiveProperty(int propID)
 			throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object getArchiveProperty(PropID propID) throws SevenZipException {
 
 		return nativeGetArchiveProperty(propID.getPropIDIndex());
@@ -71,6 +90,9 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	private native String nativeGetStringArchiveProperty(int propID)
 			throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getStringArchiveProperty(PropID propID)
 			throws SevenZipException {
 		return nativeGetStringArchiveProperty(propID.getPropIDIndex());
@@ -78,6 +100,9 @@ public class InArchiveImpl implements ISevenZipInArchive {
 
 	private native PropertyInfo nativeGetArchivePropertyInfo(int index);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public PropertyInfo getArchivePropertyInfo(int index)
 			throws SevenZipException {
 		return nativeGetArchivePropertyInfo(index);
@@ -86,12 +111,18 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	private native int nativeGetNumberOfArchiveProperties()
 			throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getNumberOfArchiveProperties() throws SevenZipException {
 		return nativeGetNumberOfArchiveProperties();
 	}
 
 	private native int nativeGetNumberOfProperties() throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getNumberOfProperties() throws SevenZipException {
 		return nativeGetNumberOfProperties();
 	}
@@ -99,24 +130,36 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	private native PropertyInfo nativeGetPropertyInfo(int index)
 			throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
 		return nativeGetPropertyInfo(index);
 	}
 
 	private native void nativeClose() throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void close() throws SevenZipException {
 		nativeClose();
 	}
 
 	private native int nativeGetNumberOfItems() throws SevenZipException;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getNumberOfItems() throws SevenZipException {
 		return nativeGetNumberOfItems();
 	}
 
 	private native Object nativeGetProperty(int index, int propID);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Object getProperty(int index, PropID propID)
 			throws SevenZipException {
 		return nativeGetProperty(index, propID.getPropIDIndex());
@@ -124,8 +167,18 @@ public class InArchiveImpl implements ISevenZipInArchive {
 
 	private native String nativeGetStringProperty(int index, int propID);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getStringProperty(int index, PropID propID)
 			throws SevenZipException {
 		return nativeGetStringProperty(index, propID.getPropIDIndex());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ISimpleInArchive getSimpleInterface() {
+		return new SimpleInArchiveImpl(this);
 	}
 }

@@ -1,5 +1,7 @@
 package net.sf.sevenzip;
 
+import net.sf.sevenzip.simple.ISimpleInArchive;
+
 public interface ISevenZipInArchive {
 	public void close() throws SevenZipException;
 
@@ -34,7 +36,19 @@ public interface ISevenZipInArchive {
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;
 
-	public void extract(int index, ISequentialOutStream outStream)
+	/**
+	 * Extract one item from archive. Multiple calls of this operations very
+	 * slow on some archive types.
+	 * 
+	 * @param index
+	 *            index of the item to extract
+	 * @param outStream
+	 *            sequential output stream to get inhalt of the item
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public void extractSlow(int index, ISequentialOutStream outStream)
 			throws SevenZipException;
 
 	public Object getArchiveProperty(PropID propID) throws SevenZipException;
@@ -62,4 +76,5 @@ public interface ISevenZipInArchive {
 	public PropertyInfo getArchivePropertyInfo(int index)
 			throws SevenZipException;
 
+	public ISimpleInArchive getSimpleInterface();
 }

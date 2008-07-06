@@ -2,14 +2,14 @@ package net.sf.sevenzip.simple.impl;
 
 import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.SevenZipException;
-import net.sf.sevenzip.simple.IInArchive;
-import net.sf.sevenzip.simple.IInArchiveItem;
+import net.sf.sevenzip.simple.ISimpleInArchive;
+import net.sf.sevenzip.simple.ISimpleInArchiveItem;
 
-public class InArchiveImpl implements IInArchive {
+public class SimpleInArchiveImpl implements ISimpleInArchive {
 	private final ISevenZipInArchive sevenZipInArchive;
 	private boolean wasClosed = false;
 
-	public InArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
+	public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
 		this.sevenZipInArchive = sevenZipInArchive;
 	}
 
@@ -23,10 +23,10 @@ public class InArchiveImpl implements IInArchive {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IInArchiveItem[] getArchiveItems() throws SevenZipException {
-		IInArchiveItem[] result = new IInArchiveItem[getNumberOfItems()];
+	public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException {
+		ISimpleInArchiveItem[] result = new ISimpleInArchiveItem[getNumberOfItems()];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = new InArchiveItemImpl(this, i);
+			result[i] = new SimpleInArchiveItemImpl(this, i);
 		}
 		return result;
 	}

@@ -14,10 +14,12 @@ import java.util.zip.ZipFile;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
-import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.ISequentialOutStream;
+import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.SevenZipException;
+import net.sf.sevenzip.simple.ISimpleInArchive;
+import net.sf.sevenzip.simple.ISimpleInArchiveItem;
 
 public class ZipContentComparator {
 	private class UniversalFileEntryInfo implements
@@ -39,10 +41,13 @@ public class ZipContentComparator {
 
 	private final ISevenZipInArchive actualSevenZipArchive;
 	List<String> errorMessages = null;
+	private final boolean useSimpleInterface;
 
-	public ZipContentComparator(ISevenZipInArchive sevenZipArchive, ZipFile zipFile) {
+	public ZipContentComparator(ISevenZipInArchive sevenZipArchive,
+			ZipFile zipFile, boolean useSimpleInterface) {
 		this.actualSevenZipArchive = sevenZipArchive;
 		this.expectedZipFile = zipFile;
+		this.useSimpleInterface = useSimpleInterface;
 		expectedZipEntries = zipFile.entries();
 	}
 
@@ -117,8 +122,18 @@ public class ZipContentComparator {
 				indices[i] = actualFileNames.get(i).itemId;
 			}
 
-			actualSevenZipArchive.extract(indices, false,
-					archiveExtractCallback);
+			if (useSimpleInterface) {
+				ISimpleInArchiveItem[] simpleInArchiveItems = actualSevenZipArchive
+						.getSimpleInterface().getArchiveItems();
+				for (int index = 0; index < indices.length; index++) {
+					ISimpleInArchiveItem archiveItems = simpleInArchiveItems[indices[index]];
+					archiveItems.extractSlow(archiveExtractCallback.getStream(
+							indices[index], ExtractAskMode.EXTRACT));
+				}
+			} else {
+				actualSevenZipArchive.extract(indices, false,
+						archiveExtractCallback);
+			}
 			System.out.println("Extraction in "
 					+ (System.currentTimeMillis() - start) / 1000.0 + " sec ("
 					+ actualFileNames.size() + " items)");
@@ -152,26 +167,50 @@ public class ZipContentComparator {
 			throws SevenZipException {
 		List<UniversalFileEntryInfo> fileNames = new ArrayList<UniversalFileEntryInfo>();
 
-		for (int i = 0; i < actualSevenZipArchive.getNumberOfItems(); i++) {
-			if (((Boolean) actualSevenZipArchive.getProperty(i,
-					PropID.IS_FOLDER)).booleanValue()) {
-				continue;
-			}
-			UniversalFileEntryInfo info = new UniversalFileEntryInfo();
-			info.filename = getStringProperty(actualSevenZipArchive, i,
-					PropID.PATH)
-					+ getStringProperty(actualSevenZipArchive, i, PropID.NAME)
-					+ getStringProperty(actualSevenZipArchive, i,
-							PropID.EXTENSION);
-			info.filename = info.filename.replace('\\', '/');
-			info.itemId = i;
-			info.realSize = ((Long) actualSevenZipArchive.getProperty(i,
-					PropID.SIZE)).longValue();
-			info.fileLastModificationTime = (Date) actualSevenZipArchive
-					.getProperty(i, PropID.LAST_WRITE_TIME);
-			fileNames.add(info);
-		}
+		if (useSimpleInterface) {
+			ISimpleInArchive simpleInArchive = actualSevenZipArchive
+					.getSimpleInterface();
 
+			ISimpleInArchiveItem[] archiveItems = simpleInArchive
+					.getArchiveItems();
+
+			for (ISimpleInArchiveItem simpleInArchiveItem : archiveItems) {
+				if (simpleInArchiveItem.isFolder()) {
+					continue;
+				}
+
+				UniversalFileEntryInfo info = new UniversalFileEntryInfo();
+				info.filename = simpleInArchiveItem.getPath();
+				info.filename = info.filename.replace('\\', '/');
+				info.itemId = simpleInArchiveItem.getItemIndex();
+				info.realSize = simpleInArchiveItem.getSize();
+				info.fileLastModificationTime = simpleInArchiveItem
+						.getLastWriteTime();
+				fileNames.add(info);
+			}
+		} else {
+
+			for (int i = 0; i < actualSevenZipArchive.getNumberOfItems(); i++) {
+				if (((Boolean) actualSevenZipArchive.getProperty(i,
+						PropID.IS_FOLDER)).booleanValue()) {
+					continue;
+				}
+				UniversalFileEntryInfo info = new UniversalFileEntryInfo();
+				info.filename = getStringProperty(actualSevenZipArchive, i,
+						PropID.PATH)
+						+ getStringProperty(actualSevenZipArchive, i,
+								PropID.NAME)
+						+ getStringProperty(actualSevenZipArchive, i,
+								PropID.EXTENSION);
+				info.filename = info.filename.replace('\\', '/');
+				info.itemId = i;
+				info.realSize = ((Long) actualSevenZipArchive.getProperty(i,
+						PropID.SIZE)).longValue();
+				info.fileLastModificationTime = (Date) actualSevenZipArchive
+						.getProperty(i, PropID.LAST_WRITE_TIME);
+				fileNames.add(info);
+			}
+		}
 		return fileNames;
 	}
 
@@ -282,7 +321,6 @@ public class ZipContentComparator {
 					// }
 					byte[] expectedData = new byte[data.length];
 					int readBytes = 0;
-					int i = 0;
 					do {
 						if (inputStream.available() == 0) {
 							error("More data as expected for file '" + filename
@@ -320,6 +358,9 @@ public class ZipContentComparator {
 			this.itemIdToItemName = itemIdToItemName;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public ISequentialOutStream getStream(int index,
 				ExtractAskMode extractAskMode) {
@@ -340,20 +381,32 @@ public class ZipContentComparator {
 			}
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public boolean prepareOperation(ExtractAskMode extractAskMode) {
 			return true;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void setOperationResult(
 				ExtractOperationResult extractOperationResult) {
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void setCompleted(long completeValue) {
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void setTotal(long total) {
 		}
