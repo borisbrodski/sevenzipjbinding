@@ -8,7 +8,7 @@ import net.sf.sevenzip.ArchiveFormat;
 import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
-import net.sf.sevenzip.impl.InStreamImpl;
+import net.sf.sevenzip.impl.RandomAccessFileInStream;
 import net.sf.sevenzip.test.ZipContentComparator;
 
 import org.junit.After;
@@ -96,7 +96,7 @@ public abstract class StandardTest {
 		ZipFile zipFile = new ZipFile("ArchiveContents/ArchiveContent" + testId
 				+ ".zip");
 		ISevenZipInArchive sevenZipArchive = SevenZip.openInArchive(
-				archiveFormat, new InStreamImpl(
+				archiveFormat, new RandomAccessFileInStream(
 						new RandomAccessFile("TestArchives/TestArchive"
 								+ testId + "." + format, "r")));
 

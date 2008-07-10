@@ -5,14 +5,14 @@ import java.io.RandomAccessFile;
 import net.sf.sevenzip.IInStream;
 import net.sf.sevenzip.SevenZip;
 
-public class InStreamImpl implements IInStream {
+public class RandomAccessFileInStream implements IInStream {
 	static {
 		SevenZip.initSevenZipNativeLibrary();
 	}
 
 	private final RandomAccessFile randomAccessFile;
 
-	public InStreamImpl(RandomAccessFile randomAccessFile) {
+	public RandomAccessFileInStream(RandomAccessFile randomAccessFile) {
 		this.randomAccessFile = randomAccessFile;
 	}
 

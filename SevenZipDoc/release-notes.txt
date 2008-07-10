@@ -1,6 +1,16 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Release - 0.3 (beta, extraction only, simple extraction interface)
+    Some memory problems was fixed:
+        - Bug fixed #1928623 - Large TAR files can't be extracted
+        - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
+    
+    * Simple extraction interface - allows easy information
+      gethering and extraction of archives
+    
+    * JUnit tests for simple extraction interface
+    
 Release - 0.2 (alpha, extraction only)
 	* Major bug in release build configuration was fixed
 	

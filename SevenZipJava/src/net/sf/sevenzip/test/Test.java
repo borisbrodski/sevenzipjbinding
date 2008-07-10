@@ -10,11 +10,11 @@ import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
 import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
-import net.sf.sevenzip.impl.InStreamImpl;
+import net.sf.sevenzip.impl.RandomAccessFileInStream;
 
 public class Test {
-	private static String testFilenames[] = { "TestArchives//TestContent.7z",
-			"TestArchives//TestContent.zip", "TestArchives//TestContent.rar", };
+	// private static String testFilenames[] = { "TestArchives//TestContent.7z",
+	// "TestArchives//TestContent.zip", "TestArchives//TestContent.rar", };
 
 	private static String cryptedTestFilenames[] = {
 			"TestArchives//TestContent-crypted.7z",
@@ -24,7 +24,7 @@ public class Test {
 
 		try {
 			ISevenZipInArchive archive = SevenZip.openInArchive(
-					ArchiveFormat.SEVEN_ZIP, new InStreamImpl(
+					ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(
 							new RandomAccessFile(new File(
 									cryptedTestFilenames[0]), "r")),
 					new TestArchiveOpenCallback());

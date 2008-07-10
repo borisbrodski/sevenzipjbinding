@@ -1,5 +1,14 @@
 package net.sf.sevenzip;
 
+import net.sf.sevenzip.impl.RandomAccessFileInStream;
+
+/**
+ * 7-Zip interface entry point class. Opens archive and returns implementation
+ * of {@link ISevenZipInArchive}
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public class SevenZip {
 
 	private static boolean initialized = false;
@@ -17,6 +26,9 @@ public class SevenZip {
 
 	private static native String nativeInitSevenZipLibrary();
 
+	/**
+	 * Ensure, that 7-Zip JBinding was intialized.
+	 */
 	public static void initSevenZipNativeLibrary() {
 		if (initialized) {
 			return;
@@ -35,13 +47,50 @@ public class SevenZip {
 			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
 			throws SevenZipException;
 
-	public static ISevenZipInArchive openInArchive(ArchiveFormat f, IInStream inStream,
-			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
-		return nativeOpenArchive(f.ordinal(), inStream, archiveOpenCallback);
+	/**
+	 * Open archive of type <code>archiveFormat</code> from the input stream
+	 * <code>inStream</code> using 'archive open callback' listener
+	 * <code>archiveOpenCallback</code>. To open archive from the file, use
+	 * {@link RandomAccessFileInStream}.
+	 * 
+	 * @param archiveFormat
+	 *            format of archive
+	 * @param inStream
+	 *            input stream to open archive from
+	 * @param archiveOpenCallback
+	 *            archive open callback listenter to use
+	 * @return implementation of {@link ISevenZipInArchive} which represents
+	 *         opened archive.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat,
+			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
+			throws SevenZipException {
+		return nativeOpenArchive(archiveFormat.ordinal(), inStream,
+				archiveOpenCallback);
 	}
 
-	public static ISevenZipInArchive openInArchive(ArchiveFormat f, IInStream inStream)
-			throws SevenZipException {
+	/**
+	 * Open archive of type <code>archiveFormat</code> from the input stream
+	 * <code>inStream</code>. To open archive from the file, use
+	 * {@link RandomAccessFileInStream}.
+	 * 
+	 * @param archiveFormat
+	 *            format of archive
+	 * @param inStream
+	 *            input stream to open archive from
+	 * @return implementation of {@link ISevenZipInArchive} which represents
+	 *         opened archive.
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public static ISevenZipInArchive openInArchive(ArchiveFormat f,
+			IInStream inStream) throws SevenZipException {
 		return nativeOpenArchive(f.ordinal(), inStream, null);
 	}
 }
