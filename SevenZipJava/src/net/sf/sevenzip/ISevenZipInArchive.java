@@ -39,6 +39,20 @@ public interface ISevenZipInArchive {
 	 */
 	public int getNumberOfItems() throws SevenZipException;
 
+	/**
+	 * Get value of property <code>propID</code> of item with index
+	 * <code>index</code>.
+	 * 
+	 * @param index
+	 *            index of item to get property value
+	 * @param propID
+	 *            property to get value of
+	 * @return value of property <code>propID</code> of item with index
+	 *         <code>index</code>
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
 	public Object getProperty(int index, PropID propID)
 			throws SevenZipException;
 
@@ -83,10 +97,21 @@ public interface ISevenZipInArchive {
 	public void extractSlow(int index, ISequentialOutStream outStream)
 			throws SevenZipException;
 
+	/**
+	 * Get value of archive property <code>propID</code>.
+	 * 
+	 * @param propID
+	 *            property to get value of
+	 * @return value of archive property <code>propID</code>
+	 * 
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
 	public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
 	/**
-	 * Return property content in human readable form.
+	 * Return property value in human readable form.
 	 * 
 	 * @param propID
 	 *            property to return
@@ -99,14 +124,57 @@ public interface ISevenZipInArchive {
 	public String getStringArchiveProperty(PropID propID)
 			throws SevenZipException;
 
+	/**
+	 * Return count of properties of each archive item
+	 * 
+	 * @return count of properties of each archive item
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
 	public int getNumberOfProperties() throws SevenZipException;
 
-	public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
+	/**
+	 * Get information about archive item property <code>propID</code>
+	 * 
+	 * @param propID
+	 *            item property
+	 * @return information about property of archive item
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public PropertyInfo getPropertyInfo(PropID propID) throws SevenZipException;
 
+	/**
+	 * Get count of properties of archive
+	 * 
+	 * @return count of properties of archive
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
 	public int getNumberOfArchiveProperties() throws SevenZipException;
 
-	public PropertyInfo getArchivePropertyInfo(int index)
+	/**
+	 * Get information about archive property <code>propID</code>.<br>
+	 * <br>
+	 * Use PropID.getPropIDByIndex() TODO
+	 * 
+	 * @param propID
+	 *            archive property
+	 * @return information about archive property
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public PropertyInfo getArchivePropertyInfo(PropID propID)
 			throws SevenZipException;
 
+	/**
+	 * Return simple 7-Zip interface for the archive
+	 * 
+	 * @return simple 7-Zip interface for the archive
+	 */
 	public ISimpleInArchive getSimpleInterface();
 }

@@ -37,14 +37,16 @@ public class Test {
 					+ archive.getNumberOfProperties());
 
 			for (int i = 0; i < archive.getNumberOfArchiveProperties(); i++) {
-				PropertyInfo propertyInfo = archive.getArchivePropertyInfo(i);
+				PropertyInfo propertyInfo = archive
+						.getArchivePropertyInfo(PropID.getPropIDByIndex(i));
 				System.out.println("ArchivePropertyInfo: " + propertyInfo);
 				Object object = archive.getArchiveProperty(propertyInfo.propID);
 				System.out.println("" + object);
 			}
 
 			for (int i = 0; i < archive.getNumberOfProperties(); i++) {
-				PropertyInfo propertyInfo = archive.getPropertyInfo(i);
+				PropertyInfo propertyInfo = archive.getPropertyInfo(PropID
+						.getPropIDByIndex(i));
 				System.out.println("PropertyInfo: " + propertyInfo);
 				PropID propID = propertyInfo.propID;
 				Object object = archive.getProperty(4, propID);
