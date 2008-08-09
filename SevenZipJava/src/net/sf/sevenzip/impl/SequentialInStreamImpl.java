@@ -6,6 +6,12 @@ import java.io.InputStream;
 import net.sf.sevenzip.ISequentialInStream;
 import net.sf.sevenzip.SevenZip;
 
+/**
+ * Implementation of {@link ISequentialInStream} based on {@link InputStream}.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public class SequentialInStreamImpl implements ISequentialInStream {
 	static {
 		SevenZip.initSevenZipNativeLibrary();
@@ -13,6 +19,13 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 
 	private InputStream inputStream;
 
+	/**
+	 * Create instance of {@link SequentialInStreamImpl} based on
+	 * {@link InputStream}
+	 * 
+	 * @param inputStream
+	 *            input stream to use
+	 */
 	public SequentialInStreamImpl(InputStream inputStream) {
 		this.inputStream = inputStream;
 	}
@@ -40,6 +53,11 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 		}
 	}
 
+	/**
+	 * Get underlaying input stream
+	 * 
+	 * @return input stream
+	 */
 	public InputStream getInputStream() {
 		return inputStream;
 	}

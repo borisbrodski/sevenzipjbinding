@@ -233,7 +233,7 @@ public interface ISimpleInArchiveItem {
 	/**
 	 * TODO: the purpose of position isn't clear
 	 * 
-	 * @return
+	 * @return TODO
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
@@ -300,8 +300,11 @@ public interface ISimpleInArchiveItem {
 	 * <br>
 	 * <b>WARNING:</b> this is very slow operation
 	 * 
-	 * @param outStream
+	 * @param sequentialOutStream
+	 *            output stream to use
 	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
 	public void extractSlow(ISequentialOutStream sequentialOutStream)
 			throws SevenZipException;

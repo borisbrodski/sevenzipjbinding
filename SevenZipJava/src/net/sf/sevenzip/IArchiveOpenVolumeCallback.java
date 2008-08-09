@@ -1,5 +1,12 @@
 package net.sf.sevenzip;
 
+/**
+ * Interface to provide information (properties and input streams) to open
+ * archive from volumes.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public interface IArchiveOpenVolumeCallback {
 
 	/**
@@ -14,7 +21,8 @@ public interface IArchiveOpenVolumeCallback {
 	 * <li> {@link PropID#LAST_WRITE_TIME} (Type: Date) <br>
 	 * 
 	 * @param propID
-	 * @return
+	 *            property
+	 * @return property value
 	 */
 	public Object getProperty(PropID propID);
 

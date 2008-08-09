@@ -1,5 +1,11 @@
 package net.sf.sevenzip;
 
+/**
+ * Enumeration for possible archive and archive item properties
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public enum PropID {
 	NO_PROPERTY1, //
 	NO_PROPERTY2, //
@@ -56,10 +62,22 @@ public enum PropID {
 		this.propIDIndex = ordinal();
 	}
 
+	/**
+	 * Native index of the property
+	 * 
+	 * @return Native index of the property
+	 */
 	public int getPropIDIndex() {
 		return propIDIndex;
 	}
 
+	/**
+	 * Get enumeration element by native property index
+	 * 
+	 * @param propIDIndex
+	 *            native property index
+	 * @return enumeration element
+	 */
 	public static PropID getPropIDByIndex(int propIDIndex) {
 		if (propIDIndex >= 0 && propIDIndex < values().length
 				&& values()[propIDIndex].getPropIDIndex() == propIDIndex) {

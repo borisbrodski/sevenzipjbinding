@@ -7,6 +7,12 @@ import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.simple.ISimpleInArchiveItem;
 
+/**
+ * Standard implementation of {@link ISimpleInArchiveItem}.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 
 	private final SimpleInArchiveImpl simpleInArchiveImpl;
@@ -21,7 +27,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getPath() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.PATH);
@@ -30,7 +36,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Integer getAttributes() throws SevenZipException {
 		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.ATTRIBUTES);
@@ -39,7 +45,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Integer getCRC() throws SevenZipException {
 		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.ATTRIBUTES);
@@ -48,7 +54,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getComment() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.COMMENT);
@@ -57,7 +63,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Date getCreationTime() throws SevenZipException {
 		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.CREATION_TIME);
@@ -66,7 +72,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getGroup() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.GROUP);
@@ -75,7 +81,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getHostOS() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.HOST_OS);
@@ -84,7 +90,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Date getLastAccessTime() throws SevenZipException {
 		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.LAST_ACCESS_TIME);
@@ -93,7 +99,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Date getLastWriteTime() throws SevenZipException {
 		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.LAST_WRITE_TIME);
@@ -102,7 +108,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getMethod() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.METHOD);
@@ -111,7 +117,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Long getPackedSize() throws SevenZipException {
 		return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.PACKED_SIZE);
@@ -120,7 +126,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Integer getPosition() throws SevenZipException {
 		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.POSITION);
@@ -129,7 +135,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Long getSize() throws SevenZipException {
 		return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.SIZE);
@@ -138,7 +144,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public String getUser() throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getStringProperty(index, PropID.USER);
@@ -147,7 +153,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Boolean isCommented() throws SevenZipException {
 		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.COMMENTED);
@@ -156,7 +162,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Boolean isEncrypted() throws SevenZipException {
 		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.ENCRYPTED);
@@ -165,7 +171,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public Boolean isFolder() throws SevenZipException {
 		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive()
 				.getProperty(index, PropID.IS_FOLDER);
@@ -181,7 +187,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public int getItemIndex() {
 		return index;
 	}

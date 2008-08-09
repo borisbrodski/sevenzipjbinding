@@ -2,7 +2,7 @@ package net.sf.sevenzip;
 
 /**
  * 
- * Enumeration of possible operation results by extract operations.
+ * Enumeration of possible operation results by extracting operations.
  * 
  * @author Boris Brodski
  * @version 1.0
@@ -10,6 +10,13 @@ package net.sf.sevenzip;
 public enum ExtractOperationResult {
 	OK, UNSUPPORTEDMETHOD, DATAERROR, CRCERROR, UNKNOWN_OPERATION_RESULT;
 
+	/**
+	 * Return extract operations enumeration item by index
+	 * 
+	 * @param index
+	 *            index of enumeration item
+	 * @return extract operations enumeration item by index
+	 */
 	public static ExtractOperationResult getOperationResult(int index) {
 		if (index >= 0 && index < values().length) {
 			return values()[index];

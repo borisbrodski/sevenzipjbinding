@@ -5,6 +5,12 @@ import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.simple.ISimpleInArchive;
 import net.sf.sevenzip.simple.ISimpleInArchiveItem;
 
+/**
+ * Standard implementation of {@link ISimpleInArchive}.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public class SimpleInArchiveImpl implements ISimpleInArchive {
 	private final ISevenZipInArchive sevenZipInArchive;
 	private boolean wasClosed = false;
@@ -13,7 +19,10 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 		this.sevenZipInArchive = sevenZipInArchive;
 	}
 
-	@Override
+	/**
+	 * {@inheritDoc}
+	 */
+
 	public void close() throws SevenZipException {
 		sevenZipInArchive.close();
 		wasClosed = true;
@@ -22,7 +31,7 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException {
 		ISimpleInArchiveItem[] result = new ISimpleInArchiveItem[getNumberOfItems()];
 		for (int i = 0; i < result.length; i++) {
@@ -34,7 +43,7 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public int getNumberOfItems() throws SevenZipException {
 		return testAndGetSafeSevenZipInArchive().getNumberOfItems();
 	}

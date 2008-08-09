@@ -5,6 +5,12 @@ import java.io.RandomAccessFile;
 import net.sf.sevenzip.IInStream;
 import net.sf.sevenzip.SevenZip;
 
+/**
+ * Implementation of {@link IInStream} using {@link RandomAccessFile}.
+ * 
+ * @author Boris Brodski
+ * @version 1.0
+ */
 public class RandomAccessFileInStream implements IInStream {
 	static {
 		SevenZip.initSevenZipNativeLibrary();
@@ -12,10 +18,19 @@ public class RandomAccessFileInStream implements IInStream {
 
 	private final RandomAccessFile randomAccessFile;
 
+	/**
+	 * Constructs instance of the class from random access file.
+	 * 
+	 * @param randomAccessFile
+	 *            random access file to use
+	 */
 	public RandomAccessFileInStream(RandomAccessFile randomAccessFile) {
 		this.randomAccessFile = randomAccessFile;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int seek(long offset, int seekOrigin,
 			long[] newPositionOneElementArray) {
 		// System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
@@ -49,6 +64,9 @@ public class RandomAccessFileInStream implements IInStream {
 		return 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
 		// System.out.print("Reading " + data.length + " bytes, ");
 		try {

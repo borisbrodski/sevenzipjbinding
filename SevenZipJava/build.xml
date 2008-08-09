@@ -55,7 +55,7 @@
 		<delete dir="${builddir}/bin"/>
 		<delete file="${release-zip-filename}"/>
 		<mkdir dir="${builddir}/bin"/>
-		<javac encoding="ISO-8859-1" debug="no" deprecation="true"
+		<javac encoding="${encoding}" debug="no" deprecation="true"
 			srcdir="${workspace}/${project.sevenzipjava}/src"
 			destdir="${builddir}/bin"
 			compiler="modern"
@@ -68,6 +68,19 @@
 			</fileset>
 		</jar>
 		
+		<javadoc packagenames="net.sf.sevenzip.*"
+			sourcepath="${workspace}/${project.sevenzipjava}/src"
+			encoding="${encoding}"
+			destdir="${builddir}/javadoc"
+            classpath=""
+            source="${build.java.version}"
+	           author="true"
+	           version="true"
+	           use="true"
+			> 
+			<doctitle><![CDATA[<h1>7-Zip-JBinding</h1>]]></doctitle>
+		</javadoc>
+		
 		<echo>JAR: ${filename.jar}, ${jarname}</echo>
 		<zip destfile="${release-zip-filename}" compress="yes">
 			<zipfileset dir="${workspace}/${project.sevenzipjava}">
@@ -78,6 +91,7 @@
 				<include name="release-notes.txt"/>
 				<include name="copying.txt"/>
 			</zipfileset>
+			<zipfileset dir="${builddir}" prefix="javadoc/" />
 			<zipfileset file="${filename.dll}"/>
 			<zipfileset dir="${builddir}">
 				<include name="*.jar"/>

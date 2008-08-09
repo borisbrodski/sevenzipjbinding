@@ -159,7 +159,8 @@ public interface ISevenZipInArchive {
 	/**
 	 * Get information about archive property <code>propID</code>.<br>
 	 * <br>
-	 * Use PropID.getPropIDByIndex() TODO
+	 * Use {@link PropID#getPropIDByIndex(int)} to get <code>PropID</code>
+	 * enumeration element with specified index.
 	 * 
 	 * @param propID
 	 *            archive property

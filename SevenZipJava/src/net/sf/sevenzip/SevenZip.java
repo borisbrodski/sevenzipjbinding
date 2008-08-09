@@ -89,8 +89,8 @@ public class SevenZip {
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
 	 *             message for more information.
 	 */
-	public static ISevenZipInArchive openInArchive(ArchiveFormat f,
+	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat,
 			IInStream inStream) throws SevenZipException {
-		return nativeOpenArchive(f.ordinal(), inStream, null);
+		return nativeOpenArchive(archiveFormat.ordinal(), inStream, null);
 	}
 }
