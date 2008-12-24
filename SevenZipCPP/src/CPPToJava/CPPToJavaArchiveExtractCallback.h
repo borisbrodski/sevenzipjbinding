@@ -50,8 +50,8 @@ public:
 	{
 	    if (refguid == IID_ICryptoGetTextPassword && _cryptoGetTextPasswordImpl)
 	    {
-	        *p = (void *)(ICryptoGetTextPassword *)this;
-	        AddRef();
+	        *p = (void *)(ICryptoGetTextPassword *)_cryptoGetTextPasswordImpl;
+	        _cryptoGetTextPasswordImpl->AddRef();
 	        return S_OK;
 	    }
 
