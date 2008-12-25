@@ -13,14 +13,18 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaArchiveOpenCallback(JNIEnv * env, jobject archiveOpenCallback) :
-        CPPToJavaAbstract(env, archiveOpenCallback)
+    CPPToJavaArchiveOpenCallback(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject archiveOpenCallback) :
+        CPPToJavaAbstract(vm, initEnv, archiveOpenCallback)
     {
+        TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
+
+        classname = "CPPToJavaArchiveOpenCallback";
+        
         // 	public void setTotal(Long files, Long bytes);
-        _setTotalMethodID = GetMethodId("setTotal", "(" JAVA_LONG_T JAVA_LONG_T ")V");
+        _setTotalMethodID = GetMethodId(initEnv, "setTotal", "(" JAVA_LONG_T JAVA_LONG_T ")V");
 
         // public void setCompleted(Long files, Long bytes);
-        _setCompletedMethodID = GetMethodId("setCompleted", "(" JAVA_LONG_T JAVA_LONG_T ")V");
+        _setCompletedMethodID = GetMethodId(initEnv, "setCompleted", "(" JAVA_LONG_T JAVA_LONG_T ")V");
     }
 
     STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes);

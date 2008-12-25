@@ -2,7 +2,6 @@ package net.sf.sevenzip.test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzip.ArchiveFormat;
@@ -129,14 +128,6 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Started.");
-		try {
-			System.in.read();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		System.out.println("Running");
 		try {
 			ISevenZipInArchive inArchive = SevenZip.openInArchive(
 					ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(
@@ -152,6 +143,8 @@ public class Test {
 				inArchive.extract(new int[] { index }, false,
 						new MyExtractCallback());
 			}
+
+			inArchive.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (SevenZipException e) {

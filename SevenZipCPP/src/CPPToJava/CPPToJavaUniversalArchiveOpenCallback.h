@@ -1,6 +1,7 @@
 #ifndef CPPTOJAVAUNIVERSALARCHIVEOPENCALLBACK_
 #define CPPTOJAVAUNIVERSALARCHIVEOPENCALLBACK_
 
+#include "VM.h"
 #include "CPPToJavaArchiveOpenCallback.h"
 #include "CPPToJavaArchiveOpenVolumeCallback.h"
 #include "CPPToJavaCryptoGetTextPassword.h"
@@ -9,20 +10,22 @@ class CPPToJavaUniversalArchiveOpencallback :
     public IArchiveOpenCallback,
     public IArchiveOpenVolumeCallback,
     public ICryptoGetTextPassword,
-    public CMyUnknownImp
+    public CMyUnknownImp,
+    public Object
 {
 private:
     IArchiveOpenCallback * _archiveOpenCallback;
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
     
-    void Init(JNIEnv * env, jobject archiveOpenCallbackImpl);
+    void Init(VM * vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
 
 public:
     
-    CPPToJavaUniversalArchiveOpencallback(JNIEnv * env, jobject archiveOpenCallbackImpl)
+    CPPToJavaUniversalArchiveOpencallback(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
     {
-        Init(env, archiveOpenCallbackImpl);
+        TRACE_OBJECT_CREATION("CPPToJavaUniversalArchiveOpencallback")
+        Init(vm, initEnv, archiveOpenCallbackImpl);
     }
     
     virtual ~CPPToJavaUniversalArchiveOpencallback()
@@ -37,6 +40,8 @@ public:
         {
             _cryptoGetTextPassword->Release();
         }
+        
+        // TRACE_OBJECT_DESTRUCTION
     }
 
     STDMETHOD(QueryInterface)(REFGUID iid, void **outObject);
@@ -55,15 +60,21 @@ public:
 
     STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes)
     {
+        TRACE_OBJECT_CALL("SetTotal")
+        
         return _archiveOpenCallback->SetTotal(files, bytes);
     }
     STDMETHOD(SetCompleted)(const UInt64 *files, const UInt64 *bytes)
     {
+        TRACE_OBJECT_CALL("SetCompleted")
+        
         return _archiveOpenCallback->SetCompleted(files, bytes);
     }
 
     STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value)
     {
+        TRACE_OBJECT_CALL("GetProperty")
+        
         if (_archiveOpenVolumeCallback)
         {
             return _archiveOpenVolumeCallback->GetProperty(propID, value);
@@ -72,6 +83,8 @@ public:
     }
     STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream)
     {
+        TRACE_OBJECT_CALL("GetStream")
+        
         if (_archiveOpenVolumeCallback)
         {
             return _archiveOpenVolumeCallback->GetStream(name, inStream);
@@ -81,6 +94,8 @@ public:
 
     STDMETHOD(CryptoGetTextPassword)(BSTR *password)
     {
+        TRACE_OBJECT_CALL("CryptoGetTextPassword")
+        
         if (_cryptoGetTextPassword)
         {
             return _cryptoGetTextPassword->CryptoGetTextPassword(password);

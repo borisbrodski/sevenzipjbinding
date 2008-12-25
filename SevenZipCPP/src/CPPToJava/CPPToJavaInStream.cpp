@@ -6,34 +6,43 @@
 
 STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition)
 {
-	jlongArray newPositionArray = _env->NewLongArray(1);
+    TRACE_OBJECT_CALL("Seek")
+    
+    JNIEnv * env = BeginCPPToJavaCall();
+    
+	jlongArray newPositionArray = env->NewLongArray(1);
 	FATALIF(newPositionArray == NULL, "Out of local resource of out of memory: newPositionArray == NULL");
 
-	_env->ExceptionClear();
-	jint result = _env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
+	env->ExceptionClear();
+	jint result = env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
 
-	if (_env->ExceptionCheck())
+	if (env->ExceptionCheck())
 	{
-        SaveLastOccurredException(_env);
-		_env->DeleteLocalRef(newPositionArray);
+        SaveLastOccurredException(env);
+		env->DeleteLocalRef(newPositionArray);
+		
+		EndCPPToJavaCall();
 		return S_FALSE;
 	}
 
 	if (result)
 	{
-		_env->DeleteLocalRef(newPositionArray);
+		env->DeleteLocalRef(newPositionArray);
+		
+		EndCPPToJavaCall();
 		return result;
 	}
 	
-	jlong * newPositionArrayData = _env->GetLongArrayElements(newPositionArray, NULL);
+	jlong * newPositionArrayData = env->GetLongArrayElements(newPositionArray, NULL);
 	if (newPosition)
 	{
 		*newPosition = (UInt64)*newPositionArrayData;
 	}
 	
-	_env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
-	_env->DeleteLocalRef(newPositionArray);
+	env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
+	env->DeleteLocalRef(newPositionArray);
 
+	EndCPPToJavaCall();
 	return result;
 }
 

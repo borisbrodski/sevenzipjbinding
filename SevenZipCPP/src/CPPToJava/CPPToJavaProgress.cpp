@@ -6,27 +6,41 @@
 
 STDMETHODIMP CPPToJavaProgress::SetCompleted(const UInt64 * completeValue)
 {
-	_env->ExceptionClear();
-	_env->CallVoidMethod(_javaImplementation, _setCompletedMethodID, (jlong)(*completeValue));
-	if (_env->ExceptionCheck())
+    TRACE_OBJECT_CALL("SetCompleted")
+    
+    JNIEnv * env = BeginCPPToJavaCall();
+
+    env->ExceptionClear();
+	env->CallVoidMethod(_javaImplementation, _setCompletedMethodID, (jlong)(*completeValue));
+	if (env->ExceptionCheck())
 	{
-        SaveLastOccurredException(_env);
+        SaveLastOccurredException(env);
+        
+        EndCPPToJavaCall();
 		return S_FALSE;
 	}
 	
+    EndCPPToJavaCall();
 	return S_OK;
 }
 
 STDMETHODIMP CPPToJavaProgress::SetTotal(UINT64 total)
 {
-	_env->ExceptionClear();
-	_env->CallVoidMethod(_javaImplementation, _setTotalMethodID, (jlong)total);
-	if (_env->ExceptionCheck())
+    TRACE_OBJECT_CALL("SetTotal")
+    
+    JNIEnv * env = BeginCPPToJavaCall();
+    
+	env->ExceptionClear();
+	env->CallVoidMethod(_javaImplementation, _setTotalMethodID, (jlong)total);
+	if (env->ExceptionCheck())
 	{
-        SaveLastOccurredException(_env);
+        SaveLastOccurredException(env);
+        
+        EndCPPToJavaCall();
 		return S_FALSE;
 	}
 	
+    EndCPPToJavaCall();
 	return S_OK;
 }
 

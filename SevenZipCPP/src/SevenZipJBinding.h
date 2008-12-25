@@ -36,12 +36,58 @@
 #define EXTRACTOPERATIONRESULT_CLASS	"net/sf/sevenzip/ExtractOperationResult"
 #define EXTRACTOPERATIONRESULT_CLASS_T	JAVA_MAKE_SIGNATURE_TYPE(EXTRACTOPERATIONRESULT_CLASS)
 
+#ifdef _DEBUG
+//#define TRACE_ON
+//#define TRACE_OBJECTS_ON
+// #define TRACE_OBJECT_CALLS
+#endif
+
+#ifdef TRACE_ON
+    #define TRACE(msg) _TRACE("7ZJB: " msg "\n")
+    #define TRACE1(msg, p1) _TRACE1("7ZJB: " msg "\n", p1)
+    #define TRACE2(msg, p1, p2) _TRACE2("7ZJB: " msg "\n", p1, p2)
+    #define TRACE3(msg, p1, p2, p3) _TRACE3("7ZJB: " msg "\n", p1, p2, p3)
+    #define _TRACE(msg) {printf(msg); fflush(stdout);}
+    #define _TRACE1(msg, p1) {printf(msg, p1); fflush(stdout);}
+    #define _TRACE2(msg, p1, p2) {printf(msg, p1, p2); fflush(stdout);}
+    #define _TRACE3(msg, p1, p2, p3) {printf(msg, p1, p2, p3); fflush(stdout);}
+#else
+    #define TRACE(msg) {}
+    #define TRACE1(msg, p1) {}
+    #define TRACE2(msg, p1, p2) {}
+    #define TRACE3(msg, p1, p2, p3) {}
+    #define _TRACE(msg) {}
+    #define _TRACE1(msg, p1) {}
+    #define _TRACE2(msg, p1, p2) {}
+    #define _TRACE3(msg, p1, p2, p3) {}
+#endif
+
+#ifdef TRACE_OBJECTS_ON
+    void TraceObjectCreation(char * classname, void * thiz);
+    void TraceObjectDestruction(void * thiz);
+    void TraceObjectCall(void * thiz, char * methodname);
+    
+    #define TRACE_OBJECT_CREATION(classname) {TraceObjectCreation(classname, (Object *)this);}
+    #define TRACE_OBJECT_DESTRUCTION         {TraceObjectDestruction((Object *)this);}
+    #define TRACE_OBJECT_CALL(methodname)    {TraceObjectCall((Object *)this, methodname);}
+#else
+    #define TRACE_OBJECT_CREATION(classname) {}
+    #define TRACE_OBJECT_DESTRUCTION {}
+    #define TRACE_OBJECT_CALL(methodname) {}
+#endif
 
 typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
 		const GUID *interfaceID, void **outObject);
 
 
 extern CreateObjectFunc createObjectFunc;
+
+class Object {
+public:
+    virtual ~Object() {
+        TRACE_OBJECT_DESTRUCTION
+    }
+};
 
 /*
  * Return error message from error code

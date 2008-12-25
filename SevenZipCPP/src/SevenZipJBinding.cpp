@@ -147,3 +147,67 @@ void SaveLastOccurredException(JNIEnv * env)
     }
 }
 
+#ifdef TRACE_OBJECTS_ON
+
+#include <map>
+using namespace std;
+struct ClassInfo
+{
+    char * _classname;
+    void * _thiz;
+};
+map<void *, ClassInfo *> _classes_map;
+
+void TracePrintObjects()
+{
+    map<void *, ClassInfo *>::const_iterator i = _classes_map.begin();
+    _TRACE("Objects alive:\n")
+    int count = 1;
+    for (; i != _classes_map.end(); i++)
+    {
+        _TRACE3("> %3i %s (this: 0x%08X)\n", count++, (*i).second->_classname, (size_t)(*i).second->_thiz)
+    }
+}
+void TraceObjectCreation(char * classname, void * thiz)
+{
+    if (_classes_map.find(thiz) == _classes_map.end())
+    {
+        ClassInfo * classInfo = new ClassInfo();
+        classInfo->_classname = classname;
+        classInfo->_thiz = thiz;
+        _classes_map[thiz] = classInfo;
+        _TRACE3("++++++++ %s (this: 0x%08X) [classes alive: %i]\n", classInfo->_classname, (size_t)classInfo->_thiz, _classes_map.size())
+    }
+    else
+    {
+        _classes_map[thiz]->_classname = classname;
+        _TRACE2("KNOWN AS %s (this: 0x%08X)\n", classname, (size_t)thiz)
+    }
+}
+void TraceObjectDestruction(void * thiz)
+{
+    if (_classes_map.find(thiz) == _classes_map.end())
+    {
+        fatal("TraceObjectDestruction(): destructor called for unknown this=0x%08X", (size_t)thiz);
+    }
+    
+    ClassInfo * classInfo = _classes_map[thiz];
+    _classes_map.erase(thiz);
+    _TRACE3("~~~ %s (this: 0x%08X) [classes alive: %i]\n", classInfo->_classname, (size_t)classInfo->_thiz, _classes_map.size())
+    
+    TracePrintObjects();
+}
+
+void TraceObjectCall(void * thiz, char * methodname)
+{
+    if (_classes_map.find(thiz) == _classes_map.end())
+    {
+        fatal("Object call for dead object. Method name: %s, this: 0x%08X", methodname, (size_t)thiz);
+    }
+#ifdef TRACE_OBJECT_CALLS
+    ClassInfo * classInfo = _classes_map[thiz];
+    _TRACE3("-> %s::%s(...) (this: 0x%08X)\n",classInfo->_classname, methodname, (size_t)thiz)
+#endif
+}
+#endif // TRACE_OBJECTS_ON
+

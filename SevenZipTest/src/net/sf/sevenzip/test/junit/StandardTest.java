@@ -38,7 +38,7 @@ public abstract class StandardTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		System.setProperty("java.library.path", "..\\SevenZipCPP\\Release\\");
+		System.setProperty("java.library.path", "..\\SevenZipCPP\\Debug\\");
 		reloadLibPath();
 	}
 

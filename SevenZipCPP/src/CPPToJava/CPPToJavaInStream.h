@@ -9,18 +9,13 @@ private:
 	jmethodID _seekMethodID;
 
 public:
-	CPPToJavaInStream(JNIEnv * env, jobject inStream) :
-		CPPToJavaSequentialInStream(env, inStream)
+	CPPToJavaInStream(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject inStream) :
+		CPPToJavaSequentialInStream(vm, initEnv, inStream)
 	{
-		_seekMethodID = GetMethodId("seek", "(JI[J)I");
-//		printf("Creating InStream\n");
-//		fflush(stdout);
-	}
-
-	virtual ~CPPToJavaInStream()
-	{
-//        printf("Deleting InStream!\n");
-//        fflush(stdout);
+	    TRACE_OBJECT_CREATION("CPPToJavaInStream")
+	    
+		_seekMethodID = GetMethodId(initEnv, "seek", "(JI[J)I");
+		classname = "CPPToJavaInStream";
 	}
 	
 	STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize)
@@ -35,18 +30,12 @@ public:
 
 	STDMETHOD_(ULONG, AddRef)()
 	{
-		int counter = CPPToJavaSequentialInStream::AddRef();
-//	    printf("CPPToJavaInStream: AddRef (changed to: %i)\n", counter);
-//	    fflush(stdout);
-		return counter;
+		return CPPToJavaSequentialInStream::AddRef();
 	}
 
 	STDMETHOD_(ULONG, Release)()
 	{
-		int counter = CPPToJavaSequentialInStream::Release();
-//        rintf("CPPToJavaInStream: Release (changed to: %i)\n", counter);
-//        fflush(stdout);
-        return counter;
+        return CPPToJavaSequentialInStream::Release();
 	}
 
 	STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);

@@ -1,12 +1,10 @@
 #include "StdAfx.h"
 
 #include "jnitools.h"
-
 #include "SevenZipJBinding.h"
-
 #include "Java/all.h"
-
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
+#include "VM.h"
 
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
@@ -101,27 +99,68 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-	
-	if (archive == NULL)
-	{
-	    return;
-	}
+    CMyComPtr<VM> vm = new VM(env);
+    try
+    {
+        TRACE1("InArchiveImpl.nativeExtract(). ThreadID=%lu",  GetCurrentThreadId())
+        
+    	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    	
+    	if (archive == NULL)
+    	{
+    	    return;
+    	}
+    
+    	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
+    
+    	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
 
-	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
+    	/*
+    	{
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
+        	p1.Release();
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    	}
+    	{
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
+        	p1.Release();
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    	}
+    	{
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
+        	p1.Release();
+        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    	}
+    	*/
+    	
+    	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
+    	
+    	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
+    	int result = 0;
+    	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
+    	        archiveExtractCallback);
 
-	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
-	
-	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(env, archiveExtractCallbackObject);
-	
-	int result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
-	        archiveExtractCallback);
-	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
-
-	if (result)
-	{
-		ThrowSevenZipException(env, result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
-	}
+    	archiveExtractCallback.Release();
+    	
+    	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+    
+    	if (result)
+    	{
+    	    TRACE1("Extraction error. Result: 0x%08X", result);
+    		ThrowSevenZipException(env, result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
+    	}
+    	else
+    	{
+    	    TRACE("Extraction succeeded")
+    	}
+    	
+    } catch (SevenZipBindingException * e)
+    {
+        ThrowSevenZipException(env, "%s", e->GetMessage());
+    }
 }
 
 /*
@@ -132,6 +171,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
+    TRACE1("InArchiveImpl.nativeGetNumberOfItems(). ThreadID=%lu",  GetCurrentThreadId())
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
     if (archive == NULL)
@@ -143,6 +183,8 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 
 	CHECK_HRESULT(archive->GetNumberOfItems(&result), "Error getting number of items from archive");
 
+	TRACE1("Returning: %u", result)
+	
 	return result;
 }
 
@@ -154,10 +196,13 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
+    TRACE1("InArchiveImpl.nativeClose(). ThreadID=%lu",  GetCurrentThreadId()) 
+    
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...")
         return;
     }
 
@@ -165,10 +210,8 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
     archive->Release();
     
     SetArchive(env, thiz, 0);
-//	IInArchive * a = archive.Detach();
-//	printf("Releasing Archive: %i\n", a->Release());
-//	printf("Releasing Archive: %i\n", a->Release());
-//	fflush(stdout);
+    
+    TRACE("Archive closed")
 }
 
 /*

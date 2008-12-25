@@ -6,58 +6,53 @@
 
 STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *processedSize)
 {
-	jbyteArray byteArray = _env->NewByteArray(size);
+    TRACE_OBJECT_CALL("Read")
+    
+    JNIEnv * env = BeginCPPToJavaCall();
+    
+	jbyteArray byteArray = env->NewByteArray(size);
 	FATALIF(byteArray == NULL, "Out of local resource of out of memory: byteArray == NULL")
 	
-	jintArray intArray = _env->NewIntArray(1);
+	jintArray intArray = env->NewIntArray(1);
 	FATALIF(intArray == NULL, "Out of local resource of out of memory: intArray == NULL");
 
-	_env->ExceptionClear();
-	jint result = _env->CallIntMethod(_javaImplementation, _readMethodID, byteArray, intArray);
+	env->ExceptionClear();
+	jint result = env->CallIntMethod(_javaImplementation, _readMethodID, byteArray, intArray);
 		
-	if (_env->ExceptionCheck())
+	if (env->ExceptionCheck())
 	{
-        SaveLastOccurredException(_env);
-		_env->DeleteLocalRef(byteArray);
-		_env->DeleteLocalRef(intArray);
+        SaveLastOccurredException(env);
+		env->DeleteLocalRef(byteArray);
+		env->DeleteLocalRef(intArray);
+		
+		EndCPPToJavaCall();
 		return S_FALSE;
 	}
 	
 	if (result)
 	{
-		_env->DeleteLocalRef(byteArray);
-		_env->DeleteLocalRef(intArray);
+		env->DeleteLocalRef(byteArray);
+		env->DeleteLocalRef(intArray);
+		
+		EndCPPToJavaCall();
 		return result;
 	}
 	
-	jint * read = _env->GetIntArrayElements(intArray, NULL);
+	jint * read = env->GetIntArrayElements(intArray, NULL);
 	if (processedSize)
 	{
 		*processedSize = (UInt32)*read;
 	}
 	
-	jbyte * buffer = _env->GetByteArrayElements(byteArray, NULL);
+	jbyte * buffer = env->GetByteArrayElements(byteArray, NULL);
 	memcpy(data, buffer, size);
-	_env->ReleaseByteArrayElements(byteArray, buffer, JNI_ABORT);
+	env->ReleaseByteArrayElements(byteArray, buffer, JNI_ABORT);
 	
-	_env->DeleteLocalRef(byteArray);
-	_env->DeleteLocalRef(intArray);
-	_env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
+	env->DeleteLocalRef(byteArray);
+	env->DeleteLocalRef(intArray);
+	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
 
-//	printf("Success read %i\n", *processedSize);
-//	fflush(stdout);
-//	
-//	for (int i = 0; i < *processedSize; i++)
-//	{
-//		if (i%32==31)
-//		{
-//			printf("\n");
-//		}
-//		printf("%02X ", 0xFF & ((char*)data)[i]);
-//	}
-//	printf("\n");
-//	fflush(stdout);
-	
+	EndCPPToJavaCall();
 	return result;
 }
 

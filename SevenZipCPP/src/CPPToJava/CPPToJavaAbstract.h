@@ -1,27 +1,52 @@
 #ifndef CPPTOJAVAABSTRACT_H_
 #define CPPTOJAVAABSTRACT_H_
 
-class CPPToJavaAbstract
+#include "vm.h"
+
+
+class CPPToJavaAbstract : public Object
 {
 protected:
-	JNIEnv * _env;
+    CMyComPtr<VM> _vm;
+    
 	jobject _javaImplementation;
 	jclass _javaImplementationClass;
-	
-	CPPToJavaAbstract(JNIEnv * env, jobject javaImplementation)
+    char * classname;
+
+	JNIEnv * BeginCPPToJavaCall()
 	{
-		_env = env;
-		_javaImplementation = env->NewGlobalRef(javaImplementation);
+	    TRACE3("====> BEGIN (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
+	    return _vm->BeginCPPToJava();
+	}
+	
+	void EndCPPToJavaCall()
+	{
+        TRACE3("<==== END   (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
+        _vm->EndCPPToJava();
+	}
+	
+	CPPToJavaAbstract(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject javaImplementation)
+	{
+	    TRACE_OBJECT_CREATION("CPPToJavaAbstract")
+	    
+		_vm = vm;
+		_javaImplementation = initEnv->NewGlobalRef(javaImplementation);
 		
-		_javaImplementationClass = _env->GetObjectClass(javaImplementation);
+		_javaImplementationClass = initEnv->GetObjectClass(javaImplementation);
 		FATALIF(_javaImplementationClass == NULL, "Can't determine class for object");
-		_javaImplementationClass = (jclass)_env->NewGlobalRef(_javaImplementationClass);
+		_javaImplementationClass = (jclass)initEnv->NewGlobalRef(_javaImplementationClass);
 	}
 	
 	virtual ~CPPToJavaAbstract()
 	{
-		_env->DeleteGlobalRef(_javaImplementation);
-		_env->DeleteGlobalRef(_javaImplementationClass);
+        JNIEnv * env = BeginCPPToJavaCall();
+        
+        env->DeleteGlobalRef(_javaImplementation);
+		env->DeleteGlobalRef(_javaImplementationClass);
+
+        EndCPPToJavaCall();
+        
+	    //TRACE_OBJECT_DESTRUCTION
 	}
 	
 	/**
@@ -32,9 +57,9 @@ protected:
 	 * 
 	 * Return: jni methodID
 	 */
-	jmethodID GetMethodId(char * methodName, char * methodSignature)
+	jmethodID GetMethodId(JNIEnv * env, char * methodName, char * methodSignature)
 	{
-		return GetMethodId(_javaImplementationClass, methodName, methodSignature);
+		return GetMethodId(env, _javaImplementationClass, methodName, methodSignature);
 	}
 	
 	/**
@@ -45,13 +70,15 @@ protected:
 	 * 
 	 * Return: jni methodID
 	 */
-	jmethodID GetMethodId(jclass javaClass, char * methodName, char * methodSignature)
+	jmethodID GetMethodId(JNIEnv * env, jclass javaClass, char * methodName, char * methodSignature)
 	{
+	    TRACE_OBJECT_CALL("GetMethodId")
+	    
 		char classname[1024];
 		
-		jmethodID methodID = _env->GetMethodID(javaClass, methodName, methodSignature);
+		jmethodID methodID = env->GetMethodID(javaClass, methodName, methodSignature);
 		FATALIF3(methodID == NULL, "Method %s.%s with signature '%s' was not found!",
-				GetJavaClassName(_env, _javaImplementationClass, classname, sizeof(classname)),
+				GetJavaClassName(env, _javaImplementationClass, classname, sizeof(classname)),
 				methodName, methodSignature);
 		
 		return methodID;
@@ -65,13 +92,15 @@ protected:
 	 * 
 	 * Return: jni methodID
 	 */
-	jmethodID GetStaticMethodId(jclass javaClass, char * methodName, char * methodSignature)
+	jmethodID GetStaticMethodId(JNIEnv * env, jclass javaClass, char * methodName, char * methodSignature)
 	{
+	    TRACE_OBJECT_CALL("GetStaticMethodId")
+	    
 		char classname[1024];
 		
-		jmethodID methodID = _env->GetStaticMethodID(javaClass, methodName, methodSignature);
+		jmethodID methodID = env->GetStaticMethodID(javaClass, methodName, methodSignature);
 		FATALIF3(methodID == NULL, "Static method %s.%s with signature '%s' was not found!",
-				GetJavaClassName(_env, _javaImplementationClass, classname, sizeof(classname)),
+				GetJavaClassName(env, _javaImplementationClass, classname, sizeof(classname)),
 				methodName, methodSignature);
 		
 		return methodID;
@@ -86,11 +115,13 @@ protected:
 	 * 
 	 * Return: _global_ reference of the class
 	 */
-	jclass GetClass(char * className)
+	jclass GetClass(JNIEnv * env, char * className)
 	{
-		jclass javaClass = _env->FindClass(className);
+        TRACE_OBJECT_CALL("GetClass")
+	    
+		jclass javaClass = env->FindClass(className);
 		FATALIF1(javaClass == NULL, "Can't file java class '%s'", className);
-		return (jclass)_env->NewGlobalRef(javaClass);
+		return (jclass)env->NewGlobalRef(javaClass);
 	}
 };
 

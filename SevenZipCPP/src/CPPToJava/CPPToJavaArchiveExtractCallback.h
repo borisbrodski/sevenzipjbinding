@@ -21,33 +21,37 @@ private:
 	jclass _extractAskModeClass;
 	jmethodID _extractAskModeGetExtractAskModeByIndexMethodID;
 	
-	void Init();
+	void Init(JNIEnv * initEnv);
 	
 public:
-	CPPToJavaArchiveExtractCallback(JNIEnv * env,
+	CPPToJavaArchiveExtractCallback(CMyComPtr<VM> vm, JNIEnv * initEnv,
 			jobject archiveExtractCallbackImpl) :
-				CPPToJavaProgress(env, archiveExtractCallbackImpl)
+				CPPToJavaProgress(vm, initEnv, archiveExtractCallbackImpl)
 	{
-		Init();
-//        printf("Creating CPPToJavaArchiveExtractCallback\n");
-//        fflush(stdout);
+	    TRACE_OBJECT_CREATION("CPPToJavaArchiveExtractCallback")
+	    
+		Init(initEnv);
+		classname = "CPPToJavaArchiveExtractCallback";
 	}
 
 	~CPPToJavaArchiveExtractCallback()
 	{
-//        printf("Deleting CPPToJavaArchiveExtractCallback\n");
-//        fflush(stdout);
-        
-		_env->DeleteGlobalRef(_extractOperationResultClass);
-		_env->DeleteGlobalRef(_extractAskModeClass);
+	    JNIEnv * env = BeginCPPToJavaCall();
+	    
+		env->DeleteGlobalRef(_extractOperationResultClass);
+		env->DeleteGlobalRef(_extractAskModeClass);
 		if (_cryptoGetTextPasswordImpl)
 		{
 		    _cryptoGetTextPasswordImpl->Release();
 		}
+		
+		EndCPPToJavaCall();
 	}
 	
 	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
 	{
+	    TRACE_OBJECT_CALL("QueryInterface")
+	    
 	    if (refguid == IID_ICryptoGetTextPassword && _cryptoGetTextPasswordImpl)
 	    {
 	        *p = (void *)(ICryptoGetTextPassword *)_cryptoGetTextPasswordImpl;
@@ -60,11 +64,13 @@ public:
 
 	STDMETHOD_(ULONG, AddRef)()
 	{
+	    TRACE_OBJECT_CALL("AddRef")
 		return CPPToJavaProgress::AddRef();
 	}
 
 	STDMETHOD_(ULONG, Release)()
 	{
+	    TRACE_OBJECT_CALL("Release")
 		return CPPToJavaProgress::Release();
 	}
 	
@@ -80,6 +86,8 @@ public:
 	
 	STDMETHOD(CryptoGetTextPassword)(BSTR *password)
 	{
+	    TRACE_OBJECT_CALL("CryptoGetTextPassword")
+	    
 	    if (_cryptoGetTextPasswordImpl)
 	    {
 	        return _cryptoGetTextPasswordImpl->CryptoGetTextPassword(password);

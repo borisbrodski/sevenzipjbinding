@@ -62,7 +62,7 @@ void fatal(char * fmt, ...);
 			if (hr)															\
 			{																\
 				ThrowSevenZipException(env,									\
-					msg, hr, p1, p2, p3, p4, p5);							\
+				        hr, msg, p1, p2, p3, p4, p5);					    \
 			}																\
 		}
 

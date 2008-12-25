@@ -14,14 +14,16 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaArchiveOpenVolumeCallback(JNIEnv * env, jobject progress) :
-        CPPToJavaAbstract(env, progress)
+    CPPToJavaArchiveOpenVolumeCallback(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject progress) :
+        CPPToJavaAbstract(vm, initEnv, progress)
     {
+        TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenVolumeCallback")
+        
         // public Object getProperty(PropID propID);
-        _getPropertyMethodID = GetMethodId("getProperty", "(" PROPID_CLASS_T ")" JAVA_OBJECT_T);
+        _getPropertyMethodID = GetMethodId(initEnv, "getProperty", "(" PROPID_CLASS_T ")" JAVA_OBJECT_T);
 
         // public IInStream getStream(String filename);
-        _getStreamMethodID = GetMethodId("getStream", "(" JAVA_STRING_T ")" INSTREAM_CLASS_T);
+        _getStreamMethodID = GetMethodId(initEnv, "getStream", "(" JAVA_STRING_T ")" INSTREAM_CLASS_T);
     }
 
     STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value);

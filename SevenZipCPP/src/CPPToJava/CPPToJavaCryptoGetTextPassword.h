@@ -13,11 +13,15 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaCryptoGetTextPassword(JNIEnv * env, jobject progress) :
-        CPPToJavaAbstract(env, progress)
+    CPPToJavaCryptoGetTextPassword(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject progress) :
+        CPPToJavaAbstract(vm, initEnv, progress)
     {
+        TRACE_OBJECT_CREATION("CPPToJavaCryptoGetTextPassword")
+        
+        classname = "CPPToJavaCryptoGetTextPassword";
+        
         // public String cryptoGetTextPassword()
-        _cryptoGetTextPasswordMethodID = GetMethodId("cryptoGetTextPassword", "()" JAVA_STRING_T);
+        _cryptoGetTextPasswordMethodID = GetMethodId(initEnv, "cryptoGetTextPassword", "()" JAVA_STRING_T);
     }
 
     STDMETHOD(CryptoGetTextPassword)(BSTR *password);

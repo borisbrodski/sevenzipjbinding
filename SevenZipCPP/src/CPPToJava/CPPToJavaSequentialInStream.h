@@ -17,10 +17,13 @@ private:
 public:
 	MY_UNKNOWN_IMP
 
-	CPPToJavaSequentialInStream(JNIEnv * env, jobject sequentialInStream)
-		: CPPToJavaAbstract(env, sequentialInStream)
+	CPPToJavaSequentialInStream(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject sequentialInStream)
+		: CPPToJavaAbstract(vm, initEnv, sequentialInStream)
 	{
-		_readMethodID = GetMethodId("read", "([B[I)I");
+	    TRACE_OBJECT_CREATION("CPPToJavaSequentialInStream")
+	    
+		_readMethodID = GetMethodId(initEnv, "read", "([B[I)I");
+		classname = "CPPToJavaSequentialInStream";
 	}
 	
 	/*

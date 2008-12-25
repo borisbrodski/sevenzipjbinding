@@ -5,21 +5,29 @@
 
 STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * password)
 {
-    _env->ExceptionClear();
-    jstring passwordString = (jstring)_env->CallObjectMethod(_javaImplementation, _cryptoGetTextPasswordMethodID);
-    if (_env->ExceptionCheck())
+    TRACE_OBJECT_CALL("CryptoGetTextPassword")
+    
+    JNIEnv * env = BeginCPPToJavaCall();
+
+    env->ExceptionClear();
+    jstring passwordString = (jstring)env->CallObjectMethod(_javaImplementation, _cryptoGetTextPasswordMethodID);
+    if (env->ExceptionCheck())
     {
-        SaveLastOccurredException(_env);
+        SaveLastOccurredException(env);
+        
+        EndCPPToJavaCall();
         return S_FALSE;
     }
 
     if (password)
     {
-        const jchar * passwordJChars = _env->GetStringChars(passwordString, NULL);
+        const jchar * passwordJChars = env->GetStringChars(passwordString, NULL);
         CMyComBSTR passwordBSTR((LPCWSTR)passwordJChars);
-        _env->ReleaseStringChars(passwordString, passwordJChars);
+        env->ReleaseStringChars(passwordString, passwordJChars);
 
         *password = passwordBSTR.Detach();
     }
+    
+    EndCPPToJavaCall();
     return S_OK;
 }

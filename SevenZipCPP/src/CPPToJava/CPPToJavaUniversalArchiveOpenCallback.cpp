@@ -3,39 +3,44 @@
 #include "jnitools.h"
 #include "CPPToJavaUniversalArchiveOpenCallback.h"
 
-void CPPToJavaUniversalArchiveOpencallback::Init(JNIEnv * env, jobject archiveOpenCallbackImpl)
+void CPPToJavaUniversalArchiveOpencallback::Init(VM * vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
 {
-    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(env, archiveOpenCallbackImpl);
+    TRACE_OBJECT_CALL("Init")
+    
+    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(vm, initEnv, archiveOpenCallbackImpl);
     _archiveOpenCallback = archiveOpenCallbackComPtr.Detach();
+    // _archiveOpenCallback->AddRef(); // TODO Remove
     
     _archiveOpenVolumeCallback = NULL;
     _cryptoGetTextPassword = NULL;
     
-    jclass cryptoGetTextPasswordClass = env->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
+    jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
     FATALIF(cryptoGetTextPasswordClass == NULL,
             "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
 
-    jclass archiveOpenVolumeCallbackClass = env->FindClass(ARCHIVEOPENVOLUMECALLBACK_CLASS);
+    jclass archiveOpenVolumeCallbackClass = initEnv->FindClass(ARCHIVEOPENVOLUMECALLBACK_CLASS);
     FATALIF(cryptoGetTextPasswordClass == NULL,
             "Can't find class " ARCHIVEOPENVOLUMECALLBACK_CLASS);
 
-    if (env->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
+    if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
     {
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
-            new CPPToJavaCryptoGetTextPassword(env, archiveOpenCallbackImpl);
+            new CPPToJavaCryptoGetTextPassword(vm, initEnv, archiveOpenCallbackImpl);
         _cryptoGetTextPassword = cryptoGetTextPasswordComPtr.Detach();
     }
     
-    if (env->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
+    if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
     {
         CMyComPtr<IArchiveOpenVolumeCallback> archiveOpenVolumeCallbackComPtr = 
-            new CPPToJavaArchiveOpenVolumeCallback(env, archiveOpenCallbackImpl);
+            new CPPToJavaArchiveOpenVolumeCallback(vm, initEnv, archiveOpenCallbackImpl);
         _archiveOpenVolumeCallback = archiveOpenVolumeCallbackComPtr.Detach();
     }
 }
 
 STDMETHODIMP(CPPToJavaUniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
 {
+    TRACE_OBJECT_CALL("QueryInterface")
+    
     if (iid == IID_IArchiveOpenCallback)
     {
         *outObject = (void *)(IArchiveOpenCallback *)this;
