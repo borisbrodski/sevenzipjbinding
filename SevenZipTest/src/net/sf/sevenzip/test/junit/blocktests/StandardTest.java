@@ -1,7 +1,6 @@
-package net.sf.sevenzip.test.junit;
+package net.sf.sevenzip.test.junit.blocktests;
 
 import java.io.RandomAccessFile;
-import java.lang.reflect.Field;
 import java.util.zip.ZipFile;
 
 import net.sf.sevenzip.ArchiveFormat;
@@ -10,38 +9,17 @@ import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.impl.RandomAccessFileInStream;
 import net.sf.sevenzip.test.ZipContentComparator;
+import net.sf.sevenzip.test.junit.TestBase;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public abstract class StandardTest {
+public abstract class StandardTest extends TestBase {
 	protected enum Testart {
 		USE_STANDARD_INTERFACE, //
 		USE_SIMPLE_INTERFACE,
-	}
-
-	private static void reloadLibPath() throws Exception {
-		// Reset the "sys_paths" field of the ClassLoader to null.
-		Class<?> clazz = ClassLoader.class;
-		Field field = clazz.getDeclaredField("sys_paths");
-		boolean accessible = field.isAccessible();
-		if (!accessible)
-			field.setAccessible(true);
-		// Object original = field.get(clazz);
-		// Reset it to null so that whenever "System.loadLibrary" is called, it
-		// will be reconstructed with the changed value.
-		field.set(clazz, null);
-	}
-
-	@BeforeClass
-	public static void init() throws Exception {
-		String dllPath = "..\\SevenZipCPP\\Debug\\";
-		System.setProperty("java.library.path", dllPath);
-		reloadLibPath();
-		System.out.println("Testing: " + dllPath + "7-Zip-JBinding.dll");
 	}
 
 	protected abstract int getTestId();

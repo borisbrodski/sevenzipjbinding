@@ -1,10 +1,10 @@
-package net.sf.sevenzip.test.junit;
+package net.sf.sevenzip.test.junit.blocktests;
 
-public class StandardTestContent5 extends StandardTest {
+public class StandardTestContent1 extends StandardTest {
 
 	@Override
 	protected int getTestId() {
-		return 5;
+		return 1;
 	}
 
 	@Override

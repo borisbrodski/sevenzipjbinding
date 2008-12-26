@@ -1,4 +1,4 @@
-package net.sf.sevenzip.test.junit;
+package net.sf.sevenzip.test.junit.blocktests;
 
 public class StandardTestContent4 extends StandardTest {
 

@@ -127,7 +127,7 @@ public class Test {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main2(String[] args) {
 		try {
 			ISevenZipInArchive inArchive = SevenZip.openInArchive(
 					ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(

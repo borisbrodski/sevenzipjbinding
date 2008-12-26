@@ -1,6 +1,14 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Release - 0.4 (beta, extraction only)
+    * Full rework of c++ code: thread safe JNI-calls
+        - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
+        
+    * New open/extract method for crypted archives and items (standard and simple interface)
+    
+    * JUnit tests for the extraction of crypted archives 
+
 Release - 0.3 (beta, extraction only, simple extraction interface)
     Some memory problems was fixed:
         - Bug fixed #1928623 - Large TAR files can't be extracted

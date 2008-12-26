@@ -1,6 +1,6 @@
-package net.sf.sevenzip.test.junit;
+package net.sf.sevenzip.test.junit.blocktests;
 
-public class StandardTestContent2 extends StandardTest {
+public class CryptedTestContent2 extends StandardTest {
 
 	@Override
 	protected int getTestId() {
@@ -9,7 +9,7 @@ public class StandardTestContent2 extends StandardTest {
 
 	@Override
 	protected boolean usingPassword() {
-		return false;
+		return true;
 	}
 
 }

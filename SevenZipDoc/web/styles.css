@@ -44,9 +44,10 @@ HR.hr { height: 1px;
 
 .fragment {
        font-family: monospace;
-       font-size: 110%;
+       font-size: 105%;
 }
 PRE.fragment {
+    text-align: left;
 	border: 1px solid #CCCCCC;
 	background-color: #f5f5f5;
 	margin-top: 4px;

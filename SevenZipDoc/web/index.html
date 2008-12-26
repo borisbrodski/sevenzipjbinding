@@ -61,13 +61,47 @@ Implemented features:
 <h2>First Steps</h2>
 Print count of items in archive:
 <div class="fragment"><pre class="fragment">
-IInArchive archive = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-	<b>new</b> InStreamImpl(<b>new</b> RandomAccessFile(<b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
 
-System.<i>out</i>.println(<font color="blue">"Archive contains "</font>
-		+ archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
+        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
 </pre></div><br>
-For more information see readme.txt or wiki page "First Steps"
+
+Print list of archived files using standard interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
+    System.<i>out</i>.println(
+            <font color="blue">"Filename: '"</font> 
+            + archive.getProperty(index, PropID.PATH)
+            + <font color="blue">"', packed size: "</font> 
+            + archive.getProperty(index, PropID.PACKED_SIZE));
+}
+</pre></div><br>
+
+Print list of archived files using simple interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
+
+<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
+    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
+            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
+}
+</pre></div><br>
+
+For more information see javadoc, readme.txt or wiki page "First Steps"
 </table>
 </center>
 </html>

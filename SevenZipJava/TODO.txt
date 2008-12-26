@@ -5,3 +5,5 @@
 		(see tests) for example of setting "java.library.path"
 		
 [ ]  2. Implement Object->Variant in 'CPPToJavaArchiveOpenVolumeCallback::GetProperty'
+
+[ ]  3. Implement safe error handling between threads
