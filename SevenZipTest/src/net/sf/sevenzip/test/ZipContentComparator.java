@@ -14,6 +14,7 @@ import java.util.zip.ZipFile;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
+import net.sf.sevenzip.ICryptoGetTextPassword;
 import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.PropID;
@@ -42,12 +43,14 @@ public class ZipContentComparator {
 	private final ISevenZipInArchive actualSevenZipArchive;
 	List<String> errorMessages = null;
 	private final boolean useSimpleInterface;
+	private final String password;
 
 	public ZipContentComparator(ISevenZipInArchive sevenZipArchive,
-			ZipFile zipFile, boolean useSimpleInterface) {
+			ZipFile zipFile, boolean useSimpleInterface, String password) {
 		this.actualSevenZipArchive = sevenZipArchive;
 		this.expectedZipFile = zipFile;
 		this.useSimpleInterface = useSimpleInterface;
+		this.password = password;
 		expectedZipEntries = zipFile.entries();
 	}
 
@@ -114,8 +117,15 @@ public class ZipContentComparator {
 			// .getEntry(expectedInfo.itemIdString));
 
 			long start = System.currentTimeMillis();
-			IArchiveExtractCallback archiveExtractCallback = new TestArchiveExtractCallback(
-					itemIdToItemName);
+			IArchiveExtractCallback archiveExtractCallback;
+
+			if (password == null) {
+				archiveExtractCallback = new TestArchiveExtractCallback(
+						itemIdToItemName);
+			} else {
+				archiveExtractCallback = new TestArchiveExtractCryptoCallback(
+						itemIdToItemName);
+			}
 
 			int[] indices = new int[actualFileNames.size()];
 			for (int i = 0; i < actualFileNames.size(); i++) {
@@ -127,8 +137,15 @@ public class ZipContentComparator {
 						.getSimpleInterface().getArchiveItems();
 				for (int index = 0; index < indices.length; index++) {
 					ISimpleInArchiveItem archiveItems = simpleInArchiveItems[indices[index]];
-					archiveItems.extractSlow(archiveExtractCallback.getStream(
-							indices[index], ExtractAskMode.EXTRACT));
+					if (password == null) {
+						archiveItems.extractSlow(archiveExtractCallback
+								.getStream(indices[index],
+										ExtractAskMode.EXTRACT));
+					} else {
+						archiveItems.extractSlow(archiveExtractCallback
+								.getStream(indices[index],
+										ExtractAskMode.EXTRACT), password);
+					}
 				}
 			} else {
 				actualSevenZipArchive.extract(indices, false,
@@ -349,6 +366,23 @@ public class ZipContentComparator {
 			}
 			return data.length;
 		}
+	}
+
+	public class TestArchiveExtractCryptoCallback extends
+			TestArchiveExtractCallback implements ICryptoGetTextPassword {
+
+		public TestArchiveExtractCryptoCallback(String[] itemIdToItemName) {
+			super(itemIdToItemName);
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String cryptoGetTextPassword() throws SevenZipException {
+			return password;
+		}
+
 	}
 
 	public class TestArchiveExtractCallback implements IArchiveExtractCallback {

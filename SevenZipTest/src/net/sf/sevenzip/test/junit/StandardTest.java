@@ -38,11 +38,15 @@ public abstract class StandardTest {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		System.setProperty("java.library.path", "..\\SevenZipCPP\\Debug\\");
+		String dllPath = "..\\SevenZipCPP\\Debug\\";
+		System.setProperty("java.library.path", dllPath);
 		reloadLibPath();
+		System.out.println("Testing: " + dllPath + "7-Zip-JBinding.dll");
 	}
 
 	protected abstract int getTestId();
+
+	protected abstract boolean usingPassword();
 
 	@Test
 	public void simpleTest_7z_standardInterface() throws Exception {
@@ -52,6 +56,7 @@ public abstract class StandardTest {
 	@Test
 	public void simpleTest_7z_simpleInterface() throws Exception {
 		if (getTestId() == 1) {
+			// Skip test #1 for sake of performence
 			return;
 		}
 		test(ArchiveFormat.SEVEN_ZIP, "7z", Testart.USE_SIMPLE_INTERFACE);
@@ -98,19 +103,24 @@ public abstract class StandardTest {
 		ISevenZipInArchive sevenZipArchive = SevenZip.openInArchive(
 				archiveFormat, new RandomAccessFileInStream(
 						new RandomAccessFile("TestArchives/TestArchive"
-								+ testId + "." + format, "r")));
+								+ testId + (usingPassword() ? "-password" : "")
+								+ "." + format, "r")));
 
 		boolean useSimpleInterface = testart == null
 				|| testart.equals(Testart.USE_SIMPLE_INTERFACE);
+		String password = null;
+		if (usingPassword()) {
+			password = "password";
+		}
 
 		ZipContentComparator contentComparator1 = new ZipContentComparator(
-				sevenZipArchive, zipFile, useSimpleInterface);
+				sevenZipArchive, zipFile, useSimpleInterface, password);
 
 		Assert.assertTrue(contentComparator1.getErrorMessage(),
 				contentComparator1.isEqual());
 
 		ZipContentComparator contentComparator2 = new ZipContentComparator(
-				sevenZipArchive, zipFile, useSimpleInterface);
+				sevenZipArchive, zipFile, useSimpleInterface, password);
 
 		Assert.assertTrue(contentComparator2.getErrorMessage(),
 				contentComparator2.isEqual());

@@ -78,6 +78,16 @@ public interface ISevenZipInArchive {
 	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode !=
 	 * 0 means "test files operation"
 	 * 
+	 * @param indices
+	 *            array of indices of archive items to extract
+	 * @param testMode
+	 *            <code>true</code> - test achived items only
+	 * @param extractCallback
+	 *            extraction callback object. Optional implementation of
+	 *            {@link ICryptoGetTextPassword} is possible.
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
 	 */
 	public void extract(int[] indices, boolean testMode,
 			IArchiveExtractCallback extractCallback) throws SevenZipException;
@@ -96,6 +106,23 @@ public interface ISevenZipInArchive {
 	 */
 	public void extractSlow(int index, ISequentialOutStream outStream)
 			throws SevenZipException;
+
+	/**
+	 * Extract one item from archive. Multiple calls of this operations very
+	 * slow on some archive types.
+	 * 
+	 * @param index
+	 *            index of the item to extract
+	 * @param outStream
+	 *            sequential output stream to get inhalt of the item
+	 * @param password
+	 *            password to use
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public void extractSlow(int index, ISequentialOutStream outStream,
+			String password) throws SevenZipException;
 
 	/**
 	 * Get value of archive property <code>propID</code>.
@@ -178,4 +205,5 @@ public interface ISevenZipInArchive {
 	 * @return simple 7-Zip interface for the archive
 	 */
 	public ISimpleInArchive getSimpleInterface();
+
 }

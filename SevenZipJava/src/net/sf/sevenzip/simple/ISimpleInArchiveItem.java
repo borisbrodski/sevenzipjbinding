@@ -298,7 +298,7 @@ public interface ISimpleInArchiveItem {
 	 * Extract one archive item. Use <code>sequentialOutStream</code> to
 	 * output data.<br>
 	 * <br>
-	 * <b>WARNING:</b> this is very slow operation
+	 * <b>WARNING:</b> this is very slow operation for multiple calls.
 	 * 
 	 * @param sequentialOutStream
 	 *            output stream to use
@@ -308,6 +308,23 @@ public interface ISimpleInArchiveItem {
 	 */
 	public void extractSlow(ISequentialOutStream sequentialOutStream)
 			throws SevenZipException;
+
+	/**
+	 * Extract one archive item. Use <code>sequentialOutStream</code> to
+	 * output data.<br>
+	 * <br>
+	 * <b>WARNING:</b> this is very slow operation for multiple calls.
+	 * 
+	 * @param sequentialOutStream
+	 *            output stream to use
+	 * @param password
+	 *            password to use
+	 * @throws SevenZipException
+	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception
+	 *             message for more information.
+	 */
+	public void extractSlow(ISequentialOutStream sequentialOutStream,
+			String password) throws SevenZipException;
 
 	/**
 	 * Returns the archive item index

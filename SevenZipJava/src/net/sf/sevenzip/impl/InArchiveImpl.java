@@ -3,6 +3,7 @@ package net.sf.sevenzip.impl;
 import net.sf.sevenzip.ExtractAskMode;
 import net.sf.sevenzip.ExtractOperationResult;
 import net.sf.sevenzip.IArchiveExtractCallback;
+import net.sf.sevenzip.ICryptoGetTextPassword;
 import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.PropID;
@@ -19,6 +20,51 @@ import net.sf.sevenzip.simple.impl.SimpleInArchiveImpl;
  * 
  */
 public class InArchiveImpl implements ISevenZipInArchive {
+	private static final class ExtractSlowCryptoCallback extends
+			ExtractSlowCallback implements ICryptoGetTextPassword {
+
+		private String password;
+
+		public ExtractSlowCryptoCallback(
+				ISequentialOutStream sequentialOutStream, String password) {
+			super(sequentialOutStream);
+			this.password = password;
+		}
+
+		@Override
+		public String cryptoGetTextPassword() throws SevenZipException {
+			return password;
+		}
+	}
+
+	private static class ExtractSlowCallback implements IArchiveExtractCallback {
+		ISequentialOutStream sequentialOutStreamParam;
+
+		public ExtractSlowCallback(ISequentialOutStream sequentialOutStream) {
+			this.sequentialOutStreamParam = sequentialOutStream;
+		}
+
+		public void setTotal(long total) {
+		}
+
+		public void setCompleted(long completeValue) {
+		}
+
+		public void setOperationResult(
+				ExtractOperationResult extractOperationResult) {
+		}
+
+		public boolean prepareOperation(ExtractAskMode extractAskMode) {
+			return true;
+		}
+
+		public ISequentialOutStream getStream(int index,
+				ExtractAskMode extractAskMode) {
+			return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam
+					: null;
+		}
+	}
+
 	static {
 		SevenZip.initSevenZipNativeLibrary();
 	}
@@ -40,37 +86,18 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	 */
 	public void extractSlow(int index, ISequentialOutStream outStream)
 			throws SevenZipException {
+		nativeExtract(new int[] { index }, false, new ExtractSlowCallback(
+				outStream));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void extractSlow(int index, ISequentialOutStream outStream,
+			String password) throws SevenZipException {
 		nativeExtract(new int[] { index }, false,
-				new IArchiveExtractCallback() {
-					ISequentialOutStream sequentialOutStreamParam;
-
-					public void setTotal(long total) {
-					}
-
-					public IArchiveExtractCallback setSequentialOutStream(
-							ISequentialOutStream sequentialOutStream) {
-						this.sequentialOutStreamParam = sequentialOutStream;
-						return this;
-					}
-
-					public void setCompleted(long completeValue) {
-					}
-
-					public void setOperationResult(
-							ExtractOperationResult extractOperationResult) {
-					}
-
-					public boolean prepareOperation(
-							ExtractAskMode extractAskMode) {
-						return true;
-					}
-
-					public ISequentialOutStream getStream(int index,
-							ExtractAskMode extractAskMode) {
-						return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam
-								: null;
-					}
-				}.setSequentialOutStream(outStream));
+				new ExtractSlowCryptoCallback(outStream, password));
 	}
 
 	private native void nativeExtract(int[] indices, boolean testMode,

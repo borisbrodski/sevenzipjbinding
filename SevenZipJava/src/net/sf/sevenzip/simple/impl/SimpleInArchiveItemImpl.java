@@ -181,7 +181,13 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 			throws SevenZipException {
 		simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(
 				index, outStream);
+	}
 
+	@Override
+	public void extractSlow(ISequentialOutStream outStream, String password)
+			throws SevenZipException {
+		simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(
+				index, outStream, password);
 	}
 
 	/**

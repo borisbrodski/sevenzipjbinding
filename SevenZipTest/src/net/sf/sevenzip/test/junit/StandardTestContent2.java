@@ -7,4 +7,9 @@ public class StandardTestContent2 extends StandardTest {
 		return 2;
 	}
 
+	@Override
+	protected boolean usingPassword() {
+		return false;
+	}
+
 }
