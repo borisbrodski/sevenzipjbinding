@@ -93,12 +93,23 @@ public class CryptedFilenamesTests extends TestBase {
 	// new RandomAccessFile(new File(
 	// "TestArchives/TestArchive1.7z"), "r")));
 	//
-	// for (int index = 0; index < archive.getNumberOfItems(); index++) {
-	// System.out.println("Filename: '"
-	// + archive.getProperty(index, PropID.PATH)
-	// + "', packed size: "
-	// + archive.getProperty(index, PropID.PACKED_SIZE));
+	// final StringBuilder stringBuilder = new StringBuilder();
+	// archive.extractSlow(0, new ISequentialOutStream() {
+	// @Override
+	// public int write(byte[] data) {
+	// stringBuilder.append(new String(data));
+	// return data.length; // Amount of processed data
 	// }
+	// });
+	//
+	// System.out.println(stringBuilder.toString());
+	//
+	// // for (int index = 0; index < archive.getNumberOfItems(); index++) {
+	// // System.out.println("Filename: '"
+	// // + archive.getProperty(index, PropID.PATH)
+	// // + "', packed size: "
+	// // + archive.getProperty(index, PropID.PACKED_SIZE));
+	// // }
 	//
 	// // ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
 	// //
@@ -109,4 +120,5 @@ public class CryptedFilenamesTests extends TestBase {
 	// // + "', packed size: " + inItem.getPackedSize());
 	// // }
 	// }
+
 }
