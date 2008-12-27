@@ -1,5 +1,5 @@
-#ifndef VM_H_
-#define VM_H_
+#ifndef JNICALLSTATE_H_
+#define JNICALLSTATE_H_
 
 #include <map>
 #include "jnitools.h"
@@ -7,11 +7,11 @@
 
 using namespace std;
 
-class VM;
+class JNICallState;
 
 class ThreadInfo
 {
-    friend class VM;
+    friend class JNICallState;
 private:
     int _callCounter;
     JNIEnv * _env;
@@ -23,7 +23,7 @@ private:
     }
 };
 
-class VM : public CMyUnknownImp, Object
+class JNICallState : public CMyUnknownImp, Object
 {
 private:
     JavaVM * _vm;
@@ -33,9 +33,9 @@ private:
 public:
     MY_UNKNOWN_IMP
     
-	VM(JNIEnv * initEnv)
+    JNICallState(JNIEnv * initEnv)
 	{
-        TRACE_OBJECT_CREATION("VM")
+        TRACE_OBJECT_CREATION("JNICallState")
         
 	    _initEnv = initEnv;
 	    _initThreadId = GetCurrentThreadId();
@@ -48,7 +48,7 @@ public:
 	    }
 	}
 	
-	virtual ~VM()
+	virtual ~JNICallState()
 	{
 	    // TRACE_OBJECT_DESTRUCTION
 	}
@@ -57,4 +57,4 @@ public:
 	
 	void EndCPPToJava();};
 
-#endif /*VM_H_*/
+#endif /*JNICALLSTATE_H_*/

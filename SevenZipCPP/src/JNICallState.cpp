@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 
-#include "VM.h"
+#include "JNICallState.h"
 
 
-JNIEnv * VM::BeginCPPToJava()
+JNIEnv * JNICallState::BeginCPPToJava()
 {
     TRACE_OBJECT_CALL("BeginCPPToJava")
     
@@ -44,7 +44,7 @@ JNIEnv * VM::BeginCPPToJava()
     }
 }
 
-void VM::EndCPPToJava()
+void JNICallState::EndCPPToJava()
 {
     TRACE_OBJECT_CALL("EndCPPToJava")
     

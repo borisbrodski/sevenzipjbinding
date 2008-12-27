@@ -1,13 +1,13 @@
 #ifndef CPPTOJAVAABSTRACT_H_
 #define CPPTOJAVAABSTRACT_H_
 
-#include "vm.h"
+#include "JNICallState.h"
 
 
 class CPPToJavaAbstract : public Object
 {
 protected:
-    CMyComPtr<VM> _vm;
+    CMyComPtr<JNICallState> _jniCallState;
     
 	jobject _javaImplementation;
 	jclass _javaImplementationClass;
@@ -16,20 +16,20 @@ protected:
 	JNIEnv * BeginCPPToJavaCall()
 	{
 	    TRACE3("====> BEGIN (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
-	    return _vm->BeginCPPToJava();
+	    return _jniCallState->BeginCPPToJava();
 	}
 	
 	void EndCPPToJavaCall()
 	{
         TRACE3("<==== END   (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
-        _vm->EndCPPToJava();
+        _jniCallState->EndCPPToJava();
 	}
 	
-	CPPToJavaAbstract(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject javaImplementation)
+	CPPToJavaAbstract(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject javaImplementation)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaAbstract")
 	    
-		_vm = vm;
+		_jniCallState = jniCallState;
 		_javaImplementation = initEnv->NewGlobalRef(javaImplementation);
 		
 		_javaImplementationClass = initEnv->GetObjectClass(javaImplementation);
@@ -45,8 +45,6 @@ protected:
 		env->DeleteGlobalRef(_javaImplementationClass);
 
         EndCPPToJavaCall();
-        
-	    //TRACE_OBJECT_DESTRUCTION
 	}
 	
 	/**

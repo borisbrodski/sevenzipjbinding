@@ -1,13 +1,13 @@
 #include "StdAfx.h"
 
 #include "jnitools.h"
-#include "CPPToJavaUniversalArchiveOpenCallback.h"
+#include "UniversalArchiveOpenCallback.h"
 
-void CPPToJavaUniversalArchiveOpencallback::Init(VM * vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+void UniversalArchiveOpencallback::Init(JNICallState * jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
 {
     TRACE_OBJECT_CALL("Init")
     
-    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(vm, initEnv, archiveOpenCallbackImpl);
+    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(jniCallState, initEnv, archiveOpenCallbackImpl);
     _archiveOpenCallback = archiveOpenCallbackComPtr.Detach();
     // _archiveOpenCallback->AddRef(); // TODO Remove
     
@@ -25,19 +25,19 @@ void CPPToJavaUniversalArchiveOpencallback::Init(VM * vm, JNIEnv * initEnv, jobj
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
     {
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
-            new CPPToJavaCryptoGetTextPassword(vm, initEnv, archiveOpenCallbackImpl);
+            new CPPToJavaCryptoGetTextPassword(jniCallState, initEnv, archiveOpenCallbackImpl);
         _cryptoGetTextPassword = cryptoGetTextPasswordComPtr.Detach();
     }
     
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
     {
         CMyComPtr<IArchiveOpenVolumeCallback> archiveOpenVolumeCallbackComPtr = 
-            new CPPToJavaArchiveOpenVolumeCallback(vm, initEnv, archiveOpenCallbackImpl);
+            new CPPToJavaArchiveOpenVolumeCallback(jniCallState, initEnv, archiveOpenCallbackImpl);
         _archiveOpenVolumeCallback = archiveOpenVolumeCallbackComPtr.Detach();
     }
 }
 
-STDMETHODIMP(CPPToJavaUniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
+STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
 {
     TRACE_OBJECT_CALL("QueryInterface")
     

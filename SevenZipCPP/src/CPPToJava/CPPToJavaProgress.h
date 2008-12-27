@@ -32,8 +32,8 @@ public:
     }
 */
 
-	CPPToJavaProgress(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject progress) :
-		CPPToJavaAbstract(vm, initEnv, progress)
+	CPPToJavaProgress(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject progress) :
+		CPPToJavaAbstract(jniCallState, initEnv, progress)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaProgress")
 	    

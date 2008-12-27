@@ -1,12 +1,12 @@
-#ifndef CPPTOJAVAUNIVERSALARCHIVEOPENCALLBACK_
-#define CPPTOJAVAUNIVERSALARCHIVEOPENCALLBACK_
+#ifndef UNIVERSALARCHIVEOPENCALLBACK_
+#define UNIVERSALARCHIVEOPENCALLBACK_
 
-#include "VM.h"
-#include "CPPToJavaArchiveOpenCallback.h"
-#include "CPPToJavaArchiveOpenVolumeCallback.h"
-#include "CPPToJavaCryptoGetTextPassword.h"
+#include "JNICallState.h"
+#include "CPPToJava/CPPToJavaArchiveOpenCallback.h"
+#include "CPPToJava/CPPToJavaArchiveOpenVolumeCallback.h"
+#include "CPPToJava/CPPToJavaCryptoGetTextPassword.h"
 
-class CPPToJavaUniversalArchiveOpencallback :
+class UniversalArchiveOpencallback :
     public IArchiveOpenCallback,
     public IArchiveOpenVolumeCallback,
     public ICryptoGetTextPassword,
@@ -18,17 +18,17 @@ private:
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
     
-    void Init(VM * vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
+    void Init(JNICallState * jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
 
 public:
     
-    CPPToJavaUniversalArchiveOpencallback(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+    UniversalArchiveOpencallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
     {
-        TRACE_OBJECT_CREATION("CPPToJavaUniversalArchiveOpencallback")
-        Init(vm, initEnv, archiveOpenCallbackImpl);
+        TRACE_OBJECT_CREATION("UniversalArchiveOpencallback")
+        Init(jniCallState, initEnv, archiveOpenCallbackImpl);
     }
     
-    virtual ~CPPToJavaUniversalArchiveOpencallback()
+    virtual ~UniversalArchiveOpencallback()
     {
         _archiveOpenCallback->Release();
         if (_archiveOpenVolumeCallback)
@@ -103,4 +103,4 @@ public:
         return E_NOINTERFACE;
     }
 };
-#endif /*CPPTOJAVAUNIVERSALARCHIVEOPENCALLBACK_*/
+#endif /*UNIVERSALARCHIVEOPENCALLBACK_*/

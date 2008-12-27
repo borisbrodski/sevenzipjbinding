@@ -24,9 +24,9 @@ private:
 	void Init(JNIEnv * initEnv);
 	
 public:
-	CPPToJavaArchiveExtractCallback(CMyComPtr<VM> vm, JNIEnv * initEnv,
+	CPPToJavaArchiveExtractCallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv,
 			jobject archiveExtractCallbackImpl) :
-				CPPToJavaProgress(vm, initEnv, archiveExtractCallbackImpl)
+				CPPToJavaProgress(jniCallState, initEnv, archiveExtractCallbackImpl)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaArchiveExtractCallback")
 	    

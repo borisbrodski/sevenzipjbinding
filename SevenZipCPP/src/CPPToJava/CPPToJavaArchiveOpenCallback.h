@@ -13,8 +13,8 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaArchiveOpenCallback(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject archiveOpenCallback) :
-        CPPToJavaAbstract(vm, initEnv, archiveOpenCallback)
+    CPPToJavaArchiveOpenCallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject archiveOpenCallback) :
+        CPPToJavaAbstract(jniCallState, initEnv, archiveOpenCallback)
     {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
 

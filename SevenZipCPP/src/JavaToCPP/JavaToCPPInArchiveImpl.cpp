@@ -4,7 +4,7 @@
 #include "SevenZipJBinding.h"
 #include "Java/all.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
-#include "VM.h"
+#include "JNICallState.h"
 
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
@@ -99,7 +99,7 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-    CMyComPtr<VM> vm = new VM(env);
+    CMyComPtr<JNICallState> jniCallState = new JNICallState(env);
     try
     {
         TRACE1("InArchiveImpl.nativeExtract(). ThreadID=%lu",  GetCurrentThreadId())
@@ -136,7 +136,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
     	}
     	*/
     	
-    	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
+    	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(jniCallState, env, archiveExtractCallbackObject);
     	
     	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
     	int result = 0;

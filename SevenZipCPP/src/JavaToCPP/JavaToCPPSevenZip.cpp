@@ -7,9 +7,9 @@
 
 #include "Java/all.h"
 #include "CPPToJava/CPPToJavaInStream.h"
-#include "CPPToJava/CPPToJavaUniversalArchiveOpenCallback.h"
+#include "UniversalArchiveOpenCallback.h"
 
-#include "VM.h"
+#include "JNICallState.h"
 
 CreateObjectFunc createObjectFunc;
 
@@ -45,7 +45,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 {
     TRACE("SevenZip.nativeOpenArchive()")
     
-    CMyComPtr<VM> vm = new VM(env);
+    CMyComPtr<JNICallState> jniCallState = new JNICallState(env);
     
     // Test format
     if (format < 0 || format >= guidsCount)
@@ -70,9 +70,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
     {
         TRACE("Using archive open callback")
         
-        archiveOpenCallback = new CPPToJavaUniversalArchiveOpencallback(vm, env, archiveOpenCallbackImpl);
+        archiveOpenCallback = new UniversalArchiveOpencallback(jniCallState, env, archiveOpenCallbackImpl);
     }
-    IInStream * stream = new CPPToJavaInStream(vm, env, inStream);
+    IInStream * stream = new CPPToJavaInStream(jniCallState, env, inStream);
     
     TRACE("Opening...")
     

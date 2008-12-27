@@ -9,8 +9,8 @@ private:
 	jmethodID _seekMethodID;
 
 public:
-	CPPToJavaInStream(CMyComPtr<VM> vm, JNIEnv * initEnv, jobject inStream) :
-		CPPToJavaSequentialInStream(vm, initEnv, inStream)
+	CPPToJavaInStream(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject inStream) :
+		CPPToJavaSequentialInStream(jniCallState, initEnv, inStream)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaInStream")
 	    

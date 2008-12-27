@@ -45,7 +45,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name, 
 
 	if (inStream)
 	{
-	    CMyComPtr<IInStream> inStreamComPtr = new CPPToJavaInStream(_vm, env, inStreamImpl);
+	    CMyComPtr<IInStream> inStreamComPtr = new CPPToJavaInStream(_jniCallState, env, inStreamImpl);
 	    *inStream = inStreamComPtr.Detach();
 	}
 	

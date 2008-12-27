@@ -17,7 +17,7 @@ void CPPToJavaArchiveExtractCallback::Init(JNIEnv * initEnv)
     if (initEnv->IsInstanceOf(_javaImplementation, cryptoGetTextPasswordClass))
     {
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
-            new CPPToJavaCryptoGetTextPassword(_vm, initEnv, _javaImplementation);
+            new CPPToJavaCryptoGetTextPassword(_jniCallState, initEnv, _javaImplementation);
         _cryptoGetTextPasswordImpl = cryptoGetTextPasswordComPtr.Detach();
     }
     
@@ -78,7 +78,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentia
 		return S_OK;
 	}
 	
-	CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(_vm, env, result);
+	CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(_jniCallState, env, result);
 	*outStream = outStreamComPtr.Detach();
 
 	EndCPPToJavaCall();
