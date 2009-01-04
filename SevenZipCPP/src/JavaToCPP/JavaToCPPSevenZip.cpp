@@ -46,6 +46,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
     TRACE("SevenZip.nativeOpenArchive()")
     
     NativeMethodContext nativeMethodContext(env);
+    
+    TRY
+    
     JNIInstance jniInstance(&nativeMethodContext);
         
     // Test format
@@ -73,8 +76,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
         
         archiveOpenCallback = new UniversalArchiveOpencallback(&nativeMethodContext, env, archiveOpenCallbackImpl);
     }
-    CPPToJavaInStream * stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
-    stream->AddRef(); // TODO Make it nicer using CMyComPtr
+    CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
     
     TRACE("Opening...")
     
@@ -87,6 +89,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
         nativeMethodContext.ThrowSevenZipException(openResult, "Archive file (format: %i) can't be opened", format);
         return NULL;
     }
+    
 
     TRACE("Archive opened")
     
@@ -95,12 +98,14 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
     SetIntegerAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
             (size_t)(void*)(archive.Detach()));
     
-    TRACE1("Setting STREAM: 0x%08X", (Object *)stream);
     SetIntegerAttribute(env, InArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
             (size_t)(void*)(stream));
     
     stream->ClearNativeMethodContext();
+    stream.Detach();
 
     return InArchiveImplObject;
+    
+    CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 

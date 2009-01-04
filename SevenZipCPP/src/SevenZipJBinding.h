@@ -37,6 +37,13 @@
 #define EXTRACTOPERATIONRESULT_CLASS	"net/sf/sevenzip/ExtractOperationResult"
 #define EXTRACTOPERATIONRESULT_CLASS_T	JAVA_MAKE_SIGNATURE_TYPE(EXTRACTOPERATIONRESULT_CLASS)
 
+#define TRY try {
+#define CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, returnvalue)             \
+    } catch(SevenZipException & sevenZipException)                              \
+    {TRACE1("Exception catched: 0x%08X", (size_t)(void *)&sevenZipException);   \
+    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
+    return returnvalue;
+
 #ifdef _DEBUG
 //#define TRACE_ON
 #define TRACE_OBJECTS_ON

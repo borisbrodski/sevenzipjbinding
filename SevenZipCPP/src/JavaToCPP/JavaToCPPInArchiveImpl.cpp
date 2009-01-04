@@ -7,13 +7,6 @@
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"
 
-#define TRY try {
-#define CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, returnvalue)             \
-    } catch(SevenZipException & sevenZipException)                              \
-    {TRACE1("Exception catched: 0x%08X", (Object *)(void *)&sevenZipException); \
-    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
-    return returnvalue;
-
 
 
 
