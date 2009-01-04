@@ -9,6 +9,8 @@ Release - 0.4 (beta, extraction only)
     
     * JUnit tests for the extraction of crypted archives and exception handling 
 
+    * New examples on the home page
+     
 Release - 0.3 (beta, extraction only, simple extraction interface)
     Some memory problems was fixed:
         - Bug fixed #1928623 - Large TAR files can't be extracted

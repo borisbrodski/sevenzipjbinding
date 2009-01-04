@@ -27,7 +27,7 @@ public class TestBase {
 		}
 		initialized = true;
 
-		String dllPath = "..\\SevenZipCPP\\Debug\\";
+		String dllPath = "..\\SevenZipCPP\\Release\\";
 		System.setProperty("java.library.path", dllPath);
 		reloadLibPath();
 		System.out.println("Testing: " + dllPath + "7-Zip-JBinding.dll");
