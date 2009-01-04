@@ -6,4 +6,6 @@
 		
 [ ]  2. Implement Object->Variant in 'CPPToJavaArchiveOpenVolumeCallback::GetProperty'
 
-[ ]  3. Implement safe error handling between threads
+[x]  3. Implement safe error handling between threads
+
+[ ]  4. Get ride of ".printStackTrace()" called for exceptions, that was thrown out of a new attached thread.

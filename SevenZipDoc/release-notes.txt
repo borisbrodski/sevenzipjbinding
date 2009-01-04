@@ -2,12 +2,12 @@
 ============================
 
 Release - 0.4 (beta, extraction only)
-    * Full rework of c++ code: thread safe JNI-calls
+    * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
         - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
         
     * New open/extract method for crypted archives and items (standard and simple interface)
     
-    * JUnit tests for the extraction of crypted archives 
+    * JUnit tests for the extraction of crypted archives and exception handling 
 
 Release - 0.3 (beta, extraction only, simple extraction interface)
     Some memory problems was fixed:
