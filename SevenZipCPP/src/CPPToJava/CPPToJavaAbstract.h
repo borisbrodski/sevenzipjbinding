@@ -7,29 +7,43 @@
 class CPPToJavaAbstract : public Object
 {
 protected:
-    CMyComPtr<JNICallState> _jniCallState;
+    CMyComPtr<NativeMethodContext> _nativeMethodContext;
     
 	jobject _javaImplementation;
 	jclass _javaImplementationClass;
     char * classname;
 
-	JNIEnv * BeginCPPToJavaCall()
+public:
+    void ClearNativeMethodContext()
+    {
+	    TRACE_OBJECT_CALL("ClearNativeMethodContext");
+        _nativeMethodContext = NULL;
+    }
+    
+    void SetNativMethodContext(CMyComPtr<NativeMethodContext> nativeMethodContext)
+    {
+	    TRACE_OBJECT_CALL("SetNativMethodContext");
+        _nativeMethodContext = nativeMethodContext;
+    }
+    
+protected:    
+	JNIEnv * BeginCPPToJavaCall() //TODO Remove
 	{
-	    TRACE3("====> BEGIN (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
-	    return _jniCallState->BeginCPPToJava();
+	    TRACE_OBJECT_CALL("BeginCPPToJavaCall");
+	    return _nativeMethodContext->BeginCPPToJava();
 	}
 	
-	void EndCPPToJavaCall()
+	void EndCPPToJavaCall()//TODO Remove
 	{
-        TRACE3("<==== END   (%s) this=0x%08X, vm=0x%08X", classname, (size_t)this, (size_t)(void *)_vm)
-        _jniCallState->EndCPPToJava();
+	    TRACE_OBJECT_CALL("EndCPPToJavaCall");
+        _nativeMethodContext->EndCPPToJava();
 	}
 	
-	CPPToJavaAbstract(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject javaImplementation)
+	CPPToJavaAbstract(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject javaImplementation)
 	{
-	    TRACE_OBJECT_CREATION("CPPToJavaAbstract")
+	    TRACE_OBJECT_CREATION("CPPToJavaAbstract");
 	    
-		_jniCallState = jniCallState;
+		_nativeMethodContext = nativeMethodContext;
 		_javaImplementation = initEnv->NewGlobalRef(javaImplementation);
 		
 		_javaImplementationClass = initEnv->GetObjectClass(javaImplementation);
@@ -39,12 +53,12 @@ protected:
 	
 	virtual ~CPPToJavaAbstract()
 	{
-        JNIEnv * env = BeginCPPToJavaCall();
+        TRACE_OBJECT_CALL("~CPPToJavaAbstract");
         
-        env->DeleteGlobalRef(_javaImplementation);
-		env->DeleteGlobalRef(_javaImplementationClass);
-
-        EndCPPToJavaCall();
+        JNIInstance jniInstance(_nativeMethodContext);
+        
+        jniInstance.GetEnv()->DeleteGlobalRef(_javaImplementation);
+        jniInstance.GetEnv()->DeleteGlobalRef(_javaImplementationClass);
 	}
 	
 	/**

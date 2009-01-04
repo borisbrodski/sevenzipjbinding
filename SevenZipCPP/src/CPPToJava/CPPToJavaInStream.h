@@ -3,14 +3,14 @@
 #include "StdAfx.h"
 #include "CPPToJavaSequentialInStream.h"
 
-class CPPToJavaInStream : public virtual IInStream, private CPPToJavaSequentialInStream
+class CPPToJavaInStream : public virtual IInStream, public CPPToJavaSequentialInStream
 {
 private:
 	jmethodID _seekMethodID;
 
 public:
-	CPPToJavaInStream(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject inStream) :
-		CPPToJavaSequentialInStream(jniCallState, initEnv, inStream)
+	CPPToJavaInStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject inStream) :
+		CPPToJavaSequentialInStream(nativeMethodContext, initEnv, inStream)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaInStream")
 	    

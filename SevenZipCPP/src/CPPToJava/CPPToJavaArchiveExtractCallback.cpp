@@ -17,7 +17,7 @@ void CPPToJavaArchiveExtractCallback::Init(JNIEnv * initEnv)
     if (initEnv->IsInstanceOf(_javaImplementation, cryptoGetTextPasswordClass))
     {
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
-            new CPPToJavaCryptoGetTextPassword(_jniCallState, initEnv, _javaImplementation);
+            new CPPToJavaCryptoGetTextPassword(_nativeMethodContext, initEnv, _javaImplementation);
         _cryptoGetTextPasswordImpl = cryptoGetTextPasswordComPtr.Detach();
     }
     
@@ -52,21 +52,18 @@ void CPPToJavaArchiveExtractCallback::Init(JNIEnv * initEnv)
 STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentialOutStream **outStream,
 		Int32 askExtractMode)
 {
-    TRACE_OBJECT_CALL("GetStream")
-    
-    JNIEnv * env = BeginCPPToJavaCall();
+    TRACE_OBJECT_CALL("GetStream");
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
     
 	jobject askExtractModeObject = env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID,
 			(jint)askExtractMode);
 	
 	// public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jobject result = env->CallObjectMethod(_javaImplementation, _getStreamMethodID, (jint)index, askExtractModeObject);
-	if (env->ExceptionCheck())
+	if (jniInstance.IsExceptionOccurs())
 	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
 		return S_FALSE;
 	}
 
@@ -78,57 +75,40 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentia
 		return S_OK;
 	}
 	
-	CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(_jniCallState, env, result);
+	CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(_nativeMethodContext, env, result);
 	*outStream = outStreamComPtr.Detach();
 
-	EndCPPToJavaCall();
 	return S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractMode)
 {
-    TRACE_OBJECT_CALL("PrepareOperation")
+    TRACE_OBJECT_CALL("PrepareOperation");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
     
 	jobject askExtractModeObject = env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID, (jint)askExtractMode);
 
 	// public boolean prepareOperation(ExtractAskMode extractAskMode);
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jboolean result = env->CallBooleanMethod(_javaImplementation, _prepareOperationMethodID, askExtractModeObject);
 
-	if (env->ExceptionCheck() || !result)
-	{
-        SaveLastOccurredException(env);
-
-        EndCPPToJavaCall();
-		return S_FALSE;
-	}
-
-    EndCPPToJavaCall();
-	return S_OK;
+	return jniInstance.IsExceptionOccurs() || !result ? S_FALSE : S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOperationResult)
 {
-    TRACE_OBJECT_CALL("SetOperationResult")
+    TRACE_OBJECT_CALL("SetOperationResult");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
 
     jobject resultEOperationResultObject = env->CallStaticObjectMethod(_extractOperationResultClass, _extractOperationResultGetOperationResultMethodID, (jint)resultEOperationResult);
 
 	// public void setOperationResult(ExtractOperationResult extractOperationResult);
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	env->CallVoidMethod(_javaImplementation, _setOperationResultMethodID, resultEOperationResultObject);
 
-	if (env->ExceptionCheck())
-	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
-		return S_FALSE;
-	}
-
-    EndCPPToJavaCall();
-	return S_OK;
+	return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK;
 }

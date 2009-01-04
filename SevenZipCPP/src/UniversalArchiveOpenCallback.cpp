@@ -3,11 +3,11 @@
 #include "jnitools.h"
 #include "UniversalArchiveOpenCallback.h"
 
-void UniversalArchiveOpencallback::Init(JNICallState * jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
 {
     TRACE_OBJECT_CALL("Init")
     
-    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(jniCallState, initEnv, archiveOpenCallbackImpl);
+    CMyComPtr<IArchiveOpenCallback> archiveOpenCallbackComPtr = new CPPToJavaArchiveOpenCallback(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
     _archiveOpenCallback = archiveOpenCallbackComPtr.Detach();
     // _archiveOpenCallback->AddRef(); // TODO Remove
     
@@ -25,14 +25,14 @@ void UniversalArchiveOpencallback::Init(JNICallState * jniCallState, JNIEnv * in
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
     {
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr = 
-            new CPPToJavaCryptoGetTextPassword(jniCallState, initEnv, archiveOpenCallbackImpl);
+            new CPPToJavaCryptoGetTextPassword(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
         _cryptoGetTextPassword = cryptoGetTextPasswordComPtr.Detach();
     }
     
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
     {
         CMyComPtr<IArchiveOpenVolumeCallback> archiveOpenVolumeCallbackComPtr = 
-            new CPPToJavaArchiveOpenVolumeCallback(jniCallState, initEnv, archiveOpenCallbackImpl);
+            new CPPToJavaArchiveOpenVolumeCallback(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
         _archiveOpenVolumeCallback = archiveOpenVolumeCallbackComPtr.Detach();
     }
 }

@@ -6,26 +6,24 @@
 
 STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *processedSize)
 {
-    TRACE_OBJECT_CALL("Read")
+    TRACE_OBJECT_CALL("Read");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
     
 	jbyteArray byteArray = env->NewByteArray(size);
-	FATALIF(byteArray == NULL, "Out of local resource of out of memory: byteArray == NULL")
+	FATALIF(byteArray == NULL, "Out of local resource of out of memory: byteArray == NULL") // TODO Change to EXCEPTION_IF()
 	
 	jintArray intArray = env->NewIntArray(1);
 	FATALIF(intArray == NULL, "Out of local resource of out of memory: intArray == NULL");
 
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jint result = env->CallIntMethod(_javaImplementation, _readMethodID, byteArray, intArray);
-		
-	if (env->ExceptionCheck())
+
+	if (jniInstance.IsExceptionOccurs())
 	{
-        SaveLastOccurredException(env);
 		env->DeleteLocalRef(byteArray);
 		env->DeleteLocalRef(intArray);
-		
-		EndCPPToJavaCall();
 		return S_FALSE;
 	}
 	
@@ -34,7 +32,6 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 		env->DeleteLocalRef(byteArray);
 		env->DeleteLocalRef(intArray);
 		
-		EndCPPToJavaCall();
 		return result;
 	}
 	
@@ -52,7 +49,6 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 	env->DeleteLocalRef(intArray);
 	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
 
-	EndCPPToJavaCall();
 	return result;
 }
 

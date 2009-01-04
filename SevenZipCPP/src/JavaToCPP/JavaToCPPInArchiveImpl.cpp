@@ -3,11 +3,23 @@
 #include "jnitools.h"
 #include "SevenZipJBinding.h"
 #include "Java/all.h"
+#include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"
 
+#define TRY try {
+#define CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, returnvalue)             \
+    } catch(SevenZipException & sevenZipException)                              \
+    {TRACE1("Exception catched: 0x%08X", (Object *)(void *)&sevenZipException); \
+    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
+    return returnvalue;
+
+
+
+
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
+static jfieldID g_InStreamAttributeFieldID;
 static jclass g_PropertyInfoClazz;
 static jfieldID g_PropertyInfo_name;
 static jfieldID g_PropertyInfo_propID;
@@ -29,6 +41,11 @@ static void localinit(JNIEnv * env, jobject thiz)
 
 	g_ObjectAttributeFieldID = env->GetFieldID(clazz, 
 	IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "I");
+	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
+			GetJavaClassName(env, clazz, classname, sizeof(classname)));
+	
+	g_InStreamAttributeFieldID = env->GetFieldID(clazz, 
+	IN_STREAM_IMPL_OBJ_ATTRIBUTE, "I");
 	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
@@ -71,10 +88,29 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 
 	if (!pointer)
 	{
-        ThrowSevenZipException(env, "Can't preform action. Archive already closed.");
+	    TRACE("GetArchive() : pointer == NULL. Throwing exception");
+        throw SevenZipException("Can't preform action. Archive already closed.");
 	}
 	
 	return (IInArchive *)(void *)pointer;
+}
+
+static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
+{
+	jint pointer;
+
+	localinit(env, thiz);
+	
+	pointer = env->GetIntField(thiz, g_InStreamAttributeFieldID);
+    
+	if (!pointer)
+	{
+        throw SevenZipException("Can't preform action. InStream==NULL.");
+	}
+	
+    TRACE1("Getting STREAM: 0x%08X", (Object *)(CPPToJavaInStream *)(void *)pointer);
+
+    return (CPPToJavaInStream *)(void *)pointer;
 }
 
 static void SetArchive(JNIEnv * env, jobject thiz, jint pointer)
@@ -99,68 +135,54 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-    CMyComPtr<JNICallState> jniCallState = new JNICallState(env);
-    try
-    {
-        TRACE1("InArchiveImpl.nativeExtract(). ThreadID=%lu",  GetCurrentThreadId())
-        
-    	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  GetCurrentThreadId());
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+	TRY;
+	
+    JNIInstance jniInstance(&nativeMethodContext);
+    
+	CPPToJavaInStream * inStream = GetInStream(env, thiz);
+	inStream->SetNativMethodContext(&nativeMethodContext);
+	
+	
+	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
     	
-    	if (archive == NULL)
-    	{
-    	    return;
-    	}
-    
-    	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
-    
-    	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
+	if (archive == NULL)
+	{
+        TRACE("Archive==NULL. Do nothing...");
+	    return;
+	}
 
-    	/*
-    	{
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
-        	p1.Release();
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    	}
-    	{
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
-        	p1.Release();
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    	}
-    	{
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        	CMyComPtr<IArchiveExtractCallback> p1 = new CPPToJavaArchiveExtractCallback(vm, env, archiveExtractCallbackObject);
-        	p1.Release();
-        	TRACE("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    	}
-    	*/
-    	
-    	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(jniCallState, env, archiveExtractCallbackObject);
-    	
-    	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
-    	int result = 0;
-    	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
-    	        archiveExtractCallback);
+	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
 
-    	archiveExtractCallback.Release();
-    	
-    	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
+
+	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);
+	
+	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
+	int result = 0;
+	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
+	        archiveExtractCallback);
+
+	archiveExtractCallback.Release();
+	
+	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+
+	if (result)
+	{
+	    TRACE1("Extraction error. Result: 0x%08X", result);
+	    nativeMethodContext.ThrowSevenZipException(result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
+	}
+	else
+	{
+	    TRACE("Extraction succeeded")
+	}
+	
+    inStream->ClearNativeMethodContext();
     
-    	if (result)
-    	{
-    	    TRACE1("Extraction error. Result: 0x%08X", result);
-    		ThrowSevenZipException(env, result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
-    	}
-    	else
-    	{
-    	    TRACE("Extraction succeeded")
-    	}
-    	
-    } catch (SevenZipBindingException * e)
-    {
-        ThrowSevenZipException(env, "%s", e->GetMessage());
-    }
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, ;);
 }
 
 /*
@@ -171,21 +193,38 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
 JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl.nativeGetNumberOfItems(). ThreadID=%lu",  GetCurrentThreadId())
+    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  GetCurrentThreadId());
+
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+        
+    JNIInstance jniInstance(&nativeMethodContext);
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+	
+	CPPToJavaInStream * p = GetInStream(env, thiz);
+	TRACE1("!!!!!! p = 0x%08X", p);
+	CMyComPtr<CPPToJavaInStream> inStream(p);
+	TRACE("22222");
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return 0;
     }
 
     UInt32 result;
 
-	CHECK_HRESULT(archive->GetNumberOfItems(&result), "Error getting number of items from archive");
+	CHECK_HRESULT(nativeMethodContext, archive->GetNumberOfItems(&result), "Error getting number of items from archive");
 
+	inStream->ClearNativeMethodContext();
+	
 	TRACE1("Returning: %u", result)
 	
 	return result;
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, 0);
 }
 
 /*
@@ -196,22 +235,34 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl.nativeClose(). ThreadID=%lu",  GetCurrentThreadId()) 
+    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  GetCurrentThreadId());
+
+    NativeMethodContext nativeMethodContext(env);
     
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+	CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+	inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
-        TRACE("Archive==NULL. Do nothing...")
+        TRACE("Archive==NULL. Do nothing...");
         return;
     }
 
-    CHECK_HRESULT(archive->Close(), "Error closing archive");
+    CHECK_HRESULT(nativeMethodContext, archive->Close(), "Error closing archive");
+    
     archive->Release();
+    inStream->Release();
     
     SetArchive(env, thiz, 0);
     
     TRACE("Archive closed")
+
+    CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, ;);
 }
 
 /*
@@ -222,19 +273,32 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
 JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfArchiveProperties
 (JNIEnv * env, jobject thiz)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-	if (archive == NULL)
+    TRACE("InArchiveImpl::GetNumberOfArchiveProperties()");
+    
+    NativeMethodContext nativeMethodContext(env);
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
+
+    if (archive == NULL)
 	{
+        TRACE("Archive==NULL. Do nothing...");
 	    return 0;
 	}
 
 	UInt32 result;
 
-	CHECK_HRESULT(archive->GetNumberOfArchiveProperties(&result), "Error getting number of archive properties");
+	CHECK_HRESULT(nativeMethodContext, archive->GetNumberOfArchiveProperties(&result), "Error getting number of archive properties");
 
-	// archive->Release();
+	inStream->ClearNativeMethodContext();
 	
 	return result;
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, 0);
 }
 
 /*
@@ -245,10 +309,21 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchivePropertyInfo
 (JNIEnv * env, jobject thiz, jint index)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetArchivePropertyInfo()");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...")
         return NULL;
     }
     
@@ -256,7 +331,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 	CMyComBSTR name;
 	unsigned long propID;
 
-	CHECK_HRESULT1(archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
+	CHECK_HRESULT1(nativeMethodContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
 
 	jobject propertInfo = GetSimpleInstance(env, g_PropertyInfoClazz); //);
 
@@ -269,7 +344,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 	{
 		javaName = env->NewString((jchar *)(BSTR)name, name.Length());
 	}
-	jobject javaType = VarTypeToJavaType(env, type);
+	jobject javaType = VarTypeToJavaType(&jniInstance, type);
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
@@ -277,8 +352,11 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
 	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
 
+	inStream->ClearNativeMethodContext();
+
 	return propertInfo;
 
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
@@ -289,19 +367,33 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchiveProperty
 (JNIEnv * env, jobject thiz, jint propID)
 {
-	CMyComPtr<IInArchive> archive(
-			GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetArchiveProperty");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...")
         return NULL;
     }
 
     NWindows::NCOM::CPropVariant PropVariant;
 
-	CHECK_HRESULT1(archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
+	CHECK_HRESULT1(nativeMethodContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
-	return PropVariantToObject(env, &PropVariant);
+	inStream->ClearNativeMethodContext();
+	
+	return PropVariantToObject(&jniInstance, &PropVariant);
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
@@ -312,19 +404,33 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchi
 JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringArchiveProperty
   (JNIEnv * env, jobject thiz, jint propID)
 {
-    CMyComPtr<IInArchive> archive(
-            GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetStringArchiveProperty");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return NULL;
     }
 
     NWindows::NCOM::CPropVariant PropVariant;
 
-    CHECK_HRESULT1(archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
+    CHECK_HRESULT1(nativeMethodContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
+    inStream->ClearNativeMethodContext();
+    
     return PropVariantToString(env, propID, PropVariant);
+
+    CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
@@ -335,18 +441,33 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStrin
 JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfProperties
 (JNIEnv * env, jobject thiz)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetNumberOfProperties");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return 0;
     }
 
     UInt32 result;
 
-	CHECK_HRESULT(archive->GetNumberOfProperties(&result), "Error getting number of properties");
+	CHECK_HRESULT(nativeMethodContext, archive->GetNumberOfProperties(&result), "Error getting number of properties");
 
+	inStream->ClearNativeMethodContext();
+	
 	return result;
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, 0);
 }
 
 /*
@@ -357,18 +478,33 @@ JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOf
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetProperty
 (JNIEnv * env, jobject thiz, jint index, jint propID)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetProperty");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return NULL;
     }
 
     NWindows::NCOM::CPropVariant propVariant;
 
-	CHECK_HRESULT2(archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+    CHECK_HRESULT2(nativeMethodContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+    
+    inStream->ClearNativeMethodContext();
 
-	return PropVariantToObject(env, &propVariant);
+	return PropVariantToObject(&jniInstance, &propVariant);
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
@@ -379,18 +515,33 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringProperty
     (JNIEnv * env, jobject thiz, jint index, jint propID)
 {
+    TRACE("InArchiveImpl::nativeGetStringProperty");
+
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return NULL;
     }
 
     NWindows::NCOM::CPropVariant propVariant;
 
-    CHECK_HRESULT2(archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+    CHECK_HRESULT2(nativeMethodContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
+    inStream->ClearNativeMethodContext();
+    
     return PropVariantToString(env, propID, propVariant);
+
+    CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
@@ -401,10 +552,21 @@ JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStrin
 JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPropertyInfo
 (JNIEnv * env, jobject thiz, jint index)
 {
-	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRACE("InArchiveImpl::nativeGetPropertyInfo");
+    
+    NativeMethodContext nativeMethodContext(env);
+    
+    TRY;
+    
+    JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+
+    inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)
     {
+        TRACE("Archive==NULL. Do nothing...");
         return NULL;
     }
 
@@ -412,7 +574,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 	CMyComBSTR name;
 	unsigned long propID;
 
-	CHECK_HRESULT1(archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
+	CHECK_HRESULT1(nativeMethodContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
 	jobject propertInfo = GetSimpleInstance(env, g_PropertyInfoClazz); //);
 
@@ -425,7 +587,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 	{
 		javaName = env->NewString((jchar *)(BSTR)name, name.Length());
 	}
-	jobject javaType = VarTypeToJavaType(env, type);
+	jobject javaType = VarTypeToJavaType(&jniInstance, type);
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
@@ -433,5 +595,9 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPrope
 	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
 	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
 
+	inStream->ClearNativeMethodContext();
+	
 	return propertInfo;
+
+    CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }

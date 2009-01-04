@@ -13,8 +13,8 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaCryptoGetTextPassword(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject progress) :
-        CPPToJavaAbstract(jniCallState, initEnv, progress)
+    CPPToJavaCryptoGetTextPassword(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject progress) :
+        CPPToJavaAbstract(nativeMethodContext, initEnv, progress)
     {
         TRACE_OBJECT_CREATION("CPPToJavaCryptoGetTextPassword")
         

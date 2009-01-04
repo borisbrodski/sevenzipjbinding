@@ -45,12 +45,13 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
 {
     TRACE("SevenZip.nativeOpenArchive()")
     
-    CMyComPtr<JNICallState> jniCallState = new JNICallState(env);
-    
+    NativeMethodContext nativeMethodContext(env);
+    JNIInstance jniInstance(&nativeMethodContext);
+        
     // Test format
     if (format < 0 || format >= guidsCount)
     {
-        ThrowSevenZipException(env, "Format %i out of range. There are only %i formats availible", format, guidsCount);
+        nativeMethodContext.ThrowSevenZipException("Format %i out of range. There are only %i formats availible", format, guidsCount);
         return NULL;
     }
 
@@ -70,27 +71,35 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive
     {
         TRACE("Using archive open callback")
         
-        archiveOpenCallback = new UniversalArchiveOpencallback(jniCallState, env, archiveOpenCallbackImpl);
+        archiveOpenCallback = new UniversalArchiveOpencallback(&nativeMethodContext, env, archiveOpenCallbackImpl);
     }
-    IInStream * stream = new CPPToJavaInStream(jniCallState, env, inStream);
+    CPPToJavaInStream * stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
+    stream->AddRef(); // TODO Make it nicer using CMyComPtr
     
     TRACE("Opening...")
     
     UInt64 maxCheckStartPosition = 0;
-    HRESULT openResult = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
+    HRESULT openResult = archive->Open((IInStream *)stream, &maxCheckStartPosition, archiveOpenCallback);
     if (openResult != S_OK)
     {
         TRACE1("Result = 0x%08X, throwing exception...", (int)openResult)
         
-        ThrowSevenZipException(env, openResult, "Archive file (format: %i) can't be opened", format);
+        nativeMethodContext.ThrowSevenZipException(openResult, "Archive file (format: %i) can't be opened", format);
         return NULL;
     }
 
     TRACE("Archive opened")
     
     jobject InArchiveImplObject = GetSimpleInstance(env, IN_ARCHIVE_IMPL);
+    
     SetIntegerAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
             (size_t)(void*)(archive.Detach()));
+    
+    TRACE1("Setting STREAM: 0x%08X", (Object *)stream);
+    SetIntegerAttribute(env, InArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
+            (size_t)(void*)(stream));
+    
+    stream->ClearNativeMethodContext();
 
     return InArchiveImplObject;
 }

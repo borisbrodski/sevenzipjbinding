@@ -6,50 +6,45 @@
 
 STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROPVARIANT *value)
 {
-    TRACE_OBJECT_CALL("GetProperty")
+    TRACE_OBJECT_CALL("GetProperty");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
     
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jobject result = env->CallObjectMethod(_javaImplementation, _getPropertyMethodID, (jint)propID);
-	if (env->ExceptionCheck())
+	if (jniInstance.IsExceptionOccurs())
 	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
 		return S_FALSE;
 	}
 	
 	// TODO Convert object to Variant
 	
-    EndCPPToJavaCall();
 	return S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name, IInStream **inStream)
 {
-    TRACE_OBJECT_CALL("GetStream")
+    TRACE_OBJECT_CALL("GetStream");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
+
     jstring nameString = env->NewString((jchar *)name, (jsize)wcslen(name));
     
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jobject inStreamImpl = env->CallObjectMethod(_javaImplementation, _getStreamMethodID, nameString);
-	if (env->ExceptionCheck())
+	if (jniInstance.IsExceptionOccurs())
 	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
 		return S_FALSE;
 	}
 
 	if (inStream)
 	{
-	    CMyComPtr<IInStream> inStreamComPtr = new CPPToJavaInStream(_jniCallState, env, inStreamImpl);
+	    CMyComPtr<IInStream> inStreamComPtr = new CPPToJavaInStream(_nativeMethodContext, env, inStreamImpl);
 	    *inStream = inStreamComPtr.Detach();
 	}
 	
-    EndCPPToJavaCall();
 	return S_OK;
 }
 

@@ -14,8 +14,8 @@ private:
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaArchiveOpenVolumeCallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject progress) :
-        CPPToJavaAbstract(jniCallState, initEnv, progress)
+    CPPToJavaArchiveOpenVolumeCallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject progress) :
+        CPPToJavaAbstract(nativeMethodContext, initEnv, progress)
     {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenVolumeCallback")
         

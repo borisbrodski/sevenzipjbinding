@@ -24,9 +24,9 @@ private:
 	void Init(JNIEnv * initEnv);
 	
 public:
-	CPPToJavaArchiveExtractCallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv,
+	CPPToJavaArchiveExtractCallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv,
 			jobject archiveExtractCallbackImpl) :
-				CPPToJavaProgress(jniCallState, initEnv, archiveExtractCallbackImpl)
+				CPPToJavaProgress(nativeMethodContext, initEnv, archiveExtractCallbackImpl)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaArchiveExtractCallback")
 	    
@@ -36,7 +36,10 @@ public:
 
 	~CPPToJavaArchiveExtractCallback()
 	{
-	    JNIEnv * env = BeginCPPToJavaCall();
+	    TRACE_OBJECT_CALL("~CPPToJavaArchiveExtractCallback");
+	    
+	    JNIInstance jniInstance(_nativeMethodContext);
+	    JNIEnv * env = jniInstance.GetEnv();
 	    
 		env->DeleteGlobalRef(_extractOperationResultClass);
 		env->DeleteGlobalRef(_extractAskModeClass);
@@ -44,13 +47,11 @@ public:
 		{
 		    _cryptoGetTextPasswordImpl->Release();
 		}
-		
-		EndCPPToJavaCall();
 	}
 	
 	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
 	{
-	    TRACE_OBJECT_CALL("QueryInterface")
+	    TRACE_OBJECT_CALL("QueryInterface");
 	    
 	    if (refguid == IID_ICryptoGetTextPassword && _cryptoGetTextPasswordImpl)
 	    {
@@ -64,29 +65,31 @@ public:
 
 	STDMETHOD_(ULONG, AddRef)()
 	{
-	    TRACE_OBJECT_CALL("AddRef")
+	    TRACE_OBJECT_CALL("AddRef");
 		return CPPToJavaProgress::AddRef();
 	}
 
 	STDMETHOD_(ULONG, Release)()
 	{
-	    TRACE_OBJECT_CALL("Release")
+	    TRACE_OBJECT_CALL("Release");
 		return CPPToJavaProgress::Release();
 	}
 	
 	STDMETHOD(SetTotal)(UInt64 total)
 	{
+	    TRACE_OBJECT_CALL("SetTotal");
 		return CPPToJavaProgress::SetTotal(total);
 	}
 	
 	STDMETHOD(SetCompleted)(const UInt64 *completeValue)
     {
+	    TRACE_OBJECT_CALL("SetCompleted");
         return CPPToJavaProgress::SetCompleted(completeValue);
     }
 	
 	STDMETHOD(CryptoGetTextPassword)(BSTR *password)
 	{
-	    TRACE_OBJECT_CALL("CryptoGetTextPassword")
+	    TRACE_OBJECT_CALL("CryptoGetTextPassword");
 	    
 	    if (_cryptoGetTextPasswordImpl)
 	    {

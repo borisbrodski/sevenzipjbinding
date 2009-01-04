@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import org.junit.BeforeClass;
 
 public class TestBase {
+	private static boolean initialized = false;
+
 	private static void reloadLibPath() throws Exception {
 		// Reset the "sys_paths" field of the ClassLoader to null.
 		Class<?> clazz = ClassLoader.class;
@@ -20,6 +22,11 @@ public class TestBase {
 
 	@BeforeClass
 	public static void init() throws Exception {
+		if (initialized) {
+			return;
+		}
+		initialized = true;
+
 		String dllPath = "..\\SevenZipCPP\\Debug\\";
 		System.setProperty("java.library.path", dllPath);
 		reloadLibPath();

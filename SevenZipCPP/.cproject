@@ -44,7 +44,9 @@
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.nostdinc.757793845" name="Do not search system directories (-nostdinc)" superClass="gnu.cpp.compiler.option.preprocessor.nostdinc"/>
 <option id="gnu.cpp.compiler.option.preprocessor.preprocess.1155208469" name="Preprocess only (-E)" superClass="gnu.cpp.compiler.option.preprocessor.preprocess"/>
-<option id="gnu.cpp.compiler.option.preprocessor.def.285046761" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def"/>
+<option id="gnu.cpp.compiler.option.preprocessor.def.285046761" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="_DEBUG"/>
+</option>
 <option id="gnu.cpp.compiler.option.preprocessor.undef.846965531" name="Undefined symbols (-U)" superClass="gnu.cpp.compiler.option.preprocessor.undef"/>
 <option id="gnu.cpp.compiler.option.optimization.flags.134020141" name="Other optimization flags" superClass="gnu.cpp.compiler.option.optimization.flags"/>
 <option id="gnu.cpp.compiler.option.debugging.other.486100109" name="Other debugging flags" superClass="gnu.cpp.compiler.option.debugging.other"/>
@@ -105,6 +107,7 @@
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+
 
 
 
@@ -554,10 +557,10 @@
 <option id="gnu.cpp.compiler.mingw.exe.release.option.debugging.level.1186876389" name="Debug Level" superClass="gnu.cpp.compiler.mingw.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
 <option id="gnu.cpp.compiler.option.include.paths.386947745" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 <listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src}&quot;"/>
+<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src/7ZipUtils}&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${SevenZipSource}.&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include&quot;"/>
 <listOptionValue builtIn="false" value="&quot;${JDK}include\win32&quot;"/>
-<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SevenZipCPP/src/7ZipUtils}&quot;"/>
 </option>
 <option id="gnu.cpp.compiler.option.preprocessor.nostdinc.1257309304" name="Do not search system directories (-nostdinc)" superClass="gnu.cpp.compiler.option.preprocessor.nostdinc"/>
 <option id="gnu.cpp.compiler.option.preprocessor.preprocess.189569669" name="Preprocess only (-E)" superClass="gnu.cpp.compiler.option.preprocessor.preprocess"/>
@@ -624,6 +627,7 @@
 <storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 <storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 <storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+
 
 
 

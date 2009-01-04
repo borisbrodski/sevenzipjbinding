@@ -31,8 +31,8 @@ public:
     }
 
 	
-	CPPToJavaSequentialOutStream(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject javaSequentialOutStreamImpl) :
-		CPPToJavaAbstract(jniCallState, initEnv, javaSequentialOutStreamImpl)
+	CPPToJavaSequentialOutStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject javaSequentialOutStreamImpl) :
+		CPPToJavaAbstract(nativeMethodContext, initEnv, javaSequentialOutStreamImpl)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaSequentialOutStream")
 	    

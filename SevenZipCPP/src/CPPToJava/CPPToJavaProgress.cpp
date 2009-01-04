@@ -6,41 +6,25 @@
 
 STDMETHODIMP CPPToJavaProgress::SetCompleted(const UInt64 * completeValue)
 {
-    TRACE_OBJECT_CALL("SetCompleted")
+    TRACE_OBJECT_CALL("SetCompleted");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
 
-    env->ExceptionClear();
-	env->CallVoidMethod(_javaImplementation, _setCompletedMethodID, (jlong)(*completeValue));
-	if (env->ExceptionCheck())
-	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
-		return S_FALSE;
-	}
-	
-    EndCPPToJavaCall();
-	return S_OK;
+    jniInstance.PrepareCall();
+    jniInstance.GetEnv()->CallVoidMethod(_javaImplementation, _setCompletedMethodID, (jlong)(*completeValue));
+
+    return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK;
 }
 
 STDMETHODIMP CPPToJavaProgress::SetTotal(UINT64 total)
 {
-    TRACE_OBJECT_CALL("SetTotal")
+    TRACE_OBJECT_CALL("SetTotal");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
     
-	env->ExceptionClear();
-	env->CallVoidMethod(_javaImplementation, _setTotalMethodID, (jlong)total);
-	if (env->ExceptionCheck())
-	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
-		return S_FALSE;
-	}
-	
-    EndCPPToJavaCall();
-	return S_OK;
+    jniInstance.PrepareCall();
+    jniInstance.GetEnv()->CallVoidMethod(_javaImplementation, _setTotalMethodID, (jlong)total);
+
+    return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK ;
 }
 

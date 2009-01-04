@@ -6,30 +6,26 @@
 
 STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition)
 {
-    TRACE_OBJECT_CALL("Seek")
+    TRACE_OBJECT_CALL("Seek");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
     
 	jlongArray newPositionArray = env->NewLongArray(1);
 	FATALIF(newPositionArray == NULL, "Out of local resource of out of memory: newPositionArray == NULL");
 
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	jint result = env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
 
-	if (env->ExceptionCheck())
+	if (jniInstance.IsExceptionOccurs())
 	{
-        SaveLastOccurredException(env);
 		env->DeleteLocalRef(newPositionArray);
-		
-		EndCPPToJavaCall();
 		return S_FALSE;
 	}
 
 	if (result)
 	{
 		env->DeleteLocalRef(newPositionArray);
-		
-		EndCPPToJavaCall();
 		return result;
 	}
 	
@@ -42,7 +38,6 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
 	env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
 	env->DeleteLocalRef(newPositionArray);
 
-	EndCPPToJavaCall();
 	return result;
 }
 

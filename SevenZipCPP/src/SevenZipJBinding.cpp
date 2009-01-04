@@ -11,40 +11,21 @@
 #include "jnitools.h"
 #include "SevenZipJBinding.h"
 
-static struct
-{
-	HRESULT errCode;
-	char * message;
-} SevenZipErrorMessages [] =
-{
-{ S_OK, "OK" }, // ((HRESULT)0x00000000L)
-		{ S_FALSE, "FALSE" }, // ((HRESULT)0x00000001L)
-		{ E_NOTIMPL, "Not implemented" }, // ((HRESULT)0x80004001L)
-		{ E_NOINTERFACE, "No interface" }, // ((HRESULT)0x80004002L)
-		{ E_ABORT, "Abort" }, // ((HRESULT)0x80004004L)
-		{ E_FAIL, "Fail" }, // ((HRESULT)0x80004005L)
-		{ STG_E_INVALIDFUNCTION, "Invalid function" }, // ((HRESULT)0x80030001L)
-		{ E_OUTOFMEMORY, "Out of memory" }, // ((HRESULT)0x8007000EL)
-		{ E_INVALIDARG, "Invalid argument" }, // ((HRESULT)0x80070057L)
-		{ 0, NULL },
-};
-
-static jthrowable g_LastOccurredException = NULL;
-
-
-/*
- * Return error message from error code
+/**
+ * Fatal error
  */
-char * getSevenZipErrorMessage(HRESULT hresult)
+void fatal(char * fmt, ...)
 {
-	for (int i = 0; SevenZipErrorMessages[i].message != NULL; i++)
-	{
-		if (SevenZipErrorMessages[i].errCode == hresult)
-		{
-			return SevenZipErrorMessages[i].message;
-		}
-	}
-	return "Unknown error code";
+    va_list args;
+    va_start(args, fmt);
+    fputs("FATAL ERROR: ", stdout);
+    vprintf(fmt, args);
+    va_end(args);
+
+    fputc('\n', stdout);
+    fflush(stdout);
+
+    exit(-1);
 }
 
 /**
@@ -67,85 +48,6 @@ char * load7ZipLibrary(CreateObjectFunc * createObjectFunc)
 	return NULL;
 }
 
-static void _ThrowSevenZipException(JNIEnv * env, char * message)
-{
-    jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
-    FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");
-    
-    jstring messageString = env->NewStringUTF(message);
-
-    jmethodID constructorId = env->GetMethodID(exceptionClass, "<init>", "(" JAVA_STRING_T JAVA_THROWABLE_T ")V");
-    FATALIF(constructorId == NULL, "Can't find " SEVEN_ZIP_EXCEPTION "(String, Throwable) constructor")
-        
-    jthrowable exception = (jthrowable)env->NewObject(exceptionClass, constructorId, messageString, g_LastOccurredException);
-    FATALIF(exception == NULL, SEVEN_ZIP_EXCEPTION " can't be created");
-
-    env->ReleaseStringUTFChars(messageString, message);
-    
-    env->Throw(exception);
-}
-
-/**
- * Throw SevenZipException with error message.
- */
-void ThrowSevenZipException(JNIEnv * env, char * fmt, ...)
-{
-	char buffer[64 * 1024];
-	va_list args;
-	va_start(args, fmt);
-	_vsnprintf(buffer, sizeof(buffer), fmt, args);
-	va_end(args);
-
-	buffer[sizeof(buffer) - 1] = '\0';
-
-	_ThrowSevenZipException(env, buffer);
-}
-
-/**
- * Throw SevenZipException with error message.
- */
-void ThrowSevenZipException(JNIEnv * env, HRESULT hresult, char * fmt, ...)
-{
-	char buffer[64 * 1024];
-	
-	snprintf(buffer, sizeof(buffer), "HRESULT: 0x%X (%s). ", (int)hresult, getSevenZipErrorMessage(hresult));
-	int beginIndex = strlen(buffer);
-	
-	va_list args;
-	va_start(args, fmt);
-	_vsnprintf(&buffer[beginIndex], sizeof(buffer) - beginIndex, fmt, args);
-	va_end(args);
-
-	buffer[sizeof(buffer) - 1] = '\0';
-
-    _ThrowSevenZipException(env, buffer);
-}
-
-/**
- * Save last occurred exception '_env->ExceptionOccurred()'
- * in global variable. Next call to ThrowSevenZipException(...) will set
- * 'lastOccurredException' as cause.
- * 
- * If _env->ExceptionOccurred() returns NULL,
- * last occurred exception will be set to NULL. 
- */
-void SaveLastOccurredException(JNIEnv * env)
-{
-    if (g_LastOccurredException)
-    {
-        env->DeleteGlobalRef(g_LastOccurredException);
-    }
-    
-    jthrowable lastOccurredException = env->ExceptionOccurred();
-    if (lastOccurredException)
-    {
-        g_LastOccurredException = (jthrowable)env->NewGlobalRef(lastOccurredException);
-    }
-    else
-    {
-        g_LastOccurredException = NULL;
-    }
-}
 
 #ifdef TRACE_OBJECTS_ON
 
@@ -162,11 +64,13 @@ void TracePrintObjects()
 {
     map<void *, ClassInfo *>::const_iterator i = _classes_map.begin();
     _TRACE("Objects alive:\n")
+#ifdef TRACE_ON
     int count = 1;
     for (; i != _classes_map.end(); i++)
     {
         _TRACE3("> %3i %s (this: 0x%08X)\n", count++, (*i).second->_classname, (size_t)(*i).second->_thiz)
     }
+#endif
 }
 void TraceObjectCreation(char * classname, void * thiz)
 {
@@ -191,7 +95,10 @@ void TraceObjectDestruction(void * thiz)
         fatal("TraceObjectDestruction(): destructor called for unknown this=0x%08X", (size_t)thiz);
     }
     
+#ifdef TRACE_ON
     ClassInfo * classInfo = _classes_map[thiz];
+#endif
+    
     _classes_map.erase(thiz);
     _TRACE3("~~~ %s (this: 0x%08X) [classes alive: %i]\n", classInfo->_classname, (size_t)classInfo->_thiz, _classes_map.size())
     
@@ -204,10 +111,21 @@ void TraceObjectCall(void * thiz, char * methodname)
     {
         fatal("Object call for dead object. Method name: %s, this: 0x%08X", methodname, (size_t)thiz);
     }
-#ifdef TRACE_OBJECT_CALLS
+    
+#ifdef TRACE_ON
     ClassInfo * classInfo = _classes_map[thiz];
-    _TRACE3("-> %s::%s(...) (this: 0x%08X)\n",classInfo->_classname, methodname, (size_t)thiz)
+    _TRACE4("-> %s::%s%s (this: 0x%08X)\n",classInfo->_classname, methodname, 
+            (strchr(methodname, '(') == NULL ? "(...)" : ""), (size_t)thiz);
 #endif
+}
+
+void TraceObjectEnsureDestruction(void * thiz)
+{
+    if (_classes_map.find(thiz) != _classes_map.end())
+    {
+        ClassInfo * classInfo = _classes_map[thiz];
+        fatal("Objcet %s (this: 0x%08X) wasn't destroyed as expected\n",classInfo->_classname, (size_t)thiz);
+    }
 }
 #endif // TRACE_OBJECTS_ON
 

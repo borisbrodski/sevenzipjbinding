@@ -18,14 +18,14 @@ private:
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
     
-    void Init(JNICallState * jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
+    void Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
 
 public:
     
-    UniversalArchiveOpencallback(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+    UniversalArchiveOpencallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
     {
         TRACE_OBJECT_CREATION("UniversalArchiveOpencallback")
-        Init(jniCallState, initEnv, archiveOpenCallbackImpl);
+        Init(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
     }
     
     virtual ~UniversalArchiveOpencallback()

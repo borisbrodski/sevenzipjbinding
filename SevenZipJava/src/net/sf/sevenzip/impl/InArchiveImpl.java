@@ -72,6 +72,9 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	@SuppressWarnings("unused")
 	private int sevenZipArchiveInstance;
 
+	@SuppressWarnings("unused")
+	private int sevenZipArchiveInStreamInstance;
+
 	/**
 	 * {@inheritDoc}
 	 */

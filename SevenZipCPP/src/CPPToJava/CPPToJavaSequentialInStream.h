@@ -17,8 +17,8 @@ private:
 public:
 	MY_UNKNOWN_IMP
 
-	CPPToJavaSequentialInStream(CMyComPtr<JNICallState> jniCallState, JNIEnv * initEnv, jobject sequentialInStream)
-		: CPPToJavaAbstract(jniCallState, initEnv, sequentialInStream)
+	CPPToJavaSequentialInStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject sequentialInStream)
+		: CPPToJavaAbstract(nativeMethodContext, initEnv, sequentialInStream)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaSequentialInStream")
 	    

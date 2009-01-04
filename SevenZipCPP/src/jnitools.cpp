@@ -3,6 +3,7 @@
 
 #include <jni.h>
 #include "jnitools.h"
+#include "JNICallState.h"
 
 static int initialized = 0;
 
@@ -71,23 +72,6 @@ static void localinit(JNIEnv * env)
 	FATALIF(g_DateConstructor == NULL, "Can't find constructor java.util.Date(long)");
 
 	initialized = 1;
-}
-
-/**
- * Fatal error
- */
-void fatal(char * fmt, ...)
-{
-	va_list args;
-	va_start(args, fmt);
-	fputs("FATAL ERROR: ", stdout);
-	vprintf(fmt, args);
-	va_end(args);
-
-	fputc('\n', stdout);
-	fflush(stdout);
-
-	exit(-1);
 }
 
 /**
@@ -250,15 +234,16 @@ jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &prop
 /**
  * Convert PropVariant into java object: Integer, Double, String and Date
  */
-jobject PropVariantToObject(JNIEnv * env, NWindows::NCOM::CPropVariant * propVariant)
+jobject PropVariantToObject(JNIInstance * jniInstance, NWindows::NCOM::CPropVariant * propVariant)
 {
+    JNIEnv * env = jniInstance->GetEnv();
+    
     localinit(env);
 
 	if (propVariant->vt & VT_VECTOR || propVariant->vt & VT_ARRAY
 			|| propVariant->vt & VT_BYREF)
 	{
-		ThrowSevenZipException(
-				env,
+	    jniInstance->ThrowSevenZipException(
 				"Vector, array or byref flags of PropVariant are not supported. VarType: %i",
 				propVariant->vt);
 		return NULL;
@@ -340,7 +325,7 @@ jobject PropVariantToObject(JNIEnv * env, NWindows::NCOM::CPropVariant * propVar
 	case VT_CLSID:
 	case VT_BSTR_BLOB:
 	default:
-		ThrowSevenZipException(env,
+	    jniInstance->ThrowSevenZipException(
 				"Unsupported PropVariant type. VarType: %i", propVariant->vt);
 
 	};
@@ -351,16 +336,16 @@ jobject PropVariantToObject(JNIEnv * env, NWindows::NCOM::CPropVariant * propVar
 /**
  * Return Java-Class corresponding to the PropVariant Type 'vt'
  */
-jclass VarTypeToJavaType(JNIEnv * env, VARTYPE vt)
+jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt)
 {
-	localinit(env);
+    JNIEnv * env = jniInstance->GetEnv();
+
+    localinit(env);
 
 	if (vt & VT_VECTOR || vt & VT_ARRAY || vt & VT_BYREF)
 	{
-		ThrowSevenZipException(
-				env,
-				"Vector, array or byref flags of PropVariant are not supported. VarType: %i",
-				vt);
+	    jniInstance->ThrowSevenZipException(
+				"Vector, array or byref flags of PropVariant are not supported. VarType: %i", vt);
 		return NULL;
 	}
 
@@ -424,7 +409,7 @@ jclass VarTypeToJavaType(JNIEnv * env, VARTYPE vt)
 	case VT_CLSID:
 	case VT_BSTR_BLOB:
 
-		ThrowSevenZipException(env,
+	    jniInstance->ThrowSevenZipException(
 				"Unsupported PropVariant type. VarType: %i", vt);
 
 	};

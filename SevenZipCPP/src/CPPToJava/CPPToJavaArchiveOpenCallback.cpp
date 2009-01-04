@@ -6,9 +6,10 @@
 
 STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, const UInt64 *bytes)
 {
-    TRACE_OBJECT_CALL("SetCompleted")
+    TRACE_OBJECT_CALL("SetCompleted");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
 
     jobject filesLongObject = NULL;
     jobject bytesLongObject = NULL;
@@ -23,25 +24,17 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, con
         bytesLongObject = LongToObject(env, *bytes);
     }
     
-	env->ExceptionClear();
+	jniInstance.PrepareCall();
 	env->CallVoidMethod(_javaImplementation, _setCompletedMethodID, filesLongObject, bytesLongObject);
-	if (env->ExceptionCheck())
-	{
-        SaveLastOccurredException(env);
-        
-        EndCPPToJavaCall();
-		return S_FALSE;
-	}
-	
-    EndCPPToJavaCall();
-	return S_OK;
+	return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const UInt64 *bytes)
 {
-    TRACE_OBJECT_CALL("SetTotal")
+    TRACE_OBJECT_CALL("SetTotal");
     
-    JNIEnv * env = BeginCPPToJavaCall();
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
 
     jobject filesLongObject = NULL;
     jobject bytesLongObject = NULL;
@@ -56,17 +49,8 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const U
         bytesLongObject = LongToObject(env, *bytes);
     }
 
-	env->ExceptionClear();
+    jniInstance.PrepareCall();
 	env->CallVoidMethod(_javaImplementation, _setTotalMethodID, filesLongObject, bytesLongObject);
-	if (env->ExceptionCheck())
-	{
-	    SaveLastOccurredException(env);
-	    
-	    EndCPPToJavaCall();
-		return S_FALSE;
-	}
-	
-    EndCPPToJavaCall();
-	return S_OK;
+	return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK;
 }
 
