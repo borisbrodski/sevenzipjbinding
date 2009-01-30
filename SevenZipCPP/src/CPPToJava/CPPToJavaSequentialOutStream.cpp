@@ -19,10 +19,12 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
 	jint result = env->CallIntMethod(_javaImplementation, _writeMethodID, dataArray);
 	if (jniInstance.IsExceptionOccurs())
 	{
+	    jniInstance.GetEnv()->DeleteLocalRef(dataArray);
 		return S_FALSE;
 	}
+    jniInstance.GetEnv()->DeleteLocalRef(dataArray);
+    
 	*processedSize = (UInt32)result;
-	
 	return S_OK;
 }
 
