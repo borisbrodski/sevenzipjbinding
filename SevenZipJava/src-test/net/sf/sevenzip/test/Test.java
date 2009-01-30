@@ -26,6 +26,71 @@ public class Test {
 			"TestArchives//TestContent-crypted.7z",
 			"TestArchives//TestContent-files-with-pass.7z" };
 
+	private static int written = 0;
+
+	public static void main(String[] args) {
+		try {
+			String inputFile = "D:\\tmp\\BigFile\\file2.7z";
+			ISevenZipInArchive archive = SevenZip.openInArchive(
+					ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(
+							new RandomAccessFile(new File(inputFile), "r")),
+					new TestArchiveOpenCallback());
+
+			System.out.println("Items in archive: "
+					+ archive.getNumberOfItems());
+			archive.extract(new int[] { 0 }, false,
+					new IArchiveExtractCallback() {
+
+						@Override
+						public void setTotal(long total) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void setCompleted(long completeValue) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void setOperationResult(
+								ExtractOperationResult extractOperationResult) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public boolean prepareOperation(
+								ExtractAskMode extractAskMode) {
+							// TODO Auto-generated method stub
+							return true;
+						}
+
+						@Override
+						public ISequentialOutStream getStream(int index,
+								ExtractAskMode extractAskMode) {
+							return new ISequentialOutStream() {
+
+								@Override
+								public int write(byte[] data) {
+									written += data.length;
+									System.out.println(written + " ("
+											+ Runtime.getRuntime().freeMemory()
+											+ ")");
+									return data.length;
+								}
+							};
+						}
+
+					});
+			archive.close();
+			System.out.println("Written: " + written);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main1(String[] args) {
 
 		try {

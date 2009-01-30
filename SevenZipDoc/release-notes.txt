@@ -1,6 +1,10 @@
 7-Zip-JBinding Release Notes
 ============================
 
+
+Release - 0.4.1 (beta, bugfix release)
+    * Bug fixed: 2525877 (Memory leak)
+    
 Release - 0.4 (beta, extraction only)
     * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
         - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
