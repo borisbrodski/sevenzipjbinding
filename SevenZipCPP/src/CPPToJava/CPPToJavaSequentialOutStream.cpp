@@ -7,6 +7,12 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
 {
     TRACE_OBJECT_CALL("Write");
     
+    if (size == 0)
+    {
+        *processedSize = 0;
+        return S_OK;
+    }
+    
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
     
@@ -23,8 +29,15 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
 		return S_FALSE;
 	}
     jniInstance.GetEnv()->DeleteLocalRef(dataArray);
-    
 	*processedSize = (UInt32)result;
+	
+    if (result <= 0)
+    {
+        jniInstance.ThrowSevenZipException("Implementation of 'int ISequentialOutStream.write(byte[])' "
+                "should write at least one byte. Returned amount of written bytes: %i", result);
+        return S_FALSE;
+    }
+    
 	return S_OK;
 }
 
