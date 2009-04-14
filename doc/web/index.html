@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>Welcome to 7-Zip-JBinding project</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head><body>
+<a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+<!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+
+<div class="menubox">
+<a href="http://sevenzipjbind.sourceforge.net/">Home</a> |
+<a href="http://sourceforge.net/projects/sevenzipjbind/">SF-Home</a> |
+<a href="http://sourceforge.net/project/showfiles.php?group_id=210915"><b>Download</b></a> |
+<a href="http://sourceforge.net/forum/?group_id=210915">Forum</a> |
+<a href="http://sourceforge.net/tracker/?group_id=210915">Tracker</a> |
+<a href="http://sevenzipjbind.wiki.sourceforge.net/">Wiki</a>
+</div><br>
+
+<center><h1>Welcome to 7-Zip-JBinding project</h1><br><br>
+
+
+<table width="600" border="0"><tr><td>
+
+<h2>News</h2>
+<div class="infobox">
+<!--
+	<h2> News </h2>
+	<hr class="hr">
+ 	</div><div class="infobox">
+ -->
+30 January 2009: <b>7-Zip-JBinding Release: 0.4.1</b>
+<ul>
+    <li> Bug fixed: 2525877 (Memory leak)
+</ul>
+<br>
+4 January 2009: <b>7-Zip-JBinding Release: 0.4</b>
+<ul>
+    <li> Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
+    <li> Bug #2441909 fixed  (Can't extract encrypted 7-Zip files)
+    <li> New open/extract method for crypted archives and items (standard and simple interface)
+    <li> JUnit tests for the extraction of crypted archives and exception handling 
+    <li> New examples on the home page
+</ul>
+<br>
+9 August 2008: <b>7-Zip-JBinding Release: 0.3</b>
+<ul>
+<li> Simple extraction interface was introduced (easy information
+      gethering and extraction)
+<li> Bug #1928623 fixed (Large TAR files can't be extracted)
+<li> Bug #1928111 fixed (Error extracting files larger that 8192 bytes)
+</ul>
+<br>
+29 March 2008: <b>7-Zip-JBinding Release: 0.2</b>
+<ul>
+<li> Major bug in release build configuration was fixed
+<li> New interface methods to get of proeprties in human readable form 
+</ul>
+<br>
+16 March 2008: <b>7-Zip-JBinding first release: 0.1</b><br><br>
+7-Zip-JBinding is in "alpha" stage! 
+The first release was made and can be tested.<br> 
+ 
+Implemented features: 
+<ul>
+<li>query archive and archive item information
+<li>extraction of different types of archives (including progress information and password providing)
+</ul>
+</div>
+<br>
+
+<h2>First Steps</h2>
+Print count of the items in archive:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
+        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+</pre></div><br>
+
+Print list of the archived files using standard interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
+    System.<i>out</i>.println(
+            <font color="blue">"Filename: '"</font> 
+            + archive.getProperty(index, PropID.PATH)
+            + <font color="blue">"', packed size: "</font> 
+            + archive.getProperty(index, PropID.PACKED_SIZE));
+}
+</pre></div><br>
+
+Print list of the archived files using simple interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
+
+<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
+    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
+            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
+}
+</pre></div><br>
+
+Extract first item of the archive and print it:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
+archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
+    <font color="#646464">@Override</font>
+    <b>public int</b> write(<b>byte</b>[] data) {
+        stringBuilder.append(<b>new</b> String(data));
+        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
+    }
+});
+
+System.<i>out</i>.println(stringBuilder.toString());
+</pre></div><br>
+
+For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
+<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
+</table>
+</center>
+</html>

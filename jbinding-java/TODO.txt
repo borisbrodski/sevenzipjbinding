@@ -1,0 +1,11 @@
+7-Zip-JBinding TODO-List
+------------------------
+
+[ ]  1. Implement custom init method for loading 7-Zip-JBinding.dll and 7z.dll
+		(see tests) for example of setting "java.library.path"
+		
+[ ]  2. Implement Object->Variant in 'CPPToJavaArchiveOpenVolumeCallback::GetProperty'
+
+[x]  3. Implement safe error handling between threads
+
+[ ]  4. Get ride of ".printStackTrace()" called for exceptions, that was thrown out of a new attached thread.

@@ -1,0 +1,56 @@
+7-Zip-JBinding Release Notes
+============================
+
+
+Release - 0.4.1 (beta, bugfix release)
+    * Bug fixed: 2525877 (Memory leak)
+    
+Release - 0.4 (beta, extraction only)
+    * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
+        - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
+        
+    * New open/extract method for crypted archives and items (standard and simple interface)
+    
+    * JUnit tests for the extraction of crypted archives and exception handling 
+
+    * New examples on the home page
+     
+Release - 0.3 (beta, extraction only, simple extraction interface)
+    Some memory problems was fixed:
+        - Bug fixed #1928623 - Large TAR files can't be extracted
+        - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
+    
+    * Simple extraction interface - allows easy information
+      gethering and extraction of archives
+    
+    * JUnit tests for simple extraction interface
+    
+Release - 0.2 (alpha, extraction only)
+	* Major bug in release build configuration was fixed
+	
+	* JUnit Tests for extraction of different 7-Zip & Zip files
+	
+	* New interface methods to get human readable content (String) of proeprties 
+		- IInArchive.getStringArchiveProperty     for archive properties
+		- IInArchive.getStringProperty            for archive item properties
+
+Release - 0.1 (alpha, extraction only)
+	* Minimal amount of code, that can be testet by open source community!
+	
+	* Base extraction functionality for all archive formats:
+		- All interfaces/methods for extraction
+		- Enums with possible values of such parameters, as "extract ask mode"
+		- Extended error handling
+
+	* Implemented operations:
+		- Open an archive in specified archive format.
+		  Supports:
+			- Progress information
+			- Archive catalog password
+			- Semi-support for archive volumes (not tested)
+		- Query most of archive item information (name, size, creation date ...)
+		- Extract multiple items
+		  Supports:
+			- Progress information
+			- Archive item password
+ 

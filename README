@@ -1,0 +1,44 @@
+--- Welcome to 7-Zip-JBinding readme file ---
+
+7-Zip-JBinding is a free binding from java to 7-Zip free compress/decompress library (http://www.7-zip.org/)
+
+
+
+License Info
+------------
+
+7-Zip-JBinding and 7-Zip binarys are licensed under GNU LGPL.
+For more information about 7-Zip source code licenses please see
+7-Zip read me file.
+
+
+
+GNU LGPL information:
+---------------------
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+
+License notes
+-------------
+
+You can support development of 7-Zip by registering.
+
+7-Zip/7-Zip-JBinding is free software distributed under the GNU LGPL.
+If you need license with other conditions, write to
+http://www.7-zip.org/support.html
+
+
