@@ -1,3 +1,10 @@
+INCLUDE(FindJNI)
+
+IF(JAVA_INCLUDE_PATH) 
+    MESSAGE(STATUS "Building Java bindings" ) 
+ELSE(JAVA_INCLUDE_PATH) 
+    MESSAGE(WARNING " Java jni.h not found" ) 
+ENDIF(JAVA_INCLUDE_PATH) 
 
 IF(HAVE_WCHAR_H)
   OPTION(HAVE_UNICODE_WCHAR "Enable Unicode Support" YES)
@@ -15,6 +22,8 @@ ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 
 SET(P7ZIP_SRC ../p7zip)
 
+include_directories(${JAVA_INCLUDE_PATH})
+include_directories(${JAVA_INCLUDE_PATH2})
 include_directories(${P7ZIP_SRC}/CPP/myWindows)
 include_directories(${P7ZIP_SRC}/CPP/)
 include_directories(${P7ZIP_SRC}/CPP/include_windows)
@@ -62,7 +71,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-ADD_EXECUTABLE(test Client7z.cpp ${P7ZIP_CPP_FILES})
+#ADD_EXECUTABLE(test Client7z.cpp ${P7ZIP_CPP_FILES})
+add_library(test SHARED SevenZipJBinding.cpp Client7z.cpp ${P7ZIP_CPP_FILES})
 
 TARGET_LINK_LIBRARIES(test dl)
 
