@@ -1,4 +1,0 @@
-#Wed Dec 17 21:10:24 CET 2008
-eclipse.preferences.version=1
-environment/project/cdt.managedbuild.config.gnu.mingw.exe.debug.1664421969=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<environment append\="true" appendContributed\="false"/>\r\n
-environment/project/cdt.managedbuild.config.gnu.mingw.exe.release.490220856=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<environment append\="true" appendContributed\="true">\r\n<variable delimiter\=";" name\="SevenZipSource" operation\="replace" value\="D\:\\Privat\\SevenZipJBinding\\SevenZip\\"/>\r\n</environment>\r\n
