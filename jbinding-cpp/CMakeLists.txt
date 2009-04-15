@@ -22,6 +22,9 @@ ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 
 SET(P7ZIP_SRC ../p7zip)
 
+include_directories(/usr/include)
+include_directories(/usr/include/c++/4.2)
+include_directories(.)
 include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
 include_directories(${P7ZIP_SRC}/CPP/myWindows)
@@ -40,6 +43,7 @@ add_definitions(
     -DCOMPRESS_MF_MT
     -DBREAK_HANDLER
     -DBENCH_MT
+    -DTRACE_OBJECTS_ON
 )
 
 
@@ -61,6 +65,26 @@ SET(P7ZIP_CPP_FILES
     ${P7ZIP_SRC}/CPP/7zip/Common/FileStreams.cpp
 )
 
+SET(JBINDING_CPP_FILES
+    Debug.cpp
+    idd_def.cpp
+    JNITools.cpp
+    JNICallState.cpp
+    SevenZipException.cpp
+    SevenZipJBinding.cpp
+    UniversalArchiveOpenCallback.cpp
+    JavaToCPP/JavaToCPPInArchiveImpl.cpp
+    JavaToCPP/JavaToCPPSevenZip.cpp
+    CPPToJava/CPPToJavaArchiveExtractCallback.cpp
+    CPPToJava/CPPToJavaArchiveOpenCallback.cpp
+    CPPToJava/CPPToJavaArchiveOpenVolumeCallback.cpp
+    CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
+    CPPToJava/CPPToJavaInStream.cpp
+    CPPToJava/CPPToJavaProgress.cpp
+    CPPToJava/CPPToJavaSequentialInStream.cpp
+    CPPToJava/CPPToJavaSequentialOutStream.cpp
+)
+
 #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
 
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -72,11 +96,11 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 #ADD_EXECUTABLE(test Client7z.cpp ${P7ZIP_CPP_FILES})
-add_library(test SHARED SevenZipJBinding.cpp Client7z.cpp ${P7ZIP_CPP_FILES})
+add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_CPP_FILES})
 
-TARGET_LINK_LIBRARIES(test dl)
+TARGET_LINK_LIBRARIES(7-Zip-JBinding dl)
 
 IF(HAVE_PTHREADS) 
-  TARGET_LINK_LIBRARIES(test ${CMAKE_THREAD_LIBS_INIT}) 
+  TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT}) 
 ENDIF(HAVE_PTHREADS) 
 

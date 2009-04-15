@@ -1,5 +1,7 @@
 package test;
 
+import net.sf.sevenzip.SevenZip;
+
 public class Main {
 
 	private static native void nativeTest();
@@ -8,8 +10,7 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.loadLibrary("test");
-		nativeTest();
+
 	}
 
 }
