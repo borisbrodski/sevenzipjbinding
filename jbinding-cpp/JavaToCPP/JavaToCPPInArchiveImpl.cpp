@@ -490,9 +490,12 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
 
     NWindows::NCOM::CPropVariant propVariant;
 
+    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
     CHECK_HRESULT2(nativeMethodContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+    TRACE("2")
 
     inStream->ClearNativeMethodContext();
+    TRACE("3")
 
 	return PropVariantToObject(&jniInstance, &propVariant);
 

@@ -1,5 +1,3 @@
-#include <windows.h>
-
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
 #include "JNICallState.h"
@@ -230,33 +228,25 @@ jobject PropVariantToObject(JNIInstance * jniInstance,
 
 	localinit(env);
 
-	/*
-	 * Not necessary with p7zip
-	 if (propVariant->vt & VT_VECTOR || propVariant->vt & VT_ARRAY
-	 || propVariant->vt & VT_BYREF)
-	 {
-	 jniInstance->ThrowSevenZipException(
-	 "Vector, array or byref flags of PropVariant are not supported. VarType: %i",
-	 propVariant->vt);
-	 return NULL;
-	 }
-	 */
-
 	switch (propVariant->vt) {
 	case VT_EMPTY:
 	case VT_NULL:
+	case VT_VOID:
 		return NULL;
+
 	case VT_I1:
 		return IntToObject(env, propVariant->cVal);
 
 	case VT_I2:
 		return IntToObject(env, propVariant->iVal);
 
+	case VT_INT: // TODO Check this: Variant 'VT_INT'
 	case VT_I4:
 		return IntToObject(env, propVariant->lVal);
 
 	case VT_I8:
 		return LongToObject(env, propVariant->hVal.QuadPart);
+
 
 	case VT_UI1:
 		return IntToObject(env, propVariant->bVal);
@@ -264,20 +254,12 @@ jobject PropVariantToObject(JNIInstance * jniInstance,
 	case VT_UI2:
 		return IntToObject(env, propVariant->uiVal);
 
+	case VT_UINT: // TODO Check this: Variant 'VT_UINT'
 	case VT_UI4:
 		return IntToObject(env, propVariant->ulVal);
 
 	case VT_UI8:
 		return LongToObject(env, propVariant->uhVal.QuadPart);
-
-		/*
-		 * Not necessary with p7zip
-		 case VT_R4:
-		 return DoubleToObject(env, (double) propVariant->fltVal);
-
-		 case VT_R8:
-		 return DoubleToObject(env, propVariant->dblVal);
-		 */
 
 	case VT_BOOL:
 		return BooleanToObject(env, propVariant->boolVal);
@@ -285,44 +267,25 @@ jobject PropVariantToObject(JNIInstance * jniInstance,
 	case VT_BSTR:
 		return BSTRToObject(env, propVariant->bstrVal);
 
+
+	case VT_DATE:
 	case VT_FILETIME:
 		return FILETIMEToObject(env, propVariant->filetime);
-		/*
-		 * Not necessary with p7zip
-		 case VT_LPSTR:
-		 case VT_LPWSTR:
-		 */
 
+	 case VT_R4:
+// Not supported by MyWindows.cpp yet
+//		 return DoubleToObject(env, (double) propVariant->fltVal);
+	 case VT_R8:
+// Not supported by MyWindows.cpp yet
+//		 return DoubleToObject(env, propVariant->dblVal);
 	case VT_CY:
-	case VT_DATE:
 	case VT_DISPATCH:
-	case VT_INT:
-	case VT_UINT:
+	case VT_DECIMAL:
+	case VT_HRESULT:
 	case VT_ERROR:
 	case VT_VARIANT:
 	case VT_UNKNOWN:
-	case VT_DECIMAL:
-	case VT_VOID:
-	case VT_HRESULT:
-		/*
-		 * Not necessary with p7zip
-		 case VT_PTR:
-		 case VT_SAFEARRAY:
-		 case VT_CARRAY:
-		 case VT_USERDEFINED:
-		 case VT_RECORD:
-		 case VT_INT_PTR:
-		 case VT_UINT_PTR:
-		 case VT_BLOB:
-		 case VT_STREAM:
-		 case VT_STORAGE:
-		 case VT_STREAMED_OBJECT:
-		 case VT_STORED_OBJECT:
-		 case VT_BLOB_OBJECT:
-		 case VT_CF:
-		 case VT_CLSID:
-		 case VT_BSTR_BLOB:
-		 */
+
 	default:
 		jniInstance->ThrowSevenZipException(
 				"Unsupported PropVariant type. VarType: %i", propVariant->vt);
@@ -340,82 +303,51 @@ jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt) {
 
 	localinit(env);
 
-	/*
-	 * Not necessary with p7zip
-	 if (vt & VT_VECTOR || vt & VT_ARRAY || vt & VT_BYREF) {
-	 jniInstance->ThrowSevenZipException(
-	 "Vector, array or byref flags of PropVariant are not supported. VarType: %i",
-	 vt);
-	 return NULL;
-	 }
-	 */
-
 	switch (vt) {
+
+
 	case VT_EMPTY:
 	case VT_NULL:
+	case VT_VOID:
 		return NULL;
-	case VT_I1:
+
 	case VT_I2:
 	case VT_I4:
+	case VT_I1:
 	case VT_UI1:
 	case VT_UI2:
 	case VT_UI4:
+	case VT_INT:
+	case VT_UINT:
 		return g_IntegerClass;
 
 	case VT_I8:
 	case VT_UI8:
 		return g_LongClass;
 
-	case VT_R4:
-	case VT_R8:
-		return g_DoubleClass;
-
 	case VT_BOOL:
 		return g_BooleanClass;
 
-		/*
-		 * Not necessary with p7zip
-		 case VT_BSTR:
-		 case VT_LPSTR:
-		 case VT_LPWSTR:
-		 return g_StringClass;
-		 */
+	case VT_BSTR:
+		return g_StringClass;
+
+	case VT_DATE:
 	case VT_FILETIME:
 		return g_DateClass;
 
+	case VT_R4:
+	case VT_R8:
+// Not supported by MyWindows.cpp yet
+//		return g_DoubleClass;
 	case VT_CY:
-	case VT_DATE:
 	case VT_DISPATCH:
+	case VT_DECIMAL:
+	case VT_HRESULT:
 	case VT_ERROR:
 	case VT_VARIANT:
 	case VT_UNKNOWN:
-	case VT_DECIMAL:
-	case VT_VOID:
-	case VT_HRESULT:
-		/*
-		 * Not necessary with p7zip
-		 case VT_PTR:
-		 case VT_SAFEARRAY:
-		 case VT_CARRAY:
-		 case VT_USERDEFINED:
-		 case VT_RECORD:
-		 case VT_INT_PTR:
-		 case VT_UINT_PTR:
-		 case VT_BLOB:
-		 case VT_STREAM:
-		 case VT_STORAGE:
-		 case VT_STREAMED_OBJECT:
-		 case VT_STORED_OBJECT:
-		 case VT_BLOB_OBJECT:
-		 */
-	case VT_INT:
-	case VT_UINT:
-		/*
-		 * Not necessary with p7zip
-		 case VT_CF:
-		 case VT_CLSID:
-		 case VT_BSTR_BLOB:
-		 */
+
+	default:
 		jniInstance->ThrowSevenZipException(
 				"Unsupported PropVariant type. VarType: %i", vt);
 

@@ -1,12 +1,12 @@
 #ifndef SEVENZIPJBINDING_H_
 #define SEVENZIPJBINDING_H_
 
-#include <windows.h>
-#include <stdio.h>
-#include <jni.h>
-#include <time.h>
+#include "StdAfx.h"
 
-#include "Common/StringConvert.h"
+#include "Common/IntToString.h"
+//#include "Common/MyInitGuid.h"
+//#include "Common/StringConvert.h"
+
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
 #include "7zip/UI/Common/PropIDUtils.h"
 #include "7zip/Common/FileStreams.h"
@@ -15,6 +15,8 @@
 #include "7zip/Archive/IArchive.h"
 
 #include "Debug.h"
+
+#include <jni.h>
 
 #define P7ZIP_VERSION_MAJOR 4
 #define P7ZIP_VERSION_MINOR 65

@@ -142,7 +142,7 @@ void NativeMethodContext::ThrowSevenZipExceptionWithMessage(char * message)
 
     if (_firstThrowenExceptionMessage == NULL)
     {
-        TRACE1("SET: Setting new 'first throwen exception message' to '%s'", message);
+        TRACE1("SET: Setting new 'first thrown exception message' to '%s'", message);
         _firstThrowenExceptionMessage = strdup(message);
     }
     else
@@ -182,6 +182,8 @@ void NativeMethodContext::JNIThrowException(JNIEnv * env)
     FATALIF(exception == NULL, SEVEN_ZIP_EXCEPTION " can't be created");
 
     env->ReleaseStringUTFChars(messageString, _firstThrowenExceptionMessage);
+    _firstThrowenExceptionMessage = NULL;
+    // TODO fix the memory leak. It looks like 'ReleaseStringUTFChars()' frees _firstThrowenExceptionMessage as well.
     env->Throw(exception);
 }
 

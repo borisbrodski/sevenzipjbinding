@@ -1,0 +1,2 @@
+- Post a issue for p7zip: core dump if referencing not existing archive item (index out of range).
+  For example: GetProperty(10000000, 3). Extract function is also affected.

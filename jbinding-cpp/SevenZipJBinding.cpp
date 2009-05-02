@@ -31,32 +31,29 @@ void fatal(const char * fmt, ...) {
 }
 
 /**
- * Load 7-Zip DLL.
+ * Load 7-Zip dynamic library.
  *
  * Return: NULL - ok, else error message
  */
 const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
+	TRACE("Loading 7-Zip library")
 
-	NWindows::NDLL::CLibrary library;
+	static NWindows::NDLL::CLibrary library;
+
 	if (!library.Load(TEXT(SEVENZIPJBINDING_LIBRARY_NAME_FILENAME))) {
 		return "Can not load library";
 	}
-	*createObjectFunc =
-			(CreateObjectFunc) library.GetProcAddress("CreateObject");
+
+	*createObjectFunc = (CreateObjectFunc) library.GetProcAddress("CreateObject");
+
+	TRACE1("7-Zip CreateObjectFunc: 0x%08X", *createObjectFunc)
 
 	if (NULL == *createObjectFunc) {
 		return "Not a 7-Zip Library. Missing 'CreateObject' export name";
 	}
 
-//	HINSTANCE lib = LoadLibraryA(DLLFILENAME);
-//	if (NULL == lib)
-//	return "Error loading 7-Zip library: " DLLFILENAME;
+	TRACE("Library loaded")
 
-//	*createObjectFunc = (CreateObjectFunc) GetProcAddress(lib, "CreateObject");
-// CreateObjectFunc
-//	if (NULL == *createObjectFunc)
-//		return "Not a 7-Zip Library. Missing 'CreateObject' export name";
-
-	return NULL;
+	return NULL; // No error message
 }
 

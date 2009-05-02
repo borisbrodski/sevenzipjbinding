@@ -27,11 +27,11 @@ public interface IArchiveOpenVolumeCallback {
 	public Object getProperty(PropID propID);
 
 	/**
-	 * Return {@link IInStream} für volume with filename <code>filename</code>.
+	 * Return {@link IInStream} for volume with filename <code>filename</code>.
 	 * 
 	 * @param filename
 	 *            name of the next required volume
-	 * @return IInStream für required volume
+	 * @return IInStream for required volume
 	 */
 	public IInStream getStream(String filename);
 }

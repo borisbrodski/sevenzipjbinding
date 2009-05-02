@@ -95,7 +95,7 @@ public class Test {
 
 		try {
 			ISevenZipInArchive archive = SevenZip.openInArchive(
-					ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(
+					ArchiveFormat.ZIP, new RandomAccessFileInStream(
 							new RandomAccessFile(new File(
 									cryptedTestFilenames[0]), "r")),
 					new TestArchiveOpenCallback());
@@ -120,11 +120,11 @@ public class Test {
 						.getPropIDByIndex(i));
 				System.out.println("PropertyInfo: " + propertyInfo);
 				PropID propID = propertyInfo.propID;
-				Object object = archive.getProperty(4, propID);
+				Object object = archive.getProperty(0, propID);
 				System.out.println(propID.toString() + ": " + object);
 			}
 			System.out.println("Extracting ...");
-			archive.extract(new int[] { 4, 3 }, false,
+			archive.extract(new int[] { 0,1 }, false,
 					new TestArchiveExtractCallback());
 
 			// archive.openArchive(f, inStream)

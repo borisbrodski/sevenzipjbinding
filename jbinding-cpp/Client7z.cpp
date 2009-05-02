@@ -20,6 +20,12 @@
 #include "7zip/IPassword.h"
 #include "7zip/MyVersion.h"
 
+#include <jni.h>
+
+// TODO
+extern "C" const GUID guids[] = {NULL};
+extern "C" const int guidsCount = sizeof(guids) / sizeof(guids[0]);
+
 // use another CLSIDs, if you want to support other formats (zip, rar, ...).
 // {23170F69-40C1-278A-1000-000110070000}
 DEFINE_GUID(CLSID_CFormat7z,
@@ -27,7 +33,7 @@ DEFINE_GUID(CLSID_CFormat7z,
 
 using namespace NWindows;
 
-#define kDllName "7z.dll"
+#define kDllName "./7z.dll"
 
 static const char *kCopyrightString = MY_7ZIP_VERSION
 " ("  kDllName " client) "
@@ -659,7 +665,7 @@ STDMETHODIMP CArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passwordIsDef
 
 //////////////////////////////////////////////////////////////////////////
 // Main function
-
+#define MY_CDECL
 int MY_CDECL main(int argc, char* argv[])
 {
   #ifdef _WIN32
@@ -850,4 +856,14 @@ int MY_CDECL main(int argc, char* argv[])
     }
   }
   return 0;
+}
+
+extern "C" void Java_test_Main_clientTest(JNIEnv * env)
+{
+	printf("Hello from client\n");
+
+	char *args[] = {"/home/boris/xxx", "l", "/home/boris/Tmp/4/test.7z"};
+	main(3, args);
+
+	printf("Bye\n");
 }
