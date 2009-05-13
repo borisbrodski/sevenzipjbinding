@@ -1,15 +1,28 @@
+#include "StdAfx.h"
+
+#include "Common/MyInitGuid.h"
+
+
 #include "SevenZipJBinding.h"
 
 #include "JNITools.h"
 #include "CLSIDs.h"
 
-#include "Java/all.h"
+#include "Java/net_sf_sevenzip_SevenZip.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "UniversalArchiveOpenCallback.h"
 
 #include "JNICallState.h"
 
-CreateObjectFunc createObjectFunc;
+using namespace NWindows;
+using namespace NFile;
+
+
+#include "7zip/UI/Common/LoadCodecs.h"
+
+//CreateObjectFunc createObjectFunc;
+STDAPI CreateCoder(const GUID *clsid, const GUID *iid, void **outObject);
+STDAPI CreateArchiver(const GUID *classID, const GUID *iid, void **outObject);
 
 /*
  * Class:     net_sf_sevenzip_SevenZip
@@ -18,14 +31,14 @@ CreateObjectFunc createObjectFunc;
  */
 JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSevenZipLibrary(
 		JNIEnv * env, jclass thiz) {
-	const char * msg = load7ZipLibrary(&createObjectFunc);
+	//const char * msg = load7ZipLibrary(&createObjectFunc);
 
-	if (msg) {
-		TRACE1("Error initializing 7-zip library: %s", msg)
-		return env->NewStringUTF(msg);
-	}
+	//if (msg) {
+	//	TRACE1("Error initializing 7-zip library: %s", msg)
+	//	return env->NewStringUTF(msg);
+	//}
 
-	TRACE("7-zip library initialized")
+	TRACE("7-zip library initialized (TODO)")
 
 	return NULL;
 }
@@ -36,7 +49,7 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSeven
  * Signature: (ILnet/sf/sevenzip/IInStream;Lnet/sf/sevenzip/IArchiveOpenCallback;)Lnet/sf/sevenzip/IInArchive;
  */
 JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive(JNIEnv * env,
-		jclass thiz, jint format, jobject inStream,
+		jclass thiz, jstring formatName, jobject inStream,
 		jobject archiveOpenCallbackImpl) {
 	TRACE("SevenZip.nativeOpenArchive()")
 
@@ -55,16 +68,71 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 
 	CMyComPtr<IInArchive> archive;
 
+
+	CCodecs *codecs = new CCodecs;
+	CMyComPtr<
+	    #ifdef EXTERNAL_CODECS
+	    ICompressCodecsInfo
+	    #else
+	    IUnknown
+	    #endif
+	    > compressCodecsInfo = codecs;
+
+	HRESULT result = codecs->Load();
+	if (result != S_OK)
+		fatal("result != S_OK");
+
+
+
+	UString s(L"zip");
+
+	int index = codecs->FindFormatForArchiveType(s);
+	if (index == -1) {
+        fatal("Not registered archive format: '%S'", (const wchar_t*)s);
+	}
+
+	fatal("Success: %i", formatIndices.Size());
+
+	/*
     CMyComPtr<IOutArchive> outArchive;
+
+
 	TRACE2("Using format: %i, fnc: 0x%08X", format, createObjectFunc)
 
-    if (createObjectFunc(&CLSID_CFormat7z, &IID_IOutArchive, (void **)&outArchive) != S_OK)
-	{
-		fatal("Can't get class object !!!!!!!!!!!!");
+	CCodecs *codecs = new CCodecs;
+	CMyComPtr<
+	    #ifdef EXTERNAL_CODECS
+	    ICompressCodecsInfo
+	    #else
+	    IUnknown
+	    #endif
+	    > compressCodecsInfo = codecs;
+	  HRESULT result = codecs->Load();
+	  if (result != S_OK)
+			fatal("result != S_OK");
 
+*/
+
+/*
+	for (int i = 0; i < 20; i++) {
+	  printf("Name: '%S'\n", (const wchar_t*)(codecs->GetCodecName(i)));
+	  fflush(stdout);
 	}
-	TRACE("HURA !!!!!!!!!!!!!!")
-	if (createObjectFunc(&guids[format], &IID_IInArchive, (void **)&archive) != S_OK)
+*/
+	/*
+	  UString s(L"zip");
+
+	CIntVector formatIndices;
+	if (codecs->FindFormatForArchiveType(s) == -1)
+	{
+		fatal("Can't get class object");
+	}
+
+	fatal("Success!");
+*/
+	return NULL;
+/*
+	if (CreateArchiver(&guids[format], &IID_IInArchive, (void **)&archive) != S_OK)
 	{
 		fatal("Can't get class object");
 	}
@@ -109,6 +177,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 
 	return InArchiveImplObject;
 
+*/
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 

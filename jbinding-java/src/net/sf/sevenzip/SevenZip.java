@@ -65,7 +65,7 @@ public class SevenZip {
 		}
 	}
 
-	private static native ISevenZipInArchive nativeOpenArchive(int format,
+	private static native ISevenZipInArchive nativeOpenArchive(String formatName,
 			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
 			throws SevenZipException;
 
@@ -91,7 +91,7 @@ public class SevenZip {
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat,
 			IInStream inStream, IArchiveOpenCallback archiveOpenCallback)
 			throws SevenZipException {
-		return nativeOpenArchive(archiveFormat.ordinal(), inStream,
+		return nativeOpenArchive(archiveFormat.getMethodName(), inStream,
 				archiveOpenCallback);
 	}
 
@@ -119,7 +119,7 @@ public class SevenZip {
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat,
 			IInStream inStream, String passwordForOpen)
 			throws SevenZipException {
-		return nativeOpenArchive(archiveFormat.ordinal(), inStream,
+		return nativeOpenArchive(archiveFormat.getMethodName(), inStream,
 				new ArchiveOpenCryptoCallback(passwordForOpen));
 	}
 
@@ -141,6 +141,6 @@ public class SevenZip {
 	 */
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat,
 			IInStream inStream) throws SevenZipException {
-		return nativeOpenArchive(archiveFormat.ordinal(), inStream, null);
+		return nativeOpenArchive(archiveFormat.getMethodName(), inStream, null);
 	}
 }

@@ -1,7 +1,7 @@
 
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
-#include "Java/all.h"
+#include "Java/net_sf_sevenzip_impl_InArchiveImpl.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"

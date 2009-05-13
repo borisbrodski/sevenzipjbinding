@@ -1,15 +1,8 @@
+# http://www.airport1.de/blog/archives/456-cMake-and-Java-it-works!-How-to-build-Java-Projects-with-cMake.html
 PROJECT(SevenZipjBindingJava Java)
 
 INCLUDE(FindJava)
 
-
-#SET(BUILD_JAVA ${PROJECT_BINARY_DIR}/build-java)
-#FILE(MAKE_DIRECTORY ${BUILD_JAVA})
-
-#ADD_CUSTOM_COMMAND(TARGET jar POST_BUILD
-#    COMMAND ${JAVA_COMPILE} ARGS -d ${BUILD_JAVA} -source 1.5 -target 1.5 `find ${CMAKE_SOURCE_DIR}/jbinding-java/src -iname "*.java"`
-#    COMMENT Compiling java
-#)
 SET(JAVA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(SEVENZIP_JBINDING_JAR ${PROJECT_BINARY_DIR}/sevenzip-jbinding.jar)
 SET(JAVA_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
@@ -35,7 +28,6 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIP_JBINDING_JAR}
         ARGS @${JAVAC_ARGS_FILE}
     COMMAND ${JAVA_ARCHIVE}
         ARGS cf ${SEVENZIP_JBINDING_JAR} -C ${JAVA_BIN_DIR} .
-    MAIN_DEPENDENCY /home/boris/Programming/SevenZipJBinding/SevenZipJBinding/jbinding-java/CMakeLists.txt
     DEPENDS ${JAVA_SOURCE_FILES_FULL}
     WORKING_DIRECTORY ${JAVA_SOURCE_DIR}
     COMMENT Compiling java)
@@ -51,5 +43,3 @@ ADD_CUSTOM_TARGET(sevenzip-jbinding.jar ALL
 #    LIST(APPEND JAVA_CLASS_FILES "${JAVA_BIN_DIR}/${TMP}")
 #    MESSAGE("${TMP}")
 #ENDFOREACH(F)
-
-#ADD_LIBRARY(jar src/test/BuildTest.java)

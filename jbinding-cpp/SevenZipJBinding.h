@@ -68,9 +68,11 @@
     return returnvalue;
 
 
-typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
-		const GUID *interfaceID, void **outObject);
+//typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
+//		const GUID *interfaceID, void **outObject);
 
+
+typedef HRESULT (*CreateObjectFunc)(const GUID *clsid, const GUID *iid, void **outObject);
 
 /**
  * Fatal error

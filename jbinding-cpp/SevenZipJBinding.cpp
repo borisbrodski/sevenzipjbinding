@@ -6,12 +6,64 @@
 // Description : Hello World in C++, Ansi-style
 //============================================================================
 
+
 #include <stdlib.h>
 
 #include "SevenZipJBinding.h"
+// #include "Common/MyInitGuid.h"
 
-#include "Windows/DLL.h"
+// #include "Windows/DLL.h"
 
+/*
+#include "Common/CommandLineParser.h"
+#include "Common/MyException.h"
+#include "Common/IntToString.h"
+#include "Common/ListFileUtils.h"
+#include "Common/StdInStream.h"
+#include "Common/StdOutStream.h"
+#include "Common/StringConvert.h"
+#include "Common/StringToInt.h"
+#include "Common/Wildcard.h"
+
+#include "Windows/FileDir.h"
+#include "Windows/FileName.h"
+#include "Windows/Defs.h"
+#include "Windows/Error.h"
+#ifdef _WIN32
+#include "Windows/MemoryLock.h"
+#endif
+
+#include "7zip/IPassword.h"
+#include "7zip/ICoder.h"
+#include "7zip/UI/Common/UpdateAction.h"
+#include "7zip/UI/Common/Update.h"
+#include "7zip/UI/Common/Extract.h"
+#include "7zip/UI/Common/ArchiveCommandLine.h"
+#include "7zip/UI/Common/ExitCode.h"
+#ifdef EXTERNAL_CODECS
+#include "../Common/LoadCodecs.h"
+#endif
+
+#include "7zip/Compress/LZMA_Alone/LzmaBenchCon.h"
+
+#include "7zip/UI/Console/List.h"
+#include "7zip/UI/Console/OpenCallbackConsole.h"
+#include "7zip/UI/Console/ExtractCallbackConsole.h"
+#include "7zip/UI/Console/UpdateCallbackConsole.h"
+
+#include "7zip/MyVersion.h"
+*/
+/*
+#if defined( _WIN32) && defined( _7ZIP_LARGE_PAGES)
+extern "C"
+{
+#include "../../../../C/Alloc.h"
+}
+#endif
+
+#include "myPrivate.h"
+#include "Windows/System.h"
+*/
 
 
 /**
@@ -30,6 +82,8 @@ void fatal(const char * fmt, ...) {
 	exit(-1);
 }
 
+
+
 /**
  * Load 7-Zip dynamic library.
  *
@@ -38,6 +92,8 @@ void fatal(const char * fmt, ...) {
 const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
 	TRACE("Loading 7-Zip library")
 
+	*createObjectFunc = NULL;
+	/*
 	static NWindows::NDLL::CLibrary library;
 
 	if (!library.Load(TEXT(SEVENZIPJBINDING_LIBRARY_NAME_FILENAME))) {
@@ -55,5 +111,6 @@ const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
 	TRACE("Library loaded")
 
 	return NULL; // No error message
+	*/
 }
 
