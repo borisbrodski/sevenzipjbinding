@@ -1,6 +1,6 @@
 PROJECT(SevenZipJBindingCPP)
 
-INCLUDE(FindJNI)
+INCLUDE(../cmake/FindJNIExtended.cmake)
 
 IF(JAVA_INCLUDE_PATH) 
     MESSAGE(STATUS "Building Java bindings" ) 
@@ -32,6 +32,7 @@ include_directories(${JAVA_INCLUDE_PATH2})
 include_directories(${P7ZIP_SRC}/CPP/myWindows)
 include_directories(${P7ZIP_SRC}/CPP/)
 include_directories(${P7ZIP_SRC}/CPP/include_windows)
+include_directories(${PROJECT_BINARY_DIR}/javah)
 
 
 add_definitions(
@@ -85,7 +86,6 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Common/InBuffer.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/InOutTempBuffer.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/LimitedStreams.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Common/InBuffer.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/LockedStream.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/MemBlocks.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/MethodId.cpp
@@ -330,10 +330,29 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 #ADD_EXECUTABLE(Client7z Client7z.cpp ${P7ZIP_SOURCE_FILES})
 #TARGET_LINK_LIBRARIES(Client7z dl)
 
+#<exec executable="${javah}">                                                                                 
+#                        <arg value="-jni" />                                                                                 
+#                        <arg value="-d" />                                                                                   
+#                        <arg path="${workspace}/${sevenzip.javaheaders}" />                                                  
+#                        <arg value="-force" />                                                                               
+#                        <arg value="-classpath" />                                                                           
+#                        <arg path="${basedir}/bin" />                                                                        
+#                        <arg value="net.sf.sevenzip.SevenZip" />                                                             
+#                        <arg value="net.sf.sevenzip.impl.InArchiveImpl" />                                                   
+#                </exec>
+SET(JAVAH_OUTPUT_DIR ${PROJECT_BINARY_DIR}/javah)
+FILE(MAKE_DIRECTORY ${JAVAH_OUTPUT_DIR})
+SET(JAVAH_JAVA_CLASS_LIST
+    net.sf.sevenzip.SevenZip
+    net.sf.sevenzip.impl.InArchiveImpl
+)
+MESSAGE("JAR: ${SEVENZIP_JBINDING_JAR}")
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND   
-                   WORKING_DIRECTORY ... 
-                   COMMENT
+                   COMMAND ${JAVA_JAVAH} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
+                   DEPENDS ${SEVENZIP_JBINDING_JAR}
+                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jbinding-java/bin
+                   COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+)
 
 add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${JBINDING_JAVAH_H_FILES})
 

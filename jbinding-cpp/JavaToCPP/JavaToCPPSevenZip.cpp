@@ -8,7 +8,7 @@
 #include "JNITools.h"
 #include "CLSIDs.h"
 
-#include "Java/net_sf_sevenzip_SevenZip.h"
+#include "net_sf_sevenzip_SevenZip.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "UniversalArchiveOpenCallback.h"
 
@@ -60,11 +60,12 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 	JNIInstance jniInstance(&nativeMethodContext);
 
 	// Test format
-	if (format < 0 || format >= guidsCount)
-	{
-		nativeMethodContext.ThrowSevenZipException("Format %i out of range. There are only %i formats availible", format, guidsCount);
-		return NULL;
-	}
+	// TODO
+//	if (format < 0 || format >= guidsCount)
+//	{
+//		nativeMethodContext.ThrowSevenZipException("Format %i out of range. There are only %i formats availible", format, guidsCount);
+//		return NULL;
+//	}
 
 	CMyComPtr<IInArchive> archive;
 
@@ -91,7 +92,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
         fatal("Not registered archive format: '%S'", (const wchar_t*)s);
 	}
 
-	fatal("Success: %i", formatIndices.Size());
+	fatal("Success");
 
 	/*
     CMyComPtr<IOutArchive> outArchive;

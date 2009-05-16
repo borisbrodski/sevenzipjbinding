@@ -297,7 +297,7 @@ HRESULT CCodecs::LoadFormats()
     ReadBoolProp(getProp, getProp2, i, NArchive::kUpdate, item.UpdateEnabled);
     if (item.UpdateEnabled)
       ReadBoolProp(getProp, getProp2, i, NArchive::kKeepName, item.KeepName);
-    
+
     if (ReadProp(getProp, getProp2, i, NArchive::kStartSignature, prop) == S_OK)
       if (prop.vt == VT_BSTR)
       {

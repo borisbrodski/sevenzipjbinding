@@ -7,9 +7,8 @@ PROJECT(SevenZipJBinding)
 
 #${JAVA_RUNTIME)
 
-#ADD_SUBDIRECTORY(p7zip)
+ADD_SUBDIRECTORY(jbinding-java)
 ADD_SUBDIRECTORY(jbinding-cpp)
-#ADD_SUBDIRECTORY(jbinding-java)
 
 
     
