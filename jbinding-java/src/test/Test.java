@@ -28,9 +28,9 @@ public class Test {
 
 	private static int written = 0;
 
-	public static void main1(String[] args) {
+	public static void main(String[] args) {
 		try {
-			String inputFile = "D:\\tmp\\BigFile\\file2.7z";
+			String inputFile = "../testdata/doc.zip";
 			ISevenZipInArchive archive = SevenZip.openInArchive(
 					ArchiveFormat.ZIP, new RandomAccessFileInStream(
 							new RandomAccessFile(new File(inputFile), "r")),
@@ -91,7 +91,7 @@ public class Test {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main1(String[] args) {
 
 		try {
 			ISevenZipInArchive archive = SevenZip.openInArchive(

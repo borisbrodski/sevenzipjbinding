@@ -57,7 +57,7 @@ public class SevenZip {
 		}
 		initialized = true;
 
-		System.loadLibrary("7-Zip-JBinding");
+		System.load("/home/boris/Coding/SevenZipJBinding/SevenZipJBinding-build/jbinding-cpp/lib7-Zip-JBinding.so");
 		String errorMessage = nativeInitSevenZipLibrary();
 		if (errorMessage != null) {
 			throw new RuntimeException("Error initializing 7-Zip-JBinding: "

@@ -7,8 +7,6 @@
 #include "JNICallState.h"
 
 
-
-
 static int initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
 static jfieldID g_InStreamAttributeFieldID;
@@ -195,9 +193,9 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGe
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
 	CPPToJavaInStream * p = GetInStream(env, thiz);
-	TRACE1("!!!!!! p = 0x%08X", p);
+
 	CMyComPtr<CPPToJavaInStream> inStream(p);
-	TRACE("22222");
+
     inStream->SetNativMethodContext(&nativeMethodContext);
 
     if (archive == NULL)

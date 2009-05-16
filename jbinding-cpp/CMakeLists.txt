@@ -46,7 +46,7 @@ add_definitions(
     -DCOMPRESS_MF_MT
     -DBREAK_HANDLER
     -DBENCH_MT
-    -DTRACE_OBJECTS_ON
+#    -DTRACE_OBJECTS_ON
 )
 SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/myWindows/myGetTickCount.cpp

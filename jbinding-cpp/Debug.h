@@ -1,7 +1,8 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-//#define _DEBUG // TODO Manage it at least out of CMakeLists.txt
+// #define _DEBUG // TODO Manage it at least out of CMakeLists.txt
+#define TRACE_ON
 
 #ifdef _DEBUG
 #define TRACE_ON

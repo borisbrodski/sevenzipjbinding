@@ -3,7 +3,6 @@
 
 #define EXCEPTION_MESSAGE_MAX_SIZE 4000
 
-// TODO Rename to SevenZipException
 class SevenZipException : public Object
 {
 private:

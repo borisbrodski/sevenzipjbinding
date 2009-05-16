@@ -6,7 +6,6 @@
 #include "SevenZipJBinding.h"
 
 #include "JNITools.h"
-#include "CLSIDs.h"
 
 #include "net_sf_sevenzip_SevenZip.h"
 #include "CPPToJava/CPPToJavaInStream.h"
@@ -59,79 +58,107 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 
 	JNIInstance jniInstance(&nativeMethodContext);
 
-	// Test format
-	// TODO
-//	if (format < 0 || format >= guidsCount)
-//	{
-//		nativeMethodContext.ThrowSevenZipException("Format %i out of range. There are only %i formats availible", format, guidsCount);
-//		return NULL;
-//	}
-
-	CMyComPtr<IInArchive> archive;
-
 
 	CCodecs *codecs = new CCodecs;
 	CMyComPtr<
-	    #ifdef EXTERNAL_CODECS
-	    ICompressCodecsInfo
-	    #else
-	    IUnknown
-	    #endif
-	    > compressCodecsInfo = codecs;
+		#ifdef EXTERNAL_CODECS
+		ICompressCodecsInfo
+		#else
+		IUnknown
+		#endif
+		> compressCodecsInfo = codecs;
 
 	HRESULT result = codecs->Load();
 	if (result != S_OK)
-		fatal("result != S_OK");
+		fatal("codecs->Load() return error: 0x%08X", result);
 
 
-
-	UString s(L"zip");
-
-	int index = codecs->FindFormatForArchiveType(s);
-	if (index == -1) {
-        fatal("Not registered archive format: '%S'", (const wchar_t*)s);
-	}
-
-	fatal("Success");
-
-	/*
-    CMyComPtr<IOutArchive> outArchive;
-
-
-	TRACE2("Using format: %i, fnc: 0x%08X", format, createObjectFunc)
-
-	CCodecs *codecs = new CCodecs;
-	CMyComPtr<
-	    #ifdef EXTERNAL_CODECS
-	    ICompressCodecsInfo
-	    #else
-	    IUnknown
-	    #endif
-	    > compressCodecsInfo = codecs;
-	  HRESULT result = codecs->Load();
-	  if (result != S_OK)
-			fatal("result != S_OK");
-
-*/
-
-/*
-	for (int i = 0; i < 20; i++) {
-	  printf("Name: '%S'\n", (const wchar_t*)(codecs->GetCodecName(i)));
-	  fflush(stdout);
-	}
-*/
-	/*
-	  UString s(L"zip");
-
-	CIntVector formatIndices;
-	if (codecs->FindFormatForArchiveType(s) == -1)
+	int index = -1;
+	UString formatNameString;
+	if (formatName)
 	{
-		fatal("Can't get class object");
+		const jchar * formatNameJChars = env->GetStringChars(formatName, NULL);
+		if (sizeof(wchar_t) == sizeof(jchar)) {
+			formatNameString = (wchar_t*)formatNameJChars;
+		} else {
+			jsize len = env->GetStringLength(formatName);
+			wchar_t * formatNameWCharT = new wchar_t[len + 1];
+			for (int i = 0; i < len; i++) {
+				formatNameWCharT[i] = (wchar_t)formatNameJChars[i];
+			}
+			formatNameWCharT[len] = 0;
+			formatNameString = formatNameWCharT;
+			delete [] formatNameWCharT;
+		}
+
+		env->ReleaseStringChars(formatName, formatNameJChars);
+
+		TRACE1("Format: '%S'\n", (const wchar_t*)formatNameString);
+		index = codecs->FindFormatForArchiveType(formatNameString);
+		if (index == -1) {
+			fatal("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
+		}
 	}
 
-	fatal("Success!");
-*/
-	return NULL;
+	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback;
+	if (archiveOpenCallbackImpl)
+	{
+		TRACE("Using archive open callback")
+
+		archiveOpenCallback = new UniversalArchiveOpencallback(&nativeMethodContext, env, archiveOpenCallbackImpl);
+	}
+
+	CMyComPtr<IInArchive> archive;
+	CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
+
+	if (index != -1) {
+		// Use one specified codec
+		codecs->CreateInArchive(index, archive);
+	    if (!archive) {
+	    	fatal("Can't get InArchive class for codec %S",  (const wchar_t *)formatNameString);
+	    }
+
+		TRACE1("Opening using codec %S", (const wchar_t*)codecs->Formats[index].Name);
+
+		HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
+	    if (result == S_FALSE) {
+			TRACE1("Result = 0x%08X, throwing exception...", (int)result)
+
+			nativeMethodContext.ThrowSevenZipException(result, "Archive file (format: %S) can't be opened", (const wchar_t *)formatNameString);
+			return NULL;
+		}
+	} else {
+		// Try all known codecs
+		TRACE("Iterating through all available codecs...")
+		bool success = false;
+		for (int i = 0; i < codecs->Formats.Size(); i++) {
+			TRACE1("Trying codec %S", (const wchar_t*)codecs->Formats[i].Name);
+
+			stream->Seek(0, STREAM_SEEK_SET, NULL);
+
+			codecs->CreateInArchive(i, archive);
+		    if (!archive) {
+		    	continue;
+		    }
+
+		    HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
+		    if (result == S_FALSE) {
+		    	continue;
+			}
+
+		    success = true;
+		    break;
+		}
+
+		if (!success) {
+			TRACE("Success=false, throwing exception...")
+
+			nativeMethodContext.ThrowSevenZipException("Archive file can't be opened with none of the registered codecs");
+			return NULL;
+		}
+
+	}
+
 /*
 	if (CreateArchiver(&guids[format], &IID_IInArchive, (void **)&archive) != S_OK)
 	{
@@ -162,6 +189,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 		nativeMethodContext.ThrowSevenZipException(openResult, "Archive file (format: %i) can't be opened", format);
 		return NULL;
 	}
+*/
 
 	TRACE("Archive opened")
 
@@ -178,7 +206,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchi
 
 	return InArchiveImplObject;
 
-*/
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
