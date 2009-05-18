@@ -2,6 +2,9 @@ PROJECT(SevenZipJBindingCPP)
 
 INCLUDE(../cmake/FindJNIExtended.cmake)
 
+GET_PROPERTY(SEVENZIP_JBINDING_JAR  GLOBAL PROPERTY SEVENZIP_JBINDING_JAR) 
+
+
 IF(JAVA_INCLUDE_PATH) 
     MESSAGE(STATUS "Building Java bindings" ) 
 ELSE(JAVA_INCLUDE_PATH) 
@@ -346,7 +349,7 @@ SET(JAVAH_JAVA_CLASS_LIST
     net.sf.sevenzip.SevenZip
     net.sf.sevenzip.impl.InArchiveImpl
 )
-MESSAGE("JAR: ${SEVENZIP_JBINDING_JAR}")
+
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
                    COMMAND ${JAVA_JAVAH} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
                    DEPENDS ${SEVENZIP_JBINDING_JAR}
