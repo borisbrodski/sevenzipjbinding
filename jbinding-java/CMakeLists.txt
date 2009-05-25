@@ -1,8 +1,6 @@
 # http://www.airport1.de/blog/archives/456-cMake-and-Java-it-works!-How-to-build-Java-Projects-with-cMake.html
 PROJECT(SevenZipjBindingJava Java)
 
-INCLUDE(FindJava)
-
 SET(JAVA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 SET(SEVENZIP_JBINDING_JAR ${PROJECT_BINARY_DIR}/sevenzip-jbinding.jar)
 SET(JAVA_BIN_DIR ${PROJECT_BINARY_DIR}/bin)
