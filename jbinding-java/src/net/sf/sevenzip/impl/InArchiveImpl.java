@@ -8,7 +8,6 @@ import net.sf.sevenzip.ISequentialOutStream;
 import net.sf.sevenzip.ISevenZipInArchive;
 import net.sf.sevenzip.PropID;
 import net.sf.sevenzip.PropertyInfo;
-import net.sf.sevenzip.SevenZip;
 import net.sf.sevenzip.SevenZipException;
 import net.sf.sevenzip.simple.ISimpleInArchive;
 import net.sf.sevenzip.simple.impl.SimpleInArchiveImpl;
@@ -20,13 +19,11 @@ import net.sf.sevenzip.simple.impl.SimpleInArchiveImpl;
  * 
  */
 public class InArchiveImpl implements ISevenZipInArchive {
-	private static final class ExtractSlowCryptoCallback extends
-			ExtractSlowCallback implements ICryptoGetTextPassword {
+	private static final class ExtractSlowCryptoCallback extends ExtractSlowCallback implements ICryptoGetTextPassword {
 
 		private String password;
 
-		public ExtractSlowCryptoCallback(
-				ISequentialOutStream sequentialOutStream, String password) {
+		public ExtractSlowCryptoCallback(ISequentialOutStream sequentialOutStream, String password) {
 			super(sequentialOutStream);
 			this.password = password;
 		}
@@ -50,23 +47,16 @@ public class InArchiveImpl implements ISevenZipInArchive {
 		public void setCompleted(long completeValue) {
 		}
 
-		public void setOperationResult(
-				ExtractOperationResult extractOperationResult) {
+		public void setOperationResult(ExtractOperationResult extractOperationResult) {
 		}
 
 		public boolean prepareOperation(ExtractAskMode extractAskMode) {
 			return true;
 		}
 
-		public ISequentialOutStream getStream(int index,
-				ExtractAskMode extractAskMode) {
-			return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam
-					: null;
+		public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) {
+			return extractAskMode.equals(ExtractAskMode.EXTRACT) ? sequentialOutStreamParam : null;
 		}
-	}
-
-	static {
-		SevenZip.initSevenZipNativeLibrary();
 	}
 
 	@SuppressWarnings("unused")
@@ -78,8 +68,8 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void extract(int[] indices, boolean testMode,
-			IArchiveExtractCallback extractCallback) throws SevenZipException {
+	public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
+			throws SevenZipException {
 
 		nativeExtract(indices, testMode, extractCallback);
 	}
@@ -87,27 +77,22 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void extractSlow(int index, ISequentialOutStream outStream)
-			throws SevenZipException {
-		nativeExtract(new int[] { index }, false, new ExtractSlowCallback(
-				outStream));
+	public void extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException {
+		nativeExtract(new int[] { index }, false, new ExtractSlowCallback(outStream));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void extractSlow(int index, ISequentialOutStream outStream,
-			String password) throws SevenZipException {
-		nativeExtract(new int[] { index }, false,
-				new ExtractSlowCryptoCallback(outStream, password));
+	public void extractSlow(int index, ISequentialOutStream outStream, String password) throws SevenZipException {
+		nativeExtract(new int[] { index }, false, new ExtractSlowCryptoCallback(outStream, password));
 	}
 
-	private native void nativeExtract(int[] indices, boolean testMode,
-			IArchiveExtractCallback extractCallback) throws SevenZipException;
-
-	private native Object nativeGetArchiveProperty(int propID)
+	private native void nativeExtract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
 			throws SevenZipException;
+
+	private native Object nativeGetArchiveProperty(int propID) throws SevenZipException;
 
 	/**
 	 * {@inheritDoc}
@@ -117,14 +102,12 @@ public class InArchiveImpl implements ISevenZipInArchive {
 		return nativeGetArchiveProperty(propID.getPropIDIndex());
 	}
 
-	private native String nativeGetStringArchiveProperty(int propID)
-			throws SevenZipException;
+	private native String nativeGetStringArchiveProperty(int propID) throws SevenZipException;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getStringArchiveProperty(PropID propID)
-			throws SevenZipException {
+	public String getStringArchiveProperty(PropID propID) throws SevenZipException {
 		return nativeGetStringArchiveProperty(propID.getPropIDIndex());
 	}
 
@@ -133,13 +116,11 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	public PropertyInfo getArchivePropertyInfo(PropID propID)
-			throws SevenZipException {
+	public PropertyInfo getArchivePropertyInfo(PropID propID) throws SevenZipException {
 		return nativeGetArchivePropertyInfo(propID.getPropIDIndex());
 	}
 
-	private native int nativeGetNumberOfArchiveProperties()
-			throws SevenZipException;
+	private native int nativeGetNumberOfArchiveProperties() throws SevenZipException;
 
 	/**
 	 * {@inheritDoc}
@@ -157,8 +138,7 @@ public class InArchiveImpl implements ISevenZipInArchive {
 		return nativeGetNumberOfProperties();
 	}
 
-	private native PropertyInfo nativeGetPropertyInfo(int index)
-			throws SevenZipException;
+	private native PropertyInfo nativeGetPropertyInfo(int index) throws SevenZipException;
 
 	/**
 	 * {@inheritDoc}
@@ -190,8 +170,7 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Object getProperty(int index, PropID propID)
-			throws SevenZipException {
+	public Object getProperty(int index, PropID propID) throws SevenZipException {
 		return nativeGetProperty(index, propID.getPropIDIndex());
 	}
 
@@ -200,8 +179,7 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getStringProperty(int index, PropID propID)
-			throws SevenZipException {
+	public String getStringProperty(int index, PropID propID) throws SevenZipException {
 		return nativeGetStringProperty(index, propID.getPropIDIndex());
 	}
 

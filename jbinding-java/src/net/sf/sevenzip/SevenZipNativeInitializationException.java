@@ -1,12 +1,13 @@
 package net.sf.sevenzip;
 
 /**
- * SevenZip core exception.
+ * SevenZip initialization exception. This exception can be thrown by any of initialization routines indicating problems
+ * with loading native SevenZipJBinding library into JVM.
  * 
  * @author Boris Brodski
  * @since 0.1
  */
-public class SevenZipException extends Exception {
+public class SevenZipNativeInitializationException extends Exception {
 
 	private static final long serialVersionUID = 42L;
 
@@ -14,7 +15,7 @@ public class SevenZipException extends Exception {
 	 * Constructs a new exception with <code>null</code> as its detail message. The cause is not initialized, and may
 	 * subsequently be initialized by a call to {@link #initCause(Throwable)}.
 	 */
-	public SevenZipException() {
+	public SevenZipNativeInitializationException() {
 		super();
 	}
 
@@ -31,7 +32,7 @@ public class SevenZipException extends Exception {
 	 *            value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @since 1.4
 	 */
-	public SevenZipException(String message, Throwable cause) {
+	public SevenZipNativeInitializationException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
@@ -43,7 +44,7 @@ public class SevenZipException extends Exception {
 	 *            the detail message. The detail message is saved for later retrieval by the {@link #getMessage()}
 	 *            method.
 	 */
-	public SevenZipException(String message) {
+	public SevenZipNativeInitializationException(String message) {
 		super(message);
 	}
 
@@ -58,7 +59,7 @@ public class SevenZipException extends Exception {
 	 *            value is permitted, and indicates that the cause is nonexistent or unknown.)
 	 * @since 1.4
 	 */
-	public SevenZipException(Throwable cause) {
+	public SevenZipNativeInitializationException(Throwable cause) {
 		super(cause);
 	}
 

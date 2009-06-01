@@ -3,7 +3,6 @@ package net.sf.sevenzip.impl;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzip.IInStream;
-import net.sf.sevenzip.SevenZip;
 
 /**
  * Implementation of {@link IInStream} using {@link RandomAccessFile}.
@@ -12,10 +11,6 @@ import net.sf.sevenzip.SevenZip;
  * @version 1.0
  */
 public class RandomAccessFileInStream implements IInStream {
-	static {
-		SevenZip.initSevenZipNativeLibrary();
-	}
-
 	private final RandomAccessFile randomAccessFile;
 
 	/**
@@ -31,8 +26,7 @@ public class RandomAccessFileInStream implements IInStream {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int seek(long offset, int seekOrigin,
-			long[] newPositionOneElementArray) {
+	public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
 		// System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
 		try {
 			switch (seekOrigin) {
@@ -41,8 +35,7 @@ public class RandomAccessFileInStream implements IInStream {
 				break;
 
 			case SEEK_CUR:
-				randomAccessFile.seek(randomAccessFile.getFilePointer()
-						+ offset);
+				randomAccessFile.seek(randomAccessFile.getFilePointer() + offset);
 				break;
 
 			case SEEK_END:

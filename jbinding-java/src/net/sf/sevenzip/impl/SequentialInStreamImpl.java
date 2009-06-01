@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sf.sevenzip.ISequentialInStream;
-import net.sf.sevenzip.SevenZip;
 
 /**
  * Implementation of {@link ISequentialInStream} based on {@link InputStream}.
@@ -13,15 +12,10 @@ import net.sf.sevenzip.SevenZip;
  * @version 1.0
  */
 public class SequentialInStreamImpl implements ISequentialInStream {
-	static {
-		SevenZip.initSevenZipNativeLibrary();
-	}
-
 	private InputStream inputStream;
 
 	/**
-	 * Create instance of {@link SequentialInStreamImpl} based on
-	 * {@link InputStream}
+	 * Create instance of {@link SequentialInStreamImpl} based on {@link InputStream}
 	 * 
 	 * @param inputStream
 	 *            input stream to use
