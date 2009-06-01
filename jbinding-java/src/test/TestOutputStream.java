@@ -1,6 +1,6 @@
 package test;
 
-import net.sf.sevenzip.ISequentialOutStream;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 
 public class TestOutputStream implements ISequentialOutStream {
 

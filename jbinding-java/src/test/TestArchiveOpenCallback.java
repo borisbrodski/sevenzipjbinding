@@ -1,8 +1,8 @@
 package test;
 
-import net.sf.sevenzip.IArchiveOpenCallback;
-import net.sf.sevenzip.ICryptoGetTextPassword;
-import net.sf.sevenzip.SevenZipException;
+import net.sf.sevenzipjbinding.IArchiveOpenCallback;
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 public class TestArchiveOpenCallback implements IArchiveOpenCallback,
 		ICryptoGetTextPassword {

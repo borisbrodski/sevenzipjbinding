@@ -1,11 +1,11 @@
 package test;
 
-import net.sf.sevenzip.ExtractAskMode;
-import net.sf.sevenzip.ExtractOperationResult;
-import net.sf.sevenzip.IArchiveExtractCallback;
-import net.sf.sevenzip.ICryptoGetTextPassword;
-import net.sf.sevenzip.ISequentialOutStream;
-import net.sf.sevenzip.SevenZipException;
+import net.sf.sevenzipjbinding.ExtractAskMode;
+import net.sf.sevenzipjbinding.ExtractOperationResult;
+import net.sf.sevenzipjbinding.IArchiveExtractCallback;
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 public class TestArchiveExtractCallback implements IArchiveExtractCallback,
 		ICryptoGetTextPassword {

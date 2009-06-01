@@ -1,6 +1,5 @@
 package test;
 
-import net.sf.sevenzip.SevenZip;
 
 public class Main {
 
