@@ -122,7 +122,7 @@ int CompareIndicies(const void *pi1, const void * pi2)
  * Method:    nativeExtract
  * Signature: ([IZLnet/sf/sevenzip/IArchiveExtractCallback;)V
  */
-JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeExtract
+JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
     TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  GetCurrentThreadId());
@@ -180,7 +180,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeEx
  * Method:    nativeGetNumberOfItems
  * Signature: ()I
  */
-JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfItems
+JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
     TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  GetCurrentThreadId());
@@ -222,7 +222,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGe
  * Method:    nativeClose
  * Signature: ()V
  */
-JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeClose
+JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
     TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  GetCurrentThreadId());
@@ -260,7 +260,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeCl
  * Method:    nativeGetNumberOfArchiveProperties
  * Signature: ()I
  */
-JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfArchiveProperties
+JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfArchiveProperties
 (JNIEnv * env, jobject thiz)
 {
     TRACE("InArchiveImpl::GetNumberOfArchiveProperties()");
@@ -296,7 +296,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGe
  * Method:    nativeGetArchivePropertyInfo
  * Signature: (I)Lnet/sf/sevenzip/PropertyInfo;
  */
-JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchivePropertyInfo
+JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetArchivePropertyInfo
 (JNIEnv * env, jobject thiz, jint index)
 {
     TRACE("InArchiveImpl::nativeGetArchivePropertyInfo()");
@@ -354,7 +354,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
  * Method:    nativeGetArchiveProperty
  * Signature: (J)Lnet/sf/sevenzip/PropVariant;
  */
-JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetArchiveProperty
+JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetArchiveProperty
 (JNIEnv * env, jobject thiz, jint propID)
 {
     TRACE("InArchiveImpl::nativeGetArchiveProperty");
@@ -391,7 +391,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
  * Method:    nativeGetStringArchiveProperty
  * Signature: (I)Ljava/lang/String;
  */
-JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringArchiveProperty
+JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetStringArchiveProperty
   (JNIEnv * env, jobject thiz, jint propID)
 {
     TRACE("InArchiveImpl::nativeGetStringArchiveProperty");
@@ -428,7 +428,7 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
  * Method:    nativeGetNumberOfProperties
  * Signature: ()I
  */
-JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetNumberOfProperties
+JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfProperties
 (JNIEnv * env, jobject thiz)
 {
     TRACE("InArchiveImpl::nativeGetNumberOfProperties");
@@ -465,7 +465,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGe
  * Method:    nativeGetProperty
  * Signature: (IJ)Ljava/lang/Object;
  */
-JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetProperty
+JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetProperty
 (JNIEnv * env, jobject thiz, jint index, jint propID)
 {
     TRACE("InArchiveImpl::nativeGetProperty");
@@ -505,7 +505,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
  * Method:    nativeGetStringProperty
  * Signature: (II)Ljava/lang/String;
  */
-JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetStringProperty
+JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetStringProperty
     (JNIEnv * env, jobject thiz, jint index, jint propID)
 {
     TRACE("InArchiveImpl::nativeGetStringProperty");
@@ -542,7 +542,7 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativ
  * Method:    nativeGetPropertyInfo
  * Signature: (I)Lnet/sf/sevenzip/PropertyInfo;
  */
-JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_impl_InArchiveImpl_nativeGetPropertyInfo
+JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetPropertyInfo
 (JNIEnv * env, jobject thiz, jint index)
 {
     TRACE("InArchiveImpl::nativeGetPropertyInfo");

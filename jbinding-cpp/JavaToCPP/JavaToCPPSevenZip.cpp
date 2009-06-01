@@ -28,7 +28,7 @@ STDAPI CreateArchiver(const GUID *classID, const GUID *iid, void **outObject);
  * Method:    nativeInitSevenZipLibrary
  * Signature: ()Ljava/lang/String;
  */
-JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSevenZipLibrary(
+JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(
 		JNIEnv * env, jclass thiz) {
 	//const char * msg = load7ZipLibrary(&createObjectFunc);
 
@@ -47,7 +47,7 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzip_SevenZip_nativeInitSeven
  * Method:    nativeOpenArchive
  * Signature: (ILnet/sf/sevenzip/IInStream;Lnet/sf/sevenzip/IArchiveOpenCallback;)Lnet/sf/sevenzip/IInArchive;
  */
-JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzip_SevenZip_nativeOpenArchive(JNIEnv * env,
+JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeOpenArchive(JNIEnv * env,
 		jclass thiz, jstring formatName, jobject inStream,
 		jobject archiveOpenCallbackImpl) {
 	TRACE("SevenZip.nativeOpenArchive()")
