@@ -1,0 +1,5 @@
+package net.sf.sevenzipjbinding;
+
+public enum ArchiveEnum {
+	NAME, CLASSID, EXTENSION, ADDEXTENSION, UPDATE, KEEPNAME, STARTSIGNATURE, FINISHSIGNATURE, ASSOCIATE
+}
