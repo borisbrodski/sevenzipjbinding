@@ -37,4 +37,12 @@ public enum ArchiveFormat {
 	public String getMethodName() {
 		return methodName;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return methodName;
+	}
 }

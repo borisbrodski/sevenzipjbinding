@@ -42,7 +42,7 @@ public class SevenZip {
 	}
 
 	private static boolean needInitialization = false;
-	private static boolean initializationSuccessful = true;
+	private static boolean initializationSuccessful = false;
 	private static RuntimeException autoinitializationException = null;
 
 	/**
@@ -171,7 +171,7 @@ public class SevenZip {
 
 	/**
 	 * Open archive of type <code>archiveFormat</code> from the input stream <code>inStream</code> using 'archive open
-	 * callback' listener <code>archiveOpenCallback</code>. To open archive from the file, use
+	 * call back' listener <code>archiveOpenCallback</code>. To open archive from the file, use
 	 * {@link RandomAccessFileInStream}.
 	 * 
 	 * @param archiveFormat
@@ -244,7 +244,8 @@ public class SevenZip {
 								+ "from platform depended JAR and the default temporary directory. Please, "
 								+ "make sure the correct 'sevenzipjbinding-<Platform>.jar' file is "
 								+ "in the class path or consider initializing SevenZipJBinding manualy using one of "
-								+ "the offered initialization methods: 'net.sf.sevenzipjbinding.SevenZip.init*()'", exception);
+								+ "the offered initialization methods: 'net.sf.sevenzipjbinding.SevenZip.init*()'",
+						exception);
 				throw autoinitializationException;
 			}
 		}

@@ -1,7 +1,7 @@
 
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
-#include "net_sf_sevenzip_impl_InArchiveImpl.h"
+#include "net_sf_sevenzipjbinding_impl_InArchiveImpl.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"
@@ -98,7 +98,7 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
         throw SevenZipException("Can't preform action. InStream==NULL.");
 	}
 
-    TRACE1("Getting STREAM: 0x%08X", (Object *)(CPPToJavaInStream *)(void *)pointer);
+    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
 
     return (CPPToJavaInStream *)(void *)pointer;
 }
@@ -125,7 +125,7 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -183,7 +183,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -225,7 +225,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -488,12 +488,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     NWindows::NCOM::CPropVariant propVariant;
 
-    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
+    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (unsigned int)(Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
     CHECK_HRESULT2(nativeMethodContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
-    TRACE("2")
 
     inStream->ClearNativeMethodContext();
-    TRACE("3")
 
 	return PropVariantToObject(&jniInstance, &propVariant);
 

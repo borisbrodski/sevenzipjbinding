@@ -27,37 +27,37 @@
 #define SEVENZIPJBINDING_LIBRARY_NAME_FILENAME "./7z.dll"
 
 
-#define SEVEN_ZIP_EXCEPTION "net/sf/sevenzip/SevenZipException"
+#define SEVEN_ZIP_EXCEPTION "net/sf/sevenzipjbinding/SevenZipException"
 #define SEVEN_ZIP_EXCEPTION_T JAVA_MAKE_SIGNATURE_TYPE(SEVEN_ZIP_EXCEPTION)
 
 
-#define IN_ARCHIVE_IMPL "net/sf/sevenzip/impl/InArchiveImpl"
+#define IN_ARCHIVE_IMPL "net/sf/sevenzipjbinding/impl/InArchiveImpl"
 #define IN_ARCHIVE_IMPL_T JAVA_MAKE_SIGNATURE_TYPE(IN_ARCHIVE_IMPL)
 #define IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInstance"
 #define IN_STREAM_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInStreamInstance"
 
-#define PROPERTYINFO_CLASS "net/sf/sevenzip/PropertyInfo"
+#define PROPERTYINFO_CLASS "net/sf/sevenzipjbinding/PropertyInfo"
 #define PROPERTYINFO_CLASS_T JAVA_MAKE_SIGNATURE_TYPE(PROPERTYINFO_CLASS)
 
-#define PROPID_CLASS "net/sf/sevenzip/PropID"
+#define PROPID_CLASS "net/sf/sevenzipjbinding/PropID"
 #define PROPID_CLASS_T JAVA_MAKE_SIGNATURE_TYPE(PROPID_CLASS)
 
-#define SEQUENTIALOUTSTREAM_CLASS		"net/sf/sevenzip/ISequentialOutStream"
+#define SEQUENTIALOUTSTREAM_CLASS		"net/sf/sevenzipjbinding/ISequentialOutStream"
 #define SEQUENTIALOUTSTREAM_CLASS_T		JAVA_MAKE_SIGNATURE_TYPE(SEQUENTIALOUTSTREAM_CLASS)
 
-#define INSTREAM_CLASS		            "net/sf/sevenzip/IInStream"
+#define INSTREAM_CLASS		            "net/sf/sevenzipjbinding/IInStream"
 #define INSTREAM_CLASS_T		        JAVA_MAKE_SIGNATURE_TYPE(INSTREAM_CLASS)
 
-#define CRYPTOGETTEXTPASSWORD_CLASS	    "net/sf/sevenzip/ICryptoGetTextPassword"
+#define CRYPTOGETTEXTPASSWORD_CLASS	    "net/sf/sevenzipjbinding/ICryptoGetTextPassword"
 #define CRYPTOGETTEXTPASSWORD_CLASS_T   JAVA_MAKE_SIGNATURE_TYPE(CRYPTOGETTEXTPASSWORD_CLASS)
 
-#define ARCHIVEOPENVOLUMECALLBACK_CLASS	    "net/sf/sevenzip/IArchiveOpenVolumeCallback"
+#define ARCHIVEOPENVOLUMECALLBACK_CLASS	    "net/sf/sevenzipjbinding/IArchiveOpenVolumeCallback"
 #define ARCHIVEOPENVOLUMECALLBACK_CLASS_T   JAVA_MAKE_SIGNATURE_TYPE(ARCHIVEOPENVOLUMECALLBACK_CLASS)
 
-#define EXTRACTASKMODE_CLASS			"net/sf/sevenzip/ExtractAskMode"
+#define EXTRACTASKMODE_CLASS			"net/sf/sevenzipjbinding/ExtractAskMode"
 #define EXTRACTASKMODE_CLASS_T			JAVA_MAKE_SIGNATURE_TYPE(EXTRACTASKMODE_CLASS)
 
-#define EXTRACTOPERATIONRESULT_CLASS	"net/sf/sevenzip/ExtractOperationResult"
+#define EXTRACTOPERATIONRESULT_CLASS	"net/sf/sevenzipjbinding/ExtractOperationResult"
 #define EXTRACTOPERATIONRESULT_CLASS_T	JAVA_MAKE_SIGNATURE_TYPE(EXTRACTOPERATIONRESULT_CLASS)
 
 #define TRY try {

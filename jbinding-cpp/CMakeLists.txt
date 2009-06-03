@@ -316,8 +316,8 @@ SET(JBINDING_CPP_FILES
 )
 
 SET(JBINDING_JAVAH_H_FILES
-    JavaToCPP/Java/net_sf_sevenzip_impl_InArchiveImpl.h
-    JavaToCPP/Java/net_sf_sevenzip_SevenZip.h
+    JavaToCPP/Java/net_sf_sevenzipjbinding_impl_InArchiveImpl.h
+    JavaToCPP/Java/net_sf_sevenzipjbinding_SevenZip.h
 )
 
 #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -346,8 +346,8 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 SET(JAVAH_OUTPUT_DIR ${PROJECT_BINARY_DIR}/javah)
 FILE(MAKE_DIRECTORY ${JAVAH_OUTPUT_DIR})
 SET(JAVAH_JAVA_CLASS_LIST
-    net.sf.sevenzip.SevenZip
-    net.sf.sevenzip.impl.InArchiveImpl
+    net.sf.sevenzipjbinding.SevenZip
+    net.sf.sevenzipjbinding.impl.InArchiveImpl
 )
 
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}

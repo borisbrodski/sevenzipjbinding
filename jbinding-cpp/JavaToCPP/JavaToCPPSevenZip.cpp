@@ -7,7 +7,7 @@
 
 #include "JNITools.h"
 
-#include "net_sf_sevenzip_SevenZip.h"
+#include "net_sf_sevenzipjbinding_SevenZip.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "UniversalArchiveOpenCallback.h"
 

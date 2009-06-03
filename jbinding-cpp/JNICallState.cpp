@@ -49,7 +49,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
     if (_threadInfoMap.find(currentThreadId) == _threadInfoMap.end())
     {
         JNIEnv * env;
-        TRACE2("JNIEnv* was requested from other thread. Current threadId=%lu, initThreadId=%lu", currentThreadId, _initThreadId)
+        TRACE2("JNIEnv* was requested from other thread. Current threadId=%lu, initThreadId=%lu", (long unsigned int)currentThreadId, (long unsigned int)_initThreadId)
         jint result = _vm->GetEnv((void**)&env, JNI_VERSION_1_6);
         if (result == JNI_OK) {
             TRACE("Current thread is already attached")
@@ -58,7 +58,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
         TRACE("Attaching current thread to VM.")
         if ((result = _vm->AttachCurrentThread((void**)&env, NULL)) || env == NULL)
         {
-            TRACE1("New thread couldn't be attached: %li", result)
+            TRACE1("New thread couldn't be attached: %li", (long int)result)
             throw SevenZipException("Can't attach current thread (id: %i) to the VM", currentThreadId);
         }
         TRACE1("Thread attached. New env=0x%08X", (size_t)env);
