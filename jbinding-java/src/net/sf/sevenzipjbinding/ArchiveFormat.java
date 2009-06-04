@@ -16,7 +16,7 @@ public enum ArchiveFormat {
 	HFS("HFS"), //
 	GZIP("GZip"), //
 	CAB("Cab"), //
-	BZip2("BZip2"), //
+	BZIP2("BZIP2"), //
 	SEVEN_ZIP("7z"), //
 	Z("Z"), //
 	;
