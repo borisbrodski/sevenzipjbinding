@@ -79,12 +79,12 @@ STATPROPSTG kProps[] =
   { NULL, kpidMTime, VT_FILETIME},
   { NULL, kpidCTime, VT_FILETIME},
   { NULL, kpidATime, VT_FILETIME},
-  
+
   { NULL, kpidAttrib, VT_UI4},
 
   { NULL, kpidEncrypted, VT_BOOL},
   { NULL, kpidComment, VT_BSTR},
-    
+
   { NULL, kpidCRC, VT_UI4},
 
   { NULL, kpidMethod, VT_BSTR},
@@ -480,14 +480,14 @@ HRESULT CZipDecoder::Decode(
       }
     }
   }
-    
+
   COutStreamWithCRC *outStreamSpec = new COutStreamWithCRC;
   CMyComPtr<ISequentialOutStream> outStream = outStreamSpec;
   outStreamSpec->SetStream(realOutStream);
   outStreamSpec->Init(needCRC);
-  
+
   UInt64 authenticationPos;
-  
+
   CMyComPtr<ISequentialInStream> inStream;
   {
     UInt64 packSize = item.PackSize;
@@ -501,7 +501,7 @@ HRESULT CZipDecoder::Decode(
     inStream.Attach(archive.CreateLimitedStream(dataPos, packSize));
     authenticationPos = dataPos + packSize;
   }
-  
+
   CMyComPtr<ICompressFilter> cryptoFilter;
   if (item.IsEncrypted())
   {
@@ -540,10 +540,10 @@ HRESULT CZipDecoder::Decode(
     }
     CMyComPtr<ICryptoSetPassword> cryptoSetPassword;
     RINOK(cryptoFilter.QueryInterface(IID_ICryptoSetPassword, &cryptoSetPassword));
-    
+
     if (!getTextPassword)
       extractCallback->QueryInterface(IID_ICryptoGetTextPassword, (void **)&getTextPassword);
-    
+
     if (getTextPassword)
     {
       CMyComBSTR password;
@@ -582,7 +582,7 @@ HRESULT CZipDecoder::Decode(
       RINOK(cryptoSetPassword->CryptoSetPassword(0, 0));
     }
   }
-  
+
   int m;
   for (m = 0; m < methodItems.Size(); m++)
     if (methodItems[m].ZipMethod == methodId)
@@ -626,7 +626,7 @@ HRESULT CZipDecoder::Decode(
     m = methodItems.Add(mi);
   }
   ICompressCoder *coder = methodItems[m].Coder;
-  
+
   {
     CMyComPtr<ICompressSetDecoderProperties2> setDecoderProperties;
     coder->QueryInterface(IID_ICompressSetDecoderProperties2, (void **)&setDecoderProperties);
@@ -636,7 +636,7 @@ HRESULT CZipDecoder::Decode(
       RINOK(setDecoderProperties->SetDecoderProperties2(&properties, 1));
     }
   }
-  
+
   #ifdef COMPRESS_MT
   {
     CMyComPtr<ICompressSetCoderMt> setCoderMt;
@@ -647,7 +647,7 @@ HRESULT CZipDecoder::Decode(
     }
   }
   #endif
-  
+
   {
     HRESULT result = S_OK;
     CMyComPtr<ISequentialInStream> inStreamNew;
@@ -715,7 +715,7 @@ HRESULT CZipDecoder::Decode(
     if (_wzAesDecoderSpec->CheckMac(inStream, authOk) != S_OK)
       authOk = false;
   }
-  
+
   res = ((crcOK && authOk) ?
     NArchive::NExtract::NOperationResult::kOK :
     NArchive::NExtract::NOperationResult::kCRCError);
@@ -746,7 +746,7 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
 
   UInt64 currentTotalUnPacked = 0, currentTotalPacked = 0;
   UInt64 currentItemUnPacked, currentItemPacked;
-  
+
   CLocalProgress *lps = new CLocalProgress;
   CMyComPtr<ICompressProgressInfo> progress = lps;
   lps->Init(extractCallback, false);
@@ -805,13 +805,18 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
 
     RINOK(extractCallback->PrepareOperation(askMode));
 
+// SevenZipJBinding BUGFIX
+#ifndef COMPRESS_MT
+    UInt32 _numThreads = 1;
+#endif
+
     Int32 res;
     RINOK(myDecoder.Decode(
         EXTERNAL_CODECS_VARS
         m_Archive, item, realOutStream, extractCallback,
         progress, _numThreads, res));
     realOutStream.Release();
-    
+
     RINOK(extractCallback->SetOperationResult(res))
   }
   return S_OK;
