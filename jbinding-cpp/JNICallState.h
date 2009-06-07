@@ -6,6 +6,10 @@
 #include "SevenZipException.h"
 #include "SevenZipJBinding.h"
 
+#ifdef COMPRESS_MT
+#include "Windows/Synchronization.h"
+#endif
+
 using namespace std;
 
 class NativeMethodContext;
@@ -45,7 +49,9 @@ private:
     map<DWORD, ThreadInfo *> _threadInfoMap;
     jthrowable _lastOccurredException;
     char * _firstThrowenExceptionMessage;
-
+#ifdef COMPRESS_MT
+    NWindows::NSynchronization::CCriticalSection _criticalSection;
+#endif
 public:
     NativeMethodContext(JNIEnv * initEnv)
 	{
@@ -57,7 +63,7 @@ public:
         _firstThrowenExceptionMessage = NULL;
 	    _initEnv = initEnv;
 	    _initThreadId = GetCurrentThreadId();
-	    TRACE2("_initThreadId = %lu, this=0x%08X", _initThreadId, (size_t)this)
+	    TRACE2("_initThreadId = %lu, this=0x%08X", (unsigned long int)_initThreadId, (size_t)this)
 	    _vm = NULL;
 	    if (initEnv->GetJavaVM(&_vm))
 	    {

@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.impl;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzipjbinding.IInStream;
@@ -12,6 +13,7 @@ import net.sf.sevenzipjbinding.IInStream;
  */
 public class RandomAccessFileInStream implements IInStream {
 	private final RandomAccessFile randomAccessFile;
+	private Throwable lastThrownException;
 
 	/**
 	 * Constructs instance of the class from random access file.
@@ -50,7 +52,7 @@ public class RandomAccessFileInStream implements IInStream {
 			// System.out.println(", CurrPos: " +
 			// newPositionOneElementArray[0]);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			lastThrownException = e;
 			return 1;
 		}
 
@@ -72,10 +74,28 @@ public class RandomAccessFileInStream implements IInStream {
 			// System.out.println("was read: " +
 			// processedSizeOneElementArray[0]);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			lastThrownException = e;
 			return 1;
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Closes random access file. After this call no more methods should be called.
+	 * 
+	 * @throws IOException
+	 */
+	public void close() throws IOException {
+		randomAccessFile.close();
+	}
+
+	/**
+	 * Return last thrown exception during read or seek operation.
+	 * 
+	 * @return last thrown exception or <code>null</code>, if no exceptions was thrown.
+	 */
+	public Throwable getLastThrownException() {
+		return lastThrownException;
 	}
 }

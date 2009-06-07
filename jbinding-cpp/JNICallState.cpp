@@ -2,6 +2,15 @@
 
 #include "JNICallState.h"
 
+#ifdef COMPRESS_MT
+	#define ENTER_CRITICAL_SECTION   {_criticalSection.Enter();}
+	#define LEAVE_CRITICAL_SECTION   {_criticalSection.Leave();}
+#else
+	#define ENTER_CRITICAL_SECTION   {}
+	#define LEAVE_CRITICAL_SECTION   {}
+#endif
+
+
 static struct
 {
     HRESULT errCode;
@@ -46,7 +55,11 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
         return _initEnv;
     }
 
-    if (_threadInfoMap.find(currentThreadId) == _threadInfoMap.end())
+    ENTER_CRITICAL_SECTION
+    int findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
+    LEAVE_CRITICAL_SECTION
+
+    if (findresult)
     {
         JNIEnv * env;
         TRACE2("JNIEnv* was requested from other thread. Current threadId=%lu, initThreadId=%lu", (long unsigned int)currentThreadId, (long unsigned int)_initThreadId)
@@ -64,11 +77,17 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
         TRACE1("Thread attached. New env=0x%08X", (size_t)env);
 
         ThreadInfo * threadInfo = new ThreadInfo(env);
+
+        ENTER_CRITICAL_SECTION
         _threadInfoMap[currentThreadId] = threadInfo;
+    	LEAVE_CRITICAL_SECTION
 
         return env;
     } else {
-        ThreadInfo * threadInfo = _threadInfoMap[currentThreadId];
+    	ENTER_CRITICAL_SECTION
+    	ThreadInfo * threadInfo = _threadInfoMap[currentThreadId];
+    	LEAVE_CRITICAL_SECTION
+
         threadInfo->_callCounter++;
         TRACE1("Begin => deattaching counter: %i", threadInfo->_callCounter)
 
@@ -87,25 +106,58 @@ void NativeMethodContext::EndCPPToJava()
         return;
     }
 #ifdef _DEBUG
-    if (_threadInfoMap.find(currentThreadId) == _threadInfoMap.end())
+    ENTER_CRITICAL_SECTION
+    int findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
+    LEAVE_CRITICAL_SECTION
+
+    if (findresult)
     {
         TRACE1("EndCPPToJava(): unknown current thread (id: %i)", (size_t)currentThreadId)
         throw SevenZipException("EndCPPToJava(): unknown current thread (id: %i)", currentThreadId);
     }
 #endif //_DEBUG
 
+    ENTER_CRITICAL_SECTION
     ThreadInfo * threadInfo = _threadInfoMap[currentThreadId];
+    LEAVE_CRITICAL_SECTION
+
     if (--threadInfo->_callCounter <= 0)
     {
         TRACE("End => Deataching current thread from JavaVM")
         _vm->DetachCurrentThread();
+        //TRACE("Detached!")
+
+        ENTER_CRITICAL_SECTION
         _threadInfoMap.erase(currentThreadId);
+        LEAVE_CRITICAL_SECTION
+
+        //TRACE("Removed from Map!")
         delete threadInfo;
+        // TRACE("threadInfo Deleted")
     }
     else
     {
         TRACE1("End => deattaching counter: %i", threadInfo->_callCounter)
     }
+    TRACE("End of void NativeMethodContext::EndCPPToJava()")
+
+    //threadInfo->_callCounter--;
+    //if (threadInfo->_callCounter <= 0)
+//    if (--threadInfo->_callCounter <= 0)
+//    {
+//        TRACE1("End => Deataching current thread from JavaVM (call counter: %i)", threadInfo->_callCounter)
+//        _vm->DetachCurrentThread();
+//        TRACE("Detached!")
+//        _threadInfoMap.erase(currentThreadId);
+//        TRACE("Removed from Map!")
+//        delete threadInfo;
+//        TRACE("threadInfo Deleted")
+//    }
+//    else
+//    {
+//        TRACE1("End => deattaching counter: %i", threadInfo->_callCounter)
+//    }
+//	TRACE("End of void NativeMethodContext::EndCPPToJava()")
 }
 
 /**

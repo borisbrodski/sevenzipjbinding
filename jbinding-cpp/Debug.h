@@ -4,6 +4,10 @@
 // #define _DEBUG // TODO Manage it at least out of CMakeLists.txt
 #define TRACE_ON
 
+#if defined(NDEBUG) && defined(_DEBUG)
+#undef _DEBUG
+#endif
+
 #ifdef _DEBUG
 #define TRACE_ON
 #define TRACE_OBJECTS_ON

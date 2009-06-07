@@ -1,6 +1,7 @@
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
 #include "JNICallState.h"
+#include "UnicodeHelper.h"
 
 static int initialized = 0;
 
@@ -189,7 +190,7 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 	localinit(env);
 
 	CMyComBSTR str(value);
-	return env->NewString((jchar *) (BSTR) str, str.Length());
+	return env->NewString(UnicodeHelper(str), str.Length());
 }
 
 /**
@@ -216,7 +217,7 @@ jstring PropVariantToString(JNIEnv * env, PROPID propID,
 		const PROPVARIANT &propVariant) {
 
 	UString string = ConvertPropertyToString(propVariant, propID, true);
-	return env->NewString((jchar *) (const wchar_t*) string, string.Length());
+	return env->NewString(UnicodeHelper(string), string.Length());
 }
 
 /**

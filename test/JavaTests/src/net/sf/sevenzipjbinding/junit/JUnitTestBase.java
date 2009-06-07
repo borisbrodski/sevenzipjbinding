@@ -22,5 +22,6 @@ public class JUnitTestBase {
 	@BeforeClass
 	public static void initializeSevenZipJBinding() throws SevenZipNativeInitializationException {
 		SevenZip.initSevenZipFromPlatformJAR();
+		System.out.println("!!!");
 	}
 }

@@ -28,7 +28,7 @@ ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 SET(P7ZIP_SRC ../p7zip)
 
 include_directories(/usr/include)
-include_directories(/usr/include/c++/4.2)
+include_directories(/usr/include/c++/4.3)
 include_directories(.)
 include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
@@ -39,6 +39,7 @@ include_directories(${PROJECT_BINARY_DIR}/javah)
 
 
 add_definitions(
+    -g3
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -DNDEBUG
@@ -50,6 +51,7 @@ add_definitions(
     -DBREAK_HANDLER
     -DBENCH_MT
 #    -DTRACE_OBJECTS_ON
+#    -DTRACE_ON
 )
 SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/myWindows/myGetTickCount.cpp
@@ -112,7 +114,7 @@ SET(P7ZIP_SOURCE_FILES
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/ExtractingFilePath.cpp
     ${P7ZIP_SRC}/CPP/7zip/UI/Common/LoadCodecs.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/OpenArchive.cpp
-    #${P7ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
+    ${P7ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/SetProperties.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/SortUtils.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/TempFiles.cpp

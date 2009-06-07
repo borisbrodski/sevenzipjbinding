@@ -65,6 +65,8 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	@SuppressWarnings("unused")
 	private int sevenZipArchiveInStreamInstance;
 
+	private int numberOfItems = -1;
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -162,7 +164,10 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	 * {@inheritDoc}
 	 */
 	public int getNumberOfItems() throws SevenZipException {
-		return nativeGetNumberOfItems();
+		if (numberOfItems == -1) {
+			numberOfItems = nativeGetNumberOfItems();
+		}
+		return numberOfItems;
 	}
 
 	private native Object nativeGetProperty(int index, int propID);

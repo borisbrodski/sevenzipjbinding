@@ -14,6 +14,7 @@ import java.util.Random;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -27,7 +28,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 1.0
  */
-public abstract class ExtractSingleFileAbstractArchiveTest {
+public abstract class ExtractSingleFileAbstractArchiveTest extends JUnitTestBase {
 	private static final String SINGLE_FILE_ARCHIVE_PATH = "testdata/simple";
 	private final ArchiveFormat archiveFormat;
 	private final int compression1;
@@ -50,93 +51,117 @@ public abstract class ExtractSingleFileAbstractArchiveTest {
 	}
 
 	@Test
-	public void testZip1Compression1() {
+	public void test1Compression1() {
 		testSingleFileArchiveExtraction(1, compression1);
 	}
 
 	@Test
-	public void testZip1Compression2() {
+	public void test1Compression2() {
 		testSingleFileArchiveExtraction(1, compression2);
 	}
 
 	@Test
-	public void testZip1Compression3() {
+	public void test1Compression3() {
 		testSingleFileArchiveExtraction(1, compression3);
 	}
 
 	@Test
-	public void testZip2Compression1() {
+	public void test2Compression1() {
 		testSingleFileArchiveExtraction(2, compression1);
 	}
 
 	@Test
-	public void testZip2Compression2() {
+	public void test2Compression2() {
 		testSingleFileArchiveExtraction(2, compression2);
 	}
 
 	@Test
-	public void testZip2Compression3() {
+	public void test2Compression3() {
 		testSingleFileArchiveExtraction(2, compression3);
 	}
 
 	@Test
-	public void testZip3Compression1() {
+	public void test3Compression1() {
 		testSingleFileArchiveExtraction(3, compression1);
 	}
 
 	@Test
-	public void testZip3Compression2() {
+	public void test3Compression2() {
 		testSingleFileArchiveExtraction(3, compression2);
 	}
 
 	@Test
-	public void testZip3Compression3() {
+	public void test3Compression3() {
 		testSingleFileArchiveExtraction(3, compression3);
 	}
 
 	@Test
-	public void testZip4Compression1() {
+	public void test4Compression1() {
 		testSingleFileArchiveExtraction(4, compression1);
 	}
 
 	@Test
-	public void testZip4Compression2() {
+	public void test4Compression2() {
 		testSingleFileArchiveExtraction(4, compression2);
 	}
 
 	@Test
-	public void testZip4Compression3() {
+	public void test4Compression3() {
 		testSingleFileArchiveExtraction(4, compression3);
 	}
 
 	@Test
-	public void testZip5Compression1() {
+	public void test5Compression1() {
 		testSingleFileArchiveExtraction(5, compression1);
 	}
 
 	@Test
-	public void testZip5Compression2() {
+	public void test5Compression2() {
 		testSingleFileArchiveExtraction(5, compression2);
 	}
 
 	@Test
-	public void testZip5Compression3() {
+	public void test5Compression3() {
 		testSingleFileArchiveExtraction(5, compression3);
 	}
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex) {
+		for (int i = 0; i < 10; i++) {
+			testSingleFileArchiveExtraction2(fileIndex, compressionIndex);
+		}
+	}
+
+	private void testSingleFileArchiveExtraction2(int fileIndex, int compressionIndex) {
 		String archiveFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + archiveFormat.toString().toLowerCase()
 				+ File.separatorChar + //
 				"simple" + fileIndex + ".dat." + compressionIndex + "." + extention;
-		String expectedFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + "simple" + fileIndex + ".dat";
+		String uncommpressedFilename = "simple" + fileIndex + ".dat";
+		String expectedFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + uncommpressedFilename;
 		try {
-			ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, new RandomAccessFileInStream(
-					new RandomAccessFile(archiveFilename, "r")));
+			RandomAccessFileInStream randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(
+					archiveFilename, "r"));
+			ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, randomAccessFileInStream);
 			SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(
 					expectedFilename);
-			inArchive.extractSlow(0, outputStream);
+			System.out.println(inArchive.getNumberOfItems());
+			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
+				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
+			}
+			int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
+
+			if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP) {
+				// Skip name test for Bzip2 and GZip.
+				// File name are not supported by this stream compression methods
+				Object nameInArchive = inArchive.getProperty(index, PropID.PATH);
+				String nameInArchiveUsingStringProperty = inArchive.getStringProperty(index, PropID.PATH);
+				assertEquals("Wrong name of the file in archive", uncommpressedFilename, nameInArchive);
+				assertEquals("Wrong name of the file in archive (using getStringProperty() method)",
+						uncommpressedFilename, nameInArchiveUsingStringProperty);
+			}
+			inArchive.extractSlow(index, outputStream);
 			outputStream.checkAndCloseInputFile();
 			inArchive.close();
+			randomAccessFileInStream.close();
 		} catch (SevenZipException exception) {
 			throw new RuntimeException(exception);
 		} catch (IOException exception) {
@@ -155,12 +180,21 @@ public abstract class ExtractSingleFileAbstractArchiveTest {
 			fileInputStream = new FileInputStream(file);
 		}
 
+		public void closeInputFile() {
+			try {
+				fileInputStream.close();
+			} catch (IOException e) {
+				throw new RuntimeException("Error closing 'expected' input file", e);
+			}
+		}
+
 		void checkAndCloseInputFile() {
 			try {
 				assertEquals("Expected data larger that extracted data", -1, fileInputStream.read());
 			} catch (IOException e) {
 				throw new RuntimeException("Error reading 'expected' input file (testing for EOF)", e);
 			}
+			closeInputFile();
 		}
 
 		@Override
