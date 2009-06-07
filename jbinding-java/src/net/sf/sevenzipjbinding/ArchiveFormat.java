@@ -15,13 +15,15 @@ public enum ArchiveFormat {
 	ISO("Iso"), //
 	HFS("HFS"), //
 	GZIP("GZip"), //
-	CAB("Cab"), //
+	CPIO("Cpio"), //
+	// CAB("Cab"), // TODO Problems with CAB: It always require ArchiveOpenVolumeCallback!
 	BZIP2("BZIP2"), //
 	SEVEN_ZIP("7z"), //
 	Z("Z"), //
+	ARJ("Arj"), //
 	;
 	// TODO Not supported in cross platform version archive formats:
-	//	ARJ, CHM, CPIO, CDEB, LZH, NSIS, RPM
+	//	CHM, CDEB, LZH, NSIS, RPM
 
 	private String methodName;
 

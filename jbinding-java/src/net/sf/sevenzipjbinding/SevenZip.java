@@ -188,7 +188,10 @@ public class SevenZip {
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
 			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
 		ensureLibraryIsInitialized();
-		return nativeOpenArchive(archiveFormat.getMethodName(), inStream, archiveOpenCallback);
+		if (archiveFormat != null) {
+			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, archiveOpenCallback);
+		}
+		return nativeOpenArchive(null, inStream, archiveOpenCallback);
 	}
 
 	/**
@@ -211,8 +214,11 @@ public class SevenZip {
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
 			String passwordForOpen) throws SevenZipException {
 		ensureLibraryIsInitialized();
-		return nativeOpenArchive(archiveFormat.getMethodName(), inStream,
-				new ArchiveOpenCryptoCallback(passwordForOpen));
+		if (archiveFormat != null) {
+			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, new ArchiveOpenCryptoCallback(
+					passwordForOpen));
+		}
+		return nativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
 	}
 
 	/**
@@ -220,7 +226,7 @@ public class SevenZip {
 	 * the file, use {@link RandomAccessFileInStream}.
 	 * 
 	 * @param archiveFormat
-	 *            format of archive
+	 *            (optional) format of archive. If <code>null</code> archive format will be auto-detected.
 	 * @param inStream
 	 *            input stream to open archive from
 	 * @return implementation of {@link ISevenZipInArchive} which represents opened archive.
@@ -231,7 +237,10 @@ public class SevenZip {
 	public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream)
 			throws SevenZipException {
 		ensureLibraryIsInitialized();
-		return nativeOpenArchive(archiveFormat.getMethodName(), inStream, null);
+		if (archiveFormat != null) {
+			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, null);
+		}
+		return nativeOpenArchive(null, inStream, null);
 	}
 
 	private static void ensureLibraryIsInitialized() {

@@ -159,18 +159,26 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2HandlerOut.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Update.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/bz2Register.cpp
-    
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
+
+# TODO Need VolumeCallback   
+#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
 
 # Chm
 
 # Com ??
 
-# Cpio
+    ${P7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder2.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHeader.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioRegister.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandlerOut.cpp

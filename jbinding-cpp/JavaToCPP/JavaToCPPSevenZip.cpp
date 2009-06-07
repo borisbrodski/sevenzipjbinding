@@ -18,6 +18,7 @@ using namespace NFile;
 
 
 #include "7zip/UI/Common/LoadCodecs.h"
+#include "UnicodeHelper.h"
 
 //CreateObjectFunc createObjectFunc;
 STDAPI CreateCoder(const GUID *clsid, const GUID *iid, void **outObject);
@@ -72,25 +73,17 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	if (result != S_OK)
 		fatal("codecs->Load() return error: 0x%08X", result);
 
+	for (int i = 0; i < codecs->Formats.Size(); i++) {
+		TRACE1("Available codec: '%S'", (const wchar_t*)codecs->Formats[i].Name)
+	}
+
 
 	int index = -1;
 	UString formatNameString;
 	if (formatName)
 	{
 		const jchar * formatNameJChars = env->GetStringChars(formatName, NULL);
-		if (sizeof(wchar_t) == sizeof(jchar)) {
-			formatNameString = (wchar_t*)formatNameJChars;
-		} else {
-			jsize len = env->GetStringLength(formatName);
-			wchar_t * formatNameWCharT = new wchar_t[len + 1];
-			for (int i = 0; i < len; i++) {
-				formatNameWCharT[i] = (wchar_t)formatNameJChars[i];
-			}
-			formatNameWCharT[len] = 0;
-			formatNameString = formatNameWCharT;
-			delete [] formatNameWCharT;
-		}
-
+		formatNameString = UnicodeHelper(formatNameJChars);
 		env->ReleaseStringChars(formatName, formatNameJChars);
 
 		TRACE1("Format: '%S'\n", (const wchar_t*)formatNameString);

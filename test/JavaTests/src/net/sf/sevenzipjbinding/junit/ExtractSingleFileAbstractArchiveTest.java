@@ -52,86 +52,161 @@ public abstract class ExtractSingleFileAbstractArchiveTest extends JUnitTestBase
 
 	@Test
 	public void test1Compression1() {
-		testSingleFileArchiveExtraction(1, compression1);
+		testSingleFileArchiveExtraction(1, compression1, false);
+	}
+
+	@Test
+	public void test1Compression1FormatAutodetect() {
+		testSingleFileArchiveExtraction(1, compression1, true);
 	}
 
 	@Test
 	public void test1Compression2() {
-		testSingleFileArchiveExtraction(1, compression2);
+		testSingleFileArchiveExtraction(1, compression2, false);
+	}
+
+	@Test
+	public void test1Compression2FormatAutodetect() {
+		testSingleFileArchiveExtraction(1, compression2, true);
 	}
 
 	@Test
 	public void test1Compression3() {
-		testSingleFileArchiveExtraction(1, compression3);
+		testSingleFileArchiveExtraction(1, compression3, false);
+	}
+
+	@Test
+	public void test1Compression3FormatAutodetect() {
+		testSingleFileArchiveExtraction(1, compression3, true);
 	}
 
 	@Test
 	public void test2Compression1() {
-		testSingleFileArchiveExtraction(2, compression1);
+		testSingleFileArchiveExtraction(2, compression1, false);
+	}
+
+	@Test
+	public void test2Compression1FormatAutodetect() {
+		testSingleFileArchiveExtraction(2, compression1, true);
 	}
 
 	@Test
 	public void test2Compression2() {
-		testSingleFileArchiveExtraction(2, compression2);
+		testSingleFileArchiveExtraction(2, compression2, false);
+	}
+
+	@Test
+	public void test2Compression2FormatAutodetect() {
+		testSingleFileArchiveExtraction(2, compression2, true);
 	}
 
 	@Test
 	public void test2Compression3() {
-		testSingleFileArchiveExtraction(2, compression3);
+		testSingleFileArchiveExtraction(2, compression3, false);
+	}
+
+	@Test
+	public void test2Compression3FormatAutodetect() {
+		testSingleFileArchiveExtraction(2, compression3, true);
 	}
 
 	@Test
 	public void test3Compression1() {
-		testSingleFileArchiveExtraction(3, compression1);
+		testSingleFileArchiveExtraction(3, compression1, false);
+	}
+
+	@Test
+	public void test3Compression1FormatAutodetect() {
+		testSingleFileArchiveExtraction(3, compression1, true);
 	}
 
 	@Test
 	public void test3Compression2() {
-		testSingleFileArchiveExtraction(3, compression2);
+		testSingleFileArchiveExtraction(3, compression2, false);
+	}
+
+	@Test
+	public void test3Compression2FormatAutodetect() {
+		testSingleFileArchiveExtraction(3, compression2, true);
 	}
 
 	@Test
 	public void test3Compression3() {
-		testSingleFileArchiveExtraction(3, compression3);
+		testSingleFileArchiveExtraction(3, compression3, false);
+	}
+
+	@Test
+	public void test3Compression3FormatAutodetect() {
+		testSingleFileArchiveExtraction(3, compression3, true);
 	}
 
 	@Test
 	public void test4Compression1() {
-		testSingleFileArchiveExtraction(4, compression1);
+		testSingleFileArchiveExtraction(4, compression1, false);
+	}
+
+	@Test
+	public void test4Compression1FormatAutodetect() {
+		testSingleFileArchiveExtraction(4, compression1, true);
 	}
 
 	@Test
 	public void test4Compression2() {
-		testSingleFileArchiveExtraction(4, compression2);
+		testSingleFileArchiveExtraction(4, compression2, false);
+	}
+
+	@Test
+	public void test4Compression2FormatAutodetect() {
+		testSingleFileArchiveExtraction(4, compression2, true);
 	}
 
 	@Test
 	public void test4Compression3() {
-		testSingleFileArchiveExtraction(4, compression3);
+		testSingleFileArchiveExtraction(4, compression3, false);
+	}
+
+	@Test
+	public void test4Compression3FormatAutodetect() {
+		testSingleFileArchiveExtraction(4, compression3, true);
 	}
 
 	@Test
 	public void test5Compression1() {
-		testSingleFileArchiveExtraction(5, compression1);
+		testSingleFileArchiveExtraction(5, compression1, false);
+	}
+
+	@Test
+	public void test5Compression1FormatAutodetect() {
+		testSingleFileArchiveExtraction(5, compression1, true);
 	}
 
 	@Test
 	public void test5Compression2() {
-		testSingleFileArchiveExtraction(5, compression2);
+		testSingleFileArchiveExtraction(5, compression2, false);
+	}
+
+	@Test
+	public void test5Compression2FormatAutodetect() {
+		testSingleFileArchiveExtraction(5, compression2, true);
 	}
 
 	@Test
 	public void test5Compression3() {
-		testSingleFileArchiveExtraction(5, compression3);
+		testSingleFileArchiveExtraction(5, compression3, false);
 	}
 
-	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex) {
+	@Test
+	public void test5Compression3FormatAutodetect() {
+		testSingleFileArchiveExtraction(5, compression3, true);
+	}
+
+	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat) {
 		for (int i = 0; i < 10; i++) {
-			testSingleFileArchiveExtraction2(fileIndex, compressionIndex);
+			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
 		}
 	}
 
-	private void testSingleFileArchiveExtraction2(int fileIndex, int compressionIndex) {
+	private void testSingleFileArchiveExtraction2(int fileIndex, int compressionIndex, boolean autodetectFormat) {
 		String archiveFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + archiveFormat.toString().toLowerCase()
 				+ File.separatorChar + //
 				"simple" + fileIndex + ".dat." + compressionIndex + "." + extention;
@@ -140,16 +215,18 @@ public abstract class ExtractSingleFileAbstractArchiveTest extends JUnitTestBase
 		try {
 			RandomAccessFileInStream randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(
 					archiveFilename, "r"));
-			ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, randomAccessFileInStream);
+			ISevenZipInArchive inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
+					randomAccessFileInStream);
 			SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(
 					expectedFilename);
-			System.out.println(inArchive.getNumberOfItems());
-			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
-			}
+			//			System.out.println(inArchive.getNumberOfItems());
+			//			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
+			//				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
+			//			}
 			int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
 
-			if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP) {
+			if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP
+					&& archiveFormat != ArchiveFormat.LZMA) {
 				// Skip name test for Bzip2 and GZip.
 				// File name are not supported by this stream compression methods
 				Object nameInArchive = inArchive.getProperty(index, PropID.PATH);

@@ -1,5 +1,32 @@
 #!/bin/bash
 
+rm arj/*.arj
+for i in 0 2 4
+do
+    for j in *.dat
+    do
+	arj a -m$i arj/$j.$i.arj $j
+    done
+done
+
+rm cpio/*.cpio
+for i in 0
+do
+    for j in *.dat
+    do
+	echo $j | cpio -o > cpio/$j.$i.cpio
+    done
+done
+
+rm lzma/*.lzma
+for i in 1 5 9
+do
+    for j in *.dat
+    do
+	lzma -z -$i -c $j > lzma/$j.$i.lzma
+    done
+done
+
 rm zip/*.zip
 for i in 0 5 9
 do
