@@ -2,6 +2,7 @@
 
 #include "JNITools.h"
 #include "CPPToJavaCryptoGetTextPassword.h"
+#include "UnicodeHelper.h"
 
 STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * password)
 {
@@ -20,10 +21,13 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
     if (password)
     {
         const jchar * passwordJChars = env->GetStringChars(passwordString, NULL);
-        CMyComBSTR passwordBSTR((LPCWSTR)passwordJChars);
-        env->ReleaseStringChars(passwordString, passwordJChars);
+        //CMyComBSTR passwordBSTR((OLECHAR*)(const wchar_t*)UnicodeHelper(passwordJChars));
+        //CMyComBSTR passwordBSTR(L"TestXXX");
 
-        *password = passwordBSTR;
+        //printf("PASSWORD: '%S'\n", (BSTR)passwordBSTR);
+        //fflush(stdout);
+        StringToBstr(UString(UnicodeHelper(passwordJChars)), password);//passwordBSTR.MyCopy();
+        env->ReleaseStringChars(passwordString, passwordJChars);
     }
 
     return S_OK;

@@ -179,7 +179,8 @@ public class SevenZip {
 	 * @param inStream
 	 *            input stream to open archive from
 	 * @param archiveOpenCallback
-	 *            archive open callback listenter to use
+	 *            archive open call back listener to use. You can optionally implement {@link ICryptoGetTextPassword} to
+	 *            specify password to use.
 	 * @return implementation of {@link ISevenZipInArchive} which represents opened archive.
 	 * 
 	 * @throws SevenZipException
@@ -238,9 +239,9 @@ public class SevenZip {
 			throws SevenZipException {
 		ensureLibraryIsInitialized();
 		if (archiveFormat != null) {
-			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, null);
+			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, new DummyOpenArchiveCallback());
 		}
-		return nativeOpenArchive(null, inStream, null);
+		return nativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
 	}
 
 	private static void ensureLibraryIsInitialized() {
@@ -326,5 +327,29 @@ public class SevenZip {
 	 */
 	public static boolean isInitialized() {
 		return initializationSuccessful;
+	}
+
+	private static class DummyOpenArchiveCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void setCompleted(Long files, Long bytes) {
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public void setTotal(Long files, Long bytes) {
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public String cryptoGetTextPassword() throws SevenZipException {
+			throw new SevenZipException("No password was provided for opening protected archive.");
+		}
 	}
 }
