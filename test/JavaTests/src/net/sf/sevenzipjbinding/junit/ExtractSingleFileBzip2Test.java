@@ -2,9 +2,9 @@ package net.sf.sevenzipjbinding.junit;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 
-public class ExtractSingleFileBzip2ArchiveTest extends ExtractSingleFileAbstractArchiveTest {
+public class ExtractSingleFileBzip2Test extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileBzip2ArchiveTest() {
+	public ExtractSingleFileBzip2Test() {
 		super(ArchiveFormat.BZIP2, "bz2", 1, 5, 9);
 	}
 

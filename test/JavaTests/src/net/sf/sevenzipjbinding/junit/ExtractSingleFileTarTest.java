@@ -3,9 +3,9 @@ package net.sf.sevenzipjbinding.junit;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 
 // TODO repair or remove
-public abstract class ExtractSingleFileTarArchiveTest extends ExtractSingleFileAbstractArchiveTest {
+public abstract class ExtractSingleFileTarTest extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileTarArchiveTest() {
+	public ExtractSingleFileTarTest() {
 		super(ArchiveFormat.TAR, 0, 0, 0);
 	}
 

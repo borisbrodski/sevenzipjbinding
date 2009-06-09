@@ -2,9 +2,9 @@ package net.sf.sevenzipjbinding.junit;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 
-public class ExtractSingleFileGzipArchiveTest extends ExtractSingleFileAbstractArchiveTest {
+public class ExtractSingleFileGzipTest extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileGzipArchiveTest() {
+	public ExtractSingleFileGzipTest() {
 		super(ArchiveFormat.GZIP, "gz", 1, 5, 9);
 	}
 
