@@ -114,10 +114,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		TRACE1("Opening using codec %S", (const wchar_t*)codecs->Formats[index].Name);
 
 		HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
-	    if (result == S_FALSE) {
-			TRACE1("Result = 0x%08X, throwing exception...", (int)result)
 
+	    if (result != S_OK) {
+			TRACE1("Result = 0x%08X, throwing exception...", (int)result)
 			nativeMethodContext.ThrowSevenZipException(result, "Archive file (format: %S) can't be opened", (const wchar_t *)formatNameString);
+
 			return NULL;
 		}
 	} else {
@@ -135,7 +136,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		    }
 
 		    HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
-		    if (result == S_FALSE) {
+		    if (result != S_OK) {
 		    	continue;
 			}
 

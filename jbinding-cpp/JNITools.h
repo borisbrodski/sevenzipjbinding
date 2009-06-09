@@ -56,7 +56,7 @@
 #define CHECK_HRESULT5(nativeMethodContext, call, msg, p1, p2, p3, p4, p5)	\
 		{ 																	\
 			HRESULT hr = call;												\
-			if (hr)															\
+			if (hr != S_OK)													\
 			{																\
 				(nativeMethodContext).ThrowSevenZipException(               \
 				        hr, msg, p1, p2, p3, p4, p5);					    \

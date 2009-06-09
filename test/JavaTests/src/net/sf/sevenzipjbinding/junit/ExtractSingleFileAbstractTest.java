@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -327,6 +328,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 		private InputStream fileInputStream;
 		private long processed = 0;
 		private Random random = new Random();
+		private Throwable firstException;
 
 		public SingleFileSequentialOutStreamComparator(String expectedFilename) throws FileNotFoundException {
 			File file = new File(expectedFilename);
@@ -345,33 +347,55 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 
 		void checkAndCloseInputFile() {
 			try {
+
+				if (firstException instanceof RuntimeException) {
+					throw (RuntimeException) firstException;
+				}
+				if (firstException instanceof Error) {
+					throw (Error) firstException;
+
+				}
+				assertNull("Exception of some wrong type was caught: " + firstException, firstException);
+
 				assertEquals("Expected data larger that extracted data (processed: " + processed + ")", -1,
 						fileInputStream.read());
 			} catch (IOException e) {
 				throw new RuntimeException("Error reading 'expected' input file (testing for EOF)", e);
+			} finally {
+				closeInputFile();
 			}
-			closeInputFile();
 		}
 
 		@Override
 		public int write(byte[] data) {
-			assertTrue(data.length > 0);
+			try {
+				assertTrue(data.length > 0);
 
-			int count = random.nextInt(data.length) + 1;
+				int count = random.nextInt(data.length) + 1;
 
-			for (int i = 0; i < count; i++) {
-				int n;
-				try {
-					n = fileInputStream.read();
-				} catch (IOException e) {
-					throw new RuntimeException("Error reading 'expected' input file", e);
+				for (int i = 0; i < count; i++) {
+					int n;
+					try {
+						n = fileInputStream.read();
+					} catch (IOException e) {
+						throw new RuntimeException("Error reading 'expected' input file", e);
+					}
+					assertTrue("Extracted data larger that expected file: Unexpected end of file in fileInputStream",
+							n >= 0);
+					assertEquals("Extracted data doesn't match exptected data", (byte) n, data[i]);
 				}
-				assertTrue("Extracted data larger that expected file: Unexpected end of file in fileInputStream",
-						n >= 0);
-				assertEquals("Extracted data doesn't match exptected data", (byte) n, data[i]);
+				processed += count;
+				return count;
+			} catch (RuntimeException runtimeException) {
+				if (firstException == null) {
+					firstException = runtimeException;
+				}
+			} catch (Error error) {
+				if (firstException == null) {
+					firstException = error;
+				}
 			}
-			processed += count;
-			return count;
+			return data.length;
 		}
 	}
 
