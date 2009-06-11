@@ -206,7 +206,32 @@ public class InArchiveImpl implements ISevenZipInArchive {
 			throw new SevenZipException("Index out of range. Index: " + index + ", NumberOfItems: "
 					+ getNumberOfItems());
 		}
-		return nativeGetProperty(index, propID.getPropIDIndex());
+		// Correct some returned values
+		Object returnValue = nativeGetProperty(index, propID.getPropIDIndex());
+		switch (propID) {
+		case SIZE:
+		case PACKED_SIZE:
+			// ARJ archive returns sized as Integer (32 bit).
+			// It isn't particular good idea, since every other archive return Long (64 bit).
+			// So it will be corrected here.
+			if (returnValue instanceof Integer) {
+				return Long.valueOf(((Integer) returnValue).longValue());
+			}
+			break;
+
+		case IS_FOLDER:
+			// Some stream archive formats doesn't set this property.
+			if (returnValue == null) {
+				return Boolean.FALSE;
+			}
+
+		case ENCRYPTED:
+			// Some stream archive formats doesn't set this property.
+			if (returnValue == null) {
+				return Boolean.FALSE;
+			}
+		}
+		return returnValue;
 	}
 
 	private native String nativeGetStringProperty(int index, int propID);

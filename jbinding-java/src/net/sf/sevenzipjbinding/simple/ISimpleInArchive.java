@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Simplified interface for C++ <code>IInArchive</code>. For binding of
- * original 7-Zip C++ interface see {@link ISevenZipInArchive}.
+ * Simplified interface for C++ <code>IInArchive</code>. For binding of original 7-Zip C++ interface see
+ * {@link ISevenZipInArchive}.
  * 
  * 
  * @author Boris Brodski
@@ -14,12 +14,10 @@ import net.sf.sevenzipjbinding.SevenZipException;
 public interface ISimpleInArchive {
 	/**
 	 * Close archive. No more archive operations are possible.<br>
-	 * <b>Note</b>: This method should be always called to free system
-	 * resources.
+	 * <b>Note</b>: This method should be always called to free system resources.
 	 * 
 	 * @throws SevenZipException
-	 *             intern error occurs. See
-	 *             {@link SevenZipException#getMessage()} for details.
+	 *             intern error occurs. See {@link SevenZipException#getMessage()} for details.
 	 */
 	public void close() throws SevenZipException;
 
@@ -29,8 +27,7 @@ public interface ISimpleInArchive {
 	 * @return count of item in archive.
 	 * 
 	 * @throws SevenZipException
-	 *             intern error occurs. See
-	 *             {@link SevenZipException#getMessage()} for details.
+	 *             error occurs. See {@link SevenZipException#getMessage()} for details.
 	 */
 	public int getNumberOfItems() throws SevenZipException;
 
@@ -39,8 +36,18 @@ public interface ISimpleInArchive {
 	 * 
 	 * @return array of archive items
 	 * @throws SevenZipException
-	 *             intern error occurs. See
-	 *             {@link SevenZipException#getMessage()} for details.
+	 *             error occurs. See {@link SevenZipException#getMessage()} for details.
 	 */
 	public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException;
+
+	/**
+	 * Return a simple representation of the archive item with index <code>index</code>.
+	 * 
+	 * @param index
+	 *            index of the archive item to return
+	 * @return corresponding instance of {@link ISimpleInArchiveItem}
+	 * @throws SevenZipException
+	 *             error occurs. See {@link SevenZipException#getMessage()} for details.
+	 */
+	public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException;
 }

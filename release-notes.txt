@@ -1,6 +1,12 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Release - 0.5 (alpha, extraction only, cross-platform, based on p7zip)
+	* SevenZipJBinding binds p7zip 
+	* Complete rework of entire code
+	* Use 
+	* Base java package changed from "net.sf.sevenzip" to "net.sf.sevenzipjbinding"
+	* New java tests  
 
 Release - 0.4.1 (beta, bugfix release)
     * Bug fixed: 2525877 (Memory leak)

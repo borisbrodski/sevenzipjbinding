@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.simple.impl;
 import java.util.Date;
 
 import net.sf.sevenzipjbinding.ISequentialOutStream;
+import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -18,8 +19,31 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	private final SimpleInArchiveImpl simpleInArchiveImpl;
 	private final int index;
 
+	/**
+	 * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
+	 * of archive <code>simpleInArchiveImpl</code>.
+	 * 
+	 * @param simpleInArchiveImpl
+	 *            opened archive
+	 * @param index
+	 *            index of the item in archive
+	 */
 	public SimpleInArchiveItemImpl(SimpleInArchiveImpl simpleInArchiveImpl, int index) {
 		this.simpleInArchiveImpl = simpleInArchiveImpl;
+		this.index = index;
+	}
+
+	/**
+	 * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
+	 * of archive <code>sevenZipInArchive</code>.
+	 * 
+	 * @param sevenZipInArchive
+	 *            opened archive
+	 * @param index
+	 *            index of the item in archive
+	 */
+	public SimpleInArchiveItemImpl(ISevenZipInArchive sevenZipInArchive, int index) {
+		this.simpleInArchiveImpl = new SimpleInArchiveImpl(sevenZipInArchive);
 		this.index = index;
 	}
 

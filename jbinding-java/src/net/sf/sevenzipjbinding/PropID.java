@@ -7,22 +7,69 @@ package net.sf.sevenzipjbinding;
  * @version 1.0
  */
 public enum PropID {
-	NO_PROPERTY1, //
-	NO_PROPERTY2, //
+	/**
+	 * Dummy property1. First real property should have an item 2. So skip the position 2.
+	 */
+	NO_PROPERTY1,
+
+	/**
+	 * Dummy property2. First real property should have an item 2. So skip the position 1.
+	 */
+	NO_PROPERTY2,
 
 	HANDLER_ITEM_INDEX, // = 2
+
+	/**
+	 * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Please note, that stream archive
+	 * formats such as gzip does not support this property, since it is always a single file (or stream) being
+	 * compressed.<br>
+	 * <br>
+	 * Type: {@link String}. <code>null</code> will be returned, if current archive type doesn't support this property.
+	 */
 	PATH, //
+
 	NAME, //
-	EXTENSION, //
-	IS_FOLDER, //
-	SIZE, //
+
+	EXTENSION,
+
+	/**
+	 * Flag either a item represents a folder or not. Please note, that some archive formats doesn't define special
+	 * items for folders. In this case you may get a item with a path <code>'dir/file'</code> without having an item for <code>'dir'</code> at all. <br>
+	 * <br>
+	 * Type: {@link Boolean}. <code>true</code> if item is a folder, otherwise <code>false</code>.
+	 * <code>Boolean.FALSE</code> is returned, if archive format doesn't support this property. This property is never
+	 * <code>null</code>.
+	 */
+	IS_FOLDER,
+
+	/**
+	 * Size of the original file. <code>-1</code> is returned, if no size known for this item.
+	 * 
+	 * Type: {@link Long} <code>null</code> will be returned, if current archive type doesn't support this property.
+	 */
+	SIZE,
+
+	/**
+	 * Size of the packed item in archive. Sometimes <code>0</code> will be returned. It means either <i>unknown</i> or
+	 * the item shares compressed data with other items and so take no additional space in archive.
+	 * 
+	 * Type: {@link Long} <code>null</code> will be returned, if current archive type doesn't support this property.
+	 */
 	PACKED_SIZE, //
+
 	ATTRIBUTES, //
 	CREATION_TIME, //
 	LAST_ACCESS_TIME, //
 	LAST_WRITE_TIME, //
 	SOLID, //
-	COMMENTED, // 
+	COMMENTED,
+
+	/**
+	 * Flag either a item encrypted or not. <br>
+	 * Type: {@link Boolean}. <code>true</code> if item is encrypted, otherwise <code>false</code>.
+	 * <code>Boolean.FALSE</code> is returned, if archive format doesn't support this property. This property is never
+	 * <code>null</code>.
+	 */
 	ENCRYPTED, //
 	SPLIT_BEFORE, //
 	SPLIT_AFTER, //
@@ -79,8 +126,7 @@ public enum PropID {
 	 * @return enumeration element
 	 */
 	public static PropID getPropIDByIndex(int propIDIndex) {
-		if (propIDIndex >= 0 && propIDIndex < values().length
-				&& values()[propIDIndex].getPropIDIndex() == propIDIndex) {
+		if (propIDIndex >= 0 && propIDIndex < values().length && values()[propIDIndex].getPropIDIndex() == propIDIndex) {
 			return values()[propIDIndex];
 		}
 
