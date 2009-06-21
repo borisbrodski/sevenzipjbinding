@@ -44,9 +44,8 @@ public class VolumedArchiveInStream implements IInStream {
 		if (currentIndex == index) {
 			return 0;
 		}
-		currentIndex = index;
 
-		for (int i = volumePositions.size() + 1; i < index; i++) {
+		for (int i = volumePositions.size(); i < index && absoluteLength == -1; i++) {
 			int result = openVolume(i, false);
 			if (result != 0) {
 				return result;
@@ -60,13 +59,14 @@ public class VolumedArchiveInStream implements IInStream {
 		String volumeFilename = cuttedVolumeFilename + MessageFormat.format("{0,number,000}", Integer.valueOf(index));
 
 		// Get new IInStream
-		currentInStream = archiveOpenVolumeCallback.getStream(volumeFilename);
+		IInStream newInStream = archiveOpenVolumeCallback.getStream(volumeFilename);
 
-		if (currentInStream == null) {
+		if (newInStream == null) {
 			absoluteLength = volumePositions.get(volumePositions.size() - 1).longValue();
-			openVolume(index - 1, seekToBegin);
 			return 0;
 		}
+
+		currentInStream = newInStream;
 
 		if (volumePositions.size() == index) {
 			// Determine volume size
@@ -87,20 +87,28 @@ public class VolumedArchiveInStream implements IInStream {
 				if (result != 0) {
 					return result;
 				}
-				currentVolumeOffset = 0;
-				absoluteOffset = volumePositions.get(index - 1).longValue();
 			}
 		} else {
 			currentVolumeLength = volumePositions.get(index).longValue() - volumePositions.get(index - 1).longValue();
 		}
 
+		if (seekToBegin) {
+			currentVolumeOffset = 0;
+			absoluteOffset = volumePositions.get(index - 1).longValue();
+		}
+
+		currentIndex = index;
+
 		return 0;
 	}
 
+	// 0------X------Y------Z   length=4
+	// 0      1      2      3 - list index
+	// 1      2      3      4 - volume
 	private int openVolumeToAbsoluteOffset() {
 		int index = volumePositions.size() - 1;
-		if (absoluteOffset == absoluteLength) {
-			openVolume(index, false);
+		if (absoluteLength != -1 && absoluteOffset >= absoluteLength) {
+			// openVolume(index, false);
 			return 0;
 		}
 		while (volumePositions.get(index).longValue() > absoluteOffset) {
@@ -117,11 +125,12 @@ public class VolumedArchiveInStream implements IInStream {
 			if (result != 0) {
 				return result;
 			}
-		} while (volumePositions.get(index).longValue() < absoluteOffset);
+		} while ((absoluteLength == -1 || absoluteOffset < absoluteLength)
+				&& volumePositions.get(index).longValue() <= absoluteOffset);
 
-		if (volumePositions.get(index).longValue() > absoluteOffset) {
-			return openVolume(index - 1, false);
-		}
+		//		if (volumePositions.get(index).longValue() > absoluteOffset) {
+		//			return openVolume(index - 1, false);
+		//		}
 
 		return 0;
 	}
@@ -146,23 +155,29 @@ public class VolumedArchiveInStream implements IInStream {
 				openVolume(Integer.MAX_VALUE, false);
 			}
 			newOffset = absoluteLength + offset;
+			break;
 
 		default:
 			throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 		}
 
+		newPositionOneElementArray[0] = newOffset;
 		if (newOffset == absoluteOffset) {
 			return 0;
 		}
 		absoluteOffset = newOffset;
 
-		if (absoluteLength != -1 && absoluteLength < absoluteOffset) {
-			absoluteOffset = absoluteLength;
-		}
 		int result = openVolumeToAbsoluteOffset();
 		if (result != 0) {
 			return result;
 		}
+
+		if (absoluteLength != -1 && absoluteLength <= absoluteOffset) {
+			absoluteOffset = absoluteLength;
+			newPositionOneElementArray[0] = absoluteLength;
+			return 0;
+		}
+
 		currentVolumeOffset = absoluteOffset - volumePositions.get(currentIndex - 1).longValue();
 		return currentInStream.seek(currentVolumeOffset, SEEK_SET, DUMMY_LONG_ONE_ELEMENT_ARRAY);
 	}
@@ -172,7 +187,7 @@ public class VolumedArchiveInStream implements IInStream {
 	 */
 	@Override
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
-		if (absoluteOffset == absoluteLength) {
+		if (absoluteLength != -1 && absoluteOffset >= absoluteLength) {
 			processedSizeOneElementArray[0] = 0;
 			return 0;
 		}

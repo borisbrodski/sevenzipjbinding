@@ -2,9 +2,6 @@ package net.sf.sevenzipjbinding.junit.tools;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Random;
-
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.PropID;
@@ -15,32 +12,105 @@ import org.junit.Test;
 
 public abstract class VolumedArchiveInStreamTest {
 
-	public static class NoReadLimit extends VolumedArchiveInStreamTest {
+	public abstract static class NoReadLimit extends VolumedArchiveInStreamTest {
 		public NoReadLimit() {
 			super(Integer.MAX_VALUE);
 		}
 	}
 
-	public static class ReadSingleBytes extends VolumedArchiveInStreamTest {
+	public abstract static class ReadSingleBytes extends VolumedArchiveInStreamTest {
 		public ReadSingleBytes() {
 			super(1);
 		}
 	}
 
-	public static class ReadMaxTwoBytes extends VolumedArchiveInStreamTest {
+	public abstract static class ReadMaxTwoBytes extends VolumedArchiveInStreamTest {
 		public ReadMaxTwoBytes() {
 			super(2);
 		}
 	}
 
-	public static class ReadMaxThreeBytes extends VolumedArchiveInStreamTest {
+	public abstract static class ReadMaxThreeBytes extends VolumedArchiveInStreamTest {
 		public ReadMaxThreeBytes() {
 			super(3);
 		}
 	}
 
+	public static class NoReadLimitSeekSet extends NoReadLimit {
+		public NoReadLimitSeekSet() {
+			setSeekMode(IInStream.SEEK_SET);
+		}
+	}
+
+	public static class ReadSingleBytesSeekSet extends ReadSingleBytes {
+		public ReadSingleBytesSeekSet() {
+			setSeekMode(IInStream.SEEK_SET);
+		}
+	}
+
+	public static class ReadMaxTwoBytesSeekSet extends ReadMaxTwoBytes {
+		public ReadMaxTwoBytesSeekSet() {
+			setSeekMode(IInStream.SEEK_SET);
+		}
+	}
+
+	public static class ReadMaxThreeBytesSeekSet extends ReadMaxThreeBytes {
+		public ReadMaxThreeBytesSeekSet() {
+			setSeekMode(IInStream.SEEK_SET);
+		}
+	}
+
+	public static class NoReadLimitSeekCur extends NoReadLimit {
+		public NoReadLimitSeekCur() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadSingleBytesSeekCur extends ReadSingleBytes {
+		public ReadSingleBytesSeekCur() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadMaxTwoBytesSeekCur extends ReadMaxTwoBytes {
+		public ReadMaxTwoBytesSeekCur() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadMaxThreeBytesSeekCur extends ReadMaxThreeBytes {
+		public ReadMaxThreeBytesSeekCur() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class NoReadLimitSeekEnd extends NoReadLimit {
+		public NoReadLimitSeekEnd() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadSingleBytesSeekEnd extends ReadSingleBytes {
+		public ReadSingleBytesSeekEnd() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadMaxTwoBytesSeekEnd extends ReadMaxTwoBytes {
+		public ReadMaxTwoBytesSeekEnd() {
+			setSeekMode(IInStream.SEEK_CUR);
+		}
+	}
+
+	public static class ReadMaxThreeBytesSeekEnd extends ReadMaxThreeBytes {
+		public ReadMaxThreeBytesSeekEnd() {
+			setSeekMode(IInStream.SEEK_END);
+		}
+	}
+
 	final int maxBlockLengthToRead;
-	final Random random = new Random(this.getClass().getCanonicalName().hashCode());
+	//	final Random random = new Random(this.getClass().getCanonicalName().hashCode());
+	private int seekMode;
 
 	@Test
 	public void testReadSingleVolume1() throws Exception {
@@ -147,7 +217,59 @@ public abstract class VolumedArchiveInStreamTest {
 	@Test
 	public void testReadAndSeekSingleVolumes1() throws Exception {
 		readTest(new long[] { 1 }, //
-				new int[] { 1, eof(1), 0, 1, eof(1), 0, 1, eof(1) });
+				new int[] { 1, eof(1), seek(0), 1, eof(1), seek(0), 1, eof(1) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes2() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 1, seek(0), 1, seek(0), 2, eof(2) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes3() throws Exception {
+		readTest(new long[] { 1, 1, 1 }, //
+				new int[] { seek(2), 1, eof(1), seek(1), 2, eof(2), seek(0), 3, eof(3) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes4() throws Exception {
+		readTest(new long[] { 1, 1, 1 }, //
+				new int[] { seek(3), 1, eof(0) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes5() throws Exception {
+		readTest(new long[] { 1, 1, 1 }, //
+				new int[] { seek(1), seek(2), seek(1), 2, eof(2), seek(1), 1, seek(3), 1, eof(0) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes6() throws Exception {
+		readTest(new long[] { 2, 2, 2 }, //
+				new int[] { seek(2), 2, 2, seek(1), 2, seek(5), 1, eof(1) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes7() throws Exception {
+		readTest(new long[] { 10, 10, 10, 10 }, //
+				new int[] { seek(1), 30, seek(2), 30, /*seek(3), 30*/});
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes8() throws Exception {
+		readTest(new long[] { 10, 10, 10, 10 }, //
+				new int[] { seek(1000), 1, eof(0), seek(0), 40, eof(40) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes9() throws Exception {
+		readTest(new long[] { 10, 1, 10, 1 }, //
+				new int[] { 22, eof(22), seek(0), 22, eof(22), seek(1), 22, eof(21),//
+						seek(2), 22, eof(20), seek(8), 22, eof(14), seek(9), 22, eof(13), //
+						seek(10), 22, eof(12), seek(11), 22, eof(11), seek(12), 22, eof(10), //
+						seek(13), 22, eof(9), seek(19), 22, eof(3), seek(20), 22, eof(2), //
+						seek(21), 22, eof(1), seek(22), 22, eof(0) });
 	}
 
 	VolumedArchiveInStreamTest(int maxBlockLengthToRead) {
@@ -170,7 +292,7 @@ public abstract class VolumedArchiveInStreamTest {
 		}
 
 		int[] processedSizeOneElementArray = new int[1];
-		int offset = 0;
+		long offset = 0;
 		for (int i = 0; i < readSizes.length; i++) {
 			int toRead = readSizes[i];
 			int wasRead = 0;
@@ -183,8 +305,8 @@ public abstract class VolumedArchiveInStreamTest {
 			}
 			if (toRead <= 0) {
 				// Seek
-				long[] absolutePosition = new long[1];
-				switch (random.nextInt(3)) {
+				long[] absolutePosition = new long[] { -1 };
+				switch (seekMode) {
 				case 0:
 					// Use SEEK_SET
 					assertEquals(0, volumedArchiveInStream.seek(-toRead, IInStream.SEEK_SET, absolutePosition));
@@ -195,20 +317,23 @@ public abstract class VolumedArchiveInStreamTest {
 					break;
 				case 2:
 					// Use SEEK_END
-					assertEquals(0, volumedArchiveInStream.seek(-toRead - entireSize, IInStream.SEEK_CUR,
+					assertEquals(0, volumedArchiveInStream.seek(-toRead - entireSize, IInStream.SEEK_END,
 							absolutePosition));
 					break;
 				}
-				offset = -toRead;
+				assertEquals(-toRead > entireSize ? entireSize : -toRead, absolutePosition[0]);
+				offset = absolutePosition[0];
 
 			} else {
 				// Read
 				do {
 					byte[] data = new byte[toRead];
 
+					processedSizeOneElementArray[0] = -1;
 					assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
 					if (processedSizeOneElementArray[0] == 0) {
 						assertEquals(entireSize, offset);
+						processedSizeOneElementArray[0] = -1;
 						assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
 						assertEquals(0, processedSizeOneElementArray[0]);
 						assertTrue(expectEOF);
@@ -233,12 +358,21 @@ public abstract class VolumedArchiveInStreamTest {
 	}
 
 	private static byte getByteByOffset(long offset) {
-		int hashCode = Long.toString(offset).hashCode();
-		return (byte) (hashCode ^ (hashCode >> 8) ^ (hashCode >> 16) ^ (hashCode >> 24));
+		//		int hashCode = Long.toString(offset).hashCode();
+		//		return (byte) (hashCode ^ (hashCode >> 8) ^ (hashCode >> 16) ^ (hashCode >> 24));
+		return (byte) offset;
 	}
 
 	private static int eof(int expectToRead) {
 		return Integer.MAX_VALUE - expectToRead;
+	}
+
+	private static int seek(int offset) {
+		return -offset;
+	}
+
+	protected void setSeekMode(int seekMode) {
+		this.seekMode = seekMode;
 	}
 
 	class TestArchiveOpenVolumeCallback implements IArchiveOpenVolumeCallback {
