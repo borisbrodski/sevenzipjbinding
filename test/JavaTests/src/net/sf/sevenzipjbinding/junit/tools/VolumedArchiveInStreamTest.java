@@ -1,0 +1,329 @@
+package net.sf.sevenzipjbinding.junit.tools;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
+
+import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
+import net.sf.sevenzipjbinding.IInStream;
+import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
+
+import org.junit.Test;
+
+public abstract class VolumedArchiveInStreamTest {
+
+	public static class NoReadLimit extends VolumedArchiveInStreamTest {
+		public NoReadLimit() {
+			super(Integer.MAX_VALUE);
+		}
+	}
+
+	public static class ReadSingleBytes extends VolumedArchiveInStreamTest {
+		public ReadSingleBytes() {
+			super(1);
+		}
+	}
+
+	public static class ReadMaxTwoBytes extends VolumedArchiveInStreamTest {
+		public ReadMaxTwoBytes() {
+			super(2);
+		}
+	}
+
+	public static class ReadMaxThreeBytes extends VolumedArchiveInStreamTest {
+		public ReadMaxThreeBytes() {
+			super(3);
+		}
+	}
+
+	final int maxBlockLengthToRead;
+	final Random random = new Random(this.getClass().getCanonicalName().hashCode());
+
+	@Test
+	public void testReadSingleVolume1() throws Exception {
+		readTest(new long[] { 1 }, //
+				new int[] { 1, eof(1), 1, eof(0) });
+	}
+
+	@Test
+	public void testReadSingleVolume2() throws Exception {
+		readTest(new long[] { 1 }, //
+				new int[] { 2, eof(1) });
+	}
+
+	@Test
+	public void testReadSingleVolume3() throws Exception {
+		readTest(new long[] { 10 }, //
+				new int[] { 1 });
+	}
+
+	@Test
+	public void testReadSingleVolume4() throws Exception {
+		readTest(new long[] { 10 }, //
+				new int[] { 1, 1 });
+	}
+
+	@Test
+	public void testReadSingleVolume5() throws Exception {
+		readTest(new long[] { 10 }, //
+				new int[] { 3, 3, 3 });
+	}
+
+	@Test
+	public void testReadSingleVolume6() throws Exception {
+		readTest(new long[] { 10 }, //
+				new int[] { 3, 3, 4, eof(4) });
+	}
+
+	@Test
+	public void testReadSingleVolume7() throws Exception {
+		readTest(new long[] { 10 }, //
+				new int[] { 3, 3, 5, eof(4) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes1() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 1 });
+	}
+
+	@Test
+	public void testReadMultipleVolumes2() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 1, 1, eof(1) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes3() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 2, eof(2) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes4() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 1, 1, 1, eof(0) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes5() throws Exception {
+		readTest(new long[] { 1, 1 }, //
+				new int[] { 3, eof(2) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes6() throws Exception {
+		readTest(new long[] { 2, 2 }, //
+				new int[] { 1, 1, 1, 1, eof(1) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes7() throws Exception {
+		readTest(new long[] { 2, 2 }, //
+				new int[] { 2, 2, eof(2) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes8() throws Exception {
+		readTest(new long[] { 2, 2 }, //
+				new int[] { 3, 3, eof(1) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes9() throws Exception {
+		readTest(new long[] { 100, 200, 300, 400 }, //
+				new int[] { 1000, eof(1000) });
+	}
+
+	@Test
+	public void testReadMultipleVolumes10() throws Exception {
+		readTest(new long[] { 1, 1, 1, 1, 1, 1, 1, 1, 1 }, //
+				new int[] { 9, eof(9) });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes1() throws Exception {
+		readTest(new long[] { 1 }, //
+				new int[] { 1, eof(1), 0, 1, eof(1), 0, 1, eof(1) });
+	}
+
+	VolumedArchiveInStreamTest(int maxBlockLengthToRead) {
+		this.maxBlockLengthToRead = maxBlockLengthToRead;
+
+	}
+
+	private void readTest(long[] streamSizes, int[] readSizes) {
+		VolumedArchiveInStream volumedArchiveInStream;
+		try {
+			volumedArchiveInStream = new VolumedArchiveInStream("file.7z.001", //
+					new TestArchiveOpenVolumeCallback("file.7z.001", streamSizes));
+		} catch (SevenZipException e) {
+			throw new Error(e);
+		}
+
+		int entireSize = 0;
+		for (int i = 0; i < streamSizes.length; i++) {
+			entireSize += streamSizes[i];
+		}
+
+		int[] processedSizeOneElementArray = new int[1];
+		int offset = 0;
+		for (int i = 0; i < readSizes.length; i++) {
+			int toRead = readSizes[i];
+			int wasRead = 0;
+			int expectToRead = toRead;
+			boolean expectEOF = false;
+			if (i + 1 < readSizes.length && readSizes[i + 1] > Integer.MAX_VALUE - 10000) {
+				expectToRead = Integer.MAX_VALUE - readSizes[i + 1];
+				expectEOF = true;
+				i++;
+			}
+			if (toRead <= 0) {
+				// Seek
+				long[] absolutePosition = new long[1];
+				switch (random.nextInt(3)) {
+				case 0:
+					// Use SEEK_SET
+					assertEquals(0, volumedArchiveInStream.seek(-toRead, IInStream.SEEK_SET, absolutePosition));
+					break;
+				case 1:
+					// Use SEEK_CUR
+					assertEquals(0, volumedArchiveInStream.seek(-toRead - offset, IInStream.SEEK_CUR, absolutePosition));
+					break;
+				case 2:
+					// Use SEEK_END
+					assertEquals(0, volumedArchiveInStream.seek(-toRead - entireSize, IInStream.SEEK_CUR,
+							absolutePosition));
+					break;
+				}
+				offset = -toRead;
+
+			} else {
+				// Read
+				do {
+					byte[] data = new byte[toRead];
+
+					assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
+					if (processedSizeOneElementArray[0] == 0) {
+						assertEquals(entireSize, offset);
+						assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
+						assertEquals(0, processedSizeOneElementArray[0]);
+						assertTrue(expectEOF);
+						expectEOF = false;
+						toRead = 0;
+						break;
+					}
+					for (int j = 0; j < processedSizeOneElementArray[0]; j++) {
+						assertEquals(data[j], getByteByOffset(offset + j));
+					}
+					offset += processedSizeOneElementArray[0];
+					toRead -= processedSizeOneElementArray[0];
+					wasRead += processedSizeOneElementArray[0];
+				} while (toRead > 0);
+				assertEquals(expectToRead, wasRead);
+				if (expectEOF) {
+					assertEquals(0, volumedArchiveInStream.read(new byte[1], processedSizeOneElementArray));
+					assertEquals(0, processedSizeOneElementArray[0]);
+				}
+			}
+		}
+	}
+
+	private static byte getByteByOffset(long offset) {
+		int hashCode = Long.toString(offset).hashCode();
+		return (byte) (hashCode ^ (hashCode >> 8) ^ (hashCode >> 16) ^ (hashCode >> 24));
+	}
+
+	private static int eof(int expectToRead) {
+		return Integer.MAX_VALUE - expectToRead;
+	}
+
+	class TestArchiveOpenVolumeCallback implements IArchiveOpenVolumeCallback {
+		private final String firstVolumeFilename;
+		private final long[] streamSizes;
+
+		TestArchiveOpenVolumeCallback(String firstVolumeFilename, long[] streamSizes) {
+			this.firstVolumeFilename = firstVolumeFilename;
+			this.streamSizes = streamSizes;
+		}
+
+		@Override
+		public Object getProperty(PropID propID) {
+			return null;
+		}
+
+		@Override
+		public IInStream getStream(String filename) {
+			assertEquals(firstVolumeFilename.substring(0, firstVolumeFilename.length() - 3), //
+					filename.substring(0, filename.length() - 3));
+
+			int index = Integer.valueOf(filename.substring(filename.length() - 3));
+
+			if (index > streamSizes.length) {
+				return null;
+			}
+
+			int initialOffset = 0;
+			for (int i = 1; i < index; i++) {
+				initialOffset += streamSizes[i - 1];
+			}
+			return new TestInStream(initialOffset, streamSizes[index - 1]);
+		}
+	}
+
+	class TestInStream implements IInStream {
+		private final long initialOffset;
+		private final long size;
+		private long offset;
+
+		TestInStream(long initialOffset, long size) {
+			this.initialOffset = initialOffset;
+			this.size = size;
+			offset = 0;
+		}
+
+		@Override
+		public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
+			switch (seekOrigin) {
+			case SEEK_SET:
+				this.offset = offset;
+				break;
+
+			case SEEK_CUR:
+				this.offset += offset;
+				break;
+
+			case SEEK_END:
+				this.offset = size + offset;
+				break;
+
+			default:
+				throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
+			}
+			newPositionOneElementArray[0] = this.offset;
+			return 0;
+		}
+
+		@Override
+		public int read(byte[] data, int[] processedSizeOneElementArray) {
+			processedSizeOneElementArray[0] = 0;
+
+			for (int i = 0; i < data.length; i++) {
+				if (offset >= size) {
+					break;
+				}
+				if (i >= maxBlockLengthToRead) {
+					break;
+				}
+				data[i] = getByteByOffset(initialOffset + offset);
+				offset++;
+				processedSizeOneElementArray[0]++;
+			}
+
+			return 0;
+		}
+	}
+}
