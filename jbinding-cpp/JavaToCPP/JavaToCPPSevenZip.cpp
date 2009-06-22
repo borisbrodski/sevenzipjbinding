@@ -93,16 +93,17 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		}
 	}
 
+	CMyComPtr<IInArchive> archive;
+	CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
+
 	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback;
 	if (archiveOpenCallbackImpl)
 	{
 		TRACE("Using archive open callback")
 
-		archiveOpenCallback = new UniversalArchiveOpencallback(&nativeMethodContext, env, archiveOpenCallbackImpl);
+		archiveOpenCallback = new UniversalArchiveOpencallback(&nativeMethodContext, env,
+				archiveOpenCallbackImpl, (CPPToJavaInStream *)stream);
 	}
-
-	CMyComPtr<IInArchive> archive;
-	CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
 
 	if (index != -1) {
 		// Use one specified codec
@@ -196,6 +197,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 			(size_t)(void*)(stream));
 
 	stream->ClearNativeMethodContext();
+
 	stream.Detach();
 
 	return InArchiveImplObject;

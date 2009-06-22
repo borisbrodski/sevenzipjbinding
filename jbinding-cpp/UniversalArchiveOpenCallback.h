@@ -6,6 +6,7 @@
 #include "CPPToJava/CPPToJavaArchiveOpenCallback.h"
 #include "CPPToJava/CPPToJavaArchiveOpenVolumeCallback.h"
 #include "CPPToJava/CPPToJavaCryptoGetTextPassword.h"
+#include "CPPToJava/CPPToJavaInStream.h"
 
 class UniversalArchiveOpencallback :
     public IArchiveOpenCallback,
@@ -19,14 +20,15 @@ private:
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
 
-    void Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl);
+    void Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv,
+    		jobject archiveOpenCallbackImpl, CPPToJavaInStream * lastVolume);
 
 public:
 
-    UniversalArchiveOpencallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+    UniversalArchiveOpencallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl, CPPToJavaInStream * lastVolume)
     {
         TRACE_OBJECT_CREATION("UniversalArchiveOpencallback")
-        Init(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
+        Init(nativeMethodContext, initEnv, archiveOpenCallbackImpl, lastVolume);
     }
 
     virtual ~UniversalArchiveOpencallback()

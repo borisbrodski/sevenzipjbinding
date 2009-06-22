@@ -5,8 +5,8 @@ CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZMA=n
 CREATE_SIMPLE_ZIP=n
-CREATE_SIMPLE_7Z=y
-CREATE_SIMPLE_RAR=n
+CREATE_SIMPLE_7Z=n
+CREATE_SIMPLE_RAR=y
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_GZIP=n
 CREATE_SIMPLE_BZIP2=n
@@ -86,6 +86,10 @@ if test $CREATE_SIMPLE_RAR = y -o $CREATE_ALL = y ; then
 	    rar a -m$i rar/$j.$i.rar $j
 	    rar a -m$i -pTestPass rar/pass-$j.$i.rar $j
 	    rar a -m$i -hpTestPass rar/passh-$j.$i.rar $j
+
+	    rar a -v10000b -m$i rar/vol-$j.$i.rar $j
+	    rar a -v10000b -m$i -pTestPass rar/vol-pass-$j.$i.rar $j
+	    rar a -v10000b -m$i -hpTestPass rar/vol-passh-$j.$i.rar $j
         done
     done
 fi

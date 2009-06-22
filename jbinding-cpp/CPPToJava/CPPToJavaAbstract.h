@@ -14,13 +14,13 @@ protected:
     const char * classname;
 
 public:
-    void ClearNativeMethodContext()
+    virtual void ClearNativeMethodContext()
     {
 	    TRACE_OBJECT_CALL("ClearNativeMethodContext");
         _nativeMethodContext = NULL;
     }
 
-    void SetNativMethodContext(CMyComPtr<NativeMethodContext> nativeMethodContext)
+    virtual void SetNativMethodContext(CMyComPtr<NativeMethodContext> nativeMethodContext)
     {
 	    TRACE_OBJECT_CALL("SetNativMethodContext");
         _nativeMethodContext = nativeMethodContext;
@@ -112,7 +112,7 @@ protected:
 
 		jmethodID methodID = env->GetStaticMethodID(javaClass, methodName, methodSignature);
 		FATALIF3(methodID == NULL, "Static method %s.%s with signature '%s' was not found!",
-				GetJavaClassName(env, _javaImplementationClass, classname, sizeof(classname)),
+				GetJavaClassName(env, javaClass, classname, sizeof(classname)),
 				methodName, methodSignature);
 
 		return methodID;

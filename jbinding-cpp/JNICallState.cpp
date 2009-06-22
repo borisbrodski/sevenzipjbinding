@@ -216,7 +216,7 @@ void NativeMethodContext::JNIThrowException(JNIEnv * env)
 
     if (!_firstThrowenExceptionMessage)
     {
-        TRACE("_firstThrowenExceptionMessage is NULL. Nothing to throw.");
+//        TRACE("_firstThrowenExceptionMessage is NULL. Nothing to throw.");
         return;
     }
 

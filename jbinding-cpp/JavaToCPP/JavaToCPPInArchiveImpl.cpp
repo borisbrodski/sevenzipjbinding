@@ -95,10 +95,10 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 
 	if (!pointer)
 	{
-        throw SevenZipException("Can't preform action. InStream==NULL.");
+        throw SevenZipException("Can't perform action. InStream==NULL.");
 	}
 
-    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
+//    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
 
     return (CPPToJavaInStream *)(void *)pointer;
 }
@@ -135,7 +135,6 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
 	CPPToJavaInStream * inStream = GetInStream(env, thiz);
 	inStream->SetNativMethodContext(&nativeMethodContext);
-
 
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
@@ -488,9 +487,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     NWindows::NCOM::CPropVariant propVariant;
 
-    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (unsigned int)(Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
+//    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (unsigned int)(Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
     CHECK_HRESULT2(nativeMethodContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
-    TRACE("Done!")
+
     inStream->ClearNativeMethodContext();
 
 	return PropVariantToObject(&jniInstance, &propVariant);

@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
@@ -148,6 +150,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	protected void usingVolumes(boolean usingVolumes) {
 		this.usingVolumes = usingVolumes;
+		if (usingVolumes) {
+			setVolumedArchivePrefix("vol-");
+		} else {
+			setVolumedArchivePrefix("");
+		}
+
 	}
 
 	public void setVolumedArchivePrefix(String volumedArchivePrefix) {
@@ -160,7 +168,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	final protected void useVolumedSevenZip() {
 		usingVolumes(true);
-		setVolumedArchivePrefix("vol-");
 		setVolumeArchivePostfix(".001");
 	}
 
@@ -321,20 +328,25 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		//		for (int i = 0; i < 10; i++) {
-		testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
-		//		}
+		for (int i = 0; i < 10; i++) {
+			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
+		}
 	}
 
 	private void testSingleFileArchiveExtraction2(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
+		String uncommpressedFilename = "simple" + fileIndex + ".dat";
+		String expectedFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + uncommpressedFilename;
+
 		String archiveFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + archiveFormat.toString().toLowerCase()
 				+ File.separatorChar
 				+ //
 				volumedArchivePrefix + cryptedArchivePrefix + "simple" + fileIndex + ".dat." + compressionIndex + "."
 				+ extention + volumeArchivePostfix;
-		String uncommpressedFilename = "simple" + fileIndex + ".dat";
-		String expectedFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + uncommpressedFilename;
+
+		if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
+			archiveFilename = archiveFilename.replace("part1.rar", "rar");
+		}
 
 		System.out.println("Opening '" + archiveFilename + "'");
 		try {
@@ -344,14 +356,15 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 			VolumeArchiveOpenCallback volumeArchiveOpenCallback = null;
 			VolumedArchiveInStream volumedArchiveInStream;
 			IInStream inStreamToUse = randomAccessFileInStream;
+			IArchiveOpenCallback archiveOpenCallbackToUse = null;
 
 			if (usingVolumes) {
-				volumeArchiveOpenCallback = new VolumeArchiveOpenCallback();
+				volumeArchiveOpenCallback = new VolumeArchiveOpenCallback(archiveFilename);
 				if (archiveFormat == ArchiveFormat.SEVEN_ZIP) {
 					volumedArchiveInStream = new VolumedArchiveInStream(archiveFilename, volumeArchiveOpenCallback);
 					inStreamToUse = volumedArchiveInStream;
 				} else {
-					throw new Error("Not implemented yet"); // TODO Implement
+					archiveOpenCallbackToUse = volumeArchiveOpenCallback;
 				}
 			}
 
@@ -364,7 +377,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 							passwordToUse);
 				}
 			} else {
-				inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse);
+				if (archiveOpenCallbackToUse == null) {
+					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse);
+				} else {
+					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
+							archiveOpenCallbackToUse);
+				}
 			}
 
 			System.out.println("Extracting...");
@@ -667,6 +685,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 			ICryptoGetTextPassword {
 
 		private RandomAccessFile randomAccessFile;
+		private String currentFilename;
+		private List<RandomAccessFile> openedRandomAccessFileList = new ArrayList<RandomAccessFile>();
+
+		VolumeArchiveOpenCallback(String firstFilename) {
+			currentFilename = firstFilename;
+		}
 
 		/**
 		 * ${@inheritDoc}
@@ -674,6 +698,10 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		@Override
 		public Object getProperty(PropID propID) {
 			System.out.println("getProperty(): " + propID);
+			switch (propID) {
+			case NAME:
+				return currentFilename;
+			}
 			return null;
 		}
 
@@ -683,15 +711,16 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		@Override
 		public IInStream getStream(String filename) {
 			System.out.println("getStream(): " + filename);
+			currentFilename = filename;
 			try {
 				RandomAccessFile newRandomAccessFile = new RandomAccessFile(filename, "r");
 				if (newRandomAccessFile == null) {
 					return null;
 				}
-				if (randomAccessFile != null) {
-					randomAccessFile.close();
-				}
 				randomAccessFile = newRandomAccessFile;
+				if (randomAccessFile != null) {
+					openedRandomAccessFileList.add(randomAccessFile);
+				}
 				return new RandomAccessFileInStream(randomAccessFile);
 			} catch (FileNotFoundException fileNotFoundException) {
 				return null;
@@ -701,8 +730,8 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		}
 
 		public void close() throws IOException {
-			if (randomAccessFile != null) {
-				randomAccessFile.close();
+			for (RandomAccessFile file : openedRandomAccessFileList) {
+				file.close();
 			}
 		}
 

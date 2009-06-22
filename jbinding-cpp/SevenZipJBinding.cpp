@@ -79,7 +79,11 @@ void fatal(const char * fmt, ...) {
 	fputc('\n', stdout);
 	fflush(stdout);
 
-	exit(-1);
+	// exit(-1);
+
+	// Crash jvm to get a stack trace
+	int * i = NULL;
+	*i = 0;
 }
 
 

@@ -3,7 +3,8 @@
 #include "JNITools.h"
 #include "UniversalArchiveOpenCallback.h"
 
-void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
+void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv,
+		jobject archiveOpenCallbackImpl, CPPToJavaInStream * lastVolume)
 {
     TRACE_OBJECT_CALL("Init")
 
@@ -33,7 +34,7 @@ void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContex
     {
     	TRACE("implements IArchiveOpenVolumeCallback")
         CMyComPtr<IArchiveOpenVolumeCallback> archiveOpenVolumeCallbackComPtr =
-            new CPPToJavaArchiveOpenVolumeCallback(nativeMethodContext, initEnv, archiveOpenCallbackImpl);
+            new CPPToJavaArchiveOpenVolumeCallback(nativeMethodContext, initEnv, archiveOpenCallbackImpl, lastVolume);
         _archiveOpenVolumeCallback = archiveOpenVolumeCallbackComPtr.Detach();
     }
 }
@@ -41,9 +42,9 @@ void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContex
 STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
 {
     TRACE_OBJECT_CALL("QueryInterface")
-    TRACE1("UniversalArchiveOpencallback::QueryInterface(%i)", iid)
-    TRACE2("UniversalArchiveOpencallback::QueryInterface(%x,%x)", (int)iid.Data4[3], (int)iid.Data4[5])
-    TRACE1("_archiveOpenVolumeCallback=0x%08X", (size_t)_archiveOpenVolumeCallback)
+//    TRACE1("UniversalArchiveOpencallback::QueryInterface(%i)", iid)
+//    TRACE2("UniversalArchiveOpencallback::QueryInterface(%x,%x)", (int)iid.Data4[3], (int)iid.Data4[5])
+//    TRACE1("_archiveOpenVolumeCallback=0x%08X", (size_t)_archiveOpenVolumeCallback)
 
     if (iid == IID_IArchiveOpenCallback)
     {
@@ -54,7 +55,7 @@ STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **o
 
     if (memcmp(&iid, &IID_IArchiveOpenVolumeCallback, sizeof(GUID)) == 0 && _archiveOpenVolumeCallback)
     {
-    	TRACE("OpenVolume")
+//    	TRACE("OpenVolume")
         *outObject = (void *)(IArchiveOpenVolumeCallback *)this;
         AddRef();
         return S_OK;
@@ -62,7 +63,7 @@ STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **o
 
     if (iid == IID_ICryptoGetTextPassword && _cryptoGetTextPassword)
     {
-    	TRACE("CryptoGetTextPassword")
+//    	TRACE("CryptoGetTextPassword")
         *outObject = (void *)(ICryptoGetTextPassword *)this;
         AddRef();
         return S_OK;

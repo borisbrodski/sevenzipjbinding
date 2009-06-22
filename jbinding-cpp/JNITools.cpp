@@ -30,9 +30,9 @@ static void localinit(JNIEnv * env) {
 		return;
 	}
 
-//	g_NumberClass = env->FindClass(JAVA_NUMBER);
-//	FATALIF(g_NumberClass == NULL, "Can't find Number class");
-//	g_NumberClass = (jclass) env->NewGlobalRef(g_NumberClass);
+	//	g_NumberClass = env->FindClass(JAVA_NUMBER);
+	//	FATALIF(g_NumberClass == NULL, "Can't find Number class");
+	//	g_NumberClass = (jclass) env->NewGlobalRef(g_NumberClass);
 
 	// class: Integer
 	g_IntegerClass = env->FindClass(JAVA_INTEGER);
@@ -43,8 +43,7 @@ static void localinit(JNIEnv * env) {
 			"(I)Ljava/lang/Integer;");
 	FATALIF(g_IntegerValueOf == NULL, "Can't find Integer.valueOf() method");
 
-	g_IntegerIntValue = env->GetMethodID(g_IntegerClass, "intValue",
-			"()I");
+	g_IntegerIntValue = env->GetMethodID(g_IntegerClass, "intValue", "()I");
 	FATALIF(g_IntegerIntValue == NULL, "Can't find Integer.intValue() method");
 
 	// class: Long
@@ -244,8 +243,15 @@ void ObjectToPropVariant(JNIInstance * jniInstance, jobject object,
 		if (env->IsInstanceOf(object, g_IntegerClass)) {
 			jint value = env->CallIntMethod(object, g_IntegerIntValue);
 			cPropVariant = value;
+		} else if (env->IsInstanceOf(object, g_StringClass)) {
+	        const jchar * jChars = env->GetStringChars((jstring)object, NULL);
+			BSTR bstr;
+	        StringToBstr(UnicodeHelper(jChars), &bstr);
+			cPropVariant = bstr;
+	        env->ReleaseStringChars((jstring)object, jChars);
 		} else {
-			jniInstance->ThrowSevenZipException("Can't convert object to PropVariant"); // TODO Improve error message by giving name of the class
+			jniInstance->ThrowSevenZipException(
+					"Can't convert object to PropVariant"); // TODO Improve error message by giving name of the class
 		}
 
 	}

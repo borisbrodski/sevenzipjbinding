@@ -1,6 +1,8 @@
 #ifndef SEVENZIPEXCEPTION_H_
 #define SEVENZIPEXCEPTION_H_
 
+#include "Debug.h"
+
 #define EXCEPTION_MESSAGE_MAX_SIZE 4000
 
 class SevenZipException : public Object
