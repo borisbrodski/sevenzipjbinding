@@ -60,13 +60,13 @@ public interface ISimpleInArchiveItem {
 	 * at all. <br>
 	 * <br>
 	 * 
-	 * @return <code>true</code> if item is a folder, otherwise <code>false</code>. <code>Boolean.FALSE</code> is
-	 *         returned, if archive format doesn't support this property. This property is never <code>null</code>
+	 * @return <code>true</code> if item is a folder, otherwise <code>false</code>. <code>false</code> is returned, if
+	 *         archive format doesn't support this property.
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
 	 */
-	public Boolean isFolder() throws SevenZipException;
+	public boolean isFolder() throws SevenZipException;
 
 	/**
 	 * Return item attributes.<br>
@@ -145,13 +145,13 @@ public interface ISimpleInArchiveItem {
 	/**
 	 * Flag either a item encrypted or not.
 	 * 
-	 * @return <code>true</code> if item is encrypted, otherwise <code>false</code>. <code>Boolean.FALSE</code> is
-	 *         returned, if archive format doesn't support this property. This property is never <code>null</code>.
+	 * @return <code>true</code> if item is encrypted, otherwise <code>false</code>. <code>false</code> is returned, if
+	 *         archive format doesn't support this property.
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
 	 */
-	public Boolean isEncrypted() throws SevenZipException;
+	public boolean isEncrypted() throws SevenZipException;
 
 	/**
 	 * Return <code>true</code> if item was commented, otherwise <code>false</code>.

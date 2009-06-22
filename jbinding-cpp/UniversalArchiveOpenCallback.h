@@ -62,12 +62,14 @@ public:
     STDMETHOD(SetTotal)(const UInt64 *files, const UInt64 *bytes)
     {
         TRACE_OBJECT_CALL("SetTotal")
+        TRACE("UniversalArchiveOpencallback::SetTotal")
 
         return _archiveOpenCallback->SetTotal(files, bytes);
     }
     STDMETHOD(SetCompleted)(const UInt64 *files, const UInt64 *bytes)
     {
         TRACE_OBJECT_CALL("SetCompleted")
+        TRACE("UniversalArchiveOpencallback::SetCompleted")
 
         return _archiveOpenCallback->SetCompleted(files, bytes);
     }
@@ -75,6 +77,7 @@ public:
     STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value)
     {
         TRACE_OBJECT_CALL("GetProperty")
+        TRACE("UniversalArchiveOpencallback::GetProperty")
 
         if (_archiveOpenVolumeCallback)
         {
@@ -85,6 +88,7 @@ public:
     STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream)
     {
         TRACE_OBJECT_CALL("GetStream")
+        TRACE("UniversalArchiveOpencallback::GetStream")
 
         if (_archiveOpenVolumeCallback)
         {
@@ -96,6 +100,7 @@ public:
     STDMETHOD(CryptoGetTextPassword)(BSTR *password)
     {
         TRACE_OBJECT_CALL("CryptoGetTextPassword")
+        TRACE("UniversalArchiveOpencallback::CryptoGetTextPassword")
 
         if (_cryptoGetTextPassword)
         {

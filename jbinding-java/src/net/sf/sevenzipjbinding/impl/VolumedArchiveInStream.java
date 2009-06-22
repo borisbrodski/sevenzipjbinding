@@ -141,6 +141,7 @@ public class VolumedArchiveInStream implements IInStream {
 	@Override
 	public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
 		long newOffset;
+		boolean proceedWithSeek = false;
 		switch (seekOrigin) {
 		case SEEK_SET:
 			newOffset = offset;
@@ -153,6 +154,7 @@ public class VolumedArchiveInStream implements IInStream {
 		case SEEK_END:
 			if (absoluteLength == -1) {
 				openVolume(Integer.MAX_VALUE, false);
+				proceedWithSeek = true;
 			}
 			newOffset = absoluteLength + offset;
 			break;
@@ -161,8 +163,10 @@ public class VolumedArchiveInStream implements IInStream {
 			throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 		}
 
+		System.out.println("Setting absolute offset to: " + newOffset + " (origin: " + seekOrigin + ", offset: "
+				+ offset + ")");
 		newPositionOneElementArray[0] = newOffset;
-		if (newOffset == absoluteOffset) {
+		if (newOffset == absoluteOffset && !proceedWithSeek) {
 			return 0;
 		}
 		absoluteOffset = newOffset;
@@ -201,6 +205,7 @@ public class VolumedArchiveInStream implements IInStream {
 		absoluteOffset += read;
 		currentVolumeOffset += read;
 
+		System.out.println("Was read: " + read + " (asked for " + data.length + ")");
 		if (currentVolumeOffset >= currentVolumeLength) {
 			return openVolume(currentIndex + 1, true);
 		}

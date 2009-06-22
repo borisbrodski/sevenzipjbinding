@@ -2,7 +2,7 @@
 
 #define JAVA_MAKE_SIGNATURE_TYPE(classname) "L" classname ";"
 
-#define JAVA_OBJECT "JAVA_OBJECT"
+#define JAVA_OBJECT "java/lang/Object"
 #define JAVA_OBJECT_T JAVA_MAKE_SIGNATURE_TYPE(JAVA_OBJECT)
 
 #define JAVA_BYTE "java/lang/Byte"
@@ -13,6 +13,9 @@
 
 #define JAVA_SHORT "java/lang/Short"
 #define JAVA_SHORT_T JAVA_MAKE_SIGNATURE_TYPE(JAVA_SHORT)
+
+#define JAVA_NUMBER "java/lang/Number"
+#define JAVA_NUMBER_T JAVA_MAKE_SIGNATURE_TYPE(JAVA_NUMBER)
 
 #define JAVA_INTEGER "java/lang/Integer"
 #define JAVA_INTEGER_T JAVA_MAKE_SIGNATURE_TYPE(JAVA_INTEGER)
@@ -79,7 +82,7 @@ jobject GetSimpleInstance(JNIEnv * env, const char * classname);
  * Put name of the java class 'clazz'into the buffer 'buffer'
  * Return: buffer
  */
-char * GetJavaClassName(JNIEnv * env, jclass clazz, const char * buffer, int size);
+char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size);
 
 /**
  * Set integer attribute "attribute" of object "object" with value "value"
@@ -100,6 +103,9 @@ jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &prop
  * Return Java-Class corresponding to the PropVariant Type 'vt'
  */
 jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt);
+
+void ObjectToPropVariant(JNIInstance * jniInstance, jobject object, PROPVARIANT * propVariant);
+
 
 /**
  * Get java.lang.Boolean object from boolean value

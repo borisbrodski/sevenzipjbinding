@@ -1,8 +1,7 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * 
- * Enumeration of supported file time types.
+ * TODO Consider remove this class Enumeration of supported file time types.
  * 
  * @author Boris Brodski
  * @version 1.0

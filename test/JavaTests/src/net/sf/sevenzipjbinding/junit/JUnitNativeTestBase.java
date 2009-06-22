@@ -6,13 +6,14 @@ import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.junit.BeforeClass;
 
 /**
- * This is the base class for all JUnit test classes. This class provides:<br>
+ * This is the base class for all JUnit test classes, that needs native library to be loaded. This class provides:<br>
  * - Initialization of the native library
  * 
- * @author boris
+ * @author Boris Brodski
+ * @version 1.0
  * 
  */
-public class JUnitTestBase {
+public class JUnitNativeTestBase {
 	/**
 	 * Initialize native SevenZipJBinding library for all JUnit tests
 	 * 
@@ -22,6 +23,5 @@ public class JUnitTestBase {
 	@BeforeClass
 	public static void initializeSevenZipJBinding() throws SevenZipNativeInitializationException {
 		SevenZip.initSevenZipFromPlatformJAR();
-		System.out.println("!!!");
 	}
 }

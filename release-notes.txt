@@ -4,20 +4,21 @@
 Release - 0.5 (alpha, extraction only, cross-platform, based on p7zip)
 	* SevenZipJBinding binds p7zip 
 	* Complete rework of entire code
-	* Use 
+	* Compression method auto detection
 	* Base java package changed from "net.sf.sevenzip" to "net.sf.sevenzipjbinding"
-	* New java tests  
+	* New JUnit tests
+	* Helper class to open volumed 7z archives (assembler multiple InStreams into single InStream)
 
-Release - 0.4.1 (beta, bugfix release)
+Release - 0.4.1 (beta, bug fix release)
     * Bug fixed: 2525877 (Memory leak)
     
 Release - 0.4 (beta, extraction only)
     * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
         - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
         
-    * New open/extract method for crypted archives and items (standard and simple interface)
+    * New open/extract method for encrypted archives and items (standard and simple interface)
     
-    * JUnit tests for the extraction of crypted archives and exception handling 
+    * JUnit tests for the extraction of encrypted archives and exception handling 
 
     * New examples on the home page
      
@@ -27,7 +28,7 @@ Release - 0.3 (beta, extraction only, simple extraction interface)
         - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
     
     * Simple extraction interface - allows easy information
-      gethering and extraction of archives
+      gathering and extraction of archives
     
     * JUnit tests for simple extraction interface
     

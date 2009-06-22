@@ -3,6 +3,7 @@
 #include "JNITools.h"
 #include "CPPToJavaArchiveOpenVolumeCallback.h"
 #include "CPPToJavaInStream.h"
+#include "UnicodeHelper.h"
 
 STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROPVARIANT *value)
 {
@@ -18,7 +19,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
 		return S_FALSE;
 	}
 
-	// TODO Convert object to Variant
+	ObjectToPropVariant(&jniInstance, result, value);
 
 	return S_OK;
 }
@@ -30,7 +31,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name, 
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
-    jstring nameString = env->NewString((jchar *)name, (jsize)wcslen(name));
+    jstring nameString = env->NewString(UnicodeHelper(name), (jsize)wcslen(name));
 
 	jniInstance.PrepareCall();
 	jobject inStreamImpl = env->CallObjectMethod(_javaImplementation, _getStreamMethodID, nameString);
@@ -43,6 +44,10 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name, 
 	{
 	    CMyComPtr<IInStream> inStreamComPtr = new CPPToJavaInStream(_nativeMethodContext, env, inStreamImpl);
 	    *inStream = inStreamComPtr.Detach();
+	}
+	else
+	{
+		*inStream = NULL;
 	}
 
 	return S_OK;

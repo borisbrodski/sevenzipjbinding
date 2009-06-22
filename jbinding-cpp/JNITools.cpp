@@ -5,8 +5,11 @@
 
 static int initialized = 0;
 
+//static jclass g_NumberClass;
+
 static jclass g_IntegerClass;
 static jmethodID g_IntegerValueOf;
+static jmethodID g_IntegerIntValue;
 
 static jclass g_LongClass;
 static jmethodID g_LongValueOf;
@@ -27,6 +30,11 @@ static void localinit(JNIEnv * env) {
 		return;
 	}
 
+//	g_NumberClass = env->FindClass(JAVA_NUMBER);
+//	FATALIF(g_NumberClass == NULL, "Can't find Number class");
+//	g_NumberClass = (jclass) env->NewGlobalRef(g_NumberClass);
+
+	// class: Integer
 	g_IntegerClass = env->FindClass(JAVA_INTEGER);
 	FATALIF(g_IntegerClass == NULL, "Can't find Integer class");
 	g_IntegerClass = (jclass) env->NewGlobalRef(g_IntegerClass);
@@ -35,6 +43,11 @@ static void localinit(JNIEnv * env) {
 			"(I)Ljava/lang/Integer;");
 	FATALIF(g_IntegerValueOf == NULL, "Can't find Integer.valueOf() method");
 
+	g_IntegerIntValue = env->GetMethodID(g_IntegerClass, "intValue",
+			"()I");
+	FATALIF(g_IntegerIntValue == NULL, "Can't find Integer.intValue() method");
+
+	// class: Long
 	g_LongClass = env->FindClass(JAVA_LONG);
 	FATALIF(g_LongClass == NULL, "Can't find Long class");
 	g_LongClass = (jclass) env->NewGlobalRef(g_LongClass);
@@ -220,6 +233,26 @@ jstring PropVariantToString(JNIEnv * env, PROPID propID,
 	return env->NewString(UnicodeHelper(string), string.Length());
 }
 
+void ObjectToPropVariant(JNIInstance * jniInstance, jobject object,
+		PROPVARIANT * propVariant) {
+	JNIEnv * env = jniInstance->GetEnv();
+
+	localinit(env);
+
+	NWindows::NCOM::CPropVariant cPropVariant;
+	if (object) {
+		if (env->IsInstanceOf(object, g_IntegerClass)) {
+			jint value = env->CallIntMethod(object, g_IntegerIntValue);
+			cPropVariant = value;
+		} else {
+			jniInstance->ThrowSevenZipException("Can't convert object to PropVariant"); // TODO Improve error message by giving name of the class
+		}
+
+	}
+
+	cPropVariant.Detach(propVariant);
+}
+
 /**
  * Convert PropVariant into java object: Integer, Double, String and Date
  */
@@ -248,7 +281,6 @@ jobject PropVariantToObject(JNIInstance * jniInstance,
 	case VT_I8:
 		return LongToObject(env, propVariant->hVal.QuadPart);
 
-
 	case VT_UI1:
 		return IntToObject(env, propVariant->bVal);
 
@@ -268,17 +300,16 @@ jobject PropVariantToObject(JNIInstance * jniInstance,
 	case VT_BSTR:
 		return BSTRToObject(env, propVariant->bstrVal);
 
-
 	case VT_DATE:
 	case VT_FILETIME:
 		return FILETIMEToObject(env, propVariant->filetime);
 
-	 case VT_R4:
-// Not supported by MyWindows.cpp yet
-//		 return DoubleToObject(env, (double) propVariant->fltVal);
-	 case VT_R8:
-// Not supported by MyWindows.cpp yet
-//		 return DoubleToObject(env, propVariant->dblVal);
+	case VT_R4:
+		// Not supported by MyWindows.cpp yet
+		//		 return DoubleToObject(env, (double) propVariant->fltVal);
+	case VT_R8:
+		// Not supported by MyWindows.cpp yet
+		//		 return DoubleToObject(env, propVariant->dblVal);
 	case VT_CY:
 	case VT_DISPATCH:
 	case VT_DECIMAL:
@@ -305,7 +336,6 @@ jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt) {
 	localinit(env);
 
 	switch (vt) {
-
 
 	case VT_EMPTY:
 	case VT_NULL:
@@ -338,8 +368,8 @@ jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt) {
 
 	case VT_R4:
 	case VT_R8:
-// Not supported by MyWindows.cpp yet
-//		return g_DoubleClass;
+		// Not supported by MyWindows.cpp yet
+		//		return g_DoubleClass;
 	case VT_CY:
 	case VT_DISPATCH:
 	case VT_DECIMAL:

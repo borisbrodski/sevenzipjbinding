@@ -19,13 +19,16 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenCallback;
+import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
+import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +83,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 1.0
  */
-public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
+public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase {
 	private static final String SINGLE_FILE_ARCHIVE_PATH = "testdata/simple";
 	private static final String DEFAULT_PASSWORD = "TestPass";
 	private final ArchiveFormat archiveFormat;
@@ -91,8 +94,11 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 	private String passwordToUse;
 	private boolean usingPassword = false;
 	private String cryptedArchivePrefix = "";
+	private String volumedArchivePrefix = "";
+	private String volumeArchivePostfix = "";
 	private boolean usingHeaderPassword = false;
 	private boolean usingPasswordCallback = false;
+	private boolean usingVolumes = false;
 
 	public ExtractSingleFileAbstractTest(ArchiveFormat archiveFormat, int compression1, int compression2,
 			int compression3) {
@@ -138,6 +144,18 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 
 	protected void usingHeaderPassword(boolean using) {
 		usingHeaderPassword = using;
+	}
+
+	protected void usingVolumes(boolean usingVolumes) {
+		this.usingVolumes = usingVolumes;
+	}
+
+	public void setVolumedArchivePrefix(String volumedArchivePrefix) {
+		this.volumedArchivePrefix = volumedArchivePrefix;
+	}
+
+	public void setVolumeArchivePostfix(String volumeArchivePostfix) {
+		this.volumeArchivePostfix = volumeArchivePostfix;
 	}
 
 	@Before
@@ -305,26 +323,44 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 	private void testSingleFileArchiveExtraction2(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
 		String archiveFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + archiveFormat.toString().toLowerCase()
-				+ File.separatorChar + //
-				cryptedArchivePrefix + "simple" + fileIndex + ".dat." + compressionIndex + "." + extention;
+				+ File.separatorChar
+				+ //
+				volumedArchivePrefix + cryptedArchivePrefix + "simple" + fileIndex + ".dat." + compressionIndex + "."
+				+ extention + volumeArchivePostfix;
 		String uncommpressedFilename = "simple" + fileIndex + ".dat";
 		String expectedFilename = SINGLE_FILE_ARCHIVE_PATH + File.separatorChar + uncommpressedFilename;
+
+		System.out.println("Opening '" + archiveFilename + "'");
 		try {
 			RandomAccessFileInStream randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(
 					archiveFilename, "r"));
 			ISevenZipInArchive inArchive;
-			if (usingHeaderPassword) {
-				if (usingPasswordCallback) {
+			VolumeArchiveOpenCallback volumeArchiveOpenCallback = null;
+			if (usingVolumes) {
+				volumeArchiveOpenCallback = new VolumeArchiveOpenCallback();
+				if (archiveFormat == ArchiveFormat.SEVEN_ZIP) {
 					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-							randomAccessFileInStream, new PasswordArchiveOpenCallback());
+							new VolumedArchiveInStream(archiveFilename, volumeArchiveOpenCallback));
+
 				} else {
-					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-							randomAccessFileInStream, passwordToUse);
+					throw new Error("Not implemented yet"); // TODO Implement
 				}
 			} else {
-				inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, randomAccessFileInStream);
+				if (usingHeaderPassword) {
+					if (usingPasswordCallback) {
+						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
+								randomAccessFileInStream, new PasswordArchiveOpenCallback());
+					} else {
+						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
+								randomAccessFileInStream, passwordToUse);
+					}
+				} else {
+					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
+							randomAccessFileInStream);
+				}
 			}
 
+			System.out.println("Extracting...");
 			SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(
 					expectedFilename);
 			//			System.out.println(inArchive.getNumberOfItems());
@@ -359,6 +395,9 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 
 			inArchive.close();
 			randomAccessFileInStream.close();
+			if (volumeArchiveOpenCallback != null) {
+				volumeArchiveOpenCallback.close();
+			}
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -615,5 +654,70 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitTestBase {
 		ExtractOperationResultException(ExtractOperationResult extractOperationResult) {
 			super("Extract operation returns error: " + extractOperationResult);
 		}
+	}
+
+	static class VolumeArchiveOpenCallback implements IArchiveOpenCallback, IArchiveOpenVolumeCallback,
+			ICryptoGetTextPassword {
+
+		private RandomAccessFile randomAccessFile;
+
+		/**
+		 * ${@inheritDoc}
+		 */
+		@Override
+		public Object getProperty(PropID propID) {
+			System.out.println("getProperty(): " + propID);
+			return null;
+		}
+
+		/**
+		 * ${@inheritDoc}
+		 */
+		@Override
+		public IInStream getStream(String filename) {
+			System.out.println("getStream(): " + filename);
+			try {
+				RandomAccessFile newRandomAccessFile = new RandomAccessFile(filename, "r");
+				if (newRandomAccessFile == null) {
+					return null;
+				}
+				if (randomAccessFile != null) {
+					randomAccessFile.close();
+				}
+				randomAccessFile = newRandomAccessFile;
+				return new RandomAccessFileInStream(randomAccessFile);
+			} catch (FileNotFoundException fileNotFoundException) {
+				return null;
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		public void close() throws IOException {
+			if (randomAccessFile != null) {
+				randomAccessFile.close();
+			}
+		}
+
+		/**
+		 * ${@inheritDoc}
+		 */
+		@Override
+		public void setCompleted(Long files, Long bytes) {
+		}
+
+		/**
+		 * ${@inheritDoc}
+		 */
+		@Override
+		public void setTotal(Long files, Long bytes) {
+		}
+
+		@Override
+		public String cryptoGetTextPassword() throws SevenZipException {
+			System.out.println("Asked for password!");
+			return "a";
+		}
+
 	}
 }

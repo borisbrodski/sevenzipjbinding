@@ -33,9 +33,9 @@ public:
 	}
 
 	~UnicodeHelper() {
-		TRACE("~UnicodeHelper()");
+//		TRACE("~UnicodeHelper()");
 		if (_jcharBuffer) {
-			TRACE("Freeing jchar string");
+//			TRACE("Freeing jchar string");
 #ifndef _DEBUG
 			size_t len = wcslen(_unicodeString);
 			memset(_jcharBuffer, 0, sizeof(jchar) * (len + 1));
@@ -44,7 +44,7 @@ public:
 		}
 
 		if (_unicodeBuffer) {
-			TRACE("Freeing unicode string");
+//			TRACE("Freeing unicode string");
 #ifndef _DEBUG
 			size_t len = jcharlen(_jcharString);
 			memset(_unicodeBuffer, 0, sizeof(wchar_t) * (len + 1));
@@ -59,7 +59,7 @@ public:
 			return _jcharString;
 		}
 
-		TRACE1("Converting wchar_t=>jchar: '%S'", _unicodeString)
+		TRACE1("Converting wchar_t=>jchar: \"%S\"", _unicodeString)
 		if (sizeof(wchar_t) == sizeof(jchar)) {
 			_jcharString = (const jchar *)( _unicodeString);
 			return _jcharString;
@@ -78,20 +78,20 @@ public:
 		if (_unicodeString) {
 			return _unicodeString;
 		}
-		TRACE("Converting jchar=>wchar_t ...")
+//		TRACE("Converting jchar=>wchar_t ...")
 		if (sizeof(wchar_t) == sizeof(jchar)) {
 			_unicodeString = (wchar_t*) (_jcharString);
 			return _unicodeString;
 		}
 		size_t len = jcharlen(_jcharString);
-		TRACE1("len: %i" , len)
+//		TRACE1("len: %i" , len)
 		_unicodeBuffer = new wchar_t[len + 1];
 		for (size_t i = 0; i < len; i++) {
 			_unicodeBuffer[i] = (wchar_t) _jcharString[i];
 		}
 		_unicodeBuffer[len] = 0;
 
-		TRACE1("Done: %S", _unicodeBuffer);
+		TRACE1("Converting jchar=>wchar_t done: \"%S\"", _unicodeBuffer);
 		return _unicodeString = _unicodeBuffer;
 	}
 

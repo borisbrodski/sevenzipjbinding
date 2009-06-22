@@ -8,7 +8,29 @@ package net.sf.sevenzipjbinding;
  * @version 1.0
  */
 public enum ExtractOperationResult {
-	OK, UNSUPPORTEDMETHOD, DATAERROR, CRCERROR, UNKNOWN_OPERATION_RESULT;
+	/**
+	 * Extraction was a success
+	 */
+	OK,
+	/**
+	 * Extraction failed: unknown compression method
+	 */
+	UNSUPPORTEDMETHOD,
+
+	/**
+	 * Extraction failed: data error
+	 */
+	DATAERROR,
+
+	/**
+	 * Extraction failed: CRC-check failed
+	 */
+	CRCERROR,
+
+	/**
+	 * Unknown extract operation result
+	 */
+	UNKNOWN_OPERATION_RESULT;
 
 	/**
 	 * Return extract operations enumeration item by index

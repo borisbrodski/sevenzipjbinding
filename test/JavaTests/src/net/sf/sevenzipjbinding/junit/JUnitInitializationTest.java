@@ -12,7 +12,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 1.0
  */
-public class JUnitInitializationTest extends JUnitTestBase {
+public class JUnitInitializationTest extends JUnitNativeTestBase {
 
 	/**
 	 * Tests standard initialization of SevenZipJBinding by the base class for all JUnit tests.
@@ -24,7 +24,7 @@ public class JUnitInitializationTest extends JUnitTestBase {
 	}
 
 	/**
-	 * After SevenZipJBinding was initialized by the base class {@link JUnitTestBase} another call to any of
+	 * After SevenZipJBinding was initialized by the base class {@link JUnitNativeTestBase} another call to any of
 	 * initialization routines should return no exception.
 	 * 
 	 * @throws SevenZipNativeInitializationException

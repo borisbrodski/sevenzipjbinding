@@ -1,11 +1,17 @@
 7-Zip-JBinding TODO-List
 ------------------------
 
-[ ]  1. Implement custom init method for loading 7-Zip-JBinding.dll and 7z.dll
+[x]  1. Implement custom init method for loading 7-Zip-JBinding.dll and 7z.dll
 		(see tests) for example of setting "java.library.path"
 		
-[ ]  2. Implement Object->Variant in 'CPPToJavaArchiveOpenVolumeCallback::GetProperty'
+[ ]  2. Implement Object->Variant in 'CPPToJavaArchiveOpenVolumeCallback::GetProperty' (in progress: Integer implemented but not tested yet)
 
 [x]  3. Implement safe error handling between threads
 
 [ ]  4. Get ride of ".printStackTrace()" called for exceptions, that was thrown out of a new attached thread.
+
+[ ]  5. Get ride of most "OneElementArray"s and let return value in a normal way. The error handling should be handled by exceptions.
+
+[ ]  6. Append short license info to all file headers.
+
+[ ]  7. Check @author and @version in the JavaDoc of all java source files. 

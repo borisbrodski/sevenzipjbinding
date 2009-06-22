@@ -171,16 +171,18 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 	 * {@inheritDoc}
 	 */
 
-	public Boolean isEncrypted() throws SevenZipException {
-		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ENCRYPTED);
+	public boolean isEncrypted() throws SevenZipException {
+		return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ENCRYPTED))
+				.booleanValue();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 
-	public Boolean isFolder() throws SevenZipException {
-		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.IS_FOLDER);
+	public boolean isFolder() throws SevenZipException {
+		return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.IS_FOLDER))
+				.booleanValue();
 	}
 
 	public void extractSlow(ISequentialOutStream outStream) throws SevenZipException {

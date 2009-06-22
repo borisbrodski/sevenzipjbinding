@@ -29,7 +29,6 @@ public class RandomAccessFileInStream implements IInStream {
 	 * {@inheritDoc}
 	 */
 	public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
-		// System.out.println("java-seek(" + offset + ", " + seekOrigin + ")");
 		try {
 			switch (seekOrigin) {
 			case SEEK_SET:
@@ -45,12 +44,10 @@ public class RandomAccessFileInStream implements IInStream {
 				break;
 
 			default:
-				throw new RuntimeException("Seek: unknown origin");
+				throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 			}
 
 			newPositionOneElementArray[0] = randomAccessFile.getFilePointer();
-			// System.out.println(", CurrPos: " +
-			// newPositionOneElementArray[0]);
 		} catch (Throwable e) {
 			lastThrownException = e;
 			return 1;
@@ -63,7 +60,6 @@ public class RandomAccessFileInStream implements IInStream {
 	 * {@inheritDoc}
 	 */
 	public int read(byte[] data, int[] processedSizeOneElementArray) {
-		// System.out.print("Reading " + data.length + " bytes, ");
 		try {
 			int read = randomAccessFile.read(data);
 			if (read == -1) {
@@ -71,8 +67,6 @@ public class RandomAccessFileInStream implements IInStream {
 			} else {
 				processedSizeOneElementArray[0] = read;
 			}
-			// System.out.println("was read: " +
-			// processedSizeOneElementArray[0]);
 		} catch (Throwable e) {
 			lastThrownException = e;
 			return 1;

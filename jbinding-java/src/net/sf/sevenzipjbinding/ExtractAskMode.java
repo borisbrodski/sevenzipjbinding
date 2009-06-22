@@ -7,7 +7,26 @@ package net.sf.sevenzipjbinding;
  * @version 1.0
  */
 public enum ExtractAskMode {
-	EXTRACT, TEST, SKIP, UNKNOWN_ASK_MODE;
+
+	/**
+	 * Extract a archive item
+	 */
+	EXTRACT,
+
+	/**
+	 * Test a archive item
+	 */
+	TEST,
+
+	/**
+	 * Skip extraction of a archive item
+	 */
+	SKIP,
+
+	/**
+	 * Unknown mode
+	 */
+	UNKNOWN_ASK_MODE;
 
 	/**
 	 * Return ask mode enumeration item by index

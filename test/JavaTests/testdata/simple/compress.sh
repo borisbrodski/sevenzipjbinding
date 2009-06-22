@@ -5,7 +5,7 @@ CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZMA=n
 CREATE_SIMPLE_ZIP=n
-CREATE_SIMPLE_7Z=n
+CREATE_SIMPLE_7Z=y
 CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_GZIP=n
@@ -69,6 +69,10 @@ if test $CREATE_SIMPLE_7Z = y -o $CREATE_ALL = y ; then
 	    7z a -t7z -m0=lzma -mx=$i 7z/$j.$i.7z $j
 	    7z a -t7z -m0=lzma -mx=$i -pTestPass 7z/pass-$j.$i.7z $j
 	    7z a -t7z -m0=lzma -mx=$i -pTestPass -mhe=on 7z/passh-$j.$i.7z $j
+
+	    7z a -v10000b -t7z -m0=lzma -mx=$i 7z/vol-$j.$i.7z $j
+	    7z a -v10000b -t7z -m0=lzma -mx=$i -pTestPass 7z/vol-pass-$j.$i.7z $j
+	    7z a -v10000b -t7z -m0=lzma -mx=$i -pTestPass -mhe=on 7z/vol-passh-$j.$i.7z $j
         done
     done
 fi

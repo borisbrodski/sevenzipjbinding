@@ -272,6 +272,18 @@ public abstract class VolumedArchiveInStreamTest {
 						seek(21), 22, eof(1), seek(22), 22, eof(0) });
 	}
 
+	@Test
+	public void testReadAndSeekSingleVolumes10() throws Exception {
+		readTest(new long[] { 10, 10, 10, 10 }, //
+				new int[] { seek(0), 1, 2, 3 });
+	}
+
+	@Test
+	public void testReadAndSeekSingleVolumes11() throws Exception {
+		readTest(new long[] { 124 }, //
+				new int[] { seek(0), 32, seek(38), 86, seek(32) });
+	}
+
 	VolumedArchiveInStreamTest(int maxBlockLengthToRead) {
 		this.maxBlockLengthToRead = maxBlockLengthToRead;
 
