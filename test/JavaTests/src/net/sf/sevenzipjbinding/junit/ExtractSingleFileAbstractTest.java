@@ -158,6 +158,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		this.volumeArchivePostfix = volumeArchivePostfix;
 	}
 
+	final protected void useVolumedSevenZip() {
+		usingVolumes(true);
+		setVolumedArchivePrefix("vol-");
+		setVolumeArchivePostfix(".001");
+	}
+
 	@Before
 	public void initPasswordToUse() {
 		passwordToUse = DEFAULT_PASSWORD;
@@ -336,28 +342,29 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 					archiveFilename, "r"));
 			ISevenZipInArchive inArchive;
 			VolumeArchiveOpenCallback volumeArchiveOpenCallback = null;
+			VolumedArchiveInStream volumedArchiveInStream;
+			IInStream inStreamToUse = randomAccessFileInStream;
+
 			if (usingVolumes) {
 				volumeArchiveOpenCallback = new VolumeArchiveOpenCallback();
 				if (archiveFormat == ArchiveFormat.SEVEN_ZIP) {
-					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-							new VolumedArchiveInStream(archiveFilename, volumeArchiveOpenCallback));
-
+					volumedArchiveInStream = new VolumedArchiveInStream(archiveFilename, volumeArchiveOpenCallback);
+					inStreamToUse = volumedArchiveInStream;
 				} else {
 					throw new Error("Not implemented yet"); // TODO Implement
 				}
-			} else {
-				if (usingHeaderPassword) {
-					if (usingPasswordCallback) {
-						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-								randomAccessFileInStream, new PasswordArchiveOpenCallback());
-					} else {
-						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-								randomAccessFileInStream, passwordToUse);
-					}
+			}
+
+			if (usingHeaderPassword) {
+				if (usingPasswordCallback) {
+					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
+							new PasswordArchiveOpenCallback());
 				} else {
-					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat,
-							randomAccessFileInStream);
+					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
+							passwordToUse);
 				}
+			} else {
+				inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse);
 			}
 
 			System.out.println("Extracting...");

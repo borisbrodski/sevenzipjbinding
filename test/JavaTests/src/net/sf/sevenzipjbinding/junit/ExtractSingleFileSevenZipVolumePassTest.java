@@ -2,9 +2,9 @@ package net.sf.sevenzipjbinding.junit;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 
-public class ExtractSingleFileSevenZipVolumeTest extends ExtractSingleFileAbstractTest {
+public class ExtractSingleFileSevenZipVolumePassTest extends ExtractSingleFileAbstractPassTest {
 
-	public ExtractSingleFileSevenZipVolumeTest() {
+	public ExtractSingleFileSevenZipVolumePassTest() {
 		super(ArchiveFormat.SEVEN_ZIP, 0, 5, 9);
 
 		useVolumedSevenZip();
