@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.singlefile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 
