@@ -79,9 +79,12 @@ void fatal(const char * fmt, ...) {
 	fputc('\n', stdout);
 	fflush(stdout);
 
+	TRACE_PRINT_OBJECTS
+
 	// exit(-1);
 
-	// Crash jvm to get a stack trace
+	printf("Crash jvm to get a stack trace\n");
+	fflush(stdout);
 	int * i = NULL;
 	*i = 0;
 }

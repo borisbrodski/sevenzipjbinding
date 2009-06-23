@@ -40,6 +40,7 @@ include_directories(${PROJECT_BINARY_DIR}/javah)
 
 add_definitions(
     -g3
+#    -O
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -DNDEBUG

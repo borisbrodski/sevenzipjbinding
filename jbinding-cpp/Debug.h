@@ -2,9 +2,9 @@
 #define DEBUG_H_
 
 // #define _DEBUG // TODO Manage it at least out of CMakeLists.txt
-#define TRACE_ON
-//#define TRACE_OBJECTS_ON
-//#define TRACE_OBJECT_CALLS
+//#define TRACE_ON
+#define TRACE_OBJECTS_ON
+#define TRACE_OBJECT_CALLS
 
 #if defined(NDEBUG) && defined(_DEBUG)
 #undef _DEBUG
@@ -55,7 +55,11 @@
                         classname, (Object *)this);                                 \
             }                                                                       \
         }
-/*
+	#define TRACE_PRINT_OBJECTS {TracePrintObjectsUsingPrintf();}
+
+    void TracePrintObjectsUsingPrintf();
+
+    /*
     #define TRACE_OBJECT_ENSURE_DESTRUCTION_WITH_STACK_CMYCOMPTR(object)    \
                     {                                                       \
                         void * __p = &(*object);                            \
@@ -64,11 +68,13 @@
                     }
 */
 #else
+	#define TRACE_PRINT_OBJECTS {}
     #define TRACE_OBJECT_CREATION(classname) {}
     #define TRACE_OBJECT_DESTRUCTION {}
     #define TRACE_OBJECT_CALL(methodname) {}
     #define TRACE_CLASS_CHECK_UNKNOWN_IMPL_DESTRUCTION(classname) {}
 //    #define TRACE_OBJECT_ENSURE_DESTRUCTION_WITH_STACK_CMYCOMPTR(object) {}
 #endif
+
 
 #endif /* DEBUG_H_ */

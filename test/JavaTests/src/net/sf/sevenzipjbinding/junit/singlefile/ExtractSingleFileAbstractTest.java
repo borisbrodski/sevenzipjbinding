@@ -329,7 +329,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 400; i++) {
 			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
 		}
 	}
@@ -349,7 +349,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 			archiveFilename = archiveFilename.replace("part1.rar", "rar");
 		}
 
-		System.out.println("Opening '" + archiveFilename + "'");
+		//		System.out.println("Opening '" + archiveFilename + "'");
 		try {
 			RandomAccessFileInStream randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(
 					archiveFilename, "r"));
@@ -371,8 +371,15 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 			if (usingHeaderPassword) {
 				if (usingPasswordCallback) {
-					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
-							new PasswordArchiveOpenCallback());
+					if (usingVolumes) {
+						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
+								new CombinedArchiveOpenCallback(archiveOpenCallbackToUse,
+										new PasswordArchiveOpenCallback(), volumeArchiveOpenCallback));
+					} else {
+						inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
+								new PasswordArchiveOpenCallback());
+
+					}
 				} else {
 					inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
 							passwordToUse);
@@ -386,7 +393,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 				}
 			}
 
-			System.out.println("Extracting...");
+			//			System.out.println("Extracting...");
 			SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(
 					expectedFilename);
 			//			System.out.println(inArchive.getNumberOfItems());
@@ -588,6 +595,47 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		}
 	}
 
+	class CombinedArchiveOpenCallback implements IArchiveOpenCallback, ICryptoGetTextPassword,
+			IArchiveOpenVolumeCallback {
+		private final ICryptoGetTextPassword cryptoGetTextPassword;
+		private final IArchiveOpenVolumeCallback archiveOpenVolumeCallback;
+		private final IArchiveOpenCallback archiveOpenCallback;
+
+		CombinedArchiveOpenCallback(IArchiveOpenCallback archiveOpenCallback,
+				ICryptoGetTextPassword cryptoGetTextPassword, IArchiveOpenVolumeCallback archiveOpenVolumeCallback) {
+			this.archiveOpenCallback = archiveOpenCallback;
+			this.cryptoGetTextPassword = cryptoGetTextPassword;
+			this.archiveOpenVolumeCallback = archiveOpenVolumeCallback;
+
+		}
+
+		@Override
+		public void setCompleted(Long files, Long bytes) {
+			archiveOpenCallback.setCompleted(files, bytes);
+		}
+
+		@Override
+		public void setTotal(Long files, Long bytes) {
+			archiveOpenCallback.setTotal(files, bytes);
+		}
+
+		@Override
+		public String cryptoGetTextPassword() throws SevenZipException {
+			return cryptoGetTextPassword.cryptoGetTextPassword();
+		}
+
+		@Override
+		public Object getProperty(PropID propID) {
+			return archiveOpenVolumeCallback.getProperty(propID);
+		}
+
+		@Override
+		public IInStream getStream(String filename) {
+			return archiveOpenVolumeCallback.getStream(filename);
+		}
+
+	}
+
 	class PasswordArchiveOpenCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
 
 		/**
@@ -755,6 +803,5 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 			System.out.println("Asked for password!");
 			return "a";
 		}
-
 	}
 }
