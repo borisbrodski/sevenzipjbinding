@@ -167,7 +167,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		this.volumeArchivePostfix = volumeArchivePostfix;
 	}
 
-	final protected void useVolumedSevenZip() {
+	final protected void usingVolumedSevenZip() {
 		usingVolumes(true);
 		setVolumeArchivePostfix(".001");
 	}
@@ -329,7 +329,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		for (int i = 0; i < 400; i++) {
+		for (int i = 0; i < 4; i++) {
 			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
 		}
 	}
@@ -484,10 +484,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void checkPropertyPackedSize(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
-		//		if (archiveFormat == ArchiveFormat.BZIP2) {
-		//			// It looks that Bzip2 doesn't support SIZE property
-		//			return;
-		//		}
 		Long size1 = (Long) inArchive.getProperty(index, PropID.PACKED_SIZE);
 		Long size2 = inArchive.getSimpleInterface().getArchiveItem(index).getPackedSize();
 

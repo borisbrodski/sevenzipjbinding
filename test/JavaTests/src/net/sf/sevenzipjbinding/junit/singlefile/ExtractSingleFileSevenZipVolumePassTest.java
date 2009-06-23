@@ -7,7 +7,7 @@ public class ExtractSingleFileSevenZipVolumePassTest extends ExtractSingleFileAb
 	public ExtractSingleFileSevenZipVolumePassTest() {
 		super(ArchiveFormat.SEVEN_ZIP, 0, 5, 9);
 
-		useVolumedSevenZip();
+		usingVolumedSevenZip();
 	}
 
 }

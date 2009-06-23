@@ -7,6 +7,6 @@ public class ExtractSingleFileSevenZipVolumePassCallbackTest extends ExtractSing
 	public ExtractSingleFileSevenZipVolumePassCallbackTest() {
 		super(ArchiveFormat.SEVEN_ZIP, 0, 5, 9);
 		usingPasswordCallback();
-		useVolumedSevenZip();
+		usingVolumedSevenZip();
 	}
 }
