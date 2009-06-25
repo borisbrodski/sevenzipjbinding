@@ -1,6 +1,6 @@
+#include "Common/MyInitGuid.h"
 #include "StdAfx.h"
 
-#include "Common/MyInitGuid.h"
 #include "SevenZipJBinding.h"
 
 
@@ -15,6 +15,10 @@
 using namespace NWindows;
 using namespace NFile;
 
+//#ifdef MINGW
+//DEFINE_GUID(IID_IUnknown,
+//0x00000000, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
+//#endif // MINGW
 
 #include "7zip/UI/Common/LoadCodecs.h"
 #include "UnicodeHelper.h"

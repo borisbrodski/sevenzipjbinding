@@ -94,6 +94,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/Windows/PropVariantConversions.cpp
     ${P7ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
     ${P7ZIP_SRC}/CPP/Common/IntToString.cpp
+    ${P7ZIP_SRC}/CPP/Common/StringConvert.cpp
 )
 ELSE(USE_MINGW)
 SET(P7ZIP_SOURCE_FILES
