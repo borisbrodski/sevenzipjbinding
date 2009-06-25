@@ -166,7 +166,7 @@ SET(P7ZIP_SOURCE_FILES
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
-    ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp    
+    #${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp     # Was needed for CygWin
     ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
     
@@ -349,7 +349,6 @@ SET(P7ZIP_SOURCE_FILES
 )
 ENDIF(USE_MINGW)
 
-IF(USE_MINGW)
 SET(JBINDING_CPP_FILES
     Debug.cpp
 #    idd_def.cpp
@@ -369,27 +368,6 @@ SET(JBINDING_CPP_FILES
     CPPToJava/CPPToJavaSequentialInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
 )
-ELSE(USE_MINGW)
-SET(JBINDING_CPP_FILES
-    Debug.cpp
-#    idd_def.cpp
-    JNITools.cpp
-    JNICallState.cpp
-    SevenZipException.cpp
-    SevenZipJBinding.cpp
-    UniversalArchiveOpenCallback.cpp
-    JavaToCPP/JavaToCPPInArchiveImpl.cpp
-    JavaToCPP/JavaToCPPSevenZip.cpp
-    CPPToJava/CPPToJavaArchiveExtractCallback.cpp
-    CPPToJava/CPPToJavaArchiveOpenCallback.cpp
-    CPPToJava/CPPToJavaArchiveOpenVolumeCallback.cpp
-    CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
-    CPPToJava/CPPToJavaInStream.cpp
-    CPPToJava/CPPToJavaProgress.cpp
-    CPPToJava/CPPToJavaSequentialInStream.cpp
-    CPPToJava/CPPToJavaSequentialOutStream.cpp
-)
-ENDIF(USE_MINGW)
 
 SET(JBINDING_JAVAH_H_FILES
     JavaToCPP/Java/net_sf_sevenzipjbinding_impl_InArchiveImpl.h

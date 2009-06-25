@@ -4,7 +4,6 @@
 #include "StdAfx.h"
 
 #include "Common/IntToString.h"
-//#include "Common/MyInitGuid.h"
 //#include "Common/StringConvert.h"
 
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
