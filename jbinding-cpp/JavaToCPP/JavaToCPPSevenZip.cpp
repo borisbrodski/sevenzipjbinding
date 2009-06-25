@@ -1,7 +1,4 @@
-#include "StdAfx.h"
-
 #include "Common/MyInitGuid.h"
-
 
 #include "SevenZipJBinding.h"
 
@@ -76,7 +73,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	for (int i = 0; i < codecs->Formats.Size(); i++) {
 		TRACE1("Available codec: '%S'", (const wchar_t*)codecs->Formats[i].Name)
 	}
-
 
 	int index = -1;
 	UString formatNameString;

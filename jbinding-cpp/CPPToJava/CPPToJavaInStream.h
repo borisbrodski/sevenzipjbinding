@@ -1,6 +1,5 @@
 #ifndef __JAVA_IN_STREAM_H__INCLUDED__
 
-#include "StdAfx.h"
 #include "CPPToJavaSequentialInStream.h"
 
 class CPPToJavaInStream : public virtual IInStream, public CPPToJavaSequentialInStream

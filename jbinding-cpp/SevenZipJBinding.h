@@ -1,10 +1,7 @@
 #ifndef SEVENZIPJBINDING_H_
 #define SEVENZIPJBINDING_H_
 
-#ifdef MINGW
-#else
 #include "StdAfx.h"
-#endif
 
 #include "Common/IntToString.h"
 //#include "Common/MyInitGuid.h"

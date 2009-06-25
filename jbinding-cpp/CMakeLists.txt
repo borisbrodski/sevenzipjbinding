@@ -33,19 +33,30 @@ ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 
 
 SET(P7ZIP_SRC ../p7zip)
+SET(_7ZIP_SRC ../7zip)
+
+
+
+IF(USE_MINGW)
+    include_directories(PlatformMinGW/)
+ELSE(USE_MINGW)
+    include_directories(PlatformUnix/)
+ENDIF(USE_MINGW)
 
 include_directories(/usr/include)
 include_directories(/usr/include/c++/4.3)
 include_directories(.)
 include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
-IF(NOT USE_CYGWIN)
+IF(USE_MINGW)
+    include_directories(${_7ZIP_SRC}/)
+ELSE(USE_MINGW)
     include_directories(${P7ZIP_SRC}/CPP/myWindows)
-ENDIF(NOT USE_CYGWIN)
+ENDIF(USE_MINGW)
 include_directories(${P7ZIP_SRC}/CPP/)
-IF(NOT USE_CYGWIN)
+IF(NOT USE_MINGW)
     include_directories(${P7ZIP_SRC}/CPP/include_windows)
-ENDIF(NOT USE_CYGWIN)
+ENDIF(NOT USE_MINGW)
 include_directories(${PROJECT_BINARY_DIR}/javah)
 
 IF(USE_CYGWIN)
@@ -76,7 +87,14 @@ add_definitions(
 
 
 IF(USE_MINGW)
-SET(P7ZIP_SOURCE_FILES)
+SET(P7ZIP_SOURCE_FILES
+    ${_7ZIP_SRC}/Windows/Synchronization.cpp
+    ${P7ZIP_SRC}/CPP/Common/MyVector.cpp
+    ${P7ZIP_SRC}/CPP/Windows/PropVariant.cpp
+    ${P7ZIP_SRC}/CPP/Windows/PropVariantConversions.cpp
+    ${P7ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
+    ${P7ZIP_SRC}/CPP/Common/IntToString.cpp
+)
 ELSE(USE_MINGW)
 SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/myWindows/myGetTickCount.cpp
@@ -334,6 +352,22 @@ ENDIF(USE_MINGW)
 IF(USE_MINGW)
 SET(JBINDING_CPP_FILES
     Debug.cpp
+#    idd_def.cpp
+    JNITools.cpp
+    JNICallState.cpp
+    SevenZipException.cpp
+    SevenZipJBinding.cpp
+    UniversalArchiveOpenCallback.cpp
+    JavaToCPP/JavaToCPPInArchiveImpl.cpp
+    JavaToCPP/JavaToCPPSevenZip.cpp
+    CPPToJava/CPPToJavaArchiveExtractCallback.cpp
+    CPPToJava/CPPToJavaArchiveOpenCallback.cpp
+    CPPToJava/CPPToJavaArchiveOpenVolumeCallback.cpp
+    CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
+    CPPToJava/CPPToJavaInStream.cpp
+    CPPToJava/CPPToJavaProgress.cpp
+    CPPToJava/CPPToJavaSequentialInStream.cpp
+    CPPToJava/CPPToJavaSequentialOutStream.cpp
 )
 ELSE(USE_MINGW)
 SET(JBINDING_CPP_FILES
@@ -404,7 +438,11 @@ add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
-TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+IF(USE_CYGWIN)
+    TARGET_LINK_LIBRARIES(7-Zip-JBinding oleaut32)
+ELSE(USE_CYGWIN)
+    TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+ENDIF(USE_CYGWIN)
 
 IF(USE_CYGWIN)
     SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias

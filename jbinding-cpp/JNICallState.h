@@ -29,9 +29,14 @@ private:
     }
 };
 #if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
-#include <pthread.h>
+#ifdef MINGW
 inline DWORD GetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
-	return (DWORD)pthread_self();
+	return GetCurrentThreadId();
+#else
+	#include <pthread.h>
+	inline DWORD GetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
+		return (DWORD)pthread_self();
+#endif
 }
 #else
 inline DWORD GetCurrentThreadId() {
