@@ -4,9 +4,16 @@ INCLUDE(../cmake/FindJNIExtended.cmake)
 
 GET_PROPERTY(SEVENZIP_JBINDING_JAR  GLOBAL PROPERTY SEVENZIP_JBINDING_JAR) 
 
+IF (CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
+    SET(USE_MINGW 1)
+    SET(USE_CYGWIN 1)
+    MESSAGE("Compiling on cygwin using -mnocyg (MinGW mode)")
+ELSE(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
+    MESSAGE("Compiling on posix system")
+ENDIF(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
 
 IF(JAVA_INCLUDE_PATH) 
-    MESSAGE(STATUS "Building Java bindings" ) 
+    MESSAGE(STATUS "Java found" ) 
 ELSE(JAVA_INCLUDE_PATH) 
     MESSAGE(WARNING " Java jni.h not found" ) 
 ENDIF(JAVA_INCLUDE_PATH) 
@@ -32,11 +39,23 @@ include_directories(/usr/include/c++/4.3)
 include_directories(.)
 include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
-include_directories(${P7ZIP_SRC}/CPP/myWindows)
+IF(NOT USE_CYGWIN)
+    include_directories(${P7ZIP_SRC}/CPP/myWindows)
+ENDIF(NOT USE_CYGWIN)
 include_directories(${P7ZIP_SRC}/CPP/)
-include_directories(${P7ZIP_SRC}/CPP/include_windows)
+IF(NOT USE_CYGWIN)
+    include_directories(${P7ZIP_SRC}/CPP/include_windows)
+ENDIF(NOT USE_CYGWIN)
 include_directories(${PROJECT_BINARY_DIR}/javah)
 
+IF(USE_CYGWIN)
+# TODO Use properly way to set this gcc flag
+add_definitions(-mno-cygwin)
+ENDIF(USE_CYGWIN)
+
+IF(USE_MINGW)
+add_definitions(-DMINGW)
+ENDIF(USE_MINGW)
 
 add_definitions(
     -g3
@@ -54,6 +73,11 @@ add_definitions(
 #    -DTRACE_OBJECTS_ON
 #    -DTRACE_ON
 )
+
+
+IF(USE_MINGW)
+SET(P7ZIP_SOURCE_FILES)
+ELSE(USE_MINGW)
 SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/myWindows/myGetTickCount.cpp
     ${P7ZIP_SRC}/CPP/myWindows/wine_date_and_time.cpp
@@ -124,7 +148,7 @@ SET(P7ZIP_SOURCE_FILES
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
-    
+    ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp    
     ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
     
@@ -305,7 +329,13 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/C/Sha256.c
     ${P7ZIP_SRC}/C/7zCrc.c
 )
+ENDIF(USE_MINGW)
 
+IF(USE_MINGW)
+SET(JBINDING_CPP_FILES
+    Debug.cpp
+)
+ELSE(USE_MINGW)
 SET(JBINDING_CPP_FILES
     Debug.cpp
 #    idd_def.cpp
@@ -325,6 +355,7 @@ SET(JBINDING_CPP_FILES
     CPPToJava/CPPToJavaSequentialInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
 )
+ENDIF(USE_MINGW)
 
 SET(JBINDING_JAVAH_H_FILES
     JavaToCPP/Java/net_sf_sevenzipjbinding_impl_InArchiveImpl.h
@@ -373,7 +404,11 @@ add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
-TARGET_LINK_LIBRARIES(7-Zip-JBinding dl)
+TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+
+IF(USE_CYGWIN)
+    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+ENDIF(USE_CYGWIN)
 
 IF(HAVE_PTHREADS) 
   TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT}) 

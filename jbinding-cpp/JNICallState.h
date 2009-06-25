@@ -30,8 +30,8 @@ private:
 };
 #if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
 #include <pthread.h>
-inline DWORD GetCurrentThreadId() {
-	return pthread_self();
+inline DWORD GetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
+	return (DWORD)pthread_self();
 }
 #else
 inline DWORD GetCurrentThreadId() {

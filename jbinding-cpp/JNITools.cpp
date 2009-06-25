@@ -242,7 +242,7 @@ void ObjectToPropVariant(JNIInstance * jniInstance, jobject object,
 	if (object) {
 		if (env->IsInstanceOf(object, g_IntegerClass)) {
 			jint value = env->CallIntMethod(object, g_IntegerIntValue);
-			cPropVariant = value;
+			cPropVariant = (Int32)value;
 		} else if (env->IsInstanceOf(object, g_StringClass)) {
 	        const jchar * jChars = env->GetStringChars((jstring)object, NULL);
 			BSTR bstr;
