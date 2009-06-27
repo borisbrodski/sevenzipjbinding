@@ -7,7 +7,11 @@
 
 extern "C" 
 { 
-#include "../../C/Threads.h"
+#ifdef MINGW
+	#include "../7zip/C/Threads.h"
+#else
+	#include "../../C/Threads.h"
+#endif
 }
 
 #ifdef _WIN32
@@ -179,9 +183,9 @@ public:
 
 }}
 
-#ifndef _WIN32
+//#ifndef _WIN32
 #include "Synchronization2.h"
-#endif
+//#endif
 
 #endif
 

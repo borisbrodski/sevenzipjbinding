@@ -30,16 +30,17 @@ private:
 };
 #if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
 #ifdef MINGW
-inline DWORD GetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
-	return GetCurrentThreadId();
+	inline DWORD PlatformGetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
+		return (DWORD)(size_t)GetCurrentThreadId();
+	}
 #else
 	#include <pthread.h>
-	inline DWORD GetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
+	inline DWORD PlatformGetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
 		return (DWORD)pthread_self();
+	}
 #endif
-}
 #else
-inline DWORD GetCurrentThreadId() {
+inline DWORD PlatformGetCurrentThreadId() {
 	return 0;
 }
 #endif

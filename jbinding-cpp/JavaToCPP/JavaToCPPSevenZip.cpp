@@ -15,13 +15,28 @@
 using namespace NWindows;
 using namespace NFile;
 
-//#ifdef MINGW
-//DEFINE_GUID(IID_IUnknown,
-//0x00000000, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
-//#endif // MINGW
+#ifdef MINGW
+DEFINE_GUID(IID_IUnknown,
+0x00000000, 0x0000, 0x0000, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46);
+#endif // MINGW
 
 #include "7zip/UI/Common/LoadCodecs.h"
 #include "UnicodeHelper.h"
+
+#ifdef _WIN32
+#ifndef _UNICODE
+bool g_IsNT = false;
+static inline bool IsItWindowsNT()
+{
+  OSVERSIONINFO versionInfo;
+  versionInfo.dwOSVersionInfoSize = sizeof(versionInfo);
+  if (!::GetVersionEx(&versionInfo))
+    return false;
+  return (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT);
+}
+#endif
+#endif
+
 
 //CreateObjectFunc createObjectFunc;
 STDAPI CreateCoder(const GUID *clsid, const GUID *iid, void **outObject);
@@ -62,8 +77,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	JNIInstance jniInstance(&nativeMethodContext);
 
-
 	CCodecs *codecs = new CCodecs;
+
 	CMyComPtr<
 		#ifdef EXTERNAL_CODECS
 		ICompressCodecsInfo
@@ -73,6 +88,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		> compressCodecsInfo = codecs;
 
 	HRESULT result = codecs->Load();
+
 	if (result != S_OK)
 		fatal("codecs->Load() return error: 0x%08X", result);
 
@@ -99,6 +115,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(&nativeMethodContext, env, inStream);
 
 	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback;
+
 	if (archiveOpenCallbackImpl)
 	{
 		TRACE("Using archive open callback")

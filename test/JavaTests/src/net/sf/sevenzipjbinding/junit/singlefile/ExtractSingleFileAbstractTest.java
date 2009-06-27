@@ -329,7 +329,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 150; i++) {
 			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
 		}
 	}

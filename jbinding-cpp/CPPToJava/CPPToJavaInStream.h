@@ -65,7 +65,12 @@ public:
 
 	STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize)
 	{
-		return CPPToJavaSequentialInStream::Read(data, size, processedSize);
+		TRACE1("READ(size=%i)", (int)size)
+		int result = CPPToJavaSequentialInStream::Read(data, size, processedSize);
+		if (processedSize) {
+			TRACE1("READ: %i", (int)*processedSize);
+		}
+		return result;
 	}
 
 	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
@@ -84,6 +89,7 @@ public:
 	}
 
 	STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);
+
 };
 
 #define __JAVA_IN_STREAM_H__INCLUDED__

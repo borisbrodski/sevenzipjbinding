@@ -10,7 +10,7 @@
 
 namespace NWindows { namespace NSynchronization { struct CBaseHandleWFMO; } }
 
-typedef NWindows::NSynchronization::CBaseHandleWFMO *HANDLE;
+//typedef NWindows::NSynchronization::CBaseHandleWFMO *HANDLE;
 
 DWORD WINAPI WaitForMultipleObjects( DWORD count, const HANDLE *handles, BOOL wait_all, DWORD timeout );
 

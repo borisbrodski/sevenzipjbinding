@@ -131,6 +131,7 @@ public class SevenZip {
 
 		String libTmpName = generateLibTempName(libname);
 		File libTmpFile = new File(tmpDirFile.getAbsolutePath() + File.separatorChar + libTmpName);
+		libTmpFile.deleteOnExit();
 
 		InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + libname);
 		if (libInputStream == null) {
