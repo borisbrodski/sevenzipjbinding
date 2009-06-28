@@ -1,5 +1,5 @@
-package net.sf.sevenzipjbinding;
-
-public enum ArchiveEnum {
-	NAME, CLASSID, EXTENSION, ADDEXTENSION, UPDATE, KEEPNAME, STARTSIGNATURE, FINISHSIGNATURE, ASSOCIATE
-}
+//package net.sf.sevenzipjbinding;
+//
+//public enum ArchiveEnum { // TODO Consider removing this class
+//	NAME, CLASSID, EXTENSION, ADDEXTENSION, UPDATE, KEEPNAME, STARTSIGNATURE, FINISHSIGNATURE, ASSOCIATE
+//}

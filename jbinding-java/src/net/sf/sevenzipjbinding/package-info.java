@@ -11,4 +11,3 @@
  * @version 1.0
  */
 package net.sf.sevenzipjbinding;
-

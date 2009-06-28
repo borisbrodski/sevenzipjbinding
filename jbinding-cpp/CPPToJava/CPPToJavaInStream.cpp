@@ -13,41 +13,27 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
-	jlongArray newPositionArray = env->NewLongArray(1);
-	FATALIF(newPositionArray == NULL, "Out of local resource of out of memory: newPositionArray == NULL");
+//	jlongArray newPositionArray = env->NewLongArray(1);
+//	FATALIF(newPositionArray == NULL, "Out of local resource of out of memory: newPositionArray == NULL");
 
-	TRACE("1")
-	jniInstance.IsExceptionOccurs();
-	TRACE("1.5")
-	jniInstance.PrepareCall();
-	TRACE("2")
-	jint result = env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin, newPositionArray);
+    jniInstance.PrepareCall();
+	jlong returnedNewPosition = env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin);
 
-	TRACE("3")
 	if (jniInstance.IsExceptionOccurs())
 	{
-		env->DeleteLocalRef(newPositionArray);
 		return S_FALSE;
 	}
 
-	TRACE("2")
-	if (result)
-	{
-		env->DeleteLocalRef(newPositionArray);
-		return result;
+	if (newPosition) {
+		*newPosition = (UInt64)returnedNewPosition;
 	}
 
-	jlong * newPositionArrayData = env->GetLongArrayElements(newPositionArray, NULL);
-	if (newPosition)
-	{
-		*newPosition = (UInt64)*newPositionArrayData;
-	}
-	TRACE1("SEEK: New Pos: %i", (int)(UInt64)*newPositionArrayData)
+	TRACE1("SEEK: New Pos: %i", (int)(UInt64)returnedNewPosition)
 
-	env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
-	env->DeleteLocalRef(newPositionArray);
+//	env->ReleaseLongArrayElements(newPositionArray, newPositionArrayData, JNI_ABORT);
+//	env->DeleteLocalRef(newPositionArray);
 
-	return result;
+	return S_OK;
 }
 
 

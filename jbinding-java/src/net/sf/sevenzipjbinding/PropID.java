@@ -97,6 +97,9 @@ public enum PropID {
 
 	USER_DEFINED(0x10000), //
 
+	/**
+	 * Unknown PropID. This PropID shouldn't be used.
+	 */
 	UNKNOWN(-1);
 
 	private final int propIDIndex;

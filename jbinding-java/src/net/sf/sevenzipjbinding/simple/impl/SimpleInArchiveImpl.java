@@ -15,6 +15,12 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 	private final ISevenZipInArchive sevenZipInArchive;
 	private boolean wasClosed = false;
 
+	/**
+	 * Constructing an instance of {@link SimpleInArchiveImpl} from
+	 * a instance of {@link ISevenZipInArchive}.
+	 * 
+	 * @param sevenZipInArchive a base instance of {@link ISevenZipInArchive}
+	 */
 	public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
 		this.sevenZipInArchive = sevenZipInArchive;
 	}

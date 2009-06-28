@@ -289,7 +289,7 @@ public abstract class VolumedArchiveInStreamTest {
 
 	}
 
-	private void readTest(long[] streamSizes, int[] readSizes) {
+	private void readTest(long[] streamSizes, int[] readSizes) throws SevenZipException {
 		VolumedArchiveInStream volumedArchiveInStream;
 		try {
 			volumedArchiveInStream = new VolumedArchiveInStream("file.7z.001", //
@@ -303,7 +303,7 @@ public abstract class VolumedArchiveInStreamTest {
 			entireSize += streamSizes[i];
 		}
 
-		int[] processedSizeOneElementArray = new int[1];
+		int processedSize;
 		long offset = 0;
 		for (int i = 0; i < readSizes.length; i++) {
 			int toRead = readSizes[i];
@@ -317,53 +317,50 @@ public abstract class VolumedArchiveInStreamTest {
 			}
 			if (toRead <= 0) {
 				// Seek
-				long[] absolutePosition = new long[] { -1 };
+				long absolutePosition = -1;
 				switch (seekMode) {
 				case 0:
 					// Use SEEK_SET
-					assertEquals(0, volumedArchiveInStream.seek(-toRead, IInStream.SEEK_SET, absolutePosition));
+					absolutePosition = volumedArchiveInStream.seek(-toRead, IInStream.SEEK_SET);
 					break;
 				case 1:
 					// Use SEEK_CUR
-					assertEquals(0, volumedArchiveInStream.seek(-toRead - offset, IInStream.SEEK_CUR, absolutePosition));
+					absolutePosition = volumedArchiveInStream.seek(-toRead - offset, IInStream.SEEK_CUR);
 					break;
 				case 2:
 					// Use SEEK_END
-					assertEquals(0, volumedArchiveInStream.seek(-toRead - entireSize, IInStream.SEEK_END,
-							absolutePosition));
+					absolutePosition = volumedArchiveInStream.seek(-toRead - entireSize, IInStream.SEEK_END);
 					break;
 				}
-				assertEquals(-toRead > entireSize ? entireSize : -toRead, absolutePosition[0]);
-				offset = absolutePosition[0];
+				assertEquals(-toRead > entireSize ? entireSize : -toRead, absolutePosition);
+				offset = absolutePosition;
 
 			} else {
 				// Read
 				do {
 					byte[] data = new byte[toRead];
 
-					processedSizeOneElementArray[0] = -1;
-					assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
-					if (processedSizeOneElementArray[0] == 0) {
+					processedSize = volumedArchiveInStream.read(data);
+					if (processedSize == 0) {
 						assertEquals(entireSize, offset);
-						processedSizeOneElementArray[0] = -1;
-						assertEquals(0, volumedArchiveInStream.read(data, processedSizeOneElementArray));
-						assertEquals(0, processedSizeOneElementArray[0]);
+						processedSize = volumedArchiveInStream.read(data);
+						assertEquals(0, processedSize);
 						assertTrue(expectEOF);
 						expectEOF = false;
 						toRead = 0;
 						break;
 					}
-					for (int j = 0; j < processedSizeOneElementArray[0]; j++) {
+					for (int j = 0; j < processedSize; j++) {
 						assertEquals(data[j], getByteByOffset(offset + j));
 					}
-					offset += processedSizeOneElementArray[0];
-					toRead -= processedSizeOneElementArray[0];
-					wasRead += processedSizeOneElementArray[0];
+					offset += processedSize;
+					toRead -= processedSize;
+					wasRead += processedSize;
 				} while (toRead > 0);
 				assertEquals(expectToRead, wasRead);
 				if (expectEOF) {
-					assertEquals(0, volumedArchiveInStream.read(new byte[1], processedSizeOneElementArray));
-					assertEquals(0, processedSizeOneElementArray[0]);
+					processedSize = volumedArchiveInStream.read(new byte[1]);
+					assertEquals(0, processedSize);
 				}
 			}
 		}
@@ -432,7 +429,7 @@ public abstract class VolumedArchiveInStreamTest {
 		}
 
 		@Override
-		public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
+		public long seek(long offset, int seekOrigin) throws SevenZipException {
 			switch (seekOrigin) {
 			case SEEK_SET:
 				this.offset = offset;
@@ -447,15 +444,14 @@ public abstract class VolumedArchiveInStreamTest {
 				break;
 
 			default:
-				throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
+				throw new SevenZipException("Seek: unknown origin: " + seekOrigin);
 			}
-			newPositionOneElementArray[0] = this.offset;
-			return 0;
+			return this.offset;
 		}
 
 		@Override
-		public int read(byte[] data, int[] processedSizeOneElementArray) {
-			processedSizeOneElementArray[0] = 0;
+		public int read(byte[] data) {
+			int read = 0;
 
 			for (int i = 0; i < data.length; i++) {
 				if (offset >= size) {
@@ -466,10 +462,10 @@ public abstract class VolumedArchiveInStreamTest {
 				}
 				data[i] = getByteByOffset(initialOffset + offset);
 				offset++;
-				processedSizeOneElementArray[0]++;
+				read++;
 			}
 
-			return 0;
+			return read;
 		}
 	}
 }

@@ -22,7 +22,7 @@ public:
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaSequentialInStream")
 	    
-		_readMethodID = GetMethodId(initEnv, "read", "([B[I)I");
+		_readMethodID = GetMethodId(initEnv, "read", "([B)I");
 		classname = "CPPToJavaSequentialInStream";
 	}
 	

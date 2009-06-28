@@ -19,9 +19,18 @@ public interface IArchiveExtractCallback extends IProgress {
 	 * @param extractAskMode
 	 *            extract ask mode
 	 * @return sequential out stream
+	 * 
+	 * @throws SevenZipException
+	 *             in error case. If this method ends with an exception, the
+	 *             current operation will be reported to 7-Zip as failed. There
+	 *             are no guarantee, that there are no further call back methods
+	 *             will be called. The first thrown exception will be saved and
+	 *             thrown late on from the first called 7-Zip-JBinding main
+	 *             method, such as <code>ISevenZipInArchive.extract()</code> or
+	 *             <code>SevenZip.openInArchive()</code>.
 	 */
 	public ISequentialOutStream getStream(int index,
-			ExtractAskMode extractAskMode);
+			ExtractAskMode extractAskMode) throws SevenZipException;
 
 	/**
 	 * Decide to proccess with extraction of the file with index
@@ -32,8 +41,18 @@ public interface IArchiveExtractCallback extends IProgress {
 	 *            extract ask mode
 	 * @return <code>true</code> proceed with extraction, <code>false</code>
 	 *         skip this file.
+	 * 
+	 * @throws SevenZipException
+	 *             in error case. If this method ends with an exception, the
+	 *             current operation will be reported to 7-Zip as failed. There
+	 *             are no guarantee, that there are no further call back methods
+	 *             will be called. The first thrown exception will be saved and
+	 *             thrown late on from the first called 7-Zip-JBinding main
+	 *             method, such as <code>ISevenZipInArchive.extract()</code> or
+	 *             <code>SevenZip.openInArchive()</code>.
 	 */
-	public boolean prepareOperation(ExtractAskMode extractAskMode);
+	public boolean prepareOperation(ExtractAskMode extractAskMode)
+			throws SevenZipException;
 
 	/**
 	 * Set result of extraction operation of the file with index
@@ -42,7 +61,17 @@ public interface IArchiveExtractCallback extends IProgress {
 	 * 
 	 * @param extractOperationResult
 	 *            result of operation
+	 * 
+	 * @throws SevenZipException
+	 *             in error case. If this method ends with an exception, the
+	 *             current operation will be reported to 7-Zip as failed. There
+	 *             are no guarantee, that there are no further call back methods
+	 *             will be called. The first thrown exception will be saved and
+	 *             thrown late on from the first called 7-Zip-JBinding main
+	 *             method, such as <code>ISevenZipInArchive.extract()</code> or
+	 *             <code>SevenZip.openInArchive()</code>.
 	 */
-	public void setOperationResult(ExtractOperationResult extractOperationResult);
+	public void setOperationResult(ExtractOperationResult extractOperationResult)
+			throws SevenZipException;
 
 }

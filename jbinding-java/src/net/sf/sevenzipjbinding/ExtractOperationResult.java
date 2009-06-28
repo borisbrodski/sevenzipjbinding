@@ -12,6 +12,7 @@ public enum ExtractOperationResult {
 	 * Extraction was a success
 	 */
 	OK,
+	
 	/**
 	 * Extraction failed: unknown compression method
 	 */

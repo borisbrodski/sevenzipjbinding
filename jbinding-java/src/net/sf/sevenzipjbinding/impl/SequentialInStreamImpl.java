@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Implementation of {@link ISequentialInStream} based on {@link InputStream}.
@@ -27,23 +28,20 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int read(byte[] data, int[] processedSizeOneElementArray) {
+	public int read(byte[] data) throws SevenZipException {
 		if (data.length == 0) {
-			processedSizeOneElementArray[0] = 0;
 			return 0;
 		}
 
 		try {
 			int read = inputStream.read(data);
 			if (read == -1) {
-				processedSizeOneElementArray[0] = 0;
+				return 0;
 			} else {
-				processedSizeOneElementArray[0] = read;
+				return read;
 			}
-			return 0; // Ok
 		} catch (IOException e) {
-			e.printStackTrace();
-			return 1; // Error
+			throw new SevenZipException("Error reading input stream", e);
 		}
 	}
 

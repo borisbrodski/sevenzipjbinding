@@ -329,7 +329,7 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 	private void testSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		for (int i = 0; i < 150; i++) {
+		for (int i = 0; i < 2; i++) {
 			testSingleFileArchiveExtraction2(fileIndex, compressionIndex, autodetectFormat);
 		}
 	}
@@ -606,12 +606,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		}
 
 		@Override
-		public void setCompleted(Long files, Long bytes) {
+		public void setCompleted(Long files, Long bytes) throws SevenZipException {
 			archiveOpenCallback.setCompleted(files, bytes);
 		}
 
 		@Override
-		public void setTotal(Long files, Long bytes) {
+		public void setTotal(Long files, Long bytes) throws SevenZipException {
 			archiveOpenCallback.setTotal(files, bytes);
 		}
 
@@ -621,12 +621,12 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		}
 
 		@Override
-		public Object getProperty(PropID propID) {
+		public Object getProperty(PropID propID) throws SevenZipException {
 			return archiveOpenVolumeCallback.getProperty(propID);
 		}
 
 		@Override
-		public IInStream getStream(String filename) {
+		public IInStream getStream(String filename) throws SevenZipException {
 			return archiveOpenVolumeCallback.getStream(filename);
 		}
 

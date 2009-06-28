@@ -8,7 +8,8 @@ Release - 0.5 (alpha, extraction only, cross-platform, based on p7zip)
 	* Base java package changed from "net.sf.sevenzip" to "net.sf.sevenzipjbinding"
 	* New JUnit tests
 	* Helper class to open volumed 7z archives (assembler multiple InStreams into single InStream)
-
+	* Get ride of oneElementArrays as a way to return values out of call back functions.
+	
 Release - 0.4.1 (beta, bug fix release)
     * Bug fixed: 2525877 (Memory leak)
     

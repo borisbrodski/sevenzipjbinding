@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzipjbinding.IInStream;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Implementation of {@link IInStream} using {@link RandomAccessFile}.
@@ -13,7 +14,6 @@ import net.sf.sevenzipjbinding.IInStream;
  */
 public class RandomAccessFileInStream implements IInStream {
 	private final RandomAccessFile randomAccessFile;
-	private Throwable lastThrownException;
 
 	/**
 	 * Constructs instance of the class from random access file.
@@ -28,7 +28,7 @@ public class RandomAccessFileInStream implements IInStream {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int seek(long offset, int seekOrigin, long[] newPositionOneElementArray) {
+	public long seek(long offset, int seekOrigin) throws SevenZipException {
 		try {
 			switch (seekOrigin) {
 			case SEEK_SET:
@@ -47,32 +47,27 @@ public class RandomAccessFileInStream implements IInStream {
 				throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 			}
 
-			newPositionOneElementArray[0] = randomAccessFile.getFilePointer();
-		} catch (Throwable e) {
-			lastThrownException = e;
-			return 1;
+			return randomAccessFile.getFilePointer();
+		} catch (IOException e) {
+			throw new SevenZipException("Error while seek operation", e);
 		}
-
-		return 0;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public int read(byte[] data, int[] processedSizeOneElementArray) {
+	public int read(byte[] data) throws SevenZipException {
 		try {
 			int read = randomAccessFile.read(data);
 			if (read == -1) {
-				processedSizeOneElementArray[0] = 0;
+				return 0;
 			} else {
-				processedSizeOneElementArray[0] = read;
+				return read;
 			}
-		} catch (Throwable e) {
-			lastThrownException = e;
-			return 1;
+			
+		} catch (IOException e) {
+			throw new SevenZipException("Error reading random access file", e);
 		}
-
-		return 0;
 	}
 
 	/**
@@ -82,14 +77,5 @@ public class RandomAccessFileInStream implements IInStream {
 	 */
 	public void close() throws IOException {
 		randomAccessFile.close();
-	}
-
-	/**
-	 * Return last thrown exception during read or seek operation.
-	 * 
-	 * @return last thrown exception or <code>null</code>, if no exceptions was thrown.
-	 */
-	public Throwable getLastThrownException() {
-		return lastThrownException;
 	}
 }

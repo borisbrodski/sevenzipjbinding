@@ -15,7 +15,7 @@ public:
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaInStream")
 
-		_seekMethodID = GetMethodId(initEnv, "seek", "(JI[J)I");
+		_seekMethodID = GetMethodId(initEnv, "seek", "(JI)J");
 		classname = "CPPToJavaInStream";
 		_nextInStream = NULL;
 		_previousInStream = NULL;
