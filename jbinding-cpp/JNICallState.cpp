@@ -99,7 +99,7 @@ void NativeMethodContext::EndCPPToJava()
 {
     TRACE_OBJECT_CALL("EndCPPToJava")
 
-    DWORD currentThreadId = GetCurrentThreadId();
+    DWORD currentThreadId = PlatformGetCurrentThreadId();
 
     if (currentThreadId == _initThreadId)
     {

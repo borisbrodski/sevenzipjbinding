@@ -1,5 +1,5 @@
-#include "Common/MyInitGuid.h"
 #include "StdAfx.h"
+#include "Common/MyInitGuid.h"
 
 #include "SevenZipJBinding.h"
 
