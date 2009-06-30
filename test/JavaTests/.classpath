@@ -4,6 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/junit-4.6.jar" sourcepath="lib/junit-4.6-src.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SevenZipJBinding-Java"/>
-	<classpathentry kind="lib" path="/SevenZipJBinding@SevenZipJBinding.build/sevenzipjbinding-CYGWIN-unknown.jar"/>
+	<classpathentry kind="lib" path="/SevenZipJBinding@SevenZipJBinding-build/sevenzipjbinding-Linux-i686.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
