@@ -66,6 +66,11 @@
     (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
     return returnvalue;
 
+#define CATCH_SEVEN_ZIP_EXCEPTION_WITHOUT_RETURN(nativeMethodContext)    		\
+    } catch(SevenZipException & sevenZipException)                              \
+    {TRACE1("Exception catched: 0x%08X", (size_t)(void *)&sevenZipException);   \
+    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}
+
 
 //typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
 //		const GUID *interfaceID, void **outObject);

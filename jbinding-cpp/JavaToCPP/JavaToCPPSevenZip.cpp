@@ -207,6 +207,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	TRACE("Archive opened")
 
+	if (nativeMethodContext.WillExceptionBeThrown()){
+		archive->Close();
+		return NULL;
+	}
+
 	jobject InArchiveImplObject = GetSimpleInstance(env, IN_ARCHIVE_IMPL);
 
 	SetIntegerAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
@@ -218,6 +223,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	stream->ClearNativeMethodContext();
 
 	stream.Detach();
+
 
 	return InArchiveImplObject;
 

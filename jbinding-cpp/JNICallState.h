@@ -94,6 +94,8 @@ public:
         TRACE_CLASS_CHECK_UNKNOWN_IMPL_DESTRUCTION("NativeMethodContext");
     }
 
+    bool WillExceptionBeThrown() {return _lastOccurredException != NULL;}
+
 	JNIEnv * BeginCPPToJava();
 
 	void EndCPPToJava();

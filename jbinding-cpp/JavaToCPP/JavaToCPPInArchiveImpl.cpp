@@ -125,7 +125,7 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -182,7 +182,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -224,7 +224,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  (long unsigned int)GetCurrentThreadId());
+    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 

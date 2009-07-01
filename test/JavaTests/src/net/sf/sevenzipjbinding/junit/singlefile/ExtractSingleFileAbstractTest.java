@@ -89,7 +89,7 @@ import org.junit.Test;
  */
 public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase {
 	private static final int SINGLE_TEST_THREAD_COUNT = 5;
-	private static final int SINGLE_TEST_REPEAT_COUNT = 2;
+	private static final int SINGLE_TEST_REPEAT_COUNT = 1;
 	private static final int SINGLE_TEST_TIMEOUT = 100000;
 	private static final String SINGLE_FILE_ARCHIVE_PATH = "testdata/simple";
 	private static final String DEFAULT_PASSWORD = "TestPass";
@@ -492,8 +492,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 					public void run() {
 						try {
 							testSingleFileArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
-							// System.out.println("run");
-							//							throw new SevenZipException("Test");
 						} catch (Throwable e) {
 							synchronized (firstThrowable) {
 								if (firstThrowable[0] == null) {
@@ -501,7 +499,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 								}
 							}
 						} finally {
-							System.out.println("finally");
 							synchronized (ExtractSingleFileAbstractTest.this) {
 								try {
 									threadsFinished[0]--;
@@ -509,7 +506,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 								} catch (Throwable throwable) {
 									throwable.printStackTrace();
 								}
-								System.out.println("thread ended: " + threadsFinished[0]);
 							}
 						}
 					}
@@ -519,7 +515,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 			synchronized (this) {
 				while (true) {
 					try {
-						System.out.println("wait for " + threadsFinished[0] + " threads");
 						if (threadsFinished[0] == 0) {
 							break;
 						}
@@ -527,13 +522,11 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					System.out.println("continue");
 					if (System.currentTimeMillis() - start > SINGLE_TEST_TIMEOUT * SINGLE_TEST_REPEAT_COUNT) {
 						fail("Time out");
 					}
 				}
 			}
-			System.out.println("All threads stops");
 			if (firstThrowable[0] != null) {
 				if (firstThrowable[0] instanceof SevenZipException) {
 					throw (SevenZipException) firstThrowable[0];
@@ -563,9 +556,9 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		}
 
 		//		System.out.println("Opening '" + archiveFilename + "'");
+		RandomAccessFileInStream randomAccessFileInStream = null;
 		try {
-			RandomAccessFileInStream randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(
-					archiveFilename, "r"));
+			randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(archiveFilename, "r"));
 			ISevenZipInArchive inArchive;
 			VolumeArchiveOpenCallback volumeArchiveOpenCallback = null;
 			VolumedArchiveInStream volumedArchiveInStream;
@@ -606,46 +599,62 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 				}
 			}
 
-			//			System.out.println("Extracting...");
-			SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(
-					expectedFilename);
-			//			System.out.println(inArchive.getNumberOfItems());
-			//			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-			//				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
-			//			}
-			assertTrue(inArchive.getNumberOfItems() > 0);
-			int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
+			SingleFileSequentialOutStreamComparator outputStream = null;
+			try {
+				//			System.out.println("Extracting...");
+				outputStream = new SingleFileSequentialOutStreamComparator(expectedFilename);
+				//			System.out.println(inArchive.getNumberOfItems());
+				//			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
+				//				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
+				//			}
+				assertTrue(inArchive.getNumberOfItems() > 0);
+				int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
 
-			checkPropertyPath(inArchive, index, uncommpressedFilename);
-			checkPropertySize(inArchive, index, expectedFilename);
-			checkPropertyPackedSize(inArchive, index, expectedFilename);
-			checkPropertyIsFolder(inArchive, index);
-			ExtractOperationResult operationResult;
-			if (usingPassword) {
-				if (usingPasswordCallback) {
-					PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(outputStream);
-					inArchive.extract(new int[] { index }, false, extractCallback);
-					operationResult = extractCallback.getExtractOperationResult();
+				checkPropertyPath(inArchive, index, uncommpressedFilename);
+				checkPropertySize(inArchive, index, expectedFilename);
+				checkPropertyPackedSize(inArchive, index, expectedFilename);
+				checkPropertyIsFolder(inArchive, index);
+				ExtractOperationResult operationResult;
+				if (usingPassword) {
+					if (usingPasswordCallback) {
+						PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(
+								outputStream);
+						inArchive.extract(new int[] { index }, false, extractCallback);
+						operationResult = extractCallback.getExtractOperationResult();
+					} else {
+						operationResult = inArchive.extractSlow(index, outputStream, passwordToUse);
+					}
 				} else {
-					operationResult = inArchive.extractSlow(index, outputStream, passwordToUse);
+					operationResult = inArchive.extractSlow(index, outputStream);
 				}
-			} else {
-				operationResult = inArchive.extractSlow(index, outputStream);
-			}
-			if (ExtractOperationResult.OK != operationResult) {
-				throw new ExtractOperationResultException(operationResult);
-			}
-			outputStream.checkAndCloseInputFile();
+				if (ExtractOperationResult.OK != operationResult) {
+					throw new ExtractOperationResultException(operationResult);
+				}
+				outputStream.checkAndCloseInputFile();
+				outputStream = null;
 
-			checkPropertyIsEncrypted(inArchive, index, expectedFilename);
+				checkPropertyIsEncrypted(inArchive, index, expectedFilename);
 
-			inArchive.close();
+			} finally {
+				inArchive.close();
+				if (outputStream != null) {
+					outputStream.closeInputFile();
+				}
+			}
 			randomAccessFileInStream.close();
 			if (volumeArchiveOpenCallback != null) {
 				volumeArchiveOpenCallback.close();
 			}
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
+		} finally {
+			if (randomAccessFileInStream != null) {
+				try {
+					randomAccessFileInStream.close();
+				} catch (IOException e) {
+					throw new Error(e);
+				}
+			}
 		}
 	}
 
@@ -955,7 +964,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		 */
 		@Override
 		public Object getProperty(PropID propID) {
-			System.out.println("getProperty(): " + propID);
 			switch (propID) {
 			case NAME:
 				return currentFilename;
@@ -968,7 +976,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 		 */
 		@Override
 		public IInStream getStream(String filename) {
-			System.out.println("getStream(): " + filename);
 			currentFilename = filename;
 			try {
 				RandomAccessFile newRandomAccessFile = new RandomAccessFile(filename, "r");
@@ -1009,7 +1016,6 @@ public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase 
 
 		@Override
 		public String cryptoGetTextPassword() throws SevenZipException {
-			System.out.println("Asked for password!");
 			return "a";
 		}
 	}
