@@ -4,13 +4,8 @@
 #define __STREAMBINDER_H
 
 #include "../IStream.h"
-
-#ifdef MINGW
-#include "Windows/Synchronization.h"
-//#include "../../Windows/Synchronization2.h"
-#else
 #include "../../Windows/Synchronization.h"
-#endif
+
 
 class CStreamBinder
 {
