@@ -7,6 +7,7 @@ GET_PROPERTY(SEVENZIP_JBINDING_JAR  GLOBAL PROPERTY SEVENZIP_JBINDING_JAR)
 IF (CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
     SET(USE_MINGW 1)
     SET(USE_CYGWIN 1)
+    INCLUDE(../cmake/FindMinGWm10-DLL.cmake)
     MESSAGE("Compiling on cygwin using -mnocyg (MinGW mode)")
 ELSE(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
     MESSAGE("Compiling on posix system")
@@ -67,7 +68,7 @@ add_definitions(-mno-cygwin)
 ENDIF(USE_CYGWIN)
 
 IF(USE_MINGW)
-add_definitions(-DMINGW)
+add_definitions(-DMINGW -mthreads -mwindows)
 ENDIF(USE_MINGW)
 
 add_definitions(
@@ -626,6 +627,7 @@ SET(JAVAH_JAVA_CLASS_LIST
     net.sf.sevenzipjbinding.impl.InArchiveImpl
 )
 
+
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
                    COMMAND ${JAVA_JAVAH} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
                    DEPENDS ${SEVENZIP_JBINDING_JAR}
@@ -645,10 +647,15 @@ ELSE(USE_CYGWIN)
 ENDIF(USE_CYGWIN)
 
 IF(USE_CYGWIN)
-    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin -Wl,--add-stdcall-alias") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+ELSE(USE_CYGWIN)
+    IF(USE_MINGW)
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-lmingwthrd -Wl,--add-stdcall-alias") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+    ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 
+
 IF(HAVE_PTHREADS) 
-  TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT}) 
+  #TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT}) 
 ENDIF(HAVE_PTHREADS) 
 

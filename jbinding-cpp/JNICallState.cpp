@@ -10,7 +10,6 @@
 	#define LEAVE_CRITICAL_SECTION   {}
 #endif
 
-
 static struct
 {
     HRESULT errCode;
