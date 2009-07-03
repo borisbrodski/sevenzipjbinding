@@ -133,9 +133,6 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
     JNIInstance jniInstance(&nativeMethodContext);
 
-	CPPToJavaInStream * inStream = GetInStream(env, thiz);
-	inStream->SetNativMethodContext(&nativeMethodContext);
-
 	CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
 	if (archive == NULL)
@@ -143,6 +140,9 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
         TRACE("Archive==NULL. Do nothing...");
 	    return;
 	}
+
+	CPPToJavaInStream * inStream = GetInStream(env, thiz);
+	inStream->SetNativMethodContext(&nativeMethodContext);
 
 	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
 
@@ -158,6 +158,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	archiveExtractCallback.Release();
 
 	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+    inStream->ClearNativeMethodContext();
 
 	if (result)
 	{
@@ -168,8 +169,6 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	{
 	    TRACE("Extraction succeeded")
 	}
-
-    inStream->ClearNativeMethodContext();
 
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, ;);
 }

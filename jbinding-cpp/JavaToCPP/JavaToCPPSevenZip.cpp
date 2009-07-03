@@ -87,7 +87,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		#endif
 		> compressCodecsInfo = codecs;
 
-	HRESULT result = codecs->Load();
+	HRESULT result = codecs->Load(); // TODO do it only once!
 
 	if (result != S_OK)
 		fatal("codecs->Load() return error: 0x%08X", result);
@@ -107,7 +107,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		TRACE1("Format: '%S'\n", (const wchar_t*)formatNameString);
 		index = codecs->FindFormatForArchiveType(formatNameString);
 		if (index == -1) {
-			fatal("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
+			jniInstance.ThrowSevenZipException("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
+			return NULL;
 		}
 	}
 
@@ -138,7 +139,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	    if (result != S_OK) {
 			TRACE1("Result = 0x%08X, throwing exception...", (int)result)
 			nativeMethodContext.ThrowSevenZipException(result, "Archive file (format: %S) can't be opened", (const wchar_t *)formatNameString);
-
 			return NULL;
 		}
 	} else {
