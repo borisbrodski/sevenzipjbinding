@@ -67,9 +67,11 @@ public:
 	{
 		TRACE1("READ(size=%i)", (int)size)
 		int result = CPPToJavaSequentialInStream::Read(data, size, processedSize);
+#ifdef TRACE_ON
 		if (processedSize) {
-			TRACE1("READ: %i", (int)*processedSize);
+			TRACE3("READ: size=%i, was read:%i, result:%i", (int)size, (int)*processedSize, (int)result);
 		}
+#endif
 		return result;
 	}
 
