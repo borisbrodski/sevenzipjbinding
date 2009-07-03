@@ -4,6 +4,11 @@
 // #define _DEBUG // TODO Manage it at least out of CMakeLists.txt
 #define TRACE_ON
 #define TRACE_OBJECTS_ON
+
+#define TRACE_THREADS_ON
+#define TRACE_THREAD_LOG_FILENAME "sevenzipjbinding-thread-%i.log"
+
+// TODO Delete this define, if not used
 #define TRACE_OBJECT_CALLS
 
 #if defined(NDEBUG) && defined(_DEBUG)
@@ -21,16 +26,20 @@
     #define TRACE1(msg, p1) _TRACE1("TRACE: " msg "\n", p1)
     #define TRACE2(msg, p1, p2) _TRACE2("TRACE: " msg "\n", p1, p2)
     #define TRACE3(msg, p1, p2, p3) _TRACE3("TRACE: " msg "\n", p1, p2, p3)
-    #define _TRACE(msg) {printf(msg); fflush(stdout);}
-    #define _TRACE1(msg, p1) {printf(msg, p1); fflush(stdout);}
-    #define _TRACE2(msg, p1, p2) {printf(msg, p1, p2); fflush(stdout);}
-    #define _TRACE3(msg, p1, p2, p3) {printf(msg, p1, p2, p3); fflush(stdout);}
-    #define _TRACE4(msg, p1, p2, p3, p4) {printf(msg, p1, p2, p3, p4); fflush(stdout);}
+    #define TRACE4(msg, p1, p2, p3, p4) _TRACE4("TRACE: " msg "\n", p1, p2, p3, p4)
+    #define _TRACE(msg) {trace_printf(msg);}
+    #define _TRACE1(msg, p1) {trace_printf(msg, p1);}
+    #define _TRACE2(msg, p1, p2) {trace_printf(msg, p1, p2);}
+    #define _TRACE3(msg, p1, p2, p3) {trace_printf(msg, p1, p2, p3);}
+    #define _TRACE4(msg, p1, p2, p3, p4) {trace_printf(msg, p1, p2, p3, p4);}
+
+	int trace_printf (const char * fmt, ...);
 #else
     #define TRACE(msg) {}
     #define TRACE1(msg, p1) {}
     #define TRACE2(msg, p1, p2) {}
     #define TRACE3(msg, p1, p2, p3) {}
+    #define TRACE4(msg, p1, p2, p3, p4) {}
     #define _TRACE(msg) {}
     #define _TRACE1(msg, p1) {}
     #define _TRACE2(msg, p1, p2) {}
