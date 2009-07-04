@@ -13,6 +13,9 @@ ELSE(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
     MESSAGE("Compiling on posix system")
 ENDIF(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
 
+SET_PROPERTY(GLOBAL PROPERTY USE_MINGW ${USE_MINGW}) 
+
+
 IF(JAVA_INCLUDE_PATH) 
     MESSAGE(STATUS "Java found" ) 
 ELSE(JAVA_INCLUDE_PATH) 
@@ -63,12 +66,12 @@ include_directories(${PROJECT_BINARY_DIR}/javah)
 include_directories(.)
 
 IF(USE_CYGWIN)
-# TODO Use properly way to set this gcc flag
-add_definitions(-mno-cygwin)
+    # TODO Use properly way to set this gcc flag
+    add_definitions(-mno-cygwin)
 ENDIF(USE_CYGWIN)
 
 IF(USE_MINGW)
-add_definitions(-DMINGW -mthreads -mwindows)
+    add_definitions(-DMINGW -mthreads)
 ENDIF(USE_MINGW)
 
 add_definitions(

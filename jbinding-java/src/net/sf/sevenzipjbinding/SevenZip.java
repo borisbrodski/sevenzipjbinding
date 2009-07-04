@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -19,7 +21,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
  */
 public class SevenZip {
 	private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
-	private static final String PROPERTY_SEVENZIPJBINDING_LIBNAME = "sevenzipjbinding.libname";
+	private static final String PROPERTY_SEVENZIPJBINDING_LIBNAME = "sevenzipjbinding.libname.%s";
 	private static final String SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME = "/sevenzipjbinding-lib.properties";
 
 	private static final class ArchiveOpenCryptoCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
@@ -101,13 +103,6 @@ public class SevenZip {
 					+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar'");
 		}
 
-		String libname = properties.getProperty(PROPERTY_SEVENZIPJBINDING_LIBNAME);
-		if (libname == null) {
-			throwInitException("property file '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-					+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
-					+ PROPERTY_SEVENZIPJBINDING_LIBNAME + "'");
-		}
-
 		String tmpDirectoryToUse;
 		if (tmpDirectory != null) {
 			tmpDirectoryToUse = tmpDirectory;
@@ -128,19 +123,44 @@ public class SevenZip {
 		if (!tmpDirFile.canWrite()) {
 			throwInitException("can't create files in '" + tmpDirFile.getAbsolutePath() + "'");
 		}
+		File tmpSubdirFile = new File(tmpDirectoryToUse + File.separator + "SevenZipJBinding-"
+				+ new Random().nextInt(10000000));
 
-		String libTmpName = generateLibTempName(libname);
-		File libTmpFile = new File(tmpDirFile.getAbsolutePath() + File.separatorChar + libTmpName);
-		libTmpFile.deleteOnExit();
-
-		InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + libname);
-		if (libInputStream == null) {
-			throwInitException("error loading native library '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-					+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
+		if (!tmpSubdirFile.mkdir()) {
+			throwInitException("Directory '" + tmpDirFile.getAbsolutePath() + "' couldn't be created");
 		}
 
-		copyLibraryToFS(libTmpFile, libInputStream);
-		initLibraryFromFileIntern(libTmpFile.getAbsolutePath());
+		List<File> librariesToInit = new ArrayList<File>(2);
+		for (int i = 1;; i++) {
+			String propertyName = String.format(PROPERTY_SEVENZIPJBINDING_LIBNAME, Integer.valueOf(i));
+			String libname = properties.getProperty(propertyName);
+			if (libname == null) {
+				if (librariesToInit.size() == 0) {
+					throwInitException("property file '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+							+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
+							+ propertyName + "'");
+				} else {
+					break;
+				}
+			}
+
+			File libTmpFile = new File(tmpSubdirFile.getAbsolutePath() + File.separatorChar + libname);
+			libTmpFile.deleteOnExit();
+
+			InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + libname);
+			if (libInputStream == null) {
+				throwInitException("error loading native library '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+						+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
+			}
+
+			copyLibraryToFS(libTmpFile, libInputStream);
+			librariesToInit.add(libTmpFile);
+		}
+
+		// Load native libraries in to reverse order
+		for (int i = librariesToInit.size() - 1; i != -1; i--) {
+			initLibraryFromFileIntern(librariesToInit.get(i).getAbsolutePath());
+		}
 	}
 
 	/**
@@ -310,14 +330,6 @@ public class SevenZip {
 				// Ignore errors here
 			}
 		}
-	}
-
-	private static String generateLibTempName(String libname) {
-		String randomPostfix = "-" + new Random().nextInt(10000000);
-		if (libname.indexOf('.') == -1) {
-			return libname + randomPostfix;
-		}
-		return libname.replaceFirst("\\.", randomPostfix + ".");
 	}
 
 	private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
