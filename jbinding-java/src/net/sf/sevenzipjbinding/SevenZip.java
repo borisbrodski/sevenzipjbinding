@@ -129,6 +129,7 @@ public class SevenZip {
 		if (!tmpSubdirFile.mkdir()) {
 			throwInitException("Directory '" + tmpDirFile.getAbsolutePath() + "' couldn't be created");
 		}
+		tmpSubdirFile.deleteOnExit();
 
 		List<File> librariesToInit = new ArrayList<File>(2);
 		for (int i = 1;; i++) {
