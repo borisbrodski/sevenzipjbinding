@@ -150,7 +150,7 @@ public class SevenZip {
 
 			InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + libname);
 			if (libInputStream == null) {
-				throwInitException("error loading native library '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+				throwInitException("error loading native library '" + libname
 						+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
 			}
 
@@ -159,9 +159,10 @@ public class SevenZip {
 		}
 
 		// Load native libraries in to reverse order
-		for (int i = librariesToInit.size() - 1; i != -1; i--) {
-			initLibraryFromFileIntern(librariesToInit.get(i).getAbsolutePath());
+		for (int i = librariesToInit.size() - 1; i != 0; i--) {
+				System.load(librariesToInit.get(i).getAbsolutePath());
 		}
+		initLibraryFromFileIntern(librariesToInit.get(0).getAbsolutePath());
 	}
 
 	/**
