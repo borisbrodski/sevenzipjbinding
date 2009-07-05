@@ -18,6 +18,8 @@ import org.junit.Test;
  * @version 1.0
  */
 public class GarbageArchiveFileTest extends JUnitNativeTestBase {
+	private static final int SINGLE_TEST_THREAD_COUNT = 20;
+	private static final int SINGLE_TEST_TIMEOUT = 1000 * 60 * SINGLE_TEST_THREAD_COUNT;
 	private final Random random = new Random(this.getClass().getCanonicalName().hashCode());
 
 	@Test
@@ -32,6 +34,59 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 				System.out.println("Iteration: " + i);
 				throw throwable;
 			}
+		}
+	}
+
+	@Test
+	public void openBadArchiveMultithreaded() throws Throwable {
+		final int[] threadsFinished = new int[] { SINGLE_TEST_THREAD_COUNT };
+		final Throwable[] firstThrowable = new Throwable[] { null };
+		for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						openBadArchive();
+					} catch (Throwable e) {
+						synchronized (firstThrowable) {
+							if (firstThrowable[0] == null) {
+								firstThrowable[0] = e;
+							}
+						}
+					} finally {
+						synchronized (GarbageArchiveFileTest.this) {
+							try {
+								threadsFinished[0]--;
+								GarbageArchiveFileTest.this.notify();
+							} catch (Throwable throwable) {
+								throwable.printStackTrace();
+							}
+						}
+					}
+				}
+			}).start();
+		}
+		long start = System.currentTimeMillis();
+		synchronized (this) {
+			while (true) {
+				try {
+					if (threadsFinished[0] == 0) {
+						break;
+					}
+					wait(SINGLE_TEST_TIMEOUT);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (System.currentTimeMillis() - start > SINGLE_TEST_TIMEOUT) {
+					fail("Time out");
+				}
+			}
+		}
+		if (firstThrowable[0] != null) {
+			if (firstThrowable[0] instanceof SevenZipException) {
+				throw (SevenZipException) firstThrowable[0];
+			}
+			throw new RuntimeException("Exception in underlying thread", firstThrowable[0]);
 		}
 	}
 
