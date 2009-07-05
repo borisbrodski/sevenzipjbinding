@@ -22,10 +22,9 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 
 	@Test
 	public void openBadArchive() throws Throwable {
-		for (int i = 0; i < 10000; i++) {
-
+		for (int i = 0; i < 900; i++) { // iteration 959 recognized as GZip archive :-)
 			try {
-				doOpenBadArchive(i == 959);
+				doOpenBadArchive(true);
 				fail("Expected exception wasn't thrown. Iteration: " + i);
 			} catch (SevenZipException e) {
 				assert true;
@@ -47,11 +46,12 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 
 			@Override
 			public int read(byte[] data) throws SevenZipException {
-				if (offset >= archive.length) {
-					return 0;
+				int result = 0;
+				for (int i = 0; i < data.length && offset < archive.length; i++) {
+					data[i] = archive[offset++];
+					result++;
 				}
-				data[0] = archive[offset++];
-				return 1;
+				return result;
 			}
 
 			@Override
