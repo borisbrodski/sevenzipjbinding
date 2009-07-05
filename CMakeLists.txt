@@ -56,15 +56,6 @@ MESSAGE("----------------------------")
 
 FILE(REMOVE ${SEVENZIPJBINDING_ZIP})
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SevenZip-JBinding - java binding for p7zip, crossplatform version of 7-Zip.")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ZIP)
-SET(CPACK_GENERATOR ZIP)
-SET(CPACK_SOURCE_GENERATOR ZIP)
-#SET(CPACK_SOURCE_IGNORE_FILES /CVS/;/\\.svn/;\\.swp$;\\.#;/#;.*~;cscope.*)
-
-INCLUDE(CPack)
-
-
 
 ADD_CUSTOM_TARGET(SevenZipJBinding-lib-jar ALL
     DEPENDS ${SEVENZIPJBINDING_LIB_JAR}) 
@@ -91,6 +82,43 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                    COMMENT Building Platformdependend jar)
 
+
+
+# ------------------- CPack -------------------
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SevenZip-JBinding - java binding for p7zip, crossplatform version of 7-Zip.")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ZIP)
+SET(CPACK_GENERATOR ZIP)
+SET(CPACK_SOURCE_GENERATOR ZIP)
+#SET(CPACK_SOURCE_IGNORE_FILES /CVS/;/\\.svn/;\\.swp$;\\.#;/#;.*~;cscope.*)
+SET(CPACK_INSTALL_COMMANDS "echo 1234567890!!!!!")
+
+INCLUDE(CPack)
+
+SET(PREPACKAGE_TMP "${PROJECT_BINARY_DIR}/prepackage.tmp")
+SET(JAVADOC_DIR "${PREPACKAGE_TMP}/javadoc")
+FILE(REMOVE_RECURSE ${PREPACKAGE_TMP})
+FILE(MAKE_DIRECTORY ${PREPACKAGE_TMP})
+
+SET(PREPACKAGE_ACTIONS 
+    "EXECUTE_PROCESS(COMMAND javadoc 
+                                -public -version -author
+                                -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
+                                -subpackages net.sf.sevenzipjbinding 
+                                -d ${JAVADOC_DIR}
+    WORKING_DIRECTORY .)"
+
+    "EXECUTE_PROCESS(COMMAND zip -q -9 -r ${PREPACKAGE_TMP}/src.zip . -x \"/*.svn/*\"
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/jbinding-java/src/)"
+
+    "EXECUTE_PROCESS(COMMAND zip -q -9 -r ${PREPACKAGE_TMP}/javadoc.zip .
+    WORKING_DIRECTORY javadoc/)"
+)
+
+FOREACH(PREPACKAGE_ACTION ${PREPACKAGE_ACTIONS})
+    INSTALL(CODE "${PREPACKAGE_ACTION}")
+ENDFOREACH(PREPACKAGE_ACTION ${PREPACKAGE_ACTIONS})
+
 INSTALL(FILES   AUTHORS
                 ChangeLog
                 COPYING
@@ -104,3 +132,14 @@ INSTALL(FILES   ${SEVENZIP_JBINDING_JAR}
                 ${SEVENZIPJBINDING_LIB_JAR}
         DESTINATION lib)
 
+INSTALL(FILES   ${PREPACKAGE_TMP}/src.zip
+                ${PREPACKAGE_TMP}/javadoc.zip
+        DESTINATION .)
+
+#INSTALL(DIRECTORY ${JAVADOC_DIR}/
+#        DESTINATION javadoc)
+
+#INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/jbinding-java/src/
+#        DESTINATION java-src
+#        REGEX "/\\.svn/" EXCLUDE)
+ 
