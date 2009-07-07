@@ -5,8 +5,8 @@
 //#define TRACE_ON
 //#define TRACE_OBJECTS_ON
 
-#define TRACE_THREADS_ON
-#define TRACE_THREAD_LOG_FILENAME "sevenzipjbinding-thread-%i.log"
+//#define TRACE_THREADS_ON
+//#define TRACE_THREAD_LOG_FILENAME "sevenzipjbinding-thread-%i.log"
 
 // TODO Delete this define, if not used
 //#define TRACE_OBJECT_CALLS

@@ -10,27 +10,21 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * This helper class allows merging multiple instances of {@link IInStream}
- * interface into one. This is helpful for accessing 7z volumed archives. 7z
- * splits its archives into volumes on the byte layout. Each archive volume gets
- * extension <code>.7z.XXX</code> (<code>.7z.001</code>, <code>.7z.002</code>,
- * <code>.7z.003</code>, ...). Such archives can be reassembled into single
- * archive file using simple concatenation: <br>
+ * This helper class allows merging multiple instances of {@link IInStream} interface into one. This is helpful for
+ * accessing 7z volumed archives. 7z splits its archives into volumes on the byte layout. Each archive volume gets
+ * extension <code>.7z.XXX</code> (<code>.7z.001</code>, <code>.7z.002</code>, <code>.7z.003</code>, ...). Such archives
+ * can be reassembled into single archive file using simple concatenation: <br>
  * <blockquote> <code>cat name.7z.* > name.7z</code> </blockquote>
  * 
- * To use this you need to implement {@link IArchiveOpenVolumeCallback}
- * interface.
+ * To use this you need to implement {@link IArchiveOpenVolumeCallback} interface.
  * <ul>
  * <li> {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
  * <code>propID</code>={@link PropID#NAME} will be called ones to get the file
  * name of the first volume in case it was not given to constructor. The file
- * name should ends with <code>.7z.001</code> or SevenZipException will be
- * thrown.
- * <li> {@link IArchiveOpenVolumeCallback#getStream(String)} will be called
- * multiple times to get instance of {@link IInStream} representing required
- * volume. The implementation of {@link IArchiveOpenVolumeCallback} should close
- * file associated with the old {@link IInStream}, if a new {@link IInStream}
- * was successfully instantiated.
+ * name should ends with <code>.7z.001</code> or SevenZipException will be thrown.
+ * <li> {@link IArchiveOpenVolumeCallback#getStream(String)} will be called multiple times to get instance of
+ * {@link IInStream} representing required volume. The implementation of {@link IArchiveOpenVolumeCallback} should close
+ * file associated with the old {@link IInStream}, if a new {@link IInStream} was successfully instantiated.
  * </ul>
  * 
  * @author Boris Brodski
@@ -52,61 +46,49 @@ public class VolumedArchiveInStream implements IInStream {
 	private String cuttedVolumeFilename;
 
 	/**
-	 * Creates instance of {@link VolumedArchiveInStream} using
-	 * {@link IArchiveOpenVolumeCallback}. The name of the first archive volume
-	 * will be asked using
-	 * {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
+	 * Creates instance of {@link VolumedArchiveInStream} using {@link IArchiveOpenVolumeCallback}. The name of the
+	 * first archive volume will be asked using {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
 	 * <code>propID</code>={@link PropID#NAME}. The file name should ends with
 	 * <code>.7z.001</code> or SevenZipException will be thrown.
 	 * 
 	 * @param archiveOpenVolumeCallback
-	 *            call back implementation used to access different volumes of
-	 *            archive.
+	 *            call back implementation used to access different volumes of archive.
 	 * @throws SevenZipException
 	 *             in error case
 	 */
-	public VolumedArchiveInStream(
-			IArchiveOpenVolumeCallback archiveOpenVolumeCallback)
-			throws SevenZipException {
-		this((String) archiveOpenVolumeCallback.getProperty(PropID.NAME),
-				archiveOpenVolumeCallback);
+	public VolumedArchiveInStream(IArchiveOpenVolumeCallback archiveOpenVolumeCallback) throws SevenZipException {
+		this((String) archiveOpenVolumeCallback.getProperty(PropID.NAME), archiveOpenVolumeCallback);
 	}
 
 	/**
-	 * Creates instance of {@link VolumedArchiveInStream} using
-	 * {@link IArchiveOpenVolumeCallback}.
+	 * Creates instance of {@link VolumedArchiveInStream} using {@link IArchiveOpenVolumeCallback}.
 	 * 
 	 * @param firstVolumeFilename
 	 *            the file name of the first volume.
 	 * @param archiveOpenVolumeCallback
-	 *            call back implementation used to access different volumes of
-	 *            archive. The file name should ends with <code>.7z.001</code>
-	 *            or SevenZipException will be thrown.
+	 *            call back implementation used to access different volumes of archive. The file name should ends with
+	 *            <code>.7z.001</code> or SevenZipException will be thrown.
 	 * @throws SevenZipException
 	 *             in error case
 	 */
-	public VolumedArchiveInStream(String firstVolumeFilename,
-			IArchiveOpenVolumeCallback archiveOpenVolumeCallback)
+	public VolumedArchiveInStream(String firstVolumeFilename, IArchiveOpenVolumeCallback archiveOpenVolumeCallback)
 			throws SevenZipException {
 		this.archiveOpenVolumeCallback = archiveOpenVolumeCallback;
 		volumePositions.add(Long.valueOf(0));
 
 		if (!firstVolumeFilename.endsWith(SEVEN_ZIP_FIRST_VOLUME_POSTFIX)) {
-			throw new SevenZipException("The first 7z volume filename '"
-					+ firstVolumeFilename + "' don't ends with the postfix: '"
-					+ SEVEN_ZIP_FIRST_VOLUME_POSTFIX + "'. Can't proceed");
+			throw new SevenZipException("The first 7z volume filename '" + firstVolumeFilename
+					+ "' don't ends with the postfix: '" + SEVEN_ZIP_FIRST_VOLUME_POSTFIX + "'. Can't proceed");
 
 		}
 
-		cuttedVolumeFilename = firstVolumeFilename.substring(0,
-				firstVolumeFilename.length() - 3);
+		cuttedVolumeFilename = firstVolumeFilename.substring(0, firstVolumeFilename.length() - 3);
 		openVolume(1, true);
 	}
 
-	private void openVolume(int index, boolean seekToBegin)
-			throws SevenZipException {
+	private void openVolume(int index, boolean seekToBegin) throws SevenZipException {
 		if (currentIndex == index) {
-			return ;
+			return;
 		}
 
 		for (int i = volumePositions.size(); i < index && absoluteLength == -1; i++) {
@@ -114,21 +96,17 @@ public class VolumedArchiveInStream implements IInStream {
 		}
 
 		if (absoluteLength != -1 && volumePositions.size() <= index) {
-			return ;
+			return;
 		}
 
-		String volumeFilename = cuttedVolumeFilename
-				+ MessageFormat
-						.format("{0,number,000}", Integer.valueOf(index));
+		String volumeFilename = cuttedVolumeFilename + MessageFormat.format("{0,number,000}", Integer.valueOf(index));
 
 		// Get new IInStream
-		IInStream newInStream = archiveOpenVolumeCallback
-				.getStream(volumeFilename);
+		IInStream newInStream = archiveOpenVolumeCallback.getStream(volumeFilename);
 
 		if (newInStream == null) {
-			absoluteLength = volumePositions.get(volumePositions.size() - 1)
-					.longValue();
-			return ;
+			absoluteLength = volumePositions.get(volumePositions.size() - 1).longValue();
+			return;
 		}
 
 		currentInStream = newInStream;
@@ -139,16 +117,13 @@ public class VolumedArchiveInStream implements IInStream {
 			if (currentVolumeLength == 0) {
 				throw new RuntimeException("Volume " + index + " is empty");
 			}
-			volumePositions.add(Long.valueOf(volumePositions.get(index - 1)
-					.longValue()
-					+ currentVolumeLength));
+			volumePositions.add(Long.valueOf(volumePositions.get(index - 1).longValue() + currentVolumeLength));
 
 			if (seekToBegin) {
 				currentInStream.seek(0, SEEK_SET);
 			}
 		} else {
-			currentVolumeLength = volumePositions.get(index).longValue()
-					- volumePositions.get(index - 1).longValue();
+			currentVolumeLength = volumePositions.get(index).longValue() - volumePositions.get(index - 1).longValue();
 		}
 
 		if (seekToBegin) {
@@ -165,7 +140,7 @@ public class VolumedArchiveInStream implements IInStream {
 	private void openVolumeToAbsoluteOffset() throws SevenZipException {
 		int index = volumePositions.size() - 1;
 		if (absoluteLength != -1 && absoluteOffset >= absoluteLength) {
-			return ;
+			return;
 		}
 		while (volumePositions.get(index).longValue() > absoluteOffset) {
 			index--;
@@ -173,7 +148,7 @@ public class VolumedArchiveInStream implements IInStream {
 
 		if (index < volumePositions.size() - 1) {
 			openVolume(index + 1, false);
-			return ;
+			return;
 		}
 
 		do {
@@ -212,8 +187,8 @@ public class VolumedArchiveInStream implements IInStream {
 			throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 		}
 
-		System.out.println("Setting absolute offset to: " + newOffset
-				+ " (origin: " + seekOrigin + ", offset: " + offset + ")");
+		//		System.out.println("Setting absolute offset to: " + newOffset
+		//				+ " (origin: " + seekOrigin + ", offset: " + offset + ")");
 		if (newOffset == absoluteOffset && !proceedWithSeek) {
 			return newOffset;
 		}
@@ -226,10 +201,9 @@ public class VolumedArchiveInStream implements IInStream {
 			return absoluteLength;
 		}
 
-		currentVolumeOffset = absoluteOffset
-				- volumePositions.get(currentIndex - 1).longValue();
+		currentVolumeOffset = absoluteOffset - volumePositions.get(currentIndex - 1).longValue();
 		currentInStream.seek(currentVolumeOffset, SEEK_SET);
-		
+
 		return newOffset;
 	}
 
@@ -247,8 +221,8 @@ public class VolumedArchiveInStream implements IInStream {
 		absoluteOffset += read;
 		currentVolumeOffset += read;
 
-//		System.out.println("Was read: " + read + " (asked for " + data.length
-//				+ ")");
+		//		System.out.println("Was read: " + read + " (asked for " + data.length
+		//				+ ")");
 		if (currentVolumeOffset >= currentVolumeLength) {
 			openVolume(currentIndex + 1, true);
 		}

@@ -2,6 +2,8 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(SevenZipJBinding)
 
 INCLUDE(FindJava)
+INCLUDE(CTest)
+
 
 # Uncomment this to build a version
 #SET(SEVENZIPJBINDING_VERSON 0.5.0)
@@ -91,7 +93,6 @@ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ZIP)
 SET(CPACK_GENERATOR ZIP)
 SET(CPACK_SOURCE_GENERATOR ZIP)
 #SET(CPACK_SOURCE_IGNORE_FILES /CVS/;/\\.svn/;\\.swp$;\\.#;/#;.*~;cscope.*)
-SET(CPACK_INSTALL_COMMANDS "echo 1234567890!!!!!")
 
 INCLUDE(CPack)
 
@@ -142,4 +143,47 @@ INSTALL(FILES   ${PREPACKAGE_TMP}/src.zip
 #INSTALL(DIRECTORY ${PROJECT_SOURCE_DIR}/jbinding-java/src/
 #        DESTINATION java-src
 #        REGEX "/\\.svn/" EXCLUDE)
- 
+
+
+# -------------------------- CTest
+
+IF(BUILD_TESTING)
+    MESSAGE("Prepare for testing")
+    GET_PROPERTY(JAVA_BIN_DIR GLOBAL PROPERTY JAVA_BIN_DIR)
+    
+    SET(JUNIT_JAVA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
+    SET(JUNIT_JAVA_BIN_DIR ${PROJECT_BINARY_DIR}/bin-junit)
+    SET(JUNIT_JAVAC_ARGS_FILE ${PROJECT_BINARY_DIR}/javac-args-junit.tmp)
+    SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.6.jar)
+
+    FILE(MAKE_DIRECTORY ${JUNIT_JAVA_BIN_DIR})
+    FILE(GLOB_RECURSE JUNIT_JAVA_SOURCE_FILES RELATIVE ${JUNIT_JAVA_SOURCE_DIR} ${JUNIT_JAVA_SOURCE_DIR}/*.java)
+    
+    FILE(WRITE ${JUNIT_JAVAC_ARGS_FILE} "-source 1.5 -target 1.5\n")
+    FILE(APPEND ${JUNIT_JAVAC_ARGS_FILE} "-d ${JUNIT_JAVA_BIN_DIR} -s ${JUNIT_JAVA_BIN_DIR}\n")
+    FILE(APPEND ${JUNIT_JAVAC_ARGS_FILE} "-cp ${JUNIT_LIB}:${JAVA_BIN_DIR}\n")
+    FOREACH(F ${JUNIT_JAVA_SOURCE_FILES})
+        FILE(APPEND ${JUNIT_JAVAC_ARGS_FILE} "${F}\n")
+    ENDFOREACH(F)
+    
+    ADD_CUSTOM_TARGET(SevenZipJBinding-tests ALL
+        COMMAND ${JAVA_COMPILE} @${JUNIT_JAVAC_ARGS_FILE}
+        DEPENDS ${SEVENZIPJBINDING_LIB_JAR}
+        WORKING_DIRECTORY ${JUNIT_JAVA_SOURCE_DIR}
+        COMMENT Compiling test classes)
+
+    MESSAGE("JUnit-Tests ${JAVA_RUNTIME} -cp ${JUNIT_LIB}:${JUNIT_JAVA_BIN_DIR}:${JAVA_BIN_DIR}:${SEVENZIPJBINDING_LIB_JAR} org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite")
+
+    SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
+    FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
+                                            ${JAVA_RUNTIME} -cp ${JUNIT_LIB}:${JUNIT_JAVA_BIN_DIR}:${JAVA_BIN_DIR}:${SEVENZIPJBINDING_LIB_JAR}
+                                            org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
+                                            WORKING_DIRECTORY ${JUNIT_JAVA_SOURCE_DIR}/..
+                                            RESULT_VARIABLE RESULT)
+                                     IF(RESULT)
+                                         MESSAGE(SEND_ERROR \"Error during JUnit Tests\")
+                                     ENDIF(RESULT)
+                                     ")
+    add_test(JUnit-Tests ${CMAKE_COMMAND} -P ${JUNIT_TEST_RUNNER})
+#                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
+ENDIF(BUILD_TESTING)

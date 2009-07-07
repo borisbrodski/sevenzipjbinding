@@ -88,7 +88,7 @@ import org.junit.Test;
  * @version 1.0
  */
 public abstract class ExtractSingleFileAbstractTest extends JUnitNativeTestBase {
-	private static final int SINGLE_TEST_THREAD_COUNT = 20;
+	private static final int SINGLE_TEST_THREAD_COUNT = 2;
 	private static final int SINGLE_TEST_REPEAT_COUNT = 2;
 	private static final int SINGLE_TEST_TIMEOUT = 100000;
 	private static final String SINGLE_FILE_ARCHIVE_PATH = "testdata/simple";
