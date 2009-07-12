@@ -7,11 +7,19 @@ GET_PROPERTY(SEVENZIP_JBINDING_JAR  GLOBAL PROPERTY SEVENZIP_JBINDING_JAR)
 IF (CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
     SET(USE_MINGW 1)
     SET(USE_CYGWIN 1)
-    INCLUDE(../cmake/FindMinGWm10-DLL.cmake)
     MESSAGE("Compiling on cygwin using -mnocyg (MinGW mode)")
-ELSE(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
-    MESSAGE("Compiling on posix system")
-ENDIF(CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
+ELSE()
+    IF(CMAKE_SYSTEM_NAME MATCHES "Windows.*")
+        SET(USE_MINGW 1)
+        MESSAGE("Compiling on windows (MinGW)")
+    ELSE()
+        MESSAGE("Compiling on posix system: ${CMAKE_SYSTEM_NAME}")
+    ENDIF()
+ENDIF()
+
+IF(USE_MINGW)
+    INCLUDE(../cmake/FindMinGWm10-DLL.cmake)
+ENDIF(USE_MINGW)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_MINGW ${USE_MINGW}) 
 
@@ -75,7 +83,7 @@ IF(USE_MINGW)
 ENDIF(USE_MINGW)
 
 add_definitions(
-    -g3
+#    -g3
 #    -O
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
@@ -646,14 +654,18 @@ add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${
 IF(USE_CYGWIN)
     TARGET_LINK_LIBRARIES(7-Zip-JBinding oleaut32)
 ELSE(USE_CYGWIN)
-    TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+    IF(USE_MINGW)
+#       TARGET_LINK_LIBRARIES(7-Zip-JBinding c)
+    ELSE(USE_MINGW)
+       TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+    ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 
 IF(USE_CYGWIN)
     SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(USE_CYGWIN)
     IF(USE_MINGW)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-lmingwthrd -Wl,--add-stdcall-alias") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
     ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 
