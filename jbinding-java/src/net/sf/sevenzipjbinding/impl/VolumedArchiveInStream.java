@@ -162,7 +162,7 @@ public class VolumedArchiveInStream implements IInStream {
 	/**
 	 * ${@inheritDoc}
 	 */
-	@Override
+
 	public long seek(long offset, int seekOrigin) throws SevenZipException {
 		long newOffset;
 		boolean proceedWithSeek = false;
@@ -210,7 +210,7 @@ public class VolumedArchiveInStream implements IInStream {
 	/**
 	 * ${@inheritDoc}
 	 */
-	@Override
+
 	public int read(byte[] data) throws SevenZipException {
 		if (absoluteLength != -1 && absoluteOffset >= absoluteLength) {
 			return 0;

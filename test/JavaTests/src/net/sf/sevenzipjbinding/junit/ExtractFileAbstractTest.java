@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
-	private static final int SINGLE_TEST_THREAD_COUNT = 2;
-	private static final int SINGLE_TEST_REPEAT_COUNT = 2;
+	private static final int SINGLE_TEST_THREAD_COUNT = 15;
+	private static final int SINGLE_TEST_REPEAT_COUNT = 50;
 	private static final int SINGLE_TEST_TIMEOUT = 100000;
 	private static final String DEFAULT_PASSWORD = "TestPass";
 
@@ -430,7 +430,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 			final Throwable[] firstThrowable = new Throwable[] { null };
 			for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
 				new Thread(new Runnable() {
-					@Override
+
 					public void run() {
 						try {
 							testArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
@@ -587,27 +587,22 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
 		}
 
-		@Override
 		public void setCompleted(Long files, Long bytes) throws SevenZipException {
 			archiveOpenCallback.setCompleted(files, bytes);
 		}
 
-		@Override
 		public void setTotal(Long files, Long bytes) throws SevenZipException {
 			archiveOpenCallback.setTotal(files, bytes);
 		}
 
-		@Override
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return cryptoGetTextPassword.cryptoGetTextPassword();
 		}
 
-		@Override
 		public Object getProperty(PropID propID) throws SevenZipException {
 			return archiveOpenVolumeCallback.getProperty(propID);
 		}
 
-		@Override
 		public IInStream getStream(String filename) throws SevenZipException {
 			return archiveOpenVolumeCallback.getStream(filename);
 		}
@@ -619,21 +614,21 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setCompleted(Long files, Long bytes) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setTotal(Long files, Long bytes) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return passwordToUse;
 		}
@@ -652,7 +647,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) {
 			return outputStream;
 		}
@@ -660,7 +655,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public boolean prepareOperation(ExtractAskMode extractAskMode) {
 			return true;
 		}
@@ -668,7 +663,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setOperationResult(ExtractOperationResult extractOperationResult) {
 			this.extractOperationResult = extractOperationResult;
 		}
@@ -676,21 +671,21 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setCompleted(long completeValue) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setTotal(long total) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return passwordToUse;
 		}
@@ -722,7 +717,6 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * ${@inheritDoc}
 		 */
-		@Override
 		public Object getProperty(PropID propID) {
 			switch (propID) {
 			case NAME:
@@ -734,7 +728,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * ${@inheritDoc}
 		 */
-		@Override
+
 		public IInStream getStream(String filename) {
 			currentFilename = filename;
 			try {
@@ -763,18 +757,17 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		/**
 		 * ${@inheritDoc}
 		 */
-		@Override
+
 		public void setCompleted(Long files, Long bytes) {
 		}
 
 		/**
 		 * ${@inheritDoc}
 		 */
-		@Override
+
 		public void setTotal(Long files, Long bytes) {
 		}
 
-		@Override
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return "a";
 		}

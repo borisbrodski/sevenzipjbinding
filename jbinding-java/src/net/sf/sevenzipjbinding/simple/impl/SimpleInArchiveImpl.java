@@ -16,10 +16,10 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 	private boolean wasClosed = false;
 
 	/**
-	 * Constructing an instance of {@link SimpleInArchiveImpl} from
-	 * a instance of {@link ISevenZipInArchive}.
+	 * Constructing an instance of {@link SimpleInArchiveImpl} from a instance of {@link ISevenZipInArchive}.
 	 * 
-	 * @param sevenZipInArchive a base instance of {@link ISevenZipInArchive}
+	 * @param sevenZipInArchive
+	 *            a base instance of {@link ISevenZipInArchive}
 	 */
 	public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
 		this.sevenZipInArchive = sevenZipInArchive;
@@ -71,7 +71,6 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
 	/**
 	 * ${@inheritDoc}
 	 */
-	@Override
 	public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException {
 		if (index < 0 || index >= sevenZipInArchive.getNumberOfItems()) {
 			throw new SevenZipException("Index " + index + " is out of range. Number of items in archive: "

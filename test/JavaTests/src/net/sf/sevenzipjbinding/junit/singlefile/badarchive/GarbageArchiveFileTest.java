@@ -43,7 +43,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 		final Throwable[] firstThrowable = new Throwable[] { null };
 		for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
 			new Thread(new Runnable() {
-				@Override
+
 				public void run() {
 					try {
 						openBadArchive();
@@ -99,7 +99,6 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 		IInStream inStream = new IInStream() {
 			int offset = 0;
 
-			@Override
 			public int read(byte[] data) throws SevenZipException {
 				int result = 0;
 				for (int i = 0; i < data.length && offset < archive.length; i++) {
@@ -109,7 +108,6 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 				return result;
 			}
 
-			@Override
 			public long seek(long newOffset, int seekOrigin) throws SevenZipException {
 				switch (seekOrigin) {
 				case SEEK_SET:

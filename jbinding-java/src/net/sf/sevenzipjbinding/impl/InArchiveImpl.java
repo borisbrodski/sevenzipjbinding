@@ -74,7 +74,6 @@ public class InArchiveImpl implements ISevenZipInArchive {
 			this.password = password;
 		}
 
-		@Override
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return password;
 		}
@@ -109,7 +108,7 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+
 	public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
 			throws SevenZipException {
 		ExtractSlowCryptoCallback extractCallback = new ExtractSlowCryptoCallback(outStream, password);

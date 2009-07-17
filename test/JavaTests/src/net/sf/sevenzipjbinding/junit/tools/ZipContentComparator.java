@@ -382,7 +382,7 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return password;
 		}
@@ -399,7 +399,7 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) {
 
 			if (!extractAskMode.equals(ExtractAskMode.EXTRACT)) {
@@ -420,7 +420,7 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public boolean prepareOperation(ExtractAskMode extractAskMode) {
 			return true;
 		}
@@ -428,7 +428,7 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setOperationResult(ExtractOperationResult extractOperationResult) {
 			if (extractOperationResult != ExtractOperationResult.OK) {
 				error("Extraction: operation result wan's ok  but " + extractOperationResult);
@@ -438,14 +438,14 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setCompleted(long completeValue) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setTotal(long total) {
 		}
 	}

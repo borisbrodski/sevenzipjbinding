@@ -31,15 +31,12 @@ public class SevenZip {
 			this.passwordForOpen = passwordForOpen;
 		}
 
-		@Override
 		public void setCompleted(Long files, Long bytes) {
 		}
 
-		@Override
 		public void setTotal(Long files, Long bytes) {
 		}
 
-		@Override
 		public String cryptoGetTextPassword() throws SevenZipException {
 			return passwordForOpen;
 		}
@@ -160,7 +157,7 @@ public class SevenZip {
 
 		// Load native libraries in to reverse order
 		for (int i = librariesToInit.size() - 1; i != 0; i--) {
-				System.load(librariesToInit.get(i).getAbsolutePath());
+			System.load(librariesToInit.get(i).getAbsolutePath());
 		}
 		initLibraryFromFileIntern(librariesToInit.get(0).getAbsolutePath());
 	}
@@ -350,21 +347,21 @@ public class SevenZip {
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setCompleted(Long files, Long bytes) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public void setTotal(Long files, Long bytes) {
 		}
 
 		/**
 		 * {@inheritDoc}
 		 */
-		@Override
+
 		public String cryptoGetTextPassword() throws SevenZipException {
 			throw new SevenZipException("No password was provided for opening protected archive.");
 		}

@@ -190,7 +190,6 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream);
 	}
 
-	@Override
 	public ExtractOperationResult extractSlow(ISequentialOutStream outStream, String password) throws SevenZipException {
 		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream, password);
 	}

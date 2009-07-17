@@ -393,12 +393,10 @@ public abstract class VolumedArchiveInStreamTest {
 			this.streamSizes = streamSizes;
 		}
 
-		@Override
 		public Object getProperty(PropID propID) {
 			return null;
 		}
 
-		@Override
 		public IInStream getStream(String filename) {
 			assertEquals(firstVolumeFilename.substring(0, firstVolumeFilename.length() - 3), //
 					filename.substring(0, filename.length() - 3));
@@ -428,7 +426,6 @@ public abstract class VolumedArchiveInStreamTest {
 			offset = 0;
 		}
 
-		@Override
 		public long seek(long offset, int seekOrigin) throws SevenZipException {
 			switch (seekOrigin) {
 			case SEEK_SET:
@@ -449,7 +446,6 @@ public abstract class VolumedArchiveInStreamTest {
 			return this.offset;
 		}
 
-		@Override
 		public int read(byte[] data) {
 			int read = 0;
 

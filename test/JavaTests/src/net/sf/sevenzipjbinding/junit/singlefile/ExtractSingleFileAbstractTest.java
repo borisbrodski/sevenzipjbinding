@@ -267,7 +267,6 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			}
 		}
 
-		@Override
 		public int write(byte[] data) {
 			try {
 				assertTrue(data.length > 0);
