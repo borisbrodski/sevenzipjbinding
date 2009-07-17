@@ -85,14 +85,14 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 	}
 
 	@Override
-	protected void doTestSingleFileArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
+	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
 		String uncommpressedFilename = "simple" + fileIndex + ".dat";
 		String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncommpressedFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
 		ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
-				compressionIndex, autodetectFormat);
+				compressionIndex, autodetectFormat, "simple", "dat");
 
 		SingleFileSequentialOutStreamComparator outputStream = null;
 		try {
