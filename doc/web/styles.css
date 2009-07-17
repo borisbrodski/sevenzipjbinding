@@ -25,6 +25,15 @@ td.menu {
 	line-height: 140%;
 }
 
+table.ArchiveTypeEnum {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin: 0px;
+}
+table.ArchiveTypeEnum td {
+    padding-left: 15px;
+}
+
 a.menu {
 	font:italic small-caps 900 24px arial;
 	font-style:normal;

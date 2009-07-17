@@ -23,9 +23,22 @@
 <td>
 <!--<img class="h1image" src="whats_this_all_about.png" /><br>-->
 <h2>What's this all about?</h2>
-Java binding/wrapper for 7Zip. Two Win32-DLLs+JAR to extract (encrypted with password, volumed) 
-7Z ZIP GZIP BZIP2 TAR RAR CAB ARJ Z CPIO RPM DEB LZH SPLIT CHM ISO WIM NSIS archives from java.
-Archive creation and other platforms are in a planning stage.
+7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> library. It allows extraction of
+many archive formats using very fast native library directly from java. Supported archive types:
+<table border="0" class="ArchiveTypeEnum"
+><tr><td>7-Zip<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
+</table>
+The archive creation and some other archive types (such as RPM, CDEB, NSIS) are in the planning stage.<br><br>
+The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JBinding in every possible way.
+<br>
+<br>
+<h2>How does it work?</h2>
+The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
+a cross-platform java interface of 7-Zip library. The native part of
+7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
+interface to perform needed operations.
+<br><br>
+<img src="overview.png"/>
 <br>
 <br>
 <!--<img class="h1image" src="news.png"/>-->
