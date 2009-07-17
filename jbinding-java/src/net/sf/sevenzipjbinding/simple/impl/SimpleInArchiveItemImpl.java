@@ -2,6 +2,7 @@ package net.sf.sevenzipjbinding.simple.impl;
 
 import java.util.Date;
 
+import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.PropID;
@@ -185,13 +186,13 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 				.booleanValue();
 	}
 
-	public void extractSlow(ISequentialOutStream outStream) throws SevenZipException {
-		simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream);
+	public ExtractOperationResult extractSlow(ISequentialOutStream outStream) throws SevenZipException {
+		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream);
 	}
 
 	@Override
-	public void extractSlow(ISequentialOutStream outStream, String password) throws SevenZipException {
-		simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream, password);
+	public ExtractOperationResult extractSlow(ISequentialOutStream outStream, String password) throws SevenZipException {
+		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream, password);
 	}
 
 	/**

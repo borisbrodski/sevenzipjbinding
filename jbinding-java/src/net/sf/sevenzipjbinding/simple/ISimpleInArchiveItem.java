@@ -2,6 +2,7 @@ package net.sf.sevenzipjbinding.simple;
 
 import java.util.Date;
 
+import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
@@ -247,10 +248,12 @@ public interface ISimpleInArchiveItem {
 	 * 
 	 * @param sequentialOutStream
 	 *            output stream to use
+	 * 
+	 * @return result of operation
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
 	 */
-	public void extractSlow(ISequentialOutStream sequentialOutStream) throws SevenZipException;
+	public ExtractOperationResult extractSlow(ISequentialOutStream sequentialOutStream) throws SevenZipException;
 
 	/**
 	 * Extract one archive item. Use <code>sequentialOutStream</code> to output data.<br>
@@ -261,10 +264,12 @@ public interface ISimpleInArchiveItem {
 	 *            output stream to use
 	 * @param password
 	 *            password to use
+	 * @return result of operation
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
 	 */
-	public void extractSlow(ISequentialOutStream sequentialOutStream, String password) throws SevenZipException;
+	public ExtractOperationResult extractSlow(ISequentialOutStream sequentialOutStream, String password)
+			throws SevenZipException;
 
 	/**
 	 * Returns the archive item index
