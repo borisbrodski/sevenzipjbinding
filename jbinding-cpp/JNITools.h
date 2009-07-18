@@ -82,7 +82,7 @@ jobject GetSimpleInstance(JNIEnv * env, const char * classname);
  * Put name of the java class 'clazz'into the buffer 'buffer'
  * Return: buffer
  */
-char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size);
+char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, size_t size);
 
 /**
  * Set long attribute "attribute" of object "object" with value "value"
@@ -110,12 +110,12 @@ void ObjectToPropVariant(JNIInstance * jniInstance, jobject object, PROPVARIANT 
 /**
  * Get java.lang.Boolean object from boolean value
  */
-jobject BooleanToObject(JNIEnv * env, int value);
+jobject BooleanToObject(JNIEnv * env, bool value);
 
 /**
  * Get java.lang.Integer object from int value
  */
-jobject IntToObject(JNIEnv * env, int value);
+jobject IntToObject(JNIEnv * env, jint value);
 
 /**
  * Get java.lang.Long object from long value

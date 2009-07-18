@@ -66,7 +66,7 @@ public:
 	STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize)
 	{
 		TRACE1("READ(size=%i)", (int)size)
-		int result = CPPToJavaSequentialInStream::Read(data, size, processedSize);
+		HRESULT result = CPPToJavaSequentialInStream::Read(data, size, processedSize);
 #ifdef TRACE_ON
 		if (processedSize) {
 			TRACE3("READ: size=%i, was read:%i, result:%i", (int)size, (int)*processedSize, (int)result);

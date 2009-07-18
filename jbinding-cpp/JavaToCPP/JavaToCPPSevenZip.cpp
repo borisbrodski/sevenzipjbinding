@@ -224,7 +224,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	stream.Detach();
 
-
 	return InArchiveImplObject;
 
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);

@@ -7,7 +7,7 @@
 #include "JNICallState.h"
 
 
-static int initialized = 0;
+static bool initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
 static jfieldID g_InStreamAttributeFieldID;
 static jclass g_PropertyInfoClazz;
@@ -149,7 +149,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);
 
 	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
-	int result = 0;
+	HRESULT result = 0;
 	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
 	        archiveExtractCallback);
 

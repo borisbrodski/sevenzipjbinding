@@ -55,7 +55,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
     }
 
     ENTER_CRITICAL_SECTION
-    int findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
+    bool findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
     LEAVE_CRITICAL_SECTION
 
     if (findresult)
@@ -106,7 +106,7 @@ void NativeMethodContext::EndCPPToJava()
     }
 #ifdef _DEBUG
     ENTER_CRITICAL_SECTION
-    int findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
+    bool findresult = _threadInfoMap.find(currentThreadId) == _threadInfoMap.end();
     LEAVE_CRITICAL_SECTION
 
     if (findresult)
@@ -282,7 +282,7 @@ void NativeMethodContext::_VThrowSevenZipException(HRESULT hresult, const char *
     char buffer[64 * 1024];
 
     snprintf(buffer, sizeof(buffer), "HRESULT: 0x%X (%s). ", (int)hresult, GetSevenZipErrorMessage(hresult));
-    int beginIndex = strlen(buffer);
+    size_t beginIndex = strlen(buffer);
     vsnprintf(&buffer[beginIndex], sizeof(buffer) - beginIndex, fmt, args);
     buffer[sizeof(buffer) - 1] = '\0';
 

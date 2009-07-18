@@ -150,7 +150,7 @@ public:
      *
      * Return: 0 - no exception occurs, else otherwise
      */
-    int IsExceptionOccurs()
+    bool IsExceptionOccurs()
     {
         TRACE_OBJECT_CALL("CheckException");
         if (_env->ExceptionCheck())
