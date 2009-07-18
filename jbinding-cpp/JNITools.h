@@ -85,9 +85,9 @@ jobject GetSimpleInstance(JNIEnv * env, const char * classname);
 char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size);
 
 /**
- * Set integer attribute "attribute" of object "object" with value "value"
+ * Set long attribute "attribute" of object "object" with value "value"
  */
-void SetIntegerAttribute(JNIEnv * env, jobject object, const char * attribute, int value);
+void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute, jlong value);
 
 /**
  * Convert PropVariant into java object: Integer, Double, String

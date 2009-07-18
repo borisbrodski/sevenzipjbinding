@@ -80,10 +80,10 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	}
 
 	@SuppressWarnings("unused")
-	private int sevenZipArchiveInstance;
+	private long sevenZipArchiveInstance;
 
 	@SuppressWarnings("unused")
-	private int sevenZipArchiveInStreamInstance;
+	private long sevenZipArchiveInStreamInstance;
 
 	private int numberOfItems = -1;
 

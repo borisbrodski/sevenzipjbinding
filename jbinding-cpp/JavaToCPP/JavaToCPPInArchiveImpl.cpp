@@ -29,14 +29,12 @@ static void localinit(JNIEnv * env, jobject thiz)
 	jclass clazz = env->GetObjectClass(thiz);
 	FATALIF(clazz == NULL, "Can't get class from object");
 
-	g_ObjectAttributeFieldID = env->GetFieldID(clazz,
-	IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "I");
+	g_ObjectAttributeFieldID = env->GetFieldID(clazz, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "J");
 	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
-	g_InStreamAttributeFieldID = env->GetFieldID(clazz,
-	IN_STREAM_IMPL_OBJ_ATTRIBUTE, "I");
-	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
+	g_InStreamAttributeFieldID = env->GetFieldID(clazz,	IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
+	FATALIF2(g_InStreamAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_STREAM_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
 	// Initialize PropVariant
@@ -70,11 +68,11 @@ static void localinit(JNIEnv * env, jobject thiz)
 
 static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 {
-	jint pointer;
+	jlong pointer;
 
 	localinit(env, thiz);
 
-	pointer = env->GetIntField(thiz, g_ObjectAttributeFieldID);
+	pointer = env->GetLongField(thiz, g_ObjectAttributeFieldID);
 
 	if (!pointer)
 	{
@@ -82,12 +80,12 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
         throw SevenZipException("Can't preform action. Archive already closed.");
 	}
 
-	return (IInArchive *)(void *)pointer;
+	return (IInArchive *)(void *)(size_t)pointer;
 }
 
 static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 {
-	jint pointer;
+	jlong pointer;
 
 	localinit(env, thiz);
 
@@ -100,14 +98,14 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 
 //    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
 
-    return (CPPToJavaInStream *)(void *)pointer;
+    return (CPPToJavaInStream *)(void *)(size_t)pointer;
 }
 
-static void SetArchive(JNIEnv * env, jobject thiz, jint pointer)
+static void SetArchive(JNIEnv * env, jobject thiz, size_t pointer)
 {
 	localinit(env, thiz);
 
-	env->SetIntField(thiz, g_ObjectAttributeFieldID, pointer);
+	env->SetLongField(thiz, g_ObjectAttributeFieldID, (jlong)pointer);
 }
 
 int CompareIndicies(const void *pi1, const void * pi2)

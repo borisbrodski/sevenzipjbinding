@@ -214,11 +214,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	jobject InArchiveImplObject = GetSimpleInstance(env, IN_ARCHIVE_IMPL);
 
-	SetIntegerAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
-			(size_t)(void*)(archive.Detach()));
+	SetLongAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
+			(jlong)(size_t)(void*)(archive.Detach()));
 
-	SetIntegerAttribute(env, InArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
-			(size_t)(void*)(stream));
+	SetLongAttribute(env, InArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
+			(jlong)(size_t)(void*)(stream));
 
 	stream->ClearNativeMethodContext();
 

@@ -130,21 +130,20 @@ jobject GetSimpleInstance(JNIEnv * env, jclass clazz) {
 }
 
 /**
- * Set integer attribute "attribute" of object "object" with value "value"
+ * Set long attribute "attribute" of object "object" with value "value"
  */
-void SetIntegerAttribute(JNIEnv * env, jobject object, const char * attribute,
-		int value) {
+void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute,
+		jlong value) {
 	char classname[256];
 
 	jclass clazz = env->GetObjectClass(object);
 	FATALIF(clazz == NULL, "Can't get class from object");
 
-	jfieldID fieldID = env->GetFieldID(clazz, attribute, "I");
+	jfieldID fieldID = env->GetFieldID(clazz, attribute, "J");
 	FATALIF2(fieldID == NULL, "Field '%s' in the class '%s' was not found", attribute,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
-	env->SetIntField(object, fieldID, value);
-
+	env->SetLongField(object, fieldID, value);
 }
 
 /**
