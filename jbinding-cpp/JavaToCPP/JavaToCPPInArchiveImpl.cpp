@@ -89,7 +89,7 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 
 	localinit(env, thiz);
 
-	pointer = env->GetIntField(thiz, g_InStreamAttributeFieldID);
+	pointer = env->GetLongField(thiz, g_InStreamAttributeFieldID);
 
 	if (!pointer)
 	{
