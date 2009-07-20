@@ -156,6 +156,7 @@ public:
         if (_env->ExceptionCheck())
         {
             _nativeMethodContext->SaveLastOccurredException(_env);
+            _env->ExceptionClear();
             return 1;
         }
 

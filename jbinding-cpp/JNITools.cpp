@@ -3,7 +3,7 @@
 #include "JNICallState.h"
 #include "UnicodeHelper.h"
 
-static int initialized = 0;
+static bool initialized = 0;
 
 //static jclass g_NumberClass;
 
@@ -86,7 +86,7 @@ static void localinit(JNIEnv * env) {
  * Put name of the java class 'clazz'into the buffer 'buffer'
  * Return: buffer
  */
-char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, int size) {
+char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, size_t size) {
 	jclass reflectionClass = env->GetObjectClass(clazz);
 	jmethodID id = env->GetMethodID(reflectionClass, "getName",
 			"()Ljava/lang/String;");
@@ -130,7 +130,7 @@ jobject GetSimpleInstance(JNIEnv * env, jclass clazz) {
 }
 
 /**
- * Set integer attribute "attribute" of object "object" with value "value"
+ * Set long attribute "attribute" of object "object" with value "value"
  */
 void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute,
 		jlong value) {
@@ -144,13 +144,12 @@ void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
 	env->SetLongField(object, fieldID, value);
-
 }
 
 /**
  * Get java.lang.Boolean object from boolean value
  */
-jobject BooleanToObject(JNIEnv * env, int value) {
+jobject BooleanToObject(JNIEnv * env, bool value) {
 	localinit(env);
 
 	jobject result = env->CallStaticObjectMethod(g_BooleanClass,
@@ -162,11 +161,11 @@ jobject BooleanToObject(JNIEnv * env, int value) {
 /**
  * Get java.lang.Integer object from int value
  */
-jobject IntToObject(JNIEnv * env, int value) {
+jobject IntToObject(JNIEnv * env, jint value) {
 	localinit(env);
 
 	jobject result = env->CallStaticObjectMethod(g_IntegerClass,
-			g_IntegerValueOf, (jint) value);
+			g_IntegerValueOf, value);
 	FATALIF1(result == NULL, "Error getting Integer object for value %i", value);
 	return result;
 }

@@ -62,7 +62,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
     {
         JNIEnv * env;
         TRACE2("JNIEnv* was requested from other thread. Current threadId=%lu, initThreadId=%lu", (long unsigned int)currentThreadId, (long unsigned int)_initThreadId)
-        jint result = _vm->GetEnv((void**)&env, JNI_VERSION_1_6);
+        jint result = _vm->GetEnv((void**)&env, JNI_VERSION_1_4);
         if (result == JNI_OK) {
             TRACE("Current thread is already attached")
             return env;
@@ -180,6 +180,7 @@ void NativeMethodContext::SaveLastOccurredException(JNIEnv * env)
     if (lastOccurredException)
     {
         _lastOccurredException = (jthrowable)env->NewGlobalRef(lastOccurredException);
+        env->DeleteLocalRef(lastOccurredException);
     }
     else
     {

@@ -7,7 +7,7 @@
 #include "JNICallState.h"
 
 
-static int initialized = 0;
+static bool initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
 static jfieldID g_InStreamAttributeFieldID;
 static jclass g_PropertyInfoClazz;
@@ -29,13 +29,11 @@ static void localinit(JNIEnv * env, jobject thiz)
 	jclass clazz = env->GetObjectClass(thiz);
 	FATALIF(clazz == NULL, "Can't get class from object");
 
-	g_ObjectAttributeFieldID = env->GetFieldID(clazz,
-	IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "J");
+	g_ObjectAttributeFieldID = env->GetFieldID(clazz, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "J");
 	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
-	g_InStreamAttributeFieldID = env->GetFieldID(clazz,
-	IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
+	g_InStreamAttributeFieldID = env->GetFieldID(clazz, IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
 	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
@@ -82,12 +80,12 @@ static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
         throw SevenZipException("Can't preform action. Archive already closed.");
 	}
 
-	return (IInArchive *)(void *)pointer;
+	return (IInArchive *)(void *)(size_t)pointer;
 }
 
 static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 {
-	jint pointer;
+	jlong pointer;
 
 	localinit(env, thiz);
 
@@ -100,14 +98,14 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 
 //    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
 
-    return (CPPToJavaInStream *)(void *)pointer;
+    return (CPPToJavaInStream *)(void *)(size_t)pointer;
 }
 
-static void SetArchive(JNIEnv * env, jobject thiz, jlong pointer)
+static void SetArchive(JNIEnv * env, jobject thiz, size_t pointer)
 {
 	localinit(env, thiz);
 
-	env->SetLongField(thiz, g_ObjectAttributeFieldID, pointer);
+	env->SetLongField(thiz, g_ObjectAttributeFieldID, (jlong)pointer);
 }
 
 int CompareIndicies(const void *pi1, const void * pi2)
@@ -151,7 +149,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);
 
 	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
-	int result = 0;
+	HRESULT result = 0;
 	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
 	        archiveExtractCallback);
 

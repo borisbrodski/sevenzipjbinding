@@ -30,5 +30,10 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
         env->ReleaseStringChars(passwordString, passwordJChars);
     }
 
+    if (passwordString)
+    {
+    	env->DeleteLocalRef(passwordString);
+    }
+
     return S_OK;
 }
