@@ -34,7 +34,7 @@ static void localinit(JNIEnv * env, jobject thiz)
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
 	g_InStreamAttributeFieldID = env->GetFieldID(clazz, IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
-	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
+	FATALIF2(g_InStreamAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_STREAM_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
 
 	// Initialize PropVariant
@@ -68,7 +68,7 @@ static void localinit(JNIEnv * env, jobject thiz)
 
 static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 {
-	jint pointer;
+	jlong pointer;
 
 	localinit(env, thiz);
 
