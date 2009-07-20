@@ -7,9 +7,12 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
 {
     TRACE_OBJECT_CALL("Write");
 
+    if (processedSize) {
+    	*processedSize = 0;
+    }
+
     if (size == 0)
     {
-        *processedSize = 0;
         return S_OK;
     }
 

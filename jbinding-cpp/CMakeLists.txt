@@ -400,7 +400,7 @@ SET(P7ZIP_SOURCE_FILES
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
-    #${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
+    ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
     
