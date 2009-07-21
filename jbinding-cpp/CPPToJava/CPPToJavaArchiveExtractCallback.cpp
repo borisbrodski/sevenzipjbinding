@@ -56,6 +56,10 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index, ISequentia
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
+    if (outStream) {
+    	*outStream = NULL;
+    }
+
 	jniInstance.PrepareCall();
 	jobject askExtractModeObject = env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID,
 			(jint)askExtractMode);

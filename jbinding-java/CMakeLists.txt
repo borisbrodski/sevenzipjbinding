@@ -32,7 +32,8 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIP_JBINDING_JAR}
 )
 
 ADD_CUSTOM_TARGET(sevenzip-jbinding-jar ALL
-                  DEPENDS ${SEVENZIP_JBINDING_JAR})
+                  DEPENDS ${SEVENZIP_JBINDING_JAR}
+                  COMMENT Processing java build target)
                     
 #SET(JAVA_CLASS_FILES "")
 #FOREACH(F ${JAVA_SOURCE_FILES})

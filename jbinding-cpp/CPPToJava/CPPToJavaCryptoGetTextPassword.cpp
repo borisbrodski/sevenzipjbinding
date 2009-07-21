@@ -11,6 +11,10 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
+    if (password) {
+    	*password = NULL;
+    }
+
     jniInstance.PrepareCall();
     jstring passwordString = (jstring)env->CallObjectMethod(_javaImplementation, _cryptoGetTextPasswordMethodID);
     if (jniInstance.IsExceptionOccurs())

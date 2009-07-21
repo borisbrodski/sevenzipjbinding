@@ -11,6 +11,10 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
+    if (processedSize) {
+    	*processedSize = 0;
+    }
+
 	jbyteArray byteArray = env->NewByteArray(size);
 	FATALIF(byteArray == NULL, "Out of local resource of out of memory: byteArray == NULL") // TODO Change to EXCEPTION_IF()
 

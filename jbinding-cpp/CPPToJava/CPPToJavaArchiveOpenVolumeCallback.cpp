@@ -31,6 +31,10 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID,
 	JNIInstance jniInstance(_nativeMethodContext);
 	JNIEnv * env = jniInstance.GetEnv();
 
+	if (value) {
+		value->vt = VT_NULL;
+	}
+
 	jniInstance.PrepareCall();
 	jobject propIDObject = env->CallStaticObjectMethod(_propIDClass,
 			_propIDGetPropIDByIndexMethodID, (jint) propID);
@@ -56,6 +60,10 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
 
 	JNIInstance jniInstance(_nativeMethodContext);
 	JNIEnv * env = jniInstance.GetEnv();
+
+	if (inStream) {
+		*inStream = NULL;
+	}
 
 	jstring nameString = env->NewString(UnicodeHelper(name), (jsize) wcslen(
 			name));

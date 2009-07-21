@@ -37,34 +37,60 @@ IF(NOT "${JAVA_JDK}" STREQUAL "${JAVA_JDK_OLD}")
 ENDIF()
 
 IF(NOT JAVA_INCLUDE_PATH)
-    MESSAGE("-- Looking for java JNI jni.h include file")
-    FIND_FILE(JAVA_INCLUDE_PATH
+    MESSAGE("-- Looking for java JNI jni.h include path")
+    FIND_FILE(JAVA_JNI_H
                 jni.h
             PATHS
                 "${JAVA_JDK}/include"
                 "$ENV{JAVA_HOME}/include"
     )
     
-    MARK_AS_ADVANCED(JAVA_INCLUDE_PATH)
-    
-    IF(NOT JAVA_INCLUDE_PATH)
+    IF(NOT JAVA_JNI_H)
         INCLUDE(FindJNI)
         
         SET(JNI_INCLUDE_DIRS CACHE INTERNAL "Ignored" FORCE)
         SET(JNI_LIBRARIES CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_AWT_LIBRARY CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_JVM_LIBRARY CACHE INTERNAL "Ignored" FORCE)
-    #    SET(JAVA_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
-        SET(JAVA_INCLUDE_PATH2 CACHE INTERNAL "Ignored" FORCE)
+#        SET(JAVA_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
+#        SET(JAVA_INCLUDE_PATH2 CACHE INTERNAL "Ignored" FORCE)
         SET(JAVA_AWT_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
+    ELSE()
+        GET_FILENAME_COMPONENT(JAVA_INCLUDE_PATH_VAR "${JAVA_JNI_H}" PATH)
+        SET(JAVA_INCLUDE_PATH "${JAVA_INCLUDE_PATH_VAR}" CACHE PATH "Include path for jni.h")
+        MARK_AS_ADVANCED(JAVA_INCLUDE_PATH)
     ENDIF()
+    SET(JAVA_JNI_H CACHE INTERNAL "Ignored" FORCE)
     
     IF(JAVA_INCLUDE_PATH)
-        MESSAGE("-- Looking for java JNI jni.h include file - found: ${JAVA_INCLUDE_PATH}")
+        MESSAGE("-- Looking for java JNI jni.h include path - found: ${JAVA_INCLUDE_PATH}")
     ELSE()
         MESSAGE(FATAL_ERROR "Java JNI jni.h include file not found. ${HELP}")
     ENDIF()
 ENDIF()
+
+
+IF(NOT JAVA_INCLUDE_PATH2)
+    MESSAGE("-- Looking for java JNI jni_md.h include path")
+    FIND_FILE(JAVA_JNI_MD_H
+                jni_md.h
+            PATHS
+                "${JAVA_INCLUDE_PATH}/win32"
+                "${JAVA_INCLUDE_PATH}/linux"
+                "${JAVA_INCLUDE_PATH}/freebsd"
+    )
+
+    IF(JAVA_JNI_MD_H)
+        GET_FILENAME_COMPONENT(JAVA_INCLUDE_PATH2_VAR "${JAVA_JNI_MD_H}" PATH)
+        SET(JAVA_INCLUDE_PATH2 "${JAVA_INCLUDE_PATH2_VAR}" CACHE PATH "Include path for jni_md.h")
+        MARK_AS_ADVANCED(JAVA_INCLUDE_PATH2)
+        SET(JAVA_JNI_MD_H CACHE INTERNAL "Ignored" FORCE)
+        MESSAGE("-- Looking for java JNI jni_md.h include path - found: ${JAVA_INCLUDE_PATH2}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java JNI jni_md.h include file not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
 
 
 GET_FILENAME_COMPONENT(JAVA_JNI_JDK_PATH "${JAVA_INCLUDE_PATH}" PATH)

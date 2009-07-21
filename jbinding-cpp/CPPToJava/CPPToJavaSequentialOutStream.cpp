@@ -11,8 +11,7 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size, 
     	*processedSize = 0;
     }
 
-    if (size == 0)
-    {
+    if (size == 0) {
         return S_OK;
     }
 

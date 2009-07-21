@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit.singlefile.badarchive;
+package net.sf.sevenzipjbinding.junit.badarchive;
 
 import static org.junit.Assert.fail;
 
@@ -18,22 +18,29 @@ import org.junit.Test;
  * @version 1.0
  */
 public class GarbageArchiveFileTest extends JUnitNativeTestBase {
-	private static final int SINGLE_TEST_THREAD_COUNT = 20;
+	private static final int SINGLE_TEST_THREAD_COUNT = 10;
 	private static final int SINGLE_TEST_TIMEOUT = 1000 * 60 * SINGLE_TEST_THREAD_COUNT;
 	private final Random random = new Random(this.getClass().getCanonicalName().hashCode());
 
 	@Test
 	public void openBadArchive() throws Throwable {
+		int pass = 0;
+		int count = 0;
 		for (int i = 0; i < 900; i++) { // iteration 959 recognized as GZip archive :-)
 			try {
+				count++;
 				doOpenBadArchive(true);
-				fail("Expected exception wasn't thrown. Iteration: " + i);
+				pass++;
+				// Ones in a while a valid archive header will be generated
 			} catch (SevenZipException e) {
 				assert true;
 			} catch (Throwable throwable) {
 				System.out.println("Iteration: " + i);
 				throw throwable;
 			}
+		}
+		if (pass > count / 50) {
+			fail("Expected exception wasn't thrown oft enough. ");
 		}
 	}
 
