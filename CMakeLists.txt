@@ -97,23 +97,48 @@ SET(CPACK_SOURCE_GENERATOR ZIP)
 INCLUDE(CPack)
 
 SET(PREPACKAGE_TMP "${PROJECT_BINARY_DIR}/prepackage.tmp")
-SET(JAVADOC_DIR "${PREPACKAGE_TMP}/javadoc")
+SET(JAVADOC_DIR "${PREPACKAGE_TMP}/javadoc/")
 FILE(REMOVE_RECURSE ${PREPACKAGE_TMP})
 FILE(MAKE_DIRECTORY ${PREPACKAGE_TMP})
 
+IF(NOT JAVA_JAVADOC)
+    MESSAGE("Javadoc not found. Please set JAVA_JAVADOC to javadoc tool")
+ENDIF(NOT JAVA_JAVADOC)
+
 SET(PREPACKAGE_ACTIONS 
-    "EXECUTE_PROCESS(COMMAND javadoc 
+    "
+    MACRO(COPY_FROM_SRC SRC DEST EXCLUDE_PATTERN)
+        FILE(GLOB_RECURSE Files RELATIVE \${SRC} \${SRC}/*)
+        FILE(MAKE_DIRECTORY \"\${DEST}\")
+        FOREACH(File \${Files})
+	    IF(NOT File MATCHES \".*(/|^)[.]svn/.*\" AND (\"x\${EXCLUDE_PATTERN}\" STREQUAL x OR NOT File MATCHES \"\${EXCLUDE_PATTERN}\"))
+                MESSAGE(\"Coping: \${File}\")
+                configure_file(
+                        \${SRC}/\${File}
+                        \${DEST}/\${File}
+                        @ONLY)
+            ENDIF()
+        ENDFOREACH()
+    ENDMACRO()
+
+    EXECUTE_PROCESS(COMMAND ${JAVA_JAVADOC}
                                 -public -version -author
                                 -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
                                 -subpackages net.sf.sevenzipjbinding 
                                 -d ${JAVADOC_DIR}
-    WORKING_DIRECTORY .)"
+    WORKING_DIRECTORY .)
+    
+    COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-java/src\" \"${PREPACKAGE_TMP}/java-src/\" \"\")
+    COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-cpp\" \"${PREPACKAGE_TMP}/cpp-src/\" CMakeLists.txt)
 
-    "EXECUTE_PROCESS(COMMAND zip -q -9 -r ${PREPACKAGE_TMP}/src.zip . -x \"/*.svn/*\"
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/jbinding-java/src/)"
+    EXECUTE_PROCESS(COMMAND ${JAVA_ARCHIVE} cMf ${PREPACKAGE_TMP}/java-src.zip .
+    WORKING_DIRECTORY ${PREPACKAGE_TMP}/java-src/)
 
-    "EXECUTE_PROCESS(COMMAND zip -q -9 -r ${PREPACKAGE_TMP}/javadoc.zip .
-    WORKING_DIRECTORY javadoc/)"
+    EXECUTE_PROCESS(COMMAND ${JAVA_ARCHIVE} cMf ${PREPACKAGE_TMP}/cpp-src.zip .
+    WORKING_DIRECTORY ${PREPACKAGE_TMP}/cpp-src/)
+
+    EXECUTE_PROCESS(COMMAND ${JAVA_ARCHIVE} cMf ${PREPACKAGE_TMP}/javadoc.zip .
+    WORKING_DIRECTORY ${JAVADOC_DIR})"
 )
 
 FOREACH(PREPACKAGE_ACTION ${PREPACKAGE_ACTIONS})
@@ -133,7 +158,8 @@ INSTALL(FILES   ${SEVENZIP_JBINDING_JAR}
                 ${SEVENZIPJBINDING_LIB_JAR}
         DESTINATION lib)
 
-INSTALL(FILES   ${PREPACKAGE_TMP}/src.zip
+INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
+                ${PREPACKAGE_TMP}/cpp-src.zip
                 ${PREPACKAGE_TMP}/javadoc.zip
         DESTINATION .)
 
