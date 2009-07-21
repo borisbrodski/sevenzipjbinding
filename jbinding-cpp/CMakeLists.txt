@@ -1,19 +1,23 @@
 PROJECT(SevenZipJBindingCPP)
 
-INCLUDE(../cmake/FindJNIExtended.cmake)
-
 GET_PROPERTY(SEVENZIP_JBINDING_JAR  GLOBAL PROPERTY SEVENZIP_JBINDING_JAR) 
+
+SET(HAVE_PTHREADS 0)
+FIND_PACKAGE(Threads)
+IF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
+  SET(HAVE_PTHREADS 1)
+ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "CYGWIN.*")
     SET(USE_MINGW 1)
     SET(USE_CYGWIN 1)
-    MESSAGE("Compiling on cygwin using -mnocyg (MinGW mode)")
+    MESSAGE("-- Compiling on cygwin using -mnocyg (MinGW mode)")
 ELSE()
     IF(CMAKE_SYSTEM_NAME MATCHES "Windows.*")
         SET(USE_MINGW 1)
-        MESSAGE("Compiling on windows (MinGW)")
+        MESSAGE("-- Compiling on windows (MinGW)")
     ELSE()
-        MESSAGE("Compiling on posix system: ${CMAKE_SYSTEM_NAME}")
+        MESSAGE("-- Compiling on posix system: ${CMAKE_SYSTEM_NAME}")
     ENDIF()
 ENDIF()
 
@@ -23,25 +27,12 @@ ENDIF(USE_MINGW)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_MINGW ${USE_MINGW}) 
 
-
-IF(JAVA_INCLUDE_PATH) 
-    MESSAGE(STATUS "Java found" ) 
-ELSE(JAVA_INCLUDE_PATH) 
-    MESSAGE(WARNING " Java jni.h not found" ) 
-ENDIF(JAVA_INCLUDE_PATH) 
-
 IF(HAVE_WCHAR_H)
   OPTION(HAVE_UNICODE_WCHAR "Enable Unicode Support" YES)
   MARK_AS_ADVANCED(HAVE_UNICODE_WCHAR)
 ELSE(HAVE_WCHAR_H)
   SET(HAVE_UNICODE_WCHAR 0)
 ENDIF(HAVE_WCHAR_H)
-
-SET(HAVE_PTHREADS 0)
-FIND_PACKAGE(Threads)
-IF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
-  SET(HAVE_PTHREADS 1)
-ENDIF(WIN32 OR CMAKE_USE_PTHREADS_INIT)
 
 
 SET(P7ZIP_SRC ../p7zip)
@@ -640,7 +631,7 @@ SET(JAVAH_JAVA_CLASS_LIST
 
 
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND ${JAVA_JAVAH} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
+                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
                    DEPENDS ${SEVENZIP_JBINDING_JAR}
                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jbinding-java/bin
                    COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"

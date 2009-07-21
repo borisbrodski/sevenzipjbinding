@@ -1,33 +1,260 @@
+# Add extended seach to the java tools.
 #
-# Adds the seach to javah (header generator) the cmake default version
-# of FindJava.cmake
-# Addionaly to the cmake's defaults (refer to FindJava.cmake) i.e.
-#    JAVA_RUNTIME,
-#    JAVA_COMPILE and
-#    JAVA_ARCHIVE,
-# this code sets the following variables:
-#    JAVA_FOUND           = ON when java was found, OFF otherwise
-#    JAVA_HEADER_COMPILE  = the full path to Java header generator
+# Input variables (for example, through -Dvar=value cmake option)
+# - JAVA_JDK - path to jdk1.5 or higher 
+# - JAVA_HOME - path to jdk1.5 or higher 
 #
+# Sets:
+#  - JAVA_COMPILE        (<jdk>/bin/javac)
+#  - JAVA_RUNTIME        (<jdk>/bin/java)
+#  - JAVA_HEADER_COMPILE (<jdk>/bin/javah)
+#  - JAVA_DOC            (<jdk>/bin/javadoc)
+#  - JAVA_ARCHIVE        (<jdk>/bin/jar)
+#  - JAVA_INCLUDE_PATH   (<jdk>/include) Path to jni.h
+#
+
+SET(JAVA_JDK CACHE PATH "Path to JDK 1.5 or higher")
+IF(NOT JAVA_JDK_OLD)
+    SET(JAVA_JDK_OLD CACHE INTERNAL "Internal: Old copy of JAVA_JDK")
+ENDIF()
+IF(JAVA_HOME)
+    SET(JAVA_JDK "${JAVA_HOME}")
+ENDIF()
+SET(HELP "Please set JAVA_HOME to jdk1.5 or higher or use -DJAVA_JDK=<path-to-jdk> option for cmake.")
+
+IF(NOT "${JAVA_JDK}" STREQUAL "${JAVA_JDK_OLD}")
+    IF(NOT JAVA_JDK_OLD STREQUAL "")
+        MESSAGE("Java JDK path (JAVA_JDK) was changed. Redo search...")
+    ENDIF()
+    SET(JAVA_COMPILE                 JAVA_COMPILE-NOTFOUND)
+    SET(JAVA_RUNTIME                 JAVA_RUNTIME-NOTFOUND)
+    SET(JAVA_HEADER_COMPILE          JAVA_HEADER_COMPILE-NOTFOUND)
+    SET(JAVA_DOC                     JAVA_DOC-NOTFOUND)
+    SET(JAVA_ARCHIVE                 JAVA_ARCHIVE-NOTFOUND)
+    SET(JAVA_INCLUDE_PATH            JAVA_INCLUDE_PATH-NOTFOUND)
+    
+    SET(JAVA_JDK_OLD "${JAVA_JDK}" CACHE INTERNAL "Internal: Old copy of JAVA_JDK" FORCE)
+ENDIF()
+
+IF(NOT JAVA_INCLUDE_PATH)
+    MESSAGE("-- Looking for java JNI jni.h include file")
+    FIND_FILE(JAVA_INCLUDE_PATH
+                jni.h
+            PATHS
+                "${JAVA_JDK}/include"
+                "$ENV{JAVA_HOME}/include"
+    )
+    
+    MARK_AS_ADVANCED(JAVA_INCLUDE_PATH)
+    
+    IF(NOT JAVA_INCLUDE_PATH)
+        INCLUDE(FindJNI)
+        
+        SET(JNI_INCLUDE_DIRS CACHE INTERNAL "Ignored" FORCE)
+        SET(JNI_LIBRARIES CACHE INTERNAL "Ignored" FORCE)
+        SET(JAVA_AWT_LIBRARY CACHE INTERNAL "Ignored" FORCE)
+        SET(JAVA_JVM_LIBRARY CACHE INTERNAL "Ignored" FORCE)
+    #    SET(JAVA_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
+        SET(JAVA_INCLUDE_PATH2 CACHE INTERNAL "Ignored" FORCE)
+        SET(JAVA_AWT_INCLUDE_PATH CACHE INTERNAL "Ignored" FORCE)
+    ENDIF()
+    
+    IF(JAVA_INCLUDE_PATH)
+        MESSAGE("-- Looking for java JNI jni.h include file - found: ${JAVA_INCLUDE_PATH}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java JNI jni.h include file not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
+
+GET_FILENAME_COMPONENT(JAVA_JNI_JDK_PATH "${JAVA_INCLUDE_PATH}" PATH)
+GET_FILENAME_COMPONENT(JAVA_JNI_JDK_PATH "${JAVA_JNI_JDK_PATH}/.." ABSOLUTE)
+
+
+IF(NOT JAVA_COMPILE)
+    MESSAGE("-- Looking for java compiler 'javac'")
+    FIND_PROGRAM(JAVA_COMPILE
+            javac
+        PATHS 
+            "${JAVA_JDK}/bin"
+            "$ENV{JAVA_HOME}/bin"
+            "${JAVA_JNI_JDK_PATH}/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
+            /usr/bin
+            /usr/lib/java/bin
+            /usr/share/java/bin
+            /usr/local/bin
+            /usr/local/java/bin
+        DOC "'javac': java compiler"
+        NO_DEFAULT_PATH
+        NO_CMAKE_ENVIRONMENT_PATH
+        NO_CMAKE_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        NO_CMAKE_FIND_ROOT_PATH
+    )
+    FIND_PROGRAM(JAVA_COMPILE
+            javac
+    )
+    MARK_AS_ADVANCED(JAVA_COMPILE)
+    
+    IF(JAVA_COMPILE)
+        MESSAGE("-- Looking for java compiler 'javac' - found: ${JAVA_COMPILE}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java compiler 'javac' not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
+
+IF(NOT JAVA_HEADER_COMPILE)
+    MESSAGE("-- Looking for java header compiler 'javah'")
+    FIND_PROGRAM(JAVA_HEADER_COMPILE
+      javah
+      PATHS 
+            "${JAVA_JDK}/bin"
+            "$ENV{JAVA_HOME}/bin"
+            "${JAVA_JNI_JDK_PATH}/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
+            /usr/bin
+            /usr/lib/java/bin
+            /usr/share/java/bin
+            /usr/local/bin
+            /usr/local/java/bin
+        DOC "'javah' tool to use"
+        NO_DEFAULT_PATH
+        NO_CMAKE_ENVIRONMENT_PATH
+        NO_CMAKE_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        NO_CMAKE_FIND_ROOT_PATH
+    )
+    FIND_PROGRAM(JAVA_HEADER_COMPILE
+      javah
+    )
+    MARK_AS_ADVANCED(JAVA_HEADER_COMPILE)
+    
+    IF(JAVA_HEADER_COMPILE)
+        MESSAGE("-- Looking for java header compiler 'javah' - found: ${JAVA_HEADER_COMPILE}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java header compiler 'javah' not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
+
+IF(NOT JAVA_DOC)
+    MESSAGE("-- Looking for java API Documentation Generator 'javadoc'")
+    FIND_PROGRAM(JAVA_DOC
+            javadoc
+        PATHS 
+            "${JAVA_JDK}/bin"
+            "$ENV{JAVA_HOME}/bin"
+            "${JAVA_JNI_JDK_PATH}/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
+            /usr/bin
+            /usr/lib/java/bin
+            /usr/share/java/bin
+            /usr/local/bin
+            /usr/local/java/bin
+        DOC "'javadoc' tool to use"
+        NO_DEFAULT_PATH
+        NO_CMAKE_ENVIRONMENT_PATH
+        NO_CMAKE_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        NO_CMAKE_FIND_ROOT_PATH
+    )
+    FIND_PROGRAM(JAVA_DOC
+            javadoc
+    )
+    MARK_AS_ADVANCED(JAVA_DOC)
+    
+    IF(JAVA_DOC)
+        MESSAGE("-- Looking for java API Documentation Generator 'javadoc' - found: ${JAVA_DOC}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java API Documentation Generator 'javadoc' not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
+
+IF(NOT JAVA_RUNTIME)
+    MESSAGE("-- Looking for java VM 'java'")
+    FIND_PROGRAM(JAVA_RUNTIME
+            java
+        PATHS 
+            "${JAVA_JDK}/bin"
+            "$ENV{JAVA_HOME}/bin"
+            "${JAVA_JNI_JDK_PATH}/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
+            /usr/bin
+            /usr/lib/java/bin
+            /usr/share/java/bin
+            /usr/local/bin
+            /usr/local/java/bin
+        DOC "'java': java JVM"
+        NO_DEFAULT_PATH
+        NO_CMAKE_ENVIRONMENT_PATH
+        NO_CMAKE_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        NO_CMAKE_FIND_ROOT_PATH
+    )
+    FIND_PROGRAM(JAVA_RUNTIME
+            java
+    )
+    MARK_AS_ADVANCED(JAVA_RUNTIME)
+    
+    IF(JAVA_RUNTIME)
+        MESSAGE("-- Looking for java VM 'java' - found: ${JAVA_RUNTIME}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java VM 'java' not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
+
+IF(NOT JAVA_ARCHIVE)
+    MESSAGE("-- Looking for java archiver 'jar'")
+    FIND_PROGRAM(JAVA_ARCHIVE
+            jar
+        PATHS 
+            "${JAVA_JDK}/bin"
+            "$ENV{JAVA_HOME}/bin"
+            "${JAVA_JNI_JDK_PATH}/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
+            "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
+            /usr/bin
+            /usr/lib/java/bin
+            /usr/share/java/bin
+            /usr/local/bin
+            /usr/local/java/bin
+        DOC "'jar': java archiver"
+        NO_DEFAULT_PATH
+        NO_CMAKE_ENVIRONMENT_PATH
+        NO_CMAKE_PATH
+        NO_SYSTEM_ENVIRONMENT_PATH
+        NO_CMAKE_SYSTEM_PATH
+        NO_CMAKE_FIND_ROOT_PATH
+    )
+    FIND_PROGRAM(JAVA_ARCHIVE
+            jar
+    )
+    MARK_AS_ADVANCED(JAVA_ARCHIVE)
+    
+    IF(JAVA_ARCHIVE)
+        MESSAGE("-- Looking for java archiver 'jar' - found: ${JAVA_ARCHIVE}")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Java archiver 'jar' not found. ${HELP}")
+    ENDIF()
+ENDIF()
+
 
 # Call cmake default version
-FIND_PACKAGE( Java )
-
-FIND_PROGRAM( JAVA_HEADER_COMPILE
-  javah
-  PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.4;JavaHome]/bin"
-        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.3;JavaHome]/bin"
-        /usr/bin
-        /usr/lib/java/bin
-        /usr/share/java/bin
-        /usr/local/bin
-        /usr/local/java/bin
-)
-MARK_AS_ADVANCED( JAVA_HEADER_COMPILE )
-  
-
-IF( JAVA_COMPILE AND JAVA_ARCHIVE AND JAVA_HEADER_COMPILE )
-  SET( JAVA_FOUND "ON" )
-ELSE( JAVA_COMPILE AND JAVA_ARCHIVE AND JAVA_HEADER_COMPILE )
-  SET( JAVA_FOUND "OFF" )
-ENDIF( JAVA_COMPILE AND JAVA_ARCHIVE AND JAVA_HEADER_COMPILE )
+#MESSAGE("JAVA_INCLUDE_PATH: ${JAVA_INCLUDE_PATH}")
+#MESSAGE("JAVA_COMPILE: ${JAVA_COMPILE}")
+#MESSAGE("JAVA_RUNTIME: ${JAVA_RUNTIME}")
+#MESSAGE("JAVA_HEADER_COMPILE: ${JAVA_HEADER_COMPILE}")
+#MESSAGE("JAVA_DOC: ${JAVA_DOC}")
+#MESSAGE("JAVA_ARCHIVE: ${JAVA_ARCHIVE}")
