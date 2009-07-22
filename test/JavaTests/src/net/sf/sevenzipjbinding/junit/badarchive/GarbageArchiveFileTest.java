@@ -4,6 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Random;
 
+import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -15,7 +16,7 @@ import org.junit.Test;
  * Tests behavior of SevenZipJBinding trying opening random stream of bytes as an archive.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 	private static final int SINGLE_TEST_THREAD_COUNT = 10;
@@ -23,13 +24,152 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 	private final Random random = new Random(this.getClass().getCanonicalName().hashCode());
 
 	@Test
-	public void openBadArchive() throws Throwable {
+	public void openBadArchiveAutodetect() throws Throwable {
+		openBadArchive(ArchiveFormat.SEVEN_ZIP);
+	}
+
+	@Test
+	public void openBadArchiveAutodetectMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.SEVEN_ZIP);
+	}
+
+	@Test
+	public void openBadArchiveSevenZip() throws Throwable {
+		openBadArchive(ArchiveFormat.SEVEN_ZIP);
+	}
+
+	@Test
+	public void openBadArchiveSevenZipMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.SEVEN_ZIP);
+	}
+
+	@Test
+	public void openBadArchiveZip() throws Throwable {
+		openBadArchive(ArchiveFormat.ZIP);
+	}
+
+	@Test
+	public void openBadArchiveZipMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.ZIP);
+	}
+
+	@Test
+	public void openBadArchiveTar() throws Throwable {
+		openBadArchive(ArchiveFormat.TAR);
+	}
+
+	@Test
+	public void openBadArchiveTarMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.TAR);
+	}
+
+	@Test
+	public void openBadArchiveSplit() throws Throwable {
+		openBadArchive(ArchiveFormat.SPLIT);
+	}
+
+	@Test
+	public void openBadArchiveSplitMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.SPLIT);
+	}
+
+	@Test
+	public void openBadArchiveRar() throws Throwable {
+		openBadArchive(ArchiveFormat.RAR);
+	}
+
+	@Test
+	public void openBadArchiveRarMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.RAR);
+	}
+
+	@Test
+	public void openBadArchiveLzma() throws Throwable {
+		openBadArchive(ArchiveFormat.LZMA);
+	}
+
+	@Test
+	public void openBadArchiveLzmaMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.LZMA);
+	}
+
+	@Test
+	public void openBadArchiveIso() throws Throwable {
+		openBadArchive(ArchiveFormat.ISO);
+	}
+
+	@Test
+	public void openBadArchiveIsoMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.ISO);
+	}
+
+	@Test
+	public void openBadArchiveHFS() throws Throwable {
+		openBadArchive(ArchiveFormat.HFS);
+	}
+
+	@Test
+	public void openBadArchiveHFSMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.HFS);
+	}
+
+	@Test
+	public void openBadArchiveGZip() throws Throwable {
+		openBadArchive(ArchiveFormat.GZIP);
+	}
+
+	@Test
+	public void openBadArchiveGZipMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.GZIP);
+	}
+
+	@Test
+	public void openBadArchiveCpio() throws Throwable {
+		openBadArchive(ArchiveFormat.CPIO);
+	}
+
+	@Test
+	public void openBadArchiveCpioMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.CPIO);
+	}
+
+	@Test
+	public void openBadArchiveBZip2() throws Throwable {
+		openBadArchive(ArchiveFormat.BZIP2);
+	}
+
+	@Test
+	public void openBadArchiveBZip2Multithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.BZIP2);
+	}
+
+	@Test
+	public void openBadArchiveZ() throws Throwable {
+		openBadArchive(ArchiveFormat.Z);
+	}
+
+	@Test
+	public void openBadArchiveZMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.Z);
+	}
+
+	@Test
+	public void openBadArchiveArj() throws Throwable {
+		openBadArchive(ArchiveFormat.ARJ);
+	}
+
+	@Test
+	public void openBadArchiveArjMultithreaded() throws Throwable {
+		openBadArchiveMultithreaded(ArchiveFormat.ARJ);
+	}
+
+	public void openBadArchive(ArchiveFormat archiveFormat) throws Throwable {
 		int pass = 0;
 		int count = 0;
 		for (int i = 0; i < 900; i++) { // iteration 959 recognized as GZip archive :-)
 			try {
 				count++;
-				doOpenBadArchive(true);
+				doOpenBadArchive(archiveFormat);
 				pass++;
 				// Ones in a while a valid archive header will be generated
 			} catch (SevenZipException e) {
@@ -44,8 +184,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 		}
 	}
 
-	@Test
-	public void openBadArchiveMultithreaded() throws Throwable {
+	public void openBadArchiveMultithreaded(final ArchiveFormat archiveFormat) throws Throwable {
 		final int[] threadsFinished = new int[] { SINGLE_TEST_THREAD_COUNT };
 		final Throwable[] firstThrowable = new Throwable[] { null };
 		for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
@@ -53,7 +192,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 
 				public void run() {
 					try {
-						openBadArchive();
+						openBadArchive(archiveFormat);
 					} catch (Throwable e) {
 						synchronized (firstThrowable) {
 							if (firstThrowable[0] == null) {
@@ -97,12 +236,9 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 		}
 	}
 
-	public void doOpenBadArchive(boolean doItActually) throws Exception {
+	public void doOpenBadArchive(ArchiveFormat archiveFormat) throws Exception {
 		final byte[] archive = new byte[random.nextInt(1000) + 1000];
 		random.nextBytes(archive);
-		if (!doItActually) {
-			throw new SevenZipException("Skipped");
-		}
 		IInStream inStream = new IInStream() {
 			int offset = 0;
 
@@ -129,6 +265,6 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
 				return offset >= archive.length ? archive.length : offset;
 			}
 		};
-		SevenZip.openInArchive(null, inStream);
+		SevenZip.openInArchive(archiveFormat, inStream);
 	}
 }

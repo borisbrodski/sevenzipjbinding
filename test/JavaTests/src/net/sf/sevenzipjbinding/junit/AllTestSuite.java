@@ -8,6 +8,12 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+/**
+ * Suite builder for all JUnit tests.
+ * 
+ * @author Boris Brodski
+ * @version 4.65-1
+ */
 public class AllTestSuite extends TestSuite {
 
 	public static Test suite() throws Exception {

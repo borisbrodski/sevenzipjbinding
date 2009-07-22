@@ -45,18 +45,21 @@ public class ZipContentComparator {
 	private final boolean useSimpleInterface;
 	private final String password;
 	private final ArchiveFormat archiveFormat;
+	private final boolean expectFailure;
+	private String corruptDataErrorMessage;
 
 	public ZipContentComparator(ArchiveFormat archiveFormat, ISevenZipInArchive sevenZipArchive, ZipFile zipFile,
-			boolean useSimpleInterface, String password) {
+			boolean useSimpleInterface, String password, boolean expectFailure) {
 		this.archiveFormat = archiveFormat;
 		this.actualSevenZipArchive = sevenZipArchive;
 		this.expectedZipFile = zipFile;
 		this.useSimpleInterface = useSimpleInterface;
 		this.password = password;
+		this.expectFailure = expectFailure;
 		expectedZipEntries = zipFile.entries();
 	}
 
-	private void compare() {
+	private void compare() throws Exception {
 		try {
 			errorMessages = new ArrayList<String>();
 			List<UniversalFileEntryInfo> expectedFileNames;
@@ -115,7 +118,7 @@ public class ZipContentComparator {
 				itemIdToItemName[actualInfo.itemId] = expectedInfo.itemIdString;
 			}
 
-			long start = System.currentTimeMillis();
+			//			long start = System.currentTimeMillis();
 			IArchiveExtractCallback archiveExtractCallback;
 
 			if (password == null) {
@@ -152,9 +155,19 @@ public class ZipContentComparator {
 			} else {
 				actualSevenZipArchive.extract(indices, false, archiveExtractCallback);
 			}
-			System.out.println("Extraction in " + (System.currentTimeMillis() - start) / 1000.0 + " sec ("
-					+ actualFileNames.size() + " items)");
+
+			if (expectFailure && corruptDataErrorMessage != null) {
+				error(corruptDataErrorMessage);
+			}
+			if (expectFailure && errorMessages.size() != 0) {
+				throw new Exception("Expected failure occurs: " + getErrorMessage());
+			}
+			//			System.out.println("Extraction in " + (System.currentTimeMillis() - start) / 1000.0 + " sec ("
+			//					+ actualFileNames.size() + " items)");
 		} catch (Exception e) {
+			if (expectFailure) {
+				throw e;
+			}
 			error("Exception occurs: " + e);
 		}
 	}
@@ -247,8 +260,9 @@ public class ZipContentComparator {
 				}
 				UniversalFileEntryInfo info = new UniversalFileEntryInfo();
 				info.filename = getStringProperty(actualSevenZipArchive, i, PropID.PATH)
-						+ getStringProperty(actualSevenZipArchive, i, PropID.NAME)
-						+ getStringProperty(actualSevenZipArchive, i, PropID.EXTENSION);
+				//						+ getStringProperty(actualSevenZipArchive, i, PropID.NAME)
+				//						+ getStringProperty(actualSevenZipArchive, i, PropID.EXTENSION)
+				;
 				info.filename = info.filename.replace('\\', '/');
 				info.itemId = i;
 				info.realSize = ((Long) actualSevenZipArchive.getProperty(i, PropID.SIZE)).longValue();
@@ -282,14 +296,14 @@ public class ZipContentComparator {
 		return fileNames;
 	}
 
-	public boolean isEqual() {
+	public boolean isEqual() throws Exception {
 		if (errorMessages == null) {
 			compare();
 		}
 		return errorMessages.size() == 0;
 	}
 
-	public String getErrorMessage() {
+	public String getErrorMessage() throws Exception {
 		if (errorMessages == null) {
 			compare();
 		}
@@ -345,14 +359,14 @@ public class ZipContentComparator {
 		public int write(byte[] data) {
 			try {
 				if (inputStream.available() < data.length) {
-					error("More data as expected for file '" + filename + "'");
+					dataError("More data as expected for file '" + filename + "'");
 					throw new RuntimeException("More data as expected for file '" + filename + "'");
 				} else {
 					byte[] expectedData = new byte[data.length];
 					int readBytes = 0;
 					do {
 						if (inputStream.available() == 0) {
-							error("More data as expected for file '" + filename + "'");
+							dataError("More data as expected for file '" + filename + "'");
 							throw new RuntimeException("More data as expected for file '" + filename + "'");
 						}
 
@@ -360,7 +374,7 @@ public class ZipContentComparator {
 					} while (readBytes < data.length);
 
 					if (!Arrays.equals(expectedData, data)) {
-						error("Extracted data missmatched for file '" + filename + "'");
+						dataError("Extracted data missmatched for file '" + filename + "'");
 						throw new RuntimeException("Extracted data missmatched for file '" + filename + "'");
 					}
 				}
@@ -370,6 +384,16 @@ public class ZipContentComparator {
 				throw new RuntimeException("Unexpected exception: " + e, e);
 			}
 			return data.length;
+		}
+
+		private void dataError(String message) {
+			if (expectFailure) {
+				if (corruptDataErrorMessage == null) {
+					corruptDataErrorMessage = message;
+				}
+			} else {
+				error(message);
+			}
 		}
 	}
 

@@ -25,17 +25,35 @@ public abstract class ExtractSingleFileAbstractHeaderPassTest extends ExtractSin
 	}
 
 	@Test(expected = SevenZipException.class)
-	public void test1Compression1WithoutHeaderPassword() throws SevenZipException {
+	public void test1Compression1WithoutHeaderPassword() throws Exception {
+		expectException(SevenZipException.class);
 		usingHeaderPassword(false);
 		usingPassword();
 		test1Compression1();
 	}
 
-	@Override
 	@Test(expected = SevenZipException.class)
-	public void test1Compression1WithWrongPassword() throws SevenZipException {
-		setPasswordToUse("12345");
-		test1Compression1();
+	public void test1Compression1WithoutHeaderPasswordFormatAutodetect() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1FormatAutodetect();
+	}
+
+	@Test(expected = SevenZipException.class)
+	public void test1Compression1WithoutHeaderPasswordMultithreaded() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1Multithreaded();
+	}
+
+	@Test(expected = SevenZipException.class)
+	public void test1Compression1WithoutHeaderPasswordFormatAutodetectMultithreaded() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1FormatAutodetectMultithreaded();
 	}
 
 }

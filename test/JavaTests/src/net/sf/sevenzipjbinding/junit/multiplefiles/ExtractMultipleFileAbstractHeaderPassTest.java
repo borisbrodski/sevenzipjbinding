@@ -5,6 +5,12 @@ import net.sf.sevenzipjbinding.SevenZipException;
 
 import org.junit.Test;
 
+/**
+ * Abstract class for all extract multiple file archive tests using header pass.
+ * 
+ * @author Boris Brodski
+ * @version 4.65-1
+ */
 public abstract class ExtractMultipleFileAbstractHeaderPassTest extends ExtractMultipleFileAbstractPassTest {
 
 	public ExtractMultipleFileAbstractHeaderPassTest(ArchiveFormat archiveFormat, int compression1, int compression2,
@@ -25,17 +31,34 @@ public abstract class ExtractMultipleFileAbstractHeaderPassTest extends ExtractM
 	}
 
 	@Test(expected = SevenZipException.class)
-	public void test1Compression1WithoutHeaderPassword() throws SevenZipException {
+	public void test1Compression1WithoutHeaderPassword() throws Exception {
+		expectException(SevenZipException.class);
 		usingHeaderPassword(false);
 		usingPassword();
 		test1Compression1();
 	}
 
-	@Override
 	@Test(expected = SevenZipException.class)
-	public void test1Compression1WithWrongPassword() throws SevenZipException {
-		setPasswordToUse("12345");
-		test1Compression1();
+	public void test1Compression1WithoutHeaderPasswordFormatAutodetect() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1FormatAutodetect();
 	}
 
+	@Test(expected = SevenZipException.class)
+	public void test1Compression1WithoutHeaderPasswordMultithreaded() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1Multithreaded();
+	}
+
+	@Test(expected = SevenZipException.class)
+	public void test1Compression1WithoutHeaderPasswordFormatAutodetectMultithreaded() throws Exception {
+		expectException(SevenZipException.class);
+		usingHeaderPassword(false);
+		usingPassword();
+		test1Compression1FormatAutodetectMultithreaded();
+	}
 }

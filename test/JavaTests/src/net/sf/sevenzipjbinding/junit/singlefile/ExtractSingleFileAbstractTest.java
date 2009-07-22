@@ -21,6 +21,8 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
 
+import org.junit.Test;
+
 /**
  * This test tests extraction of archives with a single file. Test data: <code>testdata/simple</code>.<br>
  * <br>
@@ -82,6 +84,126 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 	public ExtractSingleFileAbstractTest(ArchiveFormat archiveFormat, String extention, int compression1,
 			int compression2, int compression3) {
 		super(archiveFormat, extention, compression1, compression2, compression3);
+	}
+
+	@Test
+	public void test4Compression1() throws Exception {
+		testArchiveExtraction(4, compression1, false, false);
+	}
+
+	@Test
+	public void test4Compression1Multithreaded() throws Exception {
+		testArchiveExtraction(4, compression1, false, true);
+	}
+
+	@Test
+	public void test4Compression1FormatAutodetect() throws Exception {
+		testArchiveExtraction(4, compression1, true, false);
+	}
+
+	@Test
+	public void test4Compression1FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(4, compression1, true, true);
+	}
+
+	@Test
+	public void test4Compression2() throws Exception {
+		testArchiveExtraction(4, compression2, false, false);
+	}
+
+	@Test
+	public void test4Compression2Multithreaded() throws Exception {
+		testArchiveExtraction(4, compression2, false, true);
+	}
+
+	@Test
+	public void test4Compression2FormatAutodetect() throws Exception {
+		testArchiveExtraction(4, compression2, true, false);
+	}
+
+	@Test
+	public void test4Compression2FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(4, compression2, true, true);
+	}
+
+	@Test
+	public void test4Compression3() throws Exception {
+		testArchiveExtraction(4, compression3, false, false);
+	}
+
+	@Test
+	public void test4Compression3Multithreaded() throws Exception {
+		testArchiveExtraction(4, compression3, false, true);
+	}
+
+	@Test
+	public void test4Compression3FormatAutodetect() throws Exception {
+		testArchiveExtraction(4, compression3, true, false);
+	}
+
+	@Test
+	public void test4Compression3FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(4, compression3, true, true);
+	}
+
+	@Test
+	public void test5Compression1() throws Exception {
+		testArchiveExtraction(5, compression1, false, false);
+	}
+
+	@Test
+	public void test5Compression1Multithreaded() throws Exception {
+		testArchiveExtraction(5, compression1, false, true);
+	}
+
+	@Test
+	public void test5Compression1FormatAutodetect() throws Exception {
+		testArchiveExtraction(5, compression1, true, false);
+	}
+
+	@Test
+	public void test5Compression1FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(5, compression1, true, true);
+	}
+
+	@Test
+	public void test5Compression2() throws Exception {
+		testArchiveExtraction(5, compression2, false, false);
+	}
+
+	@Test
+	public void test5Compression2Multithreaded() throws Exception {
+		testArchiveExtraction(5, compression2, false, true);
+	}
+
+	@Test
+	public void test5Compression2FormatAutodetect() throws Exception {
+		testArchiveExtraction(5, compression2, true, false);
+	}
+
+	@Test
+	public void test5Compression2FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(5, compression2, true, true);
+	}
+
+	@Test
+	public void test5Compression3() throws Exception {
+		testArchiveExtraction(5, compression3, false, false);
+	}
+
+	@Test
+	public void test5Compression3Multithreaded() throws Exception {
+		testArchiveExtraction(5, compression3, false, true);
+	}
+
+	@Test
+	public void test5Compression3FormatAutodetect() throws Exception {
+		testArchiveExtraction(5, compression3, true, false);
+	}
+
+	@Test
+	public void test5Compression3FormatAutodetectMultithreaded() throws Exception {
+		testArchiveExtraction(5, compression3, true, true);
 	}
 
 	@Override

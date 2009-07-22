@@ -28,6 +28,12 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Abstract class for all mass archive extraction tests.
+ * 
+ * @author Boris Brodski
+ * @version 4.65-1
+ */
 public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	private static final int SINGLE_TEST_THREAD_COUNT = 2;
 	private static final int SINGLE_TEST_REPEAT_COUNT = 2;
@@ -35,9 +41,9 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	private static final String DEFAULT_PASSWORD = "TestPass";
 
 	protected final ArchiveFormat archiveFormat;
-	private final int compression1;
-	private final int compression2;
-	private final int compression3;
+	protected final int compression1;
+	protected final int compression2;
+	protected final int compression3;
 	protected final String extention;
 	protected String passwordToUse;
 	protected boolean usingPassword = false;
@@ -47,8 +53,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	protected boolean usingHeaderPassword = false;
 	protected boolean usingPasswordCallback = false;
 	protected boolean usingVolumes = false;
-	private RandomAccessFileInStream randomAccessFileInStream;
-	private VolumeArchiveOpenCallback volumeArchiveOpenCallback;
+	protected Class<? extends Exception> exceptionToBeExpected = null;
 
 	public ExtractFileAbstractTest(ArchiveFormat archiveFormat, String extention, int compression1, int compression2,
 			int compression3) {
@@ -69,6 +74,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		} else {
 			usingPassword = false;
 		}
+	}
+
+	protected void expectException(Class<? extends Exception> exceptionClass) {
+		exceptionToBeExpected = exceptionClass;
 	}
 
 	protected void setCryptedArchivePrefix(String cryptedArchivePrefix) {
@@ -124,320 +133,210 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	}
 
 	@Test
-	public void test1Compression1() throws SevenZipException {
+	public void test1Compression1() throws Exception {
 		testArchiveExtraction(1, compression1, false, false);
 	}
 
 	@Test
-	public void test1Compression1Multithreaded() throws SevenZipException {
+	public void test1Compression1Multithreaded() throws Exception {
 		testArchiveExtraction(1, compression1, false, true);
 	}
 
 	@Test
-	public void test1Compression1FormatAutodetect() throws SevenZipException {
+	public void test1Compression1FormatAutodetect() throws Exception {
 		testArchiveExtraction(1, compression1, true, false);
 	}
 
 	@Test
-	public void test1Compression1FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test1Compression1FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(1, compression1, true, true);
 	}
 
 	@Test
-	public void test1Compression2() throws SevenZipException {
+	public void test1Compression2() throws Exception {
 		testArchiveExtraction(1, compression2, false, false);
 	}
 
 	@Test
-	public void test1Compression2Multithreaded() throws SevenZipException {
+	public void test1Compression2Multithreaded() throws Exception {
 		testArchiveExtraction(1, compression2, false, true);
 	}
 
 	@Test
-	public void test1Compression2FormatAutodetect() throws SevenZipException {
+	public void test1Compression2FormatAutodetect() throws Exception {
 		testArchiveExtraction(1, compression2, true, false);
 	}
 
 	@Test
-	public void test1Compression2FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test1Compression2FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(1, compression2, true, true);
 	}
 
 	@Test
-	public void test1Compression3() throws SevenZipException {
+	public void test1Compression3() throws Exception {
 		testArchiveExtraction(1, compression3, false, false);
 	}
 
 	@Test
-	public void test1Compression3Multithreaded() throws SevenZipException {
+	public void test1Compression3Multithreaded() throws Exception {
 		testArchiveExtraction(1, compression3, false, true);
 	}
 
 	@Test
-	public void test1Compression3FormatAutodetect() throws SevenZipException {
+	public void test1Compression3FormatAutodetect() throws Exception {
 		testArchiveExtraction(1, compression3, true, false);
 	}
 
 	@Test
-	public void test1Compression3FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test1Compression3FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(1, compression3, true, true);
 	}
 
 	@Test
-	public void test2Compression1() throws SevenZipException {
+	public void test2Compression1() throws Exception {
 		testArchiveExtraction(2, compression1, false, false);
 	}
 
 	@Test
-	public void test2Compression1Multithreaded() throws SevenZipException {
+	public void test2Compression1Multithreaded() throws Exception {
 		testArchiveExtraction(2, compression1, false, true);
 	}
 
 	@Test
-	public void test2Compression1FormatAutodetect() throws SevenZipException {
+	public void test2Compression1FormatAutodetect() throws Exception {
 		testArchiveExtraction(2, compression1, true, false);
 	}
 
 	@Test
-	public void test2Compression1FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test2Compression1FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(2, compression1, true, true);
 	}
 
 	@Test
-	public void test2Compression2() throws SevenZipException {
+	public void test2Compression2() throws Exception {
 		testArchiveExtraction(2, compression2, false, false);
 	}
 
 	@Test
-	public void test2Compression2Multithreaded() throws SevenZipException {
+	public void test2Compression2Multithreaded() throws Exception {
 		testArchiveExtraction(2, compression2, false, true);
 	}
 
 	@Test
-	public void test2Compression2FormatAutodetect() throws SevenZipException {
+	public void test2Compression2FormatAutodetect() throws Exception {
 		testArchiveExtraction(2, compression2, true, false);
 	}
 
 	@Test
-	public void test2Compression2FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test2Compression2FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(2, compression2, true, true);
 	}
 
 	@Test
-	public void test2Compression3() throws SevenZipException {
+	public void test2Compression3() throws Exception {
 		testArchiveExtraction(2, compression3, false, false);
 	}
 
 	@Test
-	public void test2Compression3Multithreaded() throws SevenZipException {
+	public void test2Compression3Multithreaded() throws Exception {
 		testArchiveExtraction(2, compression3, false, true);
 	}
 
 	@Test
-	public void test2Compression3FormatAutodetect() throws SevenZipException {
+	public void test2Compression3FormatAutodetect() throws Exception {
 		testArchiveExtraction(2, compression3, true, false);
 	}
 
 	@Test
-	public void test2Compression3FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test2Compression3FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(2, compression3, true, true);
 	}
 
 	@Test
-	public void test3Compression1() throws SevenZipException {
+	public void test3Compression1() throws Exception {
 		testArchiveExtraction(3, compression1, false, false);
 	}
 
 	@Test
-	public void test3Compression1Multithreaded() throws SevenZipException {
+	public void test3Compression1Multithreaded() throws Exception {
 		testArchiveExtraction(3, compression1, false, true);
 	}
 
 	@Test
-	public void test3Compression1FormatAutodetect() throws SevenZipException {
+	public void test3Compression1FormatAutodetect() throws Exception {
 		testArchiveExtraction(3, compression1, true, false);
 	}
 
 	@Test
-	public void test3Compression1FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test3Compression1FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(3, compression1, true, true);
 	}
 
 	@Test
-	public void test3Compression2() throws SevenZipException {
+	public void test3Compression2() throws Exception {
 		testArchiveExtraction(3, compression2, false, false);
 	}
 
 	@Test
-	public void test3Compression2Multithreaded() throws SevenZipException {
+	public void test3Compression2Multithreaded() throws Exception {
 		testArchiveExtraction(3, compression2, false, true);
 	}
 
 	@Test
-	public void test3Compression2FormatAutodetect() throws SevenZipException {
+	public void test3Compression2FormatAutodetect() throws Exception {
 		testArchiveExtraction(3, compression2, true, false);
 	}
 
 	@Test
-	public void test3Compression2FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test3Compression2FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(3, compression2, true, true);
 	}
 
 	@Test
-	public void test3Compression3() throws SevenZipException {
+	public void test3Compression3() throws Exception {
 		testArchiveExtraction(3, compression3, false, false);
 	}
 
 	@Test
-	public void test3Compression3Multithreaded() throws SevenZipException {
+	public void test3Compression3Multithreaded() throws Exception {
 		testArchiveExtraction(3, compression3, false, true);
 	}
 
 	@Test
-	public void test3Compression3FormatAutodetect() throws SevenZipException {
+	public void test3Compression3FormatAutodetect() throws Exception {
 		testArchiveExtraction(3, compression3, true, false);
 	}
 
 	@Test
-	public void test3Compression3FormatAutodetectMultithreaded() throws SevenZipException {
+	public void test3Compression3FormatAutodetectMultithreaded() throws Exception {
 		testArchiveExtraction(3, compression3, true, true);
 	}
 
-	//	@Test
-	//	public void test4Compression1() throws SevenZipException {
-	//		testArchiveExtraction(4, compression1, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression1Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression1, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression1FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(4, compression1, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression1FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression1, true, true);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression2() throws SevenZipException {
-	//		testArchiveExtraction(4, compression2, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression2Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression2, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression2FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(4, compression2, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression2FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression2, true, true);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression3() throws SevenZipException {
-	//		testArchiveExtraction(4, compression3, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression3Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression3, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression3FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(4, compression3, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test4Compression3FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(4, compression3, true, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression1() throws SevenZipException {
-	//		testArchiveExtraction(5, compression1, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression1Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression1, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression1FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(5, compression1, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression1FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression1, true, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression2() throws SevenZipException {
-	//		testArchiveExtraction(5, compression2, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression2Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression2, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression2FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(5, compression2, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression2FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression2, true, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression3() throws SevenZipException {
-	//		testArchiveExtraction(5, compression3, false, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression3Multithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression3, false, true);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression3FormatAutodetect() throws SevenZipException {
-	//		testArchiveExtraction(5, compression3, true, false);
-	//	}
-	//
-	//	@Test
-	//	public void test5Compression3FormatAutodetectMultithreaded() throws SevenZipException {
-	//		testArchiveExtraction(5, compression3, true, true);
-	//	}
-
-	private void testArchiveExtraction(final int fileIndex, final int compressionIndex, final boolean autodetectFormat,
-			boolean multithreaded) throws SevenZipException {
+	protected void testArchiveExtraction(final int fileIndex, final int compressionIndex,
+			final boolean autodetectFormat, boolean multithreaded) throws Exception {
 		if (multithreaded) {
 			final int[] threadsFinished = new int[] { SINGLE_TEST_THREAD_COUNT };
 			final Throwable[] firstThrowable = new Throwable[] { null };
+			final Throwable[] firstExpectedThrowable = new Throwable[] { null };
 			for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
 				new Thread(new Runnable() {
-
 					public void run() {
 						try {
 							testArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
+							if (exceptionToBeExpected != null) {
+								throw new Exception("Expected exception wasn't thrown: "
+										+ exceptionToBeExpected.getCanonicalName());
+							}
 						} catch (Throwable e) {
 							synchronized (firstThrowable) {
-								if (firstThrowable[0] == null) {
+								if (firstThrowable[0] == null //
+										&& (exceptionToBeExpected == null // 
+										|| !exceptionToBeExpected.isAssignableFrom(e.getClass()))) {
 									firstThrowable[0] = e;
+								}
+								if (exceptionToBeExpected != null
+										&& exceptionToBeExpected.isAssignableFrom(e.getClass())) {
+									firstExpectedThrowable[0] = e;
 								}
 							}
 						} finally {
@@ -475,6 +374,12 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 				}
 				throw new RuntimeException("Exception in underlying thread", firstThrowable[0]);
 			}
+			if (firstExpectedThrowable[0] != null) {
+				if (firstExpectedThrowable[0] instanceof Exception) {
+					throw (Exception) firstExpectedThrowable[0];
+				}
+				throw (Error) firstExpectedThrowable[0];
+			}
 		} else {
 			for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
 				doTestArchiveExtraction(fileIndex, compressionIndex, autodetectFormat);
@@ -483,7 +388,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	}
 
 	protected abstract void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
-			throws SevenZipException;
+			throws Exception;
 
 	protected abstract String getTestDataPath();
 
