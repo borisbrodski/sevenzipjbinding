@@ -233,9 +233,9 @@ void NativeMethodContext::JNIThrowException(JNIEnv * env)
     jthrowable exception = (jthrowable)env->NewObject(exceptionClass, constructorId, messageString, _lastOccurredException);
     FATALIF(exception == NULL, SEVEN_ZIP_EXCEPTION " can't be created");
 
-    env->ReleaseStringUTFChars(messageString, _firstThrowenExceptionMessage);
+    free(_firstThrowenExceptionMessage);
     _firstThrowenExceptionMessage = NULL;
-    // TODO fix the memory leak. It looks like 'ReleaseStringUTFChars()' frees _firstThrowenExceptionMessage as well.
+
     env->Throw(exception);
 }
 
