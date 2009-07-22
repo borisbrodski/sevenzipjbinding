@@ -8,6 +8,9 @@
  * </ul>
  * 
  * @see net.sf.sevenzipjbinding.simple
- * @version 1.0
+ * 
+ * @author Boris Brodski
+ * @version 4.65-1
  */
 package net.sf.sevenzipjbinding;
+

@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * Enumeration for possible archive and archive item properties
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public enum PropID {
 	/**
@@ -17,6 +17,9 @@ public enum PropID {
 	 */
 	NO_PROPERTY2,
 
+	/**
+	 * Unknown purpose
+	 */
 	HANDLER_ITEM_INDEX, // = 2
 
 	/**
@@ -28,6 +31,9 @@ public enum PropID {
 	 */
 	PATH, //
 
+	/**
+	 * In {@link IArchiveOpenCallback}: Name of the volume to get
+	 */
 	NAME, //
 
 	EXTENSION,

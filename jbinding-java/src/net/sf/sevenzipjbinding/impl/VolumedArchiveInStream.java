@@ -28,7 +28,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * </ul>
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public class VolumedArchiveInStream implements IInStream {
 	private static final String SEVEN_ZIP_FIRST_VOLUME_POSTFIX = ".7z.001";

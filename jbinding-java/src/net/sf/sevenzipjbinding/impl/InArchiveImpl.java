@@ -16,6 +16,7 @@ import net.sf.sevenzipjbinding.simple.impl.SimpleInArchiveImpl;
  * Implementation of {@link ISevenZipInArchive}.
  * 
  * @author Boris Brodski
+ * @version 4.65-1
  * 
  */
 public class InArchiveImpl implements ISevenZipInArchive {

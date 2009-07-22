@@ -4,6 +4,7 @@ package net.sf.sevenzipjbinding;
  * Container for property information attributes.
  * 
  * @author Boris Brodski
+ * @version 4.65-1
  * 
  */
 public class PropertyInfo {
@@ -27,7 +28,6 @@ public class PropertyInfo {
 	 */
 	@Override
 	public String toString() {
-		return "name=" + name + "; propID=" + propID + "; varType="
-				+ varType.getCanonicalName();
+		return "name=" + name + "; propID=" + propID + "; varType=" + varType.getCanonicalName();
 	}
 }

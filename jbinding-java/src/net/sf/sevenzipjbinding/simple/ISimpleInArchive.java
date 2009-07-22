@@ -9,7 +9,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * 
  * 
  * @author Boris Brodski
- * @since 0.3
+ * @version 4.65-1
  */
 public interface ISimpleInArchive {
 	/**

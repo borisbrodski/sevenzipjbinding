@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * SevenZip core exception.
  * 
  * @author Boris Brodski
- * @since 0.1
+ * @version 4.65-1
  */
 public class SevenZipException extends Exception {
 

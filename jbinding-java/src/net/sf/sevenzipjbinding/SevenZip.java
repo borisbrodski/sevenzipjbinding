@@ -14,10 +14,8 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 /**
  * 7-Zip interface entry point class. Opens archive and returns implementation of {@link ISevenZipInArchive}
  * 
- * TODO Rethink initialization policy in case first initialization fails.
- * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public class SevenZip {
 	private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";

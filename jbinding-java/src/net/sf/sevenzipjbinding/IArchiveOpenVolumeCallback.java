@@ -1,37 +1,28 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * Interface to provide information (properties and input streams) to open
- * archive from volumes.
+ * Interface to provide information (properties and input streams) to open archive from volumes.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public interface IArchiveOpenVolumeCallback {
 
 	/**
-	 * Get property of the volume file. An implementation must support at least
-	 * following PropIDs:
-	 * <li> {@link PropID#NAME} (Type: String)
-	 * <li> {@link PropID#IS_FOLDER} (Type: Boolean):
-	 * <li> {@link PropID#SIZE} (Type: Long)
-	 * <li> {@link PropID#ATTRIBUTES} (Type: int)
-	 * <li> {@link PropID#LAST_ACCESS_TIME} (Type: Date)
-	 * <li> {@link PropID#CREATION_TIME} (Type: Date)
-	 * <li> {@link PropID#LAST_WRITE_TIME} (Type: Date) <br>
+	 * Get property of the volume file. An implementation must support at least following PropIDs: <li>
+	 * {@link PropID#NAME} (Type: String) <li> {@link PropID#IS_FOLDER} (Type: Boolean): <li> {@link PropID#SIZE} (Type:
+	 * Long) <li> {@link PropID#ATTRIBUTES} (Type: int) <li> {@link PropID#LAST_ACCESS_TIME} (Type: Date) <li>
+	 * {@link PropID#CREATION_TIME} (Type: Date) <li> {@link PropID#LAST_WRITE_TIME} (Type: Date) <br>
 	 * 
 	 * @param propID
 	 *            property
 	 * @return property value
 	 * 
 	 * @throws SevenZipException
-	 *             in error case. If this method ends with an exception, the
-	 *             current operation will be reported to 7-Zip as failed. There
-	 *             are no guarantee, that there are no further call back methods
-	 *             will be called. The first thrown exception will be saved and
-	 *             thrown late on from the first called 7-Zip-JBinding main
-	 *             method, such as <code>ISevenZipInArchive.extract()</code> or
-	 *             <code>SevenZip.openInArchive()</code>.
+	 *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+	 *             as failed. There are no guarantee, that there are no further call back methods will be called. The
+	 *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
+	 *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
 	 */
 	public Object getProperty(PropID propID) throws SevenZipException;
 
@@ -43,13 +34,10 @@ public interface IArchiveOpenVolumeCallback {
 	 * @return IInStream for required volume
 	 * 
 	 * @throws SevenZipException
-	 *             in error case. If this method ends with an exception, the
-	 *             current operation will be reported to 7-Zip as failed. There
-	 *             are no guarantee, that there are no further call back methods
-	 *             will be called. The first thrown exception will be saved and
-	 *             thrown late on from the first called 7-Zip-JBinding main
-	 *             method, such as <code>ISevenZipInArchive.extract()</code> or
-	 *             <code>SevenZip.openInArchive()</code>.
+	 *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+	 *             as failed. There are no guarantee, that there are no further call back methods will be called. The
+	 *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
+	 *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
 	 */
 	public IInStream getStream(String filename) throws SevenZipException;
 }

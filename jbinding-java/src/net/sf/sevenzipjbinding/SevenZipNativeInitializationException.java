@@ -5,7 +5,7 @@ package net.sf.sevenzipjbinding;
  * with loading native SevenZipJBinding library into JVM.
  * 
  * @author Boris Brodski
- * @since 0.1
+ * @version 4.65-1
  */
 public class SevenZipNativeInitializationException extends Exception {
 

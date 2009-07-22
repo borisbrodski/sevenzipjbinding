@@ -11,6 +11,7 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
  * should be called.
  * 
  * @author Boris Brodski
+ * @version 4.65-1
  * 
  */
 public interface ISevenZipInArchive {

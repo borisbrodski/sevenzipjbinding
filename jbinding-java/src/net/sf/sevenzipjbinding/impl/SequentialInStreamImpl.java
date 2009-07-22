@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * Implementation of {@link ISequentialInStream} based on {@link InputStream}.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public class SequentialInStreamImpl implements ISequentialInStream {
 	private InputStream inputStream;

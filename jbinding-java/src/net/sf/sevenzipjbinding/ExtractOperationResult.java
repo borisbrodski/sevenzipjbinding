@@ -5,14 +5,14 @@ package net.sf.sevenzipjbinding;
  * Enumeration of possible operation results by extracting operations.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public enum ExtractOperationResult {
 	/**
 	 * Extraction was a success
 	 */
 	OK,
-	
+
 	/**
 	 * Extraction failed: unknown compression method
 	 */

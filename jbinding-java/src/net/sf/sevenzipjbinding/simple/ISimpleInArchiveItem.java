@@ -15,7 +15,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * 
  * @see ISimpleInArchive
  * @author Boris Brodski
- * @since 0.3
+ * @version 4.65-1
  */
 public interface ISimpleInArchiveItem {
 

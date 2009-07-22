@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * Enumeration of all supported archive types.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public enum ArchiveFormat {
 	/**
@@ -52,8 +52,6 @@ public enum ArchiveFormat {
 	 */
 	CPIO("Cpio"),
 
-	// CAB("Cab"), // TODO Problems with CAB: It always require ArchiveOpenVolumeCallback!
-
 	/**
 	 * BZip2 format.
 	 */
@@ -74,8 +72,10 @@ public enum ArchiveFormat {
 	 */
 	ARJ("Arj"), //
 	;
-	// TODO Not supported in cross platform version archive formats:
-	//	CHM, CDEB, LZH, NSIS, RPM
+	// CAB("Cab"), // TODO Problems with CAB: It always require ArchiveOpenVolumeCallback: problems with auto detection.
+	//
+	// TODO Not yet supported:
+	// CAB, CHM, CDEB, LZH, NSIS, RPM
 
 	private String methodName;
 

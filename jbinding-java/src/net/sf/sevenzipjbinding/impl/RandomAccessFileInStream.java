@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * Implementation of {@link IInStream} using {@link RandomAccessFile}.
  * 
  * @author Boris Brodski
- * @version 1.0
+ * @version 4.65-1
  */
 public class RandomAccessFileInStream implements IInStream {
 	private final RandomAccessFile randomAccessFile;
@@ -64,7 +64,7 @@ public class RandomAccessFileInStream implements IInStream {
 			} else {
 				return read;
 			}
-			
+
 		} catch (IOException e) {
 			throw new SevenZipException("Error reading random access file", e);
 		}
