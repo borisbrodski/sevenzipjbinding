@@ -1,4 +1,3 @@
-# http://www.airport1.de/blog/archives/456-cMake-and-Java-it-works!-How-to-build-Java-Projects-with-cMake.html
 PROJECT(SevenZipjBindingJava Java)
 
 SET(JAVA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
