@@ -16,8 +16,39 @@ import junit.framework.TestSuite;
  */
 public class AllTestSuite extends TestSuite {
 
+	private static boolean processRecursive = true;
+
 	public static Test suite() throws Exception {
+		String singleDir = System.getProperty("SINGLEDIR");
+		String srcDir = System.getProperty("SRCDIR");
+		if (singleDir != null) {
+			processRecursive = false;
+			File singleDirFile = new File(singleDir);
+			String singleDirAbsolutePath = singleDirFile.getAbsolutePath();
+			System.out.println("Processing single directory: " + singleDirAbsolutePath);
+			if (!singleDirFile.exists() || !singleDirFile.isDirectory()) {
+				throw new Exception("Directory '" + singleDirAbsolutePath + "' doesn't exists");
+			}
+			if (srcDir == null) {
+				throw new Exception("Source directory not provided. Use java SRCDIR property.");
+			}
+			File srcDirFile = new File(srcDir);
+			String srcDirAbsolutePath = srcDirFile.getAbsolutePath();
+			//			System.out.println(singleDirAbsolutePath);
+			//			System.out.println(srcDirAbsolutePath);
+			if (!singleDirAbsolutePath.startsWith(srcDirAbsolutePath)
+					|| singleDirAbsolutePath.length() == srcDirAbsolutePath.length()) {
+				throw new Exception("Source directory SRCDIR is not a parent of test package directory SINGLEDIR.");
+			}
+			return process(singleDirFile, singleDirAbsolutePath.substring(srcDirAbsolutePath.length() + 1).replace('/',
+					'.'));
+		}
+		System.out.println("Processing directory (recursive): " + new File(".").getAbsolutePath());
 		File file = new File("src");
+		if (!file.exists() || !file.isDirectory()) {
+			throw new Exception("Directory '" + file.getAbsolutePath() + "' doesn't exists");
+		}
+
 		return process(file, null);
 	}
 
@@ -29,7 +60,9 @@ public class AllTestSuite extends TestSuite {
 				continue;
 			}
 			if (item.isDirectory()) {
-				testSuite.addTest(process(item, (classname == null ? "" : classname + ".") + item.getName()));
+				if (processRecursive) {
+					testSuite.addTest(process(item, (classname == null ? "" : classname + ".") + item.getName()));
+				}
 			} else {
 				if (classname == null) {
 					continue;
@@ -56,6 +89,7 @@ public class AllTestSuite extends TestSuite {
 			}
 		}
 		if (found) {
+			System.out.println("Adding class: " + clazz.getCanonicalName());
 			testSuite.addTest(new JUnit4TestAdapter(clazz));
 		}
 		for (Class<?> subclazz : clazz.getDeclaredClasses()) {

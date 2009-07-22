@@ -595,8 +595,8 @@ SET(JBINDING_CPP_FILES
 )
 
 SET(JBINDING_JAVAH_H_FILES
-    JavaToCPP/Java/net_sf_sevenzipjbinding_impl_InArchiveImpl.h
-    JavaToCPP/Java/net_sf_sevenzipjbinding_SevenZip.h
+    ${PROJECT_SOURCE_DIR}/JavaToCPP/Java/net_sf_sevenzipjbinding_impl_InArchiveImpl.h
+    ${PROJECT_SOURCE_DIR}/JavaToCPP/Java/net_sf_sevenzipjbinding_SevenZip.h
 )
 
 #SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
@@ -631,9 +631,9 @@ SET(JAVAH_JAVA_CLASS_LIST
 
 
 add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d ${JAVAH_OUTPUT_DIR} ${JAVAH_JAVA_CLASS_LIST} 
+                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIP_JBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}  
                    DEPENDS ${SEVENZIP_JBINDING_JAR}
-                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/jbinding-java/bin
+                   WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
                    COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
 )
 
