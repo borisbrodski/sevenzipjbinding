@@ -1,0 +1,10 @@
+Change notes starting with the version 4.65-1aplha
+
+Main features of 4.65-1aplha
+	* Extraction of 7z, Zip, Tar, Split, Rar, Lzma, Iso, HFS, GZip, Cpio, BZIP2, Z, Arj
+	* Autodetection of format type
+	* Simple extraction interface
+	* Cross-platform. Binaries availible for
+		- Windows 32/64
+		- Linux 32/64
+		- Mac OS X

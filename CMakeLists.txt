@@ -6,7 +6,7 @@ INCLUDE(CTest)
 
 
 # Uncomment this to build a version
-SET(SEVENZIPJBINDING_VERSON 4.65-1alpha)
+SET(SEVENZIPJBINDING_VERSON 4.65-1.0alpha)
 
 SET(RELEASE_PATH ${PROJECT_BINARY_DIR})
 IF (SEVENZIPJBINDING_VERSON)
@@ -17,7 +17,8 @@ ENDIF(SEVENZIPJBINDING_VERSON)
 
 SET(PLATFORM ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
 SET(SEVENZIPJBINDING_LIB_JAR ${PROJECT_BINARY_DIR}/sevenzipjbinding-${PLATFORM}.jar)
-SET(SEVENZIPJBINDING_ZIP ${RELEASE_PATH}/sevenzipjbinding${SEVENZIPJBINDING_VERSON_POSTFIX}.zip)
+SET(SEVENZIPJBINDING_FILENAME sevenzipjbinding${SEVENZIPJBINDING_VERSON_POSTFIX})
+#SET(SEVENZIPJBINDING_ZIP ${RELEASE_PATH}/${SEVENZIPJBINDING_FILENAME}.zip)
 
 # ------------------- Java -------------------
 
@@ -122,8 +123,6 @@ ENDIF(USE_MINGW)
 #MESSAGE("JAR: ${JAVA_ARCHIVE}")
 #MESSAGE("----------------------------")
 
-FILE(REMOVE ${SEVENZIPJBINDING_ZIP})
-
 
 ADD_CUSTOM_TARGET(sevenzip-jbinding-lib-jar ALL
     DEPENDS ${SEVENZIPJBINDING_LIB_JAR}) 
@@ -154,11 +153,12 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
 
 # ------------------- CPack -------------------
 
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SevenZip-JBinding - java binding for p7zip, crossplatform version of 7-Zip.")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "7-Zip-JBinding - java binding for p7zip, crossplatform version of 7-Zip.")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY ZIP)
 SET(CPACK_GENERATOR ZIP)
+SET(CPACK_PACKAGE_FILE_NAME ${SEVENZIPJBINDING_FILENAME})
 SET(CPACK_SOURCE_GENERATOR ZIP)
-#SET(CPACK_SOURCE_IGNORE_FILES /CVS/;/\\.svn/;\\.swp$;\\.#;/#;.*~;cscope.*)
+SET(CPACK_SOURCE_IGNORE_FILES "/CVS/;/\\.svn/;\\.swp$;\\.#;/#;.*~;cscope.*")
 
 INCLUDE(CPack)
 
@@ -173,18 +173,20 @@ SET(PREPACKAGE_ACTIONS
         FILE(GLOB_RECURSE Files RELATIVE \${SRC} \${SRC}/*)
         FILE(MAKE_DIRECTORY \"\${DEST}\")
         FOREACH(File \${Files})
-	    IF(NOT File MATCHES \".*(/|^)[.]svn/.*\" AND (\"x\${EXCLUDE_PATTERN}\" STREQUAL x OR NOT File MATCHES \"\${EXCLUDE_PATTERN}\"))
-                MESSAGE(\"Coping: \${File}\")
-                configure_file(
-                        \${SRC}/\${File}
-                        \${DEST}/\${File}
-                        @ONLY)
+	        IF(NOT File MATCHES \".*(/|^)[.]svn/.*\")
+	            IF(\"x\${EXCLUDE_PATTERN}\" STREQUAL \"x\" OR NOT File MATCHES \"\${EXCLUDE_PATTERN}\")
+                    configure_file(
+                            \${SRC}/\${File}
+                            \${DEST}/\${File}
+                            @ONLY)
+                ENDIF()
             ENDIF()
         ENDFOREACH()
     ENDMACRO()
 
+    FILE(MAKE_DIRECTORY \"${JAVADOC_DIR}\")
     EXECUTE_PROCESS(COMMAND ${JAVA_DOC}
-                                -public -version -author
+                                -public -version -author -quiet
                                 -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
                                 -subpackages net.sf.sevenzipjbinding 
                                 -d ${JAVADOC_DIR}

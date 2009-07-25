@@ -5,8 +5,8 @@ Content
 2. GNU LGPL information
 3. License notes
 4. Version number guide lines
-
-
+5. Compile
+5.1 Compile under Linux
 
 --- Welcome to 7-Zip-JBinding readme file ---
 
@@ -59,11 +59,12 @@ http://www.7-zip.org/support.html
 
 The scheme for the 7-Zip-JBinding version numbers is :
 
-	<7-Zip/p7zip version> - <7-Zip-JBinding version><release stage>
+	<7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage>
 
 7-Zip/p7zip version - version of the underlying 7-Zip and p7zip libraries.
 
-7-Zip-JBinding version - version of 7-Zip-JBinding base on the specified 7-Zip/p7zip version, beginning from 1 
+7-Zip-JBinding major version - major version of 7-Zip-JBinding base on the specified 7-Zip/p7zip version, beginning from 1 
+7-Zip-JBinding minor version - major version of 7-Zip-JBinding base on the specified 7-Zip/p7zip version, beginning from 0
 
 release stage:
 	- 'alpha' - alpha release: substantion part of the functionality included, not stable. For testing purposes only.
@@ -71,12 +72,14 @@ release stage:
 	- '' - release considered stable. For generally use.
 
 Examples:
-	 4.65-1alpha - Alpha release #1 based on 7-Zip/p7zip version 4.65
-	 4.66-1rc - Release candidate #2 based on 7-Zip/p7zip version 4.66
-	 4.66-2 - Stable release based on 7-Zip/p7zip version 4.66
+	 4.65-1.0alpha - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
+	 4.66-1.1rc - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
-5. Compile under Linux
+5 Compile
+
+5.1 Compile under Linux
 
 a) Check out or download source package
 b) Extract into some <src> directory
