@@ -1,0 +1,9 @@
+<span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) throws Exception {
+    ISevenZipInArchive archive;
+
+    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// null - autodetect</span>
+            <span class="java-keyword">new</span> RandomAccessFileInStream(
+                    <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>)));
+
+    <span class="java-keyword">return</span> archive.getNumberOfItems();
+}

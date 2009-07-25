@@ -41,28 +41,15 @@ table.submenu a {
 	color: #888800;
 }
 
-/*
-td.menu {
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
-}
-a.submenu {
-	font:italic small-caps 900 22px arial;
-	font-style:normal;
-	text-decoration:none;
-	color: #888800;
-    padding: 20px;
-}
 
-a.submenu:hover {
-	color: #ffff00;
+
+ul.Features li {
+    padding-bottom: 10px;
 }
-*/
 
 table.ArchiveTypeEnum {
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 2px;
+    padding-bottom: 0px;
     margin: 0px;
 }
 table.ArchiveTypeEnum td {
@@ -86,11 +73,29 @@ DIV.menubox {
 }
 
 span.java-string {
-    color: blue;
+    color: #302aff;
+}
+
+span.java-staticmethod {
+    font-style:italic;
+}
+
+span.java-staticfield {
+    font-style:italic;
+    color: #0000c0;
 }
 
 span.java-keyword {
     font-weight:bold;
+    color: #950055;
+}
+
+span.java-comment {
+    color: #3f8588;
+}
+
+div.snippet-info {
+	font-size:9px;
 }
 
 DIV.infobox {

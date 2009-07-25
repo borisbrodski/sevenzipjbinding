@@ -1,35 +1,48 @@
 <h2>What's this all about?</h2>
 7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
-many archive formats using very fast native library directly from java through JNI. Supported archive types:
-<ul>
+many archive formats using very fast native library directly from java through JNI. Featues:
+<ul class="Features">
 	<li> Extraction of 
-		<table border="0" class="ArchiveTypeEnum"
-		><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
+		<table border="0" class="ArchiveTypeEnum"><tr>
+		<td>7-Zip
+		<td>Zip
+		<td>Rar
+		<td>Tar
+		<td>Split
+		<td>Lzma
+		<td>Iso
+		<td>HFS
+		<td>GZip
+		<td>CPIO
+		<td>BZip2
+		<td>Z
+		<td>Arj
+		</table>
+	<li> It's cross-platform. Binaries available for 
+		<table border="0" class="ArchiveTypeEnum">
+		<tr><td>&rsaquo; MS-Windows 32/64
+		    <td>&rsaquo; Linux 32/64
+		    <td>&rsaquo; Darwin Mac OS X
 		</table>
 	<li> 12 example code snippets
 	<li> Over 3000 JUnit tests
+	<li> Planned: Creation of 7-Zip/Zip archives  
+	<li> Planned: Extraction of more archive formats, like RPM, CDEB, NSIS
 </ul>
-	7-ZIP, ZIP, RAR, TAR, SPLIT, LZMA, ISO, HFS, GZIP, CPIO, BZIP2, Z, ARJ
-<table border="0" class="ArchiveTypeEnum"
-><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
-</table>
-The archive creation and some other archive types (such as RPM, CDEB, NSIS) are in the planning stage.<br><br>
-The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JBinding in every possible way.
-<br>
-<br>
-
-##INCLUDE_SNIPPET(getNumberOfItemsInArchive)
-
 <h2>How does it work?</h2>
 The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
-a cross-platform java interface of 7-Zip library. The native part of
+a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
-interface to perform needed operations.
+interface to perform operations.
 <br><br>
 <img src="overview.png"/>
 <br>
 <br>
-<!--<img class="h1image" src="news.png"/>-->
+
+
+<h2>It's really simple!</h2>
+Getting number of packed items in archive:
+##INCLUDE_SNIPPET(GetNumberOfItemsInArchive)
 <h2>News</h2>
 <div class="infobox">
 30 January 2009: <b>7-Zip-JBinding Release: 0.4.1</b>

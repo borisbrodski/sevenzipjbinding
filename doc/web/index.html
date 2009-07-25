@@ -10,6 +10,7 @@
 <a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
 <a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
 <!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+
 <table border="0" width="100%">
 <tr><td><td align="center"><img src="logo2.png" />
 <tr height="50">
@@ -29,40 +30,58 @@
 <td>
 <h2>What's this all about?</h2>
 7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
-many archive formats using very fast native library directly from java through JNI. Supported archive types:
-<ul>
+many archive formats using very fast native library directly from java through JNI. Featues:
+<ul class="Features">
 	<li> Extraction of 
-		<table border="0" class="ArchiveTypeEnum"
-		><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
+		<table border="0" class="ArchiveTypeEnum"><tr>
+		<td>7-Zip
+		<td>Zip
+		<td>Rar
+		<td>Tar
+		<td>Split
+		<td>Lzma
+		<td>Iso
+		<td>HFS
+		<td>GZip
+		<td>CPIO
+		<td>BZip2
+		<td>Z
+		<td>Arj
+		</table>
+	<li> It's cross-platform. Binaries available for 
+		<table border="0" class="ArchiveTypeEnum">
+		<tr><td>&rsaquo; MS-Windows 32/64
+		    <td>&rsaquo; Linux 32/64
+		    <td>&rsaquo; Darwin Mac OS X
 		</table>
 	<li> 12 example code snippets
 	<li> Over 3000 JUnit tests
+	<li> Planned: Creation of 7-Zip/Zip archives  
+	<li> Planned: Extraction of more archive formats, like RPM, CDEB, NSIS
 </ul>
-	7-ZIP, ZIP, RAR, TAR, SPLIT, LZMA, ISO, HFS, GZIP, CPIO, BZIP2, Z, ARJ
-<table border="0" class="ArchiveTypeEnum"
-><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
-</table>
-The archive creation and some other archive types (such as RPM, CDEB, NSIS) are in the planning stage.<br><br>
-The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JBinding in every possible way.
-<br>
-<br>
-<div class="fragment"><pre class="fragment">
-<span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive() {
-    String s = <span class="java-string">"Test String"</span>;
-    <span class="java-keyword">int</span> i = 1 + 1;
-    <span class="java-keyword">return</span> i;
-}
-</pre></div>
 <h2>How does it work?</h2>
 The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
-a cross-platform java interface of 7-Zip library. The native part of
+a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
-interface to perform needed operations.
+interface to perform operations.
 <br><br>
 <img src="overview.png"/>
 <br>
 <br>
-<!--<img class="h1image" src="news.png"/>-->
+<h2>It's really simple!</h2>
+Getting number of packed items in archive:
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) throws Exception {
+    ISevenZipInArchive archive;
+
+    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// null - autodetect</span>
+            <span class="java-keyword">new</span> RandomAccessFileInStream(
+                    <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>)));
+
+    <span class="java-keyword">return</span> archive.getNumberOfItems();
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/GetNumberOfItemsInArchive.java">download java code</a></div>
 <h2>News</h2>
 <div class="infobox">
 30 January 2009: <b>7-Zip-JBinding Release: 0.4.1</b>
