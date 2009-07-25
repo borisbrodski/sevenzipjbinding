@@ -1,6 +1,15 @@
 <h2>What's this all about?</h2>
-7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> library. It allows extraction of
-many archive formats using very fast native library directly from java. Supported archive types:
+7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
+many archive formats using very fast native library directly from java through JNI. Supported archive types:
+<ul>
+	<li> Extraction of 
+		<table border="0" class="ArchiveTypeEnum"
+		><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
+		</table>
+	<li> 12 example code snippets
+	<li> Over 3000 JUnit tests
+</ul>
+	7-ZIP, ZIP, RAR, TAR, SPLIT, LZMA, ISO, HFS, GZIP, CPIO, BZIP2, Z, ARJ
 <table border="0" class="ArchiveTypeEnum"
 ><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
 </table>
@@ -9,7 +18,7 @@ The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JB
 <br>
 <br>
 
-##INCLUDE_SNIPPLET(getNumberOfItemsInArchive)
+##INCLUDE_SNIPPET(getNumberOfItemsInArchive)
 
 <h2>How does it work?</h2>
 The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces

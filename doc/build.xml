@@ -16,10 +16,6 @@
           target: default              
          ================================= -->
     <target name="default" description="description">
-		<property name="snipplet.file" value="../test/JavaTests/src/net/sf/sevenzipjbinding/junit/snipplets/GetNumberOfItemInArchive.java"/>
-		<property name="work.dir" value="."/>
-    	
-    	<copy todir="${work.dir}" file="${snipplet.file}"/>
     	
     </target>
 
