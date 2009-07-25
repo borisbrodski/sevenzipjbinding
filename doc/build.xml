@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Jul 24, 2009 9:01:12 AM                                                        
+
+     7-Zip-JBinding help    
+     Generates help files/web pages 
+                   
+     boris                                                                
+     ====================================================================== -->
+<project name="7-Zip-JBinding help" default="default">
+    <description>
+    	Generates help files/web pages
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" description="description">
+		<property name="snipplet.file" value="../test/JavaTests/src/net/sf/sevenzipjbinding/junit/snipplets/GetNumberOfItemInArchive.java"/>
+		<property name="work.dir" value="."/>
+    	
+    	<copy todir="${work.dir}" file="${snipplet.file}"/>
+    	
+    </target>
+
+	
+</project>

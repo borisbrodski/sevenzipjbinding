@@ -1,0 +1,67 @@
+<h2>First steps</h2>
+
+<!-- ##INCLUDE_SNIPPLET(getNumberOfItemsInArchive) -->
+
+Print count of the items in archive:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
+        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+</pre></div><br>
+
+Print list of the archived files using standard interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
+    System.<i>out</i>.println(
+            <font color="blue">"Filename: '"</font> 
+            + archive.getProperty(index, PropID.PATH)
+            + <font color="blue">"', packed size: "</font> 
+            + archive.getProperty(index, PropID.PACKED_SIZE));
+}
+</pre></div><br>
+
+Print list of the archived files using simple interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
+
+<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
+    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
+            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
+}
+</pre></div><br>
+
+Extract first item of the archive and print it:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
+<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
+archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
+    <font color="#646464">@Override</font>
+    <b>public int</b> write(<b>byte</b>[] data) {
+        stringBuilder.append(<b>new</b> String(data));
+        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
+    }
+});
+
+System.<i>out</i>.println(stringBuilder.toString());
+</pre></div><br>
+
+For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
+<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>

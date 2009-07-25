@@ -27,53 +27,8 @@
 <tr><td><a href="http://sourceforge.net/forum/forum.php?forum_id=757965" class="menu">Help Forum</a>
 </table>
 <td>
-<h2>What's this all about?</h2>
-7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> library. It allows extraction of
-many archive formats using very fast native library directly from java. Supported archive types:
-<table border="0" class="ArchiveTypeEnum"
-><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
-</table>
-The archive creation and some other archive types (such as RPM, CDEB, NSIS) are in the planning stage.<br><br>
-The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JBinding in every possible way.
-<br>
-<br>
-<div class="fragment"><pre class="fragment">
-private <span class="java-keyword">int</span> getNumberOfItemsInArchive() {
-    String s = <span class="java-string">"Test String"</span>;
-    <span class="java-keyword">int</span> i = 1 + 1;
-    <span class="java-keyword">return</span> i;
-}
-</pre></div>
-<h2>How does it work?</h2>
-The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
-a cross-platform java interface of 7-Zip library. The native part of
-7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
-interface to perform needed operations.
-<br><br>
-<img src="overview.png"/>
-<br>
-<br>
-<!--<img class="h1image" src="news.png"/>-->
-<h2>News</h2>
-<div class="infobox">
-30 January 2009: <b>7-Zip-JBinding Release: 0.4.1</b>
-<ul>
-    <li> Bug fixed: 2525877 (Memory leak)
-</ul>
-<br>
-4 January 2009: <b>7-Zip-JBinding Release: 0.4</b>
-<ul>
-    <li> Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
-    <li> Bug #2441909 fixed  (Can't extract encrypted 7-Zip files)
-    <li> New open/extract method for crypted archives and items (standard and simple interface)
-    <li> JUnit tests for the extraction of crypted archives and exception handling 
-    <li> New examples on the home page
-</ul>
-<a href="http://sourceforge.net/news/?group_id=210915">more news</a><br>
-<br>
-<a name="first_steps">
-<!--<img class="h1image" src="first_steps.png"/></a><br>-->
 <h2>First steps</h2>
+<!-- ##INCLUDE_SNIPPLET(getNumberOfItemsInArchive) -->
 Print count of the items in archive:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive 

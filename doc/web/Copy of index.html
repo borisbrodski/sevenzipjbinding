@@ -10,40 +10,28 @@
 <a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
 <a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
 <!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+
 <table border="0" width="100%">
 <tr><td><td align="center"><img src="logo2.png" />
 <tr height="50">
-<tr><td width="240" valign="top" class="menu">
-<table class="menu" border="0">
-<tr><td><a href="index.html">Home</a>
-<tr><td><a href="first_steps.html">Documentation</a><br>
-<table class="submenu" border="0">
-	<tr><td><a href="first_steps.html" >First steps</a>
-	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">Code snipplets</a>
-	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">JavaDoc</a>
-</table>
-<tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
-<tr><td><a href="#first_steps" class="menu">First Steps</a>
-<tr><td><a href="http://sourceforge.net/forum/forum.php?forum_id=757965" class="menu">Help Forum</a>
-</table>
+<tr><td width="180" valign="top" class="menu">
+
+<a href="http://sevenzipjbind.sourceforge.net/" class="menu">Home</a><br>
+<a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a><br>
+<a href="#first_steps" class="menu">First Steps</a><br>
+<a href="http://sourceforge.net/forum/forum.php?forum_id=757965" class="menu">Help Forum</a><br>
 <td>
+<!--<img class="h1image" src="whats_this_all_about.png" /><br>-->
 <h2>What's this all about?</h2>
 7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> library. It allows extraction of
 many archive formats using very fast native library directly from java. Supported archive types:
 <table border="0" class="ArchiveTypeEnum"
-><tr><td>7-ZIP<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
+><tr><td>7-Zip<td>ZIP<td>RAR<td>TAR<td>SPLIT<td>LZMA<td>ISO<td>HFS<td>GZIP<td>CPIO<td>BZIP2<td>Z<td>ARJ
 </table>
 The archive creation and some other archive types (such as RPM, CDEB, NSIS) are in the planning stage.<br><br>
 The library contains more that 2000 JUnit test, that automaticly checks 7-Zip-JBinding in every possible way.
 <br>
 <br>
-<div class="fragment"><pre class="fragment">
-private <span class="java-keyword">int</span> getNumberOfItemsInArchive() {
-    String s = <span class="java-string">"Test String"</span>;
-    <span class="java-keyword">int</span> i = 1 + 1;
-    <span class="java-keyword">return</span> i;
-}
-</pre></div>
 <h2>How does it work?</h2>
 The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
 a cross-platform java interface of 7-Zip library. The native part of
@@ -80,15 +68,18 @@ ISevenZipInArchive archive
         = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
                 <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
                 <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
 System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
         + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
 </pre></div><br>
+
 Print list of the archived files using standard interface:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive
         = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
                 <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
                 <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
 <b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
     System.<i>out</i>.println(
             <font color="blue">"Filename: '"</font> 
@@ -97,24 +88,29 @@ ISevenZipInArchive archive
             + archive.getProperty(index, PropID.PACKED_SIZE));
 }
 </pre></div><br>
+
 Print list of the archived files using simple interface:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive 
         = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
                 <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
                 <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
 ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
+
 <b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
     System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
             + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
 }
 </pre></div><br>
+
 Extract first item of the archive and print it:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive 
         = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
                 <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
                 <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+
 <b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
 archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
     <font color="#646464">@Override</font>
@@ -123,8 +119,10 @@ archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
         <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
     }
 });
+
 System.<i>out</i>.println(stringBuilder.toString());
 </pre></div><br>
+
 For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
 <a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
 </table>

@@ -17,13 +17,48 @@ H3 {
 CAPTION { font-weight: bold }
 
 
+/* ----------------------------- MENU -------------------------*/
+
+table.menu a {
+	font:italic small-caps 900 26px arial;
+	font-style:normal;
+	text-decoration:none;
+	color: #888800;
+}
+
+table.menu td {
+    padding-top:7px;
+}
+
+table.submenu td {
+    padding-left: 20px;
+    padding-top: 0px;
+}
+table.submenu a {
+	font:italic small-caps 900 22px arial;
+	font-style:normal;
+	text-decoration:none;
+	color: #888800;
+}
+
+/*
 td.menu {
-	/*background-color: #eeeeff;*/
-	/*border: 1px solid #b0b0b0;*/
 	margin: 2px;
 	padding: 2px;
 	line-height: 140%;
 }
+a.submenu {
+	font:italic small-caps 900 22px arial;
+	font-style:normal;
+	text-decoration:none;
+	color: #888800;
+    padding: 20px;
+}
+
+a.submenu:hover {
+	color: #ffff00;
+}
+*/
 
 table.ArchiveTypeEnum {
     padding-top: 15px;
@@ -32,18 +67,6 @@ table.ArchiveTypeEnum {
 }
 table.ArchiveTypeEnum td {
     padding-left: 15px;
-}
-
-a.menu {
-	font:italic small-caps 900 24px arial;
-	font-style:normal;
-	text-decoration:none;
-	color: #888800;
-}
-
-a.menu:hover {
-/*	background-color: #eeeeff; */
-	color: #ffff00;
 }
 
 
@@ -60,6 +83,14 @@ DIV.menubox {
 	margin: 2px;
 	padding: 2px;
 	line-height: 140%;
+}
+
+span.java-string {
+    color: blue;
+}
+
+span.java-keyword {
+    font-weight:bold;
 }
 
 DIV.infobox {
