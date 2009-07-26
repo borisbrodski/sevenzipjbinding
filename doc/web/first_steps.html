@@ -28,7 +28,59 @@
 <tr><td><a href="http://sourceforge.net/forum/forum.php?forum_id=757965" class="menu">Help Forum</a>
 </table>
 <td>
-<h2>First steps</h2>
+<h2>Download and extraction</h2>
+<p>The most simple way to get 7-Zip-JBinding to work is to download a pre-compiled binary package
+for your operating system (<a href="http://sourceforge.net/projects/sevenzipjbind/files/">download link</a>).
+All provided packages are Zip-compressed and you will need an extraction utility to expand it. For windows users,
+it is highly recommended to secure a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a>. Linux and Mac OS X
+users may use a corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.</p>
+<h2>Run an example</h2>
+To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
+distribution in your classpath:
+<ul>
+	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
+		 (<a href="javadoc/index.html">JavaDoc</a>)
+	<li> <span class="filename">sevenzipjbinding-&lsaquo;OS&rsaquo;.jar</span> - native libraries for
+	the target operating system &lsaquo;OS&rsaquo;
+</ul>  
+Here is a simple test program that can be used for checking all 7-Zip-JBinding requirements:
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> SevenZipJBindingInitCheck {
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">try</span> {
+            SevenZip.<span class="java-staticmethod">initSevenZipFromPlatformJAR</span>();
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"7-Zip-JBinding library was initialized"</span>);
+        } <span class="java-keyword">catch</span> (SevenZipNativeInitializationException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/SevenZipJBindingInitCheck.java">download java code</a></div>
+<br>
+To run this program correctly you will need to add two 7-Zip-JBinding JAR-files to the classpath.
+On Linux it could be done as following:
+<div class="fragment"><pre class="fragment">
+$ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
+  &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
+  SevenZipJBindingInitCheck
+</pre></div><br>
+ 
+Windows users can do the same with (written in a single line)
+<div class="fragment"><pre class="fragment">
+C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+  SevenZipJBindingInitCheck
+</pre></div><br>
+If the message <span class="filename">7-Zip-JBinding library was initialized</span> 
+shows up than 7-Zip-JBinding is working properly and ready for use.
+<h2>Opening archive</h2>
+Before you can do any operation with an archive file, you have to open it. In order to do this
+you need to call one of corresponding static methods of the class 
+<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">net.sf.sevenzipjbinding.SevenZip</a>.
 <!-- ##INCLUDE_SNIPPET(getNumberOfItemsInArchive) -->
 Print count of the items in archive:
 <div class="fragment"><pre class="fragment">

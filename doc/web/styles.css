@@ -16,6 +16,9 @@ H3 {
 }
 CAPTION { font-weight: bold }
 
+p {
+    text-align:justify;
+}
 
 /* ----------------------------- MENU -------------------------*/
 
@@ -96,6 +99,11 @@ span.java-comment {
 
 div.snippet-info {
 	font-size:9px;
+}
+
+span.filename {
+    font-family: Monospace;
+    font-size: 14px;
 }
 
 DIV.infobox {

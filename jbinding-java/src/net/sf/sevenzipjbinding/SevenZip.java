@@ -161,6 +161,18 @@ public class SevenZip {
 	}
 
 	/**
+	 * Prevent automatic loading of 7-Zip-JBinding native libraries into JVM. This method will only call 7-Zip-JBinding
+	 * internal initialization method, considering all needed native libraries as loaded. It method is useful, if the
+	 * java application wants to load 7-Zip-JBinding native libraries manually.
+	 * 
+	 * @throws SevenZipNativeInitializationException
+	 */
+	public static void initLoadedLibraries() throws SevenZipNativeInitializationException {
+		needInitialization = false;
+		nativeInitialization();
+	}
+
+	/**
 	 * Initialize SevenZipJBinding native library from a file
 	 * 
 	 * @param sevenZipJBindingNativeLibraryFullpath
@@ -182,6 +194,10 @@ public class SevenZip {
 	private static void initLibraryFromFileIntern(String sevenZipJBindingNativeLibraryFullpath)
 			throws SevenZipNativeInitializationException {
 		System.load(sevenZipJBindingNativeLibraryFullpath);
+		nativeInitialization();
+	}
+
+	private static void nativeInitialization() throws SevenZipNativeInitializationException {
 		String errorMessage = nativeInitSevenZipLibrary();
 		if (errorMessage != null) {
 			throw new SevenZipNativeInitializationException("Error initializing 7-Zip-JBinding: " + errorMessage);

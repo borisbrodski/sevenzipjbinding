@@ -48,7 +48,7 @@ many archive formats using very fast native library directly from java through J
 		<td>Z
 		<td>Arj
 		</table>
-	<li> It's cross-platform. Binaries available for 
+	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
 		<tr><td>&rsaquo; MS-Windows 32/64
 		    <td>&rsaquo; Linux 32/64
@@ -69,7 +69,7 @@ interface to perform operations.
 <br>
 <br>
 <h2>It's really simple!</h2>
-Getting number of packed items in archive:
+Getting number of packed items in an archive:
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) throws Exception {
     ISevenZipInArchive archive;
@@ -82,6 +82,10 @@ Getting number of packed items in archive:
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/GetNumberOfItemsInArchive.java">download java code</a></div>
+<br>
+Continue with <a href="first_steps.html">first steps</a>
+<br>
+<br>
 <h2>News</h2>
 <div class="infobox">
 30 January 2009: <b>7-Zip-JBinding Release: 0.4.1</b>
@@ -99,62 +103,7 @@ Getting number of packed items in archive:
 </ul>
 <a href="http://sourceforge.net/news/?group_id=210915">more news</a><br>
 <br>
-<a name="first_steps">
 <!--<img class="h1image" src="first_steps.png"/></a><br>-->
-<h2>First steps</h2>
-Print count of the items in archive:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
-        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
-</pre></div><br>
-Print list of the archived files using standard interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
-    System.<i>out</i>.println(
-            <font color="blue">"Filename: '"</font> 
-            + archive.getProperty(index, PropID.PATH)
-            + <font color="blue">"', packed size: "</font> 
-            + archive.getProperty(index, PropID.PACKED_SIZE));
-}
-</pre></div><br>
-Print list of the archived files using simple interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
-<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
-    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
-            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
-}
-</pre></div><br>
-Extract first item of the archive and print it:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
-archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
-    <font color="#646464">@Override</font>
-    <b>public int</b> write(<b>byte</b>[] data) {
-        stringBuilder.append(<b>new</b> String(data));
-        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
-    }
-});
-System.<i>out</i>.println(stringBuilder.toString());
-</pre></div><br>
-For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
-<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
 </table>
 </center>
 </table>
