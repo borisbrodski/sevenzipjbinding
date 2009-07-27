@@ -23,7 +23,7 @@ p {
 /* ----------------------------- MENU -------------------------*/
 
 table.menu a {
-	font:italic small-caps 900 26px arial;
+	font:italic small-caps 900 22px arial;
 	font-style:normal;
 	text-decoration:none;
 	color: #888800;
@@ -38,10 +38,13 @@ table.submenu td {
     padding-top: 0px;
 }
 table.submenu a {
-	font:italic small-caps 900 22px arial;
+	font:italic small-caps 900 16px arial;
 	font-style:normal;
 	text-decoration:none;
 	color: #888800;
+}
+table.submenu a:hover {
+	color: #555500;
 }
 
 

@@ -22,6 +22,7 @@
 	<tr><td><a href="first_steps.html" >First steps</a>
 	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">Code snippets</a>
 	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">JavaDoc</a>
+	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>
 </table>
 <tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
 <tr><td><a href="#first_steps" class="menu">First Steps</a>
@@ -34,9 +35,10 @@ for your operating system (<a href="http://sourceforge.net/projects/sevenzipjbin
 All provided packages are Zip-compressed and you will need an extraction utility to expand it. For windows users,
 it is highly recommended to secure a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a>. Linux and Mac OS X
 users may use a corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.</p>
+<br>
 <h2>Run an example</h2>
-To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
-distribution in your classpath:
+<p>To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
+distribution in your classpath:</p>
 <ul>
 	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
 		 (<a href="javadoc/index.html">JavaDoc</a>)
@@ -61,8 +63,8 @@ Here is a simple test program that can be used for checking all 7-Zip-JBinding r
 </pre></div>
 <div class="snippet-info"><a href="snippets/SevenZipJBindingInitCheck.java">download java code</a></div>
 <br>
-To run this program correctly you will need to add two 7-Zip-JBinding JAR-files to the classpath.
-On Linux it could be done as following:
+<p>To run this program correctly you will need to add two 7-Zip-JBinding JAR-files to the classpath.
+On Linux it could be done as following:</p>
 <div class="fragment"><pre class="fragment">
 $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
   &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
@@ -74,14 +76,19 @@ Windows users can do the same with (written in a single line)
 C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
   &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
   SevenZipJBindingInitCheck
-</pre></div><br>
-If the message <span class="filename">7-Zip-JBinding library was initialized</span> 
-shows up than 7-Zip-JBinding is working properly and ready for use.
+</pre></div>
+<p>If the message <!--<span class="filename">7-Zip-JBinding library was initialized</span> -->
+<div class="fragment"><pre class="fragment">
+7-Zip-JBinding library was initialized
+</pre></div>
+shows up than 7-Zip-JBinding is working properly and ready for use.</p>
+<br>
+<br>
 <h2>Opening archive</h2>
-Before you can do any operation with an archive file, you have to open it. In order to do this
-you need to call one of corresponding static methods of the class 
-<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">net.sf.sevenzipjbinding.SevenZip</a>.
-<!-- ##INCLUDE_SNIPPET(getNumberOfItemsInArchive) -->
+<p>Before you can do any operation with an archive file, you have to open it. In order to do this
+you will need to call one of the corresponding static methods
+<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openInArchive(...). The only
+manditory parameter is "inStream" - an instance of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a></p>
 Print count of the items in archive:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive 
