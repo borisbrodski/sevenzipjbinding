@@ -1,16 +1,21 @@
 <h2>Download and extraction</h2>
 
-<p>The most simple way to get 7-Zip-JBinding to work is to download a pre-compiled binary package
+<p>
+The most simple way to get 7-Zip-JBinding to work is to download a pre-compiled binary package
 for your operating system (<a href="http://sourceforge.net/projects/sevenzipjbind/files/">download link</a>).
 All provided packages are Zip-compressed and you will need an extraction utility to expand it. For windows users,
 it is highly recommended to secure a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a>. Linux and Mac OS X
-users may use a corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.</p>
+users may use a corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.
+</p>
 
 <br>
 <h2>Run an example</h2>
 
-<p>To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
-distribution in your classpath:</p>
+<p>
+To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
+distribution in your classpath:
+</p>
+
 <ul>
 	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
 		 (<a href="javadoc/index.html">JavaDoc</a>)
@@ -20,94 +25,93 @@ distribution in your classpath:</p>
 
 Here is a simple test program that can be used for checking all 7-Zip-JBinding requirements:
 ##INCLUDE_SNIPPET(SevenZipJBindingInitCheck)
-<br>
-<p>To run this program correctly you will need to add two 7-Zip-JBinding JAR-files to the classpath.
-On Linux it could be done as following:</p>
+
+<p>
+To run this program correctly you will need to add two 7-Zip-JBinding JAR-files to the classpath.
+On Linux it could be done as following:
+</p>
+
 <div class="fragment"><pre class="fragment">
 $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
   &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
   SevenZipJBindingInitCheck
-</pre></div><br>
+</pre></div>
  
+<p>
 Windows users can do the same with (written in a single line)
+</p>
+
 <div class="fragment"><pre class="fragment">
 C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
   &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
   SevenZipJBindingInitCheck
 </pre></div>
 
-<p>If the message <!--<span class="filename">7-Zip-JBinding library was initialized</span> -->
+<p>
+If the message
+</p>
+
 ##INCLUDE_OUTPUT(SevenZipJBindingInitCheck)
-shows up than 7-Zip-JBinding is working properly and ready for use.</p>
-<br>
+
+<p>
+shows up than 7-Zip-JBinding is working properly and is ready for use.
+</p>
+
 <br>
 <h2>Opening archive</h2>
 
-<p>Before you can do any operation with an archive file, you have to open it. In order to do this
+<p>
+Before you can do any operation on an archive file, you have to open it. In order to do this
 you will need to call one of the corresponding static methods
 <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openInArchive(...). The only
-manditory parameter is "inStream" - an instance of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a></p>.
+manditory parameter is "inStream" - an instance of the
+<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> interface.
+</p>
 
-Print count of the items in archive:
+<p>
+In many cases
+the task is to open an archive file from the file system. 7-Zip-JBinding has a standard implementation
+of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> for this purposes:
+<a href="javadoc/net/sf/sevenzipjbinding/RandomAccessFileInStream.html">RandomAccessFileInStream</a>.
+As the name say, this takes an instance of RandomAccessFile and turns it into instance of
+<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.
+</p>
+
+<p>
+Here is a simple example, how to open an archive from the file system: 
+</p>
+
+##INCLUDE_SNIPPET(SimpleOpen)
+
+<p>
+The opened archive can be used now for exploring and extraction operations. The last method called on archive should always be  
+<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html#close()">ISevenZipInArchive.close().</a>
+This closes archive and free system resources. The last but not least is to close the random access file 
+'<span class="java-field">randomAccessFile</span>' using close() method of the RandomAccessFile class.
+</p> 
+
+<p>
+Here is a complete program to print count of items in archive:
+##INCLUDE_SNIPPET(PrintCountOfItems)
+</p>
+
+<p>
+If you run this program with
+</p>
+
 <div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+  PrintCountOfItems my-test-archive.zip
+</pre></div>
 
-System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
-        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
-</pre></div><br>
+<p>
+you should get something like this:
+</p>
 
-Print list of the archived files using standard interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+##INCLUDE_OUTPUT(PrintCountOfItems)
 
-<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
-    System.<i>out</i>.println(
-            <font color="blue">"Filename: '"</font> 
-            + archive.getProperty(index, PropID.PATH)
-            + <font color="blue">"', packed size: "</font> 
-            + archive.getProperty(index, PropID.PACKED_SIZE));
-}
-</pre></div><br>
-
-Print list of the archived files using simple interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
-
-<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
-    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
-            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
-}
-</pre></div><br>
-
-Extract first item of the archive and print it:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
-archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
-    <font color="#646464">@Override</font>
-    <b>public int</b> write(<b>byte</b>[] data) {
-        stringBuilder.append(<b>new</b> String(data));
-        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
-    }
-});
-
-System.<i>out</i>.println(stringBuilder.toString());
-</pre></div><br>
-
-For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
-<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
+<br>
+<p>
+Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.
+</p>

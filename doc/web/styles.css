@@ -34,11 +34,11 @@ table.menu td {
 }
 
 table.submenu td {
-    padding-left: 20px;
+    padding-left: 15px;
     padding-top: 0px;
 }
 table.submenu a {
-	font:italic small-caps 900 16px arial;
+	font:italic small-caps 900 19px arial;
 	font-style:normal;
 	text-decoration:none;
 	color: #888800;
@@ -88,6 +88,10 @@ span.java-staticmethod {
 
 span.java-staticfield {
     font-style:italic;
+    color: #0000c0;
+}
+
+span.java-field {
     color: #0000c0;
 }
 

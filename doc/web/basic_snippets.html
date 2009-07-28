@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>Welcome to 7-Zip-JBinding project</title>
+<link href="styles.css" rel="stylesheet" type="text/css">
+</head><body>
+<center>
+<table><tr><td width=1000>
+<a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
+<!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+
+<table border="0" width="100%">
+<tr><td><td align="center"><img src="logo2.png" />
+<tr height="50">
+<tr><td width="240" valign="top" class="menu">
+<table class="menu" border="0">
+<tr><td><a href="index.html">Home</a>
+<tr><td><a href="first_steps.html">Documentation</a><br>
+<table class="submenu" border="0">
+	<tr><td><a href="first_steps.html" >First steps</a>
+	<tr><td><a href="basic_snippets.html" class="submenu">Code snippets</a>
+	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a>
+<!--	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>-->
+</table>
+<tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
+<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a>
+<tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a>
+<tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to 7-Zip-JBinding</a>
+</table>
+<td>
+<h1>Coming very soon!</h1>
+<h3>I expect to put a lot of examples here in one or two weeks.</h3>
+<h3>Thank you for your patience!</h3>
+<!--
+Print count of the items in archive:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
+        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
+</pre></div><br>
+Print list of the archived files using standard interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
+    System.<i>out</i>.println(
+            <font color="blue">"Filename: '"</font> 
+            + archive.getProperty(index, PropID.PATH)
+            + <font color="blue">"', packed size: "</font> 
+            + archive.getProperty(index, PropID.PACKED_SIZE));
+}
+</pre></div><br>
+Print list of the archived files using simple interface:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
+<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
+    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
+            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
+}
+</pre></div><br>
+Extract first item of the archive and print it:
+<div class="fragment"><pre class="fragment">
+ISevenZipInArchive archive 
+        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
+                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
+                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
+archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
+    <font color="#646464">@Override</font>
+    <b>public int</b> write(<b>byte</b>[] data) {
+        stringBuilder.append(<b>new</b> String(data));
+        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
+    }
+});
+System.<i>out</i>.println(stringBuilder.toString());
+</pre></div><br>
+For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
+<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
+-->
+</table>
+</center>
+</table>
+</html>

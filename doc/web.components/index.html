@@ -21,7 +21,7 @@ many archive formats using very fast native library directly from java through J
 		</table>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
-		<tr><td>&rsaquo; MS-Windows 32/64
+		<tr><td>&rsaquo; MS-Windows
 		    <td>&rsaquo; Linux 32/64
 		    <td>&rsaquo; Darwin Mac OS X
 		</table>
@@ -30,24 +30,35 @@ many archive formats using very fast native library directly from java through J
 	<li> Planned: Creation of 7-Zip/Zip archives  
 	<li> Planned: Extraction of more archive formats, like RPM, CDEB, NSIS
 </ul>
+
+<br>
 <h2>How does it work?</h2>
 
-<p>The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
+<p>
+The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
 a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
-interface to perform operations.</p>
-<br>
+interface to perform operations.
+</p>
+
 <img src="overview.png"/>
 <br>
 <br>
 
 
 <h2>It's really simple!</h2>
+
+<p>
 Getting number of packed items in an archive:
+</p>
+
 ##INCLUDE_SNIPPET(GetNumberOfItemsInArchive)
-<br>
-Continue with <a href="first_steps.html">first steps</a>
-<br>
+
+<p>
+For the sake of simplicity all error handling was skipped.
+Continue with <a href="first_steps.html">first steps</a> for more examples and explanations.
+</p>
+
 <br>
 <h2>News</h2>
 <div class="infobox">

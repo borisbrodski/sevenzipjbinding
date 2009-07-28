@@ -1,0 +1,47 @@
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> PrintCountOfItems {
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java PrintCountOfItems &#60;archive-name&#62;"</span>);
+        }
+        String archiveFilename = args[0];
+
+        RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
+        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        <span class="java-keyword">try</span> {
+            randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFilename, <span class="java-string">"r"</span>);
+            inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
+                    <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile));
+
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Count of items in archive: "</span> 
+                    + inArchive.getNumberOfItems());
+
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+            System.<span class="java-staticmethod">exit</span>(1);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    inArchive.close();
+                } <span class="java-keyword">catch</span> (SevenZipException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                }
+            }
+            <span class="java-keyword">if</span> (randomAccessFile != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    randomAccessFile.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                }
+            }
+        }
+    }
+}
+

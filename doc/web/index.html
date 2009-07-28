@@ -20,13 +20,14 @@
 <tr><td><a href="first_steps.html">Documentation</a><br>
 <table class="submenu" border="0">
 	<tr><td><a href="first_steps.html" >First steps</a>
-	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">Code snippets</a>
-	<tr><td><a href="http://sevenzipjbind.sourceforge.net/" class="submenu">JavaDoc</a>
-	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>
+	<tr><td><a href="basic_snippets.html" class="submenu">Code snippets</a>
+	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a>
+<!--	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>-->
 </table>
 <tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
-<tr><td><a href="#first_steps" class="menu">First Steps</a>
-<tr><td><a href="http://sourceforge.net/forum/forum.php?forum_id=757965" class="menu">Help Forum</a>
+<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a>
+<tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a>
+<tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to 7-Zip-JBinding</a>
 </table>
 <td>
 <h2>What's this all about?</h2>
@@ -51,7 +52,7 @@ many archive formats using very fast native library directly from java through J
 		</table>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
-		<tr><td>&rsaquo; MS-Windows 32/64
+		<tr><td>&rsaquo; MS-Windows
 		    <td>&rsaquo; Linux 32/64
 		    <td>&rsaquo; Darwin Mac OS X
 		</table>
@@ -60,32 +61,45 @@ many archive formats using very fast native library directly from java through J
 	<li> Planned: Creation of 7-Zip/Zip archives  
 	<li> Planned: Extraction of more archive formats, like RPM, CDEB, NSIS
 </ul>
+<br>
 <h2>How does it work?</h2>
-<p>The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
+<p>
+The 7-Zip-JBinding consists of two parts: the java part and the native part. The java part introduces
 a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with java part through java jni interface and uses corresponding native 7-Zip
-interface to perform operations.</p>
-<br>
+interface to perform operations.
+</p>
 <img src="overview.png"/>
 <br>
 <br>
 <h2>It's really simple!</h2>
+<p>
 Getting number of packed items in an archive:
+</p>
 <div class="fragment"><pre class="fragment">
-<span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) throws Exception {
+<span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) <span class="java-keyword">throws</span> Exception {
     ISevenZipInArchive archive;
+    RandomAccessFile randomAccessFile;
 
-    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// null - autodetect</span>
+    randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>);
+
+    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// <span class="java-keyword">null</span> - autodetect</span>
             <span class="java-keyword">new</span> RandomAccessFileInStream(
-                    <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>)));
+                    randomAccessFile));
 
-    <span class="java-keyword">return</span> archive.getNumberOfItems();
+    <span class="java-keyword">int</span> numberOfItems = archive.getNumberOfItems();
+
+    archive.close();
+    randomAccessFile.close();
+
+    <span class="java-keyword">return</span> numberOfItems;
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/GetNumberOfItemsInArchive.java">download java code</a></div>
-<br>
-Continue with <a href="first_steps.html">first steps</a>
-<br>
+<p>
+For the sake of simplicity all error handling was skipped.
+Continue with <a href="first_steps.html">first steps</a> for more examples and explanations.
+</p>
 <br>
 <h2>News</h2>
 <div class="infobox">
