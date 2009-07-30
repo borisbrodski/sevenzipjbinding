@@ -20,7 +20,10 @@ ENDIF()
 IF(JAVA_HOME)
     SET(JAVA_JDK "${JAVA_HOME}")
 ENDIF()
-SET(HELP "Please set JAVA_HOME to jdk1.5 or higher or use -DJAVA_JDK=<path-to-jdk> option for cmake.")
+SET(HELP
+"Please set JAVA_HOME to jdk1.5 or higher or use -DJAVA_JDK=<path-to-jdk> switch for cmake.
+Don't forget to delete 'CMakeCache.txt' file, if you want '-D' parameter to take effect."
+)
 
 IF(NOT "${JAVA_JDK}" STREQUAL "${JAVA_JDK_OLD}")
     IF(NOT JAVA_JDK_OLD STREQUAL "")

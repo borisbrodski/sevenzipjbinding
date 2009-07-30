@@ -6,7 +6,8 @@ Content
 3. License notes
 4. Version number guide lines
 5. Compile
-5.1 Compile under Linux
+5.1 Compile on Linux
+5.2 Compile on Windows
 
 --- Welcome to 7-Zip-JBinding readme file ---
 
@@ -79,8 +80,62 @@ Examples:
 
 5 Compile
 
-5.1 Compile under Linux
+5.1 Compile on Linux
 
-a) Check out or download source package
-b) Extract into some <src> directory
+a) Download source package from http://sourceforge.net/projects/sevenzipjbind/files/
+   and extract it into some <srcdir> directory. Try to avoid directory names with spaces in your path.
 
+   Optionally you can checkout a trunk (current development version) from SVN 
+	$ svn checkout http://sevenzipjbind.svn.sourceforge.net/svnroot/sevenzipjbind/trunk SevenZipJBinding
+		
+b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your system.
+   You can check the version of your CMake by typing:
+	$ cmake --version
+
+   If you don't have cmake installed or cmake version isn't sufficient you can download and install CMake from official
+   web site: http://www.cmake.org/
+ 
+   On Debian or Ubuntu Linux you can install cmake by typing
+    $ sudo apt-get install cmake
+
+c) The next step is to run CMake. Both in-source and out-of-source methods are supported. Here is example of in-source build:
+	$ cd <srcdir>
+	$ cmake .
+
+   Where <srcdir> is a directory, where you extracted or checked out the source code.	
+   On some Linux distributions you will need to set JAVA_JDK cmake option to your Java JDK 1.5 or higher. You can use a GUI CMake
+   tool 'cmake-gui', edit 'CMakeCache.txt' file with your favorite text editor or just delete 'CMakeCache.txt' file
+   and restart CMake with a -DJAVA_JDK parameter:
+	$ cmake . -DJAVA_JDK=<path-to-jdk>
+   
+   If everything goes right, you will get an overview of chosen tools and build options.
+
+d) Now type to compile 7-Zip-JBinding
+	$ make
+	
+e) After make succeeds you can either run tests by typing
+	$ ctest
+   
+   or build a binary package by typing
+    $ make package
+    
+
+5.2 Compile on Windows
+    Both MinGW and Cygwin environments can be used to compile 7-Zip-JBinding. Using MinGW to compile 7-Zip-JBinding 
+    is recommended and is much easier. The steps are:
+
+a) Download and install MinGW from the official web site: http://www.mingw.org/
+b) Download and install CMake from the official web site: http://www.cmake.org/
+c) Download and extract 7-Zip-Binding source package from http://sourceforge.net/projects/sevenzipjbind/files/
+d) Open cmd console, go into the directory with extracted 7-Zip-Binding source and type  
+	D:\...> cmake .
+e) Type
+	D:\...> mingw32-make.exe
+f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary package
+
+
+If you have any troubles with 7-Zip-JBinding please, ask for help. Use forum or issue tracker on sourceforge:
+Forum: http://sourceforge.net/forum/?group_id=210915
+Tracker: http://sourceforge.net/tracker/?group_id=210915
+	
+Have fun	 
