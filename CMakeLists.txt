@@ -266,5 +266,6 @@ IF(BUILD_TESTING)
     add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/singlefile -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/multiplefiles -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/badarchive -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/snippets -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
 #                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
 ENDIF(BUILD_TESTING)
