@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 
 /**
- * Standard implementation of {@link ISimpleInArchiveItem}.
+ * Standard implementation of {@link ISimpleInArchiveItem}, simplified 7-Zip-JBinding interface.
  * 
  * @author Boris Brodski
  * @version 4.65-1

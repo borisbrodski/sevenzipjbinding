@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * This java interface represents a archive item. There are no corresponding interface in original SevenZip api.<br>
  * <br>
  * 
- * This interface is a part of simplified 7-Zip interface.
+ * This interface is a part of simplified 7-Zip-JBinding interface.
  * 
  * 
  * @see ISimpleInArchive
