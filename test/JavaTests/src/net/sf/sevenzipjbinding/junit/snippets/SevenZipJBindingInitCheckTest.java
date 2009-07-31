@@ -14,7 +14,7 @@ public class SevenZipJBindingInitCheckTest extends SnippetTest {
 	@Test
 	public void testSevenZipJBindingInitCheck() {
 		/* BEGIN_OUTPUT(SevenZipJBindingInitCheck) */
-		String expected = "7-Zip-JBinding library was initialized\n";
+		String expected = "7-Zip-JBinding library was initialized" + System.getProperty("line.separator");
 		/* END_OUTPUT */
 
 		beginSnippetTest();
