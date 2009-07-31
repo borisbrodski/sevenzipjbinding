@@ -60,7 +60,7 @@ http://www.7-zip.org/support.html
 
 The scheme for the 7-Zip-JBinding version numbers is :
 
-	<7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage>
+	<7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage><impl. stage>
 
 7-Zip/p7zip version - version of the underlying 7-Zip and p7zip libraries.
 
@@ -71,10 +71,16 @@ release stage:
 	- 'alpha' - alpha release: substantion part of the functionality included, not stable. For testing purposes only.
 	- 'rc' - release candidate: all functionality included, not stable. For testing purposes only.
 	- '' - release considered stable. For generally use.
+	
+impl stage: (implementation stage)
+	Optional. Information about implemented and not implemented features.
+	- '-extr-only' - compression features are not included. 
 
 Examples:
 	 4.65-1.0alpha - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
 	 4.66-1.1rc - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+	 4.66-2.3-extr-only - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
+	 				      without compression features.
 	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
@@ -128,7 +134,7 @@ a) Download and install MinGW from the official web site: http://www.mingw.org/
 b) Download and install CMake from the official web site: http://www.cmake.org/
 c) Download and extract 7-Zip-Binding source package from http://sourceforge.net/projects/sevenzipjbind/files/
 d) Open cmd console, go into the directory with extracted 7-Zip-Binding source and type  
-	D:\...> cmake .
+	D:\...> cmake -G"MinGW Makefiles" .
 e) Type
 	D:\...> mingw32-make.exe
 f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary package

@@ -8,7 +8,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 public class PrintCountOfItems {
     public static void main(String[] args) {
-        if (args./*f*/length/* */== 0) {
+        if (args.length == 0) {
             System.out.println("Usage: java PrintCountOfItems <archive-name>");
         }
         String archiveFilename = args[0];
