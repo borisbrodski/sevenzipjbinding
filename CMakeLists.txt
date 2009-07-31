@@ -226,7 +226,7 @@ INSTALL(FILES   AUTHORS
                 LGPL
                 NEWS
                 README
-                release-notes.txt
+                ReleaseNotes
                 THANKS
         DESTINATION .)
 INSTALL(FILES   ${SEVENZIP_JBINDING_JAR} 
