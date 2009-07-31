@@ -1,7 +1,13 @@
-SevenZipJBinding THANKS file
+7-Zip-JBinding THANKS file
 
-SevenZipJBinding has originally been written by Boris Brodski.
+7-Zip-JBinding has originally been written by Boris Brodski.
 Many people have further contributed to it by reporting problems, 
 suggesting various improvements, or submitting actual code. Here is
 a list of these people. Help me keep it complete and exempt of errors.
 
+
+Special thanks to
+
+- Masoud (for pointing me to the most wired error in the C++ <-> Java exception handling)
+
+- Victor Martinez (for getting 7-Zip-JBinding to work with JNLP)
