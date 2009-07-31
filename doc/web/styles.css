@@ -116,11 +116,15 @@ span.filename {
 DIV.infobox {
 	width: 100%;
 /*
-	background-color: #ffffdd;
-	border: 1px solid #aaaa00;
+	background-color: #FFFFEE;
+	border: 1px solid #CCCCCC;
 	margin: 2px;
-	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 4px;
+	padding-bottom: 4px;
 */
+
 	text-align: left;
 	line-height: 140%;
 }
@@ -141,7 +145,7 @@ PRE.fragment {
 	margin-top: 4px;
 	margin-bottom: 4px;
 	margin-left: 2px;
-	margin-right: 8px;
+	margin-right: 2px;
 	padding-left: 6px;
 	padding-right: 6px;
 	padding-top: 4px;

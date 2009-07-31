@@ -2,3 +2,5 @@
   For example: GetProperty(10000000, 3). Extract function is also affected.
 
 - Test extracting encrypted archive where different password for different files are used.
+
+- Offer a source package without tests
