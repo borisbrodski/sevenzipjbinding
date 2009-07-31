@@ -37,11 +37,11 @@ SET(SEVENZIP_JBINDING_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzip-jbinding.
 FILE(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/jbinding-java)
 SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_JAR ${SEVENZIP_JBINDING_JAR}) 
 
-IF(USE_MINGW)
+IF(CMAKE_HOST_WIN32) #true for win64 also
     SET(PATH_SEP ";")
-ELSE(USE_MINGW)
+ELSE()
     SET(PATH_SEP ":")
-ENDIF(USE_MINGW)
+ENDIF()
 
 MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND 
         P_BUILD_NAME    # spaceless simple name of the build process. For example: "test-src-build"  
@@ -61,7 +61,7 @@ MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND
         SET(SEP "")
         FOREACH(D ${ARGN})
             FILE(APPEND ${JAVAC_ARGS_FILE} "${SEP}${D}")
-            SET(SEP ${PATH_SEP})
+            SET(SEP "${PATH_SEP}")
         ENDFOREACH()
         FILE(APPEND ${JAVAC_ARGS_FILE} "\n")
     ENDIF()
@@ -139,14 +139,6 @@ ADD_CUSTOM_TARGET(sevenzip-jbinding-lib-jar ALL
 
 ADD_DEPENDENCIES(sevenzip-jbinding-lib-jar 7-Zip-JBinding) #sevenzip-jbinding-jar
 
-IF(USE_MINGW)
-    ADD_CUSTOM_COMMAND(TARGET SevenZipJBinding-lib-jar POST_BUILD
-                       COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
-                                               -C ${MINWGM10_DLL_DIR}
-                                               ${MINWGM10_DLL_NAME}
-                       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                       COMMENT Adding mingwm10.dll to the jar)
-ENDIF(USE_MINGW)
 
 ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
                    COMMAND ${JAVA_ARCHIVE} cf ${SEVENZIPJBINDING_LIB_JAR} 
@@ -159,6 +151,15 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                    COMMENT Building Platformdependend jar)
 
+
+IF(CMAKE_HOST_WIN32)
+    ADD_CUSTOM_COMMAND(TARGET sevenzip-jbinding-lib-jar POST_BUILD
+                       COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
+                                               -C ${MINWGM10_DLL_DIR}
+                                               ${MINWGM10_DLL_NAME}
+                       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                       COMMENT Adding mingwm10.dll to the jar)
+ENDIF()
 
 
 # ------------------- CPack -------------------

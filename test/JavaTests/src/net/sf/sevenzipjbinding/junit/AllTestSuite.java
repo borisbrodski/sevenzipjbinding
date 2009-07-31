@@ -41,7 +41,7 @@ public class AllTestSuite extends TestSuite {
 				throw new Exception("Source directory SRCDIR is not a parent of test package directory SINGLEDIR.");
 			}
 			return process(singleDirFile, singleDirAbsolutePath.substring(srcDirAbsolutePath.length() + 1).replace('/',
-					'.'));
+					'.').replace('\\', '.'));
 		}
 		System.out.println("Processing directory (recursive): " + new File(".").getAbsolutePath());
 		File file = new File("src");
