@@ -3,16 +3,16 @@
 <p>
 The most simple way to get 7-Zip-JBinding to work is to download a pre-compiled binary package
 for your operating system (<a href="http://sourceforge.net/projects/sevenzipjbind/files/">download link</a>).
-All provided packages are Zip-compressed and you will need an extraction utility to expand it. For windows users,
-it is highly recommended to secure a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a>. Linux and Mac OS X
-users may use a corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.
+All provided packages are Zip-compressed and you will need an extraction utility to expand them. For windows users is
+securing a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a> is highly recommended. Linux and Mac OS X
+users may use the corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.
 </p>
 
 <br>
 <h2>Run an example</h2>
 
 <p>
-To use 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
+To use the 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
 distribution in your classpath:
 </p>
 
@@ -58,40 +58,40 @@ shows up than 7-Zip-JBinding is working properly and is ready for use.
 </p>
 
 <br>
-<h2>Opening archive</h2>
+<h2>Opening an archive</h2>
 
 <p>
 Before you can do any operation on an archive file, you have to open it. In order to do this
 you will need to call one of the corresponding static methods
 <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openInArchive(...). The only
-manditory parameter is "inStream" - an instance of the
+mandatory parameter is "inStream" - an instance of the
 <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> interface.
 </p>
 
 <p>
 In many cases
 the task is to open an archive file from the file system. 7-Zip-JBinding has a standard implementation
-of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> for this purposes:
+of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> for this purpose:
 <a href="javadoc/net/sf/sevenzipjbinding/RandomAccessFileInStream.html">RandomAccessFileInStream</a>.
-As the name say, this takes an instance of RandomAccessFile and turns it into instance of
+As the name says, this takes an instance of RandomAccessFile and turns it into an instance of
 <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.
 </p>
 
 <p>
-Here is a simple example, how to open an archive from the file system: 
+Here is a simple example of how to open an archive from the file system: 
 </p>
 
 ##INCLUDE_SNIPPET(SimpleOpen)
 
 <p>
-The opened archive can be used now for exploring and extraction operations. The last method called on archive should always be  
+The opened archive can now be used for exploring and extraction operations. The last method called on archive should always be  
 <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html#close()">ISevenZipInArchive.close().</a>
-This closes archive and free system resources. The last but not least is to close the random access file 
+This closes the archive and frees system resources. The last, but not least, step is to close the random access file 
 '<span class="java-field">randomAccessFile</span>' using close() method of the RandomAccessFile class.
 </p> 
 
 <p>
-Here is a complete program to print count of items in archive:
+Here is a complete program to print count of items in the archive:
 ##INCLUDE_SNIPPET(PrintCountOfItems)
 </p>
 
