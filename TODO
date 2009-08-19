@@ -4,3 +4,7 @@
 - Test extracting encrypted archive where different password for different files are used.
 
 - Offer a source package without tests
+
+- Put a separate readme file for source and binary distributions
+
+- Test Java JDK for >=1.5
