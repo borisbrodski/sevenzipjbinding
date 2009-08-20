@@ -279,8 +279,6 @@ ENDIF()
 
 
 IF(NOT JAVAC_TEST_OK)
-    SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
-
     MESSAGE("-- Checking java compile")
     
     SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
@@ -308,6 +306,7 @@ Javac error message: ${javac_test_err}")
     ENDIF()
     
     MESSAGE("-- Checking java compile - ok")
+    SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
 ENDIF()
 
 # Call cmake default version
