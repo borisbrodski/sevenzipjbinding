@@ -218,15 +218,19 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 		SingleFileSequentialOutStreamComparator outputStream = null;
 		try {
-			//			System.out.println("Extracting...");
-			outputStream = new SingleFileSequentialOutStreamComparator(expectedFilename);
-			//			System.out.println(inArchive.getNumberOfItems());
-			//			for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-			//				System.out.println(inArchive.getStringProperty(i, PropID.PATH));
-			//			}
-			assertTrue(inArchive.getNumberOfItems() > 0);
 			int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
+			long sizes[] = null;
 
+			if (archiveFormat != ArchiveFormat.Z && archiveFormat != ArchiveFormat.BZIP2) {
+				sizes = new long[] { (Long) inArchive.getProperty(index, PropID.SIZE) };
+				if (archiveFormat == ArchiveFormat.ISO) {
+					sizes = new long[] { -1, sizes[0] };
+				}
+			}
+
+			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
+
+			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncommpressedFilename);
 			checkPropertySize(inArchive, index, expectedFilename);
 			checkPropertyPackedSize(inArchive, index, expectedFilename);
@@ -352,8 +356,13 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		private long processed = 0;
 		private Random random = new Random();
 		private Throwable firstException;
+		private final ISevenZipInArchive inArchive;
+		private final long[] sizes;
 
-		public SingleFileSequentialOutStreamComparator(String expectedFilename) throws FileNotFoundException {
+		public SingleFileSequentialOutStreamComparator(ISevenZipInArchive inArchive, long[] sizes,
+				String expectedFilename) throws FileNotFoundException {
+			this.inArchive = inArchive;
+			this.sizes = sizes;
 			File file = new File(expectedFilename);
 			assertTrue("Expect-File " + expectedFilename + " doesn't exists", file.exists());
 
@@ -391,6 +400,24 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 		public int write(byte[] data) {
 			try {
+				int numberOfItems = inArchive.getNumberOfItems();
+				if (sizes != null) {
+					assertEquals(sizes.length, numberOfItems);
+				}
+				for (int i = 0; i < numberOfItems; i++) {
+					Long size = (Long) inArchive.getProperty(i, PropID.SIZE);
+					inArchive.getProperty(i, PropID.PACKED_SIZE);
+					inArchive.getProperty(i, PropID.PATH);
+					if (sizes != null && sizes[i] >= 0) {
+						assertEquals(Long.valueOf(sizes[i]), size);
+					}
+				}
+			} catch (SevenZipException e1) {
+				throw new Error("Error accessing 7-Zip archive out of callback method", e1);
+			}
+
+			try {
+
 				assertTrue(data.length > 0);
 
 				int count = random.nextInt(data.length) + 1;

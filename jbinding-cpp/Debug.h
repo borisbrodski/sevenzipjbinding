@@ -1,24 +1,24 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-// #define _DEBUG // TODO Manage it at least out of CMakeLists.txt
+// Use CMakeLists.txt to activate debug mode: uncomment "SET(CMAKE_BUILD_TYPE Debug)"
+//#define _DEBUG
 //#define TRACE_ON
 //#define TRACE_OBJECTS_ON
 
 //#define TRACE_THREADS_ON
 //#define TRACE_THREAD_LOG_FILENAME "sevenzipjbinding-thread-%i.log"
 
-// TODO Delete this define, if not used
-//#define TRACE_OBJECT_CALLS
-
 #if defined(NDEBUG) && defined(_DEBUG)
 #undef _DEBUG
 #endif
 
 #ifdef _DEBUG
-#define TRACE_ON
+#define _GLIBCXX_DEBUG
+#endif
+
+#if defined(_DEBUG) && !defined(TRACE_OBJECTS_ON)
 #define TRACE_OBJECTS_ON
-#define TRACE_OBJECT_CALLS
 #endif
 
 #ifdef TRACE_ON

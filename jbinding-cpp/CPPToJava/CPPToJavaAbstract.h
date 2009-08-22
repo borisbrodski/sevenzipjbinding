@@ -1,6 +1,8 @@
 #ifndef CPPTOJAVAABSTRACT_H_
 #define CPPTOJAVAABSTRACT_H_
 
+#include <stack>
+#include "Debug.h"
 #include "JNICallState.h"
 
 
@@ -8,6 +10,7 @@ class CPPToJavaAbstract : public Object
 {
 protected:
     CMyComPtr<NativeMethodContext> _nativeMethodContext;
+    std::stack<NativeMethodContext *> _nativeMethodContextStack;
 
 	jobject _javaImplementation;
 	jclass _javaImplementationClass;
@@ -17,32 +20,36 @@ public:
     virtual void ClearNativeMethodContext()
     {
 	    TRACE_OBJECT_CALL("ClearNativeMethodContext");
-        _nativeMethodContext = NULL;
+		_nativeMethodContextStack.pop();
+	    _nativeMethodContext = _nativeMethodContextStack.top();
     }
 
     virtual void SetNativMethodContext(CMyComPtr<NativeMethodContext> nativeMethodContext)
     {
 	    TRACE_OBJECT_CALL("SetNativMethodContext");
-        _nativeMethodContext = nativeMethodContext;
+	    _nativeMethodContextStack.push(nativeMethodContext);
+	    _nativeMethodContext = nativeMethodContext;
     }
 
 protected:
-	JNIEnv * BeginCPPToJavaCall() //TODO Remove
+	JNIEnv * BeginCPPToJavaCall()
 	{
 	    TRACE_OBJECT_CALL("BeginCPPToJavaCall");
 	    return _nativeMethodContext->BeginCPPToJava();
 	}
 
-	void EndCPPToJavaCall()//TODO Remove
+	void EndCPPToJavaCall()
 	{
 	    TRACE_OBJECT_CALL("EndCPPToJavaCall");
-        _nativeMethodContext->EndCPPToJava();
+		_nativeMethodContext->EndCPPToJava();
 	}
 
 	CPPToJavaAbstract(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject javaImplementation)
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaAbstract");
 
+		_nativeMethodContextStack.push(NULL);
+		_nativeMethodContextStack.push(nativeMethodContext);
 		_nativeMethodContext = nativeMethodContext;
 		_javaImplementation = initEnv->NewGlobalRef(javaImplementation);
 

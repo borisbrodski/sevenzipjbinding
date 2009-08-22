@@ -75,12 +75,22 @@ IF(USE_MINGW)
     add_definitions(-DMINGW -mthreads)
 ENDIF(USE_MINGW)
 
+IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    MESSAGE("---------- DEBUG MODE ---------------")
+    add_definitions(
+        -DTRACE_OBJECTS_ON
+        -D_DEBUG
+    )
+ELSE()
+    add_definitions(
+        -DNDEBUG
+    )
+ENDIF()
+
 add_definitions(
-#    -g3
-#    -O
+#    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
-    -DNDEBUG
     -D_REENTRANT
     -DENV_UNIX
     -DCOMPRESS_MT
@@ -88,8 +98,6 @@ add_definitions(
     -DCOMPRESS_MF_MT
     -DBREAK_HANDLER
     -DBENCH_MT
-#    -DTRACE_OBJECTS_ON
-#    -DTRACE_ON
 )
 
 

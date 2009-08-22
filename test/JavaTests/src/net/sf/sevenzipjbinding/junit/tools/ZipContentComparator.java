@@ -425,7 +425,14 @@ public class ZipContentComparator {
 		 */
 
 		public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) {
-
+			try {
+				actualSevenZipArchive.getNumberOfItems();
+				actualSevenZipArchive.getProperty(index, PropID.PATH);
+				actualSevenZipArchive.getProperty(index, PropID.SIZE);
+				actualSevenZipArchive.getProperty(index, PropID.PACKED_SIZE);
+			} catch (SevenZipException e1) {
+				throw new Error("Error calling ISevenZipInArchive methods out of call back method", e1);
+			}
 			if (!extractAskMode.equals(ExtractAskMode.EXTRACT)) {
 				return null;
 			}

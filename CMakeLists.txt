@@ -1,6 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(SevenZipJBinding)
 
+# Uncomment to build in debug mode
+SET(CMAKE_BUILD_TYPE Debug)
+
 IF (NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Release)
 ENDIF()

@@ -212,7 +212,7 @@ public class InArchiveImpl implements ISevenZipInArchive {
 		case SIZE:
 		case PACKED_SIZE:
 			// ARJ archive returns sized as Integer (32 bit).
-			// It isn't particular good idea, since every other archive return Long (64 bit).
+			// It isn't particular good idea, since every other archive returns Long (64 bit).
 			// So it will be corrected here.
 			if (returnValue instanceof Integer) {
 				return Long.valueOf(((Integer) returnValue).longValue());
