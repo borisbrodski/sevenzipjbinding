@@ -16,7 +16,7 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
 #    STRING(REGEX REPLACE " " "&nbsp;" TMP "${TMP}")
 #    STRING(REGEX REPLACE "\t" "&nbsp;&nbsp;&nbsp;&nbsp;" TMP "${TMP}")
     STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${TMP}")
-    STRING(REGEX REPLACE "(^|[^a-zA-Z])(null|import|if|int|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private)($|[^a-zA-Z])" 
+    STRING(REGEX REPLACE "(^|[^a-zA-Z])(null|import|if|for|int|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private)($|[^a-zA-Z])" 
                             "\\1##keyword##\\2##end##\\3" TMP "${TMP}")
     STRING(REGEX REPLACE "(SevenZip\\.)(openInArchive|initSevenZipFromPlatformJAR)"
                             "\\1##staticmethod##\\2##end##" TMP "${TMP}")
@@ -105,7 +105,7 @@ macro(PROCESS_SNIPPET SNIPPET_FILE)
             SET(SNIPPET_NAME "")
         ENDIF()
         IF(LINE MATCHES "/\\* +END_OUTPUT +\\*/")
-            ADJUST_PADDING("${OUTPUT_FILENAME_HTML}")
+            #ADJUST_PADDING("${OUTPUT_FILENAME_HTML}")
             SET(OUTPUT_NAME "")
         ENDIF()
         IF(NOT OUTPUT_NAME STREQUAL "")

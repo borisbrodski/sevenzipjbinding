@@ -1,51 +1,124 @@
+<!--
 <h1>Coming very soon!</h1>
 
 <h3>I expect to put a lot of examples here in one or two weeks.</h3>
 <h3>Thank you for your patience!</h3>
+-->
+
+<h2>Overview</h2>
+
+<p>
+Here you can find many simple code snippets, example of how to preform basic operations with
+7-Zip-JBinding. All outputs of the code snippets were produced using a single test archive 
+<a href="fixme"><span class="filename">simple.zip (FIXME)</span></a>. Here is a content of the test archive:
+</p>
+
+<div class="fragment"><pre class="fragment">
+$ 7z l simple.zip
+7-Zip  4.58 beta  Copyright (c) 1999-2008 Igor Pavlov  2008-05-05
+p7zip Version 4.58 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
+
+Listing archive: simple.zip
+
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2009-08-04 12:26:16 .....         4481           68  file1.txt
+2009-08-04 12:27:34 .....           75           62  file2.txt
+2009-08-04 14:53:06 D....            0            0  folder
+2009-08-04 14:53:40 .....            6            6  folder/file in folder.txt
+------------------- ----- ------------ ------------  ------------------------
+                                  4562          136  3 files, 1 folders
+</pre></div>
+<br>
+
+<h2>Standard vs Simple interface</h2>
+
+<p>
+The 7-Zip-JBinding library offers two different interfaces: standard and simple. The standard interface 
+directly maps all native 7-Zip library methods providing C++ like interface. The simple interface is a
+try to provide more Java-like easy to use interface. It was designed either for quick coding and easy
+start and not for feature richness nor for performance.
+</p>
+
+<p>
+The following examples will be presented in both standard and simple interface beginning with as simple interface.
+Please note, that the full performance can only be reached with the standard interface.
+</p>
+
+<br>
+<h2>Quering items in archive</h2>
+
+<h3>Simple interface</h3>
+
+<p>
+This example shows how to print a list of items of archive using simple interface.
+</p>
+
+##INCLUDE_SNIPPET(ListItemsSimple)
+
+<p>
+The output for the test archive:
+</p>
+
+##INCLUDE_OUTPUT(ListItemsOutput)
+
+<p>
+Please note, that not all archive formats support the "folder" items, like "folder/" in our example. Also
+please note, that packed size in this example as almost all other properties can return null. A returned null
+value means, that either the property is not supported by the particular archive format or not known
+for the particular item.
+</p>
+
+<h3>Standard interface</h3>
+
+<p>
+This example shows how to print a list of items of archive using standard interface.
+</p>
+
+##INCLUDE_SNIPPET(ListItemsStandard)
+
+<p>
+The output for the test archive is the same:
+</p>
+
+##INCLUDE_OUTPUT(ListItemsOutput)
+
+
+<h2>Extraction of a single file</h2>
+
+<p>
+This section will show how to access the compressed data of the archive items. The following examples will calculate a simple checksum
+of each archive item.
+</p>
+
+<h3>Standard interface</h3>
+
+<p>
+This example shows how to get content of the items of the archive using standard interface to calculate a simple checksum.
+</p>
+
+##INCLUDE_SNIPPET(ExtractItemsSimple) 
+ 
+<p>
+Here is the output of the last snippet:
+</p>
+
+##INCLUDE_OUTPUT(ExtractItems)
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
 
 <!--
-Print count of the items in archive:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-System.<i>out</i>.println(<font color="blue">"Archive contains "</font> 
-        + archive.getNumberOfItems() + <font color="blue">" items :-)"</font>);
-</pre></div><br>
-
-Print list of the archived files using standard interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-<b>for</b> (int index = 0; index < archive.getNumberOfItems(); index++) {
-    System.<i>out</i>.println(
-            <font color="blue">"Filename: '"</font> 
-            + archive.getProperty(index, PropID.PATH)
-            + <font color="blue">"', packed size: "</font> 
-            + archive.getProperty(index, PropID.PACKED_SIZE));
-}
-</pre></div><br>
-
-Print list of the archived files using simple interface:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-ISimpleInArchive simpleInArchive = archive.getSimpleInterface();
-
-<b>for</b> (ISimpleInArchiveItem inItem : simpleInArchive.getArchiveItems()) {
-    System.<i>out</i>.println(<font color="blue">"Filename: '"</font> + inItem.getPath()
-            + <font color="blue">"', packed size: "</font> + inItem.getPackedSize());
-}
-</pre></div><br>
-
 Extract first item of the archive and print it:
 <div class="fragment"><pre class="fragment">
 ISevenZipInArchive archive 

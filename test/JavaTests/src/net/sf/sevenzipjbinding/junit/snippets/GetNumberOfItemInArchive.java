@@ -14,7 +14,7 @@ import org.junit.Test;
 public class GetNumberOfItemInArchive {
 	@Test
 	public void snippetRunner() throws Exception {
-		assertEquals(3, getNumberOfItemsInArchive("testdata/snippets/simple.zip"));
+		assertEquals(4, getNumberOfItemsInArchive("testdata/snippets/simple.zip"));
 	}
 
 	/* BEGIN_SNIPPET(GetNumberOfItemsInArchive) */
