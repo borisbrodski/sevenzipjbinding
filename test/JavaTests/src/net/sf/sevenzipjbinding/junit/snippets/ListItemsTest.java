@@ -2,6 +2,8 @@ package net.sf.sevenzipjbinding.junit.snippets;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
 import org.junit.Test;
 
 /**
@@ -22,6 +24,7 @@ public class ListItemsTest extends SnippetTest {
 		/* END_OUTPUT */
 
 		expected = expected.replace("\n", System.getProperty("line.separator"));
+		expected = expected.replace('/', File.separatorChar);
 		return expected;
 	}
 
