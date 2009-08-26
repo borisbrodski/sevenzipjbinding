@@ -4,6 +4,7 @@ CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZMA=n
+CREATE_SIMPLE_LZH=y
 CREATE_SIMPLE_ZIP=n
 CREATE_SIMPLE_7Z=n
 CREATE_SIMPLE_RAR=n
@@ -44,6 +45,17 @@ if test $CREATE_SIMPLE_LZMA = y -o $CREATE_ALL = y ; then
         do
 	    lzma -z -$i -c $j > lzma/$j.$i.lzma
 	    # No encryption supported
+        done
+    done
+fi
+
+if test $CREATE_SIMPLE_LZH = y -o $CREATE_ALL = y ; then
+    rm lzh/*.lzh
+    for i in 5 6 7
+    do
+	for j in *.dat
+        do
+	    lha ao$i lzh/$j.$i.lzh $j
         done
     done
 fi

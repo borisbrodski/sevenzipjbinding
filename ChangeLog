@@ -5,6 +5,8 @@ Release - 4.65-1.01rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* CAB format support and tests
 
+	* LZH format support and tests
+
 	* Bugfix: crash, if access archive object out of a call back method
 
 

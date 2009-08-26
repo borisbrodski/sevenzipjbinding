@@ -1,9 +1,10 @@
 #!/bin/bash
 
-CREATE_ALL=y
+CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
-CREATE_SIMPLE_ISO=y
+CREATE_SIMPLE_LZH=y
+CREATE_SIMPLE_ISO=n
 CREATE_SIMPLE_7Z=n
 CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
@@ -64,6 +65,19 @@ if test $CREATE_SIMPLE_CPIO = y -o $CREATE_ALL = y ; then
 	    done
     done
 fi
+
+
+if test $CREATE_SIMPLE_LZH = y -o $CREATE_ALL = y ; then
+    rm lzh/*.lzh
+    for i in 5 6 7
+    do
+	    for j in *.zip
+	    do
+	        pushd $TMP_CONTENT_DIR/$j && lha ao$i $TEST_DIR/lzh/$j.$i.lzh * ; popd
+	    done
+    done
+fi
+
 
 if test $CREATE_SIMPLE_ISO = y -o $CREATE_ALL = y ; then
     rm iso/*.iso

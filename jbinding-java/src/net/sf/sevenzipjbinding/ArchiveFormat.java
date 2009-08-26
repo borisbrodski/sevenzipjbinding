@@ -77,8 +77,12 @@ public enum ArchiveFormat {
 	 */
 	CAB("Cab"),
 
+	/**
+	 * Lzh
+	 */
+	LZH("Lzh"),
 	// TODO Not yet supported:
-	// CAB, CHM, CDEB, LZH, NSIS, RPM
+	// CAB, CHM, CDEB, , NSIS, RPM
 	;
 
 	private String methodName;

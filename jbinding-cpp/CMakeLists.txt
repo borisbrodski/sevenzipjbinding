@@ -88,7 +88,7 @@ ELSE()
 ENDIF()
 
 add_definitions(
-#    -DTRACE_ON
+    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -D_REENTRANT
@@ -205,6 +205,13 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhCRC.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhOutStreamWithCRC.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
 # Chm
 
@@ -442,6 +449,13 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhCRC.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhOutStreamWithCRC.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
 # Chm
 
