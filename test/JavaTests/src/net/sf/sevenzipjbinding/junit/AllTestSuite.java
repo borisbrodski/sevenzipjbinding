@@ -89,7 +89,7 @@ public class AllTestSuite extends TestSuite {
 			}
 		}
 		if (found) {
-			System.out.println("Adding class: " + clazz.getCanonicalName());
+			//			System.out.println("Adding class: " + clazz.getCanonicalName());
 			testSuite.addTest(new JUnit4TestAdapter(clazz));
 		}
 		for (Class<?> subclazz : clazz.getDeclaredClasses()) {

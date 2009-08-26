@@ -35,7 +35,6 @@ public class ListItemsTest extends SnippetTest {
 		beginSnippetTest();
 		ListItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
 		String output = endSnippetTest();
-		System.out.println(output);
 		assertEquals(expected, output);
 	}
 
@@ -46,7 +45,6 @@ public class ListItemsTest extends SnippetTest {
 		beginSnippetTest();
 		ListItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
 		String output = endSnippetTest();
-		System.out.println(output);
 		assertEquals(expected, output);
 	}
 }
