@@ -92,9 +92,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	if (result != S_OK)
 		fatal("codecs->Load() return error: 0x%08X", result);
 
+#ifdef TRACE_ON
 	for (int i = 0; i < codecs->Formats.Size(); i++) {
 		TRACE1("Available codec: '%S'", (const wchar_t*)codecs->Formats[i].Name)
 	}
+#endif // TRACE_ON
 
 	int index = -1;
 	UString formatNameString;

@@ -200,12 +200,11 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Update.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/bz2Register.cpp
 
-# TODO Need VolumeCallback   
-#    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
-#    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
-#    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
-#    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
-#    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
 
 # Chm
 
@@ -438,12 +437,11 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Update.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/bz2Register.cpp
 
-# TODO Need VolumeCallback   
-#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
-#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
-#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
-#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
-#    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
 
 # Chm
 

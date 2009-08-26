@@ -71,11 +71,15 @@ public enum ArchiveFormat {
 	 * Arj format
 	 */
 	ARJ("Arj"), //
-	;
-	// CAB("Cab"), // TODO Problems with CAB: It always require ArchiveOpenVolumeCallback: problems with auto detection.
-	//
+
+	/**
+	 * Cab format.
+	 */
+	CAB("Cab"),
+
 	// TODO Not yet supported:
 	// CAB, CHM, CDEB, LZH, NSIS, RPM
+	;
 
 	private String methodName;
 
