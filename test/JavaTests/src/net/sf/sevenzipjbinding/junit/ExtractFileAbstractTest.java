@@ -35,8 +35,8 @@ import org.junit.Test;
  * @version 4.65-1
  */
 public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
-	private static final int SINGLE_TEST_THREAD_COUNT = 2;
-	private static final int SINGLE_TEST_REPEAT_COUNT = 2;
+	private static final int SINGLE_TEST_THREAD_COUNT = 2;//15;
+	private static final int SINGLE_TEST_REPEAT_COUNT = 2;//60;
 	private static final int SINGLE_TEST_TIMEOUT = 100000;
 	private static final String DEFAULT_PASSWORD = "TestPass";
 

@@ -88,7 +88,7 @@ ELSE()
 ENDIF()
 
 add_definitions(
-    -DTRACE_ON
+#    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -D_REENTRANT
@@ -213,7 +213,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
-# Chm
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHeader.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
 
 # Com ??
 
@@ -457,7 +460,10 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
-# Chm
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHeader.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
 
 # Com ??
 
@@ -682,4 +688,11 @@ ELSE(USE_CYGWIN)
     ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 
-
+#TARGET_LINK_LIBRARIES(7-Zip-JBinding duma)
+#FILE(WRITE "link.sh" "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
+#IF(CMAKE_COMPILER_IS_GNUCXX)
+#  IF(CMAKE_COMPILER_IS_GNUCC)
+#    SET(CMAKE_CXX_CREATE_SHARED_LIBRARY
+#        "gcc <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
+#  ENDIF()
+#ENDIF()

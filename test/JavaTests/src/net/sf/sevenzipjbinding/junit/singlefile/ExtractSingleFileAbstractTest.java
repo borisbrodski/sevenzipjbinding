@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -222,10 +223,18 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			long sizes[] = null;
 
 			if (archiveFormat != ArchiveFormat.Z && archiveFormat != ArchiveFormat.BZIP2) {
-				sizes = new long[] { (Long) inArchive.getProperty(index, PropID.SIZE) };
-				if (archiveFormat == ArchiveFormat.ISO) {
-					sizes = new long[] { -1, sizes[0] };
+				sizes = new long[inArchive.getNumberOfItems()];
+				for (int i = 0; i < sizes.length; i++) {
+					sizes[i] = -1;
 				}
+				sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
+				//				if (archiveFormat == ArchiveFormat.ISO) {
+				//					sizes = new long[] { -1, sizes[0] };
+				//				}
+			}
+
+			if (archiveFormat == ArchiveFormat.CHM) {
+				index = calcSampleFileIndexInChmArchive(inArchive);
 			}
 
 			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
@@ -233,7 +242,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncommpressedFilename);
 			checkPropertySize(inArchive, index, expectedFilename);
-			if (archiveFormat != ArchiveFormat.CAB) {
+			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM) {
 				checkPropertyPackedSize(inArchive, index, expectedFilename);
 			}
 			checkPropertyIsFolder(inArchive, index);
@@ -266,6 +275,18 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 			extractionInArchiveTestHelper.closeAllStreams();
 		}
+	}
+
+	private int calcSampleFileIndexInChmArchive(ISevenZipInArchive inArchive) throws SevenZipException {
+		int count = inArchive.getNumberOfItems();
+		for (int i = 0; i < count; i++) {
+			String name = (String) inArchive.getProperty(i, PropID.PATH);
+			if (name.startsWith("simple")) {
+				return i;
+			}
+		}
+		fail("Can't find sample file in chm archive");
+		return -1;
 	}
 
 	@Override

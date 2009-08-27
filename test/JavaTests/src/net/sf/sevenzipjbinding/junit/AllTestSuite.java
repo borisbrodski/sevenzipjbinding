@@ -29,6 +29,9 @@ public class AllTestSuite extends TestSuite {
 			if (!singleDirFile.exists() || !singleDirFile.isDirectory()) {
 				throw new Exception("Directory '" + singleDirAbsolutePath + "' doesn't exists");
 			}
+			if (!singleDirFile.isDirectory()) {
+				throw new Exception("Not a directory '" + singleDirAbsolutePath + "'");
+			}
 			if (srcDir == null) {
 				throw new Exception("Source directory not provided. Use java SRCDIR property.");
 			}
