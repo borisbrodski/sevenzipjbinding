@@ -1,9 +1,10 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Main features of 4.65-1.0rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+Main features of 4.65-1.01rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
-	* Extraction of 7z, Zip, Tar, Split, Rar, Lzma, Iso, HFS, GZip, Cpio, BZIP2, Z, Arj
+	* Extraction of
+		- 7z, Zip, Tar, Split, Rar, Lzma, Iso, HFS, GZip, Cpio, BZIP2, Z, Arj, Lzh, Cab, Chm
 	
 	* Support for password protected and volumed archives
 	
@@ -16,7 +17,8 @@ Main features of 4.65-1.0rc-extr-only (Release candidate, extraction only, cross
 		- Linux 32/64
 		- Mac OS X
 
-	* Over 3000 JUnit tests extraction of archive formats: 7z, Arj, BZip2, Cpio, GZip, ISO, Lzma, Rar, Tar, Z, Zip 
+	* Over 3000 JUnit tests extraction of archive formats:
+		- 7z, Arj, BZip2, Cpio, GZip, ISO, Lzma, Rar, Tar, Z, Zip, Lzh, Cab, Chm
 	
 	* 7-Zip-JBinding requires Java 1.5 or higher
 	

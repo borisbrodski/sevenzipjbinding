@@ -1,0 +1,1 @@
+MESSAGE(FATAL_ERROR "Please download source code distribution from http://sourceforge.net/projects/sevenzipjbind/ to compile 7-Zip-JBinding")

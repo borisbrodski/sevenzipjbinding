@@ -13,7 +13,7 @@ INCLUDE(CTest)
 
 
 # Uncomment this to build a version
-SET(SEVENZIPJBINDING_VERSON 4.65-1.0rc-extr-only)
+SET(SEVENZIPJBINDING_VERSON 4.65-1.01rc-extr-only)
 
 SET(RELEASE_PATH ${PROJECT_BINARY_DIR})
 IF (SEVENZIPJBINDING_VERSON)
@@ -232,9 +232,12 @@ INSTALL(FILES   AUTHORS
                 LGPL
                 NEWS
                 README
-                ReleaseNotes
+                ReleaseNotes.txt
                 THANKS
         DESTINATION .)
+INSTALL(FILES	CMakeFile-bin-dist.txt
+	DESTINATION .
+	RENAME CMakeLists.txt)
 INSTALL(FILES   ${SEVENZIP_JBINDING_JAR} 
                 ${SEVENZIPJBINDING_LIB_JAR}
         DESTINATION lib)
