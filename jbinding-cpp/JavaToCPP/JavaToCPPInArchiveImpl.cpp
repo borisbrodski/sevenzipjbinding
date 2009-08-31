@@ -142,26 +142,48 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	CPPToJavaInStream * inStream = GetInStream(env, thiz);
 	inStream->SetNativMethodContext(&nativeMethodContext);
 
-	jint * indices = env->GetIntArrayElements(indicesArray, NULL);
+	jint * indices;
+	jsize indicesCount;
+	HRESULT result;
+	if (indicesArray)
+	{
+		indices = env->GetIntArrayElements(indicesArray, NULL);
 
-	qsort(indices, env->GetArrayLength(indicesArray), 4, &CompareIndicies);
+		indicesCount = env->GetArrayLength(indicesArray);
+		qsort(indices, indicesCount, 4, &CompareIndicies);
+	} else {
+		result = archive->GetNumberOfItems((UInt32*)&indicesCount);
+		if (result != S_OK)
+		{
+		    TRACE1("Error getting number of items from archive. Result: 0x%08X", result);
+			nativeMethodContext.ThrowSevenZipException(result, "Error getting number of items from archive");
+		    inStream->ClearNativeMethodContext();
+		    return;
+		}
+		indices = new jint[indicesCount];
+		for (int i = 0; i < indicesCount; i++)
+			indices[i] = i;
+	}
 
 	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);
 
-	TRACE1("Extracting %i items", (int)env->GetArrayLength(indicesArray))
-	HRESULT result = 0;
-	result = archive->Extract((UInt32*)indices, env->GetArrayLength(indicesArray), (Int32)testMode,
+	TRACE1("Extracting %i items", indicesCount)
+	result = archive->Extract((UInt32*)indices, indicesCount, (Int32)testMode,
 	        archiveExtractCallback);
 
 	archiveExtractCallback.Release();
 
-	env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+	if (indicesArray)
+		env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+	else
+		delete [] indices;
+
     inStream->ClearNativeMethodContext();
 
 	if (result)
 	{
 	    TRACE1("Extraction error. Result: 0x%08X", result);
-	    nativeMethodContext.ThrowSevenZipException(result, "Error extracting %i element(s). Result: %X", env->GetArrayLength(indicesArray), result);
+	    nativeMethodContext.ThrowSevenZipException(result, "Error extracting %i element(s). Result: %X", indicesCount, result);
 	}
 	else
 	{

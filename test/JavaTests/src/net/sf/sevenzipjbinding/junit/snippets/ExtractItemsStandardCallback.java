@@ -1,11 +1,9 @@
 package net.sf.sevenzipjbinding.junit.snippets;
 
-/* BEGIN_SNIPPET(ExtractItemsStandard) */
+/* BEGIN_SNIPPET(ExtractItemsStandardCallback) */
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
@@ -17,10 +15,11 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
-public class ExtractItemsStandard {
+public class ExtractItemsStandardCallback {
 	public static class MyExtractCallback implements IArchiveExtractCallback {
 		private int hash = 0;
 		private int index;
+		private boolean skipExtraction;
 		private ISevenZipInArchive inArchive;
 
 		public MyExtractCallback(ISevenZipInArchive inArchive) {
@@ -30,8 +29,11 @@ public class ExtractItemsStandard {
 		public ISequentialOutStream getStream(int index, //
 				ExtractAskMode extractAskMode) throws SevenZipException {
 			this.index = index;
+			skipExtraction = (Boolean) inArchive.getProperty(index, PropID.IS_FOLDER);
+			if (skipExtraction) {
+				return null;
+			}
 			return new ISequentialOutStream() {
-
 				public int write(byte[] data) throws SevenZipException {
 					hash |= Arrays.hashCode(data);
 					return data.length; // Return amount of proceed data
@@ -45,6 +47,9 @@ public class ExtractItemsStandard {
 
 		public void setOperationResult(ExtractOperationResult //
 				extractOperationResult) throws SevenZipException {
+			if (skipExtraction) {
+				return;
+			}
 			if (extractOperationResult != ExtractOperationResult.OK) {
 				System.err.println("Extraction error");
 			} else {
@@ -76,20 +81,11 @@ public class ExtractItemsStandard {
 			System.out.println("   Hash   | Filename");
 			System.out.println("----------+---------");
 
-			int count = inArchive.getNumberOfItems();
-			List<Integer> itemsToExtract = new ArrayList<Integer>();
-			for (int i = 0; i < count; i++) {
-				if (!((Boolean) inArchive.getProperty(i, PropID.IS_FOLDER))//
-						.booleanValue()) {
-					itemsToExtract.add(Integer.valueOf(i));
-				}
+			int[] in = new int[inArchive.getNumberOfItems()];
+			for (int i = 0; i < in.length; i++) {
+				in[i] = i;
 			}
-			int[] items = new int[itemsToExtract.size()];
-			int i = 0;
-			for (Integer integer : itemsToExtract) {
-				items[i++] = integer.intValue();
-			}
-			inArchive.extract(items, false, // Non-test mode
+			inArchive.extract(in, false, // Non-test mode
 					new MyExtractCallback(inArchive));
 		} catch (Exception e) {
 			System.err.println("Error occurs: " + e);

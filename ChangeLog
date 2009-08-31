@@ -3,6 +3,17 @@
 
 Release - 4.65-1.01rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
+	* API change was necessary to fix a bug:
+		- net.sf.sevenzipjbinding.IArchiveExtractCallback.prepareOperation(ExtractAskMode) is void now.
+		
+		- net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream(int, ExtractAskMode) accepts null return values now.
+		  null return values can be used to skip on the fly extraction/testing of archive items. 
+
+	* net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, IArchiveExtractCallback):
+		- the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
+		  It if possible to exclude particular items later on using IArchiveExtractCallback call back. Returning null
+		  out of net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream method will skip extraction/testing. 
+
 	* CAB format support + tests
 
 	* LZH format support + tests

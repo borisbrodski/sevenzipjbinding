@@ -26,9 +26,9 @@ void CPPToJavaArchiveExtractCallback::Init(JNIEnv * initEnv)
 	_getStreamMethodID = GetMethodId(initEnv, "getStream",
 			"(I" EXTRACTASKMODE_CLASS_T ")" SEQUENTIALOUTSTREAM_CLASS_T);
 
-	// public boolean prepareOperation(ExtractAskMode extractAskMode);
+	// public void prepareOperation(ExtractAskMode extractAskMode);
 	_prepareOperationMethodID = GetMethodId(initEnv, "prepareOperation",
-			"(" EXTRACTASKMODE_CLASS_T ")Z");
+			"(" EXTRACTASKMODE_CLASS_T ")V");
 
 	// public void setOperationResult(ExtractOperationResult extractOperationResult);
 	_setOperationResultMethodID = GetMethodId(initEnv, "setOperationResult",
@@ -101,9 +101,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
 
 	// public boolean prepareOperation(ExtractAskMode extractAskMode);
 	jniInstance.PrepareCall();
-	jboolean result = env->CallBooleanMethod(_javaImplementation, _prepareOperationMethodID, askExtractModeObject);
+	env->CallVoidMethod(_javaImplementation, _prepareOperationMethodID, askExtractModeObject);
 
-	return jniInstance.IsExceptionOccurs() || !result ? S_FALSE : S_OK;
+	return jniInstance.IsExceptionOccurs() ? S_FALSE : S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOperationResult)

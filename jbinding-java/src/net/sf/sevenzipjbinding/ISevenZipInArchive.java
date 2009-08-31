@@ -65,7 +65,8 @@ public interface ISevenZipInArchive {
 	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode != 0 means "test files operation"
 	 * 
 	 * @param indices
-	 *            array of indices of archive items to extract
+	 *            (optional) array of indices of archive items to extract. If <code>null</code> - all all archive items
+	 *            will be processed.
 	 * @param testMode
 	 *            <code>true</code> - test achived items only
 	 * @param extractCallback

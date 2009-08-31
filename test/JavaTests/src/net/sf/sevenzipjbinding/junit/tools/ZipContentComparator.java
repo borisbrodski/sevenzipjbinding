@@ -452,8 +452,7 @@ public class ZipContentComparator {
 		 * {@inheritDoc}
 		 */
 
-		public boolean prepareOperation(ExtractAskMode extractAskMode) {
-			return true;
+		public void prepareOperation(ExtractAskMode extractAskMode) {
 		}
 
 		/**

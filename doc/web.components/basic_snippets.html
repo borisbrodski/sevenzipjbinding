@@ -5,6 +5,8 @@
 <h3>Thank you for your patience!</h3>
 -->
 
+<h1>Code snippets</h1>
+
 <h2>Overview</h2>
 
 <p>
@@ -92,10 +94,11 @@ This section will show how to access the compressed data of the archive items. T
 of each archive item.
 </p>
 
-<h3>Standard interface</h3>
+<h3>Simple interface</h3>
 
 <p>
-This example shows how to get content of the items of the archive using standard interface to calculate a simple checksum.
+This example shows how to get content of the items of the archive using simple interface.
+In order to consume extracted content the simple checksum will be calculated.
 </p>
 
 ##INCLUDE_SNIPPET(ExtractItemsSimple) 
@@ -107,10 +110,20 @@ Here is the output of the last snippet:
 ##INCLUDE_OUTPUT(ExtractItems)
  
  
- 
- 
- 
- 
+<h3>Standard interface</h3>
+
+
+<p>
+The following two examples show how to perform the same extracting task using standard interface.
+As in the previous example, the simple checksum will be calculated in order to
+consume the extracted data. 
+</p>
+
+<p>
+First example traverse the entire archive and uses call back method to choose on the fly whether
+proceed with the extraction an item or not. The second example prepare a list of items for extraction.
+</p>
+
  
  
  
