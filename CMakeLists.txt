@@ -262,7 +262,8 @@ IF(BUILD_TESTING)
     SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
     SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzip-jbinding-tests.jar)
     SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.6.jar)
-
+    SET(CTEST_TEST_TIMEOUT 3600)
+    
     CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_JAR}" "${JUNIT_LIB}" ${SEVENZIP_JBINDING_JAR})
 
     ADD_CUSTOM_TARGET(sevenzip-jbinding-test-jar ALL
