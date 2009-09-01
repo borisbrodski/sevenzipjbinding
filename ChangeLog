@@ -20,6 +20,8 @@ Release - 4.65-1.01rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* CHM format support + tests
 
+	* Dashboard project added: http://my.cdash.org/index.php?project=7-Zip-JBinding
+
 	* Bugfix: crash, if access archive object out of a call back method
 
 

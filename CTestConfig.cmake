@@ -4,7 +4,7 @@
 ## # The following are required to uses Dart and the Cdash dashboard
 ##   ENABLE_TESTING()
 ##   INCLUDE(Dart)
-set(CTEST_PROJECT_NAME "kdelibs")
+set(CTEST_PROJECT_NAME "7-Zip-JBinding")
 set(CTEST_NIGHTLY_START_TIME "20:00:00 CET")
 
 set(CTEST_DROP_METHOD "http")
