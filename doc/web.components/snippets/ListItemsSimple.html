@@ -27,7 +27,7 @@
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+-----------+---------"</span>);
 
             <span class="java-keyword">for</span> (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
-                System.<span class="java-staticfield">out</span>.println(String.format(<span class="java-string">"%9s | %9s | %s"</span>, <span class="java-comment">// </span>
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9s | %9s | %s"</span>, <span class="java-comment">// </span>
                         item.getSize(), 
                         item.getPackedSize(), 
                         item.getPath()));

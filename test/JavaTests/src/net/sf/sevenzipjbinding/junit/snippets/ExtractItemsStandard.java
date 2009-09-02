@@ -19,22 +19,22 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 public class ExtractItemsStandard {
 	public static class MyExtractCallback implements IArchiveExtractCallback {
-		private int hash = 0;
-		private int index;
-		private ISevenZipInArchive inArchive;
+		private int /*f*/hash/* */= 0;
+		private int /*f*/index/**/;
+		private ISevenZipInArchive /*f*/inArchive/**/;
 
 		public MyExtractCallback(ISevenZipInArchive inArchive) {
-			this.inArchive = inArchive;
+			this./*f*/inArchive/* */= inArchive;
 		}
 
 		public ISequentialOutStream getStream(int index, //
 				ExtractAskMode extractAskMode) throws SevenZipException {
-			this.index = index;
+			this./*f*/index/* */= index;
 			return new ISequentialOutStream() {
 
 				public int write(byte[] data) throws SevenZipException {
-					hash |= Arrays.hashCode(data);
-					return data.length; // Return amount of proceed data
+					/*f*/hash/* */|= Arrays.hashCode(data);
+					return data./*f*/length/**/; // Return amount of proceed data
 				}
 			};
 		}
@@ -45,12 +45,12 @@ public class ExtractItemsStandard {
 
 		public void setOperationResult(ExtractOperationResult //
 				extractOperationResult) throws SevenZipException {
-			if (extractOperationResult != ExtractOperationResult.OK) {
+			if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
 				System.err.println("Extraction error");
 			} else {
 				System.out.println(String.format("%9X | %s", // 
-						hash, inArchive.getProperty(index, PropID.PATH)));
-				hash = 0;
+						/*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
+				/*f*/hash/* */= 0;
 			}
 		}
 
@@ -79,7 +79,7 @@ public class ExtractItemsStandard {
 			int count = inArchive.getNumberOfItems();
 			List<Integer> itemsToExtract = new ArrayList<Integer>();
 			for (int i = 0; i < count; i++) {
-				if (!((Boolean) inArchive.getProperty(i, PropID.IS_FOLDER))//
+				if (!((Boolean) inArchive.getProperty(i, PropID./*sf*/IS_FOLDER/**/))//
 						.booleanValue()) {
 					itemsToExtract.add(Integer.valueOf(i));
 				}

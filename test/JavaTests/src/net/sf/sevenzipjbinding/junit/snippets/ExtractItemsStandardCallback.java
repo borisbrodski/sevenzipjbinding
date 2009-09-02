@@ -17,26 +17,27 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 public class ExtractItemsStandardCallback {
 	public static class MyExtractCallback implements IArchiveExtractCallback {
-		private int hash = 0;
-		private int index;
-		private boolean skipExtraction;
-		private ISevenZipInArchive inArchive;
+		private int /*f*/hash/* */= 0;
+		private int /*f*/index/**/;
+		private boolean /*f*/skipExtraction/**/;
+		private ISevenZipInArchive /*f*/inArchive/**/;
 
 		public MyExtractCallback(ISevenZipInArchive inArchive) {
-			this.inArchive = inArchive;
+			this./*f*/inArchive/* */= inArchive;
 		}
 
 		public ISequentialOutStream getStream(int index, //
 				ExtractAskMode extractAskMode) throws SevenZipException {
-			this.index = index;
-			skipExtraction = (Boolean) inArchive.getProperty(index, PropID.IS_FOLDER);
-			if (skipExtraction) {
+			this./*f*/index/* */= index;
+			/*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
+					.getProperty(index, PropID./*sf*/IS_FOLDER/**/);
+			if (/*f*/skipExtraction/**/) {
 				return null;
 			}
 			return new ISequentialOutStream() {
 				public int write(byte[] data) throws SevenZipException {
-					hash |= Arrays.hashCode(data);
-					return data.length; // Return amount of proceed data
+					/*f*/hash/* */|= Arrays.hashCode(data);
+					return data./*f*/length/**/; // Return amount of proceed data
 				}
 			};
 		}
@@ -47,15 +48,15 @@ public class ExtractItemsStandardCallback {
 
 		public void setOperationResult(ExtractOperationResult //
 				extractOperationResult) throws SevenZipException {
-			if (skipExtraction) {
+			if (/*f*/skipExtraction/**/) {
 				return;
 			}
-			if (extractOperationResult != ExtractOperationResult.OK) {
+			if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
 				System.err.println("Extraction error");
 			} else {
 				System.out.println(String.format("%9X | %s", // 
-						hash, inArchive.getProperty(index, PropID.PATH)));
-				hash = 0;
+						/*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
+				/*f*/hash/* */= 0;
 			}
 		}
 

@@ -23,7 +23,7 @@
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+-----------+---------"</span>);
             <span class="java-keyword">int</span> itemCount = inArchive.getNumberOfItems();
             <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; itemCount; i++) {
-                System.<span class="java-staticfield">out</span>.println(String.format(<span class="java-string">"%9s | %9s | %s"</span>, <span class="java-comment">// </span>
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9s | %9s | %s"</span>, <span class="java-comment">// </span>
                         inArchive.getProperty(i, PropID.SIZE), 
                         inArchive.getProperty(i, PropID.PACKED_SIZE), 
                         inArchive.getProperty(i, PropID.PATH)));

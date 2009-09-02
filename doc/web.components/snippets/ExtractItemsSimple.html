@@ -32,12 +32,12 @@
                 final <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
                     item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
-                        <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(byte[] data) <span class="java-keyword">throws</span> SevenZipException {
-                            hash[0] |= Arrays.hashCode(data);
+                        <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
+                            hash[0] |= Arrays.<span class="java-staticmethod">hashCode</span>(data);
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of proceed data</span>
                         }
                     });
-                    System.<span class="java-staticfield">out</span>.println(String.format(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
+                    System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
                             hash[0], item.getPath()));
                 }
             }

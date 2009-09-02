@@ -42,6 +42,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <!--	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>-->
 </table>
 <tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
+<tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a>
 <tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a>
 <tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a>
 <tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to 7-Zip-JBinding</a>
@@ -61,11 +62,16 @@ many archive formats using a very fast native library directly from java through
 		<td>Lzma
 		<td>Iso
 		<td>HFS
+		</table>
+		<table border="0" class="ArchiveTypeEnum"><tr>
 		<td>GZip
 		<td>CPIO
 		<td>BZip2
 		<td>Z
 		<td>Arj
+		<td>Chm
+		<td>Lhz
+		<td>Cab
 		</table>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
@@ -75,7 +81,7 @@ many archive formats using a very fast native library directly from java through
 		</table>
 	<li> Full support for password protected and volumed archives 
 	<li> 12 example code snippets
-	<li> Over 3000 JUnit tests
+	<li> Over 3100 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a>
 	<li> Planned: Creation of 7-Zip/Zip archives  
 	<li> Planned: Extraction of more archive formats such as RPM, CDEB, NSIS
 </ul>
@@ -121,6 +127,30 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br>
 <h2>News</h2>
 <div class="infobox">
+1 September 2009: <b>7-Zip-JBinding Release: 4.65-1.01rc-extr-only</b>
+<br><br>
+Bugfix release (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+<ul>
+	<li> API change was necessary to fix a bug:
+	<ul>
+		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.prepareOperation(ExtractAskMode) is void now.
+		
+		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream(int, ExtractAskMode) accepts null return values now.
+		  null return values can be used to skip on the fly extraction/testing of archive items. 
+	</ul>
+	<li> net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, IArchiveExtractCallback):
+	<ul>
+		<li> the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
+		  It if possible to exclude particular items later on using IArchiveExtractCallback call back. Returning null
+		  out of net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream method will skip extraction/testing. 
+	</ul>
+	<li> CAB format support + tests
+	<li> LZH format support + tests
+	<li> CHM format support + tests
+	<li> Dashboard project added: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">http://my.cdash.org/index.php?project=7-Zip-JBinding</a>
+	<li> Bugfix: crash, if access archive object out of a call back method
+</ul>
+<br>
 31 July 2009: <b>7-Zip-JBinding Release: 4.65-1.0rc-extr-only</b>
 <br><br>
 The first cross-platform release of Java wrapper for 7-Zip library was build!<br>
