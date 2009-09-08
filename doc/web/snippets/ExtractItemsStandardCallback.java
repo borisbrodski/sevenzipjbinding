@@ -15,9 +15,9 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 public class ExtractItemsStandardCallback {
     public static class MyExtractCallback implements IArchiveExtractCallback {
         private int hash = 0;
-        private int /*f*/index/**/;
-        private boolean /*f*/skipExtraction/**/;
-        private ISevenZipInArchive /*f*/inArchive/**/;
+        private int index;
+        private boolean skipExtraction;
+        private ISevenZipInArchive inArchive;
 
         public MyExtractCallback(ISevenZipInArchive inArchive) {
             this.inArchive = inArchive;
@@ -26,15 +26,15 @@ public class ExtractItemsStandardCallback {
         public ISequentialOutStream getStream(int index, 
                 ExtractAskMode extractAskMode) throws SevenZipException {
             this.index = index;
-            skipExtraction = (Boolean) /*f*/inArchive/**/
-                    .getProperty(index, PropID./*sf*/IS_FOLDER/**/);
-            if (/*f*/skipExtraction/**/) {
+            skipExtraction = (Boolean) inArchive
+                    .getProperty(index, PropID.IS_FOLDER);
+            if (skipExtraction) {
                 return null;
             }
             return new ISequentialOutStream() {
                 public int write(byte[] data) throws SevenZipException {
                     hash |= Arrays.hashCode(data);
-                    return data./*f*/length/**/; // Return amount of proceed data
+                    return data.length; // Return amount of proceed data
                 }
             };
         }
@@ -45,14 +45,14 @@ public class ExtractItemsStandardCallback {
 
         public void setOperationResult(ExtractOperationResult 
                 extractOperationResult) throws SevenZipException {
-            if (/*f*/skipExtraction/**/) {
+            if (skipExtraction) {
                 return;
             }
-            if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
+            if (extractOperationResult != ExtractOperationResult.OK) {
                 System.err.println("Extraction error");
             } else {
                 System.out.println(String.format("%9X | %s", // 
-                        /*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
+                        hash, inArchive.getProperty(index, PropID.PATH)));
                 hash = 0;
             }
         }

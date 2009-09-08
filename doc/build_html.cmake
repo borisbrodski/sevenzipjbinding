@@ -5,7 +5,9 @@ SET(OUTPUT_DIRECTORY_HTML "web.components/output")
 
 macro(PROCESS_SNIPPET_LINE_JAVA LINE_VAR)
     STRING(REGEX REPLACE "//$" "" TMP "${${LINE_VAR}}")
-    STRING(REGEX REPLACE "/\\*f\\*/([^/]+)/\\*(.)\\*/" "\\1\\2" TMP "${TMP}")
+    STRING(REGEX REPLACE "/\\*f\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
+    STRING(REGEX REPLACE "/\\*sf\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
+    STRING(REGEX REPLACE "/\\*s\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro()
 
