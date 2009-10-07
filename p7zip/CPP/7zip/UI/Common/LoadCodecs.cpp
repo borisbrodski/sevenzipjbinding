@@ -230,7 +230,8 @@ static void SplitString(const UString &srcString, UStringVector &destStrings)
 void CArcInfoEx::AddExts(const wchar_t* ext, const wchar_t* addExt)
 {
   UStringVector exts, addExts;
-  SplitString(ext, exts);
+  if (ext)
+	  SplitString(ext, exts);
   if (addExt != 0)
     SplitString(addExt, addExts);
   for (int i = 0; i < exts.Size(); i++)

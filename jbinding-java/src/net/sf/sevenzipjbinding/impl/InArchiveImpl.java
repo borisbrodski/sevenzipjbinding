@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.impl;
 
+import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
@@ -86,6 +87,8 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	private long sevenZipArchiveInStreamInstance;
 
 	private int numberOfItems = -1;
+
+	private ArchiveFormat archiveFormat;
 
 	/**
 	 * {@inheritDoc}
@@ -216,6 +219,10 @@ public class InArchiveImpl implements ISevenZipInArchive {
 			if (returnValue instanceof Integer) {
 				return Long.valueOf(((Integer) returnValue).longValue());
 			}
+
+			if (returnValue == null && archiveFormat != null && archiveFormat == ArchiveFormat.NSIS) {
+				return Long.valueOf(0);
+			}
 			break;
 
 		case IS_FOLDER:
@@ -251,5 +258,28 @@ public class InArchiveImpl implements ISevenZipInArchive {
 	 */
 	public ISimpleInArchive getSimpleInterface() {
 		return new SimpleInArchiveImpl(this);
+	}
+
+	/**
+	 * ${@inheritDoc}
+	 */
+	public ArchiveFormat getArchiveFormat() {
+		return archiveFormat;
+	}
+
+	/**
+	 * Set archive format of the opened archive. This method should be called only through JNI.
+	 * 
+	 * @param archiveFormat
+	 *            format of the opened archive
+	 */
+	@SuppressWarnings("unused")
+	private void setArchiveFormat(String archiveFormatString) {
+		for (ArchiveFormat archiveFormat : ArchiveFormat.values()) {
+			if (archiveFormat.getMethodName().equalsIgnoreCase(archiveFormatString)) {
+				this.archiveFormat = archiveFormat;
+				return;
+			}
+		}
 	}
 }

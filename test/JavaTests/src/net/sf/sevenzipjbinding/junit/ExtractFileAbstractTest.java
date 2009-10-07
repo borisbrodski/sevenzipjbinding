@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -392,6 +393,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
 	protected abstract String getTestDataPath();
 
+	protected String getTestSubdir() {
+		return archiveFormat.toString().toLowerCase();
+	}
+
 	protected class ExtractionInArchiveTestHelper {
 		private RandomAccessFileInStream randomAccessFileInStream;
 		private VolumeArchiveOpenCallback volumeArchiveOpenCallback;
@@ -402,8 +407,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
 		public ISevenZipInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
 				boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
-			String archiveFilename = getTestDataPath() + File.separatorChar + archiveFormat.toString().toLowerCase()
-					+ File.separatorChar
+			String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
 					+ //
 					volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt + "."
 					+ compressionIndex + "." + extention + volumeArchivePostfix;
@@ -457,6 +461,8 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 			} catch (IOException exception) {
 				throw new RuntimeException(exception);
 			}
+
+			assertEquals(archiveFormat, inArchive.getArchiveFormat());
 			return inArchive;
 		}
 

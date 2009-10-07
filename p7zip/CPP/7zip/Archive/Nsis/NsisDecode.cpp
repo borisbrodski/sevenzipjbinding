@@ -14,7 +14,7 @@ namespace NNsis {
 
 static const CMethodId k_Copy    = 0x0;
 static const CMethodId k_Deflate = 0x040901;
-static const CMethodId k_BZip2   = 0x040902;
+static const CMethodId k_BZip2   = 0x040902; // My 0x040202
 static const CMethodId k_LZMA    = 0x030101;
 static const CMethodId k_BCJ_X86 = 0x03030103;
 

@@ -1,6 +1,15 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* NSIS format support + tests
+
+	* New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 
+	  even if archive format auto-detection was used.
+
+	* Binary version for Windows 64 XP and above.
+
+
 Release - 4.65-1.01rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
 	* API change was necessary to fix a bug:

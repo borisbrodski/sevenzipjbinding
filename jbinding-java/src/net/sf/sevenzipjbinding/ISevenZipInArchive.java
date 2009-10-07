@@ -179,4 +179,11 @@ public interface ISevenZipInArchive {
 	 */
 	public ISimpleInArchive getSimpleInterface();
 
+	/**
+	 * Return archive format of the opened archive.
+	 * 
+	 * @return archive format of the opened archive
+	 */
+	public ArchiveFormat getArchiveFormat();
+
 }

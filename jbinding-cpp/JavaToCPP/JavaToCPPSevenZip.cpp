@@ -61,6 +61,17 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeI
 	return NULL;
 }
 
+void setArchiveFormat(JNIEnv * env, jobject inArchiveImplObject, const UString & formatNameString) {
+	jclass c = env->GetObjectClass(inArchiveImplObject);
+	jmethodID methodId = env->GetMethodID(c, "setArchiveFormat", "(Ljava/lang/String;)V");
+
+	jstring jstring = env->NewString(UnicodeHelper(formatNameString), formatNameString.Length());
+	env->CallVoidMethod(inArchiveImplObject, methodId, jstring);
+	env->ExceptionClear();
+	return ;
+}
+
+
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeOpenArchive
@@ -98,6 +109,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	}
 #endif // TRACE_ON
 
+	//for (int i = 0; i < codecs->Formats.Size(); i++) {
+	//	printf("Available codec: '%S'\n", (const wchar_t*)codecs->Formats[i].Name);
+	//}
+
 	int index = -1;
 	UString formatNameString;
 	if (formatName)
@@ -106,7 +121,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		formatNameString = UnicodeHelper(formatNameJChars);
 		env->ReleaseStringChars(formatName, formatNameJChars);
 
-		TRACE1("Format: '%S'\n", (const wchar_t*)formatNameString);
+		TRACE1("Format: '%S'", (const wchar_t*)formatNameString)
 		index = codecs->FindFormatForArchiveType(formatNameString);
 		if (index == -1) {
 			jniInstance.ThrowSevenZipException("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
@@ -162,6 +177,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		    	continue;
 			}
 
+		    formatNameString = codecs->Formats[i].Name;
 		    success = true;
 		    break;
 		}
@@ -207,14 +223,17 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	}
 */
 
-	TRACE("Archive opened")
-
 	if (nativeMethodContext.WillExceptionBeThrown()){
 		archive->Close();
 		return NULL;
 	}
 
+	TRACE("Archive opened")
+
+
 	jobject InArchiveImplObject = GetSimpleInstance(env, IN_ARCHIVE_IMPL);
+
+	setArchiveFormat(env, InArchiveImplObject, formatNameString);
 
 	SetLongAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
 			(jlong)(size_t)(void*)(archive.Detach()));
@@ -230,4 +249,3 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
-

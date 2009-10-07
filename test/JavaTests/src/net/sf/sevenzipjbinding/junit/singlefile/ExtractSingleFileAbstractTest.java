@@ -228,9 +228,6 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 					sizes[i] = -1;
 				}
 				sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
-				//				if (archiveFormat == ArchiveFormat.ISO) {
-				//					sizes = new long[] { -1, sizes[0] };
-				//				}
 			}
 
 			if (archiveFormat == ArchiveFormat.CHM) {
@@ -275,6 +272,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 			extractionInArchiveTestHelper.closeAllStreams();
 		}
+	}
+
+	protected boolean skipSizeCheck() {
+		return false;
 	}
 
 	private int calcSampleFileIndexInChmArchive(ISevenZipInArchive inArchive) throws SevenZipException {
@@ -336,8 +337,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		Long actual = Long.valueOf(new File(uncommpressedFilename).length());
 		assertNotNull(size1);
 		assertNotNull(size2);
-		assertEquals("Wrong size of the file (PropID.SIZE)", actual, size1);
-		assertEquals("Simple interface problem: wrong size of the file", actual, size2);
+		if (!skipSizeCheck()) {
+			assertEquals("Wrong size of the file (PropID.SIZE)", actual, size1);
+			assertEquals("Simple interface problem: wrong size of the file", actual, size2);
+		}
 	}
 
 	private void checkPropertyPackedSize(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)

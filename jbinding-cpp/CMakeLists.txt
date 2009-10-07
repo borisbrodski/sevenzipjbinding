@@ -251,7 +251,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaIn.cpp
 
-# Nsis
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisDecode.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisRegister.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHeader.cpp
@@ -302,6 +305,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/CopyCoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/CopyRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/Deflate64Register.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateNsisRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp
@@ -498,7 +502,10 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaIn.cpp
 
-# Nsis
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisDecode.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisRegister.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHeader.cpp
@@ -549,6 +556,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/CopyCoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/CopyRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/Deflate64Register.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateNsisRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp
