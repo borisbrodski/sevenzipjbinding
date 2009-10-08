@@ -215,7 +215,7 @@ enum
   EW_SLEEP,             // Sleep: 1 [sleep time in milliseconds]
   EW_BRINGTOFRONT,      // BringToFront: 0
   EW_CHDETAILSVIEW,     // SetDetailsView: 2 [listaction,buttonaction]
-  
+
   // 10
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
   EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
@@ -227,7 +227,7 @@ enum
   EW_GETFULLPATHNAME,   // GetFullPathName: 2 [output, input, ?lfn:sfn]
   EW_SEARCHPATH,        // SearchPath: 2 [output, filename]
   EW_GETTEMPFILENAME,   // GetTempFileName: 2 [output, base_dir]
-  
+
   // 20
   EW_EXTRACTFILE,       // File to extract: 6 [overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh, allow ignore]
                         //  overwriteflag: 0x1 = no. 0x0=force, 0x2=try, 0x3=if date is newer
@@ -1104,7 +1104,7 @@ HRESULT CInArchive::ReadEntries(const CBlockHeader &bh)
         keyName = ReadString2Qw(e.Params[1]);
         Script += keyName;
         Script += " ";
-        
+
         valueName = ReadString2Qw(e.Params[2]);
         Script += valueName;
         Script += " ";
@@ -1301,7 +1301,7 @@ HRESULT CInArchive::Open2(
   FilterFlag = false;
 
   UInt32 compressedHeaderSize = Get32(sig);
-  
+
   if (compressedHeaderSize == FirstHeader.HeaderLength)
   {
     _headerIsCompressed = false;
@@ -1402,10 +1402,10 @@ HRESULT CInArchive::Open(
 {
   Clear();
   RINOK(inStream->Seek(0, STREAM_SEEK_SET, NULL));
-  UInt64 maxSize = ((maxCheckStartPosition != 0) ? *maxCheckStartPosition : (UInt64)-1);
+  UInt64 maxSize = ((maxCheckStartPosition != 0) ? *maxCheckStartPosition : 0);
   const UInt32 kStep = 512;
   Byte buffer[kStep];
-  
+
   UInt64 position = 0;
   for (; position <= maxSize; position += kStep)
   {

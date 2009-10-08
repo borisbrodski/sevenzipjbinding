@@ -142,6 +142,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 				archiveOpenCallbackImpl, (CPPToJavaInStream *)stream);
 	}
 
+	UInt64 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
+
 	if (index != -1) {
 		// Use one specified codec
 		codecs->CreateInArchive(index, archive);
@@ -151,7 +153,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 		TRACE1("Opening using codec %S", (const wchar_t*)codecs->Formats[index].Name);
 
-		HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
+		HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
 
 	    if (result != S_OK) {
 			TRACE1("Result = 0x%08X, throwing exception...", (int)result)
@@ -172,7 +174,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		    	continue;
 		    }
 
-		    HRESULT result = archive->Open(stream, NULL, archiveOpenCallback);
+		    HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
 		    if (result != S_OK) {
 		    	continue;
 			}

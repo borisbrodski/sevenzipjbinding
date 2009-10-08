@@ -1402,7 +1402,7 @@ HRESULT CInArchive::Open(
 {
   Clear();
   RINOK(inStream->Seek(0, STREAM_SEEK_SET, NULL));
-  UInt64 maxSize = ((maxCheckStartPosition != 0) ? *maxCheckStartPosition : (UInt64)-1);
+  UInt64 maxSize = ((maxCheckStartPosition != 0) ? *maxCheckStartPosition : 0);
   const UInt32 kStep = 512;
   Byte buffer[kStep];
 
