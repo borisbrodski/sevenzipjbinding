@@ -218,7 +218,8 @@ static void SplitString(const UString &srcString, UStringVector &destStrings)
 void CArcInfoEx::AddExts(const wchar_t* ext, const wchar_t* addExt)
 {
   UStringVector exts, addExts;
-  SplitString(ext, exts);
+  if (ext)
+	  SplitString(ext, exts);
   if (addExt != 0)
     SplitString(addExt, addExts);
   for (int i = 0; i < exts.Size(); i++)
@@ -285,7 +286,7 @@ HRESULT CCodecs::LoadFormats()
     ReadBoolProp(getProp, getProp2, i, NArchive::kUpdate, item.UpdateEnabled);
     if (item.UpdateEnabled)
       ReadBoolProp(getProp, getProp2, i, NArchive::kKeepName, item.KeepName);
-    
+
     if (ReadProp(getProp, getProp2, i, NArchive::kStartSignature, prop) == S_OK)
       if (prop.vt == VT_BSTR)
       {
