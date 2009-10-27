@@ -21,6 +21,7 @@ public:
 
   AString ScanStringUntilNewLine();
   void ReadToString(AString &resultString);
+  UString ScanUStringUntilNewLine();
 
   bool Eof();
   int GetChar();

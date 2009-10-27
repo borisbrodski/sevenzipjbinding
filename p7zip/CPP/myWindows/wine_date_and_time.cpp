@@ -109,7 +109,7 @@ BOOL WINAPI DosDateTimeToFileTime( WORD fatdate, WORD fattime, FILETIME * ft) {
   LONG   bias  = TIME_GetBias();
   RtlSecondsSince1970ToFileTime( time1 - bias, ft );
 
-  TRACEN((printf("DosDateTimeToFileTime(%d,%d) t1=%ld bias=%ld => %lx %lx\n",
+  TRACEN((printf("DosDateTimeToFileTime(%ld,%ld) t1=%ld bias=%ld => %lx %lx\n",
 	(long)fatdate,(long)fattime,(long)time1,(long)bias,
 	(long)ft->dwHighDateTime,(long)ft->dwLowDateTime)))
 
@@ -138,7 +138,7 @@ BOOL WINAPI FileTimeToDosDateTime( const FILETIME *ft, WORD *fatdate, WORD *fatt
   li.QuadPart = ft->dwHighDateTime;
   li.QuadPart = (li.QuadPart << 32) | ft->dwLowDateTime;
   RtlTimeToSecondsSince1970( &li, &t );
-  unixtime = t - TIME_GetBias();
+  unixtime = t; /* FIXME unixtime = t - TIME_GetBias(); */
   tm = gmtime( &unixtime );
 
   fat_t = (tm->tm_hour << 11) + (tm->tm_min << 5) + (tm->tm_sec / 2);

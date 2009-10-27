@@ -5,28 +5,18 @@
 #include "Common/MyInitGuid.h"
 
 #include "Common/CommandLineParser.h"
-#include "Common/MyCom.h"
 #include "Common/MyException.h"
-#include "Common/StdOutStream.h"
-#include "Common/StringConvert.h"
-#include "Common/Wildcard.h"
 
-#include "Windows/Defs.h"
-#include "Windows/FileName.h"
 #ifdef _WIN32
 #include "Windows/DLL.h"
 #include "Windows/FileDir.h"
 #else
+#include "Common/StringConvert.h"
 #include "Windows/System.h"
 #endif
 
-#include "../../IPassword.h"
-#include "../../ICoder.h"
-
-#include "../../UI/Common/DefaultName.h"
 #include "../../UI/Common/ExitCode.h"
 #include "../../UI/Common/Extract.h"
-#include "../../UI/Common/OpenArchive.h"
 
 #include "../../UI/Console/ExtractCallbackConsole.h"
 #include "../../UI/Console/List.h"
@@ -331,11 +321,6 @@ int Main2(
 
   bool yesToAll = parser[NKey::kYes].ThereIs;
 
-  #ifdef _WIN32
-  if (archiveName.Right(kDefaultExtLength).CompareNoCase(kDefaultExt) != 0)
-    archiveName += kDefaultExt;
-  #endif
-
   // NExtractMode::EEnum extractMode;
   // bool isExtractGroupCommand = command.IsFromExtractGroup(extractMode);
 
@@ -345,10 +330,7 @@ int Main2(
   if(passwordEnabled)
     password = parser[NKey::kPassword].PostStrings[0];
 
-  NFind::CFileInfoW archiveFileInfo;
-  if (!NFind::FindFile(arcPath, archiveFileInfo))
-    throw kCantFindSFX;
-  if (archiveFileInfo.IsDir())
+  if (!NFind::DoesFileExist(arcPath))
     throw kCantFindSFX;
   
   UString outputDir;
@@ -382,14 +364,21 @@ int Main2(
       CExtractCallbackConsole *ecs = new CExtractCallbackConsole;
       CMyComPtr<IFolderArchiveExtractCallback> extractCallback = ecs;
       ecs->OutStream = g_StdStream;
+
+      #ifndef _NO_CRYPTO
       ecs->PasswordIsDefined = passwordEnabled;
       ecs->Password = password;
+      #endif
+
       ecs->Init();
 
       COpenCallbackConsole openCallback;
       openCallback.OutStream = g_StdStream;
+
+      #ifndef _NO_CRYPTO
       openCallback.PasswordIsDefined = passwordEnabled;
       openCallback.Password = password;
+      #endif
 
       CExtractOptions eo;
       eo.StdOutMode = false;
@@ -431,11 +420,14 @@ int Main2(
       UInt64 numErrors = 0;
       HRESULT result = ListArchives(
           codecs, CIntVector(),
+          false,
           v1, v2,
           wildcardCensorHead,
           true, false,
-          passwordEnabled,
-          password, numErrors);
+          #ifndef _NO_CRYPTO
+          passwordEnabled, password,
+          #endif
+          numErrors);
       if (numErrors > 0)
       {
         g_StdOut << endl << "Errors: " << numErrors;

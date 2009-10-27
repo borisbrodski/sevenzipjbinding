@@ -2,7 +2,7 @@
 ; 7-Zip 4.30
 ; Translated by Lazar
 
-00000000="Serbian - Cyrilic"
+00000000="Serbian - Cyrillic"
 00000001="Српски - ћирилица"
 00000002="26-3"
 

@@ -3,7 +3,7 @@
 ; Translated by Soeren Finster
 ; 7-Zip 4.07 beta
 ; Updated by JAK-Software.DE
-; 7-Zip 4.55 beta
+; 7-Zip 4.62 beta
 ; Maintained by Joachim Henke (since 4.12 beta)
 
 00000000="German"
@@ -108,6 +108,15 @@
 02000226="Blöcke"
 02000227="Teilarchive"
 
+02000229="64 Bit"
+0200022A="Big-Endian"
+0200022B="CPU"
+0200022C="Gesamtgröße"
+0200022D="Header-Größe"
+0200022E="Prüfsumme"
+0200022F="Kenndaten"
+02000230="Virtuelle Adresse"
+
 ; Status bar
 02000301="{0} Objekt(e) markiert"
 02000302="{0} Objekt(e)"
@@ -138,6 +147,9 @@
 02000608="Es sind keine Fehler aufgetreten."
 02000609="Die Datei \"{0}\" kann nicht als Archiv geöffnet werden."
 0200060A="Das verschlüsselte Archiv \"{0}\" kann nicht geöffnet werden. Falsches Passwort?"
+0200060B="Das System kann die benötigte Speichermenge nicht bereit stellen."
+0200060C="Unbekannter Fehler"
+0200060D="Typ des Archives wird nicht unterstützt"
 
 ; Dialogs
 02000702="OK"
@@ -407,7 +419,7 @@
 03020205="Kopiere..."
 03020206="Verschiebe..."
 03020207="Verschieben und Kopieren ist für diesen Ordner nicht möglich."
-03020208="Die Operation wird nicht unterstützt."
+03020208="Die Operation wird für diesen Ordner nicht unterstützt."
 03020209="Zielordner auswählen"
 
 03020210="Löschen von Datei bestätigen"
@@ -418,6 +430,7 @@
 03020215="Sollen diese {0} Objekte wirklich gelöscht werden?"
 03020216="Lösche..."
 03020217="Fehler beim Löschen von Datei oder Ordner"
+03020218="Das System kann Dateien mit langem Pfad nicht in den Papierkorb verschieben."
 
 03020220="Umbenennen..."
 03020221="Fehler beim Umbenennen von Datei oder Ordner"
@@ -444,6 +457,7 @@
 03020281="Die Datei konnte nicht aktualisiert werden.\n\"{0}\""
 03020282="Kann Editor nicht starten"
 03020283="Öffne..."
+03020284="Die Datei scheint ein Virus zu sein (Dateiname enthält lange Reihen von Leerzeichen)."
 
 03020290="Kommentar"
 03020291="&Kommentar:"
@@ -452,6 +466,7 @@
 
 03020300="Arbeitsplatz"
 03020301="Netzwerk"
+03020302="Dokumente"
 
 03020400="Hinzufügen"
 03020401="Entpacken"
@@ -472,7 +487,9 @@
 03020600="Dateien zusammenfügen"
 03020601="Zieldatei &nach:"
 03020610="Zusammenfügen..."
-03020620="Bitte nur die erste Datei auswählen."
+03020620="Bitte nur den ersten Teil der Datei auswählen."
+03020621="Datei nicht als Teil einer aufgesplitteten Datei erkannt"
+03020622="Kann nicht mehr als eine Teildatei finden."
 
 03020710="Berechne Prüfsumme..."
 03020720="Prüfsummen-Information"
@@ -482,6 +499,11 @@
 03020800="Durchsuche..."
 
 03020900="Eigenschaften"
+
+03020A01="Die Operation kann nicht aus einem Ordner mit langem Pfad aufgerufen werden."
+03020A02="Bitte genau eine Datei auswählen."
+03020A03="Bitte mindestens eine Datei auswählen."
+03020A04="Die Datei {0} existiert bereits."
 
 ; Computer
 03031100="Gesamtgröße"

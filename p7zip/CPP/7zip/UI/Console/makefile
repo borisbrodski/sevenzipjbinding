@@ -79,6 +79,9 @@ UI_COMMON_OBJS = \
   UpdatePair.o \
   UpdateProduce.o \
 
+AR_COMMON_OBJS = \
+  OutStreamWithCRC.o \
+
 LZMA_BENCH_OBJS = \
   LzmaBench.o \
   LzmaBenchCon.o \
@@ -96,6 +99,7 @@ OBJS = \
   $(WIN_OBJS) \
   $(7ZIP_COMMON_OBJS) \
   $(UI_COMMON_OBJS) \
+  $(AR_COMMON_OBJS) \
   CopyCoder.o \
   $(LZMA_BENCH_OBJS) \
   $(C_OBJS) \

@@ -92,16 +92,16 @@ clean:
 	chmod +x install.sh check/check.sh check/clean_all.sh check/check_7zr.sh 
 	cd check                  ; ./clean_all.sh
 
-test: 7za
+test: 7za sfx
 	cd check ; ./check.sh ../bin/7za
 
-test_7z: 7z
+test_7z: 7z sfx
 	cd check ; ./check.sh ../bin/7z
 
-test_7zr: 7zr
+test_7zr: 7zr sfx
 	cd check ; ./check_7zr.sh ../bin/7zr
 
-test_7zG: 7zG
+test_7zG: 7zG sfx
 	cd check ; ./check.sh ../bin/7zG
 
 test_Client7z: Client7z

@@ -124,8 +124,11 @@ d) Now type to compile 7-Zip-JBinding
 	
 e) After make succeeds you can either run tests by typing
 	$ ctest
+	or
+	$ ctest -D Experimental
+	to submit test results to the dashboard (http://my.cdash.org/index.php?project=7-Zip-JBinding)
    
-   or build a binary package by typing
+f) You can build a binary package by typing
     $ make package
     
 

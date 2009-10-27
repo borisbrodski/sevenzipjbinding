@@ -29,7 +29,7 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
   *(UINT *)p = len;
   // "void *" instead of "BSTR" to avoid unaligned copy of "wchar_t" because of optimizer on Solaris
   void * bstr = (void *)((UINT *)p + 1);
-  memmove(bstr, psz, len); // psz does not always have "wchar_t" alignment.
+  if (psz) memmove(bstr, psz, len); // psz does not always have "wchar_t" alignment.
   void *pb = (void *)(((Byte *)bstr) + len);
   memset(pb,0,sizeof(wchar_t) + LEN_ADDON);
   return (BSTR)bstr;

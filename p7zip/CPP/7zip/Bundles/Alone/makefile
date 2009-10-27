@@ -53,6 +53,7 @@ WIN_OBJS = \
 
 7ZIP_COMMON_OBJS = \
   CreateCoder.o \
+  CWrappers.o \
   FilePathAutoRename.o \
   FileStreams.o \
   FilterCoder.o \
@@ -95,6 +96,11 @@ UI_COMMON_OBJS = \
   UpdateProduce.o \
 
 AR_OBJS = \
+  Bz2Handler.o \
+  GzHandler.o \
+  LzmaHandler.o \
+  SplitHandler.o \
+  XzHandler.o \
   ZHandler.o \
 
 AR_COMMON_OBJS = \
@@ -128,38 +134,12 @@ AR_COMMON_OBJS = \
   7zUpdate.o \
   7zRegister.o
 
-BZ2_OBJS = \
-  BZip2Handler.o \
-  BZip2HandlerOut.o \
-  BZip2Update.o \
-  bz2Register.o \
-
 CAB_OBJS = \
   CabBlockInStream.o \
   CabHandler.o \
   CabHeader.o \
   CabIn.o \
   CabRegister.o \
-
-GZ_OBJS = \
-  GZipHandler.o \
-  GZipHandlerOut.o \
-  GZipHeader.o \
-  GZipIn.o \
-  GZipOut.o \
-  GZipUpdate.o \
-  GZipRegister.o \
-
-LZM_OBJS = \
-  LzmaArcRegister.o \
-  LzmaFiltersDecode.o \
-  LzmaHandler.o \
-  LzmaIn.o \
-
-# SplitHandlerOut.o
-SPLIT_OBJS = \
-  SplitHandler.o \
-  SplitRegister.o
 
 TAR_OBJS = \
   TarHandler.o \
@@ -191,7 +171,6 @@ COMPRESS_OBJS = \
   BranchMisc.o \
   BranchRegister.o \
   ByteSwap.o \
-  ByteSwapRegister.o \
   BZip2Crc.o \
   BZip2Decoder.o \
   BZip2Encoder.o \
@@ -202,8 +181,12 @@ COMPRESS_OBJS = \
   DeflateDecoder.o \
   DeflateEncoder.o \
   DeflateRegister.o \
+  DeltaFilter.o \
   ImplodeDecoder.o \
   ImplodeHuffmanDecoder.o \
+  Lzma2Decoder.o \
+  Lzma2Encoder.o \
+  Lzma2Register.o \
   LzmaDecoder.o \
   LzmaEncoder.o \
   LzmaRegister.o \
@@ -235,19 +218,30 @@ CRYPTO_OBJS = \
 
 # Alloc.o
 C_OBJS = \
+  7zStream.o \
+  Aes.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
   BwtSort.o \
+  Delta.o \
   HuffEnc.o \
   LzFind.o \
   LzFindMt.o \
+  Lzma2Dec.o \
+  Lzma2Enc.o \
   LzmaDec.o \
   LzmaEnc.o \
+  MtCoder.o \
+  Sha256.o \
   Sort.o \
   Threads.o \
-  Aes.o \
-  Sha256.o
+  Xz.o \
+  XzCrc64.o \
+  XzDec.o \
+  XzEnc.o \
+  XzIn.o
+
 
 OBJS=\
 myGetTickCount.o \
@@ -262,11 +256,7 @@ mySplitCommandLine.o \
   $(AR_OBJS) \
   $(AR_COMMON_OBJS) \
   $(7Z_OBJS) \
-  $(BZ2_OBJS) \
   $(CAB_OBJS) \
-  $(GZ_OBJS) \
-  $(LZM_OBJS) \
-  $(SPLIT_OBJS) \
   $(TAR_OBJS) \
   $(ZIP_OBJS) \
   $(COMPRESS_OBJS) \

@@ -1,4 +1,4 @@
-	p7zip 4.65
+	p7zip 9.04
 	==========
 
 Homepage : http://p7zip.sourceforge.net/
@@ -122,7 +122,7 @@ BUILD :
 
    - PA-RISC :
 	HP-UX 11.11 with aCC (HP ANSI C++ B3910B A.03.73)
-	HP-UX 11.11 with gcc 3.4.2 (7za and 7zr : OK, 7z : Ko because of a buggy gcc for HP-UX,
+	HP-UX 11.11 with gcc 3.4.2 (7za and 7zr : OK, 7z : failed because of a buggy gcc for HP-UX,
                                     plugins don't work because C++ constructors are not called !)
 
 
@@ -196,7 +196,7 @@ USAGE:
   7za a -mhe=on -pmy_password archive.7z  dir1
 
   For more, see the documentation of 7za.exe in DOCS/MANUAL directory
-  7za a -t7z  -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on archive.7z  dir1 :
+  7za a -t7z  -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on archive.7z  dir1
       adds all files from directory "dir1" to archive archive.7z
       using "ultra settings".
       -t7z     : 7z archive
@@ -205,6 +205,10 @@ USAGE:
       -mfb=64  : number of fast bytes for LZMA = 64
       -md=32m  : dictionary size = 32 megabytes
       -ms=on   : solid archive = on
+
+  To use the new codec "lzma2"
+  7za a -m0=lzma2 archive.7z directory
+
 
 BENCHMARKS :
 ------------
@@ -228,6 +232,9 @@ LIMITATIONS for Unix version only :
   Remark  : see the possible values for LANG in the directory 
             - /usr/lib/locale   : Fedora 2 / Solaris 8
             - /usr/share/locale : OpenBSD / Debian / FreeBSD / MacOS X / Mandrake 10.1 / NetBSD
+
+	On Linux, to display the available locales : locale -a
+
   p7zip relies on LC_CTYPE and then on LANG to convert name to/from UNICODE.
   the command "locale" should display these environment variables.
   you can also do "echo $LC_CTYPE" and "echo $LANG".
@@ -251,7 +258,6 @@ DEVELOPPER CORNER:
   - sizeof(wchar_t) = 4 with GCC (2 with MS VC++)
   - "FIXME" in source code indicates that you should add codes to better handle all cases.
 
-  - "FIXED" in source code indicates that the original code has been
-    changed to work in Unix environment.
+  - "FIXED" in source code indicates that the original code has been changed to work in Unix environment.
 
   see also TODO file.

@@ -1,5 +1,5 @@
-﻿;!@Lang@!UTF-8!
-; 7-Zip 4.58
+;!@Lang@!UTF-8!
+; 7-Zip 4.59
 ; Translated by F@rhad
 ;
 ;
@@ -108,6 +108,15 @@
 02000226="Blok"
 02000227="Cild"
 
+02000229="64-bit"
+0200022A="Big-endian"
+0200022B="CPU"
+0200022C="Fiziki ölçü"
+0200022D="Başlıqların ölçüsü"
+0200022E="Checksum"
+0200022F="Xarakteristika"
+02000230="Xəyali ünvan"
+
 ; Status bar
 02000301="{0} ədəd seçildi"
 02000302="{0} ədəd"
@@ -138,6 +147,9 @@
 02000608="Xəta yoxdur."
 02000609="'{0}' arxiv kimi açıla bilmir"
 0200060A="Şifrlənmiş '{0}'arxivi açıla bilmir. Açar səhvdirmi?"
+0200060B="Sistem lazımi qədər yaddaşı işlədə bilmir"
+0200060C="Bilinməyən xəta baş verdi"
+0200060D="Arxiv tipi tanınmır"
 
 ; Dialogs
 02000702="Oldu"
@@ -418,6 +430,7 @@
 03020215="Bu {0} ədəd silinənlər geri qaytarılmayacaq, silinsin?"
 03020216="silinir..."
 03020217="Silmə xətası"
+03020218="Sistem uzun yola malik sənədi zibil qutusuna ata bilmir"
 
 03020220="yeni ad verilir..."
 03020221="Adlandırma xətası"
@@ -444,6 +457,7 @@
 03020281="'{0}' sənədi yenilənmədi"
 03020282="Mətn düzəltmə işə düşmədi."
 03020283="açılır..."
+03020284="Sənəd virusa bənzəyir (sənəd adında çıx sayda simvol işlədilir)."
 
 03020290="Şərh"
 03020291="Şərh:"
@@ -452,6 +466,7 @@
 
 03020300="EHM"
 03020301="Şəbəkə"
+03020302="Sənədlər"
 
 03020400="Arxivlə"
 03020401="Çıxar"
@@ -473,6 +488,8 @@
 03020601="Bu qovluqda birləşdir:"
 03020610="birləşdirilir..."
 03020620="Yalnız birinci sənədi seçin"
+03020621="Sənədi bölünmüş sənədin bir hissəsi kimi qəbul etmək olmur"
+03020622="Bölünmüş sənədin birdən çox parçası tapıla bilmir"
 
 03020710="Yoxlama cəmi hesablanır..."
 03020720="Yoxlama cəmi"
@@ -482,6 +499,11 @@
 03020800="Oxunur..."
 
 03020900="Xüsusiyyətlər"
+
+03020A01="Əməliyyat uzun yola malik qovluqdan işə salına bilmir."
+03020A02="Bir sənəd seçməlisiniz"
+03020A03="Bir və ya daha çox sənəd seçməlisiniz"
+03020A04="{0} sənədi mövcuddur"
 
 ; Computer
 03031100="Cəmi həcm"

@@ -10,6 +10,7 @@
 
 #define NEED_NAME_WINDOWS_TO_UNIX
 #include "myPrivate.h"
+#include "Windows/Synchronization.h"
 
 #include <unistd.h> // rmdir
 #include <errno.h>
@@ -803,24 +804,33 @@ bool MyGetTempPath(UString &path)
   return true;
 }
 
+static NSynchronization::CCriticalSection g_CountCriticalSection;
+
 UINT CTempFile::Create(LPCTSTR dirPath, LPCTSTR prefix, CSysString &resultPath)
 {
+  static int memo_count = 0;
+  int count;
+
+  g_CountCriticalSection.Enter();
+  count = memo_count++;
+  g_CountCriticalSection.Leave();
+
   Remove();
 /* UINT number = ::GetTempFileName(dirPath, prefix, 0, path.GetBuffer(MAX_PATH)); */
   UINT number = (UINT)getpid();
   TCHAR * buf = resultPath.GetBuffer(MAX_PATH);
 #ifdef _UNICODE
-  swprintf(buf,MAX_PATH,L"%s%s%d.tmp",dirPath,prefix,(int)number);
+  swprintf(buf,MAX_PATH,L"%s%s#%x@%x.tmp",dirPath,prefix,(unsigned)number,count);
 #else
-  snprintf(buf,MAX_PATH,"%s%s%d.tmp",dirPath,prefix,(int)number);
+  snprintf(buf,MAX_PATH,"%s%s#%x@%x.tmp",dirPath,prefix,(unsigned)number,count);
 #endif
+ 
   buf[MAX_PATH-1]=0;
   resultPath.ReleaseBuffer();
-  if(number != 0)
-  {
-    _fileName = resultPath;
-    _mustBeDeleted = true;
-  }
+  
+  _fileName = resultPath;
+  _mustBeDeleted = true;
+ 
   return number;
 }
 

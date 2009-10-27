@@ -74,8 +74,8 @@ SRCS=\
  ../../Compress/Bcj2Register.cpp \
  ../../Compress/BcjCoder.cpp \
  ../../Compress/BcjRegister.cpp \
- ../../Compress/CopyCoder.cpp \
- ../../Compress/CopyRegister.cpp \
+ ../../Compress/LzmaDecoder.cpp \
+ ../../Compress/LzmaRegister.cpp \
  ../../Compress/LzmaDecoder.cpp \
  ../../Compress/LzmaRegister.cpp \
  ../../Compress/PpmdDecoder.cpp \
@@ -86,11 +86,12 @@ SRCS=\
  ../../Crypto/MyAes.cpp \
 
 SRCS_C=\
- ../../../../C/Bra86.c \
- ../../../../C/LzmaDec.c \
- ../../../../C/Threads.c \
  ../../../../C/Aes.c \
- ../../../../C/Sha256.c
+ ../../../../C/Bra86.c \
+ ../../../../C/Lzma2Dec.c \
+ ../../../../C/LzmaDec.c \
+ ../../../../C/Sha256.c \
+ ../../../../C/Threads.c \
 
 include ../../../../makefile.rules
 

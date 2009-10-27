@@ -197,6 +197,10 @@
         <param name="Local" value="cmdline/switches/recurse.htm">
         </OBJECT>
       <LI> <OBJECT type="text/sitemap">
+        <param name="Name" value="-scc (Set charset for console input/output)">
+        <param name="Local" value="cmdline/switches/scc.htm">
+        </OBJECT>
+      <LI> <OBJECT type="text/sitemap">
         <param name="Name" value="-scs (Set charset for list files)">
         <param name="Local" value="cmdline/switches/charset.htm">
         </OBJECT>

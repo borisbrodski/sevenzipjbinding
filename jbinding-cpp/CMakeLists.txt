@@ -109,6 +109,18 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/LzmaDec.c
     ${_7ZIP_SRC}/C/LzmaEnc.c
     ${_7ZIP_SRC}/C/Bra.c
+
+    ${_7ZIP_SRC}/C/7zStream.c
+    ${_7ZIP_SRC}/C/Delta.c
+    ${_7ZIP_SRC}/C/Lzma2Dec.c
+    ${_7ZIP_SRC}/C/Lzma2Enc.c
+    ${_7ZIP_SRC}/C/MtCoder.c
+    ${_7ZIP_SRC}/C/Xz.c
+    ${_7ZIP_SRC}/C/XzCrc64.c
+    ${_7ZIP_SRC}/C/XzDec.c
+    ${_7ZIP_SRC}/C/XzEnc.c
+    ${_7ZIP_SRC}/C/XzIn.c
+    
     ${_7ZIP_SRC}/C/Bra86.c
     ${_7ZIP_SRC}/C/BraIA64.c
     ${_7ZIP_SRC}/C/HuffEnc.c
@@ -143,6 +155,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Common/InBuffer.cpp
     ${_7ZIP_SRC}/CPP/7zip/Common/OutBuffer.cpp
     ${_7ZIP_SRC}/CPP/7zip/Common/CreateCoder.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Common/CWrappers.cpp
     ${_7ZIP_SRC}/CPP/7zip/Common/FilePathAutoRename.cpp
     ${_7ZIP_SRC}/CPP/7zip/Common/FileStreams.cpp
     ${_7ZIP_SRC}/CPP/7zip/Common/FilterCoder.cpp
@@ -166,6 +179,11 @@ SET(P7ZIP_SOURCE_FILES
     # One DLL approach
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/SplitHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2MT.cpp
@@ -195,22 +213,13 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/7z/7zUpdate.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/7z/7zRegister.cpp
     
-    ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Handler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2HandlerOut.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Update.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/BZip2/bz2Register.cpp
-
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
 
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhCRC.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhHandler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhIn.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhOutStreamWithCRC.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/LzhHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
@@ -224,18 +233,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder2.cpp
 
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHandler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHeader.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioIn.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioRegister.cpp
-    
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandlerOut.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHeader.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipIn.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipOut.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipRegister.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipUpdate.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/CpioHandler.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsIn.cpp
@@ -245,11 +243,6 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoHeader.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoRegister.cpp
-
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaArcRegister.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaFiltersDecode.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaHandler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaIn.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisDecode.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisHandler.cpp
@@ -262,9 +255,6 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Rar/RarItem.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Rar/RarRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Rar/RarVolumeInStream.cpp
-    
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Split/SplitHandler.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Archive/Split/SplitRegister.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandlerOut.cpp
@@ -297,7 +287,6 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/BranchMisc.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/BranchRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ByteSwap.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Compress/ByteSwapRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/BZip2Crc.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/BZip2Decoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/BZip2Encoder.cpp
@@ -309,6 +298,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/DeltaFilter.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/Lzma2Decoder.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/Lzma2Encoder.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/Lzma2Register.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ImplodeDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ImplodeHuffmanDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LzmaDecoder.cpp
@@ -376,6 +369,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/Windows/Time.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Common/CreateCoder.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Common/CWrappers.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/FilePathAutoRename.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/FileStreams.cpp
     ${P7ZIP_SRC}/CPP/7zip/Common/FilterCoder.cpp
@@ -414,9 +408,14 @@ SET(P7ZIP_SOURCE_FILES
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
     #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
+    #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
     ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
-    #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/SplitHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2MT.cpp
@@ -446,22 +445,13 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/7z/7zUpdate.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/7z/7zRegister.cpp
     
-    ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Handler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2HandlerOut.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/BZip2Update.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/BZip2/bz2Register.cpp
-
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabBlockInStream.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabHeader.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Cab/CabRegister.cpp
 
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhCRC.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhIn.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhOutStreamWithCRC.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzh/LzhRegister.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/LzhHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
@@ -475,18 +465,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder2.cpp
 
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioHeader.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioIn.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Cpio/CpioRegister.cpp
-    
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHandlerOut.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipHeader.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipIn.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipOut.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipRegister.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/GZip/GZipUpdate.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/CpioHandler.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsIn.cpp
@@ -496,11 +475,6 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoHeader.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoRegister.cpp
-
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaArcRegister.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaFiltersDecode.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Lzma/LzmaIn.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisDecode.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisHandler.cpp
@@ -513,9 +487,6 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarItem.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarVolumeInStream.cpp
-    
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Split/SplitHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Split/SplitRegister.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandlerOut.cpp
@@ -548,7 +519,6 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/BranchMisc.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/BranchRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ByteSwap.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Compress/ByteSwapRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/BZip2Crc.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/BZip2Decoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/BZip2Encoder.cpp
@@ -560,6 +530,10 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/DeltaFilter.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/Lzma2Decoder.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/Lzma2Encoder.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/Lzma2Register.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ImplodeDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ImplodeHuffmanDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LzmaDecoder.cpp
@@ -607,6 +581,17 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/C/Aes.c
     ${P7ZIP_SRC}/C/Sha256.c
     ${P7ZIP_SRC}/C/7zCrc.c
+
+    ${P7ZIP_SRC}/C/7zStream.c
+    ${P7ZIP_SRC}/C/Delta.c
+    ${P7ZIP_SRC}/C/Lzma2Dec.c
+    ${P7ZIP_SRC}/C/Lzma2Enc.c
+    ${P7ZIP_SRC}/C/MtCoder.c
+    ${P7ZIP_SRC}/C/Xz.c
+    ${P7ZIP_SRC}/C/XzCrc64.c
+    ${P7ZIP_SRC}/C/XzDec.c
+    ${P7ZIP_SRC}/C/XzEnc.c
+    ${P7ZIP_SRC}/C/XzIn.c
 )
 ENDIF(USE_MINGW)
 

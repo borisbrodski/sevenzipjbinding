@@ -81,10 +81,21 @@ struct CTempFileInfo
   UString FolderPath;
   UString FilePath;
   NWindows::NFile::NFind::CFileInfoW FileInfo;
-  void DeleteDirAndFile()
+  bool NeedDelete;
+
+  CTempFileInfo(): NeedDelete(false) {}
+  void DeleteDirAndFile() const
   {
-    NWindows::NFile::NDirectory::DeleteFileAlways(FilePath);
-    NWindows::NFile::NDirectory::MyRemoveDirectory(FolderPath);
+    if (NeedDelete)
+    {
+      NWindows::NFile::NDirectory::DeleteFileAlways(FilePath);
+      NWindows::NFile::NDirectory::MyRemoveDirectory(FolderPath);
+    }
+  }
+  bool WasChanged(const NWindows::NFile::NFind::CFileInfoW &newFileInfo) const
+  {
+    return newFileInfo.Size != FileInfo.Size ||
+        CompareFileTime(&newFileInfo.MTime, &FileInfo.MTime) != 0;
   }
 };
 
@@ -94,9 +105,16 @@ struct CFolderLink: public CTempFileInfo
   CMyComPtr<IFolderFolder> ParentFolder;
   bool UsePassword;
   UString Password;
+  bool IsVirtual;
 
   UString VirtualPath;
-  CFolderLink(): UsePassword(false) {}
+  CFolderLink(): UsePassword(false), IsVirtual(false) {}
+
+  bool WasChanged(const NWindows::NFile::NFind::CFileInfoW &newFileInfo) const
+  {
+    return IsVirtual || CTempFileInfo::WasChanged(newFileInfo);
+  }
+
 };
 
 enum MyMessages
@@ -269,6 +287,8 @@ public:
   int _xSize; 
 
   bool _flatMode;
+  bool _flatModeForDisk;
+  bool _flatModeForArc;
 
   bool _dontShowMode;
 
@@ -334,6 +354,8 @@ public:
       _selectionIsDefined(false),
       _ListViewMode(3),
       _flatMode(false),
+      _flatModeForDisk(false),
+      _flatModeForArc(false),
       _xSize(300),
       _mySelectMode(false),
       _enableItemChangeNotify(true),
@@ -481,12 +503,11 @@ public:
 
   void OpenFolder(int index);
   HRESULT OpenParentArchiveFolder();
-  HRESULT OpenItemAsArchive(const UString &name,
-      const UString &folderPath,
-      const UString &filePath,
+  HRESULT OpenItemAsArchive(IInStream *inStream,
+      const CTempFileInfo &tempFileInfo,
       const UString &virtualFilePath,
       bool &encrypted);
-  HRESULT OpenItemAsArchive(const UString &aName);
+  HRESULT OpenItemAsArchive(const UString &name, bool &encrypted);
   HRESULT OpenItemAsArchive(int index);
   void OpenItemInArchive(int index, bool tryInternal, bool tryExternal,
       bool editMode);

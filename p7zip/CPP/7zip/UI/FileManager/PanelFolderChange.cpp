@@ -4,18 +4,20 @@
 
 #include "Common/StringConvert.h"
 #include "Common/Wildcard.h"
-#include "Windows/FileDir.h"
+
+#include "Windows/PropVariant.h"
 
 #include "../../PropID.h"
 
-#include "Panel.h"
-#include "ListViewDialog.h"
-#include "RootFolder.h"
-#include "ViewSettings.h"
 #ifdef _WIN32
 #include "FSDrives.h"
 #endif
 #include "LangUtils.h"
+#include "ListViewDialog.h"
+#include "Panel.h"
+#include "RootFolder.h"
+#include "ViewSettings.h"
+
 #include "resource.h"
 
 using namespace NWindows;
@@ -73,9 +75,9 @@ HRESULT CPanel::BindToPath(const UString &fullPath, bool &archiveIsOpened, bool 
   UString sysPath = fullPath;
   CFileInfoW fileInfo;
   UStringVector reducedParts;
-  while(!sysPath.IsEmpty())
+  while (!sysPath.IsEmpty())
   {
-    if (FindFile(sysPath, fileInfo))
+    if (fileInfo.Find(sysPath))
       break;
     int pos = sysPath.ReverseFind(WCHAR_PATH_SEPARATOR);
     if (pos < 0)
@@ -112,11 +114,7 @@ HRESULT CPanel::BindToPath(const UString &fullPath, bool &archiveIsOpened, bool 
       UString fileName;
       if (NDirectory::GetOnlyName(sysPath, fileName))
       {
-        HRESULT res =
-          OpenItemAsArchive(fileName, _currentFolderPrefix,
-            _currentFolderPrefix + fileName,
-            _currentFolderPrefix + fileName,
-            encrypted);
+        HRESULT res = OpenItemAsArchive(fileName, encrypted);
         if (res != S_FALSE)
         {
           RINOK(res);
@@ -204,12 +202,18 @@ void CPanel::LoadFullPathAndShow()
   item.mask = 0;
 
   UString path = _currentFolderPrefix;
-  if (path.Length() > 3 && path[path.Length() - 1] == WCHAR_PATH_SEPARATOR)
+  if (path.Length() >
+      #ifdef _WIN32
+      3
+      #else
+      1
+      #endif
+      && path[path.Length() - 1] == WCHAR_PATH_SEPARATOR)
     path.Delete(path.Length() - 1);
 
   CFileInfoW info;
   DWORD attrib = FILE_ATTRIBUTE_DIRECTORY;
-  if (NFile::NFind::FindFile(path, info))
+  if (info.Find(path))
     attrib = info.Attrib;
   
   item.iImage = GetRealIconIndex(path, attrib);
@@ -341,12 +345,12 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
         sumPass += name;
         UString curName = sumPass;
         if (i == 0)
-          curName += WSTRING_PATH_SEPARATOR;
+          curName += WCHAR_PATH_SEPARATOR;
         CFileInfoW info;
         DWORD attrib = FILE_ATTRIBUTE_DIRECTORY;
-        if (NFile::NFind::FindFile(sumPass, info))
+        if (info.Find(sumPass))
           attrib = info.Attrib;
-        sumPass += WSTRING_PATH_SEPARATOR;
+        sumPass += WCHAR_PATH_SEPARATOR;
         AddComboBoxItem(name, GetRealIconIndex(curName, attrib), i, false);
         ComboBoxPaths.Add(sumPass);
       }
@@ -364,7 +368,7 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
         UString s = driveStrings[i];
         ComboBoxPaths.Add(s);
         int iconIndex = GetRealIconIndex(s, 0);
-        if (s.Length() > 0 && s[s.Length() - 1] == CHAR_PATH_SEPARATOR)
+        if (s.Length() > 0 && s[s.Length() - 1] == WCHAR_PATH_SEPARATOR)
           s.Delete(s.Length() - 1);
         AddComboBoxItem(s, iconIndex, 1, false);
       }
@@ -503,9 +507,11 @@ printf("CPanel::OpenParentFolder\n");
       _folder = link.ParentFolder;
       _library.Attach(link.Library.Detach());
       focucedName = link.ItemName;
-      if (_parentFolders.Size () > 1)
+      if (_parentFolders.Size() > 1)
         OpenParentArchiveFolder();
       _parentFolders.DeleteBack();
+      if (_parentFolders.IsEmpty())
+        _flatMode = _flatModeForDisk;
     }
   }
 
@@ -525,16 +531,17 @@ printf("CPanel::OpenParentFolder\n");
 
 void CPanel::CloseOpenFolders()
 {
-  while(_parentFolders.Size() > 0)
+  while (_parentFolders.Size() > 0)
   {
     _folder.Release();
     _library.Free();
     _folder = _parentFolders.Back().ParentFolder;
     _library.Attach(_parentFolders.Back().Library.Detach());
-    if (_parentFolders.Size () > 1)
+    if (_parentFolders.Size() > 1)
       OpenParentArchiveFolder();
     _parentFolders.DeleteBack();
   }
+  _flatMode = _flatModeForDisk;
   _folder.Release();
   _library.Free();
 }

@@ -41,6 +41,7 @@ WIN_OBJS = \
   InBuffer.o \
   InOutTempBuffer.o \
   CreateCoder.o \
+  CWrappers.o \
   FilterCoder.o \
   LimitedStreams.o \
   LockedStream.o \
@@ -61,14 +62,25 @@ AR_OBJS = \
   ArchiveExports.o \
   DllExports2.o \
   ArjHandler.o \
+  Bz2Handler.o \
+  CpioHandler.o \
   DebHandler.o \
   DmgHandler.o \
   ElfHandler.o \
+  FatHandler.o \
+  GzHandler.o \
+  LzhHandler.o \
+  LzmaHandler.o \
   MachoHandler.o \
+  MbrHandler.o \
   MubHandler.o \
+  NtfsHandler.o \
   PeHandler.o \
   RpmHandler.o \
+  SplitHandler.o \
+  VhdHandler.o \
   XarHandler.o \
+  XzHandler.o \
   ZHandler.o \
 
 AR_COMMON_OBJS = \
@@ -103,12 +115,6 @@ AR_COMMON_OBJS = \
   7zUpdate.o \
   7zRegister.o \
 
-BZ2_OBJS = \
-  BZip2Handler.o \
-  BZip2HandlerOut.o \
-  BZip2Update.o \
-  bz2Register.o \
-
 CAB_OBJS = \
   CabBlockInStream.o \
   CabHandler.o \
@@ -127,21 +133,6 @@ COM_OBJS = \
   ComIn.o \
   ComRegister.o \
 
-CPIO_OBJS = \
-  CpioHandler.o \
-  CpioHeader.o \
-  CpioIn.o \
-  CpioRegister.o \
-
-GZ_OBJS = \
-  GZipHandler.o \
-  GZipHandlerOut.o \
-  GZipHeader.o \
-  GZipIn.o \
-  GZipOut.o \
-  GZipUpdate.o \
-  GZipRegister.o \
-
 HFS_OBJS = \
   HfsHandler.o \
   HfsIn.o \
@@ -152,19 +143,6 @@ ISO_OBJS = \
   IsoHeader.o \
   IsoIn.o \
   IsoRegister.o \
-
-LZH_OBJS = \
-  LzhCRC.o \
-  LzhHandler.o \
-  LzhIn.o \
-  LzhOutStreamWithCRC.o \
-  LzhRegister.o \
-
-LZM_OBJS = \
-  LzmaArcRegister.o \
-  LzmaFiltersDecode.o \
-  LzmaHandler.o \
-  LzmaIn.o \
 
 NSIS_OBJS = \
   NsisDecode.o \
@@ -179,11 +157,6 @@ RAR_OBJS = \
   RarItem.o \
   RarVolumeInStream.o \
   RarRegister.o \
-
-# SplitHandlerOut.o
-SPLIT_OBJS = \
-  SplitHandler.o \
-  SplitRegister.o \
 
 TAR_OBJS = \
   TarHandler.o \
@@ -228,7 +201,6 @@ COMPRESS_OBJS = \
   BranchMisc.o \
   BranchRegister.o \
   ByteSwap.o \
-  ByteSwapRegister.o \
   BZip2Crc.o \
   BZip2Decoder.o \
   BZip2Encoder.o \
@@ -240,6 +212,10 @@ COMPRESS_OBJS = \
   DeflateEncoder.o \
   DeflateNsisRegister.o \
   DeflateRegister.o \
+  DeltaFilter.o \
+  Lzma2Decoder.o \
+  Lzma2Encoder.o \
+  Lzma2Register.o \
   ImplodeDecoder.o \
   ImplodeHuffmanDecoder.o \
   LzhDecoder.o \
@@ -281,19 +257,31 @@ CRYPTO_OBJS = \
 
 # Alloc.o
 C_OBJS = \
+  7zBuf2.o \
+  7zStream.o \
+  Aes.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
   BwtSort.o \
+  Delta.o \
   HuffEnc.o \
   LzFind.o \
   LzFindMt.o \
+  Lzma2Dec.o \
+  Lzma2Enc.o \
   LzmaDec.o \
   LzmaEnc.o \
+  MtCoder.o \
+  Sha256.o \
   Sort.o \
   Threads.o \
-  Aes.o \
-  Sha256.o \
+  Xz.o \
+  XzCrc64.o \
+  XzDec.o \
+  XzEnc.o \
+  XzIn.o \
+
 
 OBJS = \
   wine_date_and_time.o \
@@ -304,19 +292,13 @@ OBJS = \
   $(AR_OBJS) \
   $(AR_COMMON_OBJS) \
   $(7Z_OBJS) \
-  $(BZ2_OBJS) \
   $(CAB_OBJS) \
   $(CHM_OBJS) \
   $(COM_OBJS) \
-  $(CPIO_OBJS) \
-  $(GZ_OBJS) \
   $(HFS_OBJS) \
   $(ISO_OBJS) \
-  $(LZH_OBJS) \
-  $(LZM_OBJS) \
   $(NSIS_OBJS) \
   $(RAR_OBJS) \
-  $(SPLIT_OBJS) \
   $(TAR_OBJS) \
   $(UDF_OBJS) \
   $(WIM_OBJS) \

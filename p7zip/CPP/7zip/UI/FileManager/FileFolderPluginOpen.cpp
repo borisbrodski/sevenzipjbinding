@@ -2,24 +2,47 @@
 
 #include "StdAfx.h"
 
-#include "Common/StringConvert.h"
-#include "Windows/Defs.h"
-#include "Windows/FileDir.h"
-#include "Windows/FileName.h"
-#include "Windows/DLL.h"
+#include "resource.h"
 
-#include "IFolder.h"
-#include "RegistryAssociations.h"
-#include "RegistryPlugins.h"
+#include "Windows/Thread.h"
 
+#include "../Agent/Agent.h"
+
+#include "LangUtils.h"
 #include "OpenCallback.h"
 #include "PluginLoader.h"
-#include "../Agent/Agent.h"
+#include "RegistryAssociations.h"
+#include "RegistryPlugins.h"
 
 using namespace NWindows;
 using namespace NRegistryAssociations;
 
-static int FindPlugin(const CObjectVector<CPluginInfo> &plugins, 
+struct CThreadArchiveOpen
+{
+  UString Path;
+  CMyComPtr<IInStream> InStream;
+  CMyComPtr<IFolderManager> FolderManager;
+  CMyComPtr<IProgress> OpenCallback;
+  COpenArchiveCallback *OpenCallbackSpec;
+
+  CMyComPtr<IFolderFolder> Folder;
+  HRESULT Result;
+
+  void Process()
+  {
+    OpenCallbackSpec->ProgressDialog.WaitCreating();
+    Result = FolderManager->OpenFolderFile(InStream, Path, &Folder, OpenCallback);
+    OpenCallbackSpec->ProgressDialog.MyClose();
+  }
+  
+  static THREAD_FUNC_DECL MyThreadFunction(void *param)
+  {
+    ((CThreadArchiveOpen *)param)->Process();
+    return 0;
+  }
+};
+
+static int FindPlugin(const CObjectVector<CPluginInfo> &plugins,
     const UString &pluginName)
 {
   for (int i = 0; i < plugins.Size(); i++)
@@ -29,25 +52,19 @@ static int FindPlugin(const CObjectVector<CPluginInfo> &plugins,
 }
 
 HRESULT OpenFileFolderPlugin(
-    const UString &path, 
+    IInStream *inStream,
+    const UString &path,
     HMODULE *module,
-    IFolderFolder **resultFolder, 
-    HWND parentWindow, 
+    IFolderFolder **resultFolder,
+    HWND parentWindow,
     bool &encrypted, UString &password)
 {
-  encrypted = false;
 #ifdef _WIN32
   CObjectVector<CPluginInfo> plugins;
   ReadFileFolderPluginInfoList(plugins);
 #endif
 
-  UString extension;
-  UString name, pureName, dot;
-
-  if(!NFile::NDirectory::GetOnlyName(path, name))
-    return E_FAIL;
-  NFile::NName::SplitNameToPureNameAndExtension(name, pureName, dot, extension);
-
+  UString extension, name, pureName, dot;
 
   int slashPos = path.ReverseFind(WCHAR_PATH_SEPARATOR);
   UString dirPrefix;
@@ -59,6 +76,8 @@ HRESULT OpenFileFolderPlugin(
   }
   else
     fileName = path;
+
+  NFile::NName::SplitNameToPureNameAndExtension(fileName, pureName, dot, extension);
 
 #ifdef _WIN32
   if (!extension.IsEmpty())
@@ -86,38 +105,60 @@ HRESULT OpenFileFolderPlugin(
       continue;
 #endif // #ifdef _WIN32
     CPluginLibrary library;
-    CMyComPtr<IFolderManager> folderManager;
-    CMyComPtr<IFolderFolder> folder;
+
+    CThreadArchiveOpen t;
+
 #ifdef _WIN32
     if (plugin.FilePath.IsEmpty())
-      folderManager = new CArchiveFolderManager;
-    else if (library.LoadAndCreateManager(plugin.FilePath, plugin.ClassID, &folderManager) != S_OK)
+      t.FolderManager = new CArchiveFolderManager;
+    else if (library.LoadAndCreateManager(plugin.FilePath, plugin.ClassID, &t.FolderManager) != S_OK)
       continue;
 #else
-      folderManager = new CArchiveFolderManager;
-#endif // #ifdef _WIN32
+      t.FolderManager = new CArchiveFolderManager;
+#endif
 
-    COpenArchiveCallback *openCallbackSpec = new COpenArchiveCallback;
-    CMyComPtr<IProgress> openCallback = openCallbackSpec;
-    openCallbackSpec->PasswordIsDefined = false;
-    openCallbackSpec->ParentWindow = parentWindow;
-    openCallbackSpec->LoadFileInfo(dirPrefix, fileName);
-    HRESULT result = folderManager->OpenFolderFile(path, &folder, openCallback);
-    if (openCallbackSpec->PasswordWasAsked)
-      encrypted = true;
-    if (result == S_OK)
+    t.OpenCallbackSpec = new COpenArchiveCallback;
+    t.OpenCallback = t.OpenCallbackSpec;
+    t.OpenCallbackSpec->PasswordIsDefined = encrypted;
+    t.OpenCallbackSpec->Password = password;
+    t.OpenCallbackSpec->ParentWindow = parentWindow;
+
+    if (inStream)
+      t.OpenCallbackSpec->SetSubArchiveName(fileName);
+    else
+      t.OpenCallbackSpec->LoadFileInfo(dirPrefix, fileName);
+
+    t.InStream = inStream;
+    t.Path = path;
+
+    UString progressTitle = LangString(IDS_OPENNING, 0x03020283);
+    t.OpenCallbackSpec->ProgressDialog.MainWindow = parentWindow;
+    t.OpenCallbackSpec->ProgressDialog.MainTitle = LangString(IDS_APP_TITLE, 0x03000000);
+    t.OpenCallbackSpec->ProgressDialog.MainAddTitle = progressTitle + UString(L" ");
+
+    NWindows::CThread thread;
+    if (thread.Create(CThreadArchiveOpen::MyThreadFunction, &t) != S_OK)
+      throw 271824;
+    t.OpenCallbackSpec->StartProgressDialog(progressTitle);
+
+    if (t.Result == E_ABORT)
+      return t.Result;
+
+    if (t.Result == S_OK)
     {
+      // if (openCallbackSpec->PasswordWasAsked)
+      {
+        encrypted = t.OpenCallbackSpec->PasswordIsDefined;
+        password = t.OpenCallbackSpec->Password;
+      }
       *module = library.Detach();
-      *resultFolder = folder.Detach();
+      *resultFolder = t.Folder.Detach();
       return S_OK;
     }
+    
+    if (t.Result != S_FALSE)
+      return t.Result;
 #ifdef _WIN32
-    continue;
-
-    /*
-    if (result != S_FALSE)
-      return result;
-    */
   }
 #endif
   return S_FALSE;

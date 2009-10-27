@@ -1,8 +1,8 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.60 beta
+; 7-Zip 4.62
 ; Diterjemahkan oleh Frans Liando
 ;
-; Sumber: http://nlp.aia.bppt.go.id/glosti/
+; Sumber: http://ikc.dinus.ac.id/bukuputih/istilah-ti-indonesia.txt
 ;
 ;
 
@@ -16,8 +16,8 @@
 01000000="Konfigurasi 7-Zip"
 
 ; Info Page
-01000100="Tentang 7-Zip"
-01000103="7-Zip adalah perangkat lunak gratis. Bagaimanapun, Anda bisa mendukung pengembangan dari 7-Zip dengan mendaftar.\n\nTerjemahan bahasa Indonesia oleh Frans Liando."
+01000100="Mengenai 7-Zip"
+01000103="7-Zip merupakan perangkat lunak gratis. Bagaimanapun, Anda bisa mendukung pengembangan dari 7-Zip dengan melakukan pendaftaran.\n\nTerjemahan bahasa Indonesia oleh Frans Liando."
 01000104="Dukung"
 01000105="Daftar"
 
@@ -33,7 +33,7 @@
 
 ; System Page
 01000300="Sistem"
-01000301="Integrasi 7-Zip ke cangkang menu konteks"
+01000301="Integrasikan 7-Zip ke cangkang menu konteks"
 01000302="Menu konteks kaskade"
 01000310="Butir-butir pada menu konteks:"
 
@@ -112,7 +112,7 @@
 0200022A="Big-endian"
 0200022B="CPU"
 0200022C="Ukuran Fisik"
-0200022D="Ukuran Kepala"
+0200022D="Ukuran Tajuk"
 0200022E="Ceksum"
 0200022F="Karakteristik"
 02000230="Alamat Maya"
@@ -124,7 +124,7 @@
 02000320="Berkas:"
 02000321="Pelipat:"
 02000322="Ukuran:"
-02000323="Ukuran termampatkan:"
+02000323="Ukuran terkompres:"
 02000324="Arsip:"
 
 ; List Context Menu
@@ -137,7 +137,7 @@
 02000501="Ekstrak"
 
 ; Messages
-02000601="Operasi pembaruan tak didukung untuk arsip ini."
+02000601="Operasi pembaruan tidaklah didukung untuk arsip ini."
 02000602="Tak bisa memperbarui arsip {0}"
 02000603="Tak bisa membuat pelipat '{0}'"
 02000604="Berkas arsip tak didukung."
@@ -146,7 +146,7 @@
 02000607="Tak ada aplikasi yang diasosiasikan dengan ekstensi dari nama berkas yang diberikan"
 02000608="Tidak ada kesalahan"
 02000609="Tak bisa membuka berkas arsip '{0}'"
-0200060A="Tak bisa membuka arsip terenkripsi '{0}'. Kata sandi salah?"
+0200060A="Tak bisa membuka arsip terenkripsi '{0}'. Salah kata sandi?"
 0200060B="Sistem tak bisa mengalokasikan jumlah memori yang diperlukan"
 0200060C="Kesalahan tak dikenal"
 0200060D="Tipe arsip tak didukung"
@@ -195,7 +195,7 @@
 02000900="Konfirmasi Penggantian Berkas"
 02000901="Pelipat tujuan telah berisi berkas yang terproses."
 02000902="Maukah Anda mengganti berkas yang ada"
-02000903="dengan yang ini?"
+02000903="dengan yang satu ini?"
 
 02000911="Nama Ulang Automatis"
 
@@ -210,13 +210,13 @@
 02000A91="Metode kompresi untuk '{0}' tak didukung."
 02000A92="Kesalahan data di '{0}'. Berkas ini rusak."
 02000A93="CRC gagal di '{0}'. Berkas ini rusak."
-02000A94="Kesalahan data di berkas terenkripsi '{0}'. Kata sandi salah?"
-02000A95="CRC gagal di berkas terenkripsi '{0}'. Kata sandi salah?"
+02000A94="Kesalahan data di berkas terenkripsi '{0}'. Salah kata sandi?"
+02000A95="CRC gagal di berkas terenkripsi '{0}'. Salah kata sandi?"
 
 ; Password dialog
 02000B00="Masukkan kata sandi"
 02000B01="Masukkan kata sandi:"
-02000B02="Perlihatkan kata sandi"
+02000B02="&Perlihatkan kata sandi"
 02000B03="Konfirmasi kata sandi:"
 02000B10="Kata sandi tidak cocok"
 02000B11="Gunakanlah hanya huruf Indonesia, nomor dan karakter khusus (!, #, $, ...) untuk kata sandi"
@@ -243,18 +243,18 @@
 ; Compress dialog
 02000D00="Tambahkan ke arsip"
 02000D01="&Arsip:"
-02000D02="&Mode pembaruan:"
+02000D02="Mode pembar&uan:"
 02000D03="&Format arsip:"
 02000D04="&Metode kompresi:"
 02000D05="Buat ar&sip padat"
 02000D06="&Parameter:"
 02000D07="Pilihan"
 02000D08="Buat arsip SF&X"
-02000D09="Multirangkaian"
+02000D09="Multi-rangkaian"
 02000D0A="Enkripsi &nama berkas"
 02000D0B="&Level kompresi:"
-02000D0C="Ukuran kam&us:"
-02000D0D="Ukuran &kata:"
+02000D0C="Ukuran &kamus:"
+02000D0D="Ukuran ka&ta:"
 02000D0E="Pemakaian memori untuk Pemampatan:"
 02000D0F="Pemakaian memori untuk Pengawamampatan:"
 02000D10="Enkripsi"
@@ -263,7 +263,7 @@
 02000D13="Ukuran blok padat:"
 02000D14="Non-padat"
 02000D15="Padat"
-02000D16="Mampatkan berkas bersama"
+02000D16="Kompres berkas bersama"
 
 02000D40="Belah ke &volume, bita:"
 02000D41="Ukuran volume salah"
@@ -280,7 +280,7 @@
 
 02000DA1="Tambah dan ganti berkas"
 02000DA2="Perbarui dan tambah berkas"
-02000DA3="Perbaharui berkas yang ada"
+02000DA3="Segarkan ulang berkas yang ada"
 02000DA4="Sinkronisasikan berkas"
 
 02000DB1="Semua Berkas"
@@ -289,7 +289,7 @@
 
 ; Columns dialog
 02000E00="Kolom"
-02000E01="Cek kolom yang Anda ingin tampakkan pada pelipat ini. Gunakan tombol Atas dan Bawah untuk memesan kolom."
+02000E01="Cek kolom yang ingin ditampakkan pada pelipat ini. Gunakan tombol Pindah ke Atas dan Pindah ke Bawah untuk mengurutkan kolom."
 02000E02="Kolom yang terpilih harus"
 02000E03="ber-piksel &lebar."
 
@@ -314,7 +314,7 @@
 03000102="&Berkas"
 03000103="&Sunting"
 03000104="&Pandangan"
-03000105="Perala&tan"
+03000105="P&eralatan"
 03000106="Ban&tuan"
 03000107="&Kesukaan"
 
@@ -329,13 +329,13 @@
 03000232="P&indahkan Ke..."
 03000233="&Hapus"
 03000240="P&roperti"
-03000241="Kome&ntar"
+03000241="K&omentar"
 03000242="Hitung Ceksum"
 03000250="Buat Pelipat"
 03000251="Buat Berkas"
 03000260="&Keluar"
 03000270="Be&lah Berkas..."
-03000271="Gab&ung Berkas..."
+03000271="Gabun&g Berkas..."
 
 ; Edit
 03000310="&Ulangi"
@@ -344,7 +344,7 @@
 03000321="S&alin"
 03000322="Tem&pel"
 03000323="&Hapus"
-03000330="Pilih Semu&a"
+03000330="Pi&lih Semua"
 03000331="Tak Memilih Semua"
 03000332="Pilih Kebal&ikannya"
 03000333="Pilih..."
@@ -376,7 +376,7 @@
 
 ; Help
 03000610="Petun&juk..."
-03000620="Tent&ang 7-Zip..."
+03000620="Mengen&ai 7-Zip..."
 
 ; Favorites
 03000710="Tambahkan pelipat ke Kesukaan sebagai"
@@ -402,7 +402,7 @@
 
 ; Settings
 03010400="Setelan"
-03010401="Perlihatkan \"..\" butir"
+03010401="Perlihatkan butir \"..\""
 03010402="Perlihatkan ikon asli berkas"
 03010410="Perlihatkan menu sistem"
 03010420="&Memilih baris penuh"

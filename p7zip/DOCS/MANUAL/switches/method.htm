@@ -21,7 +21,15 @@
 
 <P>The format for this switch depends on the archive type.</P>
 
-<H4>Zip</H4>
+<UL>
+<LI><TD><A class="parameter" href="#Zip">Zip</A></TD> 
+<LI><TD><A class="parameter" href="#GZ">GZip</A></TD> 
+<LI><TD><A class="parameter" href="#BZ2">BZip2</A></TD> 
+<LI><TD><A class="parameter" href="#7Z">7z</A></TD> 
+<LI><TD><A class="parameter" href="#XZ">XZ</A></TD> 
+</UL>
+
+<H2><A name="Zip"></A>Zip</H2>
 <TABLE>
   <TR> 
     <TH width="160">Parameter</TH> 
@@ -126,10 +134,10 @@ only for file names that contain symbols unsupported by local code page.</P>
   </DD>
 </DL>
 
-<H4>GZip</H4>
+<H2><A name="GZ"></A>GZip</H2>
 GZip uses the same parameters as Zip, but GZip compresses only with Deflate method.
 
-<H4>BZip2</H4>
+<H2><A name="BZ2"></A>BZip2</H2>
 <TABLE>
   <TR> 
     <TH width="160">Parameter</TH> 
@@ -176,7 +184,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
   </DD>
 </DL>
 
-<H4>7z</H4>
+<H2><A name="7Z"></A>7z</H2>
 <TABLE>
   <TR> <TH width="80">Parameter</TH> <TH align="center">Default</TH> <TH>Description</TH> </TR>
   <TR> <TD><A class="parameter" href="#SevenZipX">x=[0 | 1 | 3 | 5 | 7 | 9 ]</A></TD> 
@@ -192,7 +200,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
   <TR> <TD><A class="parameter" href="#Bind">b{C1}[s{S1}]:{C2}[s{S2}]</A></TD> 
        <TD align="center"> </TD>  <TD>Sets binding beetwen coders.</TD> </TR>
   <TR> <TD><A class="parameter" href="#MethodID">{N}={MethodID}[:param1][:param2][..]</A></TD> 
-       <TD align="center">LZMA</TD>  <TD>Sets a method: LZMA, PPMd, BZip2, Deflate, BCJ, BCJ2, Copy.</TD> </TR>
+       <TD align="center">LZMA</TD>  <TD>Sets a method: LZMA, LZMA2, PPMd, BZip2, Deflate, Delta, BCJ, BCJ2, Copy.</TD> </TR>
    <TR> <TD><A class="parameter" href="#MultiThread">mt=[off | on | {N}]</A></TD> 
         <TD align="center">on</TD>  <TD>Sets multithreading mode.</TD> </TR>
    <TR> <TD><A class="parameter">tc=[off | on]</A></TD> 
@@ -245,8 +253,8 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
       <LI>Decreases extraction time of a group of files (or just one
      file), so long as the group doesn't contain the entire archive.</LI></LI>
     </UL>
-    <P>The current version of 7-Zip doesn't support updating of solid
-    archives, if it requires repacking solid blocks.</P>
+    <P>The updating of solid .7z archives can be slow, since it 
+	can require some recompression.</P>
 
     <P>Example:</P>
       <PRE class="example">
@@ -293,7 +301,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
   <DD>
     <P>Sets multithread mode. If you have a multiprocessor or multicore system, 
        you can get a increase with this switch.
-       7-Zip supports multithread mode only for LZMA compression and 
+       7-Zip supports multithread mode only for LZMA / LZMA2 compression and 
        BZip2 compression / decompression. If you specify {N}, for example mt=4, 
        7-Zip tries to use 4 threads. LZMA compression uses only 2 threads.
     </P>
@@ -313,7 +321,8 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
     <P>Supported methods:</P>
     <TABLE>
       <TR> <TH width="60">MethodID</TH> <TH>Description</TH> </TR>
-      <TR> <TD><A class="parameter" href="#LZMA">LZMA</A></TD> <TD>Algorithm based on LZ algorithm</TD> </TR>
+      <TR> <TD><A class="parameter" href="#LZMA">LZMA</A></TD> <TD>LZ-based algorithm</TD> </TR>
+      <TR> <TD><A class="parameter" href="#LZMA2">LZMA2</A></TD> <TD>LZMA-based algorithm</TD> </TR>
       <TR> <TD><A class="parameter" href="#PPMd">PPMd</A></TD> <TD>Dmitry Shkarin's PPMdH with small changes</TD> </TR>
       <TR> <TD>BZip2</TD> <TD>BWT algorithm</TD> </TR>
       <TR> <TD>Deflate</TD> <TD>LZ+Huffman</TD> </TR>
@@ -323,6 +332,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
     <P>Supported filters:</P>
     <TABLE>
       <TR> <TH width="60">MethodID</TH> <TH>Description</TH> </TR>
+      <TR> <TD><A class="parameter" href="#Delta">Delta</A></TD> <TD>Delta filter</TD> </TR>
       <TR> <TD>BCJ</TD> <TD>converter for x86 executables</TD> </TR>
       <TR> <TD><A class="parameter" href="#BCJ2">BCJ2</A></TD> <TD>converter for x86 executables (version 2)</TD> </TR>
       <TR> <TD>ARM</TD> <TD>converter for ARM (little endian) executables</TD> </TR>
@@ -362,7 +372,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
         <TD align="center">2</TD>  <TD>Set number of Pos Bits - [0, 4]</TD></TR>
  </TABLE>
 
- 
+
  <DL>
   <DT><A name="#LZMAMode"></A>a=[0|1]</DT>
   <DD>
@@ -442,6 +452,33 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
   
  </DL>
   
+ <H4><A name="LZMA2"></A>LZMA2</H4>
+ <P>LZMA2 is modified version of LZMA. it provides the following advantages over LZMA:</P>
+ <UL>
+   <LI>Better compression ratio for data than can't be compressed.  LZMA2 can store such 
+       blocks of data in uncompressed form. Also it decompresses such data faster. 
+   <LI>Better multithreading support. If you compress big file, LZMA2 can split  
+	that file to chunks and compress these chunks in multiple threads.
+ </UL>
+
+ <TABLE>
+   <TR> <TH width="80">Parameter</TH> <TH align="center">Default</TH> <TH>Description</TH> </TR>
+
+   <TR> <TD><A class="parameter" href="#ChunkSize">c={Size}[b|k|m]</A></TD> 
+        <TD align="center">dictSize * 4</TD>  <TD>Sets Chunk size</TD> </TR>
+ </TABLE>
+
+ <P>If you don't specify ChunkSize, LZMA2 sets it to DictionarySize * 4.</P>
+
+ <P>LZMA2 also supports all LZMA parameters, but lp+lc cannot be larger than 4.</P>
+ 
+  <P>LZMA2 uses: 1 thread for each chunk in x1 and x3 modes; and 
+   2 threads for each chunk in x5, x7 and x9 modes. 
+   If LZMA2 is set to use only such number of threads required for one chunk,  
+   it doesn't split stream to chunks. So you can get different compression  
+   ratio for different number of threads. You can get the best compression 
+   ratio, when you use 1 or 2 threads.</P>  
+
  <H4><A name="PPMd"></A>PPMd</H4>
  <P> PPMd is a PPM-based algorithm. This algorithm is mostly based 
  on Dmitry Shkarin's PPMdH source code. PPMd provides very good compression ratio for 
@@ -485,7 +522,13 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
     s1 and s2 can be much smaller (512 KB is enough for most cases) 
     than the dictionary size for stream s0.</P>
 
+ <H4><A name="Delta"></A>Delta</H4>
+ <P>It's possible to set delta offset in bytes. For example, to compress 16-bit stereo 
+   WAV files, you can set "0=Delta:4". Default delta offset is 1.</P>
 </DL>
+
+<H2><A name="XZ"></A>XZ</H2>
+XZ supports only LZMA2 codec now. The switches are similar to switches for 7z format.
 
 <H4>Examples</H4>
 

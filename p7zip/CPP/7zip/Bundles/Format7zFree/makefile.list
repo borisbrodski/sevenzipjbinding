@@ -25,6 +25,7 @@ SRCS=\
  ../../Common/InBuffer.cpp \
  ../../Common/InOutTempBuffer.cpp \
  ../../Common/CreateCoder.cpp \
+ ../../Common/CWrappers.cpp \
  ../../Common/FilterCoder.cpp \
  ../../Common/LimitedStreams.cpp \
  ../../Common/LockedStream.cpp \
@@ -44,14 +45,25 @@ SRCS=\
  ../../Archive/ArchiveExports.cpp \
  ../../Archive/DllExports2.cpp \
  ../../Archive/ArjHandler.cpp \
+ ../../Archive/Bz2Handler.cpp \
+ ../../Archive/CpioHandler.cpp \
  ../../Archive/DebHandler.cpp \
  ../../Archive/DmgHandler.cpp \
  ../../Archive/ElfHandler.cpp \
+ ../../Archive/FatHandler.cpp \
+ ../../Archive/GzHandler.cpp \
+ ../../Archive/LzhHandler.cpp \
+ ../../Archive/LzmaHandler.cpp \
  ../../Archive/MachoHandler.cpp \
+ ../../Archive/MbrHandler.cpp \
  ../../Archive/MubHandler.cpp \
+ ../../Archive/NtfsHandler.cpp \
  ../../Archive/PeHandler.cpp \
  ../../Archive/RpmHandler.cpp \
+ ../../Archive/SplitHandler.cpp \
+ ../../Archive/VhdHandler.cpp \
  ../../Archive/XarHandler.cpp \
+ ../../Archive/XzHandler.cpp \
  ../../Archive/ZHandler.cpp \
  \
  ../../Archive/Common/CoderMixer2.cpp \
@@ -83,11 +95,6 @@ SRCS=\
  ../../Archive/7z/7zUpdate.cpp \
  ../../Archive/7z/7zRegister.cpp \
  \
- ../../Archive/BZip2/BZip2Handler.cpp \
- ../../Archive/BZip2/BZip2HandlerOut.cpp \
- ../../Archive/BZip2/BZip2Update.cpp \
- ../../Archive/BZip2/bz2Register.cpp \
- \
  ../../Archive/Cab/CabBlockInStream.cpp \
  ../../Archive/Cab/CabHandler.cpp \
  ../../Archive/Cab/CabHeader.cpp \
@@ -103,19 +110,6 @@ SRCS=\
  ../../Archive/Com/ComIn.cpp \
  ../../Archive/Com/ComRegister.cpp \
  \
- ../../Archive/Cpio/CpioHandler.cpp \
- ../../Archive/Cpio/CpioHeader.cpp \
- ../../Archive/Cpio/CpioIn.cpp \
- ../../Archive/Cpio/CpioRegister.cpp \
- \
- ../../Archive/GZip/GZipHandler.cpp \
- ../../Archive/GZip/GZipHandlerOut.cpp \
- ../../Archive/GZip/GZipHeader.cpp \
- ../../Archive/GZip/GZipIn.cpp \
- ../../Archive/GZip/GZipOut.cpp \
- ../../Archive/GZip/GZipRegister.cpp \
- ../../Archive/GZip/GZipUpdate.cpp \
- \
  ../../Archive/Hfs/HfsHandler.cpp \
  ../../Archive/Hfs/HfsIn.cpp \
  ../../Archive/Hfs/HfsRegister.cpp \
@@ -124,17 +118,6 @@ SRCS=\
  ../../Archive/Iso/IsoHeader.cpp \
  ../../Archive/Iso/IsoIn.cpp \
  ../../Archive/Iso/IsoRegister.cpp \
- \
- ../../Archive/Lzh/LzhCRC.cpp \
- ../../Archive/Lzh/LzhHandler.cpp \
- ../../Archive/Lzh/LzhIn.cpp \
- ../../Archive/Lzh/LzhOutStreamWithCRC.cpp \
- ../../Archive/Lzh/LzhRegister.cpp \
- \
- ../../Archive/Lzma/LzmaArcRegister.cpp \
- ../../Archive/Lzma/LzmaFiltersDecode.cpp \
- ../../Archive/Lzma/LzmaHandler.cpp \
- ../../Archive/Lzma/LzmaIn.cpp \
  \
  ../../Archive/Nsis/NsisDecode.cpp \
  ../../Archive/Nsis/NsisHandler.cpp \
@@ -147,9 +130,6 @@ SRCS=\
  ../../Archive/Rar/RarItem.cpp \
  ../../Archive/Rar/RarVolumeInStream.cpp \
  ../../Archive/Rar/RarRegister.cpp \
- \
- ../../Archive/Split/SplitHandler.cpp \
- ../../Archive/Split/SplitRegister.cpp \
  \
  ../../Archive/Tar/TarHandler.cpp \
  ../../Archive/Tar/TarHandlerOut.cpp \
@@ -189,7 +169,6 @@ SRCS=\
  ../../Compress/BranchMisc.cpp \
  ../../Compress/BranchRegister.cpp \
  ../../Compress/ByteSwap.cpp \
- ../../Compress/ByteSwapRegister.cpp \
  ../../Compress/BZip2Crc.cpp \
  ../../Compress/BZip2Decoder.cpp \
  ../../Compress/BZip2Encoder.cpp \
@@ -201,6 +180,10 @@ SRCS=\
  ../../Compress/DeflateEncoder.cpp \
  ../../Compress/DeflateNsisRegister.cpp \
  ../../Compress/DeflateRegister.cpp \
+ ../../Compress/DeltaFilter.cpp \
+ ../../Compress/Lzma2Decoder.cpp \
+ ../../Compress/Lzma2Encoder.cpp \
+ ../../Compress/Lzma2Register.cpp \
  ../../Compress/ImplodeDecoder.cpp \
  ../../Compress/ImplodeHuffmanDecoder.cpp \
  ../../Compress/LzhDecoder.cpp \
@@ -235,19 +218,30 @@ SRCS=\
  ../../Crypto/ZipStrong.cpp
 
 SRCS_C=\
+ ../../../../C/7zBuf2.c \
+ ../../../../C/7zStream.c \
+ ../../../../C/Aes.c \
  ../../../../C/Bra.c \
  ../../../../C/Bra86.c \
  ../../../../C/BraIA64.c \
  ../../../../C/BwtSort.c \
+ ../../../../C/Delta.c \
  ../../../../C/HuffEnc.c \
  ../../../../C/LzFind.c \
  ../../../../C/LzFindMt.c \
+ ../../../../C/Lzma2Dec.c \
+ ../../../../C/Lzma2Enc.c \
  ../../../../C/LzmaDec.c \
  ../../../../C/LzmaEnc.c \
+ ../../../../C/MtCoder.c \
+ ../../../../C/Sha256.c \
  ../../../../C/Sort.c \
  ../../../../C/Threads.c \
- ../../../../C/Aes.c \
- ../../../../C/Sha256.c
+ ../../../../C/Xz.c \
+ ../../../../C/XzCrc64.c \
+ ../../../../C/XzDec.c \
+ ../../../../C/XzEnc.c \
+ ../../../../C/XzIn.c \
 
 include ../../../../makefile.rules
 

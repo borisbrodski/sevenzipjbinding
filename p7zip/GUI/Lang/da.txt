@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.59
+; 7-Zip 4.65
 ; Originaly Translated by Jakob Schmidt.
 ; Updated by Kian Andersen, Jørgen Rasmussen
 ;
@@ -24,7 +24,7 @@
 ; Folders Page
 01000200="Mappe"
 01000210="&Arbejdsmappe"
-01000211="&Systemets midlertidige mappe"
+01000211="&Systemets temp-mappe"
 01000212="&Nuværende"
 01000213="&Specificeret:"
 01000214="Brug kun til flytbare drev."
@@ -47,7 +47,7 @@
 ; Context menu
 02000101="7-Zip"
 02000102="7-Zip kommandoer"
-02000103="Åben"
+02000103="Åbn"
 02000104="Åbner det valgte arkiv."
 02000105="Udpak filer..."
 02000106="Udpak filer fra det valgte arkiv."
@@ -55,7 +55,7 @@
 02000108="Føj de valgte filer til arkiv."
 02000109="Undersøg arkiv"
 0200010A="Undersøger integriteten af valgte arkiv."
-0200010B="Udpak Her"
+0200010B="Udpak her"
 0200010C="Udpak filer fra det valgte arkiv her."
 0200010D="Udpak til {0}"
 0200010E="Udpak filer til undermappe."
@@ -124,11 +124,13 @@
 02000320="Filer:"
 02000321="Mapper:"
 02000322="Størrelse:"
+02000323="Komprimeret størrelse:"
+02000324="Arkiver:"
 
 ; List Context Menu
 02000401="&Kolonner..."
 
-02000411="&Åben"
+02000411="&Åbn"
 02000412="&Udpak..."
 
 ; ToolBar
@@ -151,9 +153,9 @@
 ; Dialogs
 02000702="OK"
 02000705="&Ja"
-02000707="Ja til &alt"
+02000707="Ja &til alle"
 02000709="&Nej"
-0200070B="Nej til a&lt"
+0200070B="N&ej til alle"
 
 02000710="Annuller"
 02000711="&Annuller"
@@ -166,19 +168,19 @@
 ; Extract dialog
 02000800="Udpak"
 02000801="U&dpak til:"
-02000802="Adgangskode"
+02000802="&Adgangskode"
 
-02000810="Sti type"
-02000811="Komplet stinavne"
-02000812="Nuværende stinavne"
-02000813="Ingen stinavne"
+02000810="Stitype"
+02000811="&Komplette stinavne"
+02000812="&Nuværende stinavne"
+02000813="&Ingen stinavne"
 
-02000820="Erstat tilstand"
-02000821="Spørg før erstatning"
-02000822="Erstat uden advarsel"
-02000823="Spring nuværende filer over"
-02000824="Automatisk omdøbning"
-02000825="Omdøb automatisk eksisterende filer"
+02000820="Erstatningsmåde"
+02000821="&Spørg før erstatning"
+02000822="&Erstat uden advarsel"
+02000823="S&pring nuværende filer over"
+02000824="A&utomatisk omdøbning"
+02000825="&Omdøb automatisk eksisterende filer"
 
 02000830="Filer"
 02000831="&Valgte filer"
@@ -194,7 +196,7 @@
 02000902="Ønsker du at udskifte den eksisterende fil"
 02000903="med denne?"
 
-02000911="A&utomatisk omdøbning"
+02000911="A&utomatisk omdøbning af alle"
 
 02000982="{0} bytes"
 02000983="Ændret den"
@@ -212,7 +214,7 @@
 
 ; Password dialog
 02000B00="Indtast adgangskode"
-02000B01="Indtast adgangskode:"
+02000B01="&Indtast adgangskode:"
 02000B02="&Vis adgangskode"
 02000B03="Genindtast adgangskode:"
 02000B10="Adgangskoderne stemmer ikke overens"
@@ -240,29 +242,29 @@
 ; Compress dialog
 02000D00="Føj til arkiv"
 02000D01="&Arkiv:"
-02000D02="&Opdateringstilstand:"
+02000D02="O&pdateringstilstand:"
 02000D03="Arkiv&format:"
 02000D04="Pakke&metode:"
 02000D05="Opret &solid arkiv"
-02000D06="&Parameter:"
+02000D06="Pa&rameter:"
 02000D07="Funktioner"
 02000D08="Opret selv&udpakkende arkiv"
 02000D09="Multi-threading"
-02000D0A="Krypter fil&navne"
+02000D0A="Kr&ypter filnavne"
 02000D0B="Nedpaknings&niveau:"
-02000D0C="&Ordbogsstørrelse:"
+02000D0C="Ord&bogsstørrelse:"
 02000D0D="&Ordstørrelse:"
 02000D0E="Hukommelsesbrug for nedpakning:"
 02000D0F="Hukommelsesbrug for udpakning:"
 02000D10="Kryptering"
-02000D11="Krypteringsmetode:"
-02000D12="Antal CPU tråde:"
-02000D13="Solid blokstørrelse:"
+02000D11="Krypterin&gsmetode:"
+02000D12="Antal &CPU tråde:"
+02000D13="&Solid blokstørrelse:"
 02000D14="Ikke-solid"
 02000D15="Solid"
-02000D16="Komprimer delte filer"
+02000D16="&Komprimer delte filer"
 
-02000D40="Opdel i bind, bytes:"
+02000D40="Op&del i bind, bytes:"
 02000D41="Ukorrekt bindstørrelse"
 02000D42="Specificer bindstørrelse: {0} bytes.\nEr du sikker på du ønsker at opdele arkivet i sådanne bind?"
 
@@ -316,9 +318,9 @@
 03000107="F&avoriter"
 
 ; File
-03000210="&Åben"
-03000211="Åben &indeni"
-03000212="Åben &udenfor"
+03000210="&Åbn"
+03000211="Å&bn indeni"
+03000212="Åbn &udenfor"
 03000220="&Vis"
 03000221="&Rediger"
 03000230="O&mdøb"
@@ -327,7 +329,7 @@
 03000233="&Slet"
 03000240="&Egenskaber"
 03000241="Komme&ntar"
-03000242="Udregn checksum"
+03000242="Udregn &checksum"
 03000250="Opret mappe"
 03000251="Opret fil"
 03000260="&Afslut"
@@ -341,25 +343,25 @@
 03000321="K&opier"
 03000322="Sæt &ind"
 03000323="&Slet"
-03000330="Vælg &alt"
-03000331="Fravælg alt"
-03000332="O&mvendt valg"
-03000333="Vælg..."
-03000334="Fravælg..."
-03000335="Vælg efter type"
-03000336="Fravælg efter type"
+03000330="&Vælg alle"
+03000331="&Fravælg alle"
+03000332="&Omvendt markering"
+03000333="V&ælg..."
+03000334="F&ravælg..."
+03000335="Vælg &efter type"
+03000336="Fravælg efter &type"
 
 ; View
 03000410="Sto&re ikoner"
 03000411="S&må ikoner"
 03000412="&Liste"
 03000413="&Detaljer"
-03000420="Usorteret"
-03000430="Åben rodmappe"
+03000420="&Usorteret"
+03000430="Åbn rodmappe"
 03000431="Et niveau op"
 03000432="Mappehistorik..."
 03000440="&Opdater"
-03000449="Flad visning"
+03000449="&Flad visning"
 03000450="&2 paneler"
 03000451="&Værktøjslinjer"
 03000460="Arkivlinje"
@@ -389,8 +391,8 @@
 03010110="Indstillinger..."
 
 ; Edit
-03010200="Tekstbehandler"
-03010201="&Tekstbehandler:"
+03010200="Editor"
+03010201="&Editor:"
 
 ; System
 03010300="System"
@@ -402,7 +404,7 @@
 03010401="Vis \"..\" post"
 03010402="Vis rigtige filikoner"
 03010410="Vis systemmenu"
-03010420="&Fuld række valg"
+03010420="&Markér hele rækken"
 03010421="Vis &gitter"
 03010430="&Alternativ markeringsmetode"
 03010440="Benyt &store hukommelsessider"
@@ -524,5 +526,7 @@
 0308000C="Bedømmelse / Forbrug"
 
 ;!@LangEnd@!
+
+ 	  	 
 
  	  	 

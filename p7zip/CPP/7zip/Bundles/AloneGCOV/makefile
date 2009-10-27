@@ -79,6 +79,7 @@ SRCS=\
  ../../../Windows/Time.cpp \
  \
  ../../Common/CreateCoder.cpp \
+ ../../Common/CWrappers.cpp \
  ../../Common/FilePathAutoRename.cpp \
  ../../Common/FileStreams.cpp \
  ../../Common/FilterCoder.cpp \
@@ -118,6 +119,11 @@ SRCS=\
  ../../UI/Common/UpdatePair.cpp \
  ../../UI/Common/UpdateProduce.cpp \
  \
+ ../../Archive/Bz2Handler.cpp \
+ ../../Archive/GzHandler.cpp \
+ ../../Archive/LzmaHandler.cpp \
+ ../../Archive/SplitHandler.cpp \
+ ../../Archive/XzHandler.cpp \
  ../../Archive/ZHandler.cpp \
  \
  ../../Archive/Common/CoderMixer2.cpp \
@@ -148,32 +154,11 @@ SRCS=\
  ../../Archive/7z/7zUpdate.cpp \
  ../../Archive/7z/7zRegister.cpp \
  \
- ../../Archive/BZip2/BZip2Handler.cpp \
- ../../Archive/BZip2/BZip2HandlerOut.cpp \
- ../../Archive/BZip2/BZip2Update.cpp \
- ../../Archive/BZip2/bz2Register.cpp \
- \
  ../../Archive/Cab/CabBlockInStream.cpp \
  ../../Archive/Cab/CabHandler.cpp \
  ../../Archive/Cab/CabHeader.cpp \
  ../../Archive/Cab/CabIn.cpp \
  ../../Archive/Cab/CabRegister.cpp \
- \
- ../../Archive/GZip/GZipHandler.cpp \
- ../../Archive/GZip/GZipHandlerOut.cpp \
- ../../Archive/GZip/GZipHeader.cpp \
- ../../Archive/GZip/GZipIn.cpp \
- ../../Archive/GZip/GZipOut.cpp \
- ../../Archive/GZip/GZipRegister.cpp \
- ../../Archive/GZip/GZipUpdate.cpp \
- \
- ../../Archive/Lzma/LzmaArcRegister.cpp \
- ../../Archive/Lzma/LzmaFiltersDecode.cpp \
- ../../Archive/Lzma/LzmaHandler.cpp \
- ../../Archive/Lzma/LzmaIn.cpp \
- \
- ../../Archive/Split/SplitHandler.cpp \
- ../../Archive/Split/SplitRegister.cpp \
  \
  ../../Archive/Tar/TarHandler.cpp \
  ../../Archive/Tar/TarHandlerOut.cpp \
@@ -202,7 +187,6 @@ SRCS=\
  ../../Compress/BranchMisc.cpp \
  ../../Compress/BranchRegister.cpp \
  ../../Compress/ByteSwap.cpp \
- ../../Compress/ByteSwapRegister.cpp \
  ../../Compress/BZip2Crc.cpp \
  ../../Compress/BZip2Decoder.cpp \
  ../../Compress/BZip2Encoder.cpp \
@@ -213,8 +197,12 @@ SRCS=\
  ../../Compress/DeflateDecoder.cpp \
  ../../Compress/DeflateEncoder.cpp \
  ../../Compress/DeflateRegister.cpp \
+ ../../Compress/DeltaFilter.cpp \
  ../../Compress/ImplodeDecoder.cpp \
  ../../Compress/ImplodeHuffmanDecoder.cpp \
+ ../../Compress/Lzma2Decoder.cpp \
+ ../../Compress/Lzma2Encoder.cpp \
+ ../../Compress/Lzma2Register.cpp \
  ../../Compress/LzmaDecoder.cpp \
  ../../Compress/LzmaEncoder.cpp \
  ../../Compress/LzmaRegister.cpp \
@@ -243,20 +231,31 @@ SRCS=\
  ../../Crypto/ZipStrong.cpp
 
 SRCS_C=\
+ ../../../../C/Aes.c \
+ ../../../../C/7zStream.c \
  ../../../../C/Bra.c \
  ../../../../C/Bra86.c \
  ../../../../C/BraIA64.c \
  ../../../../C/BwtSort.c \
+ ../../../../C/Delta.c \
  ../../../../C/HuffEnc.c \
  ../../../../C/LzFind.c \
  ../../../../C/LzFindMt.c \
+ ../../../../C/Lzma2Dec.c \
+ ../../../../C/Lzma2Enc.c \
  ../../../../C/LzmaDec.c \
  ../../../../C/LzmaEnc.c \
+ ../../../../C/MtCoder.c \
+ ../../../../C/Sha256.c \
  ../../../../C/Sort.c \
  ../../../../C/Threads.c \
- ../../../../C/Aes.c \
- ../../../../C/Sha256.c \
+ ../../../../C/Xz.c \
+ ../../../../C/XzCrc64.c \
+ ../../../../C/XzDec.c \
+ ../../../../C/XzEnc.c \
+ ../../../../C/XzIn.c \
 ../../../../C/7zCrc.c
+
 
 all : copy 7za.exe
 	

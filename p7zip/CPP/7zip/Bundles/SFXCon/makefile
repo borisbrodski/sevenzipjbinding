@@ -96,6 +96,8 @@ COMPRESS_OBJS = \
   BcjRegister.o \
   CopyCoder.o \
   CopyRegister.o \
+  Lzma2Decoder.o \
+  Lzma2Register.o \
   LzmaDecoder.o \
   LzmaRegister.o \
   PpmdDecoder.o \
@@ -108,11 +110,12 @@ CRYPTO_OBJS = \
 
 # Alloc.o
 C_OBJS = \
-  Bra86.o \
-  LzmaDec.o \
-  Threads.o \
   Aes.o \
+  Bra86.o \
+  Lzma2Dec.o \
+  LzmaDec.o \
   Sha256.o \
+  Threads.o \
 
 OBJS = \
   myGetTickCount.o\

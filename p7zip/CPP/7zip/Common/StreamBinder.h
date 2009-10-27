@@ -6,7 +6,6 @@
 #include "../IStream.h"
 #include "../../Windows/Synchronization.h"
 
-
 class CStreamBinder
 {
   NWindows::NSynchronization::CManualResetEventWFMO _allBytesAreWritenEvent;

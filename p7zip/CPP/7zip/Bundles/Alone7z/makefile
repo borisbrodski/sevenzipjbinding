@@ -56,6 +56,7 @@ WIN_OBJS = \
 
 7ZIP_COMMON_OBJS = \
   CreateCoder.o \
+  CWrappers.o \
   FilePathAutoRename.o \
   FileStreams.o \
   FilterCoder.o \
@@ -94,6 +95,11 @@ UI_COMMON_OBJS = \
   UpdatePair.o \
   UpdateProduce.o \
 
+AR_OBJS = \
+  LzmaHandler.o \
+  SplitHandler.o \
+  XzHandler.o \
+
 AR_COMMON_OBJS = \
   CoderMixer2.o \
   CoderMixer2MT.o \
@@ -123,17 +129,6 @@ AR_COMMON_OBJS = \
   7zSpecStream.o \
   7zUpdate.o \
 
-LZM_OBJS = \
-  LzmaArcRegister.o \
-  LzmaFiltersDecode.o \
-  LzmaHandler.o \
-  LzmaIn.o \
-
-# SplitHandlerOut.o
-SPLIT_OBJS = \
-  SplitHandler.o \
-  SplitRegister.o \
-
 COMPRESS_OBJS = \
   Bcj2Coder.o \
   Bcj2Register.o \
@@ -143,9 +138,12 @@ COMPRESS_OBJS = \
   BranchMisc.o \
   BranchRegister.o \
   ByteSwap.o \
-  ByteSwapRegister.o \
   CopyCoder.o \
   CopyRegister.o \
+  DeltaFilter.o \
+  Lzma2Decoder.o \
+  Lzma2Encoder.o \
+  Lzma2Register.o \
   LzmaDecoder.o \
   LzmaEncoder.o \
   LzmaRegister.o \
@@ -156,14 +154,26 @@ LZMA_BENCH_OBJS = \
 
 # 7zCrc.o Alloc.o
 C_OBJS = \
+  7zStream.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
-  LzmaDec.o \
-  LzmaEnc.o \
+  Delta.o \
   LzFind.o \
   LzFindMt.o \
+  Lzma2Dec.o \
+  Lzma2Enc.o \
+  LzmaDec.o \
+  LzmaEnc.o \
+  MtCoder.o \
+  Sha256.o \
   Threads.o \
+  Xz.o \
+  XzCrc64.o \
+  XzDec.o \
+  XzEnc.o \
+  XzIn.o \
+
 
 OBJS = \
   wine_date_and_time.o \
@@ -174,10 +184,9 @@ OBJS = \
   $(WIN_OBJS) \
   $(7ZIP_COMMON_OBJS) \
   $(UI_COMMON_OBJS) \
+  $(AR_OBJS) \
   $(AR_COMMON_OBJS) \
   $(7Z_OBJS) \
-  $(LZM_OBJS) \
-  $(SPLIT_OBJS) \
   $(COMPRESS_OBJS) \
   $(LZMA_BENCH_OBJS) \
   $(C_OBJS) \

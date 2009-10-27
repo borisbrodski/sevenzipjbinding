@@ -1,9 +1,9 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.45
-; Translated by rmgunduz 22.04.2007
+; 7-Zip 4.65
+; Translated by X-FoRcE 30.04.2009
 ;
-; Raif Merter GÜNDÜZ
-; DEU CSE / TURKEY
+; X-FoRcE
+; Turkiye
 ;
 
 00000000="Turkish"
@@ -34,7 +34,7 @@
 ; System Page
 01000300="Sistem"
 01000301="İçerik menülerinde 7-Zip görünsün"
-01000302="Çağlayan içerik menüsü"
+01000302="Kademeli içerik menüsü"
 01000310="İçerik menü öğeleri:"
 
 ; Language Page
@@ -77,9 +77,9 @@
 02000207="Boyut"
 02000208="Arşivde boyutu"
 02000209="Öznitelikler"
-0200020A="Oluşmuş"
-0200020B="Erişilmiş"
-0200020C="Değişmiş"
+0200020A="Oluşturma"
+0200020B="Erişim"
+0200020C="Değiştirme"
 0200020D="Katı"
 0200020E="Açıklanmış"
 0200020F="Şifrelenmiş"
@@ -90,7 +90,7 @@
 02000214="Tür"
 02000215="Anti"
 02000216="Sıkıştırma şekli"
-02000217="Platform"
+02000217="İşletim sistemi"
 02000218="Dosya Sistemi"
 02000219="Kullanıcı"
 0200021A="Grup"
@@ -98,6 +98,24 @@
 0200021C="Açıklama"
 0200021D="Konum"
 0200021E="Yol Öneki"
+0200021F="Klasörler"
+02000220="Dosyalar"
+02000221="Sürüm"
+02000222="Cilt"
+02000223="Çoklu Cilt"
+02000224="Konum"
+02000225="Bağlantılar"
+02000226="Bloklar"
+02000227="Ciltler"
+
+02000229="64-bit"
+0200022A="Big-endian"
+0200022B="İşlemci"
+0200022C="Fiziksel Boyut"
+0200022D="Başlık Boyutu"
+0200022E="Checksum"
+0200022F="Karakteristik"
+02000230="Sanal Adres"
 
 ; Status bar
 02000301="{0} adet öğe seçili"
@@ -106,6 +124,8 @@
 02000320="Dosyalar:"
 02000321="Klasörler:"
 02000322="Boyut:"
+02000323="Sıkıştırılmış Boyut:"
+02000324="Arşivler:"
 
 ; List Context Menu
 02000401="&Sütunlar..."
@@ -127,6 +147,9 @@
 02000608="Hata yok."
 02000609="'{0}' arşiv dosyası olarak açılamıyor."
 0200060A="'{0}' dosyası açılamıyor. Şifreniz yanlış olabilir mi?"
+0200060B="Sistem gerekli belleği ayarlayamadı"
+0200060C="Bilinmeyen hata"
+0200060D="Desteklenmeyen arşiv tipi"
 
 ; Dialogs
 02000702="Tamam"
@@ -205,13 +228,15 @@
 02000C02="Kalan süre:"
 02000C03="Boyut:"
 02000C04="Hız:"
+02000C05="İşlenen:"
+02000C06="Sıkıştırma oranı:"
 
-02000C10="&Geri planda"
+02000C10="&Arka planda"
 02000C11="Ö&nde"
 02000C12="&Duraklat"
 02000C13="De&vam et"
 
-02000C20="Durakladı - "
+02000C20="Duraklatıldı - "
 
 02000C30="İptal edilsin mi?"
 
@@ -234,14 +259,15 @@
 02000D0F="Bellek kullanımı (Çözme):"
 02000D10="Şifreleme"
 02000D11="Şifreleme metodu:"
-02000D12="İşlemci ilmeklerinin sayısı:"
+02000D12="İşlemci iş parçası sayısı:"
 02000D13="Aralıksız blok boyutu:"
 02000D14="Aralıklı"
 02000D15="Aralıksız"
+02000D16="Paylaşılan dosyaları sıkıştır"
 
 02000D40="Bayt/&cilt olarak parçala:"
-02000D41="Yanlış yığın boyutu"
-02000D42="Belirtilen yığın boyutu: {0} bayt.\nBu boyutta yığınlara ayırmak istediğinizden emin misiniz?"
+02000D41="Yanlış cilt boyutu"
+02000D42="Belirtilen cilt boyutu: {0} bayt.\nBu boyutta ciltlere ayırmak istediğinize emin misiniz?"
 
 02000D81="Sıkıştırmasız"
 02000D82="Normal"
@@ -277,7 +303,7 @@
 02000E82="Genişlik"
 
 ; Testing
-02000F90="sınanıyor"
+02000F90="Sınanıyor"
 
 
 ; File Manager
@@ -304,7 +330,7 @@
 03000233="&Sil"
 03000240="Öz&ellikler"
 03000241="Açıkla&ma"
-03000242="Toplam kazancı hesapla"
+03000242="Toplam checksum hesapla"
 03000250="Yeni k&lasör"
 03000251="Yeni dos&ya"
 03000260="Çı&k"
@@ -380,8 +406,9 @@
 03010402="Gerçek dosya simgeleri görünsün"
 03010410="Sistem menüsü görünsün"
 03010420="&Tüm satır seçilsin"
-03010421="T&ablo çizgileri görünsün"
+03010421="Tabl&o çizgileri görünsün"
 03010430="&Alternatif seçim kipi"
+03010440="Geniş &bellek sayfaları kullan"
 
 ; Strings
 
@@ -389,25 +416,25 @@
 03020202="Taşı"
 03020203="Kopyalanacak yer:"
 03020204="Taşınacak yer:"
-03020205="kopyalanıyor..."
-03020206="taşınıyor..."
+03020205="Kopyalanıyor..."
+03020206="Taşınıyor..."
 03020207="Öğelerin kopyalanması veya taşınması bu klasör için mümkün değil."
-03020208="Bu tür dosyaların parçalarını hareket ettiremezsiniz ve kopyalayamazsınız."
-03020208="İşlem desteklenmiyor."
+03020208="Bu klasör için istenen işlem desteklenmiyor."
 03020209="Hedef klasörü seçiniz."
 
 03020210="Dosya Silme Onayı"
 03020211="Klasör Silme Onayı"
-03020212="Birden fazla Dosya Silme Onayı"
+03020212="Birden Fazla Dosya Silme Onayı"
 03020213="'{0}' silinsin mi?"
 03020214="'{0}' klasörü ve içindekiler silinsin mi?"
 03020215="{0} silinsin mi?"
-03020216="siliniyor..."
-03020217="Silme Hatası"
+03020216="Siliniyor..."
+03020217="Dosya veya Klasör Silme Hatası"
+03020218="Dosya yolu uzun olduğundan Geri Dönüşüm Kutusuna taşınamıyor"
 
-03020220="yeni ad veriliyor..."
-03020221="Adlandırma Hatası"
-03020222="Kopyalama Teyidi"
+03020220="Dosya Adı Değiştiriliyor..."
+03020221="Dosya veya Klasör Adlandırma Hatası"
+03020222="Kopyalama Onayı"
 03020223="Dosyalar arşive kopyalansın mı"
 
 03020230="Yeni klasör"
@@ -430,6 +457,7 @@
 03020281="'{0}' dosyası güncellenemedi"
 03020282="Metin düzenleyici başlatılamadı."
 03020283="açılıyor..."
+03020284="Bu dosya virüs gibi görünüyor.(Dosya ismi uzun boşluk içeriyor)."
 
 03020290="Açıklama"
 03020291="&Açıklama:"
@@ -438,6 +466,7 @@
 
 03020300="Bilgisayar"
 03020301="Ağ"
+03020302="Belgeler"
 
 03020400="Arşivle"
 03020401="Çıkart"
@@ -450,22 +479,31 @@
 
 03020500="Parçala"
 03020501="Şu &klasörde parçala:"
-03020510="parçalanıyor..."
+03020510="Parçalanıyor..."
 03020520="Silmeyi onaylayın"
 03020521="Dosyayı {0} parçaya ayırmak istediğinizden emin misiniz?"
 03020522="Parça büyüklüğü, orjinal dosya boyutundan küçük olmalıdır"
 
 03020600="Birleştir"
 03020601="Şu &klasörde birleştir:"
-03020610="birleştiriliyor..."
-03020620="Sadece ilk dosyayı seçiniz"
+03020610="Birleştiriliyor..."
+03020620="Sadece ilk parçayı seçiniz"
+03020621="Parçalanan dosya tespit edilemedi"
+03020622="Parçalanmış dosyanın bir parçadan fazlası bulunamadı"
 
-03020710="Kazanç hesaplanıyor..."
-03020720="Kazanç ilgisi"
-03020721="Verinin CRC kazancı:"
-03020722="Verinin CRC kazancı ve isimler:"
+03020710="Checksum değeri hesaplanıyor..."
+03020720="Checksum bilgisi"
+03020721="Verinin CRC değeri:"
+03020722="Verinin CRC değeri ve isimler:"
 
 03020800="Taranıyor..."
+
+03020900="Özellikler"
+
+03020A01="The operation cannot be called from a folder that has a long path."
+03020A02="Bir dosya seçmelisiniz"
+03020A03="Bir veya daha fazla dosya seçmelisiniz"
+03020A04="Dosya {0} zaten mevcut"
 
 ; Computer
 03031100="Toplam Boyut"
@@ -482,11 +520,11 @@
 03080000="Bilgisayar performansı"
 03080001="Bellek kullanımı:"
 03080002="Sıkıştırılıyor"
-03080003="Ayrıştırılıyor"
+03080003="Çözülüyor"
 03080004="Hız"
 03080005="Puan"
-03080006="Ortalama Puan"
-03080007="Cari"
+03080006="Toplam Puan"
+03080007="Mevcut"
 03080008="Sonuç"
 03080009="Başarılı:"
 0308000A="Hatalı:"
@@ -494,3 +532,5 @@
 0308000C="Puan / Kullanım"
 
 ;!@LangEnd@!
+
+ 	  	 

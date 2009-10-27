@@ -205,6 +205,8 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename) {
   RtlSecondsSince1970ToFileTime( stat_info.st_mtime, &fileInfo.MTime );
   RtlSecondsSince1970ToFileTime( stat_info.st_atime, &fileInfo.ATime );
 
+  fileInfo.IsDevice = false;
+
   if (S_ISDIR(stat_info.st_mode)) {
     fileInfo.Size = 0;
   } else { // file or symbolic link
@@ -266,7 +268,8 @@ bool CFindFile::Close()
 // bool CFindFile::FindFirst(LPCTSTR wildcard, CFileInfo &fileInfo)
 bool CFindFile::FindFirst(LPCSTR wildcard, CFileInfo &fileInfo)
 {
-  Close();
+  if (!Close())
+    return false;
 
   if ((!wildcard) || (wildcard[0]==0)) {
     SetLastError(ERROR_PATH_NOT_FOUND);
@@ -319,7 +322,8 @@ bool CFindFile::FindFirst(LPCSTR wildcard, CFileInfo &fileInfo)
 
 bool CFindFile::FindFirst(LPCWSTR wildcard, CFileInfoW &fileInfo)
 {
-  Close();
+  if (!Close())
+    return false;
   CFileInfo fileInfo0;
   AString Awildcard = UnicodeStringToMultiByte(wildcard, CP_ACP);
   bool bret = FindFirst((LPCSTR)Awildcard, fileInfo0);
@@ -330,6 +334,7 @@ bool CFindFile::FindFirst(LPCWSTR wildcard, CFileInfoW &fileInfo)
      fileInfo.ATime = fileInfo0.ATime;
      fileInfo.MTime = fileInfo0.MTime;
      fileInfo.Size = fileInfo0.Size;
+     fileInfo.IsDevice = fileInfo0.IsDevice;
      fileInfo.Name = GetUnicodeString(fileInfo0.Name, CP_ACP);
   }
   return bret;
@@ -373,10 +378,54 @@ bool CFindFile::FindNext(CFileInfoW &fileInfo)
      fileInfo.ATime = fileInfo0.ATime;
      fileInfo.MTime = fileInfo0.MTime;
      fileInfo.Size = fileInfo0.Size;
+     fileInfo.IsDevice = fileInfo0.IsDevice;
      fileInfo.Name = GetUnicodeString(fileInfo0.Name, CP_ACP);
   }
   return bret;
 }
+
+bool CFileInfo::Find(LPCSTR wildcard)
+{
+  #ifdef SUPPORT_DEVICE_FILE
+  if (IsDeviceName(wildcard))
+  {
+    Clear();
+    IsDevice = true;
+    NIO::CInFile inFile;
+    if (!inFile.Open(wildcard))
+      return false;
+    Name = wildcard + 4;
+    if (inFile.LengthDefined)
+      Size = inFile.Length;
+    return true;
+  }
+  #endif
+  CFindFile finder;
+  return finder.FindFirst(wildcard, *this);
+}
+
+
+// #ifndef _UNICODE
+bool CFileInfoW::Find(LPCWSTR wildcard)
+{
+  #ifdef SUPPORT_DEVICE_FILE
+  if (IsDeviceName(wildcard))
+  {
+    Clear();
+    IsDevice = true;
+    NIO::CInFile inFile;
+    if (!inFile.Open(wildcard))
+      return false;
+    Name = wildcard + 4;
+    if (inFile.LengthDefined)
+      Size = inFile.Length;
+    return true;
+  }
+  #endif
+  CFindFile finder;
+  return finder.FindFirst(wildcard, *this);
+}
+// #endif
 
 bool FindFile(LPCSTR wildcard, CFileInfo &fileInfo)
 {
@@ -422,11 +471,19 @@ bool FindFile(LPCWSTR wildcard, CFileInfoW &fileInfo)
   return (ret == 0);
 }
 
-bool DoesFileExist(LPCSTR name)
+bool DoesFileExist(LPCSTR name) // FIXME
+{
+  CFileInfo fi;
+  int ret = fillin_CFileInfo(fi,nameWindowToUnix(name));
+  TRACEN((printf("DoesFileExist(%s) ret=%d\n",name,ret)))
+  return (ret == 0) && !fi.IsDir();;
+}
+
+bool DoesFileOrDirExist(LPCSTR name)
 {
   CFileInfo fileInfo;
   int ret = fillin_CFileInfo(fileInfo,nameWindowToUnix(name));
-  TRACEN((printf("DoesFileExist(%s) ret=%d\n",name,ret)))
+  TRACEN((printf("DoesFileOrDirExist(%s) ret=%d\n",name,ret)))
   return (ret == 0);
 }
 
@@ -441,6 +498,21 @@ bool DoesFileExist(LPCWSTR name)
   bool is_good = originalFilename(name, resultString);
   if (is_good) {
      bret = DoesFileExist((const char *)resultString);
+  }
+  return bret;
+}
+
+bool DoesFileOrDirExist(LPCWSTR name)
+{
+  AString Aname = UnicodeStringToMultiByte(name, CP_ACP); 
+  bool bret = DoesFileOrDirExist((LPCSTR)Aname);
+  if (bret) return bret;
+
+  // Try to recover the original filename
+  AString resultString;
+  bool is_good = originalFilename(name, resultString);
+  if (is_good) {
+     bret = DoesFileOrDirExist((const char *)resultString);
   }
   return bret;
 }

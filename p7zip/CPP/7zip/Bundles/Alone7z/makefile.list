@@ -39,6 +39,7 @@ SRCS=\
  ../../../Windows/Time.cpp \
  \
  ../../Common/CreateCoder.cpp \
+ ../../Common/CWrappers.cpp \
  ../../Common/FilePathAutoRename.cpp \
  ../../Common/FileStreams.cpp \
  ../../Common/FilterCoder.cpp \
@@ -77,6 +78,9 @@ SRCS=\
  ../../UI/Common/UpdateProduce.cpp \
  \
  ../../Archive/ZHandler.cpp \
+ ../../Archive/LzmaHandler.cpp \
+ ../../Archive/SplitHandler.cpp \
+ ../../Archive/XzHandler.cpp \
  \
  ../../Archive/Common/CoderMixer2.cpp \
  ../../Archive/Common/CoderMixer2MT.cpp \
@@ -105,14 +109,6 @@ SRCS=\
  ../../Archive/7z/7zUpdate.cpp \
  ../../Archive/7z/7zRegister.cpp \
  \
- ../../Archive/Lzma/LzmaArcRegister.cpp \
- ../../Archive/Lzma/LzmaFiltersDecode.cpp \
- ../../Archive/Lzma/LzmaHandler.cpp \
- ../../Archive/Lzma/LzmaIn.cpp \
- \
- ../../Archive/Split/SplitHandler.cpp \
- ../../Archive/Split/SplitRegister.cpp \
- \
  ../../Compress/Bcj2Coder.cpp \
  ../../Compress/Bcj2Register.cpp \
  ../../Compress/BcjCoder.cpp \
@@ -121,9 +117,12 @@ SRCS=\
  ../../Compress/BranchMisc.cpp \
  ../../Compress/BranchRegister.cpp \
  ../../Compress/ByteSwap.cpp \
- ../../Compress/ByteSwapRegister.cpp \
  ../../Compress/CopyCoder.cpp \
  ../../Compress/CopyRegister.cpp \
+ ../../Compress/DeltaFilter.cpp \
+ ../../Compress/Lzma2Decoder.cpp \
+ ../../Compress/Lzma2Encoder.cpp \
+ ../../Compress/Lzma2Register.cpp \
  ../../Compress/LzmaDecoder.cpp \
  ../../Compress/LzmaEncoder.cpp \
  ../../Compress/LzmaRegister.cpp \
@@ -133,14 +132,25 @@ SRCS=\
 
 
 SRCS_C=\
+ ../../../../C/7zStream.c \
  ../../../../C/Bra.c \
  ../../../../C/Bra86.c \
  ../../../../C/BraIA64.c \
+ ../../../../C/Delta.c \
+ ../../../../C/Lzma2Dec.c \
+ ../../../../C/Lzma2Enc.c \
  ../../../../C/LzmaDec.c \
  ../../../../C/LzmaEnc.c \
  ../../../../C/LzFind.c \
  ../../../../C/LzFindMt.c \
+ ../../../../C/MtCoder.c \
+ ../../../../C/Sha256.c \
  ../../../../C/Threads.c \
+ ../../../../C/Xz.c \
+ ../../../../C/XzCrc64.c \
+ ../../../../C/XzDec.c \
+ ../../../../C/XzEnc.c \
+ ../../../../C/XzIn.c \
 
 include ../../../../makefile.rules
 

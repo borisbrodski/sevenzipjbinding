@@ -27,7 +27,7 @@
 01000211="&Tímabundin kerfismappa"
 01000212="&Núverandi mappa"
 01000213="&Skilgreindu möppu:"
-01000214="Nota aðeins með fjarlægjanlegum drifum"
+01000214="Nota aðeins með flash drifum"
 
 01000281="Skilgreindu staðsetningu fyir tímabundin gagnasöfn."
 
@@ -55,7 +55,7 @@
 02000108="Bætir skjölum í gagnasafn."
 02000109="Prófa gagnasafn"
 0200010A="Prófar stöðugleika gagnasafns."
-0200010B="Afþjappa Hér"
+0200010B="Afþjappa hér"
 0200010C="Afþjappar gögnum frá gagnasafni í núverandi möppu."
 0200010D="Afþjappa í {0}"
 0200010E="Afþjappar gögn í hliðar-möppur."
@@ -72,19 +72,19 @@
 ; Properties
 02000203="Slóð"
 02000204="Nafn"
-02000205="Tegund Skráar"
+02000205="Tegund skráar"
 02000206="Mappa"
 02000207="Stærð"
-02000208="Þjöppuð Stærð"
+02000208="Þjöppuð stærð"
 02000209="Eiginleikar"
-0200020A="Búið Til"
+0200020A="Búið til"
 0200020B="Opnað"
 0200020C="Breytt"
 0200020D="Þétt"
 0200020E="Umsögn"
 0200020F="Lykilorð"
-02000210="Klofið Fyrir"
-02000211="Klofið Eftir"
+02000210="Bútuð niður fyrir"
+02000211="Bútuð niður eftir"
 02000212="Orðasafn"
 02000213="CRC"
 02000214="Tegund"
@@ -97,7 +97,7 @@
 0200021B="Kubbur"
 0200021C="Umsögn"
 0200021D="Staðsetning"
-0200021E="Prefix Slóðar"
+0200021E="Prefix slóðar"
 0200021F="Möppur"
 02000220="Skrár"
 02000221="Útgáfa"
@@ -146,8 +146,8 @@
 02000709="&Nei"
 0200070B="Nei við &Öllu"
 
-02000710="Hætta Við"
-02000711="&Hætta Við"
+02000710="Hætta við"
+02000711="&Hætta við"
 02000713="&Loka"
 02000714="Hætta"
 02000715="Endurræsa"
@@ -232,28 +232,28 @@
 02000D00="Bæta við gagnasafn"
 02000D01="&Gagnasafn:"
 02000D02="&Uppfærsla:"
-02000D03="Gagnasafn &tegund:"
-02000D04="Samþjöppun &aðferð:"
-02000D05="Gera &Þétt gagnasafn"
+02000D03="&Tegund gagnasafns:"
+02000D04="&Styrkur samþjöppunar:"
+02000D05="Gera &þétt gagnasafn"
 02000D06="&Skipanir:"
 02000D07="Stillingar"
 02000D08="Gera &SFX gagnasafn"
-02000D09="Fjölvinnsla (multi-threading)"
-02000D0A="Læsa skjali &nöfn"
+02000D09="Fjölvinnsla"
+02000D0A="Rugla &skráarnöfn"
 02000D0B="Samþjöppun &stig:"
 02000D0C="&Stærð orðasafns:"
 02000D0D="&Orðastærð:"
-02000D0E="Notkun vinnsluminnis fyrir Samþjöppun:"
-02000D0F="Notkun vinnsluminnis fyrir Afþjöppun:"
+02000D0E="Vinnsluminnisnotkun fyrir samþjöppun:"
+02000D0F="Vinnsluminnisnotkun fyrir afþjöppun:"
 02000D10="Læsing"
 02000D11="Aðferð læsingar:"
-02000D12="Fjöldi CPU kjarna:"
-02000D13="Þétt kubbastærð:"
+02000D12="Fjöldi örgjörvakjarna:"
+02000D13="Stærð þétts kubbs:"
 02000D14="Óþétt"
 02000D15="Þétt"
 02000D16="Þjappa deildum skrám"
 
-02000D40="Skipta í &hluta, bæti:"
+02000D40="Skipta skráarsafni í &hluta, bæti:"
 02000D41="Vitlaus stærð hluts"
 02000D42="Skilgreind stærð hluta: {0} bæti.\nErtu viss um að þú viljir skipta gagnasafni í þessa hluta?"
 
@@ -304,25 +304,25 @@
 03000104="&Útlit"
 03000105="&Tól"
 03000106="&Hjálp"
-03000107="&Í Uppáhaldi"
+03000107="&Uppáhald"
 
 ; File
 03000210="&Opna"
-03000211="Opna &Inni"
-03000212="Opna &Úti"
+03000211="Opna &inni"
+03000212="Opna &úti"
 03000220="&Skoða"
 03000221="&Breyta"
 03000230="&Endurnefna"
-03000231="&Afrita Til..."
-03000232="&Færa Til..."
+03000231="&Afrita í..."
+03000232="&Færa til..."
 03000233="&Eyða"
 03000240="&Stillingar"
 03000241="&Umsögn"
-03000242="Reikna út checksum"
-03000250="Gera Möppu"
-03000251="Gera Skrá"
+03000242="Reikna út checksummu"
+03000250="Búa til möppu"
+03000251="Búa til skrá"
 03000260="&Hætta"
-03000270="&Skipta skrá..."
+03000270="&Búta niður skrá..."
 03000271="&Sameina skrár..."
 
 ; Edit
@@ -330,53 +330,53 @@
 03000311="&Gera aftur"
 03000320="&Klippa"
 03000321="&Afrita"
-03000322="&Birta Afrit"
+03000322="&Líma"
 03000323="&Eyða"
-03000330="Velja &Allt"
-03000331="Afvelja Allt"
-03000332="&Öfugsnúið Val"
+03000330="Velja &allt"
+03000331="Afvelja allt"
+03000332="&Öfugsnúið val"
 03000333="Velja..."
 03000334="Afvelja..."
-03000335="Velja eftir Tegund"
-03000336="Afvelja eftir Tegund"
+03000335="Velja eftir tegund"
+03000336="Afvelja eftir tegund"
 
 ; View
-03000410="&Stórar Myndir"
-03000411="&Smáar Myndir"
+03000410="&Stórar myndir"
+03000411="&Smáar myndir"
 03000412="&Listi"
 03000413="&Smáatriði"
 03000420="Óflokkað"
-03000430="Opna Aðalmöppu"
-03000431="Til Baka"
-03000432="Möppusaga..."
+03000430="Opna aðalmöppu"
+03000431="Til baka"
+03000432="Yfirlit yfir notkun"
 03000440="&Uppfæra"
-03000449="Birta Heildarinnihald"
-03000450="&2 Borð"
+03000449="Birta heildarinnihald möppu"
+03000450="&2 Vinnsluborð"
 03000451="&Tólaröð"
 03000460="Tólaröð gagnasafns"
-03000461="Eðlileg Tólaröð"
+03000461="Eðlileg tólaröð"
 03000462="Stórir Takkar"
-03000463="Sýna Texta Takkana"
+03000463="Sýna texta á tökkum"
 
 ; Tools
-03000510="&Stillingar..."
+03000510="&Stillingar"
 03000511="&Hraðaprufa"
 
 ; Help
-03000610="&Innihald..."
+03000610="&Leiðarvísir"
 03000620="&Um 7-Zip..."
 
 ; Favorites
-03000710="&Bæta möppu við Uppáhald sem"
-03000720="Setja bókarmerki"
+03000710="&Bæta möppu við uppáhald sem"
+03000720="Bókarmerki"
 
 ; Options Dialog
 
 03010000="Stillingar"
 
 ; Plugins
-03010100="Græjur"
-03010101="&Græjur:"
+03010100="Viðbætur"
+03010101="&Viðbætur:"
 03010110="Stillingar..."
 
 ; Edit
@@ -384,9 +384,9 @@
 03010201="&Breytir:"
 
 ; System
-03010300="Kerfi"
+03010300="Stýrikerfi"
 03010302="Innleiða 7-Zip í:"
-03010310="Græja"
+03010310="Viðbót"
 
 ; Settings
 03010400="Stillingar"
@@ -438,7 +438,7 @@
 03020251="Afvelja"
 03020252="Skyggja:"
 
-03020260="Möppusaga"
+03020260="Yfirlit yfir notkun"
 
 03020280="Skrá '{0}' var breytt.\nViltu uppfæra hana í gagnasafninu?"
 03020281="Get ekki uppfært skrá\n'{0}'"
@@ -469,15 +469,15 @@
 03020521="Ertu viss um að þú viljir skipta skránni í {0} hluta?"
 03020522="Stærð hluta verður að vera smærri en stærð upprunalegu skrárinnar"
 
-03020600="Sameina Skrár"
-03020601="&Sameina Í:"
+03020600="Sameina skrár"
+03020601="&Sameina í:"
 03020610="Sameina..."
 03020620="Veldu aðeins fyrstu skránna"
 
-03020710="Checksum útreikning..."
-03020720="Checksum upplýsingar"
-03020721="CRC checksum fyrir gögn:"
-03020722="CRC checksum fyrir gögn of nöfn:"
+03020710="Checksumma í vinnslu..."
+03020720="Upplýsingar um checksummu"
+03020721="CRC checksumma fyrir gögn:"
+03020722="CRC checksumma fyrir gögn og nöfn:"
 
 03020800="Skanna..."
 
@@ -485,8 +485,8 @@
 
 ; Computer
 03031100="Heildarstærð"
-03031101="Laust Pláss"
-03031102="Stærð Hóps"
+03031101="Laust pláss"
+03031102="Stærð hóps"
 03031103="Titill"
 
 ; Network
@@ -504,9 +504,11 @@
 03080006="Heildarútkoma"
 03080007="Núverandi"
 03080008="Niðurstaða"
-03080009="Fjöldi Prufa:"
+03080009="Fjöldi prufa:"
 0308000A="Villur:"
-0308000B="CPU Notkun"
+0308000B="Örgjörvanotkun"
 0308000C="Útkoma / Notkun"
 
 ;!@LangEnd@!
+
+ 	  	 

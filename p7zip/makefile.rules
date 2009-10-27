@@ -1,12 +1,17 @@
 
 myGetTickCount.o : ../../../myWindows/myGetTickCount.cpp
 	$(CXX) $(CXXFLAGS) ../../../myWindows/myGetTickCount.cpp
-wine_date_and_time.o : ../../../myWindows/wine_date_and_time.cpp
-	$(CXX) $(CXXFLAGS) ../../../myWindows/wine_date_and_time.cpp
 myAddExeFlag.o : ../../../myWindows/myAddExeFlag.cpp
 	$(CXX) $(CXXFLAGS) ../../../myWindows/myAddExeFlag.cpp 
 mySplitCommandLine.o : ../../../myWindows/mySplitCommandLine.cpp
 	$(CXX) $(CXXFLAGS) ../../../myWindows/mySplitCommandLine.cpp
+wine_date_and_time.o : ../../../myWindows/wine_date_and_time.cpp
+	$(CXX) $(CXXFLAGS) ../../../myWindows/wine_date_and_time.cpp
+wine_GetXXXDefaultLangID.o : ../../../myWindows/wine_GetXXXDefaultLangID.cpp
+	$(CXX) $(CXXFLAGS) ../../../myWindows/wine_GetXXXDefaultLangID.cpp
+
+
+
 ConsoleClose.o : ../../UI/Console/ConsoleClose.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Console/ConsoleClose.cpp
 ExtractCallbackConsole.o : ../../UI/Console/ExtractCallbackConsole.cpp
@@ -35,8 +40,6 @@ MyMap.o : ../../../Common/MyMap.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/MyMap.cpp
 MyXml.o : ../../../Common/MyXml.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/MyXml.cpp
-ListFileUtils.o : ../../../Common/ListFileUtils.cpp
-	$(CXX) $(CXXFLAGS) ../../../Common/ListFileUtils.cpp
 MyWindows.o : ../../../Common/MyWindows.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/MyWindows.cpp
 Random.o : ../../../Common/Random.cpp
@@ -51,12 +54,16 @@ StringConvert.o : ../../../Common/StringConvert.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/StringConvert.cpp
 StringToInt.o : ../../../Common/StringToInt.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/StringToInt.cpp
+TextConfig.o : ../../../Common/TextConfig.cpp
+	$(CXX) $(CXXFLAGS) ../../../Common/TextConfig.cpp
 UTFConvert.o : ../../../Common/UTFConvert.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/UTFConvert.cpp
 MyVector.o : ../../../Common/MyVector.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/MyVector.cpp
 Wildcard.o : ../../../Common/Wildcard.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/Wildcard.cpp
+Clipboard.o : ../../../Windows/Clipboard.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Clipboard.cpp
 DLL.o : ../../../Windows/DLL.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/DLL.cpp
 Error.o : ../../../Windows/Error.cpp
@@ -77,14 +84,27 @@ PropVariantConversions.o : ../../../Windows/PropVariantConversions.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/PropVariantConversions.cpp
 PropVariantUtils.o : ../../../Windows/PropVariantUtils.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/PropVariantUtils.cpp
+Registry.o : ../../../Windows/Registry.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Registry.cpp
 Synchronization.o : ../../../Windows/Synchronization.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/Synchronization.cpp
 Time.o : ../../../Windows/Time.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/Time.cpp
 System.o : ../../../Windows/System.cpp
 	$(CXX) $(CXXFLAGS) ../../../Windows/System.cpp
+Window.o : ../../../Windows/Window.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Window.cpp
+Dialog.o : ../../../Windows/Control/Dialog.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Control/Dialog.cpp
+Controls.o : ../../../Windows/Control/Controls.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Control/Controls.cpp
+Window2.o : ../../../Windows/Control/Window2.cpp
+	$(CXX) $(CXXFLAGS) ../../../Windows/Control/Window2.cpp
+
 CreateCoder.o : ../../Common/CreateCoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Common/CreateCoder.cpp
+CWrappers.o : ../../Common/CWrappers.cpp
+	$(CXX) $(CXXFLAGS) ../../Common/CWrappers.cpp
 CrossThreadProgress.o : ../../Archive/Common/CrossThreadProgress.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Common/CrossThreadProgress.cpp
 FilePathAutoRename.o : ../../Common/FilePathAutoRename.cpp
@@ -97,6 +117,10 @@ InBuffer.o : ../../Common/InBuffer.cpp
 	$(CXX) $(CXXFLAGS) ../../Common/InBuffer.cpp
 InOutTempBuffer.o : ../../Common/InOutTempBuffer.cpp
 	$(CXX) $(CXXFLAGS) ../../Common/InOutTempBuffer.cpp
+Lang.o : ../../../Common/Lang.cpp
+	$(CXX) $(CXXFLAGS) ../../../Common/Lang.cpp
+ListFileUtils.o : ../../../Common/ListFileUtils.cpp
+	$(CXX) $(CXXFLAGS) ../../../Common/ListFileUtils.cpp
 LimitedStreams.o : ../../Common/LimitedStreams.cpp
 	$(CXX) $(CXXFLAGS) ../../Common/LimitedStreams.cpp
 LockedStream.o : ../../Common/LockedStream.cpp
@@ -151,8 +175,6 @@ BranchRegister.o : ../../Compress/BranchRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/BranchRegister.cpp
 ByteSwap.o : ../../Compress/ByteSwap.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/ByteSwap.cpp
-ByteSwapRegister.o : ../../Compress/ByteSwapRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Compress/ByteSwapRegister.cpp
 BZip2Crc.o : ../../Compress/BZip2Crc.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/BZip2Crc.cpp
 BZip2Decoder.o : ../../Compress/BZip2Decoder.cpp
@@ -175,6 +197,8 @@ DeflateNsisRegister.o : ../../Compress/DeflateNsisRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/DeflateNsisRegister.cpp
 DeflateRegister.o : ../../Compress/DeflateRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/DeflateRegister.cpp
+DeltaFilter.o : ../../Compress/DeltaFilter.cpp
+	$(CXX) $(CXXFLAGS) ../../Compress/DeltaFilter.cpp
 ImplodeDecoder.o : ../../Compress/ImplodeDecoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/ImplodeDecoder.cpp
 ImplodeHuffmanDecoder.o : ../../Compress/ImplodeHuffmanDecoder.cpp
@@ -183,6 +207,12 @@ LzhDecoder.o : ../../Compress/LzhDecoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/LzhDecoder.cpp
 LzOutWindow.o : ../../Compress/LzOutWindow.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/LzOutWindow.cpp
+Lzma2Decoder.o : ../../Compress/Lzma2Decoder.cpp
+	$(CXX) $(CXXFLAGS) ../../Compress/Lzma2Decoder.cpp
+Lzma2Encoder.o : ../../Compress/Lzma2Encoder.cpp
+	$(CXX) $(CXXFLAGS) ../../Compress/Lzma2Encoder.cpp
+Lzma2Register.o : ../../Compress/Lzma2Register.cpp
+	$(CXX) $(CXXFLAGS) ../../Compress/Lzma2Register.cpp
 LzmaDecoder.o : ../../Compress/LzmaDecoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/LzmaDecoder.cpp
 LzmaEncoder.o : ../../Compress/LzmaEncoder.cpp
@@ -241,37 +271,6 @@ LzmaBenchCon.o : ../../Compress/LZMA_Alone/LzmaBenchCon.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/7z/7zSpecStream.cpp
 7zUpdate.o : ../../Archive/7z/7zUpdate.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/7z/7zUpdate.cpp
-bz2Register.o : ../../Archive/BZip2/bz2Register.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/BZip2/bz2Register.cpp
-BZip2Handler.o : ../../Archive/BZip2/BZip2Handler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/BZip2/BZip2Handler.cpp
-BZip2HandlerOut.o : ../../Archive/BZip2/BZip2HandlerOut.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/BZip2/BZip2HandlerOut.cpp
-BZip2Update.o : ../../Archive/BZip2/BZip2Update.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/BZip2/BZip2Update.cpp
-GZipHandler.o : ../../Archive/GZip/GZipHandler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipHandler.cpp
-GZipHandlerOut.o : ../../Archive/GZip/GZipHandlerOut.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipHandlerOut.cpp
-GZipHeader.o : ../../Archive/GZip/GZipHeader.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipHeader.cpp
-GZipIn.o : ../../Archive/GZip/GZipIn.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipIn.cpp
-GZipOut.o : ../../Archive/GZip/GZipOut.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipOut.cpp
-GZipRegister.o : ../../Archive/GZip/GZipRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipRegister.cpp
-GZipUpdate.o : ../../Archive/GZip/GZipUpdate.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/GZip/GZipUpdate.cpp
-
-LzmaArcRegister.o : ../../Archive/Lzma/LzmaArcRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzma/LzmaArcRegister.cpp
-LzmaFiltersDecode.o : ../../Archive/Lzma/LzmaFiltersDecode.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzma/LzmaFiltersDecode.cpp
-LzmaHandler.o : ../../Archive/Lzma/LzmaHandler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzma/LzmaHandler.cpp
-LzmaIn.o : ../../Archive/Lzma/LzmaIn.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzma/LzmaIn.cpp
 
 TarHandler.o : ../../Archive/Tar/TarHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Tar/TarHandler.cpp
@@ -327,10 +326,6 @@ OutStreamWithSha1.o : ../../Archive/Common/OutStreamWithSha1.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Common/OutStreamWithSha1.cpp
 ParseProperties.o : ../../Archive/Common/ParseProperties.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Common/ParseProperties.cpp
-SplitHandler.o : ../../Archive/Split/SplitHandler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Split/SplitHandler.cpp
-SplitRegister.o : ../../Archive/Split/SplitRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Split/SplitRegister.cpp
 
 ArchiveExports.o : ../../Archive/ArchiveExports.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/ArchiveExports.cpp
@@ -344,18 +339,41 @@ DmgHandler.o : ../../Archive/DmgHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/DmgHandler.cpp
 ElfHandler.o : ../../Archive/ElfHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/ElfHandler.cpp
+FatHandler.o : ../../Archive/FatHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/FatHandler.cpp
 MachoHandler.o : ../../Archive/MachoHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/MachoHandler.cpp
+MbrHandler.o : ../../Archive/MbrHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/MbrHandler.cpp
 MubHandler.o : ../../Archive/MubHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/MubHandler.cpp
+NtfsHandler.o : ../../Archive/NtfsHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/NtfsHandler.cpp
 PeHandler.o : ../../Archive/PeHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/PeHandler.cpp
 RpmHandler.o : ../../Archive/RpmHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/RpmHandler.cpp
+VhdHandler.o : ../../Archive/VhdHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/VhdHandler.cpp
 XarHandler.o : ../../Archive/XarHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/XarHandler.cpp
+XzHandler.o : ../../Archive/XzHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/XzHandler.cpp
 ZHandler.o : ../../Archive/ZHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/ZHandler.cpp
+
+Bz2Handler.o : ../../Archive/Bz2Handler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/Bz2Handler.cpp
+CpioHandler.o : ../../Archive/CpioHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/CpioHandler.cpp
+GzHandler.o : ../../Archive/GzHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/GzHandler.cpp
+LzhHandler.o : ../../Archive/LzhHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/LzhHandler.cpp
+LzmaHandler.o : ../../Archive/LzmaHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/LzmaHandler.cpp
+SplitHandler.o : ../../Archive/SplitHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/SplitHandler.cpp
 
 ZRegister.o : ../../Archive/Z/ZRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Z/ZRegister.cpp
@@ -387,15 +405,6 @@ ComIn.o : ../../Archive/Com/ComIn.cpp
 ComRegister.o : ../../Archive/Com/ComRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Com/ComRegister.cpp
 
-CpioHandler.o : ../../Archive/Cpio/CpioHandler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Cpio/CpioHandler.cpp
-CpioHeader.o : ../../Archive/Cpio/CpioHeader.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Cpio/CpioHeader.cpp
-CpioIn.o : ../../Archive/Cpio/CpioIn.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Cpio/CpioIn.cpp
-CpioRegister.o : ../../Archive/Cpio/CpioRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Cpio/CpioRegister.cpp
-
 HfsHandler.o : ../../Archive/Hfs/HfsHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Hfs/HfsHandler.cpp
 HfsIn.o : ../../Archive/Hfs/HfsIn.cpp
@@ -411,17 +420,6 @@ IsoIn.o : ../../Archive/Iso/IsoIn.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Iso/IsoIn.cpp
 IsoRegister.o : ../../Archive/Iso/IsoRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Iso/IsoRegister.cpp
-
-LzhCRC.o : ../../Archive/Lzh/LzhCRC.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzh/LzhCRC.cpp
-LzhHandler.o : ../../Archive/Lzh/LzhHandler.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzh/LzhHandler.cpp
-LzhIn.o : ../../Archive/Lzh/LzhIn.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzh/LzhIn.cpp
-LzhOutStreamWithCRC.o : ../../Archive/Lzh/LzhOutStreamWithCRC.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzh/LzhOutStreamWithCRC.cpp
-LzhRegister.o : ../../Archive/Lzh/LzhRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Archive/Lzh/LzhRegister.cpp
 
 NsisDecode.o : ../../Archive/Nsis/NsisDecode.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Nsis/NsisDecode.cpp
@@ -461,10 +459,14 @@ WimRegister.o : ../../Archive/Wim/WimRegister.cpp
 
 ArchiveCommandLine.o : ../../UI/Common/ArchiveCommandLine.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/ArchiveCommandLine.cpp
+ArchiveName.o : ../../UI/Common/ArchiveName.cpp
+	$(CXX) $(CXXFLAGS) ../../UI/Common/ArchiveName.cpp
 ArchiveExtractCallback.o : ../../UI/Common/ArchiveExtractCallback.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/ArchiveExtractCallback.cpp
 ArchiveOpenCallback.o : ../../UI/Common/ArchiveOpenCallback.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/ArchiveOpenCallback.cpp
+CompressCall.o : ../../UI/Common/CompressCall.cpp
+	$(CXX) $(CXXFLAGS) ../../UI/Common/CompressCall.cpp
 DefaultName.o : ../../UI/Common/DefaultName.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/DefaultName.cpp
 EnumDirItems.o : ../../UI/Common/EnumDirItems.cpp
@@ -497,6 +499,8 @@ UpdateProduce.o : ../../UI/Common/UpdateProduce.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/UpdateProduce.cpp
 WorkDir.o : ../../UI/Common/WorkDir.cpp
 	$(CXX) $(CXXFLAGS) ../../UI/Common/WorkDir.cpp
+ZipRegistry.o : ../Common/ZipRegistry.cpp
+	$(CXX) $(CXXFLAGS) ../Common/ZipRegistry.cpp
 ZipCrypto.o : ../../Crypto/ZipCrypto.cpp
 	$(CXX) $(CXXFLAGS) ../../Crypto/ZipCrypto.cpp
 ZipStrong.o : ../../Crypto/ZipStrong.cpp
@@ -527,29 +531,53 @@ Sort.o : ../../../../C/Sort.c
 Threads.o : ../../../../C/Threads.c
 	$(CC) $(CFLAGS) ../../../../C/Threads.c
 
-Sha256.o : ../../../../C/Sha256.c
-	$(CC) $(CFLAGS) ../../../../C/Sha256.c
+Lzma2Dec.o : ../../../../C/Lzma2Dec.c
+	$(CC) $(CFLAGS) ../../../../C/Lzma2Dec.c
+Lzma2Enc.o : ../../../../C/Lzma2Enc.c
+	$(CC) $(CFLAGS) ../../../../C/Lzma2Enc.c
 LzmaEnc.o : ../../../../C/LzmaEnc.c
 	$(CC) $(CFLAGS) ../../../../C/LzmaEnc.c
 LzmaDec.o : ../../../../C/LzmaDec.c
 	$(CC) $(CFLAGS) ../../../../C/LzmaDec.c
 
-BwtSort.o : ../../../../C/BwtSort.c
-	$(CC) $(CFLAGS) ../../../../C/BwtSort.c
-BraIA64.o : ../../../../C/BraIA64.c
-	$(CC) $(CFLAGS) ../../../../C/BraIA64.c
+
+7zBuf2.o : ../../../../C/7zBuf2.c
+	$(CC) $(CFLAGS) ../../../../C/7zBuf2.c
+7zStream.o : ../../../../C/7zStream.c
+	$(CC) $(CFLAGS) ../../../../C/7zStream.c
+Aes.o : ../../../../C/Aes.c
+	$(CC) $(CFLAGS) ../../../../C/Aes.c
 Bra.o : ../../../../C/Bra.c
 	$(CC) $(CFLAGS) ../../../../C/Bra.c
 Bra86.o : ../../../../C/Bra86.c
 	$(CC) $(CFLAGS) ../../../../C/Bra86.c
-Aes.o : ../../../../C/Aes.c
-	$(CC) $(CFLAGS) ../../../../C/Aes.c
+BraIA64.o : ../../../../C/BraIA64.c
+	$(CC) $(CFLAGS) ../../../../C/BraIA64.c
+BwtSort.o : ../../../../C/BwtSort.c
+	$(CC) $(CFLAGS) ../../../../C/BwtSort.c
+Delta.o : ../../../../C/Delta.c
+	$(CC) $(CFLAGS) ../../../../C/Delta.c
 LzFind.o : ../../../../C/LzFind.c
 	$(CC) $(CFLAGS) ../../../../C/LzFind.c
 LzFindMt.o : ../../../../C/LzFindMt.c
 	$(CC) $(CFLAGS) ../../../../C/LzFindMt.c
 HuffEnc.o : ../../../../C/HuffEnc.c
 	$(CC) $(CFLAGS) ../../../../C/HuffEnc.c
+MtCoder.o : ../../../../C/MtCoder.c
+	$(CC) $(CFLAGS) ../../../../C/MtCoder.c
+Sha256.o : ../../../../C/Sha256.c
+	$(CC) $(CFLAGS) ../../../../C/Sha256.c
+
+Xz.o : ../../../../C/Xz.c
+	$(CC) $(CFLAGS) ../../../../C/Xz.c
+XzCrc64.o : ../../../../C/XzCrc64.c
+	$(CC) $(CFLAGS) ../../../../C/XzCrc64.c
+XzDec.o : ../../../../C/XzDec.c
+	$(CC) $(CFLAGS) ../../../../C/XzDec.c
+XzEnc.o : ../../../../C/XzEnc.c
+	$(CC) $(CFLAGS) ../../../../C/XzEnc.c
+XzIn.o : ../../../../C/XzIn.c
+	$(CC) $(CFLAGS) ../../../../C/XzIn.c
 
 # CRC32, C version
 7zCrc.o : ../../../../C/7zCrc.c

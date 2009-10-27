@@ -12,10 +12,8 @@
 
 <P>Update older files in the archive and add files that are not already in the archive.</P>
 
-<P>Note: The current version of 7-Zip cannot change an archive which
-was created with the solid option switched on.
-To update a .7z archive you must create and update that archive only in non-solid
-mode (-ms=off switch).</P>
+<P>Note: the updating of solid .7z archives can be slow, since it 
+can require some recompression.</P>
 
 <H4>Example</H4>
 
@@ -45,6 +43,7 @@ all files, you must use a * wildcard.</P>
   <A href="../switches/sfx.htm">-sfx (create SFX)</A><BR>
   <A href="../switches/stdin.htm">-si (use StdIn)</A><BR>
   <A href="../switches/stdout.htm">-so (use StdOut)</A><BR>
+  <A href="../switches/shared.htm">-ssw (Compress shared files)</A><BR>
   <A href="../switches/type.htm">-t (Type of archive)</A><BR>
   <A href="../switches/update.htm">-u (Update)</A><BR>
   <A href="../switches/working_dir.htm">-w (Working Dir)</A><BR>

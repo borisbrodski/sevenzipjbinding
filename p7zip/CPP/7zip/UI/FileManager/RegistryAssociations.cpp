@@ -4,20 +4,17 @@
 
 #include "RegistryAssociations.h"
 
-#include "Common/StringConvert.h"
 #include "Common/IntToString.h"
+#include "Common/StringConvert.h"
 #include "Common/StringToInt.h"
 
-#include "Windows/Synchronization.h"
 #include "Windows/Registry.h"
-
-#include "Windows/FileName.h"
+#include "Windows/Synchronization.h"
 
 #include "StringUtils.h"
 
 using namespace NWindows;
 using namespace NRegistry;
-
 
 namespace NRegistryAssociations {
   
@@ -126,7 +123,8 @@ static bool CheckShellExtensionInfo2(const CSysString &extension, UString &iconP
   if (extKey.QueryValue(NULL, programNameValue) != ERROR_SUCCESS)
     return false;
   CSysString extProgramKeyName = GetExtProgramKeyName(extension);
-  if (programNameValue.CompareNoCase(extProgramKeyName) != 0)
+  UString programNameValueU = GetUnicodeString(programNameValue);
+  if (programNameValueU.CompareNoCase(GetUnicodeString(extProgramKeyName)) != 0)
     return false;
   CKey iconKey;
   if (extKey.Open(HKEY_CLASSES_ROOT, extProgramKeyName + CSysString(TEXT(CHAR_PATH_SEPARATOR)) + kDefaultIconKeyName, KEY_READ) != ERROR_SUCCESS)
@@ -217,8 +215,8 @@ void AddShellExtensionInfo(const CSysString &extension,
     if (iconIndex >= 0)
     {
       iconPathFull += L",";
-      wchar_t s[32];
-      ConvertUInt64ToString((UInt64)iconIndex, s);
+      wchar_t s[16];
+      ConvertUInt32ToString(iconIndex, s);
       iconPathFull += s;
     }
     iconKey.SetValue(NULL, iconPathFull);

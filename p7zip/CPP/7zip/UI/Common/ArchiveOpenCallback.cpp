@@ -2,13 +2,14 @@
 
 #include "StdAfx.h"
 
-#include "ArchiveOpenCallback.h"
-
 #include "Common/StringConvert.h"
 #include "Common/ComTry.h"
+
 #include "Windows/PropVariant.h"
 
 #include "../../Common/FileStreams.h"
+
+#include "ArchiveOpenCallback.h"
 
 using namespace NWindows;
 
@@ -74,9 +75,12 @@ struct CInFileStreamVol: public CInFileStream
   CMyComPtr<IArchiveOpenCallback> OpenCallbackRef;
   ~CInFileStreamVol()
   {
-    int index = OpenCallbackImp->FindName(Name);
-    if (index >= 0)
-      OpenCallbackImp->FileNames.Delete(index);
+    if (OpenCallbackRef) /* FIXED */
+    {
+      int index = OpenCallbackImp->FindName(Name);
+      if (index >= 0)
+        OpenCallbackImp->FileNames.Delete(index);
+    }
   }
 };
 
@@ -91,7 +95,7 @@ STDMETHODIMP COpenCallbackImp::GetStream(const wchar_t *name, IInStream **inStre
   }
   *inStream = NULL;
   UString fullPath = _folderPrefix + name;
-  if (!NFile::NFind::FindFile(fullPath, _fileInfo))
+  if (!_fileInfo.Find(fullPath))
     return S_FALSE;
   if (_fileInfo.IsDir())
     return S_FALSE;

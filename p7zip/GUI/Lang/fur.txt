@@ -1,5 +1,5 @@
 ;!@Lang@!UTF-8!
-; 7-Zip 4.44
+; 7-Zip 4.60 beta
 ; Translated by Andrea Decorte (Klenje)
 ; http://softfurlan.altervista.org
 ; secont l'ortografie uficiâl de Provincie di Udin
@@ -98,6 +98,24 @@
 0200021C="Coment"
 0200021D="Posizion"
 0200021E="Prefìs dal troi"
+0200021F="Cartelis"
+02000220="Files"
+02000221="Version"
+02000222="Volum"
+02000223="Multivolum"
+02000224="Offset"
+02000225="Leams"
+02000226="Blocs"
+02000227="Volums"
+
+02000229="64-bit"
+0200022A="Big-endian"
+0200022B="CPU"
+0200022C="Dimension fisiche"
+0200022D="Dimension intestazions"
+0200022E="Some di control"
+0200022F="Caracteristichis"
+02000230="Direzion virtuâl"
 
 ; Status bar
 02000301="{0} ogjet(s) selezionât(s)"
@@ -106,6 +124,8 @@
 02000320="Files:"
 02000321="Cartelis:"
 02000322="Dimension:"
+02000323="Dimension comprimude:"
+02000324="Archivis:"
 
 ; List Context Menu
 02000401="&Colonis..."
@@ -127,6 +147,9 @@
 02000608="Nissun erôr cjatât"
 02000609="No si pues viarzi il file '{0}' come archivi"
 0200060A="No si pues viarzi l'archivi cifrât '{0}'. Ise sbaliade la peraule clâf?"
+0200060B="Il sisteme nol rive a cjoli la cuantitât di memorie che e covente"
+0200060C="Erôr no cognossût"
+0200060D="Gjenar di archivi no supuartât"
 
 ; Dialogs
 02000702="Va ben"
@@ -205,6 +228,8 @@
 02000C02="Timp restant:"
 02000C03="Dimension:"
 02000C04="Sveltece:"
+02000C05="Elaborât:"
+02000C06="Tas di compression:"
 
 02000C10="&Sfont"
 02000C11="P&rin plan"
@@ -234,6 +259,11 @@
 02000D0F="Utilizazion memorie decomprimint:"
 02000D10="Ciframent"
 02000D11="Metodi di ciframent:"
+02000D12="Numar di threads de CPU:"
+02000D13="Dimension bloc solit:"
+02000D14="No-solit"
+02000D15="Solit"
+02000D16="Comprim i files condividûts"
 
 02000D40="Divît in &volums, grandece in bytes:"
 02000D41="Dimension dai volums sbaliade"
@@ -300,7 +330,7 @@
 03000233="&Elimine"
 03000240="P&ropietâts"
 03000241="Comen&t"
-03000242="Calcole chec&ksum"
+03000242="Calcole so&me di control"
 03000250="Cree cartele"
 03000251="Cree file"
 03000260="V&a fûr"
@@ -400,6 +430,7 @@
 03020215="Sêstu sigûr di volê eliminâ chescj {0} elements?"
 03020216="Daûr a eliminâ..."
 03020217="Erôr eliminant un file o une cartele"
+03020218="Il sisteme nol pues movi un file cuntun troi lunc te Scovacere"
 
 03020220="Daûr a gambiâ non..."
 03020221="Erôr gambiant non a un file o une cartele"
@@ -426,6 +457,7 @@
 03020281="No si pues atualizâ il file\n'{0}'"
 03020282="No si pues inviâ l'editôr."
 03020283="Daûr a viarzi..."
+03020284="Il file al samee un virus (il non al à dentri un grum di spazis)."
 
 03020290="Coment"
 03020291="&Coment:"
@@ -434,6 +466,7 @@
 
 03020300="Ordenadôr"
 03020301="Rêt"
+03020302="Documents"
 
 03020400="Zonte"
 03020401="Tire fûr"
@@ -455,13 +488,22 @@
 03020601="&Torne a unî in:"
 03020610="Daûr a tornâ a unî..."
 03020620="Sielç dome il prin file"
+03020621="No si pues rilevâ il file come toc di un file dividût"
+03020622="No son stâts cjatâts plui tocs di file dividûts"
 
-03020710="Daûr a calcolâ il checksum..."
-03020720="Informazions sul checksum"
-03020721="Checksum CRC pai dâts:"
-03020722="Checksum CRC pai dâts e i nons:"
+03020710="Daûr a calcolâ la some di control..."
+03020720="Informazions su la some di control"
+03020721="Some di control CRC pai dâts:"
+03020722="Some di control CRC pai dâts e i nons:"
 
 03020800="Daûr a scandaiâ..."
+
+03020900="Propietâts"
+
+03020A01="Cheste operazion no pues jessi clamade di une cartele cuntun troi lunc."
+03020A02="Tu scugnis sielzi un file"
+03020A03="Tu scugnis sielzi un o plui files"
+03020A04="Il file {0} al esist za"
 
 ; Computer
 03031100="Dimension totâl"
@@ -486,5 +528,7 @@
 03080008="Risultant"
 03080009="Passaçs:"
 0308000A="Erôrs:"
+0308000B="Utilizazion CPU"
+0308000C="Judizi / Utilizazion"
 
 ;!@LangEnd@!

@@ -6,7 +6,7 @@
 #include <list>
 #endif
 
-/* Remark : WFMO = WaitForMultipleObjects */ 
+/* Remark : WFMO = WaitForMultipleObjects */
 
 namespace NWindows { namespace NSynchronization { struct CBaseHandleWFMO; } }
 

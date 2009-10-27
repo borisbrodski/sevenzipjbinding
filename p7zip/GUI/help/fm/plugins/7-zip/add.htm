@@ -52,6 +52,9 @@
       <TR> <TH>Method</TH> <TH>Description</TH> </TR>
       <TR> <TD>LZMA</TD> <TD>Default compression method of 7z format. It provides high 
                      compression ratio and very fast decompression.</TD> </TR>
+      <TR> <TD>LZMA2</TD> <TD>LZMA-based compression method. 
+                     It provides better multithreading support than LZMA. But compression ratio
+                     can be worse in some cases.</TD> </TR>
       <TR> <TD>PPMd</TD> <TD>Dmitry Shkarin's PPMdH algorithm with small changes. 
                   Usually it provides high compression ratio and high speed 
                   for text files.</TD> </TR>
@@ -194,9 +197,9 @@
     <P>Specifies the size of a solid block. You can also disable solid mode.
           In solid mode all files will be compressed as continuous data blocks. 
           Usually compressing to a solid archive improves the compression ratio.
-          You can use this option only for 7z archives. With the current version of 7z, you
-          can update existing archives only when 
-          solid mode is switched off and the existing archive is non-solid.</P>
+          You can use this option only for 7z archives. The updating of solid .7z 
+          archives can be slow, since it can require some recompression.</P>
+.</P>
   </DD>
 
   <DT>Number of CPU threads</DT>

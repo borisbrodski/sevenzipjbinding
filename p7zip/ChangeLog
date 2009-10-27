@@ -1,4 +1,29 @@
 
+Version 9.04 (Major bugfixes and Major enhancements) 
+============
+
+  - From Windows version of 7-zip 9.04 :
+    - 7-Zip now can update solid .7z archives.
+    - 7-Zip now supports LZMA2 compression method.
+    - 7-Zip now supports XZ archives.
+    - 7-Zip now can unpack NTFS, FAT, VHD and MBR archives.
+    - 7-Zip now can unpack GZip, BZip2, LZMA, XZ and TAR archives from stdin.
+    - New -scrc switch to calculate total CRC-32 during extracting / testing.
+    - Some bugs were fixed.
+
+  - #2799966 " A newly created 7z archive (by p7zip 4.65) is broken and cannot be unpacked / listed / tested"
+    Fixed : now "7za a -mx=9 archive.7z directory" creates a good archive even
+    if there are a lot of executable files.
+
+  - Fixed : the RAM size was reported incorrectly on MacOSX 64bits (with 2Gb+ RAM)
+  
+  - #2798023 "segfault handling very large multivolume .7z file"
+    p7zip now displays the following error "Error: Too many open files"
+    if you don't have enough rights to open all the splitted files
+    ( on Linux : ulimit -n)
+  
+
+
 Version 4.65
 ============
   - From Windows version of 7-zip 4.62 to 4.65

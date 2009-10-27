@@ -15,6 +15,7 @@ include ../../../../makefile.machine
 LIBS=`wx-config --unicode=yes --libs` $(LOCAL_LIBS_DLL)
 
 OBJS=\
+OutStreamWithCRC.o \
 Agent.o \
 AgentOut.o \
 AgentProxy.o \

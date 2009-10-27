@@ -122,12 +122,15 @@ namespace NWindows
 		  		fclose( f );
 			}
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__APPLE__)
-			unsigned int val;
-			int mib[2];
-
-			mib[0] = CTL_HW;
-			mib[1] = HW_PHYSMEM;
+#ifdef HW_MEMSIZE
+			uint64_t val = 0; // support 2Gb+ RAM
+			int mib[2] = { CTL_HW, HW_MEMSIZE };
+#else // HW_MEMSIZE
+			unsigned int val = 0; // For old system
+			int mib[2] = { CTL_HW, HW_PHYSMEM };
+#endif // HW_MEMSIZE
 			size_t size_sys = sizeof(val);
+
 			sysctl(mib, 2, &val, &size_sys, NULL, 0);
 			if (val) ullTotalPhys = val;
 #elif defined(__CYGWIN__)

@@ -34,6 +34,7 @@ public:
   FILETIME ATime;
   FILETIME MTime;
   DWORD Attrib;
+  bool IsDevice;
   
   bool IsDir() const { return MatchesMask(FILE_ATTRIBUTE_DIRECTORY); }
 };
@@ -43,6 +44,7 @@ class CFileInfo: public CFileInfoBase
 public:
   AString Name; // FIXME CSysString Name;
   bool IsDots() const;
+  bool Find(LPCSTR wildcard);
 };
 
 // FIXME #ifdef _UNICODE
@@ -53,6 +55,7 @@ class CFileInfoW: public CFileInfoBase
 public:
   UString Name;
   bool IsDots() const;
+  bool Find(LPCWSTR wildcard);
 };
 // #endif
 
@@ -78,10 +81,12 @@ public:
 
 bool FindFile(LPCSTR wildcard, CFileInfo &fileInfo);
 
-bool DoesFileExist(LPCTSTR name);
+bool DoesFileExist(LPCSTR name);
+bool DoesFileOrDirExist(LPCSTR name);
 // #ifndef _UNICODE
 bool FindFile(LPCWSTR wildcard, CFileInfoW &fileInfo);
 bool DoesFileExist(LPCWSTR name);
+bool DoesFileOrDirExist(LPCWSTR name);
 // #endif
 
 class CEnumerator

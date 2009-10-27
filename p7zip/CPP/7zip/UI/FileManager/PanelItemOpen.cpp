@@ -78,20 +78,25 @@ public:
   }
 };
 
-HRESULT CPanel::OpenItemAsArchive(const UString &name,
-    const UString &folderPath, const UString &filePath,
+HRESULT CPanel::OpenItemAsArchive(IInStream *inStream,
+    const CTempFileInfo &tempFileInfo,
     const UString &virtualFilePath,
     bool &encrypted)
 {
   encrypted = false;
   CFolderLink folderLink;
-  if (!NFile::NFind::FindFile(filePath, folderLink.FileInfo))
-    return E_FAIL;
-  if (folderLink.FileInfo.IsDir())
-    return S_FALSE;
+  (CTempFileInfo &)folderLink = tempFileInfo;
+  if (inStream)
+    folderLink.IsVirtual = true;
+  else
+  {
+    if (!folderLink.FileInfo.Find(folderLink.FilePath))
+      return ::GetLastError();
+    if (folderLink.FileInfo.IsDir())
+      return S_FALSE;
+    folderLink.IsVirtual = false;
+  }
 
-  folderLink.FilePath = filePath;
-  folderLink.FolderPath = folderPath;
   folderLink.VirtualPath = virtualFilePath;
 
   CMyComPtr<IFolderFolder> newFolder;
@@ -102,13 +107,14 @@ HRESULT CPanel::OpenItemAsArchive(const UString &name,
   NDLL::CLibrary library;
 
   UString password;
-  RINOK(OpenFileFolderPlugin(filePath, &library, &newFolder, GetParent(), encrypted, password));
+  RINOK(OpenFileFolderPlugin(inStream,
+      folderLink.FilePath.IsEmpty() ? virtualFilePath : folderLink.FilePath,
+      &library, &newFolder, GetParent(), encrypted, password));
  
   folderLink.Password = password;
   folderLink.UsePassword = encrypted;
 
   folderLink.ParentFolder = _folder;
-  folderLink.ItemName = name;
   _parentFolders.Add(folderLink);
   _parentFolders.Back().Library.Attach(_library.Detach());
 
@@ -117,22 +123,25 @@ HRESULT CPanel::OpenItemAsArchive(const UString &name,
   _folder = newFolder;
   _library.Attach(library.Detach());
 
+  _flatMode = _flatModeForArc;
+
   return S_OK;
 }
 
-HRESULT CPanel::OpenItemAsArchive(const UString &name)
+HRESULT CPanel::OpenItemAsArchive(const UString &name, bool &encrypted)
 {
-  bool encrypted;
-  return OpenItemAsArchive(name, _currentFolderPrefix,
-      _currentFolderPrefix + name,
-      _currentFolderPrefix + name,
-      encrypted);
+  CTempFileInfo tfi;
+  tfi.ItemName = name;
+  tfi.FolderPath = _currentFolderPrefix;
+  tfi.FilePath = _currentFolderPrefix + name;
+  return OpenItemAsArchive(NULL, tfi, _currentFolderPrefix + name, encrypted);
 }
 
 HRESULT CPanel::OpenItemAsArchive(int index)
 {
   CDisableTimerProcessing disableTimerProcessing1(*this);
-  RINOK(OpenItemAsArchive(GetItemRelPath(index)));
+  bool encrypted;
+  RINOK(OpenItemAsArchive(GetItemRelPath(index), encrypted));
   RefreshListCtrl();
   return S_OK;
 }

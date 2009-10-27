@@ -23,6 +23,7 @@ StringConvert.o \
 MyVector.o \
 Wildcard.o \
 FileStreams.o \
+Threads.o \
 Client7z.o
 
 include ../../../../makefile.glb

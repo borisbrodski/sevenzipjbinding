@@ -42,6 +42,9 @@ sure mv 7za433_tar 7za433_ref
 sure ${PZIP7} x ../test/7za433_7zip_lzma.7z
 sure diff -r 7za433_ref 7za433_7zip_lzma
 
+sure ${PZIP7} x ../test/7za433_7zip_lzma_bcj2.7z
+sure diff -r 7za433_ref 7za433_7zip_lzma_bcj2
+
 echo ""
 echo "# Archiving ..."
 echo "###############"
@@ -72,6 +75,20 @@ sure diff 7za.exe 7za433_ref/bin/7za.exe
 sure rm -f 7za.exe
 
 sure ${PZIP7} x ../test/7za.exe.lzma_eos
+sure diff 7za.exe 7za433_ref/bin/7za.exe
+sure rm -f 7za.exe
+
+echo ""
+echo "# TESTING (XZ) ..."
+echo "#######################"
+sure ${PZIP7} x ../test/7za.exe.xz
+sure diff 7za.exe 7za433_ref/bin/7za.exe
+
+chmod +x 7za.exe
+sure ${PZIP7} -txz a 7za.exe.xz 7za.exe
+sure rm -f 7za.exe
+
+sure ${PZIP7} x 7za.exe.xz
 sure diff 7za.exe 7za433_ref/bin/7za.exe
 sure rm -f 7za.exe
 

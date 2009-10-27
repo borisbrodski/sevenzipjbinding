@@ -14,6 +14,7 @@ OBJS = \
   LzmaBenchCon.o \
   LzmaDecoder.o \
   LzmaEncoder.o \
+  CWrappers.o \
   InBuffer.o \
   OutBuffer.o \
   FileStreams.o \
@@ -62,6 +63,9 @@ LzmaEncoder.o: ../LzmaEncoder.cpp
 
 RangeCoderBit.o: ../RangeCoderBit.cpp
 	$(CXX) $(CXXFLAGS) ../RangeCoderBit.cpp
+
+CWrappers.o: ../../Common/CWrappers.cpp
+	$(CXX) $(CXXFLAGS) ../../Common/CWrappers.cpp
 
 InBuffer.o: ../../Common/InBuffer.cpp
 	$(CXX) $(CXXFLAGS) ../../Common/InBuffer.cpp

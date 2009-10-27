@@ -35,6 +35,7 @@
 #include "Windows/Synchronization.cpp"
 #include "Windows/FileFind.cpp"
 #include "Windows/Time.cpp"
+#include "../C/Threads.c"
 
 using namespace NWindows;
 
@@ -202,7 +203,8 @@ static void test_time()
 {
 	time_t tps_unx = time(0);
 
-	g_StdOut << "\nTEST TIME :\n";
+	printf("Test Time (1):\n");
+	printf("===========\n");
 	SYSTEMTIME systimeGM;
 	GetSystemTime(&systimeGM);
 	
@@ -217,7 +219,7 @@ static void test_time()
 
 static void test_time2()
 {
-	printf("Test Time :\n");
+	printf("Test Time (2):\n");
 	printf("===========\n");
 	/* DosTime To utcFileTime */
 	UInt32 dosTime = 0x30d0094C;
@@ -286,8 +288,46 @@ static void test_semaphore()
 }
 
 
+/****************************************************************************************/
 
+
+static int threads_count = 0;
+
+static THREAD_FUNC_RET_TYPE thread_fct(void *param) {
+	threads_count++;
+	return 0;
+}
+
+#define MAX_THREADS 100000
+
+int test_thread(void) {
+	::CThread thread;
+
+	Thread_Construct(&thread);
+
+	threads_count = 0;
+	
+	printf("test_thread : %d threads\n",MAX_THREADS);
+
+	for(int i=0;i<MAX_THREADS;i++) {
+		Thread_Create(&thread, thread_fct, 0); 
+
+		Thread_Wait(&thread);
+
+		Thread_Close(&thread);
+	}
+
+	assert(threads_count == MAX_THREADS);
+
+	return 0;
+}
+
+/****************************************************************************************/
 int main() {
+
+  // return test_thread();
+
+
 #ifdef HAVE_LOCALE
   setlocale(LC_ALL,"");
 #endif
@@ -330,6 +370,7 @@ int main() {
 
   test_astring(12345);
   test_split_astring();
+
 
   test_time();
 

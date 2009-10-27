@@ -11,18 +11,18 @@
 #include "Common/StringConvert.h"
 #include "Common/StringToInt.h"
 
-#include "Windows/FileName.h"
 #include "Windows/FileDir.h"
+#include "Windows/FileName.h"
 #ifdef _WIN32
 #include "Windows/FileMapping.h"
 #include "Windows/Synchronization.h"
 #endif
 
 #include "ArchiveCommandLine.h"
-#include "UpdateAction.h"
-#include "Update.h"
-#include "SortUtils.h"
 #include "EnumDirItems.h"
+#include "SortUtils.h"
+#include "Update.h"
+#include "UpdateAction.h"
 
 #include "myPrivate.h"
 
@@ -72,7 +72,8 @@ enum Enum
   kShowDialog,
   kUseLStat,
   kTechMode,
-  kCaseSensitive
+  kCaseSensitive,
+  kCalcCrc,
 };
 
 }
@@ -137,7 +138,8 @@ static const CSwitchForm kSwitchForms[] =
     { L"AD",  NSwitchType::kSimple, false },
     { L"L",  NSwitchType::kSimple, false },
     { L"SLT", NSwitchType::kSimple, false },
-    { L"SSC", NSwitchType::kPostChar, false, 0, 0, L"-" }
+    { L"SSC", NSwitchType::kPostChar, false, 0, 0, L"-" },
+    { L"SCRC", NSwitchType::kSimple, false }
   };
 
 static const CCommandForm g_CommandForms[] =
@@ -410,9 +412,9 @@ static void ConvertToLongName(const UString &prefix, UString &name)
 {
   if (name.IsEmpty() || DoesNameContainWildCard(name))
     return;
-  NFind::CFileInfoW fileInfo;
-  if (NFind::FindFile(prefix + name, fileInfo))
-    name = fileInfo.Name;
+  NFind::CFileInfoW fi;
+  if (fi.Find(prefix + name))
+    name = fi.Name;
 }
 
 static void ConvertToLongNames(const UString &prefix, CObjectVector<NWildcard::CItem> &items)
@@ -696,6 +698,7 @@ void CArchiveCommandLineParser::Parse1(const UStringVector &commandStrings,
   options.IsInTerminal = MY_IS_TERMINAL(stdin);
   options.IsStdOutTerminal = MY_IS_TERMINAL(stdout);
   options.IsStdErrTerminal = MY_IS_TERMINAL(stderr);
+  options.StdInMode = parser[NKey::kStdIn].ThereIs;
   options.StdOutMode = parser[NKey::kStdOut].ThereIs;
   options.EnableHeaders = !parser[NKey::kDisableHeaders].ThereIs;
   options.HelpMode = parser[NKey::kHelp1].ThereIs || parser[NKey::kHelp2].ThereIs  || parser[NKey::kHelp3].ThereIs;
@@ -734,6 +737,7 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
     ThrowUserErrorException();
 
   options.TechMode = parser[NKey::kTechMode].ThereIs;
+  options.CalcCrc = parser[NKey::kCalcCrc].ThereIs;
 
   if (parser[NKey::kCaseSensitive].ThereIs)
     g_CaseSensitive = (parser[NKey::kCaseSensitive].PostCharIndex < 0);
@@ -761,6 +765,13 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
   bool thereIsArchiveName = !parser[NKey::kNoArName].ThereIs &&
       options.Command.CommandType != NCommandType::kBenchmark &&
       options.Command.CommandType != NCommandType::kInfo;
+
+  bool isExtractGroupCommand = options.Command.IsFromExtractGroup();
+  bool isExtractOrList = isExtractGroupCommand || options.Command.CommandType == NCommandType::kList;
+
+  if (isExtractOrList && options.StdInMode)
+    thereIsArchiveName = false;
+
   if (thereIsArchiveName)
   {
     if (curCommandIndex >= numNonSwitchStrings)
@@ -778,24 +789,19 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
   global_use_lstat = !parser[NKey::kUseLStat].ThereIs;
 #endif
 
-  bool isExtractGroupCommand = options.Command.IsFromExtractGroup();
-
   #ifndef _NO_CRYPTO
   options.PasswordEnabled = parser[NKey::kPassword].ThereIs;
   if (options.PasswordEnabled)
     options.Password = parser[NKey::kPassword].PostStrings[0];
   #endif
 
-  options.StdInMode = parser[NKey::kStdIn].ThereIs;
   options.ShowDialog = parser[NKey::kShowDialog].ThereIs;
 
   if (parser[NKey::kArchiveType].ThereIs)
     options.ArcType = parser[NKey::kArchiveType].PostStrings[0];
 
-  if (isExtractGroupCommand || options.Command.CommandType == NCommandType::kList)
+  if (isExtractOrList)
   {
-    if (options.StdInMode)
-      ThrowException("Reading archives from stdin is not implemented");
     if (!options.WildcardCensor.AllAreRelative())
       ThrowException("Cannot use absolute pathnames for this command");
 
@@ -825,6 +831,15 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
     #endif
 
     archiveWildcardCensor.ExtendExclude();
+
+    if (options.StdInMode)
+    {
+      UString arcName = parser[NKey::kStdIn].PostStrings.Front();
+      options.ArchivePathsSorted.Add(arcName);
+      options.ArchivePathsFullSorted.Add(arcName);
+    }
+    else
+    {
 
     UStringVector archivePaths;
 
@@ -870,6 +885,8 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
     {
       options.ArchivePathsSorted.Add(archivePaths[indices[i]]);
       options.ArchivePathsFullSorted.Add(archivePathsFull[indices[i]]);
+    }
+    
     }
 
     if (isExtractGroupCommand)

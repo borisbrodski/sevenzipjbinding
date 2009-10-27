@@ -1,7 +1,7 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.56 beta
+; 7-Zip 4.62
 ; Translated by Nicolas Sierro
-; Updated to 7-Zip 4.56 beta by Philippe Berthault
+; Updated to 7-Zip 4.62 beta by Philippe Berthault
 ;
 ;
 ;
@@ -108,6 +108,15 @@
 02000226="Blocs"
 02000227="Volumes"
 
+02000229="64 bits"
+0200022A="Big-endian"
+0200022B="CPU"
+0200022C="Taille physique"
+0200022D="Taille des en-têtes"
+0200022E="Somme de contrôle"
+0200022F="Caractéristiques"
+02000230="Adresse virtuelle"
+
 ; Status bar
 02000301="{0} objet(s) sélectionné(s)"
 02000302="{0} objet(s)"
@@ -138,6 +147,9 @@
 02000608="Il n'y a pas d'erreurs"
 02000609="Le fichier '{0}' ne peut être ouvert comme une archive"
 0200060A="L'archive cryptée '{0}' ne peut être ouverte. Mauvais mot de passe?"
+0200060B="Le système ne peut allouer la quantité de mémoire nécessaire"
+0200060C="Erreur d'origine inconnue"
+0200060D="Ce type d'archive n'est pas supporté"
 
 ; Dialogs
 02000702="OK"
@@ -418,6 +430,7 @@
 03020215="Êtes-vous sûr de vouloir supprimer ces {0} objets ?"
 03020216="Suppression..."
 03020217="Erreur durant la suppression du fichier ou du dossier"
+03020218="Le système ne peut mettre à la corbeille un fichier avec un trop long chemin d'accès"
 
 03020220="Renommage..."
 03020221="Erreur durant le renommage du fichier ou du dossier"
@@ -444,6 +457,7 @@
 03020281="Impossible de mettre à jour\n'{0}'"
 03020282="Impossible de démarrer l'éditeur."
 03020283="Ouverture..."
+03020284="Le fichier est peut-être un virus (le nom contient des grands espacements pour masquer l'extension)."
 
 03020290="Commentaire"
 03020291="&Commentaire:"
@@ -452,6 +466,7 @@
 
 03020300="Ordinateur"
 03020301="Réseau"
+03020302="Documents"
 
 03020400="Ajouter"
 03020401="Extraire"
@@ -472,7 +487,9 @@
 03020600="Combiner les fichiers"
 03020601="&Combiner en :"
 03020610="Combinaison..."
-03020620="Ne sélectionner que le premier fichier"
+03020620="Ne sélectionnez que le premier fichier"
+03020621="Ne trouve aucun fichier faisant partie d'une archive divisée"
+03020622="Ne trouve qu'un seul fichier faisant partie d'une archive divisée"
 
 03020710="Calcul de la somme de contrôle..."
 03020720="Informations sur la somme de contrôle"
@@ -482,6 +499,11 @@
 03020800="Exploration..."
 
 03020900="Propriétés"
+
+03020A01="Cette opération ne peut être effectuée depuis un dossier ayant un trop long chemin d'accès"
+03020A02="Vous devez sélectionner un fichier"
+03020A03="Vous devez sélectionner un ou plusieurs fichiers"
+03020A04="Le fichier {0} existe déjà"
 
 ; Computer
 03031100="Taille totale"

@@ -2,23 +2,21 @@
 
 #include "StdAfx.h"
 
+#include "../../../../C/7zCrc.h"
+
 #include "Common/StringConvert.h"
 #include "Common/UTFConvert.h"
 
-#include "RarIn.h"
 #include "../../Common/LimitedStreams.h"
 #include "../../Common/StreamUtils.h"
 
 #include "../Common/FindSignature.h"
 
-extern "C"
-{
-  #include "../../../../C/7zCrc.h"
-}
+#include "RarIn.h"
 
 namespace NArchive {
 namespace NRar {
-
+ 
 void CInArchive::ThrowExceptionWithCode(
     CInArchiveException::CCauseType cause)
 {
@@ -122,6 +120,7 @@ HRESULT CInArchive::Open2(IInStream *stream, const UInt64 *searchHeaderSizeLimit
   m_Position = m_StreamStartPosition;
 
   RINOK(FindAndReadMarker(stream, searchHeaderSizeLimit));
+
   Byte buf[NHeader::NArchive::kArchiveHeaderSize];
   UInt32 processedSize;
   ReadBytes(buf, sizeof(buf), &processedSize);
@@ -356,7 +355,7 @@ void CInArchive::ReadHeaderReal(CItemEx &item)
   }
 
   UInt16 fileHeaderWithNameSize = (UInt16)m_CurPos;
-
+  
   item.Position = m_Position;
   item.MainPartSize = fileHeaderWithNameSize;
   item.CommentSize = (UInt16)(m_BlockHeader.HeadSize - fileHeaderWithNameSize);
