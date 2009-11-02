@@ -1,13 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta name="verify-v1" content="mCmiZMVFK9OR5rFvabIsFhsHCfxvP4vfF5pvGSCjHOg=" />
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1" />
 <title>Welcome to 7-Zip-JBinding project</title>
-<link href="styles.css" rel="stylesheet" type="text/css">
-</head>
-
+<link href="styles.css" rel="stylesheet" type="text/css" />
 <!-- Piwik -->
 <script type="text/javascript">
 var pkBaseURL = (("https:" == document.location.protocol) ? "https://sourceforge.net/apps/piwik/sevenzipjbind/" : "http://sourceforge.net/apps/piwik/sevenzipjbind/");
@@ -20,36 +18,35 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 </script>
 <object><noscript><p><img src="http://sourceforge.net/apps/piwik/sevenzipjbind/piwik.php?idsite=1" alt="piwik"/></p></noscript></object>
 <!-- End Piwik Tag -->
-
+</head>
 <body>
 <center>
-<table><tr><td width=1000>
+<table><tr><td width="1000" align="left">
 <a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a>
 <a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=210915&amp;type=2" width="125" height="37" border="0" alt="SourceForge.net Logo" /></a>
-<!--&nbsp;<font size="+1">7-Zip-JBinding</font><br> -->
+<!--&nbsp;<font size="+1">7-Zip-JBinding</font><br/> -->
 
 <table border="0" width="100%">
-<tr><td><td align="center"><img src="logo2.png" />
-<tr height="50">
+<tr><td></td><td align="center"><img src="logo2.png" alt="Logo" /></td></tr>
+<tr><td height="50"></td></tr>
 <tr><td width="240" valign="top" class="menu">
 <table class="menu" border="0">
-<tr><td><a href="index.html">Home</a>
-<tr><td><a href="first_steps.html">Documentation</a><br>
+<tr><td><a href="index.html">Home</a></td></tr>
+<tr><td><a href="first_steps.html">Documentation</a><br/>
 <table class="submenu" border="0">
-	<tr><td><a href="first_steps.html" >First steps</a>
-	<tr><td><a href="basic_snippets.html" class="submenu">Code snippets</a>
-	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a>
-<!--	<tr><td><a href="http://sevenzipjbind.wiki.sourceforge.net/CompileUnderWindowsMinGW" class="submenu">Compiling under MinGW</a>-->
-</table>
-<tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a>
-<tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a>
-<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a>
-<tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a>
-<tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to 7-Zip-JBinding</a>
+	<tr><td><a href="first_steps.html" >First steps</a></td></tr>
+	<tr><td><a href="basic_snippets.html" class="submenu">Code snippets</a></td></tr>
+	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a></td></tr>
+</table></td></tr>
+<tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a></td></tr>
+<tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a></td></tr>
+<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a></td></tr>
+<tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a></td></tr>
+<tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to<br/>7-Zip-JBinding</a></td></tr>
 </table>
 <br/><br/>
 <iframe marginheight="0" marginwidth="0" frameborder="0" height="1000" scrolling="no" width="220" src="voting.php">Your browser does not support iframes</iframe>
-<td>
+</td><td align="left">
 <h1>First steps</h1>
 <h2>Download and extraction</h2>
 <p>
@@ -59,7 +56,7 @@ All provided packages are Zip-compressed and you will need an extraction utility
 securing a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a> is highly recommended. Linux and Mac OS X
 users may use the corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.
 </p>
-<br>
+<br/>
 <h2>Run an example</h2>
 <p>
 To use the 7-Zip-JBinding library you will need two JAR-files from <span class="filename">lib</span> folder of the
@@ -67,9 +64,9 @@ distribution in your classpath:
 </p>
 <ul>
 	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
-		 (<a href="javadoc/index.html">JavaDoc</a>)
-	<li> <span class="filename">sevenzipjbinding-&lsaquo;OS&rsaquo;.jar</span> - native libraries for
-	the target operating system &lsaquo;OS&rsaquo;
+		 (<a href="javadoc/index.html">JavaDoc</a>)</li>
+	<li> <span class="filename">sevenzip-jbinding-&lsaquo;OS&rsaquo;.jar</span> - native libraries for
+	the target operating system &lsaquo;OS&rsaquo;</li>
 </ul>  
 Here is a simple test program that can be used for checking all 7-Zip-JBinding requirements:
 <div class="fragment"><pre class="fragment">
@@ -102,7 +99,7 @@ $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\
 Windows users can do the same with (written in a single line)
 </p>
 <div class="fragment"><pre class="fragment">
-C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
   &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
   SevenZipJBindingInitCheck
 </pre></div>
@@ -115,7 +112,7 @@ If the message
 <p>
 shows up than 7-Zip-JBinding is working properly and is ready for use.
 </p>
-<br>
+<br/>
 <h2>Opening an archive</h2>
 <p>
 Before you can do any operation on an archive file, you have to open it. In order to do this
@@ -209,7 +206,7 @@ Here is a complete program to print count of items in the archive:
 If you run this program with
 </p>
 <div class="fragment"><pre class="fragment">
-C:\Test> java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
   &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
   PrintCountOfItems my-test-archive.zip
 </pre></div>
@@ -219,11 +216,13 @@ you should get something like this:
 <div class="fragment"><pre class="fragment">
 Count of items in archive: 4
 </pre></div>
-<br>
+<br/>
 <p>
 Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.
 </p>
+</td></tr>
+</table></td></tr>
 </table>
 </center>
-</table>
+</body>
 </html>
