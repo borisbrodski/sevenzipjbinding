@@ -30,17 +30,17 @@ private:
 };
 #if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
 #ifdef MINGW
-	inline DWORD PlatformGetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
-		return (DWORD)(size_t)GetCurrentThreadId();
+	inline size_t PlatformGetCurrentThreadId() {
+		return (size_t)(size_t)GetCurrentThreadId();
 	}
 #else
 	#include <pthread.h>
-	inline DWORD PlatformGetCurrentThreadId() {  // TODO Change the return type to something like "size_t"
-		return (DWORD)pthread_self();
+	inline size_t PlatformGetCurrentThreadId() {
+		return (size_t)pthread_self();
 	}
 #endif
 #else
-inline DWORD PlatformGetCurrentThreadId() {
+inline size_t PlatformGetCurrentThreadId() {
 	return 0;
 }
 #endif
@@ -50,7 +50,7 @@ class NativeMethodContext : public StackAllocatedObject
 friend class JNIInstance;
 private:
     JavaVM * _vm;
-    DWORD _initThreadId;
+    size_t _initThreadId;
     JNIEnv * _initEnv;
     map<DWORD, ThreadInfo *> _threadInfoMap;
     jthrowable _lastOccurredException;

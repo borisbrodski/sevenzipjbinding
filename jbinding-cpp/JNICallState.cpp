@@ -47,7 +47,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
 {
     TRACE_OBJECT_CALL("BeginCPPToJava")
 
-    DWORD currentThreadId = PlatformGetCurrentThreadId();
+    size_t currentThreadId = PlatformGetCurrentThreadId();
     // TRACE2("Current thread id: %i, _initThreadId:%i", (int)currentThreadId, (int)_initThreadId)
     if (currentThreadId == _initThreadId)
     {
@@ -98,7 +98,7 @@ void NativeMethodContext::EndCPPToJava()
 {
     TRACE_OBJECT_CALL("EndCPPToJava")
 
-    DWORD currentThreadId = PlatformGetCurrentThreadId();
+    size_t currentThreadId = PlatformGetCurrentThreadId();
 
     if (currentThreadId == _initThreadId)
     {
