@@ -9,7 +9,7 @@
 </head>
 <body>
 <table>
-<tr><td width="300" >
+<tr><td width="210" >
 
 <?
 function getRealIpAddr()
