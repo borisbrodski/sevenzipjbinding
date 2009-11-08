@@ -1,6 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(SevenZipJBinding)
 
+# Compile on Mac OS https://bug477945.bugzilla.mozilla.org/attachment.cgi?id=376115
+# CC="gcc-4.2 -arch i386"
+# CXX="g++-4.2 -arch i386"
+
+
 # Uncomment to build in debug mode
 # SET(CMAKE_BUILD_TYPE Debug)
 
