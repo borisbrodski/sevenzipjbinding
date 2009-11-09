@@ -92,8 +92,13 @@ public enum ArchiveFormat {
 	 */
 	NSIS("Nsis"),
 
+	/**
+	 * Deb
+	 */
+	DEB("Deb"),
+
 	// TODO Not yet supported:
-	// CDEB, RPM
+	// RPM
 	;
 
 	private String methodName;

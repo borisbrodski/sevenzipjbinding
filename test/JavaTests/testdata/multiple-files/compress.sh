@@ -3,12 +3,13 @@
 CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
-CREATE_SIMPLE_LZH=y
+CREATE_SIMPLE_LZH=n
 CREATE_SIMPLE_ISO=n
 CREATE_SIMPLE_7Z=n
 CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_ZIP=n
+CREATE_SIMPLE_DEB=y
 
 
 TMP=/tmp
@@ -129,6 +130,16 @@ if test $CREATE_SIMPLE_ZIP = y -o $CREATE_ALL = y ; then
             pushd $TMP_CONTENT_DIR/$j && zip -u -r -$i $TEST_DIR/zip/$j.$i.zip * ; popd
             pushd $TMP_CONTENT_DIR/$j && zip -u -r -$i -P TestPass $TEST_DIR/zip/pass-$j.$i.zip * ; popd
         done
+    done
+fi
+
+if test $CREATE_SIMPLE_DEB = y -o $CREATE_ALL = y ; then
+    rm deb/*.deb
+    for j in *.zip
+    do
+        pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar cr $TEST_DIR/deb/$j.1.deb; popd
+        pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar crs $TEST_DIR/deb/$j.2.deb; popd
+        pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar crS $TEST_DIR/deb/$j.3.deb; popd
     done
 fi
 

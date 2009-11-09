@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding;
 
+import java.util.Arrays;
+
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 
 /**
@@ -62,15 +64,22 @@ public interface ISevenZipInArchive {
 	public String getStringProperty(int index, PropID propID) throws SevenZipException;
 
 	/**
-	 * indices must be sorted numItems = 0xFFFFFFFF means all files testMode != 0 means "test files operation"
+	 * Extract archive items with indices <code>indices</code>. <br>
+	 * Note: passing sorted <code>indices</code> array is more performant. But it isn't suggested to manually sort
+	 * indices with something like {@link Arrays#sort(int[])}. Sort indices only, if you can do it quicker, that a
+	 * generic sort algorithms: <code>O(n*log(n))</code>.
 	 * 
 	 * @param indices
-	 *            (optional) array of indices of archive items to extract. If <code>null</code> - all all archive items
-	 *            will be processed.
+	 *            (optional) array of indices of archive items to extract.<br>
+	 *            <code>null</code> - all archive items.
+	 * 
 	 * @param testMode
-	 *            <code>true</code> - test achived items only
+	 *            <code>true</code> - test achive items only<br>
+	 *            <code>false</code> - extract archive items
+	 * 
 	 * @param extractCallback
 	 *            extraction callback object. Optional implementation of {@link ICryptoGetTextPassword} is possible.
+	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
 	 */

@@ -4,13 +4,14 @@ CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZMA=n
-CREATE_SIMPLE_LZH=y
+CREATE_SIMPLE_LZH=n
 CREATE_SIMPLE_ZIP=n
 CREATE_SIMPLE_7Z=n
 CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_GZIP=n
 CREATE_SIMPLE_BZIP2=n
+CREATE_SIMPLE_DEB=y
 
 if test $CREATE_SIMPLE_ARJ = y -o $CREATE_ALL = y ;then
     rm arj/*.arj
@@ -134,7 +135,18 @@ if test $CREATE_SIMPLE_BZIP2 = y -o $CREATE_ALL = y ; then
     do
         for j in *.dat
         do
-	    cat $j | bzip2 -$i > bzip2/$j.$i.bz2
+	        cat $j | bzip2 -$i > bzip2/$j.$i.bz2
         done
     done
 fi
+
+if test $CREATE_SIMPLE_DEB = y -o $CREATE_ALL = y ; then
+    rm deb/*.deb
+    for j in *.dat
+    do
+        ar rc deb/$j.1.deb $j
+        ar rcs deb/$j.2.deb $j
+        ar rcS deb/$j.3.deb $j
+    done
+fi
+

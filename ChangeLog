@@ -1,6 +1,14 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Improve ISevenZipInArchive.extract()
+		- Check for wrong indices avoiding VM crash
+		- Sort indices, if not already sorted
+		- Minor performance improvements
+	
+	* DEB format support + tests
+	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
 	* Binary version for Windows 64 XP and above.
