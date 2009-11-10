@@ -100,7 +100,12 @@ public enum ArchiveFormat {
 	/**
 	 * Rpm
 	 */
-	RPM("Rpm");
+	RPM("Rpm"),
+
+	/**
+	 * Xar
+	 */
+	XAR("Xar");
 
 	private String methodName;
 

@@ -11,7 +11,8 @@ CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_GZIP=n
 CREATE_SIMPLE_BZIP2=n
-CREATE_SIMPLE_DEB=y
+CREATE_SIMPLE_DEB=n
+CREATE_SIMPLE_XAR=y
 
 if test $CREATE_SIMPLE_ARJ = y -o $CREATE_ALL = y ;then
     rm arj/*.arj
@@ -147,6 +148,16 @@ if test $CREATE_SIMPLE_DEB = y -o $CREATE_ALL = y ; then
         ar rc deb/$j.1.deb $j
         ar rcs deb/$j.2.deb $j
         ar rcS deb/$j.3.deb $j
+    done
+fi
+
+if test $CREATE_SIMPLE_XAR = y -o $CREATE_ALL = y ; then
+    rm xar/*.xar
+    for j in *.dat
+    do
+        xar -c --compression none -f xar/$j.1.xar $j
+        xar -c --compression gzip  -f xar/$j.2.xar $j
+        xar -c --compression bzip2 -f xar/$j.3.xar $j
     done
 fi
 

@@ -88,6 +88,7 @@ ELSE()
 ENDIF()
 
 add_definitions(
+    -static
 #    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
@@ -126,6 +127,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/Common/StringToInt.cpp
     ${_7ZIP_SRC}/CPP/Common/UTFConvert.cpp
     ${_7ZIP_SRC}/CPP/Common/CRC.cpp
+    ${_7ZIP_SRC}/CPP/Common/MyXml.cpp
 
     ${_7ZIP_SRC}/CPP/Windows/Error.cpp
     ${_7ZIP_SRC}/CPP/Windows/FileDir.cpp
@@ -177,6 +179,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/ItemNameUtils.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/MultiStream.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithCRC.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithSha1.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/ParseProperties.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/7z/7zCompressionMode.cpp
@@ -223,6 +226,8 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
@@ -334,6 +339,8 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
+    
     ${_7ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
     ${_7ZIP_SRC}/CPP/7zip/Crypto/7zAesRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Crypto/HmacSha1.cpp
@@ -366,7 +373,8 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/Common/StringToInt.cpp
     ${P7ZIP_SRC}/CPP/Common/UTFConvert.cpp
     ${P7ZIP_SRC}/CPP/Common/MyVector.cpp
-    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
+#    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
+    ${P7ZIP_SRC}/CPP/Common/MyXml.cpp
     
     ${P7ZIP_SRC}/CPP/Windows/Error.cpp
     ${P7ZIP_SRC}/CPP/Windows/FileDir.cpp
@@ -432,6 +440,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/ItemNameUtils.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/MultiStream.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithCRC.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithSha1.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/ParseProperties.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/7z/7zCompressionMode.cpp
@@ -478,6 +487,8 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
@@ -589,6 +600,9 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
+    
+    
     ${P7ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
     ${P7ZIP_SRC}/CPP/7zip/Crypto/7zAesRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Crypto/HmacSha1.cpp

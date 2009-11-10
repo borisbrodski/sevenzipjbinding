@@ -236,6 +236,7 @@ HRESULT CHandler::Open2(IInStream *stream)
 {
   UInt64 archiveStartPos;
   RINOK(stream->Seek(0, STREAM_SEEK_SET, &archiveStartPos));
+
   const UInt32 kHeaderSize = 0x1C;
   Byte buf[kHeaderSize];
   RINOK(ReadStream_FALSE(stream, buf, kHeaderSize));
