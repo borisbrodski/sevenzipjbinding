@@ -408,14 +408,18 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		public ISevenZipInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
 				boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
 			String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
-					+ //
-					volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt + "."
-					+ compressionIndex + "." + extention + volumeArchivePostfix;
+					+ volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt
+					+ "." + compressionIndex + "." + extention + volumeArchivePostfix;
 
 			if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
 				archiveFilename = archiveFilename.replace("part1.rar", "rar");
 			}
 
+			return openArchiveFileWithSevenZip(archiveFilename, autodetectFormat);
+		}
+
+		private ISevenZipInArchive openArchiveFileWithSevenZip(String archiveFilename, boolean autodetectFormat)
+				throws SevenZipException {
 			randomAccessFileInStream = null;
 			ISevenZipInArchive inArchive = null;
 			try {

@@ -222,6 +222,8 @@ SET(P7ZIP_SOURCE_FILES
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
 
+    ${_7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
+
     ${_7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder2.cpp
@@ -474,6 +476,8 @@ SET(P7ZIP_SOURCE_FILES
 # Com ??
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp

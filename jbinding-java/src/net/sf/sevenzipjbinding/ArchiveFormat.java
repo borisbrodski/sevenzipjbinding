@@ -97,9 +97,10 @@ public enum ArchiveFormat {
 	 */
 	DEB("Deb"),
 
-	// TODO Not yet supported:
-	// RPM
-	;
+	/**
+	 * Rpm
+	 */
+	RPM("Rpm");
 
 	private String methodName;
 

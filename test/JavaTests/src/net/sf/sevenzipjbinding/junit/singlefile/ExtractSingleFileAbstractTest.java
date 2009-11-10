@@ -210,8 +210,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 	@Override
 	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws SevenZipException {
-		String uncommpressedFilename = "simple" + fileIndex + ".dat";
-		String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncommpressedFilename;
+		String uncompressedFilename = getUncompressedFilename(fileIndex);
+		String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
 		ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
@@ -237,7 +237,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
 
 			assertTrue(inArchive.getNumberOfItems() > 0);
-			checkPropertyPath(inArchive, index, uncommpressedFilename);
+			checkPropertyPath(inArchive, index, uncompressedFilename);
 			checkPropertySize(inArchive, index, expectedFilename);
 			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM) {
 				checkPropertyPackedSize(inArchive, index, expectedFilename);
@@ -272,6 +272,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 			extractionInArchiveTestHelper.closeAllStreams();
 		}
+	}
+
+	protected String getUncompressedFilename(int fileIndex) {
+		return "simple" + fileIndex + ".dat";
 	}
 
 	protected boolean skipSizeCheck() {
@@ -366,7 +370,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 	private void checkPropertyPath(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP
-				&& archiveFormat != ArchiveFormat.LZMA && archiveFormat != ArchiveFormat.Z) {
+				&& archiveFormat != ArchiveFormat.LZMA && archiveFormat != ArchiveFormat.RPM
+				&& archiveFormat != ArchiveFormat.Z) {
 			// Skip name test for Bzip2 and GZip.
 			// File name are not supported by this stream compression methods
 			Object nameInArchive = inArchive.getProperty(index, PropID.PATH);
