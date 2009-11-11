@@ -29,6 +29,8 @@ public class ZipContentComparator {
 		public String itemIdString;
 		public String filename;
 		public long realSize;
+
+		@SuppressWarnings("unused")
 		public Date fileLastModificationTime;
 
 		public int compareTo(UniversalFileEntryInfo o) {
@@ -36,6 +38,8 @@ public class ZipContentComparator {
 		}
 
 	}
+
+	private static final String XAR_TOC_ENTRY = "[TOC].xml";
 
 	private final ZipFile expectedZipFile;
 	private Enumeration<? extends ZipEntry> expectedZipEntries;
@@ -87,9 +91,6 @@ public class ZipContentComparator {
 				}
 
 				String expectedFilename = expectedInfo.filename;
-				//				if (archiveFormat == ArchiveFormat.ISO) {
-				//					expectedFilename = convertToISOFilename(expectedFilename);
-				//				}
 				if (!actualFilename.equalsIgnoreCase(expectedFilename)) {
 					error("Filename missmatch: expected '" + expectedFilename + "', actual '" + actualFilename + "'");
 				}
@@ -99,7 +100,7 @@ public class ZipContentComparator {
 							+ expectedInfo.realSize + ", actual " + actualInfo.realSize);
 				}
 
-				// TODO
+				// TODO test LastModificationTime in ZipComparator
 				// if (!actualInfo.fileLastModificationTime
 				// .equals(expectedInfo.fileLastModificationTime)) {
 				// error("Last modification time missmatch for file '"
@@ -251,7 +252,9 @@ public class ZipContentComparator {
 				info.itemId = simpleInArchiveItem.getItemIndex();
 				info.realSize = simpleInArchiveItem.getSize();
 				info.fileLastModificationTime = simpleInArchiveItem.getLastWriteTime();
-				fileNames.add(info);
+				if (!info.filename.equals(XAR_TOC_ENTRY)) {
+					fileNames.add(info);
+				}
 			}
 		} else {
 			for (int i = 0; i < actualSevenZipArchive.getNumberOfItems(); i++) {
@@ -267,7 +270,9 @@ public class ZipContentComparator {
 				info.itemId = i;
 				info.realSize = ((Long) actualSevenZipArchive.getProperty(i, PropID.SIZE)).longValue();
 				info.fileLastModificationTime = (Date) actualSevenZipArchive.getProperty(i, PropID.LAST_WRITE_TIME);
-				fileNames.add(info);
+				if (!info.filename.equals(XAR_TOC_ENTRY)) {
+					fileNames.add(info);
+				}
 			}
 		}
 		return fileNames;

@@ -9,7 +9,8 @@ CREATE_SIMPLE_7Z=n
 CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_ZIP=n
-CREATE_SIMPLE_DEB=y
+CREATE_SIMPLE_DEB=n
+CREATE_SIMPLE_XAR=y
 
 
 TMP=/tmp
@@ -140,6 +141,16 @@ if test $CREATE_SIMPLE_DEB = y -o $CREATE_ALL = y ; then
         pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar cr $TEST_DIR/deb/$j.1.deb; popd
         pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar crs $TEST_DIR/deb/$j.2.deb; popd
         pushd $TMP_CONTENT_DIR/$j && find . -maxdepth 1 -type f -print0 | xargs -0 ar crS $TEST_DIR/deb/$j.3.deb; popd
+    done
+fi
+
+if test $CREATE_SIMPLE_XAR = y -o $CREATE_ALL = y ; then
+    rm xar/*.xar
+    for j in *.zip
+    do
+        pushd $TMP_CONTENT_DIR/$j && xar -c --compression none -f $TEST_DIR/xar/$j.1.xar *; popd
+        pushd $TMP_CONTENT_DIR/$j && xar -c --compression gzip -f $TEST_DIR/xar/$j.2.xar *; popd
+        pushd $TMP_CONTENT_DIR/$j && xar -c --compression bzip2 -f $TEST_DIR/xar/$j.3.xar *; popd
     done
 fi
 
