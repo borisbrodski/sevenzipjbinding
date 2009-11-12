@@ -10,7 +10,8 @@ CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_ZIP=n
 CREATE_SIMPLE_DEB=n
-CREATE_SIMPLE_XAR=y
+CREATE_SIMPLE_XAR=n
+CREATE_SIMPLE_UDF=n
 
 
 TMP=/tmp
@@ -151,6 +152,28 @@ if test $CREATE_SIMPLE_XAR = y -o $CREATE_ALL = y ; then
         pushd $TMP_CONTENT_DIR/$j && xar -c --compression none -f $TEST_DIR/xar/$j.1.xar *; popd
         pushd $TMP_CONTENT_DIR/$j && xar -c --compression gzip -f $TEST_DIR/xar/$j.2.xar *; popd
         pushd $TMP_CONTENT_DIR/$j && xar -c --compression bzip2 -f $TEST_DIR/xar/$j.3.xar *; popd
+    done
+fi
+
+if test $CREATE_SIMPLE_UDF = y -o $CREATE_ALL = y ; then
+    rm udf/*.zip
+    MNT=$TMP/udf-mnt
+    mkdir $MNT
+    for i in 102 150
+    do
+        for j in *.zip
+        do
+            IMAGE=udf/$j.$i.udf
+            dd if=/dev/zero of=$IMAGE bs=1024 count=2000
+            mkudffs -r 0x0$i $IMAGE
+            sudo mount -o loop -t udf $IMAGE $MNT
+            sudo rm -rf $MNT/lost+found
+            sudo cp -r $TMP_CONTENT_DIR/$j/* $MNT/
+            sudo sh -c "dd if=/dev/zero of=$MNT/ignoreme.txt count=0 bs=1"
+            sudo umount $MNT
+            7z a -tzip -mx=9 $IMAGE.zip $IMAGE
+            rm $IMAGE
+        done
     done
 fi
 

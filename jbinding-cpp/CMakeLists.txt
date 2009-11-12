@@ -121,6 +121,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/Sort.c
     
     ${_7ZIP_SRC}/CPP/Common/MyVector.cpp
+    ${_7ZIP_SRC}/CPP/Common/MyMap.cpp
     ${_7ZIP_SRC}/CPP/Common/IntToString.cpp
     ${_7ZIP_SRC}/CPP/Common/StringConvert.cpp
     ${_7ZIP_SRC}/CPP/Common/MyString.cpp
@@ -220,6 +221,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHeader.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
 # Com ??
 
@@ -373,6 +378,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/Common/StringToInt.cpp
     ${P7ZIP_SRC}/CPP/Common/UTFConvert.cpp
     ${P7ZIP_SRC}/CPP/Common/MyVector.cpp
+    ${P7ZIP_SRC}/CPP/Common/MyMap.cpp
 #    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
     ${P7ZIP_SRC}/CPP/Common/MyXml.cpp
     
@@ -481,6 +487,11 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHeader.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
+
 
 # Com ??
 

@@ -239,7 +239,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncompressedFilename);
 			checkPropertySize(inArchive, index, expectedFilename);
-			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM) {
+			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
+					&& archiveFormat != ArchiveFormat.UDF) {
 				checkPropertyPackedSize(inArchive, index, expectedFilename);
 			}
 			checkPropertyIsFolder(inArchive, index);

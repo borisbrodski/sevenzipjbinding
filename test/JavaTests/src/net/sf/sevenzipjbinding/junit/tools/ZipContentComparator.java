@@ -40,6 +40,7 @@ public class ZipContentComparator {
 	}
 
 	private static final String XAR_TOC_ENTRY = "[TOC].xml";
+	private static final String IGNORE_ENTRY = "ignoreme.txt";
 
 	private final ZipFile expectedZipFile;
 	private Enumeration<? extends ZipEntry> expectedZipEntries;
@@ -252,7 +253,7 @@ public class ZipContentComparator {
 				info.itemId = simpleInArchiveItem.getItemIndex();
 				info.realSize = simpleInArchiveItem.getSize();
 				info.fileLastModificationTime = simpleInArchiveItem.getLastWriteTime();
-				if (!info.filename.equals(XAR_TOC_ENTRY)) {
+				if (!info.filename.equals(XAR_TOC_ENTRY) && !info.filename.equals(IGNORE_ENTRY)) {
 					fileNames.add(info);
 				}
 			}
@@ -270,7 +271,7 @@ public class ZipContentComparator {
 				info.itemId = i;
 				info.realSize = ((Long) actualSevenZipArchive.getProperty(i, PropID.SIZE)).longValue();
 				info.fileLastModificationTime = (Date) actualSevenZipArchive.getProperty(i, PropID.LAST_WRITE_TIME);
-				if (!info.filename.equals(XAR_TOC_ENTRY)) {
+				if (!info.filename.equals(XAR_TOC_ENTRY) && !info.filename.equals(IGNORE_ENTRY)) {
 					fileNames.add(info);
 				}
 			}

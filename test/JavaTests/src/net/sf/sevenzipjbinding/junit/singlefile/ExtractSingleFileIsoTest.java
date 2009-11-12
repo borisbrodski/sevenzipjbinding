@@ -8,4 +8,8 @@ public class ExtractSingleFileIsoTest extends ExtractSingleFileAbstractTest {
 		super(ArchiveFormat.ISO, 0, 0, 0);
 	}
 
+	@Override
+	protected boolean usingZippedTestArchive() {
+		return true;
+	}
 }

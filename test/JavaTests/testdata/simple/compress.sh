@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TMP=/tmp
+
 CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
@@ -12,7 +14,8 @@ CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_GZIP=n
 CREATE_SIMPLE_BZIP2=n
 CREATE_SIMPLE_DEB=n
-CREATE_SIMPLE_XAR=y
+CREATE_SIMPLE_XAR=n
+CREATE_SIMPLE_UDF=n
 
 if test $CREATE_SIMPLE_ARJ = y -o $CREATE_ALL = y ;then
     rm arj/*.arj
@@ -158,6 +161,27 @@ if test $CREATE_SIMPLE_XAR = y -o $CREATE_ALL = y ; then
         xar -c --compression none -f xar/$j.1.xar $j
         xar -c --compression gzip  -f xar/$j.2.xar $j
         xar -c --compression bzip2 -f xar/$j.3.xar $j
+    done
+fi
+
+if test $CREATE_SIMPLE_UDF = y -o $CREATE_ALL = y ; then
+    rm udf/*.zip
+    MNT=$TMP/udf-mnt
+    mkdir $MNT
+    for i in 102 150
+    do
+        for j in *.dat
+        do
+            IMAGE=udf/$j.$i.udf
+            dd if=/dev/zero of=$IMAGE bs=1024 count=1000
+            mkudffs -r 0x0$i $IMAGE
+            sudo mount -o loop -t udf $IMAGE $MNT
+            sudo rm -rf $MNT/lost+found
+            sudo cp $j $MNT/
+            sudo umount $MNT
+            7z a -tzip -mx=9 $IMAGE.zip $IMAGE
+            rm $IMAGE
+        done
     done
 fi
 
