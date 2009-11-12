@@ -144,9 +144,9 @@ package net.sf.sevenzipjbinding;
  * </tr>
  * <tr align="center">
  * <td>Udf</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
+ * <td>X</td>
+ * <td>X</td>
+ * <td>{@link UDF}</td>
  * </tr>
  * <tr align="center">
  * <td>Wim</td>

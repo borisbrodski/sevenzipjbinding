@@ -10,6 +10,8 @@ Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platf
 	* DEB format support + tests
 	
 	* RPM format support + tests
+
+	* UDF format support + tests
 	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
