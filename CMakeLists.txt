@@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(SevenZipJBinding)
 
 # Compile on Mac OS https://bug477945.bugzilla.mozilla.org/attachment.cgi?id=376115
+# 64 bit java: /System/Library/Frameworks/JavaVM.framework/Versions/1.6/Commands/java
 # CC="gcc-4.2 -arch i386"
 # CXX="g++-4.2 -arch i386"
 
@@ -30,6 +31,11 @@ IF (SEVENZIPJBINDING_VERSON)
 ELSE(SEVENZIPJBINDING_VERSON)
     SET(SEVENZIPJBINDING_VERSON_POSTFIX "")
 ENDIF(SEVENZIPJBINDING_VERSON)
+
+IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
+    MESSAGE("---- Mac OS X ----")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch x86_64")
+ENDIF()
 
 IF(USE_MINGW_W64)
 	SET(PLATFORM ${CMAKE_SYSTEM_NAME}-amd64)

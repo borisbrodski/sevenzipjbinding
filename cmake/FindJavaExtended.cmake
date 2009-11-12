@@ -278,7 +278,7 @@ IF(NOT JAVA_ARCHIVE)
 ENDIF()
 
 
-IF(NOT JAVAC_TEST_OK)
+IF(NOT JAVAC_TEST_OK OR NOT JAVA_ARCH)
     MESSAGE("-- Checking java compile")
     
     SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
@@ -286,11 +286,12 @@ IF(NOT JAVAC_TEST_OK)
     FILE(WRITE "${JAVAC_TEST_DIR}/TestClass.java" "
 public class TestClass {
     private static class Java15Test<T> {
-        void doIt(T t) {System.out.println(t);}
+        void doIt(T t) {t.toString();}
     }
     public static void main(String args[]) {
         new Java15Test<String>().doIt(\"Hello World\");
-    } 
+        System.out.print(System.getProperty(\"os.arch\"));
+    }
 }")
     EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} TestClass.java 
                     WORKING_DIRECTORY ${JAVAC_TEST_DIR}
@@ -305,8 +306,22 @@ NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
 Javac error message: ${javac_test_err}")
     ENDIF()
     
-    MESSAGE("-- Checking java compile - ok")
+    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} TestClass
+                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+                    RESULT_VARIABLE java_test_result
+                    OUTPUT_VARIABLE java_test_output 
+                    ERROR_VARIABLE java_test_err)
+    IF(java_test_result)
+        MESSAGE(FATAL_ERROR "${JAVA_RUNTIME} can't run simple java program.
+        
+NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
+        
+Javac error message: ${java_test_err}")
+    ENDIF()
+    
     SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
+    SET(JAVA_ARCH "${java_test_output}" CACHE INTERNAL "Java os.arch")
+    MESSAGE("-- Checking java compile - ok (arch: ${JAVA_ARCH})")
 ENDIF()
 
 # Call cmake default version
