@@ -8,4 +8,8 @@ public class ExtractSingleFileUdfTest extends ExtractSingleFileAbstractTest {
 		super(ArchiveFormat.UDF, 102, 150, 150);
 	}
 
+	@Override
+	protected boolean usingZippedTestArchive() {
+		return true;
+	}
 }
