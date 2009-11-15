@@ -11,7 +11,7 @@
 #  - JAVA_DOC            (<jdk>/bin/javadoc)
 #  - JAVA_ARCHIVE        (<jdk>/bin/jar)
 #  - JAVA_INCLUDE_PATH   (<jdk>/include) Path to jni.h
-#
+#  - JAVA_ARCH           (System.getProperty("os.arch"))
 
 SET(JAVA_JDK CACHE PATH "Path to JDK 1.5 or higher")
 IF(NOT JAVA_JDK_OLD)
@@ -278,7 +278,7 @@ IF(NOT JAVA_ARCHIVE)
 ENDIF()
 
 
-IF(NOT JAVAC_TEST_OK OR NOT JAVA_ARCH)
+IF(NOT JAVAC_TEST_OK)
     MESSAGE("-- Checking java compile")
     
     SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
@@ -305,24 +305,68 @@ NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
 Javac error message: ${javac_test_err}")
     ENDIF()
-    
-    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} TestClass
+        
+    SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
+    MESSAGE("-- Checking java compile - ok")
+ENDIF()
+
+IF(NOT JAVA_ARCH OR NOT JAVA_SYSTEM)
+    MESSAGE("-- Checking java system properties")
+    SET(JAVAC_TEST_DIR "${PROJECT_BINARY_DIR}/javac-test")
+    IF(NOT EXISTS "${JAVAC_TEST_DIR}")
+        FILE(MAKE_DIRECTORY "${JAVAC_TEST_DIR}")
+    ENDIF()
+    FILE(WRITE "${JAVAC_TEST_DIR}/JavaSystemPropertyTest.java" "
+public class JavaSystemPropertyTest {
+    public static void main(String args[]) {
+        String property = System.getProperty(args[0]);
+        System.out.print(property.split(\" \")[0]);
+    }
+}")
+    EXECUTE_PROCESS(COMMAND ${JAVA_COMPILE} JavaSystemPropertyTest.java 
                     WORKING_DIRECTORY ${JAVAC_TEST_DIR}
-                    RESULT_VARIABLE java_test_result
-                    OUTPUT_VARIABLE java_test_output 
-                    ERROR_VARIABLE java_test_err)
-    IF(java_test_result)
+                    RESULT_VARIABLE javac_result
+                    OUTPUT_VARIABLE javac_output 
+                    ERROR_VARIABLE javac_err)
+    IF(javac_result)
+        MESSAGE(FATAL_ERROR "${JAVA_COMPILE} can't compile simple java program.
+        
+NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
+        
+Javac error message: ${javac_err}")
+    ENDIF()
+
+    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} JavaSystemPropertyTest os.arch
+                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+                    RESULT_VARIABLE java_result
+                    OUTPUT_VARIABLE java_output 
+                    ERROR_VARIABLE java_err)
+    IF(java_result)
         MESSAGE(FATAL_ERROR "${JAVA_RUNTIME} can't run simple java program.
         
 NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
         
-Javac error message: ${java_test_err}")
+Javac error message: ${java_err}")
     ENDIF()
-    
-    SET(JAVAC_TEST_OK "1" CACHE INTERNAL "Javac test passed")
-    SET(JAVA_ARCH "${java_test_output}" CACHE INTERNAL "Java os.arch")
-    MESSAGE("-- Checking java compile - ok (arch: ${JAVA_ARCH})")
+    SET(JAVA_ARCH "${java_output}" CACHE INTERNAL "Java os.name")
+
+    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} JavaSystemPropertyTest os.name
+                    WORKING_DIRECTORY ${JAVAC_TEST_DIR}
+                    RESULT_VARIABLE java_result
+                    OUTPUT_VARIABLE java_output 
+                    ERROR_VARIABLE java_err)
+    IF(java_result)
+        MESSAGE(FATAL_ERROR "${JAVA_RUNTIME} can't run simple java program.
+        
+NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
+        
+Javac error message: ${java_err}")
+    ENDIF()
+
+    SET(JAVA_SYSTEM "${java_output}" CACHE INTERNAL "Java os.arch")
+    MESSAGE("-- Checking java compile - ok (arch: ${JAVA_ARCH}, system: ${JAVA_SYSTEM})")
 ENDIF()
+
 
 # Call cmake default version
 #MESSAGE("JAVA_INCLUDE_PATH: ${JAVA_INCLUDE_PATH}")

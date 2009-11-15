@@ -106,7 +106,7 @@ mkdir META-INF
 echo "Manifest-Version: 1.0" > META-INF/MANIFEST.MF 
 echo "Created-By: 1.5.0" >> META-INF/MANIFEST.MF 
 
-jar c0f $MULTIPLATFORMJAR *
+jar cf $MULTIPLATFORMJAR *
 cp $MULTIPLATFORMJAR $ASSEMBLEDIR/lib/
 cd ..
 rm -r "$JARASSEMBLEDIR"
