@@ -18,7 +18,7 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 INCLUDE(cmake/FindJavaExtended.cmake)
-INCLUDE(cmake/CheckGCC.cmake)
+#INCLUDE(cmake/CheckGCC.cmake)
 INCLUDE(CTest)
 
 
