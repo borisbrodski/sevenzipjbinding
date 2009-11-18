@@ -18,8 +18,8 @@ function getRealIpAddr()
 }
 
 $size = $_SERVER["CONTENT_LENGTH"];
-$filename = $_SERVER["HTTP_FILENAME"];
-$description = $_SERVER["HTTP_DESCR"];
+$filename = addslashes($_SERVER["HTTP_FILENAME"]);
+$description = addslashes($_SERVER["HTTP_DESCR"]);
 $ip = addslashes(getRealIpAddr());
 
 $link = mysql_connect('mysql-s', 's210915rw', 'HeMySQ15');
@@ -29,7 +29,7 @@ if (!$link) {
 mysql_select_db("s210915_main");
 
 $deletequery = "DELETE FROM files WHERE filename = '". addslashes($filename) . "'";
-mysql_query($deletequery) or die("Error. Query 1 failed.");
+mysql_query($deletequery) or die("Error. Query 1 failed.\n");
 
 $putdata = fopen("php://input", "r");
 $chunk = 1;
@@ -38,7 +38,7 @@ while (!feof($putdata)) {
 	if (strlen($content) > 0) {
 		$sql = "INSERT INTO files (content, ip, description, filename, chunk)
 				VALUES ('$content', '$ip', '$description', '$filename', $chunk)";
-		$r = mysql_query($sql) or die("Error. Query 2 failed, chunk $chunk");
+		$r = mysql_query($sql) or die("Error. Query 2 failed, chunk $chunk" . mysql_error() . "\n");
 		echo "Chunk $chunk: " . strlen($content) . "  ($r row added)\n";
 		$chunk++;
 	}
