@@ -26,7 +26,7 @@ ProcessFile() {
     fi
     cd */lib
     nativejar="$(pwd)/$(echo *$2.jar)"
-    cd "$JARASSEMBLEDIR/$2"
+    cd "$JARASSEMBLEDIR/"
     jar -xf "$nativejar"
     cd "$ROOTDIR"
     rm -r $1.dir
@@ -79,8 +79,9 @@ fi
 ASSEMBLEDIR=$ROOTDIR/$release$multiplatformname
 JARASSEMBLEDIR=$ROOTDIR/JAR-$multiplatformname
 PLATFORMSFILE="$JARASSEMBLEDIR/sevenzipjbinding-platforms.properties"
+TMPPLATFORMSFILE="$JARASSEMBLEDIR/sevenzipjbinding-platforms.properties.tmp"
 MULTIPLATFORMJAR=sevenzipjbinding-$multiplatformname.jar
-echo "# Information about available platforms" > $PLATFORMSFILE
+echo "# Information about available platforms" > $TMPPLATFORMSFILE
 
 if [ -d "$ASSEMBLEDIR" ]; then
     rm -r "$ASSEMBLEDIR"
@@ -96,9 +97,11 @@ for i in $releasefiles; do
     GetTargetName target $i
     GetReleaseName release $i
     ProcessFile "$i" "$target" "$release"
-    echo "platform.$count=$target" >> $PLATFORMSFILE
+    echo "platform.$count=$target" >> $TMPPLATFORMSFILE
     count=$(($count+1))
 done
+
+mv $TMPPLATFORMSFILE $PLATFORMSFILE
 
 cd "$JARASSEMBLEDIR"
 find . \( -name "META-INF" -or -name "MANIFEST.MF" \) -delete
@@ -106,8 +109,7 @@ mkdir META-INF
 echo "Manifest-Version: 1.0" > META-INF/MANIFEST.MF 
 echo "Created-By: 1.5.0" >> META-INF/MANIFEST.MF 
 
-jar cf $MULTIPLATFORMJAR *
-cp $MULTIPLATFORMJAR $ASSEMBLEDIR/lib/
+jar cf $ASSEMBLEDIR/lib/$MULTIPLATFORMJAR *
 cd ..
 rm -r "$JARASSEMBLEDIR"
 if [ -f $release$multiplatformname.zip ] ; then
