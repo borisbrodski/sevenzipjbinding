@@ -1,7 +1,22 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Binary version for MacOS 64 bit (java 6)
+	
+	* Support for multi-platform jars:
+	  - Multiplatform releases:
+	  	- AllWindows:
+	  	- AllLinux
+	  	- AllDarvin
+	  	- AllPlatforms
+
+	  - Initialization reworked (net.sf.sevenzipjbinding.SevenZip)
+	    - SevenZip.initLibraryFromFile() removed. Please use 'System.load()' or 'System.loadLibrary()' to
+	      load native libraries into JVM and then call SevenZip.initLoadedLibraries() to call 7-Zip-JBinding
+	      initialization routine.
+	    - Detailed JavaDoc
+	
 	* Improve ISevenZipInArchive.extract()
 		- Check for wrong indices avoiding VM crash
 		- Sort indices, if not already sorted
