@@ -135,7 +135,7 @@ IF(USE_MINGW)
         EXECUTE_PROCESS(COMMAND cygpath.exe -m ${MINW_RUNTIME_DLL_FILENAME} OUTPUT_VARIABLE MINW_RUNTIME_DLL_FILENAME)
     ENDIF()
 # !!! TODO
-    GET_FILENAME_COMPONENT(MINWG_RUNTIME_DLL_DIR ${MINW_RUNTIME_DLL_FILENAME} PATH)
+#    GET_FILENAME_COMPONENT(MINWG_RUNTIME_DLL_DIR ${MINW_RUNTIME_DLL_FILENAME} PATH)
     GET_FILENAME_COMPONENT(MINWG_RUNTIME_DLL_NAME ${MINW_RUNTIME_DLL_FILENAME} NAME)
     FILE(APPEND ${SEVENZIP_JBINDING_LIB_PROPERTY_FILE} "sevenzipjbinding.libname.2=${MINWG_RUNTIME_DLL_NAME}")
 ENDIF(USE_MINGW)
@@ -192,11 +192,14 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
 
 IF(CMAKE_HOST_WIN32)
     ADD_CUSTOM_COMMAND(TARGET sevenzipjbinding-lib-jar POST_BUILD
-                       COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
-                                               -C ${MINWG_RUNTIME_DLL_DIR}
-                                               ${MINWG_RUNTIME_DLL_NAME}
-                       WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-                       COMMENT Adding MinGW runtime dll to the jar)
+                   COMMAND ${CMAKE_COMMAND} -E copy
+                                           ${MINW_RUNTIME_DLL_FILENAME}
+                                           ${PLATFORM}
+                   COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
+                                               -C ${PROJECT_BINARY_DIR}
+                                               ${PLATFORM}/${MINWG_RUNTIME_DLL_NAME}
+                   WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+                   COMMENT Adding MinGW runtime dll to the jar)
 ENDIF()
 
 
