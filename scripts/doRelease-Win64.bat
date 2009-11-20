@@ -6,5 +6,5 @@ cmake ../SevenZipJBinding -G"MinGW Makefiles" -DUSE_MINGW_W64=Yes -DCMAKE_C_COMP
 C:\MinGW\bin\mingw32-make.exe 
 ctest -D Experimental
 C:\MinGW\bin\mingw32-make.exe package
-..\SevenZipJBinding\scripts\upload-release.bat sev*.zip "Uploaded by doRelease.bat from 'Windows XP 64'"
+cmake -P ../SevenZipJBinding/scripts/upload-release.cmake
 cd ..
