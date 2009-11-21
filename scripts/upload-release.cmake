@@ -24,6 +24,7 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
     
     set(CHUNK_NUMBER 1)
     get_filename_component(FILEBASENAME "${FILENAME}" NAME)
+    list(SORT CHUNKS)
     foreach(CHUNK ${CHUNKS})
         message("Uploading chunk ${CHUNK_NUMBER}: '${CHUNK}'")
         execute_process(COMMAND curl -T "${CHUNK}"
