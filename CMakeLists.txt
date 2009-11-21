@@ -21,7 +21,6 @@ INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
 INCLUDE(CTest)
 
-
 # Uncomment this to build a version
 SET(SEVENZIPJBINDING_VERSON 4.65-1.10rc-extr-only)
 
@@ -117,6 +116,10 @@ ADD_CUSTOM_TARGET(sevenzipjbinding-jar ALL
 
 #ADD_SUBDIRECTORY(jbinding-java)
 ADD_SUBDIRECTORY(jbinding-cpp)
+
+IF(BUILD_MYSPLIT)
+    ADD_SUBDIRECTORY(tools/mysplit)
+ENDIF()
 
 ADD_DEPENDENCIES(7-Zip-JBinding sevenzipjbinding-jar)
 
@@ -297,7 +300,7 @@ IF(BUILD_TESTING)
     SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
     SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar)
     SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.6.jar)
-    SET(CTEST_TEST_TIMEOUT 7200)
+    #SET(DART_TESTING_TIMEOUT 7200)
     
     CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_JAR}" "${JUNIT_LIB}" ${SEVENZIP_JBINDING_JAR})
 

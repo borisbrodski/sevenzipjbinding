@@ -14,10 +14,30 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
         file(REMOVE "${CHUNK}")
     endforeach()
 
-    execute_process(COMMAND split "${FILENAME}" -b ${CHUNK_LENGTH} chunk.
+    find_program(MYSPLIT
+            mysplit
+        PATHS 
+            "tools/mysplit"
+    )
+    if(NOT MYSPLIT)
+        find_program(SPLIT
+                split
+        )
+        if(SPLIT)
+            execute_process(COMMAND "${SPLIT}" "${FILENAME}" -b ${CHUNK_LENGTH} chunk.
+                            RESULT_VARIABLE RESULT)
+            if(RESULT)
+                message(FATAL_ERROR "${SPLIT} failed: ${RESULT}")
+            endif()
+        else()
+            message(FATAL_ERROR "Either split or mysplit tool was found") 
+        endif()
+    endif()
+    
+    execute_process(COMMAND "${MYSPLIT}" "${FILENAME}" ${CHUNK_LENGTH} chunk.
                     RESULT_VARIABLE RESULT)
     if(RESULT)
-        message(FATAL_ERROR "Split failed: ${RESULT}")
+        message(FATAL_ERROR "${MYSPLIT} failed: ${RESULT}")
     endif()
     
     file(GLOB CHUNKS  RELATIVE "${CMAKE_BINARY_DIR}" "chunk.*")
