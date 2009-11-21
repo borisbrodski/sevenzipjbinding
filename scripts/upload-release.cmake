@@ -32,13 +32,14 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
         else()
             message(FATAL_ERROR "Either split or mysplit tool was found") 
         endif()
+    else()
+        execute_process(COMMAND "${MYSPLIT}" "${FILENAME}" ${CHUNK_LENGTH} chunk.
+                        RESULT_VARIABLE RESULT)
+        if(RESULT)
+            message(FATAL_ERROR "${MYSPLIT} failed: ${RESULT}")
+        endif()
     endif()
     
-    execute_process(COMMAND "${MYSPLIT}" "${FILENAME}" ${CHUNK_LENGTH} chunk.
-                    RESULT_VARIABLE RESULT)
-    if(RESULT)
-        message(FATAL_ERROR "${MYSPLIT} failed: ${RESULT}")
-    endif()
     
     file(GLOB CHUNKS  RELATIVE "${CMAKE_BINARY_DIR}" "chunk.*")
     
