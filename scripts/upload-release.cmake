@@ -24,7 +24,7 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
                 split
         )
         if(SPLIT)
-            execute_process(COMMAND "${SPLIT}" "${FILENAME}" -b ${CHUNK_LENGTH} chunk.
+            execute_process(COMMAND "${SPLIT}" -b ${CHUNK_LENGTH} "${FILENAME}" chunk.
                             RESULT_VARIABLE RESULT)
             if(RESULT)
                 message(FATAL_ERROR "${SPLIT} failed: ${RESULT}")
