@@ -579,6 +579,7 @@ public class SevenZip {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException("Error initializing SevenZipJBinding native library: "
 					+ "can't copy native library out of a resource file to the temporary location: '"
 					+ toLibTmpFile.getAbsolutePath() + "'", e);
@@ -616,7 +617,7 @@ public class SevenZip {
 		String arch = System.getProperty("os.arch");
 		String system = System.getProperty("os.name").split(" ")[0];
 		if (availablePlatform.contains(system + "-" + arch)) {
-			return arch + "-" + system;
+			return system + "-" + arch;
 		}
 
 		// TODO allow fuzzy matches
