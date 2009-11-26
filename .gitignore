@@ -1,2 +1,4 @@
 *.bak
 *~
+jbinding-java/bin
+test/JavaTests/bin
