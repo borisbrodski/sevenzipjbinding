@@ -38,10 +38,10 @@ cat $BINARY_DIR/DartConfiguration.tcl | \
 	DartConfiguration.tcl
 
 
-#ConfigureCommand: echo "No configuration required for IT tests"
-#MakeCommand: echo "No make required for IT tests"
-
-cat $BINARY_DIR/CTestTestfile.cmake | sed 's$"[^"]\+/JUnitRunner.cmake"$"ITJUnitTestRunner.cmake"$g' > CTestTestfile.cmake
+cat $BINARY_DIR/CTestTestfile.cmake | \
+	sed 's$"[^"]\+/JUnitRunner.cmake"$"ITJUnitTestRunner.cmake"$g' | \
+	sed 's$"/usr/bin/cmake"$"cmake"$g' > \
+	CTestTestfile.cmake
 
 cp $BINARY_DIR/jbinding-java/sevenzipjbinding-tests.jar .
 #cp $SCRIPT_HOME/run-it-test.sh .
