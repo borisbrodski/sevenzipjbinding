@@ -129,33 +129,14 @@ proceed with the extraction of an item or not. The second example prepare a list
 
 <h4>Extracting archive using standard interface and prepared list of items to extract</h4>
 ##INCLUDE_SNIPPET(ExtractItemsStandard) 
+
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+<h2>Open multi-part 7z archives</h2>
+
+##INCLUDE_SNIPPET(OpenMultipartArchive7z) 
  
- 
- 
- 
 
 
 
-<!--
-Extract first item of the archive and print it:
-<div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-
-<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
-archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
-    <font color="#646464">@Override</font>
-    <b>public int</b> write(<b>byte</b>[] data) {
-        stringBuilder.append(<b>new</b> String(data));
-        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
-    }
-});
-
-System.<i>out</i>.println(stringBuilder.toString());
-</pre></div><br/>
-
-For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
-<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
--->

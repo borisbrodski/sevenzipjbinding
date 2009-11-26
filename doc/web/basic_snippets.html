@@ -352,7 +352,7 @@ proceed with the extraction of an item or not. The second example prepare a list
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> ExtractItemsStandardCallback {
-    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback implements IArchiveExtractCallback {
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback <span class="java-keyword">implements</span> IArchiveExtractCallback {
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">hash</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> boolean <span class="java-field">skipExtraction</span>;
@@ -466,7 +466,7 @@ proceed with the extraction of an item or not. The second example prepare a list
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> ExtractItemsStandard {
-    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback implements IArchiveExtractCallback {
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback <span class="java-keyword">implements</span> IArchiveExtractCallback {
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">hash</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> ISevenZipInArchive <span class="java-field">inArchive</span>;
@@ -562,30 +562,156 @@ proceed with the extraction of an item or not. The second example prepare a list
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/ExtractItemsStandard.java">download java code</a></div>
- 
- 
- 
- 
-<!--
-Extract first item of the archive and print it:
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<h2>Open multi-part 7z archives</h2>
 <div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
-<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
-archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
-    <font color="#646464">@Override</font>
-    <b>public int</b> write(<b>byte</b>[] data) {
-        stringBuilder.append(<b>new</b> String(data));
-        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
+<span class="java-keyword">import</span> java.io.FileNotFoundException;
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+<span class="java-keyword">import</span> java.util.HashMap;
+<span class="java-keyword">import</span> java.util.Map;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ArchiveFormat;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IInStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> OpenMultipartArchive7z {
+<span class="java-javadoc">    /**
+     * In this example we use VolumedArchiveInStream class only.
+     * It means, we doesn't pass instances of this class directly
+     * to 7-Zip, so not complete implementation
+     * of {@link IArchiveOpenVolumeCallback} is required.
+     * See VolumedArchiveInStream JavaDoc for more information
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> ArchiveOpenVolumeCallback 
+            <span class="java-keyword">implements</span> IArchiveOpenVolumeCallback {
+
+<span class="java-javadoc">        /**
+         * Cache for opened file streams
+         */</span>
+        <span class="java-keyword">private</span> Map&#60;String, RandomAccessFile&#62; <span class="java-field">openedRandomAccessFileList</span> = 
+        <span class="java-keyword">new</span> HashMap&#60;String, RandomAccessFile&#62;();
+
+<span class="java-javadoc">        /**
+         * This method doesn't needed, if using with VolumedArchiveInStream
+         * and pass the name of the first archive in constructor.
+         * (Use two argument constructor)
+         * 
+         * <span class="java-javadoc-keyword">@see</span> IArchiveOpenVolumeCallback#getProperty(PropID)
+         */</span>
+        <span class="java-keyword">public</span> Object getProperty(PropID propID) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+        }
+
+<span class="java-javadoc">        /**
+         * 
+         * The name of the required volume will be calculated out of the
+         * name of the first volume and volume index. If you need
+         * need volume index (integer) you will have to parse filename
+         * and extract index.
+         * 
+         * &#60;pre&#62;
+         * int index = filename.substring(filename.length() - 3, 
+         *         filename.length());
+         * &#60;/pre&#62;
+         * 
+         */</span>
+        <span class="java-keyword">public</span> IInStream getStream(String filename) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-keyword">try</span> {
+                <span class="java-comment">// We use caching of opened streams, so check cache first</span>
+                RandomAccessFile randomAccessFile = <span class="java-field">openedRandomAccessFileList</span>
+                        .get(filename);
+                <span class="java-keyword">if</span> (randomAccessFile != <span class="java-keyword">null</span>) { <span class="java-comment">// Cache hit.</span>
+                    <span class="java-comment">// Move the file pointer back to the beginning</span>
+                    <span class="java-comment">// in order to emulating new stream</span>
+                    randomAccessFile.seek(0);
+                    <span class="java-keyword">return</span> <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile);
+                }
+
+                <span class="java-comment">// Nothing useful in cache. Open required volume.</span>
+                randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"r"</span>);
+
+                <span class="java-comment">// Put new stream in the cache</span>
+                <span class="java-field">openedRandomAccessFileList</span>.put(filename, randomAccessFile);
+
+                <span class="java-keyword">return</span> <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile);
+            } <span class="java-keyword">catch</span> (FileNotFoundException fileNotFoundException) {
+                <span class="java-comment">// Required volume doesn't exist. This happens if the volume:</span>
+                <span class="java-comment">// 1. never exists. 7-Zip doesn't know how many volumes should</span>
+                <span class="java-comment">//    exist, so it have to try each volume.</span>
+                <span class="java-comment">// 2. should be there, but doesn't. This is an error case.</span>
+
+                <span class="java-comment">// Since normal and error cases are possible,</span>
+                <span class="java-comment">// we can't throw an error message</span>
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>; <span class="java-comment">// We return always null in this case</span>
+            } <span class="java-keyword">catch</span> (Exception e) {
+                <span class="java-keyword">throw</span> <span class="java-keyword">new</span> RuntimeException(e);
+            }
+        }
+
+<span class="java-javadoc">        /**
+         * Close all opened streams
+         */</span>
+        <span class="java-keyword">void</span> close() <span class="java-keyword">throws</span> IOException {
+            <span class="java-keyword">for</span> (RandomAccessFile file : <span class="java-field">openedRandomAccessFileList</span>.values()) {
+                file.close();
+            }
+        }
     }
-});
-System.<i>out</i>.println(stringBuilder.toString());
-</pre></div><br/>
-For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
-<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
--->
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
+            System.<span class="java-staticfield">out</span>.println(
+                    <span class="java-string">"Usage: java OpenMultipartArchive7z &#60;first-volume&#62;"</span>);
+        }
+        ArchiveOpenVolumeCallback archiveOpenVolumeCallback = <span class="java-keyword">null</span>;
+        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        <span class="java-keyword">try</span> {
+
+            archiveOpenVolumeCallback = <span class="java-keyword">new</span> ArchiveOpenVolumeCallback();
+            inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.SEVEN_ZIP, 
+                    <span class="java-keyword">new</span> VolumedArchiveInStream(args[0], 
+                            archiveOpenVolumeCallback));
+
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Size   | Compr.Sz. | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+-----------+---------"</span>);
+            <span class="java-keyword">int</span> itemCount = inArchive.getNumberOfItems();
+            <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; itemCount; i++) {
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9s | %9s | %s"</span>, <span class="java-comment">// </span>
+                        inArchive.getProperty(i, PropID.SIZE), 
+                        inArchive.getProperty(i, PropID.PACKED_SIZE), 
+                        inArchive.getProperty(i, PropID.PATH)));
+            }
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+            System.<span class="java-staticmethod">exit</span>(1);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    inArchive.close();
+                } <span class="java-keyword">catch</span> (SevenZipException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                }
+            }
+            <span class="java-keyword">if</span> (archiveOpenVolumeCallback != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    archiveOpenVolumeCallback.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                }
+            }
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/OpenMultipartArchive7z.java">download java code</a></div>
+ 
 </td></tr>
 </table></td></tr>
 </table>

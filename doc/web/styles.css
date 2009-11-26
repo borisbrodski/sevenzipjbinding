@@ -100,12 +100,21 @@ span.java-field {
 }
 
 span.java-keyword {
-    font-weight:bold;
+    font-weight: bold;
     color: #950055;
 }
 
 span.java-comment {
     color: #3f8588;
+}
+
+span.java-javadoc {
+    color: #455fbf;
+}
+
+span.java-javadoc-keyword {
+    font-weight: bold;
+    color: #7f9fbf;
 }
 
 div.snippet-info {

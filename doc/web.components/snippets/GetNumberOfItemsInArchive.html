@@ -4,7 +4,7 @@
 
     randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>);
 
-    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// <span class="java-keyword">null</span> - autodetect</span>
+    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// null - autodetect</span>
             <span class="java-keyword">new</span> RandomAccessFileInStream(
                     randomAccessFile));
 
