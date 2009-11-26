@@ -7,8 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
@@ -640,7 +640,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
 		private RandomAccessFile randomAccessFile;
 		private String currentFilename;
-		private List<RandomAccessFile> openedRandomAccessFileList = new ArrayList<RandomAccessFile>();
+		private Map<String, RandomAccessFile> randomAccessFileMap = new HashMap<String, RandomAccessFile>();
 
 		public VolumeArchiveOpenCallback(String firstFilename) {
 			currentFilename = firstFilename;
@@ -662,16 +662,15 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		 */
 
 		public IInStream getStream(String filename) {
-			currentFilename = filename;
 			try {
-				RandomAccessFile newRandomAccessFile = new RandomAccessFile(filename, "r");
-				if (newRandomAccessFile == null) {
-					return null;
-				}
-				randomAccessFile = newRandomAccessFile;
+				currentFilename = filename;
+				randomAccessFile = randomAccessFileMap.get(filename);
 				if (randomAccessFile != null) {
-					openedRandomAccessFileList.add(randomAccessFile);
+					randomAccessFile.seek(0);
+					return new RandomAccessFileInStream(randomAccessFile);
 				}
+				randomAccessFile = new RandomAccessFile(filename, "r");
+				randomAccessFileMap.put(filename, randomAccessFile);
 				return new RandomAccessFileInStream(randomAccessFile);
 			} catch (FileNotFoundException fileNotFoundException) {
 				return null;
@@ -681,7 +680,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		}
 
 		public void close() throws IOException {
-			for (RandomAccessFile file : openedRandomAccessFileList) {
+			for (RandomAccessFile file : randomAccessFileMap.values()) {
 				file.close();
 			}
 		}
