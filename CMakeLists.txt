@@ -312,7 +312,7 @@ IF(BUILD_TESTING)
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
     FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
                                             ${JAVA_RUNTIME} -cp \"${JUNIT_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
-                                            \"-DSINGLEDIR=\${TEST_DIR}\" \"-DSRCDIR=\${SRCDIR}\"
+                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\"
                                             org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)
@@ -320,11 +320,11 @@ IF(BUILD_TESTING)
                                          MESSAGE(SEND_ERROR \"Error during JUnit Tests\")
                                      ENDIF(RESULT)
                                      ")
-    add_test(JUnit-init                         ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-tools                        ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/tools -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/snippets -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/singlefile -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/multiplefiles -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -DTEST_DIR=src/net/sf/sevenzipjbinding/junit/badarchive -DSRCDIR=src -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init                         ${CMAKE_COMMAND} -D "SINGLEBUNDLE=01 Common tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-tools                        ${CMAKE_COMMAND} -D "SINGLEBUNDLE=02 Tools tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -D "SINGLEBUNDLE=03 Multiple files tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=04 Single file tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=05 Snippets tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=06 Bad archive tests" -P ${JUNIT_TEST_RUNNER})
 #                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
 ENDIF(BUILD_TESTING)

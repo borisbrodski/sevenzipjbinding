@@ -76,8 +76,8 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
     endif()
 endmacro()
 
-if(DEFINED DESCRIPTION)
-    set(DESCRIPTION "")
+if(NOT DESCRIPTION)
+    set(DESCRIPTION "Uploaded by cmake")
 endif()
 
 if(FILENAME)
