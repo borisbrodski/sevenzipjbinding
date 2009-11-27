@@ -47,18 +47,43 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <br/><br/>
 <iframe marginheight="0" marginwidth="0" frameborder="0" height="1000" scrolling="no" width="220" src="voting.php">Your browser does not support iframes</iframe>
 </td><td align="left">
-<!--
-<h1>Coming very soon!</h1>
-<h3>I expect to put a lot of examples here in one or two weeks.</h3>
-<h3>Thank you for your patience!</h3>
--->
 <h1>Code snippets</h1>
-<h2>Overview</h2>
-<p>
-Here you can find many simple code snippets, example of how to preform basic operations with
-7-Zip-JBinding. All outputs of the code snippets were produced using a single test archive 
-<a href="simple.zip"><span class="filename">simple.zip</span></a>. Here is a content of the test archive:
-</p>
+<ul>
+	<li><a href="#overview">Overview</a></li>
+	<li><a href="#std-vs-simple">Standard vs Simple interface</a></li>
+	<li><a href="#quering-archive">Quering items in archive</a>
+	<ul>
+		<li><a href="#quering-archive-simple-int">Simple interface</a></li>
+		<li><a href="#quering-archive-std-int">Standard interface</a></li>
+	</ul>
+	</li>
+	<li><a href="#extraction-single-file"> Extraction of a single
+	file</a>
+	<ul>
+		<li><a href="#extraction-single-file-simple-int">Simple
+		interface</a></li>
+		<li><a href="#extraction-single-file-std-int">Standard
+		interface</a>
+		<ul>
+			<li><a href="#extracting-archive-std-int-callback">
+			Extracting archive using standard interface and call back method as a
+			filter</a></li>
+			<li><a href="#extracting-archive-std-int-prepared-list">
+			Extracting archive using standard interface and prepared list of
+			items to extract</a></li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li><a href="#open-multipart-7z-archives">Open multi-part 7z
+	archives</a></li>
+</ul>
+<h2><a name="overview">Overview</a></h2>
+<p>Here you can find many simple code snippets, example of how to
+preform basic operations with 7-Zip-JBinding. All outputs of the code
+snippets were produced using a single test archive <a href="simple.zip"><span
+	class="filename">simple.zip</span></a>. Here is a content of the test
+archive:</p>
 <div class="fragment"><pre class="fragment">
 $ 7z l simple.zip
 7-Zip  4.58 beta  Copyright (c) 1999-2008 Igor Pavlov  2008-05-05
@@ -73,24 +98,22 @@ Listing archive: simple.zip
 ------------------- ----- ------------ ------------  ------------------------
                                   4562          136  3 files, 1 folders
 </pre></div>
-<br/>
-<h2>Standard vs Simple interface</h2>
-<p>
-The 7-Zip-JBinding library offers two different interfaces: standard and simple. The standard interface 
-directly maps all native 7-Zip library methods providing C++ like interface. The simple interface is a
-try to provide more Java-like easy to use interface. It was designed either for quick coding and easy
-start and not for feature richness nor for performance.
-</p>
-<p>
-The following examples will be presented in both standard and simple interface beginning with as simple interface.
-Please note, that the full performance can only be reached with the standard interface.
-</p>
-<br/>
-<h2>Quering items in archive</h2>
-<h3>Simple interface</h3>
-<p>
-This example shows how to print a list of items of archive using simple interface.
-</p>
+<br />
+<h2><a name="std-vs-simple">Standard vs Simple interface</a></h2>
+<p>The 7-Zip-JBinding library offers two different interfaces:
+standard and simple. The standard interface directly maps all native
+7-Zip library methods providing C++ like interface. The simple interface
+is a try to provide more Java-like easy to use interface. It was
+designed either for quick coding and easy start and not for feature
+richness nor for performance.</p>
+<p>The following examples will be presented in both standard and
+simple interface beginning with as simple interface. Please note, that
+the full performance can only be reached with the standard interface.</p>
+<br />
+<h2><a name="quering-archive">Quering items in archive</a></h2>
+<h3><a name="quering-archive-simple-int">Simple interface</a></h3>
+<p>This example shows how to print a list of items of archive using
+simple interface.</p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
@@ -149,9 +172,7 @@ This example shows how to print a list of items of archive using simple interfac
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/ListItemsSimple.java">download java code</a></div>
-<p>
-The output for the test archive:
-</p>
+<p>The output for the test archive:</p>
 <div class="fragment"><pre class="fragment">
    Size   | Compr.Sz. | Filename
 ----------+-----------+---------
@@ -160,16 +181,14 @@ The output for the test archive:
         0 |         0 | folder
         6 |         6 | folder/file in folder.txt
 </pre></div>
-<p>
-Please note, that not all archive formats support the "folder" items, like "folder/" in our example. Also
-please note, that packed size in this example as almost all other properties can return null. A returned null
-value means, that either the property is not supported by the particular archive format or not known
-for the particular item.
-</p>
-<h3>Standard interface</h3>
-<p>
-This example shows how to print a list of items of archive using standard interface.
-</p>
+<p>Please note, that not all archive formats support the "folder"
+items, like "folder/" in our example. Also please note, that packed size
+in this example as almost all other properties can return null. A
+returned null value means, that either the property is not supported by
+the particular archive format or not known for the particular item.</p>
+<h3><a name="quering-archive-std-int">Standard interface</a></h3>
+<p>This example shows how to print a list of items of archive using
+standard interface.</p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
@@ -224,9 +243,7 @@ This example shows how to print a list of items of archive using standard interf
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/ListItemsStandard.java">download java code</a></div>
-<p>
-The output for the test archive is the same:
-</p>
+<p>The output for the test archive is the same:</p>
 <div class="fragment"><pre class="fragment">
    Size   | Compr.Sz. | Filename
 ----------+-----------+---------
@@ -235,21 +252,22 @@ The output for the test archive is the same:
         0 |         0 | folder
         6 |         6 | folder/file in folder.txt
 </pre></div>
-<h2>Extraction of a single file</h2>
-<p>
-This section will show how to access the compressed data of the archive items. The following examples will calculate a simple checksum
-of each archive item.
-</p>
-<h3>Simple interface</h3>
-<p>
-This example shows how to get content of the items of the archive using simple interface.
-In order to consume extracted content the simple checksum will be calculated.
-</p>
+<h2><a name="extraction-single-file">Extraction of a single
+file</a></h2>
+<p>This section will show how to access the compressed data of the
+archive items. The following examples will calculate a simple checksum
+of each archive item.</p>
+<h3><a name="extraction-single-file-simple-int">Simple
+interface</a></h3>
+<p>This example shows how to get content of the items of the archive
+using simple interface. In order to consume extracted content the simple
+checksum will be calculated.</p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 <span class="java-keyword">import</span> java.util.Arrays;
 
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ExtractOperationResult;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialOutStream;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
@@ -279,14 +297,19 @@ In order to consume extracted content the simple checksum will be calculated.
             <span class="java-keyword">for</span> (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
                 final <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
-                    item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
+                    ExtractOperationResult result;
+                    result = item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
                         <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
                             hash[0] |= Arrays.<span class="java-staticmethod">hashCode</span>(data);
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of proceed data</span>
                         }
                     });
-                    System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
-                            hash[0], item.getPath()));
+                    <span class="java-keyword">if</span> (result == ExtractOperationResult.OK) {
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
+                                hash[0], item.getPath()));
+                    } else {
+                        System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);
+                    }
                 }
             }
         } <span class="java-keyword">catch</span> (Exception e) {
@@ -312,10 +335,7 @@ In order to consume extracted content the simple checksum will be calculated.
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/ExtractItemsSimple.java">download java code</a></div>
- 
-<p>
-Here is the output of the last snippet:
-</p>
+<p>Here is the output of the last snippet:</p>
 <div class="fragment"><pre class="fragment">
    Hash   | Filename
 ----------+---------
@@ -323,19 +343,17 @@ Here is the output of the last snippet:
  8CB12E6A | file2.txt
  E8EEC7F4 | folder/file in folder.txt
 </pre></div>
- 
- 
-<h3>Standard interface</h3>
-<p>
-The following two examples show how to perform the same extracting task using standard interface.
-As in the previous example, the simple checksum will be calculated in order to
-consume the extracted data. 
+<h3><a name="extraction-single-file-std-int">Standard interface</a></h3>
+<p>The following two examples show how to perform the same
+extracting task using standard interface. As in the previous example,
+the simple checksum will be calculated in order to consume the extracted
+data.</p>
+<p>First example traverse the entire archive and uses call back
+method to choose on the fly whether proceed with the extraction of an
+item or not. The second example prepare a list of items for extraction.
 </p>
-<p>
-First example traverse the entire archive and uses call back method to choose on the fly whether
-proceed with the extraction of an item or not. The second example prepare a list of items for extraction.
-</p>
-<h4>Extracting archive using standard interface and call back method as a filter</h4>
+<h4><a name="extracting-archive-std-int-callback"> Extracting
+archive using standard interface and call back method as a filter</a></h4>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
@@ -447,7 +465,9 @@ proceed with the extraction of an item or not. The second example prepare a list
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/ExtractItemsStandardCallback.java">download java code</a></div>
-<h4>Extracting archive using standard interface and prepared list of items to extract</h4>
+<h4><a name="extracting-archive-std-int-prepared-list">
+Extracting archive using standard interface and prepared list of items
+to extract</a></h4>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
@@ -563,7 +583,8 @@ proceed with the extraction of an item or not. The second example prepare a list
 </pre></div>
 <div class="snippet-info"><a href="snippets/ExtractItemsStandard.java">download java code</a></div>
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-<h2>Open multi-part 7z archives</h2>
+<h2><a name="open-multipart-7z-archives">Open multi-part 7z
+archives</a></h2>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.FileNotFoundException;
 <span class="java-keyword">import</span> java.io.IOException;
@@ -711,6 +732,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/OpenMultipartArchive7z.java">download java code</a></div>
+<p>Here is the output of the last snippet:</p>
 <div class="fragment"><pre class="fragment">
    Size   | Compr.Sz. | Filename
 ----------+-----------+---------
