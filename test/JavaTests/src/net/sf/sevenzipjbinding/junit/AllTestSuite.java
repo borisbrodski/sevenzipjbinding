@@ -196,9 +196,9 @@ public class AllTestSuite extends TestSuite {
 	static {
 		tests.put("01 Common tests", commonTests);
 		tests.put("02 Tools tests", toolsTests);
-		tests.put("03 Multiple files tests", multipleFilesTests);
+		tests.put("03 Snippets tests", snippetsTests);
 		tests.put("04 Single file tests", singleFileTests);
-		tests.put("05 Snippets tests", snippetsTests);
+		tests.put("05 Multiple files tests", multipleFilesTests);
 		tests.put("06 Bad archive tests", badArchiveTests);
 	}
 
