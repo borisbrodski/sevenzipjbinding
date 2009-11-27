@@ -16,6 +16,8 @@ Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platf
 	      load native libraries into JVM and then call SevenZip.initLoadedLibraries() to call 7-Zip-JBinding
 	      initialization routine.
 	    - Detailed JavaDoc
+
+        * Integration test for all platforms for single and multiple platform distributions
 	
 	* Improve ISevenZipInArchive.extract()
 		- Check for wrong indices avoiding VM crash
@@ -27,6 +29,8 @@ Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platf
 	* RPM format support + tests
 
 	* UDF format support + tests
+
+        * Source code repository was changed to git
 	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
