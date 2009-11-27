@@ -2,6 +2,7 @@
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 <span class="java-keyword">import</span> java.util.Arrays;
 
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ExtractOperationResult;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialOutStream;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
@@ -31,14 +32,19 @@
             <span class="java-keyword">for</span> (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
                 final <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
-                    item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
+                    ExtractOperationResult result;
+                    result = item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
                         <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
                             hash[0] |= Arrays.<span class="java-staticmethod">hashCode</span>(data);
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of proceed data</span>
                         }
                     });
-                    System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
-                            hash[0], item.getPath()));
+                    <span class="java-keyword">if</span> (result == ExtractOperationResult.OK) {
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
+                                hash[0], item.getPath()));
+                    } else {
+                        System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);
+                    }
                 }
             }
         } <span class="java-keyword">catch</span> (Exception e) {
