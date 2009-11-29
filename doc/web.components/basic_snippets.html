@@ -27,8 +27,13 @@
 		</li>
 	</ul>
 	</li>
-	<li><a href="#open-multipart-7z-archives">Open multi-part 7z
-	archives</a></li>
+	<li><a href="#open-multipart-archives">Open multi-part
+	archives</a>
+	<ul>
+		<li><a href="#open-multipart-7z-archives">Open multi-part 7z
+		archives</a></li>
+	</ul>
+	</li>
 </ul>
 
 
@@ -148,12 +153,95 @@ to extract</a></h4>
 
 ##INCLUDE_SNIPPET(ExtractItemsStandard)
 
+<h2><a name="open-multipart-archives">Open multi-part archives</a></h2>
+<p>
+Dealing with a multi-part archives is not so easy, as dealing with a
+ordinary archives. Different archive formats need different approach and
+therefore will be discussed separately.
+</p>
 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-<h2><a name="open-multipart-7z-archives">Open multi-part 7z
-archives</a></h2>
-
+<h3><a name="open-multipart-7z-archives">Open multi-part 7z
+archives</a></h3>
+<p>
+Multi-part 7z archives are build by simple splitting of solid 7z
+archives into multiple peaces. This means, you can easy convert a
+multi-part 7z archive into single part 7z archive by concatenation of
+all archive parts into a one single file. Here is an example, how you
+can do this in a sh-shell.
+</p>
+<div class="fragment"><pre class="fragment">
+$ ###
+$ ### <span class="java-comment">Compress some files into 7z archive.</span>
+$ ### <span class="java-comment">Create mult-part archive 10.240 bytes for each part.</span>
+$ ###
+$ 7z a test.7z -v10k somedir/
+...
+$ ls -l
+total 32
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Concatenate all parts into a single file</span>
+$ ###
+$ cat test.7z.* > test.7z
+$ ls -l
+total 60
+-rw-r--r-- 1 boris boris <b>27164</b> 2009-11-29 01:18 <b>test.7z</b>
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Test archive</span>
+$ ###
+$ 7z t test.7z
+...
+Everything is Ok
+...
+###
+### <span class="java-comment">Split solid archive back into peaces</span>
+### <span class="java-comment">Split starts counting from 000, so rename files</span>
+###
+$ split  -b 15000 -a 3 -d test.7z test2.7z.
+$ mv test2.7z.001 test2.7z.002
+$ mv test2.7z.000 test2.7z.001
+$ ls -l
+total 88
+-rw-r--r-- 1 boris boris <b>15000</b> 2009-11-29 01:36 <b>test2.7z.001</b>
+-rw-r--r-- 1 boris boris <b>12164</b> 2009-11-29 01:36 <b>test2.7z.002</b>
+-rw-r--r-- 1 boris boris 27164 2009-11-29 01:22 test.7z
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Test new multi-part archive file archive</span>
+$ ###
+$ 7z t test2.7z.001
+...
+Everything is Ok
+...
+</pre></div>
+<p>
+The naming conventions for the volumes of a multi-part 7z archive are:
+</p>
+<ul>
+	<li>Every file name of a volume should ends with ".7z.XXX", where
+	X is a digit between 0 and 9. The XXX is a decimal sequential number of
+	the volume starting with 1. Ending ".7z.000" is not allowed.</li>
+</ul>
+<p>
+It's important to provide corrent names in
+IArchiveOpenVolumeCallback.getProperty() method and to
+VolumedArchiveInStream class. Also you will probably need to parse
+filenames passed to IArchiveOpenVolumeCallback.getStream(String
+filename) in order to get a number of the required volume.
+</p>
+<p>
+Here is an example of how to open a multi-part archive directly from the
+file system. In this example all the volumes are named correctly, so
+it's no need to parse requred volume name to extract the index. The
+volumes already exists under the passed names und can be directly opened.
+</p>
 ##INCLUDE_SNIPPET(OpenMultipartArchive7z)
 
 <p>Here is the output of the last snippet:</p>
