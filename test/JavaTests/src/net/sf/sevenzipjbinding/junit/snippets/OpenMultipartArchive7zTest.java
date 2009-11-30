@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class OpenMultipartArchive7zTest extends SnippetTest {
 	private String getExpectedOutput() {
-		/* BEGIN_OUTPUT(OpenMultipartArchiveOutput) */
+		/* BEGIN_OUTPUT(OpenMultipart7zArchiveOutput) */
 		String expected = "   Size   | Compr.Sz. | Filename\n";
 		expected += "----------+-----------+---------\n";
 		expected += "        6 |       114 | folder/file in folder.txt\n";
