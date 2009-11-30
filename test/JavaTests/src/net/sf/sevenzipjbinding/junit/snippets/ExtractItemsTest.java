@@ -7,7 +7,7 @@ import java.io.File;
 import org.junit.Test;
 
 /**
- * Tests {@link SevenZipJBindingInitCheck} snippet
+ * Tests {@link ExtractItemsSimple} and {@link ExtractItemsStandard} snippets
  * 
  * @author Boris Brodski
  * @version 4.65-1

@@ -72,7 +72,7 @@ import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
 import net.sf.sevenzipjbinding.junit.snippets.ListItemsTest;
-import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchiveTest;
+import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchive7zTest;
 import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
@@ -170,7 +170,7 @@ public class AllTestSuite extends TestSuite {
 	static Class<?>[] snippetsTests = { //
 	/*    */PrintCountOfItemsTest.class, //
 			FirstStepsSimpleSnippets.class, //
-			OpenMultipartArchiveTest.class, //
+			OpenMultipartArchive7zTest.class, //
 			ExtractItemsTest.class, //
 			SevenZipJBindingInitCheckTest.class, //
 			ListItemsTest.class, //
