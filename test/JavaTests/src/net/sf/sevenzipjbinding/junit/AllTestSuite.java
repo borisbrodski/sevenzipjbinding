@@ -16,6 +16,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileLzhTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarVolumeHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarVolumePassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarVolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipHeaderPassTest;
@@ -112,6 +113,7 @@ public class AllTestSuite extends TestSuite {
 			ExtractMultipleFileRarHeaderPassTest.class, //
 			ExtractMultipleFileRarPassTest.class, //
 			ExtractMultipleFileRarTest.class, //
+			ExtractMultipleFileRarVolumeHeaderPassTest.class, //
 			ExtractMultipleFileRarVolumePassTest.class, //
 			ExtractMultipleFileRarVolumeTest.class, //
 			ExtractMultipleFileSevenZipHeaderPassTest.class, //

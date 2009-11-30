@@ -418,7 +418,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 					+ "." + compressionIndex + "." + extention + volumeArchivePostfix;
 
 			if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
-				archiveFilename = archiveFilename.replace("part1.rar", "rar");
+				archiveFilename = archiveFilename.replace("part1.rar", "part01.rar");
+				if (!new File(archiveFilename).exists()) {
+					archiveFilename = archiveFilename.replace("part01.rar", "rar");
+				}
 			}
 
 			return openArchiveFileWithSevenZip(archiveFilename, autodetectFormat);

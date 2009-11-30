@@ -6,7 +6,7 @@ CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZH=n
 CREATE_SIMPLE_ISO=n
 CREATE_SIMPLE_7Z=n
-CREATE_SIMPLE_RAR=n
+CREATE_SIMPLE_RAR=y
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_ZIP=n
 CREATE_SIMPLE_DEB=n
@@ -105,9 +105,9 @@ if test $CREATE_SIMPLE_RAR = y -o $CREATE_ALL = y ; then
             pushd $TMP_CONTENT_DIR/$j && rar a -r -m$i -pTestPass $TEST_DIR/rar/pass-$j.$i.rar . ; popd
             pushd $TMP_CONTENT_DIR/$j && rar a -r -m$i -hpTestPass $TEST_DIR/rar/passh-$j.$i.rar . ; popd
 
-            pushd $TMP_CONTENT_DIR/$j && rar a -r -v200000b -m$i $TEST_DIR/rar/vol-$j.$i.rar . ; popd
-            pushd $TMP_CONTENT_DIR/$j && rar a -r -v200000b -m$i -pTestPass $TEST_DIR/rar/vol-pass-$j.$i.rar . ; popd
-            pushd $TMP_CONTENT_DIR/$j && rar a -r -v200000b -m$i -hpTestPass $TEST_DIR/rar/vol-passh-$j.$i.rar . ; popd
+            pushd $TMP_CONTENT_DIR/$j && rar a -r -v2700b -m$i $TEST_DIR/rar/vol-$j.$i.rar . ; popd
+            pushd $TMP_CONTENT_DIR/$j && rar a -r -v2700b -m$i -pTestPass $TEST_DIR/rar/vol-pass-$j.$i.rar . ; popd
+            pushd $TMP_CONTENT_DIR/$j && rar a -r -v2700b -m$i -hpTestPass $TEST_DIR/rar/vol-passh-$j.$i.rar . ; popd
         done
     done
 fi
