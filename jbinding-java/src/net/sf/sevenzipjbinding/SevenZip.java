@@ -467,6 +467,8 @@ public class SevenZip {
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+	 * @throws NullPointerException
+	 *             is thrown, if inStream is null
 	 * 
 	 * @see #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)
 	 * @see #openInArchive(ArchiveFormat, IInStream, String)
@@ -475,9 +477,9 @@ public class SevenZip {
 			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
 		ensureLibraryIsInitialized();
 		if (archiveFormat != null) {
-			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, archiveOpenCallback);
+			return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, archiveOpenCallback);
 		}
-		return nativeOpenArchive(null, inStream, archiveOpenCallback);
+		return callNativeOpenArchive(null, inStream, archiveOpenCallback);
 	}
 
 	/**
@@ -496,6 +498,8 @@ public class SevenZip {
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+	 * @throws NullPointerException
+	 *             is thrown, if inStream is null
 	 * 
 	 * @see #openInArchive(ArchiveFormat, IInStream)
 	 * @see #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)
@@ -504,10 +508,10 @@ public class SevenZip {
 			String passwordForOpen) throws SevenZipException {
 		ensureLibraryIsInitialized();
 		if (archiveFormat != null) {
-			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, new ArchiveOpenCryptoCallback(
+			return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, new ArchiveOpenCryptoCallback(
 					passwordForOpen));
 		}
-		return nativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
+		return callNativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
 	}
 
 	/**
@@ -522,6 +526,9 @@ public class SevenZip {
 	 * 
 	 * @throws SevenZipException
 	 *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+	 * @throws NullPointerException
+	 *             is thrown, if inStream is null
+	 * 
 	 * @see #openInArchive(ArchiveFormat, IInStream)
 	 * @see #openInArchive(ArchiveFormat, IInStream, String)
 	 */
@@ -529,9 +536,9 @@ public class SevenZip {
 			throws SevenZipException {
 		ensureLibraryIsInitialized();
 		if (archiveFormat != null) {
-			return nativeOpenArchive(archiveFormat.getMethodName(), inStream, new DummyOpenArchiveCallback());
+			return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, new DummyOpenArchiveCallback());
 		}
-		return nativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
+		return callNativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
 	}
 
 	private static void ensureLibraryIsInitialized() {
@@ -634,6 +641,14 @@ public class SevenZip {
 		stringBuilder.setLength(stringBuilder.length() - 2);
 		throwInitException(stringBuilder.toString());
 		return null; // Will never happen
+	}
+
+	private static ISevenZipInArchive callNativeOpenArchive(String formatName, IInStream inStream,
+			IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
+		if (inStream == null) {
+			throw new NullPointerException("SevenZip.callNativeOpenArchive(...): inStream parameter is null");
+		}
+		return nativeOpenArchive(formatName, inStream, archiveOpenCallback);
 	}
 
 	private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
