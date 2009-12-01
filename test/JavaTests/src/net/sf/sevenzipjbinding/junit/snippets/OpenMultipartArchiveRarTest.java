@@ -14,12 +14,12 @@ import org.junit.Test;
  */
 public class OpenMultipartArchiveRarTest extends SnippetTest {
 	private String getExpectedOutput() {
-		/* BEGIN_OUTPUT(OpenMultipartArchiveOutput) */
+		/* BEGIN_OUTPUT(OpenMultipartRarArchiveOutput) */
 		String expected = "   Size   | Compr.Sz. | Filename\n";
 		expected += "----------+-----------+---------\n";
-		expected += "        6 |       114 | folder/file in folder.txt\n";
-		expected += "     4481 |      null | file1.txt\n";
-		expected += "       75 |      null | file2.txt\n";
+		expected += "        6 |         6 | folder/file in folder.txt\n";
+		expected += "     4481 |      4481 | file1.txt\n";
+		expected += "       75 |        75 | file2.txt\n";
 		expected += "        0 |         0 | folder\n";
 		/* END_OUTPUT */
 
@@ -33,7 +33,7 @@ public class OpenMultipartArchiveRarTest extends SnippetTest {
 		String expected = getExpectedOutput();
 
 		beginSnippetTest();
-		OpenMultipartArchive7z.main(new String[] { "testdata/snippets/multipart-7z.7z.001" });
+		OpenMultipartArchiveRar.main(new String[] { "testdata/snippets/multipart-rar.part1.rar" });
 		String output = endSnippetTest();
 		assertEquals(expected, output);
 	}
