@@ -9,6 +9,7 @@ macro(PROCESS_SNIPPET_LINE_JAVA LINE_VAR)
     STRING(REGEX REPLACE "/\\*f\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*sf\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*s\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
+    STRING(REGEX REPLACE "/\\*(  +)\\*/" "\\1" TMP "${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro()
 
@@ -35,7 +36,7 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     PROCESS_SNIPPET_COMMON_LINE_HTML(${LINE_VAR})
 
     STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${${LINE_VAR}}")
-    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private)($|[^a-zA-Z])" 
+    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default)($|[^a-zA-Z])" 
                             "\\1##keyword##\\2##end##\\3" TMP "${TMP}")
     STRING(REGEX REPLACE "(SevenZip\\.)(openInArchive|initSevenZipFromPlatformJAR)"
                             "\\1##staticmethod##\\2##end##" TMP "${TMP}")
@@ -64,6 +65,7 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     STRING(REGEX REPLACE "##comment##" "<span class=\"java-comment\">" TMP "${TMP}") 
     STRING(REGEX REPLACE "##keyword##" "<span class=\"java-keyword\">" TMP "${TMP}") 
     STRING(REGEX REPLACE "##field##" "<span class=\"java-field\">" TMP "${TMP}") 
+    STRING(REGEX REPLACE "/\\*(  +)\\*/" "\\1" TMP "${TMP}")
 #    MESSAGE("${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro() 

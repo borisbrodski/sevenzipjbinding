@@ -32,7 +32,7 @@ public class OpenMultipartArchive7z {
 		 * Cache for opened file streams
 		 */
 		private Map<String, RandomAccessFile> /*f*/openedRandomAccessFileList/* */= //
-		new HashMap<String, RandomAccessFile>();
+		/*                */new HashMap<String, RandomAccessFile>();
 
 		/**
 		 * This method doesn't needed, if using with VolumedArchiveInStream <br>
