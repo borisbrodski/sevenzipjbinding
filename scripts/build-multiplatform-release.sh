@@ -81,7 +81,6 @@ JARASSEMBLEDIR=$ROOTDIR/JAR-$multiplatformname
 PLATFORMSFILE="$JARASSEMBLEDIR/sevenzipjbinding-platforms.properties"
 TMPPLATFORMSFILE="$JARASSEMBLEDIR/sevenzipjbinding-platforms.properties.tmp"
 MULTIPLATFORMJAR=sevenzipjbinding-$multiplatformname.jar
-echo "# Information about available platforms" > $TMPPLATFORMSFILE
 
 if [ -d "$ASSEMBLEDIR" ]; then
     rm -r "$ASSEMBLEDIR"
@@ -91,6 +90,7 @@ if [ -d "$JARASSEMBLEDIR" ]; then
     rm -r "$JARASSEMBLEDIR"
 fi
 mkdir "$JARASSEMBLEDIR"
+echo "# Information about available platforms" > $TMPPLATFORMSFILE
 count=1
 echo Building multiplatform release \"$multiplatformname\" out of
 for i in $releasefiles; do
