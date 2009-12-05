@@ -78,6 +78,46 @@ macro(PROCESS_OUTPUT_LINE_HTML LINE_VAR)
     SET(${LINE_VAR} "${TMP}")
 endmacro()
 
+macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
+
+    SET(JAVADOC_HTML_FILES
+        net/sf/sevenzipjbinding/ArchiveFormat.html
+        net/sf/sevenzipjbinding/ExtractAskMode.html
+        net/sf/sevenzipjbinding/ExtractOperationResult.html
+        net/sf/sevenzipjbinding/IArchiveExtractCallback.html
+        net/sf/sevenzipjbinding/IArchiveOpenCallback.html
+        net/sf/sevenzipjbinding/IArchiveOpenVolumeCallback.html
+        net/sf/sevenzipjbinding/ICryptoGetTextPassword.html
+        net/sf/sevenzipjbinding/IInStream.html
+        net/sf/sevenzipjbinding/impl/InArchiveImpl.html
+        net/sf/sevenzipjbinding/IProgress.html
+        net/sf/sevenzipjbinding/ISequentialInStream.html
+        net/sf/sevenzipjbinding/ISequentialOutStream.html
+        net/sf/sevenzipjbinding/ISevenZipInArchive.html
+        net/sf/sevenzipjbinding/simple/ISimpleInArchive.html
+        net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html
+        net/sf/sevenzipjbinding/PropertyInfo.html
+        net/sf/sevenzipjbinding/PropID.html
+        net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html
+        net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
+        net/sf/sevenzipjbinding/SevenZip.html
+        net/sf/sevenzipjbinding/SevenZipException.html
+        net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html
+        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveImpl.html
+        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveItemImpl.html
+        net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html)
+    SET(TMP "${${LINE_VAR}}")
+    FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
+        STRING(REGEX REPLACE ".*/([^/]+)\\.html" "\\1" CLASS_NAME "${HTML_FILE}")
+        STRING(REGEX REPLACE "([^a-zA-Z0-9])(${CLASS_NAME})([^a-zA-Z0-9])" 
+                "\\1<a href=\"javadoc/${JD_PATH}${HTML_FILE}\">\\2</a>\\3" TMP "${TMP}")
+#        STRING(REGEX REPLACE "${CLASS_NAME}" 
+#                "XXXXX" TMP "${TMP}")
+    ENDFOREACH()
+    SET(${LINE_VAR} "${TMP}")
+endmacro()
+
+
 macro(ADJUST_PADDING SNIPPET_FILE)
     SET(PADDING -1)
     file(STRINGS ${SNIPPET_FILE} SNIPPET_FILE_LINES)
@@ -197,6 +237,7 @@ function(APPEND_FILE OUTPUT_FILE FILE_TO_APPEND)
     MATH(EXPR LINES_COUNT "${LINES_COUNT}-1")
     FOREACH(INDEX RANGE ${LINES_COUNT})
         LIST(GET FILE_LINES ${INDEX} LINE)
+        PROCESS_JAVADOC_CLASSES(LINE)
         FILE(APPEND "${OUTPUT_FILE}" "${LINE}\n")
     ENDFOREACH()
 endfunction()
@@ -225,6 +266,7 @@ macro(PROCESS_HTML FILENAME)
             APPEND_FILE("${OUTPUT_HTML_FILE}" "${OUTPUT_DIRECTORY_HTML}/${OUTPUT_NAME}.html")
             APPEND_FILE("${OUTPUT_HTML_FILE}" "web.components/output_footer.html")
         ELSE()
+            PROCESS_JAVADOC_CLASSES(LINE)
             FILE(APPEND "${OUTPUT_HTML_FILE}" "${LINE}\n")
         ENDIF()
     ENDFOREACH()
@@ -235,6 +277,7 @@ FILE(GLOB JAVA_FILES "../test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippe
 FOREACH(JAVA_FILE ${JAVA_FILES})
     PROCESS_SNIPPET("${JAVA_FILE}")
 ENDFOREACH()
+
 
 PROCESS_HTML("index.html")
 PROCESS_HTML("first_steps.html")
