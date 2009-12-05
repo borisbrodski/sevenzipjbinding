@@ -1,5 +1,7 @@
 <h1>Code snippets</h1>
 
+<h2>Index</h2>
+
 <ul>
 	<li><a href="#overview">Overview</a></li>
 	<li><a href="#std-vs-simple">Standard vs Simple interface</a></li>
@@ -32,7 +34,8 @@
 	<ul>
 		<li><a href="#open-multipart-7z-archives">Open multi-part 7z
 		archives</a></li>
-		<li><a href="#open-multipart-rar-archives">Open multi-part RAR archives</a></li>
+		<li><a href="#open-multipart-rar-archives">Open multi-part
+		RAR archives</a></li>
 	</ul>
 	</li>
 </ul>
@@ -40,29 +43,93 @@
 
 <h2><a name="overview">Overview</a></h2>
 
-<p>Here you can find many simple code snippets, example of how to
-preform basic operations with 7-Zip-JBinding. All outputs of the code
-snippets were produced using a single test archive <a href="simple.zip"><span
-	class="filename">simple.zip</span></a>. Here is a content of the test
-archive:</p>
-
+<p>Here you can find many code snippets, example of how to
+perform basic operations with 7-Zip-JBinding. All examples are part of the JUnit tests.
+Each example runs on one of the test archives. JUnit tests check, that the output of the
+snippet is exactly the one published on this page. Below is a list of the test archives
+for this page. You can download all test archives in as a 
+<a href="test-archives/7-Zip-JBinding-all-test-archives-for-snippets.zip">single ZIP file</a>. 
+</p>
+<ul>
+  <li><a href="test-archives/simple.zip"><span class="filename">simple.zip</span></a>
 <div class="fragment"><pre class="fragment">
 $ 7z l simple.zip
-7-Zip  4.58 beta  Copyright (c) 1999-2008 Igor Pavlov  2008-05-05
-p7zip Version 4.58 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
 
 Listing archive: simple.zip
 
 
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
-2009-08-04 12:26:16 .....         4481           68  file1.txt
-2009-08-04 12:27:34 .....           75           62  file2.txt
-2009-08-04 14:53:06 D....            0            0  folder
-2009-08-04 14:53:40 .....            6            6  folder/file in folder.txt
+2009-08-04 11:26:16 .....         4481           68  file1.txt
+2009-08-04 11:27:34 .....           75           62  file2.txt
+2009-08-04 13:53:06 D....            0            0  folder
+2009-08-04 13:53:40 .....            6            6  folder/file in folder.txt
 ------------------- ----- ------------ ------------  ------------------------
                                   4562          136  3 files, 1 folders
 </pre></div>
+  </li>
+  <li>
+  	<a href="test-archives/multipart-7z.7z.001"><span class="filename">multipart-7z.7z.001</span></a>;
+  	<a href="test-archives/multipart-7z.7z.002"><span class="filename">multipart-7z.7z.002</span></a>;
+  	<a href="test-archives/multipart-7z.7z.003"><span class="filename">multipart-7z.7z.003</span></a>;
+  	<a href="test-archives/multipart-7z.7z.004"><span class="filename">multipart-7z.7z.004</span></a>
+<div class="fragment"><pre class="fragment">
+$ 7z l multipart-7z.7z.001
+
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
+
+Listing archive: multipart-7z.7z.001
+
+Method = LZMA
+Solid = +
+Blocks = 1
+Physical Size = 331
+Headers Size = 217
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2009-08-04 13:53:39 ....A            6          114  folder/file in folder.txt
+2009-08-04 11:26:16 ....A         4481               file1.txt
+2009-08-04 11:27:33 ....A           75               file2.txt
+2009-08-04 13:53:05 D....            0            0  folder
+------------------- ----- ------------ ------------  ------------------------
+                                  4562          114  3 files, 1 folders
+</pre></div>
+  </li>
+  <li>
+  	<a href="test-archives/multipart-rar.part1.rar"><span class="filename">multipart-rar.part1.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part2.rar"><span class="filename">multipart-rar.part2.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part3.rar"><span class="filename">multipart-rar.part3.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part4.rar"><span class="filename">multipart-rar.part4.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part5.rar"><span class="filename">multipart-rar.part5.rar</span></a>
+<div class="fragment"><pre class="fragment">
+$ 7z l multipart-rar.part1.rar 
+
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
+
+Listing archive: multipart-rar.part1.rar
+
+Solid = -
+Blocks = 4
+Multivolume = +
+Volumes = 5
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2009-08-04 13:53:39 .....            6            6  folder/file in folder.txt
+2009-08-04 11:26:16 .....         4481         4481  file1.txt
+2009-08-04 11:27:33 .....           75           75  file2.txt
+2009-08-04 13:53:05 D....            0            0  folder
+------------------- ----- ------------ ------------  ------------------------
+                                  4562         4562  3 files, 1 folders
+</pre></div>
+  </li>
+</ul>
+
 <br />
 
 <h2><a name="std-vs-simple">Standard vs Simple interface</a></h2>
@@ -155,21 +222,17 @@ to extract</a></h4>
 ##INCLUDE_SNIPPET(ExtractItemsStandard)
 
 <h2><a name="open-multipart-archives">Open multi-part archives</a></h2>
-<p>
-Dealing with a multi-part archives is not so easy, as dealing with a
-ordinary archives. Different archive formats need different approach and
-therefore will be discussed separately.
-</p>
+<p>Dealing with a multi-part archives is not so easy, as dealing
+with a ordinary single part archives. Different archive formats need
+different approaches and therefore will be discussed separately.</p>
 
 <h3><a name="open-multipart-7z-archives">Open multi-part 7z
 archives</a></h3>
-<p>
-Multi-part 7z archives are build by simple splitting of solid 7z
+<p>Multi-part 7z archives are build by simple splitting of solid 7z
 archives into multiple peaces. This means, you can easy convert a
 multi-part 7z archive into single part 7z archive by concatenation of
 all archive parts into a one single file. Here is an example, how you
-can do this in a sh-shell.
-</p>
+can do this in a sh-shell.</p>
 <div class="fragment"><pre class="fragment">
 $ ###
 $ ### <span class="java-comment">Compress some files into 7z archive.</span>
@@ -185,7 +248,7 @@ total 32
 $ ###
 $ ### <span class="java-comment">Concatenate all parts into a single file</span>
 $ ###
-$ cat test.7z.* > test.7z
+$ cat test.7z.* &gt; test.7z
 $ ls -l
 total 60
 -rw-r--r-- 1 boris boris <b>27164</b> 2009-11-29 01:18 <b>test.7z</b>
@@ -222,27 +285,23 @@ $ 7z t test2.7z.001
 Everything is Ok
 ...
 </pre></div>
-<p>
-The naming conventions for the volumes of a multi-part 7z archive are:
-</p>
+<p>The naming conventions for the volumes of a multi-part 7z archive
+are:</p>
 <ul>
 	<li>Every file name of a volume should ends with ".7z.XXX", where
 	X is a digit between 0 and 9. The XXX is a decimal sequential number of
 	the volume starting with 1. Ending ".7z.000" is not allowed.</li>
 </ul>
-<p>
-It's important to provide corrent names in
+<p>It's important to provide corrent names in
 IArchiveOpenVolumeCallback.getProperty() method and to
 VolumedArchiveInStream class. Also you will probably need to parse
 filenames passed to IArchiveOpenVolumeCallback.getStream(String
-filename) in order to get a number of the required volume.
-</p>
-<p>
-Here is an example of how to open a multi-part archive directly from the
-file system. In this example all the volumes are named correctly, so
-it's no need to parse requred volume name to extract the index. The
-volumes already exists under the passed names und can be directly opened.
-</p>
+filename) in order to get a number of the required volume.</p>
+<p>Here is an example of how to open a multi-part archive directly
+from the file system. In this example all the volumes are named
+correctly, so it's no need to parse requred volume name to extract the
+index. The volumes already exists under the passed names und can be
+directly opened.</p>
 ##INCLUDE_SNIPPET(OpenMultipartArchive7z)
 
 <p>Here is the output of the last snippet:</p>
@@ -253,6 +312,13 @@ volumes already exists under the passed names und can be directly opened.
 <h3><a name="open-multipart-rar-archives">Open multi-part RAR
 archives</a></h3>
 
+<p>Since RAR uses its own proprietary format for splitting archives into
+multiple volumes, there is no need to use VolumedArchiveInStream in
+order to open multi-part RAR archives. To provide access to the different
+volumes of a RAR archive, the archive open callback class should
+additionally implement the IArchiveOpenVolumeCallback interface.
+Here is an example:
+</p>
 
 ##INCLUDE_SNIPPET(OpenMultipartArchiveRar)
 

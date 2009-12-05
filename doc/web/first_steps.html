@@ -40,7 +40,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 </table></td></tr>
 <tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a></td></tr>
 <tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a></td></tr>
-<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a></td></tr>
+<tr><td><a href="https://sourceforge.net/projects/sevenzipjbind/forums" class="menu">Forum</a></td></tr>
 <tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a></td></tr>
 <tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to<br/>7-Zip-JBinding</a></td></tr>
 </table>
@@ -70,15 +70,15 @@ distribution in your classpath:
 </ul>  
 Here is a simple test program that can be used for checking all 7-Zip-JBinding requirements:
 <div class="fragment"><pre class="fragment">
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html">SevenZipNativeInitializationException</a>;
 
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> SevenZipJBindingInitCheck {
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">try</span> {
-            SevenZip.<span class="java-staticmethod">initSevenZipFromPlatformJAR</span>();
+            <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">initSevenZipFromPlatformJAR</span>();
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"7-Zip-JBinding library was initialized"</span>);
-        } <span class="java-keyword">catch</span> (SevenZipNativeInitializationException e) {
+        } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html">SevenZipNativeInitializationException</a> e) {
             e.printStackTrace();
         }
     }
@@ -117,35 +117,35 @@ shows up than 7-Zip-JBinding is working properly and is ready for use.
 <p>
 Before you can do any operation on an archive file, you have to open it. In order to do this
 you will need to call one of the corresponding static methods
-<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openInArchive(...). The only
+<a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.html"><a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a></a>.openInArchive(...). The only
 mandatory parameter is "inStream" - an instance of the
-<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> interface.
+<a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.html"><a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a></a> interface.
 </p>
 <p>
 In many cases
 the task is to open an archive file from the file system. 7-Zip-JBinding has a standard implementation
-of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> for this purpose:
-<a href="javadoc/net/sf/sevenzipjbinding/RandomAccessFileInStream.html">RandomAccessFileInStream</a>.
+of <a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.html"><a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a></a> for this purpose:
+<a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>.html"><a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a></a>.
 As the name says, this takes an instance of RandomAccessFile and turns it into an instance of
-<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.
+<a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.html"><a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a></a>.
 </p>
 <p>
 Here is a simple example of how to open an archive from the file system: 
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">public</span> <span class="java-keyword">void</span> openArchive(String archiveFilename) 
-        <span class="java-keyword">throws</span> SevenZipException, FileNotFoundException {
+        <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>, FileNotFoundException {
 
     <span class="java-field">randomAccessFile</span> = <span class="java-keyword">new</span> RandomAccessFile(archiveFilename, <span class="java-string">"r"</span>);
 
-    <span class="java-field">inArchive</span> = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// Choose format automatically</span>
-            <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile));
+    <span class="java-field">inArchive</span> = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// Choose format automatically</span>
+            <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(randomAccessFile));
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/SimpleOpen.java">download java code</a></div>
 <p>
 The opened archive can now be used for exploring and extraction operations. The last method called on archive should always be  
-<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html#close()">ISevenZipInArchive.close().</a>
+<a href="javadoc/net/sf/sevenzipjbinding/<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.html#close()"><a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.close().</a>
 This closes the archive and frees system resources. The last, but not least, step is to close the random access file 
 '<span class="java-field">randomAccessFile</span>' using close() method of the RandomAccessFile class.
 </p> 
@@ -155,10 +155,10 @@ Here is a complete program to print count of items in the archive:
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>;
 
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> PrintCountOfItems {
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
@@ -168,11 +168,11 @@ Here is a complete program to print count of items in the archive:
         String archiveFilename = args[0];
 
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
-        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
             randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFilename, <span class="java-string">"r"</span>);
-            inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
-                    <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile));
+            inArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
+                    <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(randomAccessFile));
 
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Count of items in archive: "</span> 
                     + inArchive.getNumberOfItems());
@@ -184,7 +184,7 @@ Here is a complete program to print count of items in the archive:
             <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
                 <span class="java-keyword">try</span> {
                     inArchive.close();
-                } <span class="java-keyword">catch</span> (SevenZipException e) {
+                } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
                     System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
                 }
             }

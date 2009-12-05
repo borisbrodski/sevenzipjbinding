@@ -17,12 +17,14 @@ Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platf
 	      initialization routine.
 	    - Detailed JavaDoc
 
-        * Integration test for all platforms for single and multiple platform distributions
+    * Integration test for all platforms for single and multiple platform distributions
 	
 	* Improve ISevenZipInArchive.extract()
 		- Check for wrong indices avoiding VM crash
 		- Sort indices, if not already sorted
 		- Minor performance improvements
+	
+	* Code snippets for opening multi-part 7z and RAR archives (See web page, Code snippets)  
 	
 	* DEB format support + tests
 	
@@ -30,7 +32,7 @@ Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* UDF format support + tests
 
-        * Source code repository was changed to git
+    * Source code repository was changed to git (http://git-scm.com/)
 	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
