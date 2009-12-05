@@ -44,7 +44,6 @@ public class ExtractItemsTest extends SnippetTest {
 		beginSnippetTest();
 		ExtractItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
 		String output = endSnippetTest();
-		System.out.println(output);
 		assertEquals(expected, output);
 	}
 
@@ -55,7 +54,6 @@ public class ExtractItemsTest extends SnippetTest {
 		beginSnippetTest();
 		ExtractItemsStandardCallback.main(new String[] { "testdata/snippets/simple.zip" });
 		String output = endSnippetTest();
-		System.out.println(output);
 		assertEquals(expected, output);
 	}
 
