@@ -1,6 +1,6 @@
 SET(URL "http://sevenzipjbind.sourceforge.net/download.php?filename=")
 SET(IT_PACKAGE_NAME "sevenzipjbinding-it-test-pack.zip")
-SET(ITROOT "SevenZip.ITTests")
+SET(ITROOT "SevenZipJBinding.IT-Tests")
 
 FIND_PROGRAM(SEVEN_ZIP
         7z
@@ -14,8 +14,20 @@ FIND_PROGRAM(SEVEN_ZIP
     DOC "7z archive progr"
 )
 
+FIND_PROGRAM(SEVEN_ZIP
+        7za
+    PATHS
+        "${SEVEN_ZIP_DIR}"
+        "[HKEY_CURRENT_USER\\Software\\7-Zip;Path]"
+        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\7-Zip;Path]"
+        /bin            
+        /usr/bin
+        /usr/local/bin
+    DOC "7z archive progr"
+)
+
 IF(NOT SEVEN_ZIP)
-    MESSAGE(FATAL_ERROR, "Can't find 7z executable. Please use -DSEVEN_ZIP=/path/to/7z or -DSEVEN_ZIP_DIR=/path/to/")
+    MESSAGE(FATAL_ERROR, "Can't find 7z nor 7za executable. Please use -DSEVEN_ZIP=/path/to/7z[a] or -DSEVEN_ZIP_DIR=/path/to/")
 ENDIF()
 
 FIND_PROGRAM(JAVA
@@ -113,7 +125,7 @@ ENDMACRO()
 
 # Single platform packages
 #TEST_PACKAGE("Linux-amd64")
-TEST_PACKAGE("Linux-i386")
+#TEST_PACKAGE("Linux-i386")
 #TEST_PACKAGE("Mac-i386")
 #TEST_PACKAGE("Mac-x86_64")
 #TEST_PACKAGE("Windows-amd64")
@@ -123,5 +135,5 @@ TEST_PACKAGE("Linux-i386")
 #TEST_PACKAGE("AllLinux")
 #TEST_PACKAGE("AllWindows")
 #TEST_PACKAGE("AllMac")
-#TEST_PACKAGE("AllPlatforms")
+TEST_PACKAGE("AllPlatforms")
 

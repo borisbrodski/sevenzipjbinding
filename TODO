@@ -9,9 +9,8 @@
 
 
 Minor TODOs:
-- Compile and test 7-Zip-JBinding unter Windows XP 64
 - Write more tests, for example, extracting archive with two files encrypted with different password.
-- Test some untested archive formats, such as DEB
+- Test some untested archive formats
 - Support more archive formats
 - Write documentation / improve javadoc
 - Improve Web site

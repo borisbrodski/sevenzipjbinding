@@ -5,7 +5,7 @@ if [ "$1" == "" ] ; then
 fi
 BINARY_DIR=$(readlink -f $1)
 SOURCE_DIR=`cat $BINARY_DIR/DartConfiguration.tcl | grep SourceDirectory | sed 's$SourceDirectory: \(.*\)$\1$g'`
-SCRIPT_HOME=`echo $0 | sed 's|\(.*/\)\?[^/]*|\1|g'`
+SCRIPT_HOME=`readlink -f $0 | sed 's|\(.*/\)\?[^/]*|\1|g'`
 VERSION=`echo $BINARY_DIR/seven*.zip | sed 's$\(.\+/\)*\([^/]\+\)$\2$g' | sed 's/sevenzipjbinding-\(.*\)-[^-]\+-[^-]\+\.zip/\1/g'`
 ITTEST_PACKAGE=sevenzipjbinding-it-test-$VERSION
 ITTEST_PACKAGE_ZIP=sevenzipjbinding-it-test-pack.zip
