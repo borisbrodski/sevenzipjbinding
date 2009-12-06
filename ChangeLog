@@ -1,14 +1,14 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Binary version for MacOS 64 bit (java 6)
 	
 	* Support for multi-platform jars:
 	  - Multiplatform releases:
 	  	- AllWindows:
 	  	- AllLinux
-	  	- AllDarvin
+	  	- AllMac
 	  	- AllPlatforms
 
 	  - Initialization reworked (net.sf.sevenzipjbinding.SevenZip)
@@ -32,7 +32,9 @@ Release - 4.65-1.10rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* UDF format support + tests
 
-    * Source code repository was changed to git (http://git-scm.com/)
+    * Source code repository: moved from svn to git (http://git-scm.com/)
+    	- Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
+    	- Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
 	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
