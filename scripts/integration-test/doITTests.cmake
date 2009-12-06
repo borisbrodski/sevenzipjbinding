@@ -23,7 +23,7 @@ FIND_PROGRAM(SEVEN_ZIP
         /bin            
         /usr/bin
         /usr/local/bin
-    DOC "7z archive progr"
+    DOC "7za archive progr"
 )
 
 IF(NOT SEVEN_ZIP)
@@ -36,6 +36,8 @@ FIND_PROGRAM(JAVA
         /bin            
         /usr/bin
         /usr/local/bin
+        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.5;JavaHome]/bin"
+        "[HKEY_LOCAL_MACHINE\\SOFTWARE\\JavaSoft\\Java Development Kit\\1.6;JavaHome]/bin"
     DOC "Java VM"
 )
 
@@ -43,19 +45,20 @@ IF(NOT JAVA)
     MESSAGE(FATAL_ERROR, "Can't find java executable. Please use -DJAVA=/path/to/java")
 ENDIF()
 
+IF(NOT SD)
+    IF(EXISTS "${ITROOT}")
+        FILE(REMOVE_RECURSE "${ITROOT}")
+    ENDIF()
+    FILE(MAKE_DIRECTORY "${ITROOT}")
 
-IF(EXISTS "${ITROOT}")
-    FILE(REMOVE_RECURSE "${ITROOT}")
-ENDIF()
-FILE(MAKE_DIRECTORY "${ITROOT}")
-
-MESSAGE("Download integration test pack from ${URL}${IT_PACKAGE_NAME}")
-
-FILE(DOWNLOAD "${URL}${IT_PACKAGE_NAME}" "${ITROOT}/${IT_PACKAGE_NAME}" STATUS status LOG log)
-list(GET status 0 num_status)
-IF (num_status GREATER 0)
-    list(GET status 1 str_status)
-    MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
+    MESSAGE("Download integration test pack from ${URL}${IT_PACKAGE_NAME}")
+    
+    FILE(DOWNLOAD "${URL}${IT_PACKAGE_NAME}" "${ITROOT}/${IT_PACKAGE_NAME}" STATUS status LOG log)
+    list(GET status 0 num_status)
+    IF (num_status GREATER 0)
+        list(GET status 1 str_status)
+        MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
+    ENDIF()
 ENDIF()
 
 MESSAGE("Extract ${ITROOT}/${IT_PACKAGE_NAME} using ${SEVEN_ZIP}")
@@ -85,6 +88,7 @@ IF(NOT VERSION)
     MESSAGE(FATAL_ERROR "Couldn't recognize release version")
 ENDIF()
 
+FILE(WRITE "${ITTEST_DIR}/java-executable" "${JAVA}")
 
 MACRO(TEST_PACKAGE PLATFORM)
     SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")

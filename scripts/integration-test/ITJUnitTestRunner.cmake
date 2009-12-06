@@ -5,10 +5,10 @@ ELSE()
     SET(PATH_SEP ":")
 ENDIF()
 
-IF($ENV{JAVA})
-    SET(JAVA "$ENV{JAVA}")
-ELSE()
-    SET(JAVA java)
+FILE(READ "java-executable" JAVA)
+
+IF(NOT JAVA)
+    MESSAGE(FATAL_ERROR "Internal error. Can't read 'java-executable' file with the java execuable name.")
 ENDIF()
 
 EXECUTE_PROCESS(COMMAND
