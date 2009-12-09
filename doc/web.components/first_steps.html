@@ -64,18 +64,18 @@ shows up than 7-Zip-JBinding is working properly and is ready for use.
 <p>
 Before you can do any operation on an archive file, you have to open it. In order to do this
 you will need to call one of the corresponding static methods
-<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openInArchive(...). The only
+SevenZip.openInArchive(...). The only
 mandatory parameter is "inStream" - an instance of the
-<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> interface.
+IInStream interface.
 </p>
 
 <p>
 In many cases
 the task is to open an archive file from the file system. 7-Zip-JBinding has a standard implementation
-of <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> for this purpose:
-<a href="javadoc/net/sf/sevenzipjbinding/RandomAccessFileInStream.html">RandomAccessFileInStream</a>.
+of IInStream for this purpose:
+RandomAccessFileInStream.
 As the name says, this takes an instance of RandomAccessFile and turns it into an instance of
-<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>.
+IInStream.
 </p>
 
 <p>
@@ -86,7 +86,7 @@ Here is a simple example of how to open an archive from the file system:
 
 <p>
 The opened archive can now be used for exploring and extraction operations. The last method called on archive should always be  
-<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html#close()">ISevenZipInArchive.close().</a>
+ISevenZipInArchive.close().
 This closes the archive and frees system resources. The last, but not least, step is to close the random access file 
 '<span class="java-field">randomAccessFile</span>' using close() method of the RandomAccessFile class.
 </p> 
