@@ -29,6 +29,12 @@ package net.sf.sevenzipjbinding;
  * <td>{@link #BZIP2}</td>
  * </tr>
  * <tr align="center">
+ * <td>Cab</td>
+ * <td>X</td>
+ * <td>X</td>
+ * <td>{@link #CAB}</td>
+ * </tr>
+ * <tr align="center">
  * <td>Chm</td>
  * <td>X</td>
  * <td>X</td>
