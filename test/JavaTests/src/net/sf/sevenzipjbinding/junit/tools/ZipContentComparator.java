@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -7,7 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -121,7 +125,7 @@ public class ZipContentComparator {
 			}
 
 			//			long start = System.currentTimeMillis();
-			IArchiveExtractCallback archiveExtractCallback;
+			TestArchiveExtractCallback archiveExtractCallback;
 
 			if (password == null) {
 				archiveExtractCallback = new TestArchiveExtractCallback(itemIdToItemName);
@@ -134,11 +138,13 @@ public class ZipContentComparator {
 				indices[i] = actualFileNames.get(i).itemId;
 			}
 
+			int expectedIndicesExtracted = indices.length;
 			if (useSimpleInterface) {
 				ISimpleInArchiveItem[] simpleInArchiveItems = actualSevenZipArchive.getSimpleInterface()
 						.getArchiveItems();
 				for (int index = 0; index < indices.length; index++) {
-					if (index > 20) {
+					if (index >= 20) {
+						expectedIndicesExtracted = 20;
 						break; // Test only first 20 indices. extractSlow() is slow indeed.
 					}
 					ISimpleInArchiveItem archiveItems = simpleInArchiveItems[indices[index]];
@@ -164,6 +170,11 @@ public class ZipContentComparator {
 			if (expectFailure && errorMessages.size() != 0) {
 				throw new Exception("Expected failure occurs: " + getErrorMessage());
 			}
+
+			assertEquals("Count of extracted archive items doesn't match the expectations", Integer
+					.valueOf(expectedIndicesExtracted), Integer.valueOf(archiveExtractCallback
+					.getExtractedIndicesCount()));
+
 			//			System.out.println("Extraction in " + (System.currentTimeMillis() - start) / 1000.0 + " sec ("
 			//					+ actualFileNames.size() + " items)");
 		} catch (Exception e) {
@@ -421,6 +432,7 @@ public class ZipContentComparator {
 
 	public class TestArchiveExtractCallback implements IArchiveExtractCallback {
 		private final String[] itemIdToItemName;
+		private Set<Integer> extractedIndices = new HashSet<Integer>();
 
 		public TestArchiveExtractCallback(String[] itemIdToItemName) {
 			this.itemIdToItemName = itemIdToItemName;
@@ -429,7 +441,6 @@ public class ZipContentComparator {
 		/**
 		 * {@inheritDoc}
 		 */
-
 		public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) {
 			try {
 				actualSevenZipArchive.getNumberOfItems();
@@ -442,7 +453,7 @@ public class ZipContentComparator {
 			if (!extractAskMode.equals(ExtractAskMode.EXTRACT)) {
 				return null;
 			}
-
+			extractedIndices.add(Integer.valueOf(index));
 			try {
 				String filename = itemIdToItemName[index];
 				InputStream inputStream = expectedZipFile.getInputStream(expectedZipFile.getEntry(filename));
@@ -483,6 +494,10 @@ public class ZipContentComparator {
 		 */
 
 		public void setTotal(long total) {
+		}
+
+		int getExtractedIndicesCount() {
+			return extractedIndices.size();
 		}
 	}
 }
