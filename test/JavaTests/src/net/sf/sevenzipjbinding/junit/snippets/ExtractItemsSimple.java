@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
+import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -34,14 +35,19 @@ public class ExtractItemsSimple {
 			for (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
 				final int[] hash = new int[] { 0 };
 				if (!item.isFolder()) {
-					item.extractSlow(new ISequentialOutStream() {
+					ExtractOperationResult result;
+					result = item.extractSlow(new ISequentialOutStream() {
 						public int write(byte[] data) throws SevenZipException {
 							hash[0] |= Arrays.hashCode(data);
 							return data.length; // Return amount of proceed data
 						}
 					});
-					System.out.println(String.format("%9X | %s", // 
-							hash[0], item.getPath()));
+					if (result == ExtractOperationResult.OK) {
+						System.out.println(String.format("%9X | %s", // 
+								hash[0], item.getPath()));
+					} else {
+						System.err.println("Error extracting item: " + result);
+					}
 				}
 			}
 		} catch (Exception e) {

@@ -16,11 +16,11 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  * <br>
  * Following properties will be verified:
  * <ul>
+ * <li>PATH
  * </ul>
  * 
  * Following properties will be NOT verified:
  * <ul>
- * <li>PATH
  * <li>SIZE
  * <li>PACKED_SIZE
  * <li>IS_FOLDER

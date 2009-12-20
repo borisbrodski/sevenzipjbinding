@@ -1,161 +1,328 @@
-<!--
-<h1>Coming very soon!</h1>
-
-<h3>I expect to put a lot of examples here in one or two weeks.</h3>
-<h3>Thank you for your patience!</h3>
--->
-
 <h1>Code snippets</h1>
 
-<h2>Overview</h2>
+<h2>Index</h2>
 
-<p>
-Here you can find many simple code snippets, example of how to preform basic operations with
-7-Zip-JBinding. All outputs of the code snippets were produced using a single test archive 
-<a href="simple.zip"><span class="filename">simple.zip</span></a>. Here is a content of the test archive:
+<ul>
+	<li><a href="#overview">Overview</a></li>
+	<li><a href="#std-vs-simple">Standard vs Simple interface</a></li>
+	<li><a href="#quering-archive">Quering items in archive</a>
+	<ul>
+		<li><a href="#quering-archive-simple-int">Simple interface</a></li>
+		<li><a href="#quering-archive-std-int">Standard interface</a></li>
+	</ul>
+	</li>
+	<li><a href="#extraction-single-file"> Extraction of a single
+	file</a>
+	<ul>
+		<li><a href="#extraction-single-file-simple-int">Simple
+		interface</a></li>
+		<li><a href="#extraction-single-file-std-int">Standard
+		interface</a>
+		<ul>
+			<li><a href="#extracting-archive-std-int-callback">
+			Extracting archive using standard interface and call back method as a
+			filter</a></li>
+			<li><a href="#extracting-archive-std-int-prepared-list">
+			Extracting archive using standard interface and prepared list of
+			items to extract</a></li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+	<li><a href="#open-multipart-archives">Open multi-part
+	archives</a>
+	<ul>
+		<li><a href="#open-multipart-7z-archives">Open multi-part 7z
+		archives</a></li>
+		<li><a href="#open-multipart-rar-archives">Open multi-part
+		RAR archives</a></li>
+	</ul>
+	</li>
+</ul>
+
+
+<h2><a name="overview">Overview</a></h2>
+
+<p>Here you can find many code snippets, example of how to
+perform basic operations with 7-Zip-JBinding. All examples are part of the JUnit tests.
+Each example runs on one of the test archives. JUnit tests check, that the output of the
+snippet is exactly the one published on this page. Below is a list of the test archives
+for this page. You can download all test archives in as a 
+<a href="test-archives/7-Zip-JBinding-all-test-archives-for-snippets.zip">single ZIP file</a>. 
 </p>
-
+<ul>
+  <li><a href="test-archives/simple.zip"><span class="filename">simple.zip</span></a>
 <div class="fragment"><pre class="fragment">
 $ 7z l simple.zip
-7-Zip  4.58 beta  Copyright (c) 1999-2008 Igor Pavlov  2008-05-05
-p7zip Version 4.58 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
 
 Listing archive: simple.zip
 
 
    Date      Time    Attr         Size   Compressed  Name
 ------------------- ----- ------------ ------------  ------------------------
-2009-08-04 12:26:16 .....         4481           68  file1.txt
-2009-08-04 12:27:34 .....           75           62  file2.txt
-2009-08-04 14:53:06 D....            0            0  folder
-2009-08-04 14:53:40 .....            6            6  folder/file in folder.txt
+2009-08-04 11:26:16 .....         4481           68  file1.txt
+2009-08-04 11:27:34 .....           75           62  file2.txt
+2009-08-04 13:53:06 D....            0            0  folder
+2009-08-04 13:53:40 .....            6            6  folder/file in folder.txt
 ------------------- ----- ------------ ------------  ------------------------
                                   4562          136  3 files, 1 folders
 </pre></div>
-<br/>
+  </li>
+  <li>
+  	<a href="test-archives/multipart-7z.7z.001"><span class="filename">multipart-7z.7z.001</span></a>;
+  	<a href="test-archives/multipart-7z.7z.002"><span class="filename">multipart-7z.7z.002</span></a>;
+  	<a href="test-archives/multipart-7z.7z.003"><span class="filename">multipart-7z.7z.003</span></a>;
+  	<a href="test-archives/multipart-7z.7z.004"><span class="filename">multipart-7z.7z.004</span></a>
+<div class="fragment"><pre class="fragment">
+$ 7z l multipart-7z.7z.001
 
-<h2>Standard vs Simple interface</h2>
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
 
-<p>
-The 7-Zip-JBinding library offers two different interfaces: standard and simple. The standard interface 
-directly maps all native 7-Zip library methods providing C++ like interface. The simple interface is a
-try to provide more Java-like easy to use interface. It was designed either for quick coding and easy
-start and not for feature richness nor for performance.
-</p>
+Listing archive: multipart-7z.7z.001
 
-<p>
-The following examples will be presented in both standard and simple interface beginning with as simple interface.
-Please note, that the full performance can only be reached with the standard interface.
-</p>
+Method = LZMA
+Solid = +
+Blocks = 1
+Physical Size = 331
+Headers Size = 217
 
-<br/>
-<h2>Quering items in archive</h2>
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2009-08-04 13:53:39 ....A            6          114  folder/file in folder.txt
+2009-08-04 11:26:16 ....A         4481               file1.txt
+2009-08-04 11:27:33 ....A           75               file2.txt
+2009-08-04 13:53:05 D....            0            0  folder
+------------------- ----- ------------ ------------  ------------------------
+                                  4562          114  3 files, 1 folders
+</pre></div>
+  </li>
+  <li>
+  	<a href="test-archives/multipart-rar.part1.rar"><span class="filename">multipart-rar.part1.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part2.rar"><span class="filename">multipart-rar.part2.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part3.rar"><span class="filename">multipart-rar.part3.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part4.rar"><span class="filename">multipart-rar.part4.rar</span></a>;
+  	<a href="test-archives/multipart-rar.part5.rar"><span class="filename">multipart-rar.part5.rar</span></a>
+<div class="fragment"><pre class="fragment">
+$ 7z l multipart-rar.part1.rar 
 
-<h3>Simple interface</h3>
+7-Zip 4.65  Copyright (c) 1999-2009 Igor Pavlov  2009-02-03
+p7zip Version 4.65 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,2 CPUs)
 
-<p>
-This example shows how to print a list of items of archive using simple interface.
-</p>
+Listing archive: multipart-rar.part1.rar
+
+Solid = -
+Blocks = 4
+Multivolume = +
+Volumes = 5
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2009-08-04 13:53:39 .....            6            6  folder/file in folder.txt
+2009-08-04 11:26:16 .....         4481         4481  file1.txt
+2009-08-04 11:27:33 .....           75           75  file2.txt
+2009-08-04 13:53:05 D....            0            0  folder
+------------------- ----- ------------ ------------  ------------------------
+                                  4562         4562  3 files, 1 folders
+</pre></div>
+  </li>
+</ul>
+
+<br />
+
+<h2><a name="std-vs-simple">Standard vs Simple interface</a></h2>
+
+<p>The 7-Zip-JBinding library offers two different interfaces:
+standard and simple. The standard interface directly maps all native
+7-Zip library methods providing C++ like interface. The simple interface
+is a try to provide more Java-like easy to use interface. It was
+designed either for quick coding and easy start and not for feature
+richness nor for performance.</p>
+
+<p>The following examples will be presented in both standard and
+simple interface beginning with as simple interface. Please note, that
+the full performance can only be reached with the standard interface.</p>
+
+<br />
+<h2><a name="quering-archive">Quering items in archive</a></h2>
+
+<h3><a name="quering-archive-simple-int">Simple interface</a></h3>
+
+<p>This example shows how to print a list of items of archive using
+simple interface.</p>
 
 ##INCLUDE_SNIPPET(ListItemsSimple)
 
-<p>
-The output for the test archive:
-</p>
+<p>The output for the test archive:</p>
 
 ##INCLUDE_OUTPUT(ListItemsOutput)
 
-<p>
-Please note, that not all archive formats support the "folder" items, like "folder/" in our example. Also
-please note, that packed size in this example as almost all other properties can return null. A returned null
-value means, that either the property is not supported by the particular archive format or not known
-for the particular item.
-</p>
+<p>Please note, that not all archive formats support the "folder"
+items, like "folder/" in our example. Also please note, that packed size
+in this example as almost all other properties can return null. A
+returned null value means, that either the property is not supported by
+the particular archive format or not known for the particular item.</p>
 
-<h3>Standard interface</h3>
+<h3><a name="quering-archive-std-int">Standard interface</a></h3>
 
-<p>
-This example shows how to print a list of items of archive using standard interface.
-</p>
+<p>This example shows how to print a list of items of archive using
+standard interface.</p>
 
 ##INCLUDE_SNIPPET(ListItemsStandard)
 
-<p>
-The output for the test archive is the same:
-</p>
+<p>The output for the test archive is the same:</p>
 
 ##INCLUDE_OUTPUT(ListItemsOutput)
 
 
-<h2>Extraction of a single file</h2>
+<h2><a name="extraction-single-file">Extraction of a single
+file</a></h2>
 
-<p>
-This section will show how to access the compressed data of the archive items. The following examples will calculate a simple checksum
-of each archive item.
-</p>
+<p>This section will show how to access the compressed data of the
+archive items. The following examples will calculate a simple checksum
+of each archive item.</p>
 
-<h3>Simple interface</h3>
+<h3><a name="extraction-single-file-simple-int">Simple
+interface</a></h3>
 
-<p>
-This example shows how to get content of the items of the archive using simple interface.
-In order to consume extracted content the simple checksum will be calculated.
-</p>
+<p>This example shows how to get content of the items of the archive
+using simple interface. In order to consume extracted content the simple
+checksum will be calculated.</p>
 
-##INCLUDE_SNIPPET(ExtractItemsSimple) 
- 
-<p>
-Here is the output of the last snippet:
-</p>
+##INCLUDE_SNIPPET(ExtractItemsSimple)
+
+<p>Here is the output of the last snippet:</p>
 
 ##INCLUDE_OUTPUT(ExtractItems)
- 
- 
-<h3>Standard interface</h3>
 
 
-<p>
-The following two examples show how to perform the same extracting task using standard interface.
-As in the previous example, the simple checksum will be calculated in order to
-consume the extracted data. 
+<h3><a name="extraction-single-file-std-int">Standard interface</a></h3>
+
+
+<p>The following two examples show how to perform the same
+extracting task using standard interface. As in the previous example,
+the simple checksum will be calculated in order to consume the extracted
+data.</p>
+
+<p>First example traverse the entire archive and uses call back
+method to choose on the fly whether proceed with the extraction of an
+item or not. The second example prepare a list of items for extraction.
 </p>
 
-<p>
-First example traverse the entire archive and uses call back method to choose on the fly whether
-proceed with the extraction of an item or not. The second example prepare a list of items for extraction.
-</p>
+<h4><a name="extracting-archive-std-int-callback"> Extracting
+archive using standard interface and call back method as a filter</a></h4>
+##INCLUDE_SNIPPET(ExtractItemsStandardCallback)
 
-<h4>Extracting archive using standard interface and call back method as a filter</h4>
-##INCLUDE_SNIPPET(ExtractItemsStandardCallback) 
+<h4><a name="extracting-archive-std-int-prepared-list">
+Extracting archive using standard interface and prepared list of items
+to extract</a></h4>
 
-<h4>Extracting archive using standard interface and prepared list of items to extract</h4>
-##INCLUDE_SNIPPET(ExtractItemsStandard) 
- 
- 
- 
- 
+##INCLUDE_SNIPPET(ExtractItemsStandard)
 
+<h2><a name="open-multipart-archives">Open multi-part archives</a></h2>
+<p>Dealing with a multi-part archives is not so easy, as dealing
+with a ordinary single part archives. Different archive formats need
+different approaches and therefore will be discussed separately.</p>
 
-
-<!--
-Extract first item of the archive and print it:
+<h3><a name="open-multipart-7z-archives">Open multi-part 7z
+archives</a></h3>
+<p>Multi-part 7z archives are build by simple splitting of solid 7z
+archives into multiple peaces. This means, you can easy convert a
+multi-part 7z archive into single part 7z archive by concatenation of
+all archive parts into a one single file. Here is an example, how you
+can do this in a sh-shell.</p>
 <div class="fragment"><pre class="fragment">
-ISevenZipInArchive archive 
-        = SevenZip.<i>openInArchive</i>(ArchiveFormat.<i>SEVEN_ZIP</i>,
-                <b>new</b> RandomAccessFileInStream(<b>new</b> RandomAccessFile(
-                <b>new</b> File(<font color="blue">"archive.7z"</font>), "r")));
+$ ###
+$ ### <span class="java-comment">Compress some files into 7z archive.</span>
+$ ### <span class="java-comment">Create mult-part archive 10.240 bytes for each part.</span>
+$ ###
+$ 7z a test.7z -v10k somedir/
+...
+$ ls -l
+total 32
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Concatenate all parts into a single file</span>
+$ ###
+$ cat test.7z.* &gt; test.7z
+$ ls -l
+total 60
+-rw-r--r-- 1 boris boris <b>27164</b> 2009-11-29 01:18 <b>test.7z</b>
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Test archive</span>
+$ ###
+$ 7z t test.7z
+...
+Everything is Ok
+...
+###
+### <span class="java-comment">Split solid archive back into peaces</span>
+### <span class="java-comment">Split starts counting from 000, so rename files</span>
+###
+$ split  -b 15000 -a 3 -d test.7z test2.7z.
+$ mv test2.7z.001 test2.7z.002
+$ mv test2.7z.000 test2.7z.001
+$ ls -l
+total 88
+-rw-r--r-- 1 boris boris <b>15000</b> 2009-11-29 01:36 <b>test2.7z.001</b>
+-rw-r--r-- 1 boris boris <b>12164</b> 2009-11-29 01:36 <b>test2.7z.002</b>
+-rw-r--r-- 1 boris boris 27164 2009-11-29 01:22 test.7z
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.001
+-rw-r--r-- 1 boris boris 10240 2009-11-29 01:17 test.7z.002
+-rw-r--r-- 1 boris boris  6684 2009-11-29 01:17 test.7z.003
+$ ###
+$ ### <span class="java-comment">Test new multi-part archive file archive</span>
+$ ###
+$ 7z t test2.7z.001
+...
+Everything is Ok
+...
+</pre></div>
+<p>The naming conventions for the volumes of a multi-part 7z archive
+are:</p>
+<ul>
+	<li>Every file name of a volume should ends with ".7z.XXX", where
+	X is a digit between 0 and 9. The XXX is a decimal sequential number of
+	the volume starting with 1. Ending ".7z.000" is not allowed.</li>
+</ul>
+<p>It's important to provide corrent names in
+IArchiveOpenVolumeCallback.getProperty() method and to
+VolumedArchiveInStream class. Also you will probably need to parse
+filenames passed to IArchiveOpenVolumeCallback.getStream(String
+filename) in order to get a number of the required volume.</p>
+<p>Here is an example of how to open a multi-part archive directly
+from the file system. In this example all the volumes are named
+correctly, so it's no need to parse requred volume name to extract the
+index. The volumes already exists under the passed names und can be
+directly opened.</p>
+##INCLUDE_SNIPPET(OpenMultipartArchive7z)
 
-<b>final</b> StringBuilder stringBuilder = <b>new</b> StringBuilder();
-archive.extractSlow(0, <b>new</b> ISequentialOutStream() {
-    <font color="#646464">@Override</font>
-    <b>public int</b> write(<b>byte</b>[] data) {
-        stringBuilder.append(<b>new</b> String(data));
-        <b>return</b> data.length; <font color="#3f7f5f">// Amount of processed data</font>
-    }
-});
+<p>Here is the output of the last snippet:</p>
 
-System.<i>out</i>.println(stringBuilder.toString());
-</pre></div><br/>
+##INCLUDE_OUTPUT(OpenMultipart7zArchiveOutput)
 
-For more information see <a href="http://sevenzipjbind.wiki.sourceforge.net/FirstSteps">wiki page "First Steps"</a> or 
-<a href="http://sevenzipjbind.svn.sourceforge.net/viewvc/sevenzipjbind/trunk/SevenZipTest/">JUnit test project on SVN</a>
--->
+
+<h3><a name="open-multipart-rar-archives">Open multi-part RAR
+archives</a></h3>
+
+<p>Since RAR uses its own proprietary format for splitting archives into
+multiple volumes, there is no need to use VolumedArchiveInStream in
+order to open multi-part RAR archives. To provide access to the different
+volumes of a RAR archive, the archive open callback class should
+additionally implement the IArchiveOpenVolumeCallback interface.
+Here is an example:
+</p>
+
+##INCLUDE_SNIPPET(OpenMultipartArchiveRar)
+
+<p>Here is the output of the last snippet:</p>
+
+##INCLUDE_OUTPUT(OpenMultipartRarArchiveOutput)
+

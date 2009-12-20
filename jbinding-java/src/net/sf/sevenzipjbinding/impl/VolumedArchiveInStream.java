@@ -12,16 +12,15 @@ import net.sf.sevenzipjbinding.SevenZipException;
 /**
  * This helper class allows merging multiple instances of {@link IInStream} interface into one. This is helpful for
  * accessing 7z volumed archives. 7z splits its archives into volumes on the byte layout. Each archive volume gets
- * extension <code>.7z.XXX</code> (<code>.7z.001</code>, <code>.7z.002</code>, <code>.7z.003</code>, ...). Such archives
+ * extension <code>.7z.nnn</code> (<code>.7z.001</code>, <code>.7z.002</code>, <code>.7z.003</code>, ...). Such archives
  * can be reassembled into single archive file using simple concatenation: <br>
  * <blockquote> <code>cat name.7z.* > name.7z</code> </blockquote>
  * 
  * To use this you need to implement {@link IArchiveOpenVolumeCallback} interface.
  * <ul>
- * <li> {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
- * <code>propID</code>={@link PropID#NAME} will be called ones to get the file
- * name of the first volume in case it was not given to constructor. The file
- * name should ends with <code>.7z.001</code> or SevenZipException will be thrown.
+ * <li> {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the <code>propID</code>={@link PropID#NAME} will be
+ * called ones to get the file name of the first volume in case it was not given to constructor. The file name should
+ * ends with <code>.7z.001</code> or SevenZipException will be thrown.
  * <li> {@link IArchiveOpenVolumeCallback#getStream(String)} will be called multiple times to get instance of
  * {@link IInStream} representing required volume. The implementation of {@link IArchiveOpenVolumeCallback} should close
  * file associated with the old {@link IInStream}, if a new {@link IInStream} was successfully instantiated.
@@ -48,8 +47,8 @@ public class VolumedArchiveInStream implements IInStream {
 	/**
 	 * Creates instance of {@link VolumedArchiveInStream} using {@link IArchiveOpenVolumeCallback}. The name of the
 	 * first archive volume will be asked using {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
-	 * <code>propID</code>={@link PropID#NAME}. The file name should ends with
-	 * <code>.7z.001</code> or SevenZipException will be thrown.
+	 * <code>propID</code>={@link PropID#NAME}. The file name should ends with <code>.7z.001</code> or SevenZipException
+	 * will be thrown.
 	 * 
 	 * @param archiveOpenVolumeCallback
 	 *            call back implementation used to access different volumes of archive.

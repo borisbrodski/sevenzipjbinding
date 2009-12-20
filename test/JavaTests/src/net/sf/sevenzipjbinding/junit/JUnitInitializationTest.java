@@ -1,6 +1,9 @@
 package net.sf.sevenzipjbinding.junit;
 
 import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 
@@ -20,7 +23,7 @@ public class JUnitInitializationTest extends JUnitNativeTestBase {
 	@Test
 	public void initializationTest() {
 		assertTrue("SevenZip wasn't initialized by base class " + this.getClass().getSuperclass().getCanonicalName(),
-				SevenZip.isInitialized());
+				SevenZip.isInitializedSuccessfully());
 	}
 
 	/**
@@ -32,9 +35,8 @@ public class JUnitInitializationTest extends JUnitNativeTestBase {
 	 */
 	@Test
 	public void doubleInitializationTest() throws SevenZipNativeInitializationException {
-		SevenZip.initLibraryFromFile("FileThatDoesNotExists.txt");
+		SevenZip.initSevenZipFromPlatformJAR("PlatformThatDoesNotExist");
 		SevenZip.initSevenZipFromPlatformJAR();
-		SevenZip.initSevenZipFromPlatformJAR("DirectoryThatDoesNotExists");
+		SevenZip.initSevenZipFromPlatformJAR(new File("DirectoryThatDoesNotExists"));
 	}
-
 }

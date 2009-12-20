@@ -15,7 +15,7 @@ many archive formats using a very fast native library directly from java through
 		<td>HFS</td>
 		<td>GZip</td></tr>
 		<tr>
-		<td>CPIO</td>
+		<td>Cpio</td>
 		<td>BZip2</td>
 		<td>Z</td>
 		<td>Arj</td>
@@ -23,6 +23,10 @@ many archive formats using a very fast native library directly from java through
 		<td>Lhz</td>
 		<td>Cab</td>
 		<td>Nsis</td></tr>
+		<tr>
+		<td>Deb</td>
+		<td>Rpm</td>
+		<td>Udf</td></tr>
 		</table></li>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
@@ -32,9 +36,9 @@ many archive formats using a very fast native library directly from java through
 		</table></li>
 	<li> Full support for password protected and volumed archives</li> 
 	<li> 12 example code snippets</li>
-	<li> Over 3100 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Over 3600 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
 	<li> Planned: Creation of 7-Zip/Zip archives</li>
-	<li> Planned: Extraction of more archive formats such as RPM, CDEB</li>
+	<li> Planned: Extraction of more archive formats: Compound, Dmg, Elf, Hfs, Macho, Mub, Pa, Split, Wim</li>
 </ul>
 
 <br/>
@@ -46,8 +50,9 @@ a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with the java part through the java jni interface and uses the corresponding native 7-Zip
 interface to perform operations.
 </p>
-
+<center>
 <img src="overview.png" alt="Overview"/>
+</center>
 <br/>
 <br/>
 
@@ -68,11 +73,34 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br/>
 <h2>News</h2>
 <div class="infobox">
+9 December 2009: <b>7-Zip-JBinding Release: 4.65-1.03rc-extr-only</b>
+<br/><br/>
+Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
+<ul>
+	<li> Binary version for MacOS 64 bit (java 6)</li>
+	<li> Support for multi-platform jars. Multi-platform releases:
+	  <ul>
+	  	<li>AllPlatforms - all available native libraries in a single jar</li>
+	  	<li>AllWindows - native libraries for Windows 32 and 64</li>
+	  	<li>AllLinux - native libraries for Linux 32 and 64</li>
+	  	<li>AllMac - native libraries for Mac 32 and 64</li>
+	  </ul>
+	</li>
+	<li> Initialization reworked. See JavaDoc for SevenZip for more information.</li>
+	<li> Integration test for all platforms for single and multiple platform distributions</li>
+	<li> Improved ISevenZipInArchive.extract(): Sort indices, if not already sorted, bug fixes.</li>
+	<li> DEB format support + tests</li>
+	<li> RPM format support + tests</li>
+	<li> UDF format support + tests</li>
+	<li> New <a href="basic_snippets.html#open-multipart-archives">Code snippets</a>: opening multi-part 7z and RAR archives</li>
+	<li> Source code repository: moved from svn to <a href="http://git-scm.com/">git</a></li>
+</ul>
+<br/>
+
 9 October 2009: <b>7-Zip-JBinding Release: 4.65-1.02rc-extr-only</b>
 <br/><br/>
 Bugfix release (Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65)
 <ul>
-
 	<li> Binary version for Windows 64 XP and above (amd64)</li>
 	<li> NSIS format support + tests</li>
 	<li> New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 

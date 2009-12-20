@@ -100,12 +100,21 @@ span.java-field {
 }
 
 span.java-keyword {
-    font-weight:bold;
+    font-weight: bold;
     color: #950055;
 }
 
 span.java-comment {
     color: #3f8588;
+}
+
+span.java-javadoc {
+    color: #455fbf;
+}
+
+span.java-javadoc-keyword {
+    font-weight: bold;
+    color: #7f9fbf;
 }
 
 div.snippet-info {
@@ -134,13 +143,13 @@ DIV.infobox {
 }
 
 HR.hr { height: 1px;
-     border: none;
-     border-top: 2px solid gray;
+    border: none;
+    border-top: 2px solid gray;
 }
 
 .fragment {
-       font-family: monospace;
-       font-size: 110%;
+    font-family: monospace;
+    font-size: 110%;
 }
 PRE.fragment {
     text-align: left;
@@ -154,6 +163,10 @@ PRE.fragment {
 	padding-right: 6px;
 	padding-top: 4px;
 	padding-bottom: 4px;
+}
+
+pre.fragment a {
+	color: black;
 }
 
 

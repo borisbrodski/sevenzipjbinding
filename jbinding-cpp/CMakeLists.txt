@@ -36,11 +36,8 @@ ELSE(HAVE_WCHAR_H)
   SET(HAVE_UNICODE_WCHAR 0)
 ENDIF(HAVE_WCHAR_H)
 
-
 SET(P7ZIP_SRC ../p7zip)
 SET(_7ZIP_SRC ../7zip)
-
-
 
 IF(USE_MINGW)
     include_directories(PlatformMinGW/)
@@ -132,12 +129,14 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/Sort.c
     
     ${_7ZIP_SRC}/CPP/Common/MyVector.cpp
+    ${_7ZIP_SRC}/CPP/Common/MyMap.cpp
     ${_7ZIP_SRC}/CPP/Common/IntToString.cpp
     ${_7ZIP_SRC}/CPP/Common/StringConvert.cpp
     ${_7ZIP_SRC}/CPP/Common/MyString.cpp
     ${_7ZIP_SRC}/CPP/Common/StringToInt.cpp
     ${_7ZIP_SRC}/CPP/Common/UTFConvert.cpp
     ${_7ZIP_SRC}/CPP/Common/CRC.cpp
+    ${_7ZIP_SRC}/CPP/Common/MyXml.cpp
 
     ${_7ZIP_SRC}/CPP/Windows/Error.cpp
     ${_7ZIP_SRC}/CPP/Windows/FileDir.cpp
@@ -195,6 +194,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/ItemNameUtils.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/MultiStream.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithCRC.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithSha1.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Common/ParseProperties.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/7z/7zCompressionMode.cpp
@@ -227,7 +227,17 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
 
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
+
 # Com ??
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
+
+    ${_7ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
@@ -323,6 +333,8 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
+    
     ${_7ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
     ${_7ZIP_SRC}/CPP/7zip/Crypto/7zAesRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Crypto/HmacSha1.cpp
@@ -355,7 +367,9 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/Common/StringToInt.cpp
     ${P7ZIP_SRC}/CPP/Common/UTFConvert.cpp
     ${P7ZIP_SRC}/CPP/Common/MyVector.cpp
-    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
+    ${P7ZIP_SRC}/CPP/Common/MyMap.cpp
+#    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
+    ${P7ZIP_SRC}/CPP/Common/MyXml.cpp
     
     ${P7ZIP_SRC}/CPP/Windows/Error.cpp
     ${P7ZIP_SRC}/CPP/Windows/FileDir.cpp
@@ -427,6 +441,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/ItemNameUtils.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/MultiStream.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithCRC.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Common/OutStreamWithSha1.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Common/ParseProperties.cpp
     
     ${P7ZIP_SRC}/CPP/7zip/Archive/7z/7zCompressionMode.cpp
@@ -459,7 +474,18 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
 
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
+
+
 # Com ??
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
+
+    ${P7ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
@@ -555,6 +581,9 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
+    
+    
     ${P7ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
     ${P7ZIP_SRC}/CPP/7zip/Crypto/7zAesRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Crypto/HmacSha1.cpp
@@ -662,6 +691,13 @@ add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${
 
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
+
+IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
+    # TODO Get status to work on Linux64
+    IF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686") 
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS -static)
+    ENDIF()
+ENDIF()
 
 IF(USE_CYGWIN)
     TARGET_LINK_LIBRARIES(7-Zip-JBinding oleaut32)

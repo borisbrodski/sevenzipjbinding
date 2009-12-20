@@ -111,6 +111,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	//for (int i = 0; i < codecs->Formats.Size(); i++) {
 	//	printf("Available codec: '%S'\n", (const wchar_t*)codecs->Formats[i].Name);
+	//	fflush(stdout);
 	//}
 
 	int index = -1;

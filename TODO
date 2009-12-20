@@ -7,11 +7,14 @@
 
 - Offer a source package without tests
 
+- Repack XAR (bz2) tests with new version of xar
+
+- In JavaDoc of ArchiveFormat: add columns (single file tests and multiple files tests)
+
 
 Minor TODOs:
-- Compile and test 7-Zip-JBinding unter Windows XP 64
 - Write more tests, for example, extracting archive with two files encrypted with different password.
-- Test some untested archive formats, such as DEB
+- Test some untested archive formats
 - Support more archive formats
 - Write documentation / improve javadoc
 - Improve Web site
@@ -20,3 +23,8 @@ Minor TODOs:
 Major TODOs:
 - Implement archive creation
 - Move to version 9.X of 7-zip/p7zip
+
+Info:
+- Quasijarus compression
+  * http://ifctfvax.harhan.org/Quasijarus/compress.html
+  * ftp://ifctfvax.harhan.org/pub/UNIX/

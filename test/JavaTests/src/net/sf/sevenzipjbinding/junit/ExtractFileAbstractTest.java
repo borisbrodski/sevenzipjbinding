@@ -7,8 +7,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
@@ -25,6 +26,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
+import net.sf.sevenzipjbinding.junit.tools.ZipInStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -391,6 +393,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	protected abstract void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws Exception;
 
+	protected boolean usingZippedTestArchive() {
+		return false;
+	}
+
 	protected abstract String getTestDataPath();
 
 	protected String getTestSubdir() {
@@ -398,7 +404,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 	}
 
 	protected class ExtractionInArchiveTestHelper {
-		private RandomAccessFileInStream randomAccessFileInStream;
+		private IInStream randomAccessFileInStream;
 		private VolumeArchiveOpenCallback volumeArchiveOpenCallback;
 
 		public ExtractionInArchiveTestHelper() {
@@ -408,18 +414,30 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		public ISevenZipInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
 				boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
 			String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
-					+ //
-					volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt + "."
-					+ compressionIndex + "." + extention + volumeArchivePostfix;
+					+ volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt
+					+ "." + compressionIndex + "." + extention + volumeArchivePostfix;
 
 			if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
-				archiveFilename = archiveFilename.replace("part1.rar", "rar");
+				archiveFilename = archiveFilename.replace("part1.rar", "part01.rar");
+				if (!new File(archiveFilename).exists()) {
+					archiveFilename = archiveFilename.replace("part01.rar", "rar");
+				}
 			}
 
+			return openArchiveFileWithSevenZip(archiveFilename, autodetectFormat);
+		}
+
+		private ISevenZipInArchive openArchiveFileWithSevenZip(String archiveFilename, boolean autodetectFormat)
+				throws SevenZipException {
 			randomAccessFileInStream = null;
 			ISevenZipInArchive inArchive = null;
 			try {
-				randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(archiveFilename, "r"));
+				if (usingZippedTestArchive()) {
+					ZipFile zipFile = new ZipFile(new File(archiveFilename + ".zip"));
+					randomAccessFileInStream = new ZipInStream(zipFile, zipFile.entries().nextElement());
+				} else {
+					randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(archiveFilename, "r"));
+				}
 				volumeArchiveOpenCallback = null;
 				VolumedArchiveInStream volumedArchiveInStream;
 				IInStream inStreamToUse = randomAccessFileInStream;
@@ -469,7 +487,14 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		public void closeAllStreams() {
 			if (randomAccessFileInStream != null) {
 				try {
-					randomAccessFileInStream.close();
+					if (randomAccessFileInStream instanceof RandomAccessFileInStream) {
+						((RandomAccessFileInStream) randomAccessFileInStream).close();
+					} else if (randomAccessFileInStream instanceof ZipInStream) {
+						((ZipInStream) randomAccessFileInStream).close();
+					} else {
+						throw new IllegalStateException("Unknown IInStream implementation: "
+								+ randomAccessFileInStream.getClass().getCanonicalName());
+					}
 				} catch (Throwable t) {
 					throw new RuntimeException(t);
 				}
@@ -618,7 +643,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
 		private RandomAccessFile randomAccessFile;
 		private String currentFilename;
-		private List<RandomAccessFile> openedRandomAccessFileList = new ArrayList<RandomAccessFile>();
+		private Map<String, RandomAccessFile> randomAccessFileMap = new HashMap<String, RandomAccessFile>();
 
 		public VolumeArchiveOpenCallback(String firstFilename) {
 			currentFilename = firstFilename;
@@ -640,16 +665,15 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		 */
 
 		public IInStream getStream(String filename) {
-			currentFilename = filename;
 			try {
-				RandomAccessFile newRandomAccessFile = new RandomAccessFile(filename, "r");
-				if (newRandomAccessFile == null) {
-					return null;
-				}
-				randomAccessFile = newRandomAccessFile;
+				currentFilename = filename;
+				randomAccessFile = randomAccessFileMap.get(filename);
 				if (randomAccessFile != null) {
-					openedRandomAccessFileList.add(randomAccessFile);
+					randomAccessFile.seek(0);
+					return new RandomAccessFileInStream(randomAccessFile);
 				}
+				randomAccessFile = new RandomAccessFile(filename, "r");
+				randomAccessFileMap.put(filename, randomAccessFile);
 				return new RandomAccessFileInStream(randomAccessFile);
 			} catch (FileNotFoundException fileNotFoundException) {
 				return null;
@@ -659,7 +683,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 		}
 
 		public void close() throws IOException {
-			for (RandomAccessFile file : openedRandomAccessFileList) {
+			for (RandomAccessFile file : randomAccessFileMap.values()) {
 				file.close();
 			}
 		}

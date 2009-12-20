@@ -5,20 +5,38 @@ SET(OUTPUT_DIRECTORY_HTML "web.components/output")
 
 macro(PROCESS_SNIPPET_LINE_JAVA LINE_VAR)
     STRING(REGEX REPLACE "//$" "" TMP "${${LINE_VAR}}")
+    STRING(REGEX REPLACE "[ \t]*<br>$" "" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*f\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*sf\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*s\\*/([^/]+)/\\*([^*]*)\\*/" "\\1\\2" TMP "${TMP}")
+    STRING(REGEX REPLACE "/\\*(  +)\\*/" "\\1" TMP "${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro()
 
-macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
-    STRING(REGEX REPLACE "&" "&amp;" TMP "${${LINE_VAR}}")
+
+macro(PROCESS_SNIPPET_COMMON_LINE_HTML LINE_VAR)
+    STRING(REGEX REPLACE "[ \t]*<br>$" "" TMP "${${LINE_VAR}}")
+    STRING(REGEX REPLACE "//$" "" TMP "${TMP}")
+    STRING(REGEX REPLACE "&" "&amp;" TMP "${TMP}")
     STRING(REGEX REPLACE "<" "&#60;" TMP "${TMP}")
     STRING(REGEX REPLACE ">" "&#62;" TMP "${TMP}")
 #    STRING(REGEX REPLACE " " "&nbsp;" TMP "${TMP}")
 #    STRING(REGEX REPLACE "\t" "&nbsp;&nbsp;&nbsp;&nbsp;" TMP "${TMP}")
-    STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${TMP}")
-    STRING(REGEX REPLACE "(^|[^a-zA-Z])(null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private)($|[^a-zA-Z])" 
+    STRING(REGEX REPLACE "@see" "<span class=\"java-javadoc-keyword\">@see</span>" TMP "${TMP}") 
+    SET(${LINE_VAR} "${TMP}")
+endmacro()
+
+macro(PROCESS_SNIPPET_JAVADOC_LINE_HTML LINE_VAR)
+    PROCESS_SNIPPET_COMMON_LINE_HTML(${LINE_VAR})
+    STRING(REGEX REPLACE "code" "CoDe" TMP "${${LINE_VAR}}")
+    SET(${LINE_VAR} "${TMP}")
+endmacro()
+
+macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
+    PROCESS_SNIPPET_COMMON_LINE_HTML(${LINE_VAR})
+
+    STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${${LINE_VAR}}")
+    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default)($|[^a-zA-Z])" 
                             "\\1##keyword##\\2##end##\\3" TMP "${TMP}")
     STRING(REGEX REPLACE "(SevenZip\\.)(openInArchive|initSevenZipFromPlatformJAR)"
                             "\\1##staticmethod##\\2##end##" TMP "${TMP}")
@@ -29,7 +47,12 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     STRING(REGEX REPLACE "(Arrays\\.)(hashCode)" "\\1##staticmethod##\\2##end##" TMP "${TMP}")
     STRING(REGEX REPLACE "(String\\.)(format)" "\\1##staticmethod##\\2##end##" TMP "${TMP}")
     STRING(REGEX REPLACE "(Integer\\.)(valueOf)" "\\1##staticmethod##\\2##end##" TMP "${TMP}")
-    STRING(REGEX REPLACE "//$" "" TMP "${TMP}")
+    
+    # Remove highlighint inside a "// ..." comment
+    WHILE("${TMP}" MATCHES ".*(//[^#]*)##[a-z]+##(.*)$")
+        STRING(REGEX REPLACE "(//[^#]*)##[a-z]+##(.*)$" "\\1\\2" TMP "${TMP}")
+    ENDWHILE()
+    
     STRING(REGEX REPLACE "(//.*)$" "##comment##\\1##end##" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*f\\*/([^/]+)/\\*([^*]*)\\*/" "##field##\\1##end##\\2" TMP "${TMP}")
     STRING(REGEX REPLACE "/\\*sf\\*/([^/]+)/\\*([^*]*)\\*/" "##staticfield##\\1##end##\\2" TMP "${TMP}")
@@ -42,9 +65,11 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     STRING(REGEX REPLACE "##comment##" "<span class=\"java-comment\">" TMP "${TMP}") 
     STRING(REGEX REPLACE "##keyword##" "<span class=\"java-keyword\">" TMP "${TMP}") 
     STRING(REGEX REPLACE "##field##" "<span class=\"java-field\">" TMP "${TMP}") 
+    STRING(REGEX REPLACE "/\\*(  +)\\*/" "\\1" TMP "${TMP}")
 #    MESSAGE("${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro() 
+
 macro(PROCESS_OUTPUT_LINE_HTML LINE_VAR)
     STRING(REGEX REPLACE "&" "&amp;" TMP "${${LINE_VAR}}")
     STRING(REGEX REPLACE "<" "&#60;" TMP "${TMP}")
@@ -52,6 +77,46 @@ macro(PROCESS_OUTPUT_LINE_HTML LINE_VAR)
     STRING(REGEX REPLACE "\\\\n" "\n" TMP "${TMP}")
     SET(${LINE_VAR} "${TMP}")
 endmacro()
+
+macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
+
+    SET(JAVADOC_HTML_FILES
+        net/sf/sevenzipjbinding/ArchiveFormat.html
+        net/sf/sevenzipjbinding/ExtractAskMode.html
+        net/sf/sevenzipjbinding/ExtractOperationResult.html
+        net/sf/sevenzipjbinding/IArchiveExtractCallback.html
+        net/sf/sevenzipjbinding/IArchiveOpenCallback.html
+        net/sf/sevenzipjbinding/IArchiveOpenVolumeCallback.html
+        net/sf/sevenzipjbinding/ICryptoGetTextPassword.html
+        net/sf/sevenzipjbinding/IInStream.html
+        net/sf/sevenzipjbinding/impl/InArchiveImpl.html
+        net/sf/sevenzipjbinding/IProgress.html
+        net/sf/sevenzipjbinding/ISequentialInStream.html
+        net/sf/sevenzipjbinding/ISequentialOutStream.html
+        net/sf/sevenzipjbinding/ISevenZipInArchive.html
+        net/sf/sevenzipjbinding/simple/ISimpleInArchive.html
+        net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html
+        net/sf/sevenzipjbinding/PropertyInfo.html
+        net/sf/sevenzipjbinding/PropID.html
+        net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html
+        net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
+        net/sf/sevenzipjbinding/SevenZip.html
+        net/sf/sevenzipjbinding/SevenZipException.html
+        net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html
+        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveImpl.html
+        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveItemImpl.html
+        net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html)
+    SET(TMP "${${LINE_VAR}}")
+    FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
+        STRING(REGEX REPLACE ".*/([^/]+)\\.html" "\\1" CLASS_NAME "${HTML_FILE}")
+        STRING(REGEX REPLACE "([^a-zA-Z0-9])(${CLASS_NAME})([^a-zA-Z0-9])" 
+                "\\1<a href=\"javadoc/${JD_PATH}${HTML_FILE}\">\\2</a>\\3" TMP "${TMP}")
+#        STRING(REGEX REPLACE "${CLASS_NAME}" 
+#                "XXXXX" TMP "${TMP}")
+    ENDFOREACH()
+    SET(${LINE_VAR} "${TMP}")
+endmacro()
+
 
 macro(ADJUST_PADDING SNIPPET_FILE)
     SET(PADDING -1)
@@ -102,6 +167,7 @@ macro(PROCESS_SNIPPET SNIPPET_FILE)
     file(STRINGS ${SNIPPET_FILE} JAVA_FILE_LINES)
     SET(SNIPPET_NAME "")
     SET(OUTPUT_NAME "")
+    SET(IS_IN_JAVADOC 0)
     LIST(LENGTH JAVA_FILE_LINES LINES_COUNT)
     MATH(EXPR LINES_COUNT "${LINES_COUNT}-1")
     FOREACH(INDEX RANGE ${LINES_COUNT})
@@ -129,8 +195,22 @@ macro(PROCESS_SNIPPET SNIPPET_FILE)
             FILE(APPEND ${SNIPPET_OUTPUT_FILENAME_JAVA} "${JAVA_LINE}")
             FILE(APPEND ${SNIPPET_OUTPUT_FILENAME_JAVA} "\n")
 
-            PROCESS_SNIPPET_LINE_HTML(HTML_LINE)
-            FILE(APPEND ${SNIPPET_OUTPUT_FILENAME_HTML} "${HTML_LINE}")
+            SET(HTML_PREFIX "")
+            SET(HTML_POSTFIX "")
+            IF(HTML_LINE MATCHES "^[ \t]*/\\*\\*[ \t]*$")
+                SET(IS_IN_JAVADOC 1)
+                SET(HTML_PREFIX "<span class=\"java-javadoc\">")
+            ENDIF()
+            IF(HTML_LINE MATCHES "^[ \t]*\\*/[ \t]*$")
+                SET(IS_IN_JAVADOC 0)
+                SET(HTML_POSTFIX "</span>")
+            ENDIF()
+            IF(IS_IN_JAVADOC)
+                PROCESS_SNIPPET_JAVADOC_LINE_HTML(HTML_LINE)
+            ELSE()
+                PROCESS_SNIPPET_LINE_HTML(HTML_LINE)
+            ENDIF()
+            FILE(APPEND ${SNIPPET_OUTPUT_FILENAME_HTML} "${HTML_PREFIX}${HTML_LINE}${HTML_POSTFIX}")
             FILE(APPEND ${SNIPPET_OUTPUT_FILENAME_HTML} "\n")
         ENDIF()
         IF(LINE MATCHES "/\\* +BEGIN_SNIPPET\\([a-zA-Z0-9]+\\) +\\*/")
@@ -157,6 +237,7 @@ function(APPEND_FILE OUTPUT_FILE FILE_TO_APPEND)
     MATH(EXPR LINES_COUNT "${LINES_COUNT}-1")
     FOREACH(INDEX RANGE ${LINES_COUNT})
         LIST(GET FILE_LINES ${INDEX} LINE)
+        PROCESS_JAVADOC_CLASSES(LINE)
         FILE(APPEND "${OUTPUT_FILE}" "${LINE}\n")
     ENDFOREACH()
 endfunction()
@@ -185,6 +266,7 @@ macro(PROCESS_HTML FILENAME)
             APPEND_FILE("${OUTPUT_HTML_FILE}" "${OUTPUT_DIRECTORY_HTML}/${OUTPUT_NAME}.html")
             APPEND_FILE("${OUTPUT_HTML_FILE}" "web.components/output_footer.html")
         ELSE()
+            PROCESS_JAVADOC_CLASSES(LINE)
             FILE(APPEND "${OUTPUT_HTML_FILE}" "${LINE}\n")
         ENDIF()
     ENDFOREACH()
@@ -195,6 +277,7 @@ FILE(GLOB JAVA_FILES "../test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippe
 FOREACH(JAVA_FILE ${JAVA_FILES})
     PROCESS_SNIPPET("${JAVA_FILE}")
 ENDFOREACH()
+
 
 PROCESS_HTML("index.html")
 PROCESS_HTML("first_steps.html")

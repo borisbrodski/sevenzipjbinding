@@ -142,27 +142,44 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	CPPToJavaInStream * inStream = GetInStream(env, thiz);
 	inStream->SetNativMethodContext(&nativeMethodContext);
 
-	jint * indices;
-	jsize indicesCount;
-	HRESULT result;
+	jint * indices = NULL;
+	UInt32 indicesCount = (UInt32)-1;
+	UInt32 numberOfItems;
+
+	HRESULT result = archive->GetNumberOfItems((UInt32*)&numberOfItems);
+	if (result != S_OK)
+	{
+	    TRACE1("Error getting number of items from archive. Result: 0x%08X", result);
+		nativeMethodContext.ThrowSevenZipException(result, "Error getting number of items from archive");
+	    inStream->ClearNativeMethodContext();
+	    return;
+	}
 	if (indicesArray)
 	{
 		indices = env->GetIntArrayElements(indicesArray, NULL);
 
 		indicesCount = env->GetArrayLength(indicesArray);
-		qsort(indices, indicesCount, 4, &CompareIndicies);
-	} else {
-		result = archive->GetNumberOfItems((UInt32*)&indicesCount);
-		if (result != S_OK)
-		{
-		    TRACE1("Error getting number of items from archive. Result: 0x%08X", result);
-			nativeMethodContext.ThrowSevenZipException(result, "Error getting number of items from archive");
-		    inStream->ClearNativeMethodContext();
-		    return;
-		}
-		indices = new jint[indicesCount];
+
+		jint lastIndex = -1;
+		int sortNeeded = false;
 		for (int i = 0; i < indicesCount; i++)
-			indices[i] = i;
+		{
+			if (indices[i] < 0 || indices[i] >= numberOfItems)
+			{
+			    TRACE2("Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
+							indices[i], numberOfItems)
+				nativeMethodContext.ThrowSevenZipException(result,
+						"Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
+						indices[i], numberOfItems);
+			    inStream->ClearNativeMethodContext();
+			    return;
+			}
+			if (lastIndex > indices[i])
+				sortNeeded = true;
+			lastIndex = indices[i];
+		}
+		if (sortNeeded)
+			qsort(indices, indicesCount, 4, &CompareIndicies);
 	}
 
 	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);

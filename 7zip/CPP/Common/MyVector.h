@@ -4,6 +4,7 @@
 #define __COMMON_VECTOR_H
 
 #include "Defs.h"
+#include <stddef.h>
 
 class CBaseRecordVector
 {

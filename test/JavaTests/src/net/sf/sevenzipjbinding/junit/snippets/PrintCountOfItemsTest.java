@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 /**
- * Tests {@link SevenZipJBindingInitCheck} snippet
+ * Tests {@link PrintCountOfItems} snippet
  * 
  * @author Boris Brodski
  * @version 4.65-1

@@ -35,7 +35,7 @@ public interface IInStream extends ISequentialInStream {
 	 *            <li> {@link #SEEK_SET} - <code>offset</code> is an absolute offset to move to,<br><li>
 	 *            {@link #SEEK_CUR} - <code>offset</code> is a relative offset to the current position in stream,<br>
 	 *            <li> {@link #SEEK_END} - <code>offset</code> is an offset from the end of the stream
-	 *            <code>(offset < 0)</code>.
+	 *            <code>(offset <= 0)</code>.
 	 * 
 	 * @return new absolute position in the stream.
 	 * 

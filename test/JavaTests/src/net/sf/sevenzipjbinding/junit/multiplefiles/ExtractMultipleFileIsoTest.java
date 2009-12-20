@@ -8,4 +8,8 @@ public class ExtractMultipleFileIsoTest extends ExtractMultipleFileAbstractTest 
 		super(ArchiveFormat.ISO, 0, 0, 0);
 	}
 
+	@Override
+	protected boolean usingZippedTestArchive() {
+		return true;
+	}
 }

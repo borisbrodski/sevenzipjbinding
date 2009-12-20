@@ -1,3 +1,9 @@
+--- Welcome to 7-Zip-JBinding README file ---
+
+7-Zip-JBinding is a free cross-platform java binding of 7-Zip free compress/decompress library
+(http://www.7-zip.org/, http://p7zip.sourceforge.net/)
+
+
 Content
 -------
 
@@ -9,11 +15,6 @@ Content
 5.1 Compile on Linux
 5.2 Compile on Windows
 
---- Welcome to 7-Zip-JBinding readme file ---
-
-7-Zip-JBinding is a free binding for java of 7-Zip free compress/decompress library (http://www.7-zip.org/, http://p7zip.sourceforge.net/)
-
-
 
 1. License Info
 ---------------
@@ -22,7 +23,6 @@ Content
 For more information about 7-Zip source code licenses please see
 7-Zip read me file. For more information about p7zip source code
 please see p7zip read me file.
-
 
 
 2. GNU LGPL information
@@ -43,7 +43,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-
 3. License notes
 ----------------
 
@@ -52,7 +51,6 @@ You can support development of 7-Zip by registering.
 7-Zip/p7zip/7-Zip-JBinding is free software distributed under the GNU LGPL.
 If you need license with other conditions, write to
 http://www.7-zip.org/support.html
-
 
 
 4. Version number guide lines
@@ -84,7 +82,8 @@ Examples:
 	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
-5 Compile
+5. Compile
+----------
 
 Please note, you will need a source code distribution to compile 7-Zip-JBinding.
 
@@ -94,9 +93,11 @@ Please note, you will need a source code distribution to compile 7-Zip-JBinding.
 a) Download source package from http://sourceforge.net/projects/sevenzipjbind/files/
    and extract it into some <srcdir> directory. Try to avoid directory names with spaces in your path.
 
-   Optionally you can checkout a trunk (current development version) from SVN 
-	$ svn checkout http://sevenzipjbind.svn.sourceforge.net/svnroot/sevenzipjbind/trunk SevenZipJBinding
-		
+   Optionally you can checkout a trunk (current development version) from GIT repository 
+	$ git clone git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind SevenZipJBinding
+	$ cd SevenZipJBinding
+	$ git checkout Release-4.65-1.02rc-extr-only
+
 b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your system.
    You can check the version of your CMake by typing:
 	$ cmake --version
@@ -108,7 +109,6 @@ b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your 
     $ sudo apt-get install cmake
 
 c) The next step is to run CMake. Both in-source and out-of-source methods are supported. Here is example of in-source build:
-	$ cd <srcdir>
 	$ cmake .
 
    Where <srcdir> is a directory, where you extracted or checked out the source code.	
@@ -149,5 +149,5 @@ f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary pac
 If you have any troubles with 7-Zip-JBinding please, ask for help. Use forum or issue tracker on sourceforge:
 Forum: http://sourceforge.net/forum/?group_id=210915
 Tracker: http://sourceforge.net/tracker/?group_id=210915
-	
-Have fun	 
+
+Have fun!	 

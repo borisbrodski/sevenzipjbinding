@@ -32,6 +32,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <tr><td width="240" valign="top" class="menu">
 <table class="menu" border="0">
 <tr><td><a href="index.html">Home</a></td></tr>
+<tr><td><a href="https://sourceforge.net/projects/sevenzipjbind/">SF-Home</a></td></tr>
 <tr><td><a href="first_steps.html">Documentation</a><br/>
 <table class="submenu" border="0">
 	<tr><td><a href="first_steps.html" >First steps</a></td></tr>
@@ -40,7 +41,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 </table></td></tr>
 <tr><td><a href="http://sourceforge.net/project/showfiles.php?group_id=210915" class="menu">Download</a></td></tr>
 <tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a></td></tr>
-<tr><td><a href="http://sourceforge.net/forum/?group_id=210915" class="menu">Forum</a></td></tr>
+<tr><td><a href="https://sourceforge.net/projects/sevenzipjbind/forums" class="menu">Forum</a></td></tr>
 <tr><td><a href="http://sourceforge.net/tracker/?group_id=210915" class="menu">Tracker</a></td></tr>
 <tr><td><a href="http://sourceforge.net/donate/index.php?group_id=210915" class="menu">Donate Money to<br/>7-Zip-JBinding</a></td></tr>
 </table>
@@ -63,7 +64,7 @@ many archive formats using a very fast native library directly from java through
 		<td>HFS</td>
 		<td>GZip</td></tr>
 		<tr>
-		<td>CPIO</td>
+		<td>Cpio</td>
 		<td>BZip2</td>
 		<td>Z</td>
 		<td>Arj</td>
@@ -71,6 +72,10 @@ many archive formats using a very fast native library directly from java through
 		<td>Lhz</td>
 		<td>Cab</td>
 		<td>Nsis</td></tr>
+		<tr>
+		<td>Deb</td>
+		<td>Rpm</td>
+		<td>Udf</td></tr>
 		</table></li>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
@@ -80,9 +85,9 @@ many archive formats using a very fast native library directly from java through
 		</table></li>
 	<li> Full support for password protected and volumed archives</li> 
 	<li> 12 example code snippets</li>
-	<li> Over 3100 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Over 3600 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
 	<li> Planned: Creation of 7-Zip/Zip archives</li>
-	<li> Planned: Extraction of more archive formats such as RPM, CDEB</li>
+	<li> Planned: Extraction of more archive formats: Compound, Dmg, Elf, Hfs, Macho, Mub, Pa, Split, Wim</li>
 </ul>
 <br/>
 <h2>How does it work?</h2>
@@ -92,7 +97,9 @@ a cross-platform java interface of the 7-Zip library. The native part of
 7-Zip-JBinding communicates with the java part through the java jni interface and uses the corresponding native 7-Zip
 interface to perform operations.
 </p>
+<center>
 <img src="overview.png" alt="Overview"/>
+</center>
 <br/>
 <br/>
 <h2>It's really simple!</h2>
@@ -101,13 +108,13 @@ Getting number of packed items in an archive:
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) <span class="java-keyword">throws</span> Exception {
-    ISevenZipInArchive archive;
+    <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> archive;
     RandomAccessFile randomAccessFile;
 
     randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>);
 
-    archive = SevenZip.<span class="java-staticmethod">openInArchive</span>(ArchiveFormat.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// <span class="java-keyword">null</span> - autodetect</span>
-            <span class="java-keyword">new</span> RandomAccessFileInStream(
+    archive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<a href="javadoc/net/sf/sevenzipjbinding/ArchiveFormat.html">ArchiveFormat</a>.<span class="java-staticfield">ZIP</span>, <span class="java-comment">// null - autodetect</span>
+            <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(
                     randomAccessFile));
 
     <span class="java-keyword">int</span> numberOfItems = archive.getNumberOfItems();
@@ -126,13 +133,36 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br/>
 <h2>News</h2>
 <div class="infobox">
+9 December 2009: <b>7-Zip-JBinding Release: 4.65-1.03rc-extr-only</b>
+<br/><br/>
+Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
+<ul>
+	<li> Binary version for MacOS 64 bit (java 6)</li>
+	<li> Support for multi-platform jars. Multi-platform releases:
+	  <ul>
+	  	<li>AllPlatforms - all available native libraries in a single jar</li>
+	  	<li>AllWindows - native libraries for Windows 32 and 64</li>
+	  	<li>AllLinux - native libraries for Linux 32 and 64</li>
+	  	<li>AllMac - native libraries for Mac 32 and 64</li>
+	  </ul>
+	</li>
+	<li> Initialization reworked. See JavaDoc for <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a> for more information.</li>
+	<li> Integration test for all platforms for single and multiple platform distributions</li>
+	<li> Improved <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.extract(): Sort indices, if not already sorted, bug fixes.</li>
+	<li> DEB format support + tests</li>
+	<li> RPM format support + tests</li>
+	<li> UDF format support + tests</li>
+	<li> New <a href="basic_snippets.html#open-multipart-archives">Code snippets</a>: opening multi-part 7z and RAR archives</li>
+	<li> Source code repository: moved from svn to <a href="http://git-scm.com/">git</a></li>
+</ul>
+<br/>
 9 October 2009: <b>7-Zip-JBinding Release: 4.65-1.02rc-extr-only</b>
 <br/><br/>
 Bugfix release (Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65)
 <ul>
 	<li> Binary version for Windows 64 XP and above (amd64)</li>
 	<li> NSIS format support + tests</li>
-	<li> New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 
+	<li> New method <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.getArchiveFormat() returns format of the opened archive, 
 	     even if archive format auto-detection was used.</li>
 	<li> Better performance for archive format auto-detection</li>
 </ul>
@@ -143,16 +173,16 @@ Bugfix release (Release candidate, extraction only, cross-platform, based on 7zi
 <ul>
 	<li> API change was necessary to fix a bug:</li>
 	<li><ul>
-		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.prepareOperation(ExtractAskMode) is void now.</li>
+		<li> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>.prepareOperation(<a href="javadoc/net/sf/sevenzipjbinding/ExtractAskMode.html">ExtractAskMode</a>) is void now.</li>
 		
-		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream(int, ExtractAskMode) accepts null return values now.
+		<li> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>.getStream(int, <a href="javadoc/net/sf/sevenzipjbinding/ExtractAskMode.html">ExtractAskMode</a>) accepts null return values now.
 		  null return values can be used to skip on the fly extraction/testing of archive items.</li> 
 	</ul></li>
-	<li> net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, IArchiveExtractCallback):</li>
+	<li> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.extract(int[], boolean, <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>):</li>
 	<li><ul>
 		<li> the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
-		  It if possible to exclude particular items later on using IArchiveExtractCallback call back. Returning null
-		  out of net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream method will skip extraction/testing.</li> 
+		  It if possible to exclude particular items later on using <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a> call back. Returning null
+		  out of net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>.getStream method will skip extraction/testing.</li> 
 	</ul></li>
 	<li> CAB format support + tests</li>
 	<li> LZH format support + tests</li>

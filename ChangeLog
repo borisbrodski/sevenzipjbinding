@@ -1,10 +1,46 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 9.04-1.03alpha-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 9.04 beta)
+Release - 9.04-2.00alpha-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 9.04 beta)
 
 	* Bind 7-Zip 9.04 beta
 
+
+Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Binary version for MacOS 64 bit (java 6)
+	
+	* Support for multi-platform jars:
+	  - Multiplatform releases:
+	  	- AllWindows:
+	  	- AllLinux
+	  	- AllMac
+	  	- AllPlatforms
+
+	  - Initialization reworked (net.sf.sevenzipjbinding.SevenZip)
+	    - SevenZip.initLibraryFromFile() removed. Please use 'System.load()' or 'System.loadLibrary()' to
+	      load native libraries into JVM and then call SevenZip.initLoadedLibraries() to call 7-Zip-JBinding
+	      initialization routine.
+	    - Detailed JavaDoc
+
+    * Integration test for all platforms for single and multiple platform distributions
+	
+	* Improve ISevenZipInArchive.extract()
+		- Check for wrong indices avoiding VM crash
+		- Sort indices, if not already sorted
+		- Minor performance improvements
+	
+	* Code snippets for opening multi-part 7z and RAR archives (See web page, Code snippets)  
+	
+	* DEB format support + tests
+	
+	* RPM format support + tests
+
+	* UDF format support + tests
+
+    * Source code repository: moved from svn to git (http://git-scm.com/)
+    	- Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
+    	- Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
+	
 
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
