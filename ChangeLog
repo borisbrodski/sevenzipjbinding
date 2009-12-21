@@ -1,7 +1,7 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 9.04-2.00alpha-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 9.04 beta)
+Release - 9.04-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 9.04 beta)
 
 	* Bind 7-Zip 9.04 beta
 
