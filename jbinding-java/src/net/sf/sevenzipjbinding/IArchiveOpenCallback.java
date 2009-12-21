@@ -1,7 +1,7 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * Interface to recieve information about open archive progress
+ * Interface to receive and provide information about open archive progress
  * 
  * @author Boris Brodski
  * @version 4.65-1
