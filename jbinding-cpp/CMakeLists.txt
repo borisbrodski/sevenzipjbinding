@@ -639,6 +639,7 @@ SET(JBINDING_CPP_FILES
     CPPToJava/CPPToJavaArchiveOpenVolumeCallback.cpp
     CPPToJava/CPPToJavaCryptoGetTextPassword.cpp
     CPPToJava/CPPToJavaInStream.cpp
+    CPPToJava/CPPToJavaOutStream.cpp
     CPPToJava/CPPToJavaProgress.cpp
     CPPToJava/CPPToJavaSequentialInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
