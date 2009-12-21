@@ -1,7 +1,7 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * InStream interface used to operate with seeable input stream
+ * InStream interface used to operate with seekable input stream
  * 
  * @author Boris Brodski
  * @version 4.65-1
