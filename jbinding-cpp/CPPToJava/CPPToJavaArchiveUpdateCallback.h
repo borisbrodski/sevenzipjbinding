@@ -17,6 +17,9 @@ private:
     static jmethodID _getStreamID;
     static jmethodID _setOperationResultID;
 
+    static jclass _propIDClass;
+    static jmethodID _propIDGetPropIDByIndexMethodID;
+
     void Init(JNIEnv * initEnv);
 
 public:
