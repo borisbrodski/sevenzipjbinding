@@ -99,7 +99,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
 
 	jobject askExtractModeObject = env->CallStaticObjectMethod(_extractAskModeClass, _extractAskModeGetExtractAskModeByIndexMethodID, (jint)askExtractMode);
 
-	// public boolean prepareOperation(ExtractAskMode extractAskMode);
+	// public void prepareOperation(ExtractAskMode extractAskMode);
 	jniInstance.PrepareCall();
 	env->CallVoidMethod(_javaImplementation, _prepareOperationMethodID, askExtractModeObject);
 
