@@ -643,6 +643,7 @@ SET(JBINDING_CPP_FILES
     CPPToJava/CPPToJavaProgress.cpp
     CPPToJava/CPPToJavaSequentialInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
+    CPPToJava/CPPToJavaArchiveUpdateCallback.cpp
 )
 
 SET(JBINDING_JAVAH_H_FILES
