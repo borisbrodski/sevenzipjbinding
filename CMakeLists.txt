@@ -113,8 +113,6 @@ ADD_CUSTOM_TARGET(sevenzipjbinding-jar ALL
                   DEPENDS ${SEVENZIP_JBINDING_JAR}
                   COMMENT Processing java build target)
 
-
-#ADD_SUBDIRECTORY(jbinding-java)
 ADD_SUBDIRECTORY(jbinding-cpp)
 
 IF(BUILD_MYSPLIT)
