@@ -9,6 +9,7 @@
 #include "net_sf_sevenzipjbinding_SevenZip.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "UniversalArchiveOpenCallback.h"
+#include "CodecTools.h"
 
 #include "JNICallState.h"
 
@@ -58,6 +59,8 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeI
 
 	TRACE("7-zip library initialized (TODO)")
 
+	CodecTools::init();
+
 	return NULL;
 }
 
@@ -88,46 +91,21 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	JNIInstance jniInstance(&nativeMethodContext);
 
-	CCodecs *codecs = new CCodecs;
-
-	CMyComPtr<
-		#ifdef EXTERNAL_CODECS
-		ICompressCodecsInfo
-		#else
-		IUnknown
-		#endif
-		> compressCodecsInfo = codecs;
-
-	HRESULT result = codecs->Load(); // TODO do it only once!
-
-	if (result != S_OK)
-		fatal("codecs->Load() return error: 0x%08X", result);
-
 #ifdef TRACE_ON
-	for (int i = 0; i < codecs->Formats.Size(); i++) {
-		TRACE1("Available codec: '%S'", (const wchar_t*)codecs->Formats[i].Name)
+	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
+		TRACE1("Available codec: '%S'", (const wchar_t*)CodecTools::codecs.Formats[i].Name)
 	}
 #endif // TRACE_ON
 
-	//for (int i = 0; i < codecs->Formats.Size(); i++) {
-	//	printf("Available codec: '%S'\n", (const wchar_t*)codecs->Formats[i].Name);
+	//for (int i = 0; i < SevenZipJBinding::codecs.Formats.Size(); i++) {
+	//	printf("Available codec: '%S'\n", (const wchar_t*)SevenZipJBinding::codecs.Formats[i].Name);
 	//	fflush(stdout);
 	//}
 
 	int index = -1;
 	UString formatNameString;
-	if (formatName)
-	{
-		const jchar * formatNameJChars = env->GetStringChars(formatName, NULL);
-		formatNameString = UnicodeHelper(formatNameJChars);
-		env->ReleaseStringChars(formatName, formatNameJChars);
-
-		TRACE1("Format: '%S'", (const wchar_t*)formatNameString)
-		index = codecs->FindFormatForArchiveType(formatNameString);
-		if (index == -1) {
-			jniInstance.ThrowSevenZipException("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
-			return NULL;
-		}
+	if (formatName) {
+		index = CodecTools::getIndexByName(env, formatName, formatNameString);
 	}
 
 	CMyComPtr<IInArchive> archive;
@@ -147,12 +125,12 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	if (index != -1) {
 		// Use one specified codec
-		codecs->CreateInArchive(index, archive);
+		CodecTools::codecs.CreateInArchive(index, archive);
 	    if (!archive) {
 	    	fatal("Can't get InArchive class for codec %S",  (const wchar_t *)formatNameString);
 	    }
 
-		TRACE1("Opening using codec %S", (const wchar_t*)codecs->Formats[index].Name);
+		TRACE1("Opening using codec %S", (const wchar_t*)CodecTools::codecs.Formats[index].Name);
 
 		HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
 
@@ -165,12 +143,12 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		// Try all known codecs
 		TRACE("Iterating through all available codecs...")
 		bool success = false;
-		for (int i = 0; i < codecs->Formats.Size(); i++) {
-			TRACE1("Trying codec %S", (const wchar_t*)codecs->Formats[i].Name);
+		for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
+			TRACE1("Trying codec %S", (const wchar_t*)CodecTools::codecs.Formats[i].Name);
 
 			stream->Seek(0, STREAM_SEEK_SET, NULL);
 
-			codecs->CreateInArchive(i, archive);
+			CodecTools::codecs.CreateInArchive(i, archive);
 		    if (!archive) {
 		    	continue;
 		    }
@@ -180,7 +158,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		    	continue;
 			}
 
-		    formatNameString = codecs->Formats[i].Name;
+		    formatNameString = CodecTools::codecs.Formats[i].Name;
 		    success = true;
 		    break;
 		}
