@@ -119,12 +119,6 @@ public:
 };
 
 
-/**
- * Load 7-Zip DLL.
- *
- * Return: NULL - ok, else error message
- */
-const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc);
 
 
 #endif /*SEVENZIPJBINDING_H_*/

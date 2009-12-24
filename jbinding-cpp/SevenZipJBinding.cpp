@@ -10,6 +10,7 @@
 #include <stdlib.h>
 
 #include "SevenZipJBinding.h"
+
 // #include "Common/MyInitGuid.h"
 
 // #include "Windows/DLL.h"
@@ -65,7 +66,6 @@ extern "C"
 #include "Windows/System.h"
 */
 
-
 /**
  * Fatal error
  */
@@ -89,35 +89,4 @@ void fatal(const char * fmt, ...) {
 	*i = 0;
 }
 
-
-
-/**
- * Load 7-Zip dynamic library.
- *
- * Return: NULL - ok, else error message
- */
-const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
-	TRACE("Loading 7-Zip library")
-
-	*createObjectFunc = NULL;
-	/*
-	static NWindows::NDLL::CLibrary library;
-
-	if (!library.Load(TEXT(SEVENZIPJBINDING_LIBRARY_NAME_FILENAME))) {
-		return "Can not load library";
-	}
-
-	*createObjectFunc = (CreateObjectFunc) library.GetProcAddress("CreateObject");
-
-	TRACE1("7-Zip CreateObjectFunc: 0x%08X", *createObjectFunc)
-
-	if (NULL == *createObjectFunc) {
-		return "Not a 7-Zip Library. Missing 'CreateObject' export name";
-	}
-
-	TRACE("Library loaded")
-
-	return NULL; // No error message
-	*/
-}
 
