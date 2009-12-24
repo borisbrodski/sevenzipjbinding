@@ -163,6 +163,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
         openBadArchiveMultithreaded(ArchiveFormat.ARJ);
     }
 
+    // TODO write a test (using @After), that all archive formats was tested above
 
     public void openBadArchive(ArchiveFormat archiveFormat) throws Throwable {
         int pass = 0;
