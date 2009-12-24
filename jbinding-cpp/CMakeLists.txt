@@ -680,6 +680,7 @@ FILE(MAKE_DIRECTORY ${JAVAH_OUTPUT_DIR})
 SET(JAVAH_JAVA_CLASS_LIST
     net.sf.sevenzipjbinding.SevenZip
     net.sf.sevenzipjbinding.impl.InArchiveImpl
+    net.sf.sevenzipjbinding.impl.OutArchiveImpl
 )
 
 

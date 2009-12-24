@@ -230,3 +230,26 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    checkArchiveFormatForOutArchive
+ * Signature: (Ljava/lang/String;)Z
+ */
+JBINDING_JNIEXPORT jboolean JNICALL Java_net_sf_sevenzipjbinding_SevenZip_checkArchiveFormatForOutArchive
+  (JNIEnv * env, jclass thiz, jstring formatName) {
+	TRACE("SevenZip.checkArchiveFormatForOutArchive()")
+
+	NativeMethodContext nativeMethodContext(env);
+
+	TRY
+
+	JNIInstance jniInstance(&nativeMethodContext);
+
+	UString formatNameString;
+	int index = CodecTools::getIndexByName(env, formatName, formatNameString);
+
+	return CodecTools::codecs.Formats[index].CreateOutArchive != NULL;
+
+	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
+}
