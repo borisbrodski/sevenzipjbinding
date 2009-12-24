@@ -12,28 +12,28 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import org.junit.Test;
 
 public class GetNumberOfItemInArchive {
-	@Test
-	public void snippetRunner() throws Exception {
-		assertEquals(4, getNumberOfItemsInArchive("testdata/snippets/simple.zip"));
-	}
+    @Test
+    public void snippetRunner() throws Exception {
+        assertEquals(4, getNumberOfItemsInArchive("testdata/snippets/simple.zip"));
+    }
 
-	/* BEGIN_SNIPPET(GetNumberOfItemsInArchive) */
-	private int getNumberOfItemsInArchive(String archiveFile) throws Exception {
-		ISevenZipInArchive archive;
-		RandomAccessFile randomAccessFile;
+    /* BEGIN_SNIPPET(GetNumberOfItemsInArchive) */
+    private int getNumberOfItemsInArchive(String archiveFile) throws Exception {
+        ISevenZipInArchive archive;
+        RandomAccessFile randomAccessFile;
 
-		randomAccessFile = new RandomAccessFile(archiveFile, "r");
+        randomAccessFile = new RandomAccessFile(archiveFile, "r");
 
-		archive = SevenZip.openInArchive(ArchiveFormat.ZIP, // null - autodetect
-				new RandomAccessFileInStream(//
-						randomAccessFile));
+        archive = SevenZip.openInArchive(ArchiveFormat.ZIP, // null - autodetect
+                new RandomAccessFileInStream(//
+                        randomAccessFile));
 
-		int numberOfItems = archive.getNumberOfItems();
+        int numberOfItems = archive.getNumberOfItems();
 
-		archive.close();
-		randomAccessFile.close();
+        archive.close();
+        randomAccessFile.close();
 
-		return numberOfItems;
-	}
-	/* END_SNIPPET */
+        return numberOfItems;
+    }
+    /* END_SNIPPET */
 }

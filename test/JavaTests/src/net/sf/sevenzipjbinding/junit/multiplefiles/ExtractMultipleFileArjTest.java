@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractMultipleFileArjTest extends ExtractMultipleFileAbstractTest {
 
-	public ExtractMultipleFileArjTest() {
-		super(ArchiveFormat.ARJ, 0, 2, 4);
-	}
+    public ExtractMultipleFileArjTest() {
+        super(ArchiveFormat.ARJ, 0, 2, 4);
+    }
 
 }

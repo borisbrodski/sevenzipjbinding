@@ -14,26 +14,26 @@ import org.junit.Test;
 
 public class FirstStepsSimpleSnippets {
 
-	private static final String TEST_ARCHIVE_SIMPLE = "testdata/snippets/simple.zip";
-	private ISevenZipInArchive inArchive;
-	private RandomAccessFile randomAccessFile;
+    private static final String TEST_ARCHIVE_SIMPLE = "testdata/snippets/simple.zip";
+    private ISevenZipInArchive inArchive;
+    private RandomAccessFile randomAccessFile;
 
-	@Test
-	public void testOpenArchiveSnippet() throws Exception {
-		openArchive(TEST_ARCHIVE_SIMPLE);
-		assertNotNull(inArchive);
-		inArchive.close();
-		randomAccessFile.close();
-	}
+    @Test
+    public void testOpenArchiveSnippet() throws Exception {
+        openArchive(TEST_ARCHIVE_SIMPLE);
+        assertNotNull(inArchive);
+        inArchive.close();
+        randomAccessFile.close();
+    }
 
-	/* BEGIN_SNIPPET(SimpleOpen) */
-	public void openArchive(String archiveFilename) //
-			throws SevenZipException, FileNotFoundException {
+    /* BEGIN_SNIPPET(SimpleOpen) */
+    public void openArchive(String archiveFilename) //
+            throws SevenZipException, FileNotFoundException {
 
-		/*f*/randomAccessFile/* */= new RandomAccessFile(archiveFilename, "r");
+        /*f*/randomAccessFile/* */= new RandomAccessFile(archiveFilename, "r");
 
-		/*f*/inArchive/* */= SevenZip.openInArchive(null, // Choose format automatically
-				new RandomAccessFileInStream(randomAccessFile));
-	}
-	/* END_SNIPPET */
+        /*f*/inArchive/* */= SevenZip.openInArchive(null, // Choose format automatically
+                new RandomAccessFileInStream(randomAccessFile));
+    }
+    /* END_SNIPPET */
 }

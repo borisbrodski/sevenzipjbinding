@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileRarTest extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileRarTest() {
-		super(ArchiveFormat.RAR, 0, 2, 5);
-	}
+    public ExtractSingleFileRarTest() {
+        super(ArchiveFormat.RAR, 0, 2, 5);
+    }
 
 }

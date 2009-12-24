@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileSevenZipPassTest extends ExtractSingleFileAbstractPassTest {
 
-	public ExtractSingleFileSevenZipPassTest() {
-		super(ArchiveFormat.SEVEN_ZIP, 0, 5, 9);
-	}
+    public ExtractSingleFileSevenZipPassTest() {
+        super(ArchiveFormat.SEVEN_ZIP, 0, 5, 9);
+    }
 
 }

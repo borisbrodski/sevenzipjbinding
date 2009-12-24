@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileCabTest extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileCabTest() {
-		super(ArchiveFormat.CAB, 0, 1, 1);
-	}
+    public ExtractSingleFileCabTest() {
+        super(ArchiveFormat.CAB, 0, 1, 1);
+    }
 
 }

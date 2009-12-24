@@ -185,131 +185,131 @@ package net.sf.sevenzipjbinding;
  * @version 4.65-1
  */
 public enum ArchiveFormat {
-	/**
-	 * Zip format.
-	 */
-	ZIP("Zip"),
+    /**
+     * Zip format.
+     */
+    ZIP("Zip"),
 
-	/**
-	 * Tar format.
-	 */
-	TAR("Tar"),
+    /**
+     * Tar format.
+     */
+    TAR("Tar"),
 
-	/**
-	 * Split format.
-	 */
-	SPLIT("Split"),
+    /**
+     * Split format.
+     */
+    SPLIT("Split"),
 
-	/**
-	 * Rar format.
-	 */
-	RAR("Rar"), //
+    /**
+     * Rar format.
+     */
+    RAR("Rar"), //
 
-	/**
-	 * Lzma format.
-	 */
-	LZMA("Lzma"),
+    /**
+     * Lzma format.
+     */
+    LZMA("Lzma"),
 
-	/**
-	 * Iso format.
-	 */
-	ISO("Iso"),
+    /**
+     * Iso format.
+     */
+    ISO("Iso"),
 
-	/**
-	 * Hfs format
-	 */
-	HFS("HFS"),
+    /**
+     * Hfs format
+     */
+    HFS("HFS"),
 
-	/**
-	 * Gzip format
-	 */
-	GZIP("GZip"),
+    /**
+     * Gzip format
+     */
+    GZIP("GZip"),
 
-	/**
-	 * Cpio format.
-	 */
-	CPIO("Cpio"),
+    /**
+     * Cpio format.
+     */
+    CPIO("Cpio"),
 
-	/**
-	 * BZip2 format.
-	 */
-	BZIP2("BZIP2"),
+    /**
+     * BZip2 format.
+     */
+    BZIP2("BZIP2"),
 
-	/**
-	 * 7z format.
-	 */
-	SEVEN_ZIP("7z"),
+    /**
+     * 7z format.
+     */
+    SEVEN_ZIP("7z"),
 
-	/**
-	 * Z format.
-	 */
-	Z("Z"),
+    /**
+     * Z format.
+     */
+    Z("Z"),
 
-	/**
-	 * Arj format
-	 */
-	ARJ("Arj"), //
+    /**
+     * Arj format
+     */
+    ARJ("Arj"), //
 
-	/**
-	 * Cab format.
-	 */
-	CAB("Cab"),
+    /**
+     * Cab format.
+     */
+    CAB("Cab"),
 
-	/**
-	 * Lzh
-	 */
-	LZH("Lzh"),
+    /**
+     * Lzh
+     */
+    LZH("Lzh"),
 
-	/**
-	 * Chm
-	 */
-	CHM("Chm"),
+    /**
+     * Chm
+     */
+    CHM("Chm"),
 
-	/**
-	 * Nsis
-	 */
-	NSIS("Nsis"),
+    /**
+     * Nsis
+     */
+    NSIS("Nsis"),
 
-	/**
-	 * Deb
-	 */
-	DEB("Deb"),
+    /**
+     * Deb
+     */
+    DEB("Deb"),
 
-	/**
-	 * Rpm
-	 */
-	RPM("Rpm"),
+    /**
+     * Rpm
+     */
+    RPM("Rpm"),
 
-	/**
-	 * Udf
-	 */
-	UDF("Udf"),
+    /**
+     * Udf
+     */
+    UDF("Udf"),
 
-	/**
-	 * Xar
-	 */
-	XAR("Xar");
+    /**
+     * Xar
+     */
+    XAR("Xar");
 
-	private String methodName;
+    private String methodName;
 
-	ArchiveFormat(String methodName) {
-		this.methodName = methodName;
-	}
+    ArchiveFormat(String methodName) {
+        this.methodName = methodName;
+    }
 
-	/**
-	 * Return name of the archive method
-	 * 
-	 * @return name of the archive method
-	 */
-	public String getMethodName() {
-		return methodName;
-	}
+    /**
+     * Return name of the archive method
+     * 
+     * @return name of the archive method
+     */
+    public String getMethodName() {
+        return methodName;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return methodName;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return methodName;
+    }
 }

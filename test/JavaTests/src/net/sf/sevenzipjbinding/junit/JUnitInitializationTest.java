@@ -17,26 +17,26 @@ import org.junit.Test;
  */
 public class JUnitInitializationTest extends JUnitNativeTestBase {
 
-	/**
-	 * Tests standard initialization of SevenZipJBinding by the base class for all JUnit tests.
-	 */
-	@Test
-	public void initializationTest() {
-		assertTrue("SevenZip wasn't initialized by base class " + this.getClass().getSuperclass().getCanonicalName(),
-				SevenZip.isInitializedSuccessfully());
-	}
+    /**
+     * Tests standard initialization of SevenZipJBinding by the base class for all JUnit tests.
+     */
+    @Test
+    public void initializationTest() {
+        assertTrue("SevenZip wasn't initialized by base class " + this.getClass().getSuperclass().getCanonicalName(),
+                SevenZip.isInitializedSuccessfully());
+    }
 
-	/**
-	 * After SevenZipJBinding was initialized by the base class {@link JUnitNativeTestBase} another call to any of
-	 * initialization routines should return no exception.
-	 * 
-	 * @throws SevenZipNativeInitializationException
-	 *             throws, if SevenZipJBinding will proceed with the initialization and it's will fail.
-	 */
-	@Test
-	public void doubleInitializationTest() throws SevenZipNativeInitializationException {
-		SevenZip.initSevenZipFromPlatformJAR("PlatformThatDoesNotExist");
-		SevenZip.initSevenZipFromPlatformJAR();
-		SevenZip.initSevenZipFromPlatformJAR(new File("DirectoryThatDoesNotExists"));
-	}
+    /**
+     * After SevenZipJBinding was initialized by the base class {@link JUnitNativeTestBase} another call to any of
+     * initialization routines should return no exception.
+     * 
+     * @throws SevenZipNativeInitializationException
+     *             throws, if SevenZipJBinding will proceed with the initialization and it's will fail.
+     */
+    @Test
+    public void doubleInitializationTest() throws SevenZipNativeInitializationException {
+        SevenZip.initSevenZipFromPlatformJAR("PlatformThatDoesNotExist");
+        SevenZip.initSevenZipFromPlatformJAR();
+        SevenZip.initSevenZipFromPlatformJAR(new File("DirectoryThatDoesNotExists"));
+    }
 }

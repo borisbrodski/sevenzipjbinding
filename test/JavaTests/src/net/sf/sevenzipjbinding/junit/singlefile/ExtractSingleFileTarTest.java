@@ -4,8 +4,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileTarTest extends ExtractSingleFileAbstractTest {
 
-	public ExtractSingleFileTarTest() {
-		super(ArchiveFormat.TAR, 0, 0, 0);
-	}
+    public ExtractSingleFileTarTest() {
+        super(ArchiveFormat.TAR, 0, 0, 0);
+    }
 
 }

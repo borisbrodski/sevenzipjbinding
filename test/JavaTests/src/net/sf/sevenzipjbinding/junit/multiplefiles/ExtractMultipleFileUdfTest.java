@@ -4,12 +4,12 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractMultipleFileUdfTest extends ExtractMultipleFileAbstractTest {
 
-	public ExtractMultipleFileUdfTest() {
-		super(ArchiveFormat.UDF, 102, 150, 150);
-	}
+    public ExtractMultipleFileUdfTest() {
+        super(ArchiveFormat.UDF, 102, 150, 150);
+    }
 
-	@Override
-	protected boolean usingZippedTestArchive() {
-		return true;
-	}
+    @Override
+    protected boolean usingZippedTestArchive() {
+        return true;
+    }
 }

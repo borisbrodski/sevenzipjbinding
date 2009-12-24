@@ -13,44 +13,44 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 4.65-1
  */
 public class SequentialInStreamImpl implements ISequentialInStream {
-	private InputStream inputStream;
+    private InputStream inputStream;
 
-	/**
-	 * Create instance of {@link SequentialInStreamImpl} based on {@link InputStream}
-	 * 
-	 * @param inputStream
-	 *            input stream to use
-	 */
-	public SequentialInStreamImpl(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
+    /**
+     * Create instance of {@link SequentialInStreamImpl} based on {@link InputStream}
+     * 
+     * @param inputStream
+     *            input stream to use
+     */
+    public SequentialInStreamImpl(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public int read(byte[] data) throws SevenZipException {
-		if (data.length == 0) {
-			return 0;
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public int read(byte[] data) throws SevenZipException {
+        if (data.length == 0) {
+            return 0;
+        }
 
-		try {
-			int read = inputStream.read(data);
-			if (read == -1) {
-				return 0;
-			} else {
-				return read;
-			}
-		} catch (IOException e) {
-			throw new SevenZipException("Error reading input stream", e);
-		}
-	}
+        try {
+            int read = inputStream.read(data);
+            if (read == -1) {
+                return 0;
+            } else {
+                return read;
+            }
+        } catch (IOException e) {
+            throw new SevenZipException("Error reading input stream", e);
+        }
+    }
 
-	/**
-	 * Get underlaying input stream
-	 * 
-	 * @return input stream
-	 */
-	public InputStream getInputStream() {
-		return inputStream;
-	}
+    /**
+     * Get underlaying input stream
+     * 
+     * @return input stream
+     */
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 }

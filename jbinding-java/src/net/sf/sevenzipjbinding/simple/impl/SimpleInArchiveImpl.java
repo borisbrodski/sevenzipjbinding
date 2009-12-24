@@ -12,70 +12,70 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
  * @version 4.65-1
  */
 public class SimpleInArchiveImpl implements ISimpleInArchive {
-	private final ISevenZipInArchive sevenZipInArchive;
-	private boolean wasClosed = false;
+    private final ISevenZipInArchive sevenZipInArchive;
+    private boolean wasClosed = false;
 
-	/**
-	 * Constructing an instance of {@link SimpleInArchiveImpl} from a instance of {@link ISevenZipInArchive}.
-	 * 
-	 * @param sevenZipInArchive
-	 *            a base instance of {@link ISevenZipInArchive}
-	 */
-	public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
-		this.sevenZipInArchive = sevenZipInArchive;
-	}
+    /**
+     * Constructing an instance of {@link SimpleInArchiveImpl} from a instance of {@link ISevenZipInArchive}.
+     * 
+     * @param sevenZipInArchive
+     *            a base instance of {@link ISevenZipInArchive}
+     */
+    public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
+        this.sevenZipInArchive = sevenZipInArchive;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public void close() throws SevenZipException {
-		sevenZipInArchive.close();
-		wasClosed = true;
-	}
+    public void close() throws SevenZipException {
+        sevenZipInArchive.close();
+        wasClosed = true;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException {
-		ISimpleInArchiveItem[] result = new ISimpleInArchiveItem[getNumberOfItems()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = new SimpleInArchiveItemImpl(this, i);
-		}
-		return result;
-	}
+    public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException {
+        ISimpleInArchiveItem[] result = new ISimpleInArchiveItem[getNumberOfItems()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new SimpleInArchiveItemImpl(this, i);
+        }
+        return result;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public int getNumberOfItems() throws SevenZipException {
-		return testAndGetSafeSevenZipInArchive().getNumberOfItems();
-	}
+    public int getNumberOfItems() throws SevenZipException {
+        return testAndGetSafeSevenZipInArchive().getNumberOfItems();
+    }
 
-	/**
-	 * Tests, if 7-Zip In archive interface can be accessed safely.
-	 * 
-	 * @return 7-Zip In archive interface
-	 * @throws SevenZipException
-	 *             archive can't be accessed any more
-	 */
-	public ISevenZipInArchive testAndGetSafeSevenZipInArchive() throws SevenZipException {
-		if (wasClosed) {
-			throw new SevenZipException("Archive was closed");
-		}
-		return sevenZipInArchive;
-	}
+    /**
+     * Tests, if 7-Zip In archive interface can be accessed safely.
+     * 
+     * @return 7-Zip In archive interface
+     * @throws SevenZipException
+     *             archive can't be accessed any more
+     */
+    public ISevenZipInArchive testAndGetSafeSevenZipInArchive() throws SevenZipException {
+        if (wasClosed) {
+            throw new SevenZipException("Archive was closed");
+        }
+        return sevenZipInArchive;
+    }
 
-	/**
-	 * ${@inheritDoc}
-	 */
-	public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException {
-		if (index < 0 || index >= sevenZipInArchive.getNumberOfItems()) {
-			throw new SevenZipException("Index " + index + " is out of range. Number of items in archive: "
-					+ sevenZipInArchive.getNumberOfItems());
-		}
-		return new SimpleInArchiveItemImpl(this, index);
-	}
+    /**
+     * ${@inheritDoc}
+     */
+    public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException {
+        if (index < 0 || index >= sevenZipInArchive.getNumberOfItems()) {
+            throw new SevenZipException("Index " + index + " is out of range. Number of items in archive: "
+                    + sevenZipInArchive.getNumberOfItems());
+        }
+        return new SimpleInArchiveItemImpl(this, index);
+    }
 }

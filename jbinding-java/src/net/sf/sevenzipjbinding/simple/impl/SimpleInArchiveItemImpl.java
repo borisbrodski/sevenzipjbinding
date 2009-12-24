@@ -17,188 +17,188 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
  */
 public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
 
-	private final SimpleInArchiveImpl simpleInArchiveImpl;
-	private final int index;
+    private final SimpleInArchiveImpl simpleInArchiveImpl;
+    private final int index;
 
-	/**
-	 * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
-	 * of archive <code>simpleInArchiveImpl</code>.
-	 * 
-	 * @param simpleInArchiveImpl
-	 *            opened archive
-	 * @param index
-	 *            index of the item in archive
-	 */
-	public SimpleInArchiveItemImpl(SimpleInArchiveImpl simpleInArchiveImpl, int index) {
-		this.simpleInArchiveImpl = simpleInArchiveImpl;
-		this.index = index;
-	}
+    /**
+     * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
+     * of archive <code>simpleInArchiveImpl</code>.
+     * 
+     * @param simpleInArchiveImpl
+     *            opened archive
+     * @param index
+     *            index of the item in archive
+     */
+    public SimpleInArchiveItemImpl(SimpleInArchiveImpl simpleInArchiveImpl, int index) {
+        this.simpleInArchiveImpl = simpleInArchiveImpl;
+        this.index = index;
+    }
 
-	/**
-	 * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
-	 * of archive <code>sevenZipInArchive</code>.
-	 * 
-	 * @param sevenZipInArchive
-	 *            opened archive
-	 * @param index
-	 *            index of the item in archive
-	 */
-	public SimpleInArchiveItemImpl(ISevenZipInArchive sevenZipInArchive, int index) {
-		this.simpleInArchiveImpl = new SimpleInArchiveImpl(sevenZipInArchive);
-		this.index = index;
-	}
+    /**
+     * Create instance of {@link SimpleInArchiveItemImpl} representing archive item with index index<code>index</code>
+     * of archive <code>sevenZipInArchive</code>.
+     * 
+     * @param sevenZipInArchive
+     *            opened archive
+     * @param index
+     *            index of the item in archive
+     */
+    public SimpleInArchiveItemImpl(ISevenZipInArchive sevenZipInArchive, int index) {
+        this.simpleInArchiveImpl = new SimpleInArchiveImpl(sevenZipInArchive);
+        this.index = index;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getPath() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.PATH);
-	}
+    public String getPath() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.PATH);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Integer getAttributes() throws SevenZipException {
-		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ATTRIBUTES);
-	}
+    public Integer getAttributes() throws SevenZipException {
+        return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ATTRIBUTES);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Integer getCRC() throws SevenZipException {
-		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ATTRIBUTES);
-	}
+    public Integer getCRC() throws SevenZipException {
+        return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ATTRIBUTES);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getComment() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.COMMENT);
-	}
+    public String getComment() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.COMMENT);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Date getCreationTime() throws SevenZipException {
-		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.CREATION_TIME);
-	}
+    public Date getCreationTime() throws SevenZipException {
+        return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.CREATION_TIME);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getGroup() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.GROUP);
-	}
+    public String getGroup() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.GROUP);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getHostOS() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.HOST_OS);
-	}
+    public String getHostOS() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.HOST_OS);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Date getLastAccessTime() throws SevenZipException {
-		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_ACCESS_TIME);
-	}
+    public Date getLastAccessTime() throws SevenZipException {
+        return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_ACCESS_TIME);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Date getLastWriteTime() throws SevenZipException {
-		return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_WRITE_TIME);
-	}
+    public Date getLastWriteTime() throws SevenZipException {
+        return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_WRITE_TIME);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getMethod() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.METHOD);
-	}
+    public String getMethod() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.METHOD);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Long getPackedSize() throws SevenZipException {
-		return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.PACKED_SIZE);
-	}
+    public Long getPackedSize() throws SevenZipException {
+        return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.PACKED_SIZE);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Integer getPosition() throws SevenZipException {
-		return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.POSITION);
-	}
+    public Integer getPosition() throws SevenZipException {
+        return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.POSITION);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Long getSize() throws SevenZipException {
-		return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.SIZE);
-	}
+    public Long getSize() throws SevenZipException {
+        return (Long) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.SIZE);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public String getUser() throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.USER);
-	}
+    public String getUser() throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getStringProperty(index, PropID.USER);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public Boolean isCommented() throws SevenZipException {
-		return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.COMMENTED);
-	}
+    public Boolean isCommented() throws SevenZipException {
+        return (Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.COMMENTED);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public boolean isEncrypted() throws SevenZipException {
-		return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ENCRYPTED))
-				.booleanValue();
-	}
+    public boolean isEncrypted() throws SevenZipException {
+        return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ENCRYPTED))
+                .booleanValue();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public boolean isFolder() throws SevenZipException {
-		return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.IS_FOLDER))
-				.booleanValue();
-	}
+    public boolean isFolder() throws SevenZipException {
+        return ((Boolean) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.IS_FOLDER))
+                .booleanValue();
+    }
 
-	public ExtractOperationResult extractSlow(ISequentialOutStream outStream) throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream);
-	}
+    public ExtractOperationResult extractSlow(ISequentialOutStream outStream) throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream);
+    }
 
-	public ExtractOperationResult extractSlow(ISequentialOutStream outStream, String password) throws SevenZipException {
-		return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream, password);
-	}
+    public ExtractOperationResult extractSlow(ISequentialOutStream outStream, String password) throws SevenZipException {
+        return simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().extractSlow(index, outStream, password);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
 
-	public int getItemIndex() {
-		return index;
-	}
+    public int getItemIndex() {
+        return index;
+    }
 }

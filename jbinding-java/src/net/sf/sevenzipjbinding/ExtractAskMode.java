@@ -8,38 +8,38 @@ package net.sf.sevenzipjbinding;
  */
 public enum ExtractAskMode {
 
-	/**
-	 * Extract a archive item
-	 */
-	EXTRACT,
+    /**
+     * Extract a archive item
+     */
+    EXTRACT,
 
-	/**
-	 * Test a archive item
-	 */
-	TEST,
+    /**
+     * Test a archive item
+     */
+    TEST,
 
-	/**
-	 * Skip extraction of a archive item
-	 */
-	SKIP,
+    /**
+     * Skip extraction of a archive item
+     */
+    SKIP,
 
-	/**
-	 * Unknown mode
-	 */
-	UNKNOWN_ASK_MODE;
+    /**
+     * Unknown mode
+     */
+    UNKNOWN_ASK_MODE;
 
-	/**
-	 * Return ask mode enumeration item by index
-	 * 
-	 * @param index
-	 *            index of enumeration item
-	 * @return ask mode enumeration item by index
-	 */
-	public static ExtractAskMode getExtractAskModeByIndex(int index) {
-		if (index >= 0 && index < values().length) {
-			return values()[index];
-		}
+    /**
+     * Return ask mode enumeration item by index
+     * 
+     * @param index
+     *            index of enumeration item
+     * @return ask mode enumeration item by index
+     */
+    public static ExtractAskMode getExtractAskModeByIndex(int index) {
+        if (index >= 0 && index < values().length) {
+            return values()[index];
+        }
 
-		return UNKNOWN_ASK_MODE;
-	}
+        return UNKNOWN_ASK_MODE;
+    }
 }
