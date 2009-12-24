@@ -188,12 +188,12 @@ public enum ArchiveFormat {
     /**
      * Zip format.
      */
-    ZIP("Zip"),
+    ZIP("Zip", true),
 
     /**
      * Tar format.
      */
-    TAR("Tar"),
+    TAR("Tar", true),
 
     /**
      * Split format.
@@ -223,7 +223,7 @@ public enum ArchiveFormat {
     /**
      * Gzip format
      */
-    GZIP("GZip"),
+    GZIP("GZip", true),
 
     /**
      * Cpio format.
@@ -233,12 +233,12 @@ public enum ArchiveFormat {
     /**
      * BZip2 format.
      */
-    BZIP2("BZIP2"),
+    BZIP2("BZIP2", true),
 
     /**
      * 7z format.
      */
-    SEVEN_ZIP("7z"),
+    SEVEN_ZIP("7z", true),
 
     /**
      * Z format.
@@ -291,9 +291,15 @@ public enum ArchiveFormat {
     XAR("Xar");
 
     private String methodName;
+    private boolean outArchiveSupported;
 
-    ArchiveFormat(String methodName) {
+    private ArchiveFormat(String methodName) {
+        this(methodName, false);
+    }
+
+    private ArchiveFormat(String methodName, boolean outArchiveSupported) {
         this.methodName = methodName;
+        this.outArchiveSupported = outArchiveSupported;
     }
 
     /**
@@ -303,6 +309,16 @@ public enum ArchiveFormat {
      */
     public String getMethodName() {
         return methodName;
+    }
+
+    /**
+     * Return whether this archive type supports creation/update operations
+     * 
+     * @return <code>true</code> - creation/update operations are supported,<br>
+     *         <code>false</code> - only archive extraction is supported
+     */
+    public boolean isOutArchiveSupported() {
+        return outArchiveSupported;
     }
 
     /**

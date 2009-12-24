@@ -98,8 +98,10 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
  */
 public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //
-    /*    */JUnitInitializationTest.class //
+    /*    */JUnitInitializationTest.class, //
+            ArchiveFormatTest.class //
     };
+
     static Class<?>[] badArchiveTests = { //
     /*    */GarbageArchiveFileTest.class // 
     };

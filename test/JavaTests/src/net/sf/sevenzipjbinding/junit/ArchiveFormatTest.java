@@ -1,21 +1,20 @@
 package net.sf.sevenzipjbinding.junit;
 
+import junit.framework.Assert;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.SevenZip;
 
 import org.junit.Test;
 
-public class ArchiveFormatTest {
+public class ArchiveFormatTest extends JUnitNativeTestBase {
     @Test
     public void testForOutArchive() {
         for (ArchiveFormat archiveFormat : ArchiveFormat.values()) {
             try {
-                System.out.print("Testing " + archiveFormat + ": ");
-                System.out.flush();
                 SevenZip.openOutArchive(archiveFormat);
-                System.out.println("Ok");
+                Assert.assertTrue(archiveFormat.isOutArchiveSupported());
             } catch (Exception e) {
-                System.out.println("Exception");
+                Assert.assertFalse(archiveFormat.isOutArchiveSupported());
             }
         }
     }

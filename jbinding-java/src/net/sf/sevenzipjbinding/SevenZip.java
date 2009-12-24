@@ -659,6 +659,9 @@ public class SevenZip {
 
     public static ISevenZipOutArchive openOutArchive(ArchiveFormat archiveFormat) {
         ensureLibraryIsInitialized();
+        if (!archiveFormat.isOutArchiveSupported()) {
+            throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
+        }
         if (!checkArchiveFormatForOutArchive(archiveFormat.getMethodName())) {
             throw new IllegalStateException("Can't create OutArchive: archive format '" + archiveFormat
                     + "' doesn't support archive creation.");
