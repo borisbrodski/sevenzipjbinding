@@ -29,4 +29,11 @@ public interface ISevenZipOutArchive {
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
             IArchiveUpdateCallback archiveUpdateCallback);
 
+    /**
+     * Return archive format used with this instance of {@link IOutStream}
+     * 
+     * @return archive format used with this instance of {@link IOutStream}
+     */
+    public ArchiveFormat getArchiveFormat();
+
 }
