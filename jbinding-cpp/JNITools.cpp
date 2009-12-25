@@ -13,12 +13,14 @@ static jmethodID g_IntegerIntValue;
 
 static jclass g_LongClass;
 static jmethodID g_LongValueOf;
+static jmethodID g_LongLongValue;
 
 static jclass g_DoubleClass;
 static jmethodID g_DoubleValueOf;
 
 static jclass g_BooleanClass;
 static jmethodID g_BooleanValueOf;
+static jmethodID g_BooleanBooleanValue;
 
 static jclass g_StringClass;
 
@@ -54,6 +56,10 @@ static void localinit(JNIEnv * env) {
 			"(J)L" JAVA_LONG ";");
 	FATALIF(g_LongValueOf == NULL, "Can't find Long.valueOf() method");
 
+	g_LongLongValue = env->GetMethodID(g_IntegerClass, "longValue", "()J");
+	FATALIF(g_LongLongValue == NULL, "Can't find Long.longValue() method");
+
+	// class: Double
 	g_DoubleClass = env->FindClass(JAVA_DOUBLE);
 	FATALIF(g_DoubleClass == NULL, "Can't find Double class");
 	g_DoubleClass = (jclass) env->NewGlobalRef(g_DoubleClass);
@@ -63,11 +69,17 @@ static void localinit(JNIEnv * env) {
 
 	g_BooleanClass = env->FindClass(JAVA_BOOLEAN);
 	FATALIF(g_BooleanClass == NULL, "Can't find Boolean class");
+
 	g_BooleanClass = (jclass) env->NewGlobalRef(g_BooleanClass);
 	g_BooleanValueOf = env->GetStaticMethodID(g_BooleanClass, "valueOf",
 			"(Z)Ljava/lang/Boolean;");
 	FATALIF(g_BooleanValueOf == NULL, "Can't find Boolean.valueOf() method");
 
+	g_BooleanBooleanValue = env->GetMethodID(g_BooleanClass, "booleanValue", "()Z");
+	FATALIF(g_BooleanBooleanValue == NULL, "Can't find Boolean.booleanValue() method");
+
+
+	// class: String
 	g_StringClass = env->FindClass(JAVA_STRING);
 	FATALIF(g_StringClass == NULL, "Can't find String class");
 	g_StringClass = (jclass) env->NewGlobalRef(g_StringClass);
@@ -244,10 +256,17 @@ void ObjectToPropVariant(JNIInstance * jniInstance, jobject object,
 			cPropVariant = (Int32)value;
 		} else if (env->IsInstanceOf(object, g_StringClass)) {
 	        const jchar * jChars = env->GetStringChars((jstring)object, NULL);
-			BSTR bstr;
-	        StringToBstr(UnicodeHelper(jChars), &bstr);
-			cPropVariant = bstr;
+//			BSTR bstr;
+//	        StringToBstr(UnicodeHelper(jChars), &bstr);
+//			cPropVariant = bstr;
+	        cPropVariant = UString(UnicodeHelper(jChars));
 	        env->ReleaseStringChars((jstring)object, jChars);
+		} else if (env->IsInstanceOf(object, g_BooleanClass)) {
+			jboolean value = env->CallBooleanMethod(object, g_BooleanBooleanValue);
+			cPropVariant = (bool)value;
+		} else if (env->IsInstanceOf(object, g_LongClass)) {
+			jlong value = env->CallLongMethod(object, g_LongLongValue);
+			cPropVariant = (UInt64)value;
 		} else {
 			jniInstance->ThrowSevenZipException(
 					"Can't convert object to PropVariant"); // TODO Improve error message by giving name of the class
