@@ -4,8 +4,7 @@
 #include "CPPToJavaOutStream.h"
 
 
-STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition)
-{
+STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
     TRACE_OBJECT_CALL("Seek");
 
 	TRACE2("SEEK(offset=%i, origin=%i)", (int)offset, (int)seekOrigin);
@@ -33,4 +32,21 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
 	return S_OK;
 }
 
+STDMETHODIMP CPPToJavaOutStream::SetSize(Int64 newSize) {
+    TRACE_OBJECT_CALL("SetSize");
+
+	TRACE1("SetSize(size=%i)", (int)newSize);
+
+    JNIInstance jniInstance(_nativeMethodContext);
+    JNIEnv * env = jniInstance.GetEnv();
+
+    jniInstance.PrepareCall();
+	env->CallVoidMethod(_javaImplementation, _setSizeMethodID, (jlong)newSize);
+
+	if (jniInstance.IsExceptionOccurs()) {
+		return S_FALSE;
+	}
+
+	return S_OK;
+}
 

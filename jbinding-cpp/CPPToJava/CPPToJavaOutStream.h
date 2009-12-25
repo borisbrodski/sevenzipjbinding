@@ -6,6 +6,7 @@ class CPPToJavaOutStream : public virtual IOutStream, public CPPToJavaSequential
 {
 private:
 	jmethodID _seekMethodID;
+	jmethodID _setSizeMethodID;
 
 public:
 	CPPToJavaOutStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject inStream) :
@@ -14,6 +15,7 @@ public:
 	    TRACE_OBJECT_CREATION("CPPToJavaOutStream")
 
 		_seekMethodID = GetMethodId(initEnv, "seek", "(JI)J");
+		_setSizeMethodID = GetMethodId(initEnv, "setSize", "(J)V");
 		classname = "CPPToJavaOutStream";
 	}
 
@@ -29,9 +31,16 @@ public:
 		return result;
 	}
 
-	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
+	STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject)
 	{
-		return CPPToJavaSequentialOutStream::QueryInterface(refguid, p);
+	    if (iid == IID_IOutStream)
+	    {
+	        *outObject = (void *)(IOutStream *)this;
+	        AddRef();
+	        return S_OK;
+	    }
+
+		return CPPToJavaSequentialOutStream::QueryInterface(iid, outObject);
 	}
 
 	STDMETHOD_(ULONG, AddRef)()
@@ -46,6 +55,7 @@ public:
 
 	STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);
 
+	STDMETHOD(SetSize)(Int64 newSize);
 };
 
 #define __JAVA_OUT_STREAM_H__INCLUDED__
