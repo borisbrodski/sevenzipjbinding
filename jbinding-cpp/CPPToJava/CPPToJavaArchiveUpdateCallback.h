@@ -6,7 +6,7 @@
 
 class CPPToJavaArchiveUpdateCallback :
 					public virtual IArchiveUpdateCallback,
-					public virtual CPPToJavaProgress
+					public CPPToJavaProgress
 {
 
 private:
@@ -20,15 +20,17 @@ private:
     static jclass _propIDClass;
     static jmethodID _propIDGetPropIDByIndexMethodID;
 
-    void Init(JNIEnv * initEnv);
+    bool isInArchiveAttached;
+    void Init(JNIEnv * initEnv, bool isInArchiveAttached);
 
 public:
-    CPPToJavaArchiveUpdateCallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveUpdateCallback) :
+    CPPToJavaArchiveUpdateCallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveUpdateCallback,
+								   bool isInArchiveAttached) :
 		CPPToJavaProgress(nativeMethodContext, initEnv, archiveUpdateCallback)
     {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
 
-		Init(initEnv);
+		Init(initEnv, isInArchiveAttached);
         classname = "CPPToJavaArchiveOpenCallback";
     }
 
@@ -54,6 +56,25 @@ public:
 	    TRACE_OBJECT_CALL("SetCompleted");
         return CPPToJavaProgress::SetCompleted(completeValue);
     }
+
+	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
+	{
+	    TRACE_OBJECT_CALL("QueryInterface");
+
+		return CPPToJavaProgress::QueryInterface(refguid, p);
+	}
+
+	STDMETHOD_(ULONG, AddRef)()
+	{
+	    TRACE_OBJECT_CALL("AddRef");
+		return CPPToJavaProgress::AddRef();
+	}
+
+	STDMETHOD_(ULONG, Release)()
+	{
+	    TRACE_OBJECT_CALL("Release");
+		return CPPToJavaProgress::Release();
+	}
 
 };
 

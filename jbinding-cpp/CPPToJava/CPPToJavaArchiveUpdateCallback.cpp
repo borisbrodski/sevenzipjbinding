@@ -15,7 +15,8 @@ jmethodID CPPToJavaArchiveUpdateCallback::_setOperationResultID = NULL;
 jclass CPPToJavaArchiveUpdateCallback::_propIDClass = NULL;
 jmethodID CPPToJavaArchiveUpdateCallback::_propIDGetPropIDByIndexMethodID = NULL;
 
-void CPPToJavaArchiveUpdateCallback::Init(JNIEnv * initEnv) {
+void CPPToJavaArchiveUpdateCallback::Init(JNIEnv * initEnv, bool isInArchiveAttached) {
+	this->isInArchiveAttached = isInArchiveAttached;
     if (!_isNewDataID) {
 		// public boolean isNewData(int index);
     	_isNewDataID = GetMethodId(initEnv, "isNewData", "(I)Z");
@@ -67,32 +68,44 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index,
     JNIEnv * env = jniInstance.GetEnv();
 
     if (newData) {
-		jniInstance.PrepareCall();
-		jboolean isNewData = env->CallBooleanMethod(_javaImplementation, _isNewDataID, (jint)index);
-		if (jniInstance.IsExceptionOccurs())
-		{
-			return S_FALSE;
-		}
-		*newData = isNewData ? 1 : 0; // TODO Check, if this really helps
+    	if (isInArchiveAttached) {
+			jniInstance.PrepareCall();
+			jboolean isNewData = env->CallBooleanMethod(_javaImplementation, _isNewDataID, (jint)index);
+			if (jniInstance.IsExceptionOccurs())
+			{
+				return S_FALSE;
+			}
+			*newData = isNewData ? 1 : 0; // TODO Check, if this really helps
+    	} else {
+    		*newData = 1;
+    	}
     }
 
     if (newProperties) {
-		jniInstance.PrepareCall();
-		jboolean isNewProperties = env->CallBooleanMethod(_javaImplementation, _isNewPropertiesID, (jint)index);
-		if (jniInstance.IsExceptionOccurs())
-		{
-			return S_FALSE;
-		}
-		*newProperties = isNewProperties ? 1 : 0; // TODO Check, if this really helps
+    	if (isInArchiveAttached) {
+			jniInstance.PrepareCall();
+			jboolean isNewProperties = env->CallBooleanMethod(_javaImplementation, _isNewPropertiesID, (jint)index);
+			if (jniInstance.IsExceptionOccurs())
+			{
+				return S_FALSE;
+			}
+			*newProperties = isNewProperties ? 1 : 0; // TODO Check, if this really helps
+    	} else {
+    		*newProperties = 1;
+    	}
     }
 
     if (indexInArchive) {
-		jniInstance.PrepareCall();
-		*indexInArchive = (UInt32)env->CallIntMethod(_javaImplementation, _getOldArchiveItemIndexID, (jint)index);
-		if (jniInstance.IsExceptionOccurs())
-		{
-			return S_FALSE;
-		}
+    	if (isInArchiveAttached) {
+			jniInstance.PrepareCall();
+			*indexInArchive = (UInt32)env->CallIntMethod(_javaImplementation, _getOldArchiveItemIndexID, (jint)index);
+			if (jniInstance.IsExceptionOccurs())
+			{
+				return S_FALSE;
+			}
+    	} else {
+    		*indexInArchive = (UInt32)-1;
+    	}
     }
 
 	return S_OK;
@@ -163,8 +176,10 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationR
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
 
+    jboolean operationResultBoolean = (operationResult == NArchive::NUpdate::NOperationResult::kOK);
+
 	jniInstance.PrepareCall();
-	env->CallVoidMethod(_javaImplementation, _setOperationResultID, (jint)operationResult);
+	env->CallVoidMethod(_javaImplementation, _setOperationResultID, operationResultBoolean);
 	if (jniInstance.IsExceptionOccurs())
 	{
 		return S_FALSE;
