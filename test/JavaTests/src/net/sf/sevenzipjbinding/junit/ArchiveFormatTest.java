@@ -12,9 +12,12 @@ public class ArchiveFormatTest extends JUnitNativeTestBase {
         for (ArchiveFormat archiveFormat : ArchiveFormat.values()) {
             try {
                 SevenZip.openOutArchive(archiveFormat);
-                Assert.assertTrue(archiveFormat.isOutArchiveSupported());
+                Assert
+                        .assertTrue("Problem with archive format " + archiveFormat, archiveFormat
+                                .isOutArchiveSupported());
             } catch (Exception e) {
-                Assert.assertFalse(archiveFormat.isOutArchiveSupported());
+                Assert.assertFalse("Problem with archive format " + archiveFormat, archiveFormat
+                        .isOutArchiveSupported());
             }
         }
     }
