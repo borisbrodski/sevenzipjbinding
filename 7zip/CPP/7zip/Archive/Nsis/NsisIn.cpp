@@ -215,7 +215,7 @@ enum
   EW_SLEEP,             // Sleep: 1 [sleep time in milliseconds]
   EW_BRINGTOFRONT,      // BringToFront: 0
   EW_CHDETAILSVIEW,     // SetDetailsView: 2 [listaction,buttonaction]
-
+  
   // 10
   EW_SETFILEATTRIBUTES, // SetFileAttributes: 2 [filename, attributes]
   EW_CREATEDIR,         // Create directory: 2, [path, ?update$INSTDIR]
@@ -227,7 +227,7 @@ enum
   EW_GETFULLPATHNAME,   // GetFullPathName: 2 [output, input, ?lfn:sfn]
   EW_SEARCHPATH,        // SearchPath: 2 [output, filename]
   EW_GETTEMPFILENAME,   // GetTempFileName: 2 [output, base_dir]
-
+  
   // 20
   EW_EXTRACTFILE,       // File to extract: 6 [overwriteflag, output filename, compressed filedata, filedatetimelow, filedatetimehigh, allow ignore]
                         //  overwriteflag: 0x1 = no. 0x0=force, 0x2=try, 0x3=if date is newer
@@ -240,7 +240,7 @@ enum
   EW_READENVSTR,        // ReadEnvStr/ExpandEnvStrings: 3 [output, string_with_env_variables, IsRead]
   EW_INTCMP,            // IntCmp: 6 [val1, val2, equal, val1<val2, val1>val2, unsigned?]
   EW_INTOP,             // IntOp: 4 [output, input1, input2, op] where op: 0=add, 1=sub, 2=mul, 3=div, 4=bor, 5=band, 6=bxor, 7=bnot input1, 8=lnot input1, 9=lor, 10=land], 11=1%2
-
+  
   // 30
   EW_INTFMT,            // IntFmt: [output, format, input]
   EW_PUSHPOP,           // Push/Pop/Exchange: 3 [variable/string, ?pop:push, ?exch]
@@ -252,7 +252,7 @@ enum
   EW_SETBRANDINGIMAGE,  // SetBrandingImage:  1: [Bitmap file]
   EW_CREATEFONT,        // CreateFont:        5: [handle output, face name, height, weight, flags]
   EW_SHOWWINDOW,        // ShowWindow:        2: [hwnd, show state]
-
+  
   // 40
   EW_SHELLEXEC,         // ShellExecute program: 4, [shell action, complete commandline, parameters, showwindow]
   EW_EXECUTE,           // Execute program: 3,[complete command line,waitflag,>=0?output errorcode]
@@ -264,7 +264,7 @@ enum
   EW_REBOOT,            // Reboot: 0
   EW_WRITEINI,          // Write INI String: 4, [Section, Name, Value, INI File]
   EW_READINISTR,        // ReadINIStr: 4 [output, section, name, ini_file]
-
+  
   // 50
   EW_DELREG,            // DeleteRegValue/DeleteRegKey: 4, [root key(int), KeyName, ValueName, delkeyonlyifempty]. ValueName is -1 if delete key
   EW_WRITEREG,          // Write Registry value: 5, [RootKey(int),KeyName,ItemName,ItemData,typelen]
@@ -277,7 +277,7 @@ enum
   EW_FGETS,             // FileRead: 4  [handle, output, maxlen, ?getchar:gets]
   EW_FSEEK,             // FileSeek: 4  [handle, offset, mode, >=0?positionoutput]
   EW_FINDCLOSE,         // FindClose: 1 [handle]
-
+  
   // 60
   EW_FINDNEXT,          // FindNext: 2  [output, handle]
   EW_FINDFIRST,         // FindFirst: 2 [filespec, output, handleoutput]
@@ -883,7 +883,7 @@ HRESULT CInArchive::ReadEntries(const CBlockHeader &bh)
 
         Script += " ";
         Script += ReadString2Qw(e.Params[0]);
-
+        
         Script += " ";
         Script += ReadString2Qw(e.Params[1]);
 
@@ -986,14 +986,14 @@ HRESULT CInArchive::ReadEntries(const CBlockHeader &bh)
         Script += ReadString2(e.Params[1]);
         Script += " ";
         Script += ReadString2(e.Params[2]);
-
+        
         Script += " ";
         UInt32 spec = e.Params[5];
         // if (spec & 1)
           Script += IntToString(e.Params[3]);
         // else
         //   Script += ReadString2(e.Params[3]);
-
+        
         Script += " ";
         // if (spec & 2)
           Script += IntToString(e.Params[4]);
@@ -1104,7 +1104,7 @@ HRESULT CInArchive::ReadEntries(const CBlockHeader &bh)
         keyName = ReadString2Qw(e.Params[1]);
         Script += keyName;
         Script += " ";
-
+        
         valueName = ReadString2Qw(e.Params[2]);
         Script += valueName;
         Script += " ";
@@ -1301,7 +1301,7 @@ HRESULT CInArchive::Open2(
   FilterFlag = false;
 
   UInt32 compressedHeaderSize = Get32(sig);
-
+  
   if (compressedHeaderSize == FirstHeader.HeaderLength)
   {
     _headerIsCompressed = false;
@@ -1405,7 +1405,7 @@ HRESULT CInArchive::Open(
   UInt64 maxSize = ((maxCheckStartPosition != 0) ? *maxCheckStartPosition : 0);
   const UInt32 kStep = 512;
   Byte buffer[kStep];
-
+  
   UInt64 position = 0;
   for (; position <= maxSize; position += kStep)
   {
