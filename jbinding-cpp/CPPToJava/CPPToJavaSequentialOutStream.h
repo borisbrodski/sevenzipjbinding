@@ -6,13 +6,15 @@
 #include "CPPToJavaAbstract.h"
 
 class CPPToJavaSequentialOutStream : public CPPToJavaAbstract,
-	public ISequentialOutStream, public CMyUnknownImp
+	public virtual ISequentialOutStream,
+	public CMyUnknownImp
 {
 private:
 	jmethodID _writeMethodID;
 
 public:
-	MY_UNKNOWN_IMP
+	MY_UNKNOWN_IMP1(ISequentialOutStream)
+
 //    STDMETHOD_(ULONG, AddRef)()
 //    {
 //        TRACE2("CPPToJavaSequentialOutStream::AddRef(). Counter before: %i => %i", (int)__m_RefCount,(int)__m_RefCount + 1);
