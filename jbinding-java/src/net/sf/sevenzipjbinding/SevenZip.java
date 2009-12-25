@@ -662,15 +662,30 @@ public class SevenZip {
         if (!archiveFormat.isOutArchiveSupported()) {
             throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
         }
-        if (!checkArchiveFormatForOutArchive(archiveFormat.getMethodName())) {
+        int archiveFormatIndex = getSevenZipCCodersArchiveFormatIndex(archiveFormat.getMethodName(), true);
+        if (archiveFormatIndex == -1) {
             throw new IllegalStateException("Can't create OutArchive: archive format '" + archiveFormat
                     + "' doesn't support archive creation.");
         }
 
-        return new OutArchiveImpl(archiveFormat);
+        return new OutArchiveImpl(archiveFormat, archiveFormatIndex);
     }
 
-    private static native boolean checkArchiveFormatForOutArchive(String archiveFormat);
+    /**
+     * Retrieve 7-zip CCoders-index of the archive format <code>archiveFormat</code>. Optionally, check this archive
+     * format for existence of "out codec".
+     * 
+     * @param archiveFormat
+     *            archive format to process
+     * @param checkForOutArchive
+     *            <code>true</code> - check archive format <code>archiveFormat</code> for capability of
+     *            creating/updating archives<br>
+     *            <code>false</code> - do no such checking.
+     * @return 7-zip CCoders-index of the archive format <code>archiveFormat</code>. <br>
+     *         <code>-1</code> - if <code>checkForOutArchive == true</code> and 7-Zip can't create/update archives of
+     *         archive format <code>archiveFormat</code>.
+     */
+    private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive);
 
     private static class DummyOpenArchiveCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
         /**

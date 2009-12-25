@@ -39,10 +39,6 @@ static inline bool IsItWindowsNT()
 #endif
 
 
-//CreateObjectFunc createObjectFunc;
-STDAPI CreateCoder(const GUID *clsid, const GUID *iid, void **outObject);
-STDAPI CreateArchiver(const GUID *classID, const GUID *iid, void **outObject);
-
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeInitSevenZipLibrary
@@ -50,16 +46,15 @@ STDAPI CreateArchiver(const GUID *classID, const GUID *iid, void **outObject);
  */
 JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(
 		JNIEnv * env, jclass thiz) {
-	//const char * msg = load7ZipLibrary(&createObjectFunc);
+
+	TRACE("7-zip library initialized (TODO)")
+
+	CodecTools::init();
 
 	//if (msg) {
 	//	TRACE1("Error initializing 7-zip library: %s", msg)
 	//	return env->NewStringUTF(msg);
 	//}
-
-	TRACE("7-zip library initialized (TODO)")
-
-	CodecTools::init();
 
 	return NULL;
 }
@@ -231,14 +226,17 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
+
+// private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
+
 /*
  * Class:     net_sf_sevenzipjbinding_SevenZip
- * Method:    checkArchiveFormatForOutArchive
- * Signature: (Ljava/lang/String;)Z
+ * Method:    getSevenZipCCodersArchiveFormatIndex
+ * Signature: (Ljava/lang/String;Z)I
  */
-JBINDING_JNIEXPORT jboolean JNICALL Java_net_sf_sevenzipjbinding_SevenZip_checkArchiveFormatForOutArchive
-  (JNIEnv * env, jclass thiz, jstring formatName) {
-	TRACE("SevenZip.checkArchiveFormatForOutArchive()")
+JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_SevenZip_getSevenZipCCodersArchiveFormatIndex
+  (JNIEnv * env, jclass thiz, jstring formatName, jboolean checkForOutArchive) {
+	TRACE("SevenZip.getSevenZipCCodersArchiveFormatIndex()")
 
 	NativeMethodContext nativeMethodContext(env);
 
@@ -249,7 +247,11 @@ JBINDING_JNIEXPORT jboolean JNICALL Java_net_sf_sevenzipjbinding_SevenZip_checkA
 	UString formatNameString;
 	int index = CodecTools::getIndexByName(env, formatName, formatNameString);
 
-	return CodecTools::codecs.Formats[index].CreateOutArchive != NULL;
+	if (checkForOutArchive && CodecTools::codecs.Formats[index].CreateOutArchive == NULL) {
+		return -1;
+	}
+
+	return (jint)index;
 
 	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
