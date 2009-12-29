@@ -8,8 +8,27 @@ import java.util.List;
 
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.IOutStream;
+import net.sf.sevenzipjbinding.ISeekableStream;
+import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
+/**
+ * A byte array based implementation of
+ * <ul>
+ * <li>{@link ISequentialOutStream}</li>
+ * <li>{@link IOutStream}</li>
+ * <li>{@link ISequentialInStream}</li>
+ * <li>{@link IInStream}</li>
+ * <li>{@link ISeekableStream}</li>
+ * </ul>
+ * 
+ * Provide read/write access to the content represented as a byte array. Provide bridge to {@link InputStream} and
+ * {@link OutputStream} through various methods.
+ * 
+ * @author boris
+ * 
+ */
 public class ByteArrayStream implements IInStream, IOutStream {
 
     private static final int INPUT_STREAM_READ_BUFFER_SIZE = 16 * 1024;
@@ -66,10 +85,69 @@ public class ByteArrayStream implements IInStream, IOutStream {
         }
     }
 
+    /**
+     * Create new empty instance of ByteArrayStream with content <code>content</code> specifying maximal length of the
+     * stored data.
+     * 
+     * @param content
+     *            content to initialize byte array stream with. The current position will be set at the beginning of the
+     *            stream.
+     * 
+     * @param copyContentArray
+     *            <code>true</code> - copy <code>newContent</code> byte array, so the original array can be modified
+     *            safely, without affecting the byte stream<br>
+     *            <code>false</code> - don't copy byte array <code>newContent</code>. Any change to the byte array
+     *            <code>newContent</code> will be reflected by the byte array stream.
+     * 
+     * @param maxSize
+     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     */
+    public ByteArrayStream(byte[] content, boolean copyContentArray, int maxSize) {
+        this(1024, maxSize);
+        setBytes(content, copyContentArray);
+    }
+
+    /**
+     * Create new empty instance of ByteArrayStream with content <code>content</code> without specifying maximal length
+     * of the stored data.<br>
+     * <b>WARNING:</b> The maximal length of the byte array stream will be set to <code>content.length</code>. This
+     * means, that no more data can be added to such byte array stream. However it's still possible to override or
+     * truncate existing data.
+     * 
+     * @param content
+     *            content to initialize byte array stream with. The current position will be set at the beginning of the
+     *            stream.
+     * 
+     * @param copyContentArray
+     *            <code>true</code> - copy <code>newContent</code> byte array, so the original array can be modified
+     *            safely, without affecting the byte stream<br>
+     *            <code>false</code> - don't copy byte array <code>newContent</code>. Any change to the byte array
+     *            <code>newContent</code> will be reflected by the byte array stream.
+     */
+    public ByteArrayStream(byte[] content, boolean copyContentArray) {
+        this(1024 > content.length ? content.length : 1024, content.length);
+        setBytes(content, copyContentArray);
+    }
+
+    /**
+     * Create new empty instance of ByteArrayStream specifying maximal length of the stored data.
+     * 
+     * @param maxSize
+     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     */
     public ByteArrayStream(int maxSize) {
         this(1024, maxSize);
     }
 
+    /**
+     * Create new empty instance of ByteArrayStream specifing maximal length of the stored data.
+     * 
+     * @param maxSize
+     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     * @param initialSize
+     *            size of the first data chunk. The first data chunk (byte array) will be allocated after first writing
+     *            request.
+     */
     public ByteArrayStream(int initialSize, int maxSize) {
         this.initialSize = initialSize;
         if (maxSize <= 0) {
@@ -110,9 +188,57 @@ public class ByteArrayStream implements IInStream, IOutStream {
     /**
      * {@inheritDoc}
      */
-    public void setSize(long newSize) throws SevenZipException {
-        // TODO Auto-generated method stub
+    public void setSize(long newSize) {
+        if (newSize == 0) {
+            truncate();
+            return;
+        }
 
+        if (newSize > maxSize) {
+            throw new RuntimeException("Maximal size of the byte array stream was reached by setSize(" + newSize
+                    + "). Maximal size is " + maxSize + " bytes");
+        }
+
+        if (size == 0) {
+            chunkList.add(new byte[(int) newSize]);
+            currentChunkIndex = 0;
+            size = (int) newSize;
+        }
+
+        if (newSize > size) {
+            int sizeToAdd = (int) (newSize - size);
+            int entireSize = 0;
+            for (int i = 0; i < chunkList.size(); i++) {
+                entireSize += chunkList.get(i).length;
+            }
+            //int lastChunkLength = chunkList.get(chunkList.size() - 1).length;
+            int lastChunkFreeSpace = entireSize - size;
+            if (lastChunkFreeSpace < sizeToAdd) {
+                size += lastChunkFreeSpace; // Needed for correct maximal stream size detection
+                allocateNextChunk(sizeToAdd - lastChunkFreeSpace);
+            }
+            size = (int) newSize;
+        }
+        if (newSize < size) {
+            int currentSize = 0;
+            for (int i = 0; i < chunkList.size(); i++) {
+                currentSize += chunkList.get(i).length;
+                if (currentSize >= newSize) {
+                    // Remove all chunks after i-th chunk
+                    for (int j = chunkList.size() - 1; j > i; j--) {
+                        chunkList.remove(j);
+                    }
+                    if (seekToPosition != -1 && seekToPosition > newSize) {
+                        seekToPosition = (int) newSize;
+                    } else if (currentPosition > newSize) {
+                        currentPosition = (int) newSize;
+                        currentPositionInChunk = currentPosition - currentSize + chunkList.get(i).length;
+                        currentChunkIndex = i;
+                    }
+                    size = (int) newSize;
+                }
+            }
+        }
     }
 
     /**
@@ -122,6 +248,10 @@ public class ByteArrayStream implements IInStream, IOutStream {
         return write(data, 0, data.length);
     }
 
+    /**
+     * Write <code>length</code> byte from the byte array <code>data</code> beginning from the position
+     * <code>startPosition</code>.
+     */
     public int write(byte[] data, int startPosition, int length) {
         if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
             throw new IllegalStateException("Invalid start position (" + startPosition + ") and length (" + length
@@ -147,7 +277,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
                 currentPositionInChunk = 0;
                 currentChunkIndex++;
                 if (currentChunkIndex >= chunkList.size()) {
-                    allocateNextChunk();
+                    allocateNextChunk(-1);
                 }
             }
         } while (dataToWrite > 0);
@@ -158,10 +288,30 @@ public class ByteArrayStream implements IInStream, IOutStream {
         return data.length;
     }
 
+    /**
+     * Get a deattached input stream associated with the entire byte stream content. Reading from this input stream
+     * doesn't affect the current position of the byte array stream.<br>
+     * <b>Warning:</b> The returned instance of the InputStream is still attached to the content of the byte array
+     * stream. That means, that any change of the content will be immediately visible through InputStream.
+     */
+    public InputStream getDeattachedInputStream() {
+        return null; // TODO
+    }
+
+    /**
+     * Get an attached input stream associated with the byte stream content. Reading from returned InputStream is
+     * equivalent to reading from the byte array itself. It means, that reading from InputStream affects the current
+     * position of the byte array stream.
+     */
     public InputStream getInputStream() {
         return null; // TODO
     }
 
+    /**
+     * Get an attached output stream associated with the byte stream content. Writing to returned OutputStream is
+     * equivalent to writing to the byte array itself. It means, that writing to OutputStream affects the current
+     * position of the byte array stream.
+     */
     public OutputStream getOutputStream() {
         return null; // TODO
     }
@@ -235,9 +385,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
                 currentPosition += read;
                 currentPositionInChunk += read;
                 if (lastChunk.length - currentPositionInChunk == 0) {
-                    currentPositionInChunk = 0;
-                    currentChunkIndex++;
-                    allocateNextChunk();
+                    allocateNextChunk(-1);
                 }
             }
             size = currentPosition;
@@ -265,10 +413,34 @@ public class ByteArrayStream implements IInStream, IOutStream {
         init();
     }
 
+    /**
+     * Return the size of the byte array stream content in bytes.
+     */
     public int getSize() {
         return size;
     }
 
+    /**
+     * Return current position in the byte array stream. The current position determines which part of the data will be
+     * affected by next read or write operation. The current position can be changed explicitly by calling
+     * {@link #seek(long, int)} method.
+     * 
+     * @return current position in the stream beginning with 0. if current position is equal to the size of the stream
+     *         {@link #getSize()}, that means, that end of stream (EOF) was reached. All subsequent read operations will
+     *         return EOF. All subsequent write operation will expand the stream until maximal size of stream will be
+     *         reached. (See {@link #ByteArrayStream(int)}).
+     */
+    public int getCurrentPosition() {
+        if (seekToPosition != -1) {
+            return seekToPosition;
+        }
+        return currentPosition;
+    }
+
+    /**
+     * Return the content of the byte array stream in a new byte array. The current content of the byte array stream
+     * copied to the new byte array.
+     */
     public byte[] getBytes() {
         byte[] result = new byte[size];
         int pos = 0;
@@ -280,8 +452,31 @@ public class ByteArrayStream implements IInStream, IOutStream {
         return result;
     }
 
-    public void setBytes(byte[] bytes) {
-        // TODO;
+    /**
+     * Reinitialize byte array stream, replace current content with the new content <code>newContent</code> and set the
+     * current position to the beginning of the stream.
+     * 
+     * @param newContent
+     *            new content of the byte array stream
+     * @param copyNewContentArray
+     *            <code>true</code> - copy <code>newContent</code> byte array, so the original array can be modified
+     *            safely, without affecting the byte stream<br>
+     *            <code>false</code> - don't copy byte array <code>newContent</code>. Any change to the byte array
+     *            <code>newContent</code> will be reflected by the byte array stream.
+     */
+    public void setBytes(byte[] newContent, boolean copyNewContentArray) {
+        init();
+        byte[] content = newContent;
+        int newContentLength = newContent.length;
+        if (copyNewContentArray) {
+            content = new byte[newContentLength];
+            System.arraycopy(newContent, 0, content, 0, newContentLength);
+        }
+        chunkList.add(content);
+        currentChunkIndex = 0;
+        currentPosition = 0;
+        currentPositionInChunk = 0;
+        size = newContentLength;
     }
 
     private void performDelayedSeek() {
@@ -294,9 +489,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
 
     private void startWriting() {
         if (currentChunkIndex == -1 || currentPositionInChunk >= chunkList.get(currentChunkIndex).length) {
-            allocateNextChunk();
-            currentPositionInChunk = 0;
-            currentChunkIndex++;
+            allocateNextChunk(-1);
         }
     }
 
@@ -311,7 +504,12 @@ public class ByteArrayStream implements IInStream, IOutStream {
         }
     }
 
-    private void allocateNextChunk() {
+    private void allocateNextChunk(int atLeastAmount) {
+        if (currentChunkIndex == -1
+                || (currentChunkIndex == chunkList.size() - 1 && chunkList.get(currentChunkIndex).length == currentPositionInChunk)) {
+            currentPositionInChunk = 0;
+            currentChunkIndex++;
+        }
         if (size >= maxSize) {
             throw new RuntimeException("Maximal size of the byte array stream was reached. (Max size = " + maxSize
                     + ")");
@@ -325,9 +523,14 @@ public class ByteArrayStream implements IInStream, IOutStream {
         if (size + nextChunkSize > maxSize) {
             nextChunkSize = maxSize - size;
         }
-
+        if (atLeastAmount != -1 && nextChunkSize < atLeastAmount) {
+            if ((size + atLeastAmount) >= maxSize) {
+                throw new RuntimeException("Maximal size of the byte array stream was reached. (Max size = " + maxSize
+                        + ")");
+            }
+            nextChunkSize = atLeastAmount;
+        }
         byte[] chunk = new byte[nextChunkSize];
         chunkList.add(chunk);
     }
-
 }

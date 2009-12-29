@@ -187,6 +187,81 @@ public abstract class ByteArrayStreamTest {
     }
 
     // ----------------------------------------------------------------
+    @Test
+    public void testWrite1SetBytes() throws Exception {
+        setBytes("A".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite2SetBytes() throws Exception {
+        setBytes("AB".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite3SetBytes() throws Exception {
+        setBytes("ABC".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite4SetBytes() throws Exception {
+        setBytes("ABCD".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite5SetBytes() throws Exception {
+        setBytes("ABCDE".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite7SetBytes() throws Exception {
+        setBytes("ABCDEFG".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite8SetBytes() throws Exception {
+        setBytes("ABCDEFGH".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite9SetBytes() throws Exception {
+        setBytes("ABCDEFGHI".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite50SetBytes() throws Exception {
+        byte[] firstBytes = new byte[50];
+        random.nextBytes(firstBytes);
+        setBytes(firstBytes);
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    // ----------------------------------------------------------------
 
     @Test
     public void testSimpleWriteFromInputStream() throws Exception {
@@ -274,10 +349,92 @@ public abstract class ByteArrayStreamTest {
         compareWithExpectedBuffer(firstBytes, testBuffer);
     }
 
+    @Test
+    public void testSetSizeEmptyArray() throws Exception {
+        write(testBuffer);
+        setSize(0);
+        compareWithExpectedBuffer(); // Expect empty byte array stream
+    }
+
+    @Test
+    public void testSetSize1ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(1);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 1));
+    }
+
+    @Test
+    public void testSetSize2ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(2);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 2));
+    }
+
+    @Test
+    public void testSetSize3ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(3);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 3));
+    }
+
+    @Test
+    public void testSetSize4ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(4);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 4));
+    }
+
+    @Test
+    public void testSetSize5ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(5);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 5));
+    }
+
+    @Test
+    public void testSetSize7ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(7);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 7));
+    }
+
+    @Test
+    public void testSetSize8ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(8);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 8));
+    }
+
+    @Test
+    public void testSetSize9ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(9);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 9));
+    }
+
+    @Test
+    public void testSetSize200ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(200);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 200));
+    }
+
+    private byte[] subarray(byte[] data, int startPosition, int length) {
+        byte[] array = new byte[length];
+        int lengthToCopy = data.length < length ? data.length : length;
+        System.arraycopy(data, startPosition, array, 0, lengthToCopy);
+        return array;
+    }
+
     protected abstract byte[] getTestBuffer();
 
     private void write(byte[] buffer) {
         byteArrayStream.write(buffer);
+        checkInvariant();
+    }
+
+    private void setBytes(byte[] buffer) {
+        byteArrayStream.setBytes(buffer, true);
         checkInvariant();
     }
 
@@ -286,11 +443,20 @@ public abstract class ByteArrayStreamTest {
         checkInvariant();
     }
 
+    private void truncateToCurrentPosition() {
+        byteArrayStream.setSize(byteArrayStream.getCurrentPosition());
+        checkInvariant();
+    }
+
+    private void setSize(int newSize) {
+        byteArrayStream.setSize(newSize);
+        checkInvariant();
+    }
+
     private void writeFromInputStream(byte[] buffer) throws IOException {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
         byteArrayStream.writeFromInputStream(byteArrayInputStream, false);
         checkInvariant();
-
     }
 
     private void compareWithExpectedBuffer(byte[]... buffers) throws IOException {
