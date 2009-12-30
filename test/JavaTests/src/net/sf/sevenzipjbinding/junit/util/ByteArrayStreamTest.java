@@ -1,15 +1,18 @@
 package net.sf.sevenzipjbinding.junit.util;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Random;
 
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public abstract class ByteArrayStreamTest {
@@ -90,11 +93,18 @@ public abstract class ByteArrayStreamTest {
 
     private static final int MAX_SIZE = 8 * 1024 * 1024;
     private static Random random = new Random(0);
+
+    private static Field chunkListField;
+    private static Field currentPositionField;
+    private static Field currentPositionInChunkField;
+    private static Field currentChunkIndexField;
+    private static Field sizeField;
+
     private byte[] testBuffer;
     private ByteArrayStream byteArrayStream;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         testBuffer = getTestBuffer();
         byteArrayStream = new ByteArrayStream(4, MAX_SIZE);
         checkInvariant();
@@ -428,38 +438,38 @@ public abstract class ByteArrayStreamTest {
 
     protected abstract byte[] getTestBuffer();
 
-    private void write(byte[] buffer) {
+    private void write(byte[] buffer) throws Exception {
         byteArrayStream.write(buffer);
         checkInvariant();
     }
 
-    private void setBytes(byte[] buffer) {
+    private void setBytes(byte[] buffer) throws Exception {
         byteArrayStream.setBytes(buffer, true);
         checkInvariant();
     }
 
-    private void truncate() {
+    private void truncate() throws Exception {
         byteArrayStream.truncate();
         checkInvariant();
     }
 
-    private void truncateToCurrentPosition() {
+    private void truncateToCurrentPosition() throws Exception {
         byteArrayStream.setSize(byteArrayStream.getCurrentPosition());
         checkInvariant();
     }
 
-    private void setSize(int newSize) {
+    private void setSize(int newSize) throws Exception {
         byteArrayStream.setSize(newSize);
         checkInvariant();
     }
 
-    private void writeFromInputStream(byte[] buffer) throws IOException {
+    private void writeFromInputStream(byte[] buffer) throws Exception {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
         byteArrayStream.writeFromInputStream(byteArrayInputStream, false);
         checkInvariant();
     }
 
-    private void compareWithExpectedBuffer(byte[]... buffers) throws IOException {
+    private void compareWithExpectedBuffer(byte[]... buffers) throws Exception {
         ByteArrayOutputStream expectedByteArrayOutputStream = new ByteArrayOutputStream();
         for (byte[] buffer : buffers) {
             expectedByteArrayOutputStream.write(buffer);
@@ -475,8 +485,60 @@ public abstract class ByteArrayStreamTest {
         assertArrayEquals(expected, byteArrayOutputStream.toByteArray());
     }
 
-    private void checkInvariant() {
-        byteArrayStream.checkInvariant();
+    @BeforeClass
+    public static void initByteArrayStreamPrivateMethods() throws Exception {
+        chunkListField = ByteArrayStream.class.getDeclaredField("chunkList");
+        currentPositionField = ByteArrayStream.class.getDeclaredField("currentPosition");
+        currentPositionInChunkField = ByteArrayStream.class.getDeclaredField("currentPositionInChunk");
+        currentChunkIndexField = ByteArrayStream.class.getDeclaredField("currentChunkIndex");
+        sizeField = ByteArrayStream.class.getDeclaredField("size");
 
+        chunkListField.setAccessible(true);
+        currentPositionField.setAccessible(true);
+        currentPositionInChunkField.setAccessible(true);
+        currentChunkIndexField.setAccessible(true);
+        sizeField.setAccessible(true);
     }
+
+    @SuppressWarnings("unchecked")
+    private void checkInvariant() throws Exception {
+        List<byte[]> chunkList = (List<byte[]>) chunkListField.get(byteArrayStream);
+        int currentPosition = currentPositionField.getInt(byteArrayStream);
+        int currentPositionInChunk = currentPositionInChunkField.getInt(byteArrayStream);
+        int currentChunkIndex = currentChunkIndexField.getInt(byteArrayStream);
+        int size = sizeField.getInt(byteArrayStream);
+
+        if (chunkList.size() == 0) {
+            assertTrue(currentPosition == 0);
+            assertTrue(currentPositionInChunk == 0);
+            assertTrue(currentChunkIndex == -1);
+            assertTrue(size == 0);
+            return;
+        }
+
+        assertTrue(currentPositionInChunk >= 0);
+        assertTrue(currentPosition >= 0);
+        assertTrue(currentChunkIndex >= 0);
+        assertTrue(size >= 0);
+
+        int sizeBeforeLastChunk = 0;
+        int sizeBeforeCurrentChunk = 0;
+        for (int i = 0; i < chunkList.size() - 1; i++) {
+            if (i < currentChunkIndex) {
+                sizeBeforeCurrentChunk += chunkList.get(i).length;
+            }
+            if (i == currentChunkIndex) {
+                if (currentChunkIndex < chunkList.size() - 1) {
+                    assertTrue(currentPositionInChunk < chunkList.get(i).length);
+                } else {
+                    assertTrue(currentPositionInChunk <= chunkList.get(i).length);
+                }
+            }
+            sizeBeforeLastChunk += chunkList.get(i).length;
+        }
+        assertTrue((sizeBeforeCurrentChunk + currentPositionInChunk) == currentPosition);
+        assertTrue(sizeBeforeLastChunk <= size);
+        assertTrue(sizeBeforeLastChunk + chunkList.get(chunkList.size() - 1).length >= size);
+    }
+
 }

@@ -45,46 +45,6 @@ public class ByteArrayStream implements IInStream, IOutStream {
     private int size;
     private int seekToPosition;
 
-    public void checkInvariant() {
-        if (chunkList.size() == 0) {
-            myassert(currentPosition == 0);
-            myassert(currentPositionInChunk == 0);
-            myassert(currentChunkIndex == -1);
-            myassert(size == 0);
-            return;
-        }
-
-        myassert(currentPositionInChunk >= 0);
-        myassert(currentPosition >= 0);
-        myassert(currentChunkIndex >= 0);
-        myassert(size >= 0);
-
-        int sizeBeforeLastChunk = 0;
-        int sizeBeforeCurrentChunk = 0;
-        for (int i = 0; i < chunkList.size() - 1; i++) {
-            if (i < currentChunkIndex) {
-                sizeBeforeCurrentChunk += chunkList.get(i).length;
-            }
-            if (i == currentChunkIndex) {
-                if (currentChunkIndex < chunkList.size() - 1) {
-                    myassert(currentPositionInChunk < chunkList.get(i).length);
-                } else {
-                    myassert(currentPositionInChunk <= chunkList.get(i).length);
-                }
-            }
-            sizeBeforeLastChunk += chunkList.get(i).length;
-        }
-        myassert((sizeBeforeCurrentChunk + currentPositionInChunk) == currentPosition);
-        myassert(sizeBeforeLastChunk <= size);
-        myassert(sizeBeforeLastChunk + chunkList.get(chunkList.size() - 1).length >= size);
-    }
-
-    private void myassert(boolean b) {
-        if (!b) {
-            throw new IllegalStateException("Invariant broken.");
-        }
-    }
-
     /**
      * Create new empty instance of ByteArrayStream with content <code>content</code> specifying maximal length of the
      * stored data.
