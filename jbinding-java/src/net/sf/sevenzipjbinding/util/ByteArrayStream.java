@@ -211,6 +211,14 @@ public class ByteArrayStream implements IInStream, IOutStream {
     /**
      * Write <code>length</code> byte from the byte array <code>data</code> beginning from the position
      * <code>startPosition</code>.
+     * 
+     * @param data
+     *            data to write
+     * @param startPosition
+     *            index of the first byte to write (beginning with 0)
+     * @param length
+     *            count of bytes to write
+     * @return count of written bytes
      */
     public int write(byte[] data, int startPosition, int length) {
         if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
@@ -260,8 +268,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
 
     /**
      * Get an attached input stream associated with the byte stream content. Reading from returned InputStream is
-     * equivalent to reading from the byte array itself. It means, that reading from InputStream affects the current
-     * position of the byte array stream.
+     * equivalent to reading from the byte array itself. It means, that reading from InputStream started at the current
+     * position of the byte array stream and moves it forward.
      */
     public InputStream getInputStream() {
         return null; // TODO
@@ -308,7 +316,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
     public void writeFromInputStream(InputStream inputStream, boolean closeStreamAfterReading) throws IOException {
         performDelayedSeek();
 
-        // A call to this method on empty stream (for example after truncate()) will be handled separately for performace reasons.
+        // A call to this method on empty stream (for example after truncate()) will be handled separately
+        // for performance reasons.
         if (size == 0) {
             init();
             // First, try to read entire stream at once. This does work well with streams associated for example 
@@ -375,6 +384,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
 
     /**
      * Return the size of the byte array stream content in bytes.
+     * 
+     * @return the size of the byte array stream content in bytes.
      */
     public int getSize() {
         return size;
@@ -400,6 +411,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
     /**
      * Return the content of the byte array stream in a new byte array. The current content of the byte array stream
      * copied to the new byte array.
+     * 
+     * @return new array with the entire content of the byte array stream
      */
     public byte[] getBytes() {
         byte[] result = new byte[size];
