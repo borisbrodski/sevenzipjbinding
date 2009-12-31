@@ -8,8 +8,9 @@ package net.sf.sevenzipjbinding;
  */
 public interface ISequentialOutStream {
     /**
-     * if (size > 0) this function must write at least 1 byte. This function is allowed to write less than "size". You
-     * must call Write function in loop, if you need to write exact amount of data
+     * Write <code>data</code> byte array to the stream. If <code>data.length > 0</code> this function must write at
+     * least 1 byte. This function is allowed to write less than <code>data.length</code>. You must call Write function
+     * in loop, if you need to write exact amount of data.
      * 
      * @param data
      *            data to write
