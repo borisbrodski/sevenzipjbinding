@@ -133,6 +133,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * {@inheritDoc}
      */
     public int read(byte[] data) throws SevenZipException {
+        performDelayedSeek();
         // TODO Auto-generated method stub
         return 0;
     }
@@ -141,8 +142,33 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * {@inheritDoc}
      */
     public long seek(long offset, int seekOrigin) throws SevenZipException {
-        // TODO Auto-generated method stub
-        return 0;
+        long newOffset;
+        switch (seekOrigin) {
+        case SEEK_SET:
+            newOffset = offset;
+            break;
+
+        case SEEK_CUR:
+            if (seekToPosition == -1) {
+                newOffset = currentPosition + offset;
+            } else {
+                newOffset = seekToPosition + offset;
+            }
+            break;
+
+        case SEEK_END:
+            newOffset = size + offset;
+            break;
+
+        default:
+            throw new SevenZipException("Seek: unknown origin: " + seekOrigin);
+        }
+        if (newOffset > maxSize) {
+            throw new RuntimeException("Maximal size of the byte array stream was reached by seek to " + newOffset
+                    + ", maximal size is " + maxSize + " bytes");
+        }
+        seekToPosition = (int) newOffset;
+        return newOffset;
     }
 
     /**
@@ -228,6 +254,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
         if (length == 0) {
             return 0;
         }
+
+        performDelayedSeek();
         startWriting();
 
         int startPositionInData = startPosition;
