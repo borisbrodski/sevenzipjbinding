@@ -135,7 +135,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
     public int read(byte[] data) throws SevenZipException {
         performDelayedSeek();
         // TODO Auto-generated method stub
-        return 0;
+        return data.length;
     }
 
     /**
@@ -175,6 +175,10 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * {@inheritDoc}
      */
     public void setSize(long newSize) {
+        setSize(newSize, false);
+    }
+
+    private void setSize(long newSize, boolean setCurrentPointerToTheEndIfExpanding) {
         if (newSize == 0) {
             truncate();
             return;
@@ -185,13 +189,12 @@ public class ByteArrayStream implements IInStream, IOutStream {
                     + "). Maximal size is " + maxSize + " bytes");
         }
 
-        if (size == 0) {
-            chunkList.add(new byte[(int) newSize]);
-            currentChunkIndex = 0;
-            size = (int) newSize;
-        }
-
         if (newSize > size) {
+            if (size == 0) {
+                chunkList.add(new byte[(int) newSize]);
+                currentChunkIndex = 0;
+                size = (int) newSize;
+            }
             int sizeToAdd = (int) (newSize - size);
             int entireSize = 0;
             for (int i = 0; i < chunkList.size(); i++) {
@@ -202,6 +205,16 @@ public class ByteArrayStream implements IInStream, IOutStream {
             if (lastChunkFreeSpace < sizeToAdd) {
                 size += lastChunkFreeSpace; // Needed for correct maximal stream size detection
                 allocateNextChunk(sizeToAdd - lastChunkFreeSpace);
+                if (setCurrentPointerToTheEndIfExpanding) {
+                    currentPositionInChunk = sizeToAdd - lastChunkFreeSpace;
+                }
+            } else if (setCurrentPointerToTheEndIfExpanding) {
+                currentPositionInChunk = chunkList.get(chunkList.size() - 1).length - lastChunkFreeSpace + sizeToAdd;
+            }
+
+            if (setCurrentPointerToTheEndIfExpanding) {
+                currentChunkIndex = chunkList.size() - 1;
+                currentPosition = (int) newSize;
             }
             size = (int) newSize;
         }
@@ -485,7 +498,34 @@ public class ByteArrayStream implements IInStream, IOutStream {
             return;
         }
 
-        // TODO
+        if (currentPosition == seekToPosition) {
+            seekToPosition = -1;
+            return;
+        }
+
+        if (seekToPosition > size) {
+            setSize(seekToPosition, true);
+            seekToPosition = -1;
+            return;
+        }
+
+        int entireSize = 0;
+        for (int i = 0; i < chunkList.size(); i++) {
+            int currentChunkLength = chunkList.get(i).length;
+            entireSize += currentChunkLength;
+            if (entireSize > seekToPosition) {
+                currentChunkIndex = i;
+                currentPositionInChunk = currentChunkLength - (entireSize - seekToPosition);
+                currentPosition = seekToPosition;
+                seekToPosition = -1;
+                return;
+            }
+        }
+        // seekToPosition == size && currentPositionInChunk == currentChunkLength
+        currentChunkIndex = chunkList.size() - 1;
+        currentPositionInChunk = chunkList.get(currentChunkIndex).length;
+        currentPosition = size;
+        seekToPosition = -1;
     }
 
     private void startWriting() {

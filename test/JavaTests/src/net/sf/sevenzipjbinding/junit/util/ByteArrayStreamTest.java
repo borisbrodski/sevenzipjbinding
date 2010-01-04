@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit.util;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -9,6 +10,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 
+import net.sf.sevenzipjbinding.ISeekableStream;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Before;
@@ -429,6 +431,78 @@ public abstract class ByteArrayStreamTest {
         compareWithExpectedBuffer(subarray(testBuffer, 0, 200));
     }
 
+    @Test
+    public void testSeekTo0() throws Exception {
+        testSeekTo(0);
+    }
+
+    @Test
+    public void testSeekTo1() throws Exception {
+        testSeekTo(1);
+    }
+
+    @Test
+    public void testSeekTo2() throws Exception {
+        testSeekTo(2);
+    }
+
+    @Test
+    public void testSeekTo3() throws Exception {
+        testSeekTo(3);
+    }
+
+    @Test
+    public void testSeekTo4() throws Exception {
+        testSeekTo(4);
+    }
+
+    @Test
+    public void testSeekTo5() throws Exception {
+        testSeekTo(5);
+    }
+
+    @Test
+    public void testSeekTo7() throws Exception {
+        testSeekTo(7);
+    }
+
+    @Test
+    public void testSeekTo8() throws Exception {
+        testSeekTo(8);
+    }
+
+    @Test
+    public void testSeekTo9() throws Exception {
+        testSeekTo(9);
+    }
+
+    @Test
+    public void testSeekTo50() throws Exception {
+        testSeekTo(50);
+    }
+
+    private void testSeekTo(int pos) throws Exception {
+        write(testBuffer);
+        if (testBuffer.length > 2) {
+            for (int i = byteArrayStream.getCurrentPosition(); i != -1; i--) {
+                seek(i);
+            }
+
+            assertEquals(Integer.valueOf(1), Integer.valueOf(byteArrayStream.read(new byte[1])));
+        }
+        seek(pos);
+        write("x".getBytes());
+        if (testBuffer.length <= pos) {
+            byte[] newTestBuffer = new byte[pos + 1];
+            if (testBuffer.length != 0) {
+                System.arraycopy(testBuffer, 0, newTestBuffer, 0, testBuffer.length);
+            }
+            testBuffer = newTestBuffer;
+        }
+        testBuffer[pos] = 'x';
+        compareWithExpectedBuffer(testBuffer);
+    }
+
     private byte[] subarray(byte[] data, int startPosition, int length) {
         byte[] array = new byte[length];
         int lengthToCopy = data.length < length ? data.length : length;
@@ -439,8 +513,13 @@ public abstract class ByteArrayStreamTest {
     protected abstract byte[] getTestBuffer();
 
     private void write(byte[] buffer) throws Exception {
-        byteArrayStream.write(buffer);
+        int currentPosition = byteArrayStream.getCurrentPosition();
+        int wrote = byteArrayStream.write(buffer);
+        assertEquals(Integer.valueOf(buffer.length), Integer.valueOf(wrote));
         checkInvariant();
+        assertEquals("Current position in the stream is incorrect. Initial position: " + currentPosition
+                + ", buffer length: " + buffer.length, Integer.valueOf(currentPosition + buffer.length), Integer
+                .valueOf(byteArrayStream.getCurrentPosition()));
     }
 
     private void setBytes(byte[] buffer) throws Exception {
@@ -460,6 +539,13 @@ public abstract class ByteArrayStreamTest {
 
     private void setSize(int newSize) throws Exception {
         byteArrayStream.setSize(newSize);
+        checkInvariant();
+    }
+
+    private void seek(int position) throws Exception {
+        long newPosition = byteArrayStream.seek(position, ISeekableStream.SEEK_SET);
+        assertEquals(position, (int) newPosition);
+        assertEquals(position, byteArrayStream.getCurrentPosition());
         checkInvariant();
     }
 
@@ -540,5 +626,4 @@ public abstract class ByteArrayStreamTest {
         assertTrue(sizeBeforeLastChunk <= size);
         assertTrue(sizeBeforeLastChunk + chunkList.get(chunkList.size() - 1).length >= size);
     }
-
 }
