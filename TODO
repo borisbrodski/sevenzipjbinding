@@ -28,3 +28,27 @@ Info:
 - Quasijarus compression
   * http://ifctfvax.harhan.org/Quasijarus/compress.html
   * ftp://ifctfvax.harhan.org/pub/UNIX/
+
+  
+User AsciiDoc to write User Manual
+
+Example:
+
+7-Zip-JBinding User Manual
+==========================
+Boris Brodski <brodsky_boris@yahoo.com>
+v1.0, February 2010:
+First release.
+
+
+
+Level One Section Title
+-----------------------
+
+Level 2 Subsection Title
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Hello World
+
+ 
