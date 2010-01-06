@@ -60,6 +60,13 @@ public abstract class ByteArrayStreamTest {
         }
     }
 
+    public static class ByteArrayStreamTestWithBufferLength6 extends ByteArrayStreamTest {
+        @Override
+        protected byte[] getTestBuffer() {
+            return "012345".getBytes();
+        }
+    }
+
     public static class ByteArrayStreamTestWithBufferLength7 extends ByteArrayStreamTest {
         @Override
         protected byte[] getTestBuffer() {
@@ -169,6 +176,13 @@ public abstract class ByteArrayStreamTest {
     }
 
     @Test
+    public void testWrite6ByteFirst() throws Exception {
+        write("ABCDEF".getBytes());
+        write(testBuffer);
+        compareWithExpectedBuffer("ABCDEF".getBytes(), testBuffer);
+    }
+
+    @Test
     public void testWrite7ByteFirst() throws Exception {
         write("ABCDEFG".getBytes());
         write(testBuffer);
@@ -234,6 +248,14 @@ public abstract class ByteArrayStreamTest {
     @Test
     public void testWrite5SetBytes() throws Exception {
         setBytes("ABCDE".getBytes());
+        write(testBuffer);
+        truncateToCurrentPosition();
+        compareWithExpectedBuffer(testBuffer);
+    }
+
+    @Test
+    public void testWrite6SetBytes() throws Exception {
+        setBytes("ABCDEF".getBytes());
         write(testBuffer);
         truncateToCurrentPosition();
         compareWithExpectedBuffer(testBuffer);
@@ -332,6 +354,13 @@ public abstract class ByteArrayStreamTest {
     }
 
     @Test
+    public void testWriteFromInputStream6ByteFirst() throws Exception {
+        writeFromInputStream("ABCDEF".getBytes());
+        writeFromInputStream(testBuffer);
+        compareWithExpectedBuffer("ABCDEF".getBytes(), testBuffer);
+    }
+
+    @Test
     public void testWriteFromInputStream7ByteFirst() throws Exception {
         writeFromInputStream("ABCDEFG".getBytes());
         writeFromInputStream(testBuffer);
@@ -404,6 +433,13 @@ public abstract class ByteArrayStreamTest {
     }
 
     @Test
+    public void testSetSize6ByteArray() throws Exception {
+        write(testBuffer);
+        setSize(6);
+        compareWithExpectedBuffer(subarray(testBuffer, 0, 6));
+    }
+
+    @Test
     public void testSetSize7ByteArray() throws Exception {
         write(testBuffer);
         setSize(7);
@@ -462,6 +498,11 @@ public abstract class ByteArrayStreamTest {
     }
 
     @Test
+    public void testSeekTo6() throws Exception {
+        testSeekTo(6);
+    }
+
+    @Test
     public void testSeekTo7() throws Exception {
         testSeekTo(7);
     }
@@ -481,15 +522,134 @@ public abstract class ByteArrayStreamTest {
         testSeekTo(50);
     }
 
+    @Test
+    public void testReadFromBeginningEmptyArray() throws Exception {
+        write(testBuffer);
+        seek(0);
+        int read = read(new byte[0]);
+        assertEquals(Integer.valueOf(0), Integer.valueOf(read));
+    }
+
+    @Test
+    public void testReadFromBeginning1Byte() throws Exception {
+        testReadFromBeginning(1, false);
+    }
+
+    @Test
+    public void testReadFromBeginning2Byte() throws Exception {
+        testReadFromBeginning(2, false);
+    }
+
+    @Test
+    public void testReadFromBeginning2ByteSingleByte() throws Exception {
+        testReadFromBeginning(2, true);
+    }
+
+    @Test
+    public void testReadFromBeginning3Byte() throws Exception {
+        testReadFromBeginning(3, false);
+    }
+
+    @Test
+    public void testReadFromBeginning3ByteSingleByte() throws Exception {
+        testReadFromBeginning(3, true);
+    }
+
+    @Test
+    public void testReadFromBeginning4Byte() throws Exception {
+        testReadFromBeginning(4, false);
+    }
+
+    @Test
+    public void testReadFromBeginning4ByteSingleByte() throws Exception {
+        testReadFromBeginning(4, true);
+    }
+
+    @Test
+    public void testReadFromBeginning5Byte() throws Exception {
+        testReadFromBeginning(5, false);
+    }
+
+    @Test
+    public void testReadFromBeginning5ByteSingleByte() throws Exception {
+        testReadFromBeginning(5, true);
+    }
+
+    @Test
+    public void testReadFromBeginning6Byte() throws Exception {
+        testReadFromBeginning(6, false);
+    }
+
+    @Test
+    public void testReadFromBeginning6ByteSingleByte() throws Exception {
+        testReadFromBeginning(6, true);
+    }
+
+    @Test
+    public void testReadFromBeginning7Byte() throws Exception {
+        testReadFromBeginning(7, false);
+    }
+
+    @Test
+    public void testReadFromBeginning7ByteSingleByte() throws Exception {
+        testReadFromBeginning(7, true);
+    }
+
+    @Test
+    public void testReadFromBeginning8Byte() throws Exception {
+        testReadFromBeginning(8, false);
+    }
+
+    @Test
+    public void testReadFromBeginning8ByteSingleByte() throws Exception {
+        testReadFromBeginning(8, true);
+    }
+
+    @Test
+    public void testReadFromBeginning9Byte() throws Exception {
+        testReadFromBeginning(9, false);
+    }
+
+    @Test
+    public void testReadFromBeginning9ByteSingleByte() throws Exception {
+        testReadFromBeginning(9, true);
+    }
+
+    @Test
+    public void testReadFromBeginning40Byte() throws Exception {
+        testReadFromBeginning(40, false);
+    }
+
+    @Test
+    public void testReadFromBeginning40ByteSingleByte() throws Exception {
+        testReadFromBeginning(40, true);
+    }
+
+    private void testReadFromBeginning(int length, boolean readSingleBytes) throws Exception {
+        write(testBuffer);
+        seek(0);
+        byte[] buffer = new byte[length];
+        int read = 0;
+        if (readSingleBytes) {
+            byte[] singleByteArray = new byte[1];
+            for (int i = 0; i < length; i++) {
+                int readSingleByte = read(singleByteArray);
+                if (readSingleByte == 0) {
+                    break;
+                }
+                read++;
+                buffer[i] = singleByteArray[0];
+            }
+        } else {
+            read = read(buffer);
+        }
+        assertEquals(Integer.valueOf(Math.min(length, testBuffer.length)), Integer.valueOf(read));
+        checkArray(testBuffer, 0, buffer, 0, read);
+        assertTrue(read == length || byteArrayStream.isEOF());
+    }
+
     private void testSeekTo(int pos) throws Exception {
         write(testBuffer);
-        if (testBuffer.length > 2) {
-            for (int i = byteArrayStream.getCurrentPosition(); i != -1; i--) {
-                seek(i);
-            }
-
-            assertEquals(Integer.valueOf(1), Integer.valueOf(byteArrayStream.read(new byte[1])));
-        }
         seek(pos);
         write("x".getBytes());
         if (testBuffer.length <= pos) {
@@ -543,10 +703,32 @@ public abstract class ByteArrayStreamTest {
     }
 
     private void seek(int position) throws Exception {
+        if (byteArrayStream.getSize() > 2) {
+            for (int i = byteArrayStream.getCurrentPosition(); i >= 0; i--) {
+                doSeek(i);
+            }
+
+            assertEquals(Integer.valueOf(1), Integer.valueOf(byteArrayStream.read(new byte[1])));
+            assertEquals(Integer.valueOf(1), Integer.valueOf(byteArrayStream.getCurrentPosition()));
+        }
+        doSeek(position);
+    }
+
+    private void doSeek(int position) throws Exception {
         long newPosition = byteArrayStream.seek(position, ISeekableStream.SEEK_SET);
         assertEquals(position, (int) newPosition);
         assertEquals(position, byteArrayStream.getCurrentPosition());
         checkInvariant();
+    }
+
+    private int read(byte[] bs) throws Exception {
+        int read = byteArrayStream.read(bs);
+        assertTrue(bs.length != 0 || read == 0);
+        assertTrue(bs.length == 0 || read != 0 || byteArrayStream.isEOF());
+        assertTrue(read <= bs.length);
+        assertTrue(read == bs.length || byteArrayStream.isEOF());
+        checkInvariant();
+        return read;
     }
 
     private void writeFromInputStream(byte[] buffer) throws Exception {
@@ -584,6 +766,14 @@ public abstract class ByteArrayStreamTest {
         currentPositionInChunkField.setAccessible(true);
         currentChunkIndexField.setAccessible(true);
         sizeField.setAccessible(true);
+    }
+
+    private void checkArray(byte[] array1, int startPosition1, byte[] array2, int startPosition2, int length) {
+        for (int i = 0; i < length; i++) {
+            assertEquals("Byte content differs i=" + i + ", startPosition1=" + startPosition1 + ", startPosition2="
+                    + startPosition2, Byte.valueOf(array1[startPosition1 + i]), Byte
+                    .valueOf(array2[startPosition2 + i]));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -625,5 +815,13 @@ public abstract class ByteArrayStreamTest {
         assertTrue((sizeBeforeCurrentChunk + currentPositionInChunk) == currentPosition);
         assertTrue(sizeBeforeLastChunk <= size);
         assertTrue(sizeBeforeLastChunk + chunkList.get(chunkList.size() - 1).length >= size);
+
+        if (byteArrayStream.isEOF()) {
+            assertTrue("In EOF situation current position " + byteArrayStream.getCurrentPosition()
+                    + " less then the size of the stream " + byteArrayStream.getSize(), byteArrayStream
+                    .getCurrentPosition() >= byteArrayStream.getSize());
+        } else {
+            assertTrue(byteArrayStream.getCurrentPosition() < byteArrayStream.getSize());
+        }
     }
 }

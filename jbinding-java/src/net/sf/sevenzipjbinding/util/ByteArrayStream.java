@@ -133,9 +133,68 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * {@inheritDoc}
      */
     public int read(byte[] data) throws SevenZipException {
+        return read(data, 0, data.length);
+    }
+
+    /**
+     * Reads <code>length bytes from the byte array stream. If <code>length == 0</code> 0 is returned. If
+     * <code>length != 0</code>, then return value 0 indicates end-of-stream (EOF). This means no more bytes can be read
+     * from the stream. The read bytes will be stored in the <code>data</code> array beginning from the position
+     * <code>startPosition</code><br>
+     * <br>
+     * 
+     * 
+     * @param data
+     *            buffer to get read data.
+     * @param startPosition
+     *            position (index) in the array <code>data</code> to store first read byte.
+     * @param length
+     *            count of the bytes to read.
+     * 
+     * @return amount of bytes written in the <code>data</code> array. 0 - represents end of stream.
+     * @throws IllegalStateException
+     *             will be thrown, if <code>startPosition</code> is an invalid index for the array <code>data</code> or
+     *             if <code>startPosition + length > data.length</code>.
+     */
+    public int read(byte[] data, int startPosition, int length) {
+        if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
+            throw new IllegalStateException("Invalid start position (" + startPosition + ") and length (" + length
+                    + ")");
+        }
         performDelayedSeek();
-        // TODO Auto-generated method stub
-        return data.length;
+        int read = currentPosition + length > size ? size - currentPosition : length;
+        int toRead = read;
+
+        // According to JavaDoc: if (length != 0 && read == 0) then EOF => 0 returned
+        while (toRead > 0) {
+            int currentChunkLength = chunkList.get(currentChunkIndex).length;
+            int toReadInChunk = currentChunkLength - currentPositionInChunk;
+            int toCopy = toRead > toReadInChunk ? toReadInChunk : toRead;
+            System.arraycopy(chunkList.get(currentChunkIndex), currentPositionInChunk, data, startPosition, toCopy);
+            startPosition += toCopy;
+            currentPositionInChunk += toCopy;
+            toRead -= toCopy;
+
+            if (currentPositionInChunk >= currentChunkLength && currentChunkIndex < chunkList.size() - 1) {
+                currentChunkIndex++;
+                currentPositionInChunk = 0;
+                toReadInChunk = chunkList.get(currentChunkIndex).length;
+            }
+        }
+        currentPosition += read;
+
+        return read;
+    }
+
+    /**
+     * Retrieve "End Of Stream" status of the byte array stream.
+     * 
+     * @return <code>true</code> the current position is at the end of the stream. The read operation will return 0, the
+     *         write operation will expand the byte array stream.<br>
+     *         <code>false</code> -the current position is not at the end of the stream.
+     */
+    public boolean isEOF() {
+        return getCurrentPosition() >= size;
     }
 
     /**
@@ -258,6 +317,10 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * @param length
      *            count of bytes to write
      * @return count of written bytes
+     * 
+     * @throws IllegalStateException
+     *             will be thrown, if <code>startPosition</code> is an invalid index for the array <code>data</code> or
+     *             if <code>startPosition + length > data.length</code>.
      */
     public int write(byte[] data, int startPosition, int length) {
         if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
