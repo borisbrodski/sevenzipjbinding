@@ -361,31 +361,37 @@ public class ByteArrayStream implements IInStream, IOutStream {
     }
 
     /**
-     * Get a deattached input stream associated with the entire byte stream content. Reading from this input stream
+     * Get a detached input stream associated with the entire byte stream content. Reading from this input stream
      * doesn't affect the current position of the byte array stream.<br>
      * <b>Warning:</b> The returned instance of the InputStream is still attached to the content of the byte array
      * stream. That means, that any change of the content will be immediately visible through InputStream.
+     * 
+     * @return detached input stream
      */
-    public InputStream getDeattachedInputStream() {
-        return null; // TODO
+    public InputStream getDetachedInputStream() {
+        throw new IllegalStateException("Not implemented"); // TODO
     }
 
     /**
      * Get an attached input stream associated with the byte stream content. Reading from returned InputStream is
      * equivalent to reading from the byte array itself. It means, that reading from InputStream started at the current
      * position of the byte array stream and moves it forward.
+     * 
+     * @return {@link InputStream} implementation for this byte array stream
      */
     public InputStream getInputStream() {
-        return null; // TODO
+        throw new IllegalStateException("Not implemented"); // TODO
     }
 
     /**
      * Get an attached output stream associated with the byte stream content. Writing to returned OutputStream is
      * equivalent to writing to the byte array itself. It means, that writing to OutputStream affects the current
      * position of the byte array stream.
+     * 
+     * @return {@link OutputStream} implementation for this byte array stream
      */
     public OutputStream getOutputStream() {
-        return null; // TODO
+        throw new IllegalStateException("Not implemented"); // TODO
     }
 
     /**
@@ -417,6 +423,17 @@ public class ByteArrayStream implements IInStream, IOutStream {
         }
     }
 
+    /**
+     * Write entire data from {@link InputStream} <code>inputStream</code> into byte array stream. The new data will be
+     * written at the current position of the byte array stream.
+     * 
+     * @param inputStream
+     *            input stream to read from.
+     * @param closeStreamAfterReading
+     *            close input stream after reading.
+     * @throws IOException
+     *             exceptions during reading and optional closing of input stream.
+     */
     public void writeFromInputStream(InputStream inputStream, boolean closeStreamAfterReading) throws IOException {
         performDelayedSeek();
 
