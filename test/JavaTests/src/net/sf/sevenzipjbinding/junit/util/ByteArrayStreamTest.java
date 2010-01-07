@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.util;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -532,102 +534,202 @@ public abstract class ByteArrayStreamTest {
 
     @Test
     public void testReadFromBeginning1Byte() throws Exception {
-        testReadFromBeginning(1, false);
+        testRead(1, 0, false);
     }
 
     @Test
     public void testReadFromBeginning2Byte() throws Exception {
-        testReadFromBeginning(2, false);
+        testRead(2, 0, false);
     }
 
     @Test
     public void testReadFromBeginning2ByteSingleByte() throws Exception {
-        testReadFromBeginning(2, true);
+        testRead(2, 0, true);
     }
 
     @Test
     public void testReadFromBeginning3Byte() throws Exception {
-        testReadFromBeginning(3, false);
+        testRead(3, 0, false);
     }
 
     @Test
     public void testReadFromBeginning3ByteSingleByte() throws Exception {
-        testReadFromBeginning(3, true);
+        testRead(3, 0, true);
     }
 
     @Test
     public void testReadFromBeginning4Byte() throws Exception {
-        testReadFromBeginning(4, false);
+        testRead(4, 0, false);
     }
 
     @Test
     public void testReadFromBeginning4ByteSingleByte() throws Exception {
-        testReadFromBeginning(4, true);
+        testRead(4, 0, true);
     }
 
     @Test
     public void testReadFromBeginning5Byte() throws Exception {
-        testReadFromBeginning(5, false);
+        testRead(5, 0, false);
     }
 
     @Test
     public void testReadFromBeginning5ByteSingleByte() throws Exception {
-        testReadFromBeginning(5, true);
+        testRead(5, 0, true);
     }
 
     @Test
     public void testReadFromBeginning6Byte() throws Exception {
-        testReadFromBeginning(6, false);
+        testRead(6, 0, false);
     }
 
     @Test
     public void testReadFromBeginning6ByteSingleByte() throws Exception {
-        testReadFromBeginning(6, true);
+        testRead(6, 0, true);
     }
 
     @Test
     public void testReadFromBeginning7Byte() throws Exception {
-        testReadFromBeginning(7, false);
+        testRead(7, 0, false);
     }
 
     @Test
     public void testReadFromBeginning7ByteSingleByte() throws Exception {
-        testReadFromBeginning(7, true);
+        testRead(7, 0, true);
     }
 
     @Test
     public void testReadFromBeginning8Byte() throws Exception {
-        testReadFromBeginning(8, false);
+        testRead(8, 0, false);
     }
 
     @Test
     public void testReadFromBeginning8ByteSingleByte() throws Exception {
-        testReadFromBeginning(8, true);
+        testRead(8, 0, true);
     }
 
     @Test
     public void testReadFromBeginning9Byte() throws Exception {
-        testReadFromBeginning(9, false);
+        testRead(9, 0, false);
     }
 
     @Test
     public void testReadFromBeginning9ByteSingleByte() throws Exception {
-        testReadFromBeginning(9, true);
+        testRead(9, 0, true);
     }
 
     @Test
     public void testReadFromBeginning40Byte() throws Exception {
-        testReadFromBeginning(40, false);
+        testRead(40, 0, false);
     }
 
     @Test
     public void testReadFromBeginning40ByteSingleByte() throws Exception {
-        testReadFromBeginning(40, true);
+        testRead(40, 0, true);
     }
 
-    private void testReadFromBeginning(int length, boolean readSingleBytes) throws Exception {
+    @Test
+    public void testReadFrom1() throws Exception {
+        testRead(10, 1, false);
+    }
+
+    @Test
+    public void testReadFrom1SingleByte() throws Exception {
+        testRead(10, 1, true);
+    }
+
+    @Test
+    public void testReadFrom2() throws Exception {
+        testRead(10, 2, false);
+    }
+
+    @Test
+    public void testReadFrom2SingleByte() throws Exception {
+        testRead(10, 2, true);
+    }
+
+    @Test
+    public void testReadFrom3() throws Exception {
+        testRead(10, 3, false);
+    }
+
+    @Test
+    public void testReadFrom3SingleByte() throws Exception {
+        testRead(10, 3, true);
+    }
+
+    @Test
+    public void testReadFrom4() throws Exception {
+        testRead(10, 4, false);
+    }
+
+    @Test
+    public void testReadFrom4SingleByte() throws Exception {
+        testRead(10, 4, true);
+    }
+
+    @Test
+    public void testReadFrom5() throws Exception {
+        testRead(10, 5, false);
+    }
+
+    @Test
+    public void testReadFrom5SingleByte() throws Exception {
+        testRead(10, 5, true);
+    }
+
+    @Test
+    public void testReadFrom6() throws Exception {
+        testRead(10, 6, false);
+    }
+
+    @Test
+    public void testReadFrom6SingleByte() throws Exception {
+        testRead(10, 6, true);
+    }
+
+    @Test
+    public void testReadFrom7() throws Exception {
+        testRead(10, 7, false);
+    }
+
+    @Test
+    public void testReadFrom7SingleByte() throws Exception {
+        testRead(10, 7, true);
+    }
+
+    @Test
+    public void testReadFrom8() throws Exception {
+        testRead(10, 8, false);
+    }
+
+    @Test
+    public void testReadFrom8SingleByte() throws Exception {
+        testRead(10, 8, true);
+    }
+
+    @Test
+    public void testReadFrom9() throws Exception {
+        testRead(10, 9, false);
+    }
+
+    @Test
+    public void testReadFrom9SingleByte() throws Exception {
+        testRead(10, 9, true);
+    }
+
+    @Test
+    public void testReadFrom200() throws Exception {
+        testRead(10, 200, false);
+    }
+
+    @Test
+    public void testReadFrom200SingleByte() throws Exception {
+        testRead(10, 200, true);
+    }
+
+    private void testRead(int length, int offset, boolean readSingleBytes) throws Exception {
         write(testBuffer);
-        seek(0);
+        seek(offset);
         byte[] buffer = new byte[length];
         int read = 0;
         if (readSingleBytes) {
@@ -643,8 +745,8 @@ public abstract class ByteArrayStreamTest {
         } else {
             read = read(buffer);
         }
-        assertEquals(Integer.valueOf(Math.min(length, testBuffer.length)), Integer.valueOf(read));
-        checkArray(testBuffer, 0, buffer, 0, read);
+        assertEquals(Integer.valueOf(max(0, min(length, testBuffer.length - offset))), Integer.valueOf(read));
+        checkArray(testBuffer, offset, buffer, 0, read);
         assertTrue(read == length || byteArrayStream.isEOF());
     }
 
