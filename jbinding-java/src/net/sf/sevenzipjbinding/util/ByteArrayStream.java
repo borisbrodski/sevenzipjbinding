@@ -110,10 +110,10 @@ public class ByteArrayStream implements IInStream, IOutStream {
      */
     public ByteArrayStream(int initialSize, int maxSize) {
         this.initialSize = initialSize;
-        if (maxSize <= 0) {
+        if (maxSize < 0) {
             throw new IllegalStateException("Maximal size of the byte array stream should be >0");
         }
-        if (initialSize <= 0) {
+        if (initialSize < 0) {
             throw new IllegalStateException("Initial size of the byte array stream should be >0");
         }
         this.maxSize = maxSize;
