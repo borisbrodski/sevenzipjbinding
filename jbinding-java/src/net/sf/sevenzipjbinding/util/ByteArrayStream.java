@@ -231,6 +231,13 @@ public class ByteArrayStream implements IInStream, IOutStream {
     }
 
     /**
+     * Set current pointer back to zero.
+     */
+    public void rewind() {
+        seekToPosition = 0;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public void setSize(long newSize) {
