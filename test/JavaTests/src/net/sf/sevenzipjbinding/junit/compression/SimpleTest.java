@@ -8,12 +8,13 @@ import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
+import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class Test {
+public class SimpleTest {
     @org.junit.Test
     public void testname() throws Exception {
-        VirtualContent virtualContent = new VirtualContent();
+        VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(100, 3, 3, 100, 50);
         virtualContent.print();
         File directory = new File("testoutput");
