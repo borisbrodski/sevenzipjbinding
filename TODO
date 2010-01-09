@@ -9,9 +9,13 @@
 
 - Repack XAR (bz2) tests with new version of xar
 
-- In JavaDoc of ArchiveFormat: add columns (single file tests and multiple files tests)
+- In JavaDoc of ArchiveFormat: add columns (single file tests and multiple files tests + archive creation)
 
+- Append short license info to all source files.
 
+- Check @author and @version in the JavaDoc of test java source files.
+
+ 
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
 - Test some untested archive formats
