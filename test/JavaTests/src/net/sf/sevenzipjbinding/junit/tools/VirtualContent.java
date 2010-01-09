@@ -48,6 +48,27 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @version 4.65-1
  */
 public class VirtualContent {
+    public static class VirtualContentConfiguration {
+        private boolean forbiddenRootDirectory;
+        private boolean allowEmptyFiles;
+
+        public boolean isForbiddenRootDirectory() {
+            return forbiddenRootDirectory;
+        }
+
+        public void setForbiddenRootDirectory(boolean forbiddenRootDirectory) {
+            this.forbiddenRootDirectory = forbiddenRootDirectory;
+        }
+
+        public boolean isAllowEmptyFiles() {
+            return allowEmptyFiles;
+        }
+
+        public void setAllowEmptyFiles(boolean allowEmptyFiles) {
+            this.allowEmptyFiles = allowEmptyFiles;
+        }
+    }
+
     private class Item {
         private String path;
         private Date creationDate;
@@ -114,7 +135,9 @@ public class VirtualContent {
         }
 
         public ISequentialInStream getStream(int index) {
-            return itemList.get(index).getBlob();
+            ByteArrayStream byteArrayStream = itemList.get(index).getBlob();
+            byteArrayStream.rewind();
+            return byteArrayStream;
         }
 
         public void setOperationResult(boolean operationResultOk) {
@@ -131,24 +154,22 @@ public class VirtualContent {
     }
 
     private class TestSequentailOutStream implements ISequentialOutStream {
-        private final Item item;
+        private final ByteArrayStream byteArrayStream;
 
         public TestSequentailOutStream(Item item) {
-            this.item = item;
-            item.getBlob().rewind();
+            byteArrayStream = item.getBlob();
+            byteArrayStream.rewind();
         }
 
         public int write(byte[] data) throws SevenZipException {
             byte[] expectedData = new byte[data.length];
-            assertEquals(Integer.valueOf(data.length), Integer.valueOf(item.getBlob().read(expectedData)));
+            assertEquals(Integer.valueOf(data.length), Integer.valueOf(byteArrayStream.read(expectedData)));
             assertArrayEquals(expectedData, data);
-            System.out.println("Returning " + data.length);
             return data.length;
         }
 
         void finish() throws SevenZipException {
-            assertTrue(item.getBlob().isEOF());
-            item.getBlob().rewind();
+            assertTrue(byteArrayStream.isEOF());
         }
     }
 
@@ -163,8 +184,6 @@ public class VirtualContent {
         }
 
         public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) throws SevenZipException {
-            System.out.println("Extracting index=" + index);
-
             String path = (String) inArchive.getProperty(index, PropID.PATH);
 
             Integer myIndexObjekt = usedNames.get(path.toUpperCase());
@@ -182,6 +201,7 @@ public class VirtualContent {
         public void setOperationResult(ExtractOperationResult extractOperationResult) throws SevenZipException {
             assertEquals(ExtractOperationResult.OK, extractOperationResult);
             testSequentailOutStream.finish();
+            testSequentailOutStream = null;
         }
 
         public void setCompleted(long completeValue) throws SevenZipException {
@@ -208,6 +228,11 @@ public class VirtualContent {
 
     private List<Item> itemList = new ArrayList<Item>();
     private Map<String, Integer> usedNames = new HashMap<String, Integer>();
+    private VirtualContentConfiguration configuration;
+
+    public VirtualContent(VirtualContentConfiguration virtualContentConfiguration) {
+        this.configuration = virtualContentConfiguration;
+    }
 
     public void writeToDirectory(File directory) throws Exception {
         directory.mkdirs();
@@ -247,6 +272,9 @@ public class VirtualContent {
         List<String> directoryList = getRandomDirectory(directoriesDepth, maxSubdirectories, countOfFiles);
         for (int i = 0; i < countOfFiles; i++) {
             int fileLength = averageFileLength + random.nextInt(deltaFileLength + 1);
+            if (configuration.isAllowEmptyFiles() && random.nextInt(3) == 0) {
+                fileLength = 0;
+            }
             byte[] fileContent = getRandomFileContent(fileLength);
 
             String directory = directoryList.get(random.nextInt(directoryList.size()));
@@ -294,7 +322,9 @@ public class VirtualContent {
 
     private List<String> getRandomDirectory(int directoriesDepth, int maxSubdirectories, int maxDirectories) {
         List<String> result = new ArrayList<String>();
-        result.add(""); // Root directory
+        if (!configuration.isForbiddenRootDirectory()) {
+            result.add(""); // Root directory
+        }
         BigDecimal countOfDirectories;
         if (maxSubdirectories > 1 && directoriesDepth > 1) {
             // count of directories = \[ \frac{maxSubdirectories^{directoriesDepth + 1} - 1}{maxSubdirectories - 1} \]$ (maxSubdirectories > 1)
