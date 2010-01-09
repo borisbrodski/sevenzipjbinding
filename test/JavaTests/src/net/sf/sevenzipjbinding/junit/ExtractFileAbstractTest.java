@@ -1,7 +1,7 @@
 package net.sf.sevenzipjbinding.junit;
 
+import static net.sf.sevenzipjbinding.junit.JUnitNativeTestBase.SINGLE_TEST_REPEAT_COUNT;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,9 +38,6 @@ import org.junit.Test;
  * @version 4.65-1
  */
 public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
-    private static final int SINGLE_TEST_THREAD_COUNT = 2;//15;
-    private static final int SINGLE_TEST_REPEAT_COUNT = 2;//60;
-    private static final int SINGLE_TEST_TIMEOUT = 100000;
     private static final String DEFAULT_PASSWORD = "TestPass";
 
     protected final ArchiveFormat archiveFormat;
@@ -318,71 +315,11 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     protected void testArchiveExtraction(final int fileIndex, final int compressionIndex,
             final boolean autodetectFormat, boolean multithreaded) throws Exception {
         if (multithreaded) {
-            final int[] threadsFinished = new int[] { SINGLE_TEST_THREAD_COUNT };
-            final Throwable[] firstThrowable = new Throwable[] { null };
-            final Throwable[] firstExpectedThrowable = new Throwable[] { null };
-            for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            testArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
-                            if (exceptionToBeExpected != null) {
-                                throw new Exception("Expected exception wasn't thrown: "
-                                        + exceptionToBeExpected.getCanonicalName());
-                            }
-                        } catch (Throwable e) {
-                            synchronized (firstThrowable) {
-                                if (firstThrowable[0] == null //
-                                        && (exceptionToBeExpected == null // 
-                                        || !exceptionToBeExpected.isAssignableFrom(e.getClass()))) {
-                                    firstThrowable[0] = e;
-                                }
-                                if (exceptionToBeExpected != null
-                                        && exceptionToBeExpected.isAssignableFrom(e.getClass())) {
-                                    firstExpectedThrowable[0] = e;
-                                }
-                            }
-                        } finally {
-                            synchronized (ExtractFileAbstractTest.this) {
-                                try {
-                                    threadsFinished[0]--;
-                                    ExtractFileAbstractTest.this.notify();
-                                } catch (Throwable throwable) {
-                                    throwable.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                }).start();
-            }
-            long start = System.currentTimeMillis();
-            synchronized (this) {
-                while (true) {
-                    try {
-                        if (threadsFinished[0] == 0) {
-                            break;
-                        }
-                        wait(SINGLE_TEST_TIMEOUT * SINGLE_TEST_REPEAT_COUNT);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (System.currentTimeMillis() - start > SINGLE_TEST_TIMEOUT * SINGLE_TEST_REPEAT_COUNT) {
-                        fail("Time out");
-                    }
+            runMultithreaded(new RunnableThrowsException() {
+                public void run() throws Exception {
+                    testArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
                 }
-            }
-            if (firstThrowable[0] != null) {
-                if (firstThrowable[0] instanceof SevenZipException) {
-                    throw (SevenZipException) firstThrowable[0];
-                }
-                throw new RuntimeException("Exception in underlying thread", firstThrowable[0]);
-            }
-            if (firstExpectedThrowable[0] != null) {
-                if (firstExpectedThrowable[0] instanceof Exception) {
-                    throw (Exception) firstExpectedThrowable[0];
-                }
-                throw (Error) firstExpectedThrowable[0];
-            }
+            }, exceptionToBeExpected);
         } else {
             for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
                 doTestArchiveExtraction(fileIndex, compressionIndex, autodetectFormat);
