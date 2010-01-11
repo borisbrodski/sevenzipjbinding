@@ -125,12 +125,12 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
 
     @Test
     public void compress10BigFiles() throws Exception {
-        fillRandomlyAndTest(10, 1, 2, 400000, 5000, false);
+        fillRandomlyAndTest(10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, false);
     }
 
     @Test
     public void compress10BigFilesMultithreaded() throws Exception {
-        fillRandomlyAndTest(10, 1, 2, 400000, 5000, true);
+        fillRandomlyAndTest(10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, true);
     }
 
     // TODO Core dump was caused by this test ones
