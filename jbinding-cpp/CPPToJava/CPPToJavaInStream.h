@@ -75,9 +75,15 @@ public:
 		return result;
 	}
 
-	STDMETHOD(QueryInterface)(REFGUID refguid, void ** p)
+	STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject)
 	{
-		return CPPToJavaSequentialInStream::QueryInterface(refguid, p);
+		if (iid == IID_IInStream)
+	    {
+	        *outObject = (void *)(IInStream *)this;
+	        AddRef();
+	        return S_OK;
+	    }
+		return CPPToJavaSequentialInStream::QueryInterface(iid, outObject);
 	}
 
 	STDMETHOD_(ULONG, AddRef)()

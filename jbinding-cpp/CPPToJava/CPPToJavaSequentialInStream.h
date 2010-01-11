@@ -15,7 +15,7 @@ private:
 	jmethodID _readMethodID;
 
 public:
-	MY_UNKNOWN_IMP
+	MY_UNKNOWN_IMP1(ISequentialInStream)
 
 	CPPToJavaSequentialInStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject sequentialInStream)
 		: CPPToJavaAbstract(nativeMethodContext, initEnv, sequentialInStream)
