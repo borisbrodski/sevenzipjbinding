@@ -281,7 +281,7 @@ public class ZipContentComparator {
                 info.filename = info.filename.replace('\\', '/');
                 info.itemId = i;
                 info.realSize = ((Long) actualSevenZipArchive.getProperty(i, PropID.SIZE)).longValue();
-                info.fileLastModificationTime = (Date) actualSevenZipArchive.getProperty(i, PropID.LAST_WRITE_TIME);
+                info.fileLastModificationTime = (Date) actualSevenZipArchive.getProperty(i, PropID.LAST_MODIFICATION_TIME);
                 if (!info.filename.equals(XAR_TOC_ENTRY) && !info.filename.equals(IGNORE_ENTRY)) {
                     fileNames.add(info);
                 }

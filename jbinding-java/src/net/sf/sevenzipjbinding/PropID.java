@@ -63,10 +63,26 @@ public enum PropID {
      */
     PACKED_SIZE, //
 
+    /**
+     * Archive item or file attributes. See {@link FileAttribute} enumeration for the supported bit masks.
+     */
     ATTRIBUTES, //
+
+    /**
+     * Date and time of the file creation.
+     */
     CREATION_TIME, //
+
+    /**
+     * Date and time of last access of the file.
+     */
     LAST_ACCESS_TIME, //
-    LAST_WRITE_TIME, //
+
+    /**
+     * Date and time the file was last time modified.
+     */
+    LAST_MODIFICATION_TIME, //
+
     SOLID, //
     COMMENTED,
 

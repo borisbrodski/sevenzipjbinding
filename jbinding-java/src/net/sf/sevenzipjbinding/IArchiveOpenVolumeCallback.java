@@ -17,7 +17,7 @@ public interface IArchiveOpenVolumeCallback {
      * <li>{@link PropID#ATTRIBUTES} (Type: int)</li>
      * <li>{@link PropID#LAST_ACCESS_TIME} (Type: Date)</li>
      * <li>{@link PropID#CREATION_TIME} (Type: Date)</li>
-     * <li>{@link PropID#LAST_WRITE_TIME} (Type: Date)</li>
+     * <li>{@link PropID#LAST_MODIFICATION_TIME} (Type: Date)</li>
      * </ul>
      * 
      * @param propID

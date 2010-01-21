@@ -117,7 +117,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
      */
 
     public Date getLastWriteTime() throws SevenZipException {
-        return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_WRITE_TIME);
+        return (Date) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.LAST_MODIFICATION_TIME);
     }
 
     /**
