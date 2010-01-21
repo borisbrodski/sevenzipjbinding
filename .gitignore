@@ -3,3 +3,4 @@
 jbinding-java/bin
 test/JavaTests/bin
 .svn
+hs_err_pid*.log
