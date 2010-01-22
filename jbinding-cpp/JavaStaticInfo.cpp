@@ -30,25 +30,44 @@ jobject JavaFinalClass::newInstance(JNIEnv * env) {
     return env->NewObject(_jclass, defaultConstructor);
 }
 
-struct JOut {
-    JNIEnv * _env;
-    ostream & _stream;
-    JOut(JNIEnv * env, ostream & stream) : _env(env), _stream(stream) {}
-};
-
-JOut operator<< (ostream & stream, JNIEnv * env) {
-    return JOut(env, stream);
-}
-ostream & operator<< (JOut jout, jstring str) {
-    char const * s = jout._env->GetStringUTFChars(str, NULL);
-    jout._stream << s;
-    jout._env->ReleaseStringUTFChars(str, s);
-    return jout._stream;
-}
-
 void test(JNIEnv * env) {
     //m.myMethod(env);
-    jobject classLong = env->FindClass("java/lang/Long");
+    jclass classLong = env->FindClass("java/lang/Long");
+    jmethodID longValueOf = env->GetStaticMethodID(classLong, "valueOf", "(J)Ljava/lang/Long;");
+    jobject long123 = env->CallStaticObjectMethod(classLong, longValueOf, (jlong)123);
+
+    JObject & objectLong = JObject::getInstanceFromObject(env, long123);
+    std::cout << "long123 = " << env << objectLong.toString(env, long123) << std::endl;
+    std::cout << "long123 = " << env << objectLong.toString(env, long123) << std::endl;
+
+
+    jclass classInteger = env->FindClass("java/lang/Integer");
+    jmethodID integerValueOf = env->GetStaticMethodID(classInteger, "valueOf", "(I)Ljava/lang/Integer;");
+    jobject integer234 = env->CallStaticObjectMethod(classInteger, integerValueOf, (jint)234);
+
+    JObject & objectInteger = JObject::getInstanceFromObject(env, integer234);
+    std::cout << "integer234 = " << env << objectInteger.toString(env, integer234) << std::endl;
+    std::cout << "integer234 = " << env << objectInteger.toString(env, integer234) << std::endl;
+
+
+    JObject & objectLong2 = JObject::getInstanceFromObject(env, long123);
+    std::cout << "long123 = " << env << objectLong2.toString(env, long123) << std::endl;
+    std::cout << "long123 = " << env << objectLong2.toString(env, long123) << std::endl;
+
+    JObject & objectLong3 = JObject::getInstanceFromObject(env, long123);
+    std::cout << "long123 = " << env << objectLong2.toString(env, long123) << std::endl;
+    std::cout << "long123 = " << env << objectLong2.toString(env, long123) << std::endl;
+
+    JObject & objectInteger2 = JObject::getInstanceFromObject(env, integer234);
+    std::cout << "integer234 = " << env << objectInteger2.toString(env, integer234) << std::endl;
+    std::cout << "integer234 = " << env << objectInteger2.toString(env, integer234) << std::endl;
+
+    JObject & objectInteger3 = JObject::getInstanceFromObject(env, integer234);
+    std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
+    std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
+
+    exit(0);
+/*
     std::cout << "o=" << classLong << std::endl;
     jobject classInteger = env->FindClass("java/lang/Integer");
     std::cout << "o=" << classInteger << std::endl;
@@ -62,7 +81,7 @@ void test(JNIEnv * env) {
 
     str = objectInteger.toString()(env, classInteger);
     std::cout << "Result: '" << env << str << "'" << std::endl;
-
+*/
 
 
     //o.getVersion(env);

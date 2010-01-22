@@ -9,9 +9,32 @@
 
 #include <map>
 #include <stdarg.h>
-#include <iostream> // TODO Remove me
 #include "JNITools.h"
 #include "JObjectList.h"
+
+#ifdef TRACE_ON
+#include <ostream>
+struct JOut {
+    JNIEnv * _env;
+    std::ostream & _stream;
+    JOut(JNIEnv * env, std::ostream & stream) : _env(env), _stream(stream) {}
+};
+
+inline JOut operator<< (std::ostream & stream, JNIEnv * env) {
+    return JOut(env, stream);
+}
+inline std::ostream & operator<< (JOut jout, jstring str) {
+    char const * s = jout._env->GetStringUTFChars(str, NULL);
+    jout._stream << s;
+    jout._env->ReleaseStringUTFChars(str, s);
+    return jout._stream;
+}
+inline std::ostream & operator<< (JOut jout, jint i) {
+    jout._stream << i;
+    return jout._stream;
+}
+#endif
+
 
 #ifdef JSF_DEFINE_VARIABLES
 #   define JSI_VARIABLE(type, name, init)	type name init;
@@ -53,7 +76,7 @@ class JavaFinalClass {
             jclass jclassClass = env->GetObjectClass(_jclass);
             jmethodID getModifiersMethodId = env->GetMethodID(jclassClass, "getModifiers", "()I");
             jint modifiers = env->CallNonvirtualIntMethod(_jclass, jclassClass, getModifiersMethodId);
-            ASSERT(modifiers & JAVA_MODIFIER_FINAL)
+            MY_ASSERT(modifiers & JAVA_MODIFIER_FINAL)
 #endif
         }
     }
@@ -207,48 +230,28 @@ JAVA_FINAL_CLASS("net/sf", interface2)
 /*    */JAVA_FINAL_CLASS_METHOD(Void, method4, "(t4)")
 }
 
-
-
-
-
-
-
-
-
-
-
-class JClassObjectInfo {
-    friend std::ostream & operator<<(std::ostream &, JClassObjectInfo &);
-public:
-    virtual jclass getJClass() =0;
-    virtual char const * getName() =0;
-    virtual char const * getPackage() =0;
-};
-
-inline std::ostream & operator<<(std::ostream & stream, JClassObjectInfo & info) {
-    stream << info.getPackage() << '/' << info.getName();
-}
-
-
 template<typename T>
-class JInterface : public JClassObjectInfo {
+class JInterface {
     static JObjectMap<jclass, T> jinterfaceMap;
-    char const * _package;
     char const * _name;
     jclass _jclass;
 protected:
-    JInterface(char const * package, char const * name) :
-            _package(package), _name(name) {
+    JInterface(char const * name) :
+        _name(name) {
     }
+#ifdef USE_MY_ASSERTS
+    void checkObjectClass(JNIEnv * env, jobject object) {
+        jclass clazz = env->GetObjectClass(object);
+        FATALIF(!clazz, "JInterface::checkObject(): GetObjectClass() failed")
+        MY_ASSERT(env->IsSameObject(_jclass, clazz))
+    }
+#endif // USE_MY_ASSERTS
 public:
     jclass getJClass() {
         return _jclass;
     }
     char const * getName() {
         return _name;
-    }
-    char const * getPackage() {
-        return _package;
     }
     static T & getInstanceFromObject(JNIEnv * env, jobject jobject) {
         jclass jobjectClass = env->GetObjectClass(jobject);
@@ -260,7 +263,7 @@ public:
         if (instance) {
             return *instance;
         }
-        objectClass = (jclass)env->NewGlobalRef(objectClass);
+        objectClass = (jclass) env->NewGlobalRef(objectClass);
         T & newInstance = jinterfaceMap.add(objectClass);
         newInstance._jclass = objectClass;
         return newInstance;
@@ -270,91 +273,41 @@ public:
 template<typename T>
 JObjectMap<jclass, T> JInterface<T>::jinterfaceMap;
 
+#ifdef TRACE_ON
+template<typename T>
+inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interface) {
+    stream << interface.getName();
+}
+#endif // TRACE_ON
 class JInterfaceMethod {
+#ifdef TRACE_ON
     friend std::ostream & operator<<(std::ostream &, JInterfaceMethod &);
+#endif
     char const * _name;
     char const * _signature;
-    JClassObjectInfo * _jclassObjectInfo;
     jmethodID _jmethodID;
 protected:
     JInterfaceMethod(char const * name, char const * signature) :
-        _name(name), _signature(signature), _jmethodID(NULL), _jclassObjectInfo(NULL) {
+        _name(name), _signature(signature), _jmethodID(NULL) {
     }
-    jmethodID getMethodID(JNIEnv * env) {
+public:
+    jmethodID getMethodID(JNIEnv * env, jclass jclazz) {
         if (_jmethodID) {
             return _jmethodID;
         }
-        _jmethodID = env->GetMethodID(_jclassObjectInfo->getJClass(), _name, _signature);
-        FATALIF4(!_jmethodID, "Method not found: %s/%s.%s() signature %s", _jclassObjectInfo->getPackage(), _jclassObjectInfo->getName(), _name, _signature);
-    }
-public:
-    void setJClassObjectInfo(JClassObjectInfo * jclassObjectInfo) {
-        _jclassObjectInfo = jclassObjectInfo;
-    }
-    JClassObjectInfo * getJClassObjectInfo() {
-        return _jclassObjectInfo;
-    }
-    char const * getName() {
-        return _name; // TODO Remove this
+#ifdef TRACE_ON
+        std::cout << "Getting method id for " << *this << std::endl;
+#endif
+        _jmethodID = env->GetMethodID(jclazz, _name, _signature);
+        FATALIF2(!_jmethodID, "Method not found: .%s() signature %s", _name, _signature);
     }
 };
 
+#ifdef TRACE_ON
 inline std::ostream & operator<<(std::ostream & stream, JInterfaceMethod & method) {
-    stream << *method.getJClassObjectInfo() << '.' << method._name << method._signature;
+    stream << method._name << method._signature;
 }
-
-class JInterfaceLongMethod : public JInterfaceMethod {
-protected:
-    JInterfaceLongMethod(char const * name, char const * signature) :
-        JInterfaceMethod(name, signature) {
-    }
-
-public:
-    jlong operator()(JNIEnv * env, ...) {
-        std::cout << *this << std::endl;
-        return 0;
-    }
-};
-
-class JInterfaceStringMethod : public JInterfaceMethod {
-protected:
-    JInterfaceStringMethod(char const * name, char const * signature) :
-        JInterfaceMethod(name, signature) {
-    }
-
-public:
-    jstring operator()(JNIEnv * env, jobject object, ...) {
-        va_list args;
-        va_start(args, object);
-        jstring result = static_cast<jstring>(env->CallObjectMethodV(object, getMethodID(env), args));
-        va_end(args);
-
-        std::cout << *this << std::endl;
-
-        return result;
-    }
-};
-
-class JInterfaceIntMethod : public JInterfaceMethod {
-protected:
-    JInterfaceIntMethod(char const * name, char const * signature) :
-        JInterfaceMethod(name, signature) {
-    }
-
-public:
-    jint operator()(JNIEnv * env, jobject object, ...) {
-        va_list args;
-        va_start(args, object);
-        jint result = env->CallIntMethodV(object, getMethodID(env), args);
-        va_end(args);
-
-        std::cout << *this << std::endl;
-
-        return result;
-    }
-};
-
-
+#endif
 
 #ifdef JSF_DEFINE_VARIABLES
 #   define DEFINE_JINTERFACEMAP(name) JObjectMap<jclass, name> JInterface<name>::jinterfaceMap;
@@ -362,32 +315,61 @@ public:
 #   define DEFINE_JINTERFACEMAP(name)
 #endif
 
-#define BEGIN_JINTERFACE(package, name)                                                 \
+#define BEGIN_JINTERFACE(name)                                                          \
     class name : public JInterface<name> {                                              \
         friend class JObjectMap<jclass, name>;                                          \
-        name() : JInterface<name>(package, #name) {}                                    \
+        name() : JInterface<name>(#name) {}                                             \
     public:
-
 
 #define END_JINTERFACE                      };
 
+#define JAVA_TYPE_String jstring
+#define JAVA_TYPE_Int jint
+#define JAVA_TYPE_Long jlong
+
+#define JNI_ENV_CALL_String CallObjectMethodV
+#define JNI_ENV_CALL_Int CallIntMethodV
+#define JNI_ENV_CALL_Long CallLongMethodV
+
+#ifdef USE_MY_ASSERTS
+#   define CHECK_OBJECT_CLASS(env, object) {checkObjectClass(env, object);}
+#else
+#   define CHECK_OBJECT_CLASS(env, object) {}
+#endif
+
+#ifdef TRACE_ON
+#   define TRACE_JNI_CALLING(name, signature) {std::cout << "Calling " << *this << '.' << #name << signature << std::endl;}
+#   define TRACE_JNI_CALLED(name, signature) {std::cout << "Called " << *this << '.' << #name << " returned '" << env << result << "'" << std::endl;}
+#else
+#   define TRACE_JNI_CALLING(name, signature) {}
+#   define TRACE_JNI_CALLED(name, signature) {}
+#endif
+
 #define JINTERFACE_METHOD(ret_type, name, signature)                            \
     private: class C_##name; friend class C_##name;                             \
-    class C_##name : public JInterface##ret_type##Method {                      \
+    class C_##name : public JInterfaceMethod {                                  \
     public:                                                                     \
-        C_##name() : JInterface##ret_type##Method(#name, signature) {           \
+        C_##name() : JInterfaceMethod(#name, signature) {                       \
         }                                                                       \
     };                                                                          \
     C_##name _##name;                                                           \
     public:                                                                     \
-        C_##name & name() {                                                     \
-            _##name.setJClassObjectInfo(this);                                  \
-            return _##name;                                                     \
-        };
+        JAVA_TYPE_##ret_type name(JNIEnv * env, jobject object, ...) {          \
+            CHECK_OBJECT_CLASS(env, object)                                     \
+            TRACE_JNI_CALLING(name, signature)                                  \
+            va_list args;                                                       \
+            va_start(args, object);                                             \
+            JAVA_TYPE_##ret_type result = static_cast<JAVA_TYPE_##ret_type>(    \
+                        env->JNI_ENV_CALL_##ret_type(object,                    \
+                            _##name.getMethodID(env, getJClass()), args));      \
+            va_end(args);                                                       \
+            TRACE_JNI_CALLED(name, signature)                                   \
+            return result;                                                      \
+        }
 
-BEGIN_JINTERFACE("net/sf", JObject)
-    JINTERFACE_METHOD(String, toString, "()Ljava/lang/String;")
-    JINTERFACE_METHOD(Int, hashCode, "()I")
+BEGIN_JINTERFACE(JObject)
+/*    */JINTERFACE_METHOD(String, toString, "()Ljava/lang/String;")
+/*    */JINTERFACE_METHOD(Int, hashCode, "()I")
 END_JINTERFACE
 
 #ifdef JSF_DEFINE_VARIABLES
