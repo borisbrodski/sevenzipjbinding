@@ -15,7 +15,7 @@ SevenZipException::SevenZipException(const char * fmt, ...)
     _message[EXCEPTION_MESSAGE_MAX_SIZE - 1] = 0;
     va_end(args);
 
-    TRACE1("Exception with message '%s' created.", _message);
+    TRACE("Exception with message '" << _message << "' created.");
     _hresult = 0;
 }
 
@@ -31,6 +31,6 @@ SevenZipException::SevenZipException(HRESULT hresult, char * fmt, ...)
     _message[EXCEPTION_MESSAGE_MAX_SIZE - 1] = 0;
     va_end(args);
 
-    TRACE2("Exception with message '%s' created. HResult: %i", _message, _hresult);
+    TRACE("Exception with message '" << _message << "' created. HResult: " << _hresult);
     _hresult = hresult;
 }

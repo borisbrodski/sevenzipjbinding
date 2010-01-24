@@ -7,7 +7,7 @@
 STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
     TRACE_OBJECT_CALL("Seek");
 
-	TRACE2("SEEK(offset=%i, origin=%i)", (int)offset, (int)seekOrigin);
+	TRACE("SEEK(offset=" << offset << ", origin=" << seekOrigin << ")");
 
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();
@@ -27,7 +27,7 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
 		*newPosition = (UInt64)returnedNewPosition;
 	}
 
-	TRACE1("SEEK: New Pos: %i", (int)(UInt64)returnedNewPosition)
+	TRACE("SEEK: New Pos: " << (UInt64)returnedNewPosition)
 
 	return S_OK;
 }
@@ -35,7 +35,7 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
 STDMETHODIMP CPPToJavaOutStream::SetSize(Int64 newSize) {
     TRACE_OBJECT_CALL("SetSize");
 
-	TRACE1("SetSize(size=%i)", (int)newSize);
+	TRACE("SetSize(size=" << newSize << ')');
 
     JNIInstance jniInstance(_nativeMethodContext);
     JNIEnv * env = jniInstance.GetEnv();

@@ -59,7 +59,7 @@ public:
 			return _jcharString;
 		}
 
-		TRACE1("Converting wchar_t=>jchar: \"%S\"", _unicodeString)
+		TRACE("Converting wchar_t=>jchar: \"" << _unicodeString <<"\"")
 		if (sizeof(wchar_t) == sizeof(jchar)) {
 			_jcharString = (const jchar *)( _unicodeString);
 			return _jcharString;
@@ -91,7 +91,7 @@ public:
 		}
 		_unicodeBuffer[len] = 0;
 
-		TRACE1("Converting jchar=>wchar_t done: \"%S\"", _unicodeBuffer);
+		TRACE("Converting jchar=>wchar_t done: \"" << _unicodeBuffer << "\"");
 		return _unicodeString = _unicodeBuffer;
 	}
 

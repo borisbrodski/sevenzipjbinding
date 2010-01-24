@@ -26,7 +26,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID,
 		PROPVARIANT *value) {
 	TRACE_OBJECT_CALL("GetProperty");
 
-	TRACE1("GetProperty(%i)", propID)
+	TRACE("GetProperty(" << propID << ')')
 
 	JNIInstance jniInstance(_nativeMethodContext);
 	JNIEnv * env = jniInstance.GetEnv();

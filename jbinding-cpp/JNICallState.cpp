@@ -61,7 +61,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
     if (findresult)
     {
         JNIEnv * env;
-        TRACE2("JNIEnv* was requested from other thread. Current threadId=%lu, initThreadId=%lu", (long unsigned int)currentThreadId, (long unsigned int)_initThreadId)
+        TRACE("JNIEnv* was requested from other thread. Current threadId=" << currentThreadId << ", initThreadId=" << _initThreadId)
         jint result = _vm->GetEnv((void**)&env, JNI_VERSION_1_4);
         if (result == JNI_OK) {
             TRACE("Current thread is already attached")
@@ -70,10 +70,10 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
         TRACE("Attaching current thread to VM.")
         if ((result = _vm->AttachCurrentThread((void**)&env, NULL)) || env == NULL)
         {
-            TRACE1("New thread couldn't be attached: %li", (long int)result)
+            TRACE("New thread couldn't be attached: " << result)
             throw SevenZipException("Can't attach current thread (id: %i) to the VM", currentThreadId);
         }
-        TRACE1("Thread attached. New env=0x%08X", (size_t)env);
+        TRACE("Thread attached. New env=" << (void *)env);
 
         ThreadInfo * threadInfo = new ThreadInfo(env);
 
@@ -88,7 +88,7 @@ JNIEnv * NativeMethodContext::BeginCPPToJava()
     	LEAVE_CRITICAL_SECTION
 
         threadInfo->_callCounter++;
-        TRACE1("Begin => deattaching counter: %i", threadInfo->_callCounter)
+        TRACE("Begin => deattaching counter: " << threadInfo->_callCounter)
 
         return threadInfo->_env;
     }
@@ -111,7 +111,7 @@ void NativeMethodContext::EndCPPToJava()
 
     if (findresult)
     {
-        TRACE1("EndCPPToJava(): unknown current thread (id: %i)", (size_t)currentThreadId)
+        TRACE("EndCPPToJava(): unknown current thread (id: " << currentThreadId << ")")
         throw SevenZipException("EndCPPToJava(): unknown current thread (id: %i)", currentThreadId);
     }
 #endif //_DEBUG
@@ -136,7 +136,7 @@ void NativeMethodContext::EndCPPToJava()
     }
     else
     {
-        TRACE1("End => deattaching counter: %i", threadInfo->_callCounter)
+        TRACE("End => deattaching counter: " << threadInfo->_callCounter)
     }
     TRACE("End of void NativeMethodContext::EndCPPToJava()")
 
@@ -194,12 +194,12 @@ void NativeMethodContext::ThrowSevenZipExceptionWithMessage(char * message)
 
     if (_firstThrowenExceptionMessage == NULL)
     {
-        TRACE1("SET: Setting new 'first thrown exception message' to '%s'", message);
+        TRACE("SET: Setting new 'first thrown exception message' to '" << message << "'");
         _firstThrowenExceptionMessage = strdup(message);
     }
     else
     {
-        TRACE1("IGNORE: 'first throwen exception message' already set. New exception with message '%s' will be ignored", message);
+        TRACE("IGNORE: 'first thrown exception message' already set. New exception with message '" << message << "' will be ignored");
     }
 }
 
@@ -220,7 +220,7 @@ void NativeMethodContext::JNIThrowException(JNIEnv * env)
         return;
     }
 
-    TRACE2("Throwing new exception with text '%s' and cause 0x%08X", _firstThrowenExceptionMessage, (size_t)_lastOccurredException);
+    TRACE("Throwing new exception with text '" << _firstThrowenExceptionMessage << "' and cause " << _lastOccurredException);
 
     jclass exceptionClass = env->FindClass(SEVEN_ZIP_EXCEPTION);
     FATALIF(exceptionClass == NULL, "SevenZipException class '" SEVEN_ZIP_EXCEPTION "' can't be found");

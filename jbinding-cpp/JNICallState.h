@@ -69,7 +69,7 @@ public:
         _firstThrowenExceptionMessage = NULL;
 	    _initEnv = initEnv;
 	    _initThreadId = PlatformGetCurrentThreadId();
-	    TRACE2("_initThreadId = %lu, this=0x%08X", (unsigned long int)_initThreadId, (size_t)this)
+	    TRACE("_initThreadId = " << _initThreadId << ", this=" << this)
 	    _vm = NULL;
 	    if (initEnv->GetJavaVM(&_vm))
 	    {

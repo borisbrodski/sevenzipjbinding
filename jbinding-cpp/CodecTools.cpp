@@ -27,7 +27,7 @@ int CodecTools::getIndexByName(JNIEnv * env, jstring formatName, UString & forma
 	formatNameString = UnicodeHelper(formatNameJChars);
 	env->ReleaseStringChars(formatName, formatNameJChars);
 
-	TRACE1("Format: '%S'", (const wchar_t*)formatNameString)
+	TRACE("Format: " << formatNameString)
 	index = CodecTools::codecs.FindFormatForArchiveType(formatNameString);
 	if (index == -1) {
 		throw SevenZipException("Not registered archive format: '%S'", (const wchar_t*)formatNameString);

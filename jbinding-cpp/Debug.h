@@ -3,7 +3,7 @@
 
 // Use CMakeLists.txt to activate debug mode: uncomment "SET(CMAKE_BUILD_TYPE Debug)"
 //#define _DEBUG
-//#define TRACE_ON
+#define TRACE_ON
 //#define TRACE_OBJECTS_ON
 
 //#define TRACE_THREADS_ON
@@ -26,30 +26,40 @@
 #endif
 
 #ifdef TRACE_ON
-#   define TRACE(msg) _TRACE("TRACE: " msg "\n")
-#   define TRACE1(msg, p1) _TRACE1("TRACE: " msg "\n", p1)
-#   define TRACE2(msg, p1, p2) _TRACE2("TRACE: " msg "\n", p1, p2)
-#   define TRACE3(msg, p1, p2, p3) _TRACE3("TRACE: " msg "\n", p1, p2, p3)
-#   define TRACE4(msg, p1, p2, p3, p4) _TRACE4("TRACE: " msg "\n", p1, p2, p3, p4)
-#   define _TRACE(msg) {trace_printf(msg);}
-#   define _TRACE1(msg, p1) {trace_printf(msg, p1);}
-#   define _TRACE2(msg, p1, p2) {trace_printf(msg, p1, p2);}
-#   define _TRACE3(msg, p1, p2, p3) {trace_printf(msg, p1, p2, p3);}
-#   define _TRACE4(msg, p1, p2, p3, p4) {trace_printf(msg, p1, p2, p3, p4);}
+#   include <iostream>
+#   include <iomanip>
+
+#   define TRACE(msg) _TRACE("TRACE: " << msg << std::endl)
+#   define _TRACE(msg) {std::cout << msg;}
 
 /**/int trace_printf (const char * fmt, ...);
 #else
 #   define TRACE(msg) {}
-#   define TRACE1(msg, p1) {}
-#   define TRACE2(msg, p1, p2) {}
-#   define TRACE3(msg, p1, p2, p3) {}
-#   define TRACE4(msg, p1, p2, p3, p4) {}
 #   define _TRACE(msg) {}
-#   define _TRACE1(msg, p1) {}
-#   define _TRACE2(msg, p1, p2) {}
-#   define _TRACE3(msg, p1, p2, p3) {}
-#   define _TRACE4(msg, p1, p2, p3, p4) {}
 #endif
+
+#ifdef TRACE_ON
+struct JOut {
+    JNIEnv * _env;
+    std::ostream & _stream;
+    JOut(JNIEnv * env, std::ostream & stream) : _env(env), _stream(stream) {}
+};
+
+inline JOut operator<< (std::ostream & stream, JNIEnv * env) {
+    return JOut(env, stream);
+}
+inline std::ostream & operator<< (JOut jout, jstring str) {
+    char const * s = jout._env->GetStringUTFChars(str, NULL);
+    jout._stream << s;
+    jout._env->ReleaseStringUTFChars(str, s);
+    return jout._stream;
+}
+inline std::ostream & operator<< (JOut jout, jint i) {
+    jout._stream << i;
+    return jout._stream;
+}
+#endif
+
 
 #ifdef TRACE_OBJECTS_ON
 /**/void TraceObjectCreation(const char * classname, void * thiz);
@@ -90,9 +100,9 @@
 #endif
 
 #ifdef USE_MY_ASSERTS
-#   define ASSERT(a) {if (!(a)) fatal("ASSERT: " __FILE__ ":%i : %s\n", (int)__LINE__, #a );}
+#   define MY_ASSERT(a) {if (!(a)) fatal("ASSERT: " __FILE__ ":%i : %s\n", (int)__LINE__, #a );}
 #else
-#   define ASSERT(a) {}
+#   define MY_ASSERT(a) {}
 #endif
 
 #endif /* DEBUG_H_ */

@@ -21,11 +21,11 @@ public:
 
 	STDMETHOD(Write)(const void *data, UInt32 size, UInt32 *processedSize)
 	{
-		TRACE1("WRITE(size=%i)", (int)size)
+		TRACE("WRITE(size=" << size << ")")
 		HRESULT result = CPPToJavaSequentialOutStream::Write(data, size, processedSize);
 #ifdef TRACE_ON
 		if (processedSize) {
-			TRACE3("WRITE: size=%i, was written:%i, result:%i", (int)size, (int)*processedSize, (int)result);
+			TRACE("WRITE: size=" << size << ", was written:" << *processedSize << ", result:" << result);
 		}
 #endif
 		return result;

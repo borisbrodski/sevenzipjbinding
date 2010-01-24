@@ -53,12 +53,11 @@ void TracePrintObjects()
 	ENTER_CRITICAL_SECTION
 
 	map<void *, ClassInfo *>::const_iterator i = g_classes_map.begin();
-    _TRACE("Objects alive:\n")
+    _TRACE("Objects alive:" << std::endl)
 
     int count = 1;
-    for (; i != g_classes_map.end(); i++)
-    {
-        _TRACE3("> %3i %s (this: 0x%08X)\n", count++, (*i).second->_classname, (size_t)(*i).second->_thiz)
+    for (; i != g_classes_map.end(); i++) {
+        _TRACE("> " << std::setw(3) << count++ << " " << (*i).second->_classname << " (this: " << (*i).second->_thiz << ")" << std::endl)
     }
 
     LEAVE_CRITICAL_SECTION
@@ -69,14 +68,14 @@ void TracePrintObjectsUsingPrintf()
 	ENTER_CRITICAL_SECTION
 
 	map<void *, ClassInfo *>::const_iterator i = g_classes_map.begin();
-    printf("Objects alive:\n");
+    std::cout << "Objects alive:" << std::endl;
 	fflush(stdout);
 
     int count = 1;
     for (; i != g_classes_map.end(); i++)
     {
-        printf("> %3i %s (this: 0x%08X)\n", count++, (*i).second->_classname, (size_t)(*i).second->_thiz);
-		fflush(stdout);
+        std::cout << "> " << setw(3) << count++ << ' ' << (*i).second->_classname << " (this: " << (*i).second->_thiz << ")" << std::endl;
+		std::cout.flush();
     }
 
     LEAVE_CRITICAL_SECTION
@@ -95,7 +94,7 @@ void TraceObjectCreation(const char * classname, void * thiz)
 
         ENTER_CRITICAL_SECTION
         g_classes_map[thiz] = classInfo;
-		_TRACE3("++++++++ %s (this: 0x%08X) [classes alive: %i]\n", classInfo->_classname, (size_t)classInfo->_thiz, g_classes_map.size())
+		_TRACE("++++++++ " << classInfo->_classname << " (this: " << classInfo->_thiz << ") [classes alive: " << g_classes_map.size() << "]" << std::endl)
 		LEAVE_CRITICAL_SECTION
 
     }
@@ -105,7 +104,7 @@ void TraceObjectCreation(const char * classname, void * thiz)
         g_classes_map[thiz]->_classname = classname;
 		LEAVE_CRITICAL_SECTION
 
-		_TRACE2("KNOWN AS %s (this: 0x%08X)\n", classname, (size_t)thiz)
+		_TRACE("KNOWN AS " << classname << " (this: " << thiz << ")" << std::endl)
     }
 
 }
@@ -128,7 +127,7 @@ void TraceObjectDestruction(void * thiz)
 
 	ENTER_CRITICAL_SECTION
     g_classes_map.erase(thiz);
-    _TRACE3("~~~ %s (this: 0x%08X) [classes alive: %i]\n", classInfo->_classname, (size_t)classInfo->_thiz, g_classes_map.size())
+    _TRACE("~~~ " << classInfo->_classname << " (this: " << classInfo->_thiz << ") [classes alive: " << g_classes_map.size() << "]" << std::endl)
     LEAVE_CRITICAL_SECTION
 
     TracePrintObjects();
@@ -148,8 +147,7 @@ void TraceObjectCall(void * thiz, const char * methodname)
 #ifdef TRACE_ON
 	ENTER_CRITICAL_SECTION
     ClassInfo * classInfo = g_classes_map[thiz];
-    _TRACE4("-> %s::%s%s (this: 0x%08X)\n",classInfo->_classname, methodname,
-            (strchr(methodname, '(') == NULL ? "(...)" : ""), (size_t)thiz);
+    _TRACE("-> " << classInfo->_classname << "::" << methodname << (strchr(methodname, '(') == NULL ? "(...)" : "") << " (this: " << thiz << ")" << std::endl)
     LEAVE_CRITICAL_SECTION
 #endif
 
@@ -166,7 +164,7 @@ void TraceObjectEnsureDestruction(void * thiz)
     	ENTER_CRITICAL_SECTION
         ClassInfo * classInfo = g_classes_map[thiz];
 		LEAVE_CRITICAL_SECTION
-        fatal("Objcet %s (this: 0x%08X) wasn't destroyed as expected\n",classInfo->_classname, (size_t)thiz);
+        fatal("Object %s (this: 0x%08X) wasn't destroyed as expected\n",classInfo->_classname, (size_t)thiz);
     }
 
 }

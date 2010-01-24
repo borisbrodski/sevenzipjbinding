@@ -6,6 +6,8 @@
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"
 
+#include "JavaStatInfos/PropertyInfo.h"
+
 
 static bool initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
@@ -123,7 +125,7 @@ int CompareIndicies(const void *pi1, const void * pi2)
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeExtract
 (JNIEnv * env, jobject thiz, jintArray indicesArray, jboolean testMode, jobject archiveExtractCallbackObject)
 {
-    TRACE1("InArchiveImpl::nativeExtract(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
+    TRACE("InArchiveImpl::nativeExtract(). ThreadID=" << PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -149,7 +151,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 	HRESULT result = archive->GetNumberOfItems((UInt32*)&numberOfItems);
 	if (result != S_OK)
 	{
-	    TRACE1("Error getting number of items from archive. Result: 0x%08X", result);
+	    TRACE("Error getting number of items from archive. Result: 0x" << std::hex << result)
 		nativeMethodContext.ThrowSevenZipException(result, "Error getting number of items from archive");
 	    inStream->ClearNativeMethodContext();
 	    return;
@@ -166,8 +168,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 		{
 			if (indices[i] < 0 || indices[i] >= numberOfItems)
 			{
-			    TRACE2("Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
-							indices[i], numberOfItems)
+			    TRACE("Passed index for the extraction is incorrect: " << indices[i] << " (Count of items in archive: " << numberOfItems << ")")
 				nativeMethodContext.ThrowSevenZipException(result,
 						"Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
 						indices[i], numberOfItems);
@@ -184,7 +185,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
 	CMyComPtr<IArchiveExtractCallback> archiveExtractCallback = new CPPToJavaArchiveExtractCallback(&nativeMethodContext, env, archiveExtractCallbackObject);
 
-	TRACE1("Extracting %i items", indicesCount)
+	TRACE("Extracting " << indicesCount << " items")
 	result = archive->Extract((UInt32*)indices, indicesCount, (Int32)testMode,
 	        archiveExtractCallback);
 
@@ -199,7 +200,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
 	if (result)
 	{
-	    TRACE1("Extraction error. Result: 0x%08X", result);
+	    TRACE("Extraction error. Result: 0x" << std::hex << result);
 	    nativeMethodContext.ThrowSevenZipException(result, "Error extracting %i element(s). Result: %X", indicesCount, result);
 	}
 	else
@@ -218,7 +219,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeGetNumberOfItems
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
+    TRACE("InArchiveImpl::nativeGetNumberOfItems(). ThreadID=" << PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 
@@ -245,7 +246,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
 	inStream->ClearNativeMethodContext();
 
-	TRACE1("Returning: %u", result)
+	TRACE("Returning: " << result)
 
 	return result;
 
@@ -260,7 +261,7 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeClose
 (JNIEnv * env, jobject thiz)
 {
-    TRACE1("InArchiveImpl::nativeClose(). ThreadID=%lu",  (long unsigned int)PlatformGetCurrentThreadId());
+    TRACE("InArchiveImpl::nativeClose(). ThreadID=" << PlatformGetCurrentThreadId());
 
     NativeMethodContext nativeMethodContext(env);
 

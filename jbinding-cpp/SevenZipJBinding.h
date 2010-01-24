@@ -4,7 +4,6 @@
 #include "StdAfx.h"
 
 #include "Common/IntToString.h"
-//#include "Common/StringConvert.h"
 
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
 #include "7zip/UI/Common/PropIDUtils.h"
@@ -13,9 +12,10 @@
 #include "Windows/PropVariantConversions.h"
 #include "7zip/Archive/IArchive.h"
 
+#include <jni.h>
+
 #include "Debug.h"
 
-#include <jni.h>
 
 #define P7ZIP_VERSION_MAJOR 4
 #define P7ZIP_VERSION_MINOR 65
@@ -65,13 +65,13 @@
 #define TRY try {
 #define CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, returnvalue)             \
     } catch(SevenZipException & sevenZipException)                              \
-    {TRACE1("Exception catched: 0x%08X", (size_t)(void *)&sevenZipException);   \
+    {TRACE("Exception catched: " << &sevenZipException);                        \
     (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
     return returnvalue;
 
 #define CATCH_SEVEN_ZIP_EXCEPTION_WITHOUT_RETURN(nativeMethodContext)    		\
     } catch(SevenZipException & sevenZipException)                              \
-    {TRACE1("Exception catched: 0x%08X", (size_t)(void *)&sevenZipException);   \
+    {TRACE1("Exception catched: " << &sevenZipException);                       \
     (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}
 
 
