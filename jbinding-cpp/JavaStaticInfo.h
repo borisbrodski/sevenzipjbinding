@@ -12,30 +12,6 @@
 #include "JNITools.h"
 #include "JObjectList.h"
 
-#ifdef TRACE_ON
-#include <ostream>
-struct JOut {
-    JNIEnv * _env;
-    std::ostream & _stream;
-    JOut(JNIEnv * env, std::ostream & stream) : _env(env), _stream(stream) {}
-};
-
-inline JOut operator<< (std::ostream & stream, JNIEnv * env) {
-    return JOut(env, stream);
-}
-inline std::ostream & operator<< (JOut jout, jstring str) {
-    char const * s = jout._env->GetStringUTFChars(str, NULL);
-    jout._stream << s;
-    jout._env->ReleaseStringUTFChars(str, s);
-    return jout._stream;
-}
-inline std::ostream & operator<< (JOut jout, jint i) {
-    jout._stream << i;
-    return jout._stream;
-}
-#endif
-
-
 #ifdef JSF_DEFINE_VARIABLES
 #   define JSI_VARIABLE(type, name, init)	type name init;
 #else
@@ -95,10 +71,6 @@ public:
     char const * getCanonicalName() {
         return _canonicalName;
     }
-};
-
-class JavaInterface {
-public:
 };
 
 class JavaField {
@@ -186,53 +158,54 @@ public:
     }
 };
 
-class JavaInterfaceMethod {
-    char const * _name;
-    char const * _signature;
-    std::map<jclass, jmethodID> _jmethodIDMap;
-    JavaInterface & _javaInterface;
-
-public:
-    JavaInterfaceMethod(JavaInterface & javaInterface, char const * name, char const * signature) :
-        _javaInterface(javaInterface), _name(name), _signature(signature) {
-    }
-    jmethodID getJMethodID(JNIEnv * env, jclass implementingClass) {
-        std::map<jclass, jmethodID>::iterator iterator = _jmethodIDMap.find(implementingClass);
-        if (iterator != _jmethodIDMap.end()) {
-            return iterator->second;
-        }
-
-        jmethodID jmethodID = env->GetMethodID(implementingClass, _name, _signature);
-        FATALIF2(!jmethodID, "Can't find method '%s' signature '%s'", _name, _signature);
-        _jmethodIDMap[implementingClass] = jmethodID;
-        return jmethodID;
-    }
-};
-
-class JavaEnum {
-    char const * _name;
-public:
-    JavaEnum(char const * name) :
-        _name(name) {
-
-    }
-};
-
-JAVA_INTERFACE(interface1)
-{
-/*    */JAVA_INTERFACE_METHOD(method1, "(t1)")
-/*    */JAVA_INTERFACE_METHOD(method2, "(t2)")
-}
-
 JAVA_FINAL_CLASS("net/sf", interface2)
 {
 /*    */JAVA_FIELD(Long, field1, "I")
 /*    */JAVA_FINAL_CLASS_METHOD(Void, method4, "(t4)")
 }
 
+template<class T>
+class JavaClass {
+    char const * _fullname;
+    jclass _jclass;
+protected:
+    static T & _instance;
+    JavaClass(char const * fullname) :
+        _fullname(fullname), _jclass(NULL) {
+    }
+
+#ifdef TRACE_ON
+    template<typename T2>
+    friend std::ostream & operator<<(std::ostream &, JavaClass<T2> &);
+#endif
+#ifdef USE_MY_ASSERTS
+    void checkObjectClass(JNIEnv * env, jobject object) {
+        MY_ASSERT(env->IsInstanceOf(object, getJClass(env)))
+    }
+#endif // USE_MY_ASSERTS
+public:
+    jclass getJClass(JNIEnv * env) {
+        if (!_jclass) {
+            // Lazy initialize jclass reference
+            _jclass = env->FindClass(_fullname);
+            FATALIF1(!_jclass, "Error finding class '%s'", _fullname)
+        }
+        return _jclass;
+    }
+};
+
+template<typename T>
+T & JavaClass<T>::_instance = *(new T());
+
+#ifdef TRACE_ON
+template<typename T>
+inline std::ostream & operator<<(std::ostream & stream, JavaClass<T> & javaClass) {
+    stream << javaClass._fullname;
+}
+#endif // TRACE_ON
 template<typename T>
 class JInterface {
-    static JObjectMap<jclass, T> jinterfaceMap;
+    static JObjectMap<jclass, T> _jinterfaceMap;
     char const * _name;
     jclass _jclass;
 protected:
@@ -259,19 +232,19 @@ public:
         return getInstance(env, jobjectClass);
     }
     static T & getInstance(JNIEnv * env, jclass objectClass) {
-        T * instance = jinterfaceMap.get(env, objectClass);
+        T * instance = _jinterfaceMap.get(env, objectClass);
         if (instance) {
             return *instance;
         }
         objectClass = (jclass) env->NewGlobalRef(objectClass);
-        T & newInstance = jinterfaceMap.add(objectClass);
+        T & newInstance = _jinterfaceMap.add(objectClass);
         newInstance._jclass = objectClass;
         return newInstance;
     }
 };
 
 template<typename T>
-JObjectMap<jclass, T> JInterface<T>::jinterfaceMap;
+JObjectMap<jclass, T> JInterface<T>::_jinterfaceMap;
 
 #ifdef TRACE_ON
 template<typename T>
@@ -279,100 +252,335 @@ inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interfac
     stream << interface.getName();
 }
 #endif // TRACE_ON
-class JInterfaceMethod {
+class JMethod {
 #ifdef TRACE_ON
-    friend std::ostream & operator<<(std::ostream &, JInterfaceMethod &);
+    friend std::ostream & operator<<(std::ostream &, JMethod &);
 #endif
     char const * _name;
     char const * _signature;
+    bool _isStatic;
     jmethodID _jmethodID;
 protected:
-    JInterfaceMethod(char const * name, char const * signature) :
-        _name(name), _signature(signature), _jmethodID(NULL) {
+    JMethod(char const * name, char const * signature, bool isStatic = false) :
+        _name(name), _signature(signature), _isStatic(isStatic), _jmethodID(NULL) {
     }
 public:
     jmethodID getMethodID(JNIEnv * env, jclass jclazz) {
-        if (_jmethodID) {
-            return _jmethodID;
-        }
+        if (!_jmethodID) {
 #ifdef TRACE_ON
-        std::cout << "Getting method id for " << *this << std::endl;
+            std::cout << "Getting method id for " << *this << std::endl;
 #endif
-        _jmethodID = env->GetMethodID(jclazz, _name, _signature);
-        FATALIF2(!_jmethodID, "Method not found: .%s() signature %s", _name, _signature);
+            if (_isStatic) {
+                _jmethodID = env->GetStaticMethodID(jclazz, _name, _signature);
+            } else {
+                _jmethodID = env->GetMethodID(jclazz, _name, _signature);
+            }
+            FATALIF3(!_jmethodID, "Method not found: %s() signature %s%s", _name, _signature, _isStatic ? " (static)" : "");
+        }
+        return _jmethodID;
     }
 };
 
 #ifdef TRACE_ON
-inline std::ostream & operator<<(std::ostream & stream, JInterfaceMethod & method) {
+inline std::ostream & operator<<(std::ostream & stream, JMethod & method) {
     stream << method._name << method._signature;
 }
 #endif
 
-#ifdef JSF_DEFINE_VARIABLES
-#   define DEFINE_JINTERFACEMAP(name) JObjectMap<jclass, name> JInterface<name>::jinterfaceMap;
-#else
-#   define DEFINE_JINTERFACEMAP(name)
+class JField {
+#ifdef TRACE_ON
+    friend std::ostream & operator<<(std::ostream &, JField &);
+#endif
+    char const * _name;
+    char const * _signature;
+    bool _isStatic;
+    jfieldID _jfieldID;
+
+protected:
+    JField(char const * name, char const * signature, bool isStatic = false) :
+        _name(name), _signature(signature), _isStatic(isStatic), _jfieldID(NULL) {
+    }
+public:
+    jfieldID getFieldID(JNIEnv * env, jclass jclazz) {
+        if (!_jfieldID) {
+#ifdef TRACE_ON
+            std::cout << "Getting field id for " << *this << std::endl;
+#endif
+            if (_isStatic) {
+                _jfieldID = env->GetStaticFieldID(jclazz, _name, _signature);
+            } else {
+                _jfieldID = env->GetFieldID(jclazz, _name, _signature);
+            }
+            FATALIF3(!_jfieldID, "Field not found: %s() signature %s%s", _name, _signature, _isStatic ? " (static)" : "");
+        }
+        return _jfieldID;
+    }
+};
+
+#ifdef TRACE_ON
+inline std::ostream & operator<<(std::ostream & stream, JField & field) {
+    stream << field._name << field._signature;
+}
 #endif
 
-#define BEGIN_JINTERFACE(name)                                                          \
-    class name : public JInterface<name> {                                              \
-        friend class JObjectMap<jclass, name>;                                          \
-        name() : JInterface<name>(#name) {}                                             \
+#define BEGIN_JCLASS(package, name)                                             \
+    class name : public JavaClass<name> {                                       \
+    public:\
+        name() : JavaClass<name>(package "/" #name) {}                          \
+
+#define END_JCLASS                      };
+
+#define BEGIN_JINTERFACE(name)                                                  \
+    class name : public JInterface<name> {                                      \
+        friend class JObjectMap<jclass, name>;                                  \
+        name() : JInterface<name>(#name) {}                                     \
     public:
 
 #define END_JINTERFACE                      };
 
-#define JAVA_TYPE_String jstring
-#define JAVA_TYPE_Int jint
-#define JAVA_TYPE_Long jlong
+#define JAVA_TYPE_String                    jstring
+#define JAVA_TYPE_Int                       jint
+#define JAVA_TYPE_Long                      jlong
+#define JAVA_TYPE_Void                      void
 
-#define JNI_ENV_CALL_String CallObjectMethodV
-#define JNI_ENV_CALL_Int CallIntMethodV
-#define JNI_ENV_CALL_Long CallLongMethodV
+#define FIELD_SIGNATURE_Long                "J"
+#define FIELD_SIGNATURE_String              "Ljava/lang/String;"
+
+//#define CALL_AND_ASSIGN_TO_RESULT(type, e)  JAVA_TYPE_##type result = 0;
+#define CALL_AND_ASSIGN_TO_RESULT(type, e)  CALL_AND_ASSIGN_TO_RESULT_I(CALL_AND_ASSIGN_TO_RESULT_##type,e)
+#define CALL_AND_ASSIGN_TO_RESULT_I(m, e)   m(e)
+
+#define CALL_AND_ASSIGN_TO_RESULT_String(e) jstring result = static_cast<jstring>(e);
+#define CALL_AND_ASSIGN_TO_RESULT_Long(e)   jlong result = static_cast<jlong>(e);
+#define CALL_AND_ASSIGN_TO_RESULT_Int(e)    jint result = static_cast<jint>(e);
+#define CALL_AND_ASSIGN_TO_RESULT_Void(e)   char const * result = "<void>"; e;
+
+#define RETURN_RESULT_String                return result;
+#define RETURN_RESULT_Long                  return result;
+#define RETURN_RESULT_Int                   return result;
+#define RETURN_RESULT_Void
+
+#define JNI_ENV_VIRTUAL_CALL_Int            CallIntMethodV
+#define JNI_ENV_VIRTUAL_CALL_Long           CallLongMethodV
+#define JNI_ENV_VIRTUAL_CALL_String         CallObjectMethodV
+#define JNI_ENV_VIRTUAL_CALL_Void           CallVoidMethodV
+
+#define JNI_ENV_NON_VIRTUAL_CALL_Int        CallNonvirtualIntMethodV
+#define JNI_ENV_NON_VIRTUAL_CALL_Long       CallNonvirtualLongMethodV
+#define JNI_ENV_NON_VIRTUAL_CALL_String     CallNonvirtualObjectMethodV
+#define JNI_ENV_NON_VIRTUAL_CALL_Void       CallNonvirtualVoidMethodV
+
+#define JNI_ENV_STATIC_CALL_Int             CallStaticIntMethodV
+#define JNI_ENV_STATIC_CALL_Long            CallStaticLongMethodV
+#define JNI_ENV_STATIC_CALL_String          CallStaticObjectMethodV
+#define JNI_ENV_STATIC_CALL_Void            CallStaticVoidMethodV
+
+#define JNI_ENV_GET_Long                    GetLongField
+#define JNI_ENV_GET_String                  GetObjectField
+
+#define JNI_ENV_STATIC_GET_Long             GetStaticLongField
+#define JNI_ENV_STATIC_GET_String           GetStaticObjectField
+
+#define JNI_ENV_SET_Long                    SetLongField
+#define JNI_ENV_SET_String                  SetObjectField
+
+#define JNI_ENV_STATIC_SET_Long             SetStaticLongField
+#define JNI_ENV_STATIC_SET_String           SetStaticObjectField
 
 #ifdef USE_MY_ASSERTS
-#   define CHECK_OBJECT_CLASS(env, object) {checkObjectClass(env, object);}
+#   define CHECK_OBJECT_CLASS(env, this, object) {(this)->checkObjectClass(env, object);}
 #else
-#   define CHECK_OBJECT_CLASS(env, object) {}
+#   define CHECK_OBJECT_CLASS(env, this, object) {}
 #endif
 
 #ifdef TRACE_ON
-#   define TRACE_JNI_CALLING(name, signature) {std::cout << "Calling " << *this << '.' << #name << signature << std::endl;}
-#   define TRACE_JNI_CALLED(name, signature) {std::cout << "Called " << *this << '.' << #name << " returned '" << env << result << "'" << std::endl;}
+#   define TRACE_JNI_CALLING(this, name, signature) {std::cout << "Calling " << *(this) << '.' << #name << signature << std::endl;}
+#   define TRACE_JNI_CALLED(this, name, signature) {std::cout << "Called " << *(this) << '.' << #name << " returned '" << env << result << "'" << std::endl;}
+#   define TRACE_JNI_GETTING(this, name, signature) {std::cout << "Getting " << *(this) << '.' << #name << '(' << signature << ')' << std::endl;}
+#   define TRACE_JNI_GOT(this, name, signature) {std::cout << "Got " << *(this) << '.' << #name << "='" << env << result << "'" << std::endl;}
+#   define TRACE_JNI_SETTING(this, name, signature) {std::cout << "Setting " << *(this) << '.' << #name << '(' << signature << ')' << '=' << env << value << std::endl;}
+#   define TRACE_JNI_SET(this, name, signature) {std::cout << "Set " << *(this) << '.' << #name << std::endl;}
 #else
-#   define TRACE_JNI_CALLING(name, signature) {}
-#   define TRACE_JNI_CALLED(name, signature) {}
+#   define TRACE_JNI_CALLING(this, name, signature) {}
+#   define TRACE_JNI_CALLED(this, name, signature) {}
+#   define TRACE_JNI_GETTING(this, name, signature) {}
+#   define TRACE_JNI_GOT(this, name, signature) {}
+#   define TRACE_JNI_SETTING(this, name, signature) {}
+#   define TRACE_JNI_SET(this, name, signature) {}
 #endif
+
+#define JCLASS_FINAL_METHOD(ret_type, name, signature)                          \
+    private: class C_##name; friend class C_##name;                             \
+    class C_##name : public JMethod {                                           \
+    public:                                                                     \
+        C_##name() : JMethod(#name, signature) {                                \
+        }                                                                       \
+    };                                                                          \
+    C_##name _##name;                                                           \
+    public:                                                                     \
+        static JAVA_TYPE_##ret_type name(JNIEnv * env, jobject object, ...) {   \
+            CHECK_OBJECT_CLASS(env, &_instance, object)                         \
+            TRACE_JNI_CALLING(&_instance, name, signature)                      \
+            va_list args;                                                       \
+            va_start(args, object);                                             \
+            jclass clazz = _instance.getJClass(env);                            \
+            CALL_AND_ASSIGN_TO_RESULT(ret_type,                                 \
+                env->JNI_ENV_NON_VIRTUAL_CALL_##ret_type(object, clazz,         \
+                    _instance._##name.getMethodID(env, clazz), args))           \
+            va_end(args);                                                       \
+            TRACE_JNI_CALLED(&_instance, name, signature)                       \
+            RETURN_RESULT_##ret_type                                            \
+        }
+
+#define JCLASS_VIRTUAL_METHOD(ret_type, name, signature)                        \
+    private: class C_##name; friend class C_##name;                             \
+    class C_##name : public JMethod {                                           \
+    public:                                                                     \
+        C_##name() : JMethod(#name, signature) {                                \
+        }                                                                       \
+    };                                                                          \
+    C_##name _##name;                                                           \
+    public:                                                                     \
+        static JAVA_TYPE_##ret_type name(JNIEnv * env, jobject object, ...) {   \
+            CHECK_OBJECT_CLASS(env, &_instance, object)                         \
+            TRACE_JNI_CALLING(&_instance, name, signature)                      \
+            va_list args;                                                       \
+            va_start(args, object);                                             \
+            jclass clazz = _instance.getJClass(env);                            \
+            CALL_AND_ASSIGN_TO_RESULT_##ret_type(                               \
+                env->JNI_ENV_VIRTUAL_CALL_##ret_type(object,                    \
+                    _instance._##name.getMethodID(env, clazz), args))           \
+            va_end(args);                                                       \
+            TRACE_JNI_CALLED(&_instance, name, signature)                       \
+            RETURN_RESULT_##ret_type                                            \
+        }
+
+#define JCLASS_STATIC_METHOD(ret_type, name, signature)                         \
+    private: class C_##name; friend class C_##name;                             \
+    class C_##name : public JMethod {                                           \
+    public:                                                                     \
+        C_##name() : JMethod(#name, signature, true) {                          \
+        }                                                                       \
+    };                                                                          \
+    C_##name _##name;                                                           \
+    public:                                                                     \
+        static JAVA_TYPE_##ret_type name(JNIEnv * env, ...) {   \
+            TRACE_JNI_CALLING(&_instance, name, signature)                      \
+            va_list args;                                                       \
+            va_start(args, env);                                                \
+            jclass clazz = _instance.getJClass(env);                            \
+            CALL_AND_ASSIGN_TO_RESULT_##ret_type(                               \
+                env->JNI_ENV_STATIC_CALL_##ret_type(clazz,                      \
+                    _instance._##name.getMethodID(env, clazz), args))           \
+            va_end(args);                                                       \
+            TRACE_JNI_CALLED(&_instance, name, signature)                       \
+            RETURN_RESULT_##ret_type                                            \
+        }
+
+#define JCLASS_FIELD(ret_type, name)                                            \
+    private: class C_##name; friend class C_##name;                             \
+    class C_##name : public JField {                                            \
+    public:                                                                     \
+        C_##name() : JField(#name, FIELD_SIGNATURE_##ret_type) {                \
+        }                                                                       \
+    };                                                                          \
+    C_##name _##name;                                                           \
+    public:                                                                     \
+        static JAVA_TYPE_##ret_type name##_Get(JNIEnv * env, jobject object) {  \
+            CHECK_OBJECT_CLASS(env, &_instance, object)                         \
+            TRACE_JNI_GETTING(&_instance, name, FIELD_SIGNATURE_##ret_type)     \
+            JAVA_TYPE_##ret_type result = static_cast<JAVA_TYPE_##ret_type>(    \
+                env->JNI_ENV_GET_##ret_type(object,                             \
+                        _instance._##name.getFieldID(env,                       \
+                                    _instance.getJClass(env))));                \
+            TRACE_JNI_GOT(&_instance, name, FIELD_SIGNATURE_##ret_type)         \
+            RETURN_RESULT_##ret_type                                            \
+        }                                                                       \
+        static void name##_Set(JNIEnv * env, jobject object,                    \
+                         JAVA_TYPE_##ret_type value) {                          \
+            CHECK_OBJECT_CLASS(env, &_instance, object)                         \
+            TRACE_JNI_SETTING(&_instance, name, FIELD_SIGNATURE_##ret_type)     \
+            env->JNI_ENV_SET_##ret_type(object,                                 \
+                _instance._##name.getFieldID(env, _instance.getJClass(env)),    \
+                value);                                                         \
+            TRACE_JNI_SET(&_instance, name, FIELD_SIGNATURE_##ret_type)         \
+        }
+
+#define JCLASS_STATIC_FIELD(ret_type, name)                                     \
+    private: class C_##name; friend class C_##name;                             \
+    class C_##name : public JField {                                            \
+    public:                                                                     \
+        C_##name() : JField(#name, FIELD_SIGNATURE_##ret_type, true) {          \
+        }                                                                       \
+    };                                                                          \
+    C_##name _##name;                                                           \
+    public:                                                                     \
+        static JAVA_TYPE_##ret_type name##_Get(JNIEnv * env) {                  \
+            TRACE_JNI_GETTING(&_instance, name, FIELD_SIGNATURE_##ret_type)     \
+            jclass clazz = _instance.getJClass(env);                            \
+            JAVA_TYPE_##ret_type result = static_cast<JAVA_TYPE_##ret_type>(    \
+                env->JNI_ENV_STATIC_GET_##ret_type(clazz,                       \
+                        _instance._##name.getFieldID(env, clazz)));             \
+            TRACE_JNI_GOT(&_instance, name, FIELD_SIGNATURE_##ret_type)         \
+            RETURN_RESULT_##ret_type                                            \
+        }                                                                       \
+        static void name##_Set(JNIEnv * env, JAVA_TYPE_##ret_type value) {      \
+            TRACE_JNI_SETTING(&_instance, name, FIELD_SIGNATURE_##ret_type)     \
+            jclass clazz = _instance.getJClass(env);                            \
+            env->JNI_ENV_STATIC_SET_##ret_type(clazz,                           \
+                _instance._##name.getFieldID(env, clazz), value);               \
+            TRACE_JNI_SET(&_instance, name, FIELD_SIGNATURE_##ret_type)         \
+        }
 
 #define JINTERFACE_METHOD(ret_type, name, signature)                            \
     private: class C_##name; friend class C_##name;                             \
-    class C_##name : public JInterfaceMethod {                                  \
+    class C_##name : public JMethod {                                           \
     public:                                                                     \
-        C_##name() : JInterfaceMethod(#name, signature) {                       \
+        C_##name() : JMethod(#name, signature) {                                \
         }                                                                       \
     };                                                                          \
     C_##name _##name;                                                           \
     public:                                                                     \
         JAVA_TYPE_##ret_type name(JNIEnv * env, jobject object, ...) {          \
-            CHECK_OBJECT_CLASS(env, object)                                     \
-            TRACE_JNI_CALLING(name, signature)                                  \
+            CHECK_OBJECT_CLASS(env, this, object)                               \
+            TRACE_JNI_CALLING(this, name, signature)                            \
             va_list args;                                                       \
             va_start(args, object);                                             \
             JAVA_TYPE_##ret_type result = static_cast<JAVA_TYPE_##ret_type>(    \
-                        env->JNI_ENV_CALL_##ret_type(object,                    \
+                        env->JNI_ENV_VIRTUAL_CALL_##ret_type(object,            \
                             _##name.getMethodID(env, getJClass()), args));      \
             va_end(args);                                                       \
-            TRACE_JNI_CALLED(name, signature)                                   \
+            TRACE_JNI_CALLED(this, name, signature)                             \
             return result;                                                      \
         }
+
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
+/*    */JCLASS_FINAL_METHOD(Long, privateLongMethod, "(I)J")
+/*    */JCLASS_FINAL_METHOD(String, privateStringMethod, "(I)Ljava/lang/String;")
+/*    */JCLASS_FINAL_METHOD(Void, privateVoidMethod, "(I)V")
+
+/*    */JCLASS_FINAL_METHOD(Long, privateFinalLongMethod, "(I)J")
+/*    */JCLASS_FINAL_METHOD(String, privateFinalStringMethod, "(I)Ljava/lang/String;")
+/*    */JCLASS_FINAL_METHOD(Void, privateFinalVoidMethod, "(I)V")
+
+/*    */JCLASS_STATIC_METHOD(Long, privateStaticLongMethod, "(I)J")
+/*    */JCLASS_STATIC_METHOD(String, privateStaticStringMethod, "(I)Ljava/lang/String;")
+/*    */JCLASS_STATIC_METHOD(Void, privateStaticVoidMethod, "(I)V")
+
+/*    */JCLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, "(I)J")
+/*    */JCLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, "(I)Ljava/lang/String;")
+/*    */JCLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, "(I)V")
+
+/*    */JCLASS_FIELD(Long, privateLongField)
+/*    */JCLASS_FIELD(String, privateStringField)
+
+/*    */JCLASS_STATIC_FIELD(Long, privateStaticLongField)
+/*    */JCLASS_STATIC_FIELD(String, privateStaticStringField)
+END_JCLASS
 
 BEGIN_JINTERFACE(JObject)
 /*    */JINTERFACE_METHOD(String, toString, "()Ljava/lang/String;")
 /*    */JINTERFACE_METHOD(Int, hashCode, "()I")
 END_JINTERFACE
-
-#ifdef JSF_DEFINE_VARIABLES
-#endif
 
 #endif /* JAVASTATICINFO_H_ */

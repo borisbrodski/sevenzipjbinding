@@ -58,6 +58,10 @@ inline std::ostream & operator<< (JOut jout, jint i) {
     jout._stream << i;
     return jout._stream;
 }
+inline std::ostream & operator<< (JOut jout, char const * str) {
+    jout._stream << str;
+    return jout._stream;
+}
 #endif
 
 

@@ -45,6 +45,7 @@ public:
                 return &(iter->value);
             }
         }
+        std::cout << "MAP: Not found" << std::endl;
 
 
         return NULL;

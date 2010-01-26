@@ -633,6 +633,7 @@ SET(JBINDING_CPP_FILES
     SevenZipJBinding.cpp
     UniversalArchiveOpenCallback.cpp
     CodecTools.cpp
+    JavaStaticInfo.cpp
     JavaToCPP/JavaToCPPSevenZip.cpp
     JavaToCPP/JavaToCPPInArchiveImpl.cpp
     JavaToCPP/JavaToCPPOutArchiveImpl.cpp

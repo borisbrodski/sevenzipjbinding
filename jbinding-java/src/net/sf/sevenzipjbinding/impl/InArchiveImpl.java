@@ -20,7 +20,7 @@ import net.sf.sevenzipjbinding.simple.impl.SimpleInArchiveImpl;
  * @version 4.65-1
  * 
  */
-public class InArchiveImpl implements ISevenZipInArchive {
+public final class InArchiveImpl implements ISevenZipInArchive {
     private static class ExtractSlowCallback implements IArchiveExtractCallback {
         ISequentialOutStream sequentialOutStreamParam;
         private ExtractOperationResult extractOperationResult;
@@ -79,6 +79,9 @@ public class InArchiveImpl implements ISevenZipInArchive {
             return password;
         }
     }
+
+    @SuppressWarnings("unused")
+    private long bindingSession;
 
     @SuppressWarnings("unused")
     private long sevenZipArchiveInstance;
