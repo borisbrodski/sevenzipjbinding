@@ -116,19 +116,6 @@ char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, size_t size) 
 }
 
 /**
- * Create instance of class 'classname' using default constructor.
- */
-jobject GetSimpleInstance(JNIEnv * env, const char * classname) {
-	jclass clazz = env->FindClass(classname);
-	FATALIF1(clazz == NULL, "Class '%s' wasn't found", classname);
-
-	//	printf(">> Class: %X (%s)\n", clazz, classname);
-	//	fflush(stdout);
-	//
-	return GetSimpleInstance(env, clazz);
-}
-
-/**
  * Create instance of class 'clazz' using default constructor.
  */
 jobject GetSimpleInstance(JNIEnv * env, jclass clazz) {

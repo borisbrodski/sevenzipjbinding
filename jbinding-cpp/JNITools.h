@@ -68,10 +68,7 @@
 
 class JNIInstance;
 
-/**
- * Create instance of class 'clazz' using default constructor.
- */
-jobject GetSimpleInstance(JNIEnv * env, jclass clazz);
+// TODO Check all methods here and remove not used
 
 /**
  * Create instance of class 'classname' using default constructor.
