@@ -10,6 +10,12 @@
 #include "Windows/Synchronization.h"
 #endif
 
+#if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
+#ifndef MINGW
+	#include <pthread.h>
+#endif
+#endif
+
 using namespace std;
 
 class NativeMethodContext;
@@ -28,22 +34,17 @@ private:
         _env = env;
     }
 };
+	inline size_t PlatformGetCurrentThreadId() {
 #if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
 #ifdef MINGW
-	inline size_t PlatformGetCurrentThreadId() {
 		return (size_t)(size_t)GetCurrentThreadId();
-	}
 #else
-	#include <pthread.h>
-	inline size_t PlatformGetCurrentThreadId() {
 		return (size_t)pthread_self();
-	}
 #endif
 #else
-inline size_t PlatformGetCurrentThreadId() {
 	return 0;
-}
 #endif
+	}
 
 class NativeMethodContext : public StackAllocatedObject
 {
