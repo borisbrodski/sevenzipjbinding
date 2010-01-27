@@ -17,7 +17,6 @@
 #include "JavaStatInfos/InArchiveImpl.h"
 #include "JavaStatInfos/PropertyInfo.h"
 
-
 #include <iostream>
 using namespace std;
 
@@ -36,21 +35,20 @@ void test(JNIEnv * env) {
     //m.myMethod(env);
     jclass classLong = env->FindClass("java/lang/Long");
     jmethodID longValueOf = env->GetStaticMethodID(classLong, "valueOf", "(J)Ljava/lang/Long;");
-    jobject long123 = env->CallStaticObjectMethod(classLong, longValueOf, (jlong)123);
+    jobject long123 = env->CallStaticObjectMethod(classLong, longValueOf, (jlong) 123);
 
     JObject & objectLong = JObject::getInstanceFromObject(env, long123);
     std::cout << "long123 = " << env << objectLong.toString(env, long123) << std::endl;
     std::cout << "long123 = " << env << objectLong.toString(env, long123) << std::endl;
 
-
     jclass classInteger = env->FindClass("java/lang/Integer");
-    jmethodID integerValueOf = env->GetStaticMethodID(classInteger, "valueOf", "(I)Ljava/lang/Integer;");
-    jobject integer234 = env->CallStaticObjectMethod(classInteger, integerValueOf, (jint)234);
+    jmethodID integerValueOf = env->GetStaticMethodID(classInteger, "valueOf",
+            "(I)Ljava/lang/Integer;");
+    jobject integer234 = env->CallStaticObjectMethod(classInteger, integerValueOf, (jint) 234);
 
     JObject & objectInteger = JObject::getInstanceFromObject(env, integer234);
     std::cout << "integer234 = " << env << objectInteger.toString(env, integer234) << std::endl;
     std::cout << "integer234 = " << env << objectInteger.toString(env, integer234) << std::endl;
-
 
     JObject & objectLong2 = JObject::getInstanceFromObject(env, long123);
     std::cout << "long123 = " << env << objectLong2.toString(env, long123) << std::endl;
@@ -68,49 +66,91 @@ void test(JNIEnv * env) {
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
 
-//    exit(0);
-/*
-    std::cout << "o=" << classLong << std::endl;
-    jobject classInteger = env->FindClass("java/lang/Integer");
-    std::cout << "o=" << classInteger << std::endl;
+    //    exit(0);
+    /*
+     std::cout << "o=" << classLong << std::endl;
+     jobject classInteger = env->FindClass("java/lang/Integer");
+     std::cout << "o=" << classInteger << std::endl;
 
-    JObject & objectLong = JObject::getInstanceFromObject(env, classLong);
+     JObject & objectLong = JObject::getInstanceFromObject(env, classLong);
 
-    JObject & objectInteger = JObject::getInstanceFromObject(env, classInteger);
+     JObject & objectInteger = JObject::getInstanceFromObject(env, classInteger);
 
-    jstring str = objectLong.toString()(env, classLong);
-    std::cout << "Result: '" << env << str << "'" << std::endl;
+     jstring str = objectLong.toString()(env, classLong);
+     std::cout << "Result: '" << env << str << "'" << std::endl;
 
-    str = objectInteger.toString()(env, classInteger);
-    std::cout << "Result: '" << env << str << "'" << std::endl;
-*/
-
+     str = objectInteger.toString()(env, classInteger);
+     std::cout << "Result: '" << env << str << "'" << std::endl;
+     */
 
     //o.getVersion(env);
 
-//    jobject o = InArchiveImpl::_class.newInstance(env);
-//
-//    env->SetLongField(o, InArchiveImpl::bindingSession.getJFieldID(env), 123);
-//    env->CallVoidMethod(o, InArchiveImpl::test.getJMethodID(env));
+    //    jobject o = InArchiveImpl::_class.newInstance(env);
+    //
+    //    env->SetLongField(o, InArchiveImpl::bindingSession.getJFieldID(env), 123);
+    //    env->CallVoidMethod(o, InArchiveImpl::test.getJMethodID(env));
 }
 
-void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expectedValue, jstring actualValue) {
+void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expectedValue,
+                 jstring actualValue) {
     std::stringstream jstringstream;
 
     jstringstream << env << actualValue;
     if (jstringstream.str() != expectedValue) {
-        errmsg << "ERROR: Expected '" << expectedValue << "' get '" << jstringstream.str() << "'" << std::endl;
+        errmsg << "ERROR: Expected '" << expectedValue << "' get '" << jstringstream.str() << "'"
+                << std::endl;
     }
 }
 
 void checkLong(std::stringstream & errmsg, jlong expectedValue, jlong actualValue) {
     if (actualValue != expectedValue) {
-        errmsg << "ERROR: Expected '" << expectedValue << "' get '" << actualValue << "'" << std::endl;
+        errmsg << "ERROR: Expected '" << expectedValue << "' get '" << actualValue << "'"
+                << std::endl;
     }
 }
 
-JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testAbstractClass
-(JNIEnv * env, jobject thiz, jobject jTestAbstractClass) {
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testInterface1(
+                                                                                   JNIEnv * env,
+                                                                                   jobject thiz,
+                                                                                   jobject interface1Impl,
+                                                                                   jint offset,
+                                                                                   jboolean fromClass) {
+    std::stringstream errmsg;
+
+    Interface1 * interface1;
+
+    if (fromClass) {
+        jclass interface1ImplClass = env->GetObjectClass(interface1Impl);
+        MY_ASSERT(interface1ImplClass)
+
+        interface1 = &Interface1::getInstance(env, interface1ImplClass);
+
+    } else {
+        interface1 = &Interface1::getInstanceFromObject(env, interface1Impl);
+    }
+
+    jlong longResult = interface1->longMethod(env, interface1Impl, jint(17 + offset));
+    checkLong(errmsg, jlong(12017), longResult);
+
+    jstring stringResult = interface1->stringMethod(env, interface1Impl, jint(18 + offset));
+    checkString(errmsg, env, "Interface.I = 18", stringResult);
+    env->DeleteLocalRef(stringResult);
+
+    interface1->voidMethod(env, interface1Impl, jint(19 + offset));
+
+    char const * errmsgstring = errmsg.str().c_str();
+    if (*errmsgstring) {
+        return env->NewStringUTF(errmsgstring);
+    }
+    return NULL;
+}
+
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testAbstractClass(
+                                                                                      JNIEnv * env,
+                                                                                      jobject thiz,
+                                                                                      jobject jTestAbstractClass) {
 
     std::stringstream errmsg;
 
@@ -119,7 +159,8 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_junit_jnitools_J
     jlong longResult = JTestAbstractClass::privateLongMethod(env, jTestAbstractClass, jlong(1));
     checkLong(errmsg, jlong(1001), longResult);
 
-    jstring stringResult = JTestAbstractClass::privateStringMethod(env, jTestAbstractClass, jint(2));
+    jstring stringResult =
+            JTestAbstractClass::privateStringMethod(env, jTestAbstractClass, jint(2));
     checkString(errmsg, env, "I1 = 2", stringResult);
     env->DeleteLocalRef(stringResult);
 
@@ -149,10 +190,11 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_junit_jnitools_J
 
     // --- Virtual methods ---
 
-    longResult = JTestAbstractClass::protectedVirtualLongMethod(env,jTestAbstractClass, jlong(10));
+    longResult = JTestAbstractClass::protectedVirtualLongMethod(env, jTestAbstractClass, jlong(10));
     checkLong(errmsg, jlong(3010), longResult);
 
-    stringResult = JTestAbstractClass::protectedVirtualStringMethod(env,jTestAbstractClass,jint(11));
+    stringResult = JTestAbstractClass::protectedVirtualStringMethod(env, jTestAbstractClass, jint(
+            11));
     checkString(errmsg, env, "I4 = 11", stringResult);
     env->DeleteLocalRef(stringResult);
 
@@ -188,5 +230,4 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_junit_jnitools_J
     }
     return NULL;
 }
-
 

@@ -546,12 +546,12 @@ inline std::ostream & operator<<(std::ostream & stream, JField & field) {
             TRACE_JNI_CALLING(this, name, signature)                            \
             va_list args;                                                       \
             va_start(args, object);                                             \
-            JAVA_TYPE_##ret_type result = static_cast<JAVA_TYPE_##ret_type>(    \
+            CALL_AND_ASSIGN_TO_RESULT_##ret_type(                               \
                         env->JNI_ENV_VIRTUAL_CALL_##ret_type(object,            \
                             _##name.getMethodID(env, getJClass()), args));      \
             va_end(args);                                                       \
             TRACE_JNI_CALLED(this, name, signature)                             \
-            return result;                                                      \
+            RETURN_RESULT_##ret_type                                            \
         }
 
 BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
@@ -577,6 +577,12 @@ BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
 /*    */JCLASS_STATIC_FIELD(Long, privateStaticLongField)
 /*    */JCLASS_STATIC_FIELD(String, privateStaticStringField)
 END_JCLASS
+
+BEGIN_JINTERFACE(Interface1)
+/*    */JINTERFACE_METHOD(Long, longMethod, "(I)J")
+/*    */JINTERFACE_METHOD(String, stringMethod, "(I)Ljava/lang/String;")
+/*    */JINTERFACE_METHOD(Void, voidMethod, "(I)V")
+END_JINTERFACE
 
 BEGIN_JINTERFACE(JObject)
 /*    */JINTERFACE_METHOD(String, toString, "()Ljava/lang/String;")
