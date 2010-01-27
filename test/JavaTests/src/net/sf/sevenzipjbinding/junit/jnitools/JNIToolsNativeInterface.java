@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit.jnitools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
@@ -10,6 +11,8 @@ public class JNIToolsNativeInterface extends JUnitNativeTestBase {
     public native String testAbstractClass(JTestAbstractClass jTestAbstractClass);
 
     public native String testInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
+
+    public native JTestFinalClass testJTestFinalClassNewInstance();
 
     @Test
     public void testFinalClass() {
@@ -173,6 +176,15 @@ public class JNIToolsNativeInterface extends JUnitNativeTestBase {
         assertEquals(17, interface1Impl2.getLongMethodParameterI());
         assertEquals(18, interface1Impl2.getStringMethodParameterI());
         assertEquals(19, interface1Impl2.getVoidMethodParameterI());
+    }
+
+    @Test
+    public void testJTestFinalClassNewInstance1() {
+        JTestFinalClass instance = testJTestFinalClassNewInstance();
+        assertNotNull(instance);
+        assertEquals(-1, instance.getProtectedVirtualLongMethodParameterI());
+        assertEquals(-1, instance.getPrivateVoidMethodParameterI());
+        assertEquals(-1, instance.getProtectedVirtualStringMethodParameterI());
     }
 
     private void checkErrorMessage(String errorMessage) {

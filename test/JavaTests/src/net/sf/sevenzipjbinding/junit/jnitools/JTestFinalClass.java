@@ -1,9 +1,9 @@
 package net.sf.sevenzipjbinding.junit.jnitools;
 
 public final class JTestFinalClass extends JTestAbstractClass {
-    private int protectedVirtualLongMethodParameterI;
-    private int protectedVirtualStringMethodParameterI;
-    private int protectedVirtualVoidMethodParameterI;
+    private int protectedVirtualLongMethodParameterI = -1;
+    private int protectedVirtualStringMethodParameterI = -1;
+    private int protectedVirtualVoidMethodParameterI = -1;
 
     @Override
     protected long protectedVirtualLongMethod(int i) {

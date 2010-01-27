@@ -164,6 +164,20 @@ JAVA_FINAL_CLASS("net/sf", interface2)
 /*    */JAVA_FINAL_CLASS_METHOD(Void, method4, "(t4)")
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 template<class T>
 class JavaClass {
     char const * _fullname;
@@ -187,10 +201,20 @@ public:
     jclass getJClass(JNIEnv * env) {
         if (!_jclass) {
             // Lazy initialize jclass reference
-            _jclass = env->FindClass(_fullname);
-            FATALIF1(!_jclass, "Error finding class '%s'", _fullname)
+            jclass clazz = env->FindClass(_fullname);
+            FATALIF1(!clazz, "Error finding class '%s'", _fullname)
+            _jclass = static_cast<jclass>(env->NewGlobalRef(clazz));
+            MY_ASSERT(_jclass)
         }
+        std::cout << "getClass() for " << _fullname << std::endl; // TODO
         return _jclass;
+    }
+
+    static jobject newInstance(JNIEnv * env) {
+        jclass clazz = _instance.getJClass(env);
+        jmethodID defaultConstructor = _instance._defaultConstructor.getMethodID(env, clazz);
+        FATALIF1(defaultConstructor == NULL, "Class '%s' has no default constructor", _instance._fullname);
+        return env->NewObject(clazz, defaultConstructor);
     }
 };
 
@@ -323,21 +347,6 @@ inline std::ostream & operator<<(std::ostream & stream, JField & field) {
 }
 #endif
 
-#define BEGIN_JCLASS(package, name)                                             \
-    class name : public JavaClass<name> {                                       \
-    public:\
-        name() : JavaClass<name>(package "/" #name) {}                          \
-
-#define END_JCLASS                      };
-
-#define BEGIN_JINTERFACE(name)                                                  \
-    class name : public JInterface<name> {                                      \
-        friend class JObjectMap<jclass, name>;                                  \
-        name() : JInterface<name>(#name) {}                                     \
-    public:
-
-#define END_JINTERFACE                      };
-
 #define JAVA_TYPE_String                    jstring
 #define JAVA_TYPE_Int                       jint
 #define JAVA_TYPE_Long                      jlong
@@ -408,6 +417,28 @@ inline std::ostream & operator<<(std::ostream & stream, JField & field) {
 #   define TRACE_JNI_SETTING(this, name, signature) {}
 #   define TRACE_JNI_SET(this, name, signature) {}
 #endif
+
+#define BEGIN_JCLASS(package, name)                                             \
+    class name : public JavaClass<name> {                                       \
+        friend class JavaClass<name>;                                           \
+        class C_DefaultConstructor; friend class C_DefaultConstructor;          \
+        class C_DefaultConstructor : public JMethod {                           \
+        public:                                                                 \
+            C_DefaultConstructor() : JMethod("<init>", "()V") {}                \
+        };                                                                      \
+        C_DefaultConstructor _defaultConstructor;                               \
+    public:                                                                     \
+        name() : JavaClass<name>(package "/" #name) {}
+
+#define END_JCLASS                      };
+
+#define BEGIN_JINTERFACE(name)                                                  \
+    class name : public JInterface<name> {                                      \
+        friend class JObjectMap<jclass, name>;                                  \
+        name() : JInterface<name>(#name) {}                                     \
+    public:
+
+#define END_JINTERFACE                      };
 
 #define JCLASS_FINAL_METHOD(ret_type, name, signature)                          \
     private: class C_##name; friend class C_##name;                             \
@@ -576,6 +607,11 @@ BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
 
 /*    */JCLASS_STATIC_FIELD(Long, privateStaticLongField)
 /*    */JCLASS_STATIC_FIELD(String, privateStaticStringField)
+END_JCLASS
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestFinalClass)
+/*    */JCLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, "(I)J")
+/*    */JCLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, "(I)Ljava/lang/String;")
+/*    */JCLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, "(I)V")
 END_JCLASS
 
 BEGIN_JINTERFACE(Interface1)

@@ -66,6 +66,8 @@ void test(JNIEnv * env) {
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
 
+//    JTestFinalClass::newInstance(env);
+
     //    exit(0);
     /*
      std::cout << "o=" << classLong << std::endl;
@@ -231,3 +233,9 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testAbstract
     return NULL;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testJTestFinalClassNewInstance(
+                                                                                                   JNIEnv * env,
+                                                                                                   jobject thiz) {
+    return JTestFinalClass::newInstance(env);
+}
