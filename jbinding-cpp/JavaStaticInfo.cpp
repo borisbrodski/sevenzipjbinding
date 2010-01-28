@@ -66,7 +66,7 @@ void test(JNIEnv * env) {
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
     std::cout << "integer234 = " << env << objectInteger3.toString(env, integer234) << std::endl;
 
-//    JTestFinalClass::newInstance(env);
+    //    JTestFinalClass::newInstance(env);
 
     //    exit(0);
     /*
@@ -98,8 +98,9 @@ void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expected
     std::stringstream jstringstream;
 
     jstringstream << env << actualValue;
-    if (jstringstream.str() != expectedValue) {
-        errmsg << "ERROR: Expected '" << expectedValue << "' get '" << jstringstream.str() << "'"
+    string expectedString = string("\"") + expectedValue + '"';
+    if (jstringstream.str() != expectedString) {
+        errmsg << "ERROR: Expected '" << expectedString << "' get '" << jstringstream.str() << "'"
                 << std::endl;
     }
 }
@@ -108,6 +109,12 @@ void checkLong(std::stringstream & errmsg, jlong expectedValue, jlong actualValu
     if (actualValue != expectedValue) {
         errmsg << "ERROR: Expected '" << expectedValue << "' get '" << actualValue << "'"
                 << std::endl;
+    }
+}
+
+void checkNull(std::stringstream & errmsg, bool expectedNull, jobject actualValue) {
+    if (expectedNull ^ !actualValue) {
+        errmsg << "ERROR: Expected " << (expectedNull ? "null" : "not null") << std::endl;
     }
 }
 
@@ -238,4 +245,40 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testJTestFin
                                                                                                    JNIEnv * env,
                                                                                                    jobject thiz) {
     return JTestFinalClass::newInstance(env);
+}
+
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testFinalClass(
+                                                                                   JNIEnv * env,
+                                                                                   jobject thiz,
+                                                                                   jobject jTestFinalClass) {
+    std::stringstream errmsg;
+
+    jclass clazz = JTestFinalClass::privateClassField_Get(env, jTestFinalClass);
+    checkNull(errmsg, false, clazz);
+
+    JTestFinalClass::privateClassField_Set(env, jTestFinalClass, NULL);
+
+    // --- Test Field: privateJTestFinalClassField ---
+    jobject object = JTestFinalClass::privateJTestFinalClassField_Get(env, jTestFinalClass);
+    checkNull(errmsg, true, object);
+
+    jobject jTestFinalClass2 = JTestFinalClass::newInstance(env);
+    JTestFinalClass::id_Set(env, jTestFinalClass2, jlong(200));
+    JTestFinalClass::privateJTestFinalClassField_Set(env, jTestFinalClass, jTestFinalClass2);
+
+    // --- Test Field: privateJTestFinalClassField ---
+    object = JTestFinalClass::privateJTestAbstractClassField_Get(env, jTestFinalClass);
+    checkNull(errmsg, true, object);
+
+    jTestFinalClass2 = JTestFinalClass::newInstance(env);
+    JTestFinalClass::id_Set(env, jTestFinalClass2, jlong(300));
+    JTestFinalClass::privateJTestAbstractClassField_Set(env, jTestFinalClass, jTestFinalClass2);
+
+
+    char const * errmsgstring = errmsg.str().c_str();
+    if (*errmsgstring) {
+        return env->NewStringUTF(errmsgstring);
+    }
+    return NULL;
 }

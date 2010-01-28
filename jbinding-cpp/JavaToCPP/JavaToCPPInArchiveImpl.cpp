@@ -13,9 +13,6 @@ static bool initialized = 0;
 static jfieldID g_ObjectAttributeFieldID;
 static jfieldID g_InStreamAttributeFieldID;
 static jclass g_PropertyInfoClazz;
-static jfieldID g_PropertyInfo_name;
-static jfieldID g_PropertyInfo_propID;
-static jfieldID g_PropertyInfo_varType;
 static jclass g_PropIDClazz;
 static jmethodID g_PropID_getPropIDByIndex;
 
@@ -43,18 +40,6 @@ static void localinit(JNIEnv * env, jobject thiz)
 	g_PropertyInfoClazz = env->FindClass(PROPERTYINFO_CLASS);
 	FATALIF1(g_PropertyInfoClazz == NULL, "Can't find class '%s'", PROPERTYINFO_CLASS);
 	g_PropertyInfoClazz = (jclass)env->NewGlobalRef(g_PropertyInfoClazz);
-
-	g_PropertyInfo_name = env->GetFieldID(g_PropertyInfoClazz, "name",
-			"L" JAVA_STRING ";");
-	FATALIF1(g_PropertyInfo_name == NULL, "Can't find attribute 'name' in the class %s", PROPERTYINFO_CLASS);
-
-	g_PropertyInfo_propID = env->GetFieldID(g_PropertyInfoClazz, "propID",
-	"L" PROPID_CLASS ";");
-	FATALIF1(g_PropertyInfo_propID == NULL, "Can't find attribute 'propID' in the class %s", PROPERTYINFO_CLASS);
-
-	g_PropertyInfo_varType = env->GetFieldID(g_PropertyInfoClazz, "varType",
-			"Ljava/lang/Class;");
-	FATALIF1(g_PropertyInfo_varType == NULL, "Can't find attribute 'varType' in the class %s", PROPERTYINFO_CLASS);
 
 	// Initialize PropID
 	g_PropIDClazz = env->FindClass(PROPID_CLASS);
@@ -359,7 +344,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
 
-	jobject propertInfo = PropertyInfo::_class.newInstance(env);
+	jobject propertInfo = PropertyInfo::newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)
@@ -370,13 +355,13 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 	{
 		javaName = env->NewString((jchar *)(BSTR)name, name.Length());
 	}
-	jobject javaType = VarTypeToJavaType(&jniInstance, type);
+	jclass javaType = VarTypeToJavaType(&jniInstance, type);
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
-	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
 
-	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
-	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
+	PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+    PropertyInfo::name_Set(env, propertInfo, javaName);
+    PropertyInfo::varType_Set(env, propertInfo, javaType);
 
 	inStream->ClearNativeMethodContext();
 
@@ -603,7 +588,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
-	jobject propertInfo = PropertyInfo::_class.newInstance(env);
+	jobject propertInfo = PropertyInfo::newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)
@@ -614,13 +599,13 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 	{
 		javaName = env->NewString((jchar *)(BSTR)name, name.Length());
 	}
-	jobject javaType = VarTypeToJavaType(&jniInstance, type);
+	jclass javaType = VarTypeToJavaType(&jniInstance, type);
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
-	env->SetObjectField(propertInfo, g_PropertyInfo_propID, propIDObject);
 
-	env->SetObjectField(propertInfo, g_PropertyInfo_name, javaName);
-	env->SetObjectField(propertInfo, g_PropertyInfo_varType, javaType);
+    PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+    PropertyInfo::name_Set(env, propertInfo, javaName);
+    PropertyInfo::varType_Set(env, propertInfo, javaType);
 
 	inStream->ClearNativeMethodContext();
 

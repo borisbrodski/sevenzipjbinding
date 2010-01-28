@@ -5,6 +5,16 @@ public final class JTestFinalClass extends JTestAbstractClass {
     private int protectedVirtualStringMethodParameterI = -1;
     private int protectedVirtualVoidMethodParameterI = -1;
 
+    private Class<?> privateClassField = StringBuffer.class;
+
+    private JTestFinalClass privateJTestFinalClassField = null;
+    private JTestAbstractClass privateJTestAbstractClassField = null;
+
+    private static JTestFinalClass privateStaticJTestFinalClassField = null;
+    private static JTestAbstractClass privateStaticJTestAbstractClassField = null;
+
+    private long id;
+
     @Override
     protected long protectedVirtualLongMethod(int i) {
         protectedVirtualLongMethodParameterI = i;
@@ -32,5 +42,29 @@ public final class JTestFinalClass extends JTestAbstractClass {
 
     public int getProtectedVirtualVoidMethodParameterI() {
         return protectedVirtualVoidMethodParameterI;
+    }
+
+    public Class<?> getPrivateClassField() {
+        return privateClassField;
+    }
+
+    public JTestAbstractClass getPrivateJTestAbstractClassField() {
+        return privateJTestAbstractClassField;
+    }
+
+    public JTestFinalClass getPrivateJTestFinalClassField() {
+        return privateJTestFinalClassField;
+    }
+
+    public static JTestFinalClass getPrivateStaticJTestFinalClassField() {
+        return privateStaticJTestFinalClassField;
+    }
+
+    public static JTestAbstractClass getPrivateStaticJTestAbstractClassField() {
+        return privateStaticJTestAbstractClassField;
+    }
+
+    public long getId() {
+        return id;
     }
 }

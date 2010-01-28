@@ -10,12 +10,14 @@ import org.junit.Test;
 public class JNIToolsNativeInterface extends JUnitNativeTestBase {
     public native String testAbstractClass(JTestAbstractClass jTestAbstractClass);
 
+    public native String testFinalClass(JTestAbstractClass jTestFinalClass);
+
     public native String testInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
 
     public native JTestFinalClass testJTestFinalClassNewInstance();
 
     @Test
-    public void testFinalClass() {
+    public void testAbstractClass() {
         JTestFinalClass jTestFinalClass = new JTestFinalClass();
         checkErrorMessage(testAbstractClass(jTestFinalClass));
         assertEquals(1, jTestFinalClass.getPrivateLongMethodParameterI());
@@ -37,7 +39,7 @@ public class JNIToolsNativeInterface extends JUnitNativeTestBase {
     }
 
     @Test
-    public void testFinalClassRepeated() {
+    public void testAbstractClassRepeated() {
         JTestFinalClass jTestFinalClass = new JTestFinalClass();
         checkErrorMessage(testAbstractClass(jTestFinalClass));
         assertEquals(1, jTestFinalClass.getPrivateLongMethodParameterI());
@@ -185,6 +187,41 @@ public class JNIToolsNativeInterface extends JUnitNativeTestBase {
         assertEquals(-1, instance.getProtectedVirtualLongMethodParameterI());
         assertEquals(-1, instance.getPrivateVoidMethodParameterI());
         assertEquals(-1, instance.getProtectedVirtualStringMethodParameterI());
+    }
+
+    @Test
+    public void testJTestFinalClassNewInstance1Repeated() {
+        JTestFinalClass instance = testJTestFinalClassNewInstance();
+        assertNotNull(instance);
+        assertEquals(-1, instance.getProtectedVirtualLongMethodParameterI());
+        assertEquals(-1, instance.getPrivateVoidMethodParameterI());
+        assertEquals(-1, instance.getProtectedVirtualStringMethodParameterI());
+    }
+
+    @Test
+    public void testFinalClassFields() {
+        JTestFinalClass jTestFinalClass = new JTestFinalClass();
+        checkErrorMessage(testFinalClass(jTestFinalClass));
+        assertEquals(null, jTestFinalClass.getPrivateClassField());
+
+        assertNotNull(jTestFinalClass.getPrivateJTestFinalClassField());
+        assertEquals(200, jTestFinalClass.getPrivateJTestFinalClassField().getId());
+
+        assertNotNull(jTestFinalClass.getPrivateJTestAbstractClassField());
+        assertEquals(300, ((JTestFinalClass) jTestFinalClass.getPrivateJTestAbstractClassField()).getId());
+    }
+
+    @Test
+    public void testFinalClassFieldsRepeated() {
+        JTestFinalClass jTestFinalClass = new JTestFinalClass();
+        checkErrorMessage(testFinalClass(jTestFinalClass));
+        assertEquals(null, jTestFinalClass.getPrivateClassField());
+
+        assertNotNull(jTestFinalClass.getPrivateJTestFinalClassField());
+        assertEquals(200, jTestFinalClass.getPrivateJTestFinalClassField().getId());
+
+        assertNotNull(jTestFinalClass.getPrivateJTestAbstractClassField());
+        assertEquals(300, ((JTestFinalClass) jTestFinalClass.getPrivateJTestAbstractClassField()).getId());
     }
 
     private void checkErrorMessage(String errorMessage) {

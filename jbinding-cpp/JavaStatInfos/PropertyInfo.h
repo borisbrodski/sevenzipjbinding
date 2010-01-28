@@ -10,8 +10,10 @@
 
 #include "JavaStaticInfo.h"
 
-JAVA_FINAL_CLASS("net/sf/sevenzipjbinding", PropertyInfo) {
-
-}
+BEGIN_JCLASS("net/sf/sevenzipjbinding", PropertyInfo)
+    JCLASS_FIELD(String, name)
+    JCLASS_FIELD_OBJECT(propID, "Lnet/sf/sevenzipjbinding/PropID;")
+    JCLASS_FIELD(Class, varType)
+END_JCLASS
 
 #endif /* PROPERTYINFO_H_ */
