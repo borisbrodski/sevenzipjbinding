@@ -44,8 +44,6 @@ static inline bool IsItWindowsNT()
 #define JAVA_STATIC_EXTERN extern
 #include "JavaStaticInfo.h"
 
-void test(JNIEnv * env); // TODO Remove this
-
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeInitSevenZipLibrary
@@ -58,7 +56,6 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
 
     CodecTools::init();
 
-    test(env);
     //if (msg) {
     //	TRACE1("Error initializing 7-zip library: %s", msg)
     //	return env->NewStringUTF(msg);
@@ -220,10 +217,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
         TRACE("Archive opened")
 
-        jobject InArchiveImplObject = InArchiveImpl::_class.newInstance(env);
+        jobject InArchiveImplObject = jni::InArchiveImpl::newInstance(env);
 
         jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString), formatNameString.Length());
-        InArchiveImpl::setArchiveFormat(env, InArchiveImplObject, jstringFormatNameString);
+        jni::InArchiveImpl::setArchiveFormat(env, InArchiveImplObject, jstringFormatNameString);
         if (jniInstance.IsExceptionOccurs()) {
             archive->Close();
             return NULL;

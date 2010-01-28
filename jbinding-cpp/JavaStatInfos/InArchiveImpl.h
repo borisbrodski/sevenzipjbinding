@@ -10,13 +10,11 @@
 
 #include "JavaStaticInfo.h"
 
-JAVA_FINAL_CLASS("net/sf/sevenzipjbinding/impl", InArchiveImpl) {
-    JAVA_FIELD(Long, bindingSession, "J")
-    JAVA_FIELD(Long, sevenZipArchiveInstance, "J")
-    JAVA_FIELD(Long, sevenZipArchiveInStreamInstance, "J")
-
-    JAVA_FINAL_CLASS_METHOD(Void, setArchiveFormat, "(Ljava/lang/String;)V")
-}
-
+BEGIN_JCLASS("net/sf/sevenzipjbinding/impl", InArchiveImpl)
+/*    */JCLASS_FIELD(Long, bindingSession)
+/*    */JCLASS_FIELD(Long, sevenZipArchiveInstance)
+/*    */JCLASS_FIELD(Long, sevenZipArchiveInStreamInstance)
+/*    */JCLASS_FINAL_METHOD(Void, setArchiveFormat, "(Ljava/lang/String;)V")
+END_JCLASS
 
 #endif /* IINARCHIVE_H_ */

@@ -633,7 +633,6 @@ SET(JBINDING_CPP_FILES
     SevenZipJBinding.cpp
     UniversalArchiveOpenCallback.cpp
     CodecTools.cpp
-    JavaStaticInfo.cpp
     JavaToCPP/JavaToCPPSevenZip.cpp
     JavaToCPP/JavaToCPPInArchiveImpl.cpp
     JavaToCPP/JavaToCPPOutArchiveImpl.cpp
@@ -647,6 +646,8 @@ SET(JBINDING_CPP_FILES
     CPPToJava/CPPToJavaSequentialInStream.cpp
     CPPToJava/CPPToJavaSequentialOutStream.cpp
     CPPToJava/CPPToJavaArchiveUpdateCallback.cpp
+
+    ../test/CTests/JniToolsTest.cpp
 )
 
 SET(JBINDING_JAVAH_H_FILES

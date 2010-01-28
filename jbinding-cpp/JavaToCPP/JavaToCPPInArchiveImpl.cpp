@@ -16,6 +16,8 @@ static jclass g_PropertyInfoClazz;
 static jclass g_PropIDClazz;
 static jmethodID g_PropID_getPropIDByIndex;
 
+using jni::PropertyInfo;
+
 static void localinit(JNIEnv * env, jobject thiz)
 {
 	char classname[256];
