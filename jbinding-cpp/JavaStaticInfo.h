@@ -12,6 +12,8 @@
 #include "JNITools.h"
 #include "JObjectList.h"
 
+#define JBINDING_JNIEXPORT extern "C" JNIEXPORT
+
 #define JAVA_TYPE_String                    jstring
 #define JAVA_TYPE_Int                       jint
 #define JAVA_TYPE_Long                      jlong

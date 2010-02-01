@@ -8,11 +8,8 @@
 #ifndef JOBJECTLIST_H_
 #define JOBJECTLIST_H_
 
-#include <iostream> // TODO Remove me
-
 #include <list>
 #include "jni.h"
-
 
 template<typename JOBJ, typename VALUE>
 class JObjectMap {
@@ -23,7 +20,7 @@ class JObjectMap {
     std::list<Item> jobjectList;
     typedef typename std::list<Item>::iterator iterator;
 public:
-    VALUE & add(JOBJ & jobj) {
+    VALUE & add(JOBJ const & jobj) {
         jobjectList.push_front(Item());
         Item & item = *jobjectList.begin();
         item.jobj = jobj;
@@ -33,11 +30,11 @@ public:
     VALUE * get(JNIEnv * env, JOBJ jobj) {
         iterator iter = jobjectList.begin();
         for (; iter != jobjectList.end(); iter++) {
-            std::cout << "MAP: Checking " << iter->jobj << std::endl;
+            TRACE("MAP: Checking " << iter->jobj);
             if (env->IsSameObject(iter->jobj, jobj)) {
-                std::cout << "MAP: Found!" << std::endl;
+                TRACE("MAP: Found!")
                 if (jobjectList.begin() != iter) {
-                    std::cout << "MAP: Move" << std::endl;
+                    TRACE("MAP: Move");
                     // Move found class to the front
                     jobjectList.splice(jobjectList.begin(), jobjectList, iter);
                 }
@@ -45,10 +42,12 @@ public:
                 return &(iter->value);
             }
         }
-        std::cout << "MAP: Not found" << std::endl;
-
+        TRACE("MAP: Not found");
 
         return NULL;
+    }
+    int size() {
+        return jobjectList.size();
     }
 };
 

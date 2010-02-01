@@ -7,16 +7,12 @@
 #include "JNICallState.h"
 
 #include "JavaStatInfos/PropertyInfo.h"
-
+#include "JavaStatInfos/InArchiveImpl.h"
 
 static bool initialized = 0;
-static jfieldID g_ObjectAttributeFieldID;
 static jfieldID g_InStreamAttributeFieldID;
-static jclass g_PropertyInfoClazz;
 static jclass g_PropIDClazz;
 static jmethodID g_PropID_getPropIDByIndex;
-
-using jni::PropertyInfo;
 
 static void localinit(JNIEnv * env, jobject thiz)
 {
@@ -30,18 +26,9 @@ static void localinit(JNIEnv * env, jobject thiz)
 	jclass clazz = env->GetObjectClass(thiz);
 	FATALIF(clazz == NULL, "Can't get class from object");
 
-	g_ObjectAttributeFieldID = env->GetFieldID(clazz, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE, "J");
-	FATALIF2(g_ObjectAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
-			GetJavaClassName(env, clazz, classname, sizeof(classname)));
-
 	g_InStreamAttributeFieldID = env->GetFieldID(clazz, IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
 	FATALIF2(g_InStreamAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_STREAM_IMPL_OBJ_ATTRIBUTE,
 			GetJavaClassName(env, clazz, classname, sizeof(classname)));
-
-	// Initialize PropVariant
-	g_PropertyInfoClazz = env->FindClass(PROPERTYINFO_CLASS);
-	FATALIF1(g_PropertyInfoClazz == NULL, "Can't find class '%s'", PROPERTYINFO_CLASS);
-	g_PropertyInfoClazz = (jclass)env->NewGlobalRef(g_PropertyInfoClazz);
 
 	// Initialize PropID
 	g_PropIDClazz = env->FindClass(PROPID_CLASS);
@@ -57,16 +44,12 @@ static void localinit(JNIEnv * env, jobject thiz)
 
 static IInArchive * GetArchive(JNIEnv * env, jobject thiz)
 {
-	jlong pointer;
-
-	localinit(env, thiz);
-
-	pointer = env->GetLongField(thiz, g_ObjectAttributeFieldID);
+	jlong pointer = jni::InArchiveImpl::sevenZipArchiveInstance_Get(env, thiz);
 
 	if (!pointer)
 	{
 	    TRACE("GetArchive() : pointer == NULL. Throwing exception");
-        throw SevenZipException("Can't preform action. Archive already closed.");
+        throw SevenZipException("Can't perform action. Archive already closed.");
 	}
 
 	return (IInArchive *)(void *)(size_t)pointer;
@@ -88,13 +71,6 @@ static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz)
 //    TRACE1("Getting STREAM: 0x%08X", (unsigned int)(Object *)(CPPToJavaInStream *)(void *)pointer);
 
     return (CPPToJavaInStream *)(void *)(size_t)pointer;
-}
-
-static void SetArchive(JNIEnv * env, jobject thiz, size_t pointer)
-{
-	localinit(env, thiz);
-
-	env->SetLongField(thiz, g_ObjectAttributeFieldID, (jlong)pointer);
 }
 
 int CompareIndicies(const void *pi1, const void * pi2)
@@ -271,7 +247,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     archive->Release();
     inStream->Release();
 
-    SetArchive(env, thiz, 0);
+    jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
 
     TRACE("Archive closed")
 
@@ -346,7 +322,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
 
-	jobject propertInfo = PropertyInfo::newInstance(env);
+	jobject propertInfo = jni::PropertyInfo::newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)
@@ -361,9 +337,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 
-	PropertyInfo::propID_Set(env, propertInfo, propIDObject);
-    PropertyInfo::name_Set(env, propertInfo, javaName);
-    PropertyInfo::varType_Set(env, propertInfo, javaType);
+	jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+    jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+    jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
 	inStream->ClearNativeMethodContext();
 
@@ -590,7 +566,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
-	jobject propertInfo = PropertyInfo::newInstance(env);
+	jobject propertInfo = jni::PropertyInfo::newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)
@@ -605,9 +581,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	jobject propIDObject = env->CallStaticObjectMethod(g_PropIDClazz, g_PropID_getPropIDByIndex, propID);
 
-    PropertyInfo::propID_Set(env, propertInfo, propIDObject);
-    PropertyInfo::name_Set(env, propertInfo, javaName);
-    PropertyInfo::varType_Set(env, propertInfo, javaType);
+    jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+    jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+    jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
 	inStream->ClearNativeMethodContext();
 

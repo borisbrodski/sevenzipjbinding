@@ -64,18 +64,6 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
     return NULL;
 }
 
-/* TODO Delete me
-void setArchiveFormat(JNIEnv * env, jobject inArchiveImplObject, const UString & formatNameString) {
-    jclass c = env->GetObjectClass(inArchiveImplObject);
-    jmethodID methodId = env->GetMethodID(c, "setArchiveFormat", "(Ljava/lang/String;)V");
-
-    jstring jstring = env->NewString(UnicodeHelper(formatNameString), formatNameString.Length());
-    env->CallVoidMethod(inArchiveImplObject, methodId, jstring);
-    env->ExceptionClear();
-    return;
-}
-*/
-
 /*
  * Class:     net_sf_sevenzip_SevenZip
  * Method:    nativeOpenArchive
@@ -217,26 +205,25 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
         TRACE("Archive opened")
 
-        jobject InArchiveImplObject = jni::InArchiveImpl::newInstance(env);
+        jobject inArchiveImplObject = jni::InArchiveImpl::newInstance(env);
 
         jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString), formatNameString.Length());
-        jni::InArchiveImpl::setArchiveFormat(env, InArchiveImplObject, jstringFormatNameString);
+        jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);
         if (jniInstance.IsExceptionOccurs()) {
             archive->Close();
             return NULL;
         }
 
-        SetLongAttribute(env, InArchiveImplObject, IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE,
-                (jlong) (size_t) (void*) (archive.Detach()));
+        jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, inArchiveImplObject, (jlong) (size_t) (void*) (archive.Detach()));
 
-        SetLongAttribute(env, InArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
+        SetLongAttribute(env, inArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
                 (jlong) (size_t) (void*) (stream));
 
         stream->ClearNativeMethodContext();
 
         stream.Detach();
 
-        return InArchiveImplObject;
+        return inArchiveImplObject;
 
     CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }

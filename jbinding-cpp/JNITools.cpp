@@ -2,7 +2,6 @@
 #include "JNITools.h"
 #include "JNICallState.h"
 #include "UnicodeHelper.h"
-
 static bool initialized = 0;
 
 //static jclass g_NumberClass;

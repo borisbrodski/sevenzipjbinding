@@ -2,6 +2,7 @@
 
 #include "JNICallState.h"
 
+
 #ifdef COMPRESS_MT
 	#define ENTER_CRITICAL_SECTION   {_criticalSection.Enter();}
 	#define LEAVE_CRITICAL_SECTION   {_criticalSection.Leave();}

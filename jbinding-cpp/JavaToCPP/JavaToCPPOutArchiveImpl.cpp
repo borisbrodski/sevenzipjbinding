@@ -20,7 +20,7 @@
  */
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_updateItemsNative
   (JNIEnv * env, jobject, jint archiveFormatIndex, jobject outStream, jint numberOfItems, jobject archiveUpdateCallback) {
-	TRACE("OutArchiveImpl.updateItemsNative()")
+	TRACE("OutArchiveImpl.updateItemsNative()");
 
 	NativeMethodContext nativeMethodContext(env);
 
