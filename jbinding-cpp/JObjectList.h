@@ -27,7 +27,7 @@ public:
         return item.value;
     }
 
-    VALUE * get(JNIEnv * env, JOBJ jobj) {
+    VALUE * get(JNIEnv * env, JOBJ const & jobj) {
         iterator iter = jobjectList.begin();
         for (; iter != jobjectList.end(); iter++) {
             TRACE("MAP: Checking " << iter->jobj);

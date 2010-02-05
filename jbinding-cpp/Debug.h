@@ -14,7 +14,8 @@
 #endif
 
 #ifdef _DEBUG
-#   define _GLIBCXX_DEBUG
+// This cause probably a crash
+//#   define _GLIBCXX_DEBUG
 #endif
 
 #ifdef _DEBUG
