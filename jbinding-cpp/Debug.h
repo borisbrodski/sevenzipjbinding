@@ -3,7 +3,7 @@
 
 // Use CMakeLists.txt to activate debug mode: uncomment "SET(CMAKE_BUILD_TYPE Debug)"
 //#define _DEBUG
-#define TRACE_ON
+//#define TRACE_ON
 //#define TRACE_OBJECTS_ON
 
 //#define TRACE_THREADS_ON

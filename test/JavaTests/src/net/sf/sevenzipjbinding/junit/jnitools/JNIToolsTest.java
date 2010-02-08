@@ -1,20 +1,30 @@
 package net.sf.sevenzipjbinding.junit.jnitools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 import org.junit.Test;
 
-public class JNIToolsNativeInterface extends JUnitNativeTestBase {
-    public native String testAbstractClass(JTestAbstractClass jTestAbstractClass);
+public class JNIToolsTest extends JUnitNativeTestBase {
+    private native String testAbstractClass(JTestAbstractClass jTestAbstractClass);
 
-    public native String testFinalClass(JTestAbstractClass jTestFinalClass);
+    private native String testFinalClass(JTestAbstractClass jTestFinalClass);
 
-    public native String testInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
+    private native String testInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
 
-    public native JTestFinalClass testJTestFinalClassNewInstance();
+    private native JTestFinalClass testJTestFinalClassNewInstance();
+
+    private native boolean abstractClassIsInstance(Object obj);
+
+    private native boolean finalClassIsInstance(Object obj);
+
+    private native boolean abstractClassIsAssignableFromInstanceOf(Class<?> clazz);
+
+    private native boolean finalClassIsAssignableFromInstanceOf(Class<?> clazz);
 
     @Test
     public void testAbstractClass() {
@@ -228,5 +238,83 @@ public class JNIToolsNativeInterface extends JUnitNativeTestBase {
         if (errorMessage != null) {
             fail(errorMessage);
         }
+    }
+
+    @Test
+    public void testAbstractClassIsInstanceAbstractClass() {
+        assertTrue(abstractClassIsInstance(getOtherJTestAbstractInstance()));
+    }
+
+    @Test
+    public void testAbstractClassIsInstanceFinalClass() {
+        assertTrue(abstractClassIsInstance(new JTestFinalClass()));
+    }
+
+    @Test
+    public void testAbstractClassIsInstanceString() {
+        assertFalse(abstractClassIsInstance(""));
+    }
+
+    @Test
+    public void testFinalClassIsInstanceAbstractClass() {
+        assertFalse(finalClassIsInstance(getOtherJTestAbstractInstance()));
+    }
+
+    @Test
+    public void testFinalClassIsInstanceFinalClass() {
+        assertTrue(finalClassIsInstance(new JTestFinalClass()));
+    }
+
+    @Test
+    public void testFinalClassIsInstanceString() {
+        assertFalse(finalClassIsInstance(""));
+    }
+
+    @Test
+    public void testAbstractClassIsAssignableFromInstanceOfAbstractClass() {
+        assertTrue(abstractClassIsAssignableFromInstanceOf(JTestAbstractClass.class));
+    }
+
+    @Test
+    public void testAbstractClassIsAssignableFromInstanceOfFinalClass() {
+        assertTrue(abstractClassIsAssignableFromInstanceOf(JTestFinalClass.class));
+    }
+
+    @Test
+    public void testAbstractClassIsAssignableFromInstanceOfString() {
+        assertFalse(abstractClassIsAssignableFromInstanceOf(String.class));
+    }
+
+    @Test
+    public void testFinalClassIsAssignableFromInstanceOfAbstractClass() {
+        assertFalse(finalClassIsAssignableFromInstanceOf(JTestAbstractClass.class));
+    }
+
+    @Test
+    public void testFinalClassIsAssignableFromInstanceOfFinalClass() {
+        assertTrue(finalClassIsAssignableFromInstanceOf(JTestFinalClass.class));
+    }
+
+    @Test
+    public void testFinalClassIsAssignableFromInstanceOfString() {
+        assertFalse(finalClassIsAssignableFromInstanceOf(String.class));
+    }
+
+    private JTestAbstractClass getOtherJTestAbstractInstance() {
+        return new JTestAbstractClass() {
+            @Override
+            protected void protectedVirtualVoidMethod(int i) {
+            }
+
+            @Override
+            protected String protectedVirtualStringMethod(int i) {
+                return null;
+            }
+
+            @Override
+            protected long protectedVirtualLongMethod(int i) {
+                return 0;
+            }
+        };
     }
 }

@@ -327,6 +327,13 @@ public:
                 _instance._fullname);
         return env->NewObject(clazz, defaultConstructor);
     }
+
+    static bool isInstance(JNIEnv * env, jobject object) {
+        return env->IsInstanceOf(object, _instance.getJClass(env));
+    }
+    static bool isAssingableFromInstanceOf(JNIEnv * env, jclass clazz) {
+        return env->IsAssignableFrom(clazz, _instance.getJClass(env));
+    }
 };
 
 template<typename T>
