@@ -93,12 +93,21 @@ public:
             AbstractJavaCallback<jni::Callback1>(jbindingSession, env, implementation) {
         TRACE_OBJECT_CREATION("CPPToJavaSimpleClass");
     }
-    jstring callback1(long num, char const * string) {
+    char * callback1(long num) {
         JNIEnvInstance envInstance(&_jbindingSession);
 
-        jstring result =_javaClass.test(envInstance, _implementation, jint(num));
 
-        return result;
+        jstring result =_javaClass.test(envInstance, _implementation, jint(num));
+        if (envInstance.exceptionCheck()) {
+            return strdup("EXCEPTION");
+        }
+
+        jboolean isCopy;
+        char const * resultString = envInstance->GetStringUTFChars(result, &isCopy);
+        TRACE("Result = " << resultString)
+        char * resultStringCopy = strdup(resultString);
+        envInstance->ReleaseStringUTFChars(result, resultString);
+        return resultStringCopy;
     }
 };
 
@@ -116,7 +125,7 @@ JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSessionWithCallback1(
                                                                                         JNIEnv * env,
                                                                                         jclass thiz,
-                                                                                        jobject object) {
+                                                                                        jobject object, jlong number) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext nativeCallContext(jbindingSession, env);
 
@@ -125,9 +134,9 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSessionWithCa
     //    std::cout << "X: " << i << std::endl;
     // }
 
-    //CPPToJavaSimpleClass callback(jbindingSession, env, object);
+    CPPToJavaSimpleClass callback(jbindingSession, env, object);
 
-    //callback.callback1(1, "Hello");
+    char * result = callback.callback1(number);
 
-    return env->NewStringUTF("OK");
+    return env->NewStringUTF(result);
 }

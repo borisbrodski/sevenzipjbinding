@@ -8,7 +8,46 @@
 using namespace std;
 using namespace jni;
 
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
+/*    */JCLASS_FINAL_METHOD(Long, privateLongMethod, "(I)")
+/*    */JCLASS_FINAL_METHOD(String, privateStringMethod, "(I)")
+/*    */JCLASS_FINAL_METHOD(Void, privateVoidMethod, "(I)")
 
+/*    */JCLASS_FINAL_METHOD(Long, privateFinalLongMethod, "(I)")
+/*    */JCLASS_FINAL_METHOD(String, privateFinalStringMethod, "(I)")
+/*    */JCLASS_FINAL_METHOD(Void, privateFinalVoidMethod, "(I)")
+
+/*    */JCLASS_STATIC_METHOD(Long, privateStaticLongMethod, "(I)")
+/*    */JCLASS_STATIC_METHOD(String, privateStaticStringMethod, "(I)")
+/*    */JCLASS_STATIC_METHOD(Void, privateStaticVoidMethod, "(I)")
+
+/*    */JCLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, "(I)")
+/*    */JCLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, "(I)")
+/*    */JCLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, "(I)")
+
+/*    */JCLASS_FIELD(Long, privateLongField)
+/*    */JCLASS_FIELD(String, privateStringField)
+
+/*    */JCLASS_STATIC_FIELD(Long, privateStaticLongField)
+/*    */JCLASS_STATIC_FIELD(String, privateStaticStringField)
+END_JCLASS
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestFinalClass)
+/*    */JCLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, "(I)")
+/*    */JCLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, "(I)")
+/*    */JCLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, "(I)")
+
+/*    */JCLASS_FIELD(Class, privateClassField)
+/*    */JCLASS_FIELD(Long, id)
+
+/*    */JCLASS_FIELD_OBJECT(privateJTestFinalClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestFinalClass;")
+/*    */JCLASS_FIELD_OBJECT(privateJTestAbstractClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestAbstractClass;")
+END_JCLASS
+
+BEGIN_JINTERFACE(Interface1)
+/*    */JINTERFACE_METHOD(Long, longMethod, "(I)")
+/*    */JINTERFACE_METHOD(String, stringMethod, "(I)")
+/*    */JINTERFACE_METHOD(Void, voidMethod, "(I)")
+END_JINTERFACE
 
 void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expectedValue,
                  jstring actualValue) {
@@ -26,6 +65,14 @@ void checkLong(std::stringstream & errmsg, jlong expectedValue, jlong actualValu
     if (actualValue != expectedValue) {
         errmsg << "ERROR: Expected '" << expectedValue << "' get '" << actualValue << "'"
                 << std::endl;
+    }
+}
+
+void checkException(std::stringstream & errmsg, JNIEnv * env) {
+    jni::prepareExceptionCheck(env);
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        errmsg << "Unexpected exception" << std::endl;
     }
 }
 
@@ -57,13 +104,16 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testInterfac
     }
 
     jlong longResult = interface1->longMethod(env, interface1Impl, jint(17 + offset));
+    checkException(errmsg, env);
     checkLong(errmsg, jlong(12017), longResult);
 
     jstring stringResult = interface1->stringMethod(env, interface1Impl, jint(18 + offset));
+    checkException(errmsg, env);
     checkString(errmsg, env, "Interface.I = 18", stringResult);
     env->DeleteLocalRef(stringResult);
 
     interface1->voidMethod(env, interface1Impl, jint(19 + offset));
+    checkException(errmsg, env);
 
     char const * errmsgstring = errmsg.str().c_str();
     if (*errmsgstring) {
@@ -83,48 +133,60 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testAbstract
     // --- Private methods ---
 
     jlong longResult = JTestAbstractClass::privateLongMethod(env, jTestAbstractClass, jlong(1));
+    checkException(errmsg, env);
     checkLong(errmsg, jlong(1001), longResult);
 
     jstring stringResult =
             JTestAbstractClass::privateStringMethod(env, jTestAbstractClass, jint(2));
+    checkException(errmsg, env);
     checkString(errmsg, env, "I1 = 2", stringResult);
     env->DeleteLocalRef(stringResult);
 
     JTestAbstractClass::privateVoidMethod(env, jTestAbstractClass, jint(3));
+    checkException(errmsg, env);
 
     // --- Final methods ---
 
     longResult = JTestAbstractClass::privateFinalLongMethod(env, jTestAbstractClass, jlong(4));
+    checkException(errmsg, env);
     checkLong(errmsg, jlong(1004), longResult);
 
     stringResult = JTestAbstractClass::privateFinalStringMethod(env, jTestAbstractClass, jint(5));
+    checkException(errmsg, env);
     checkString(errmsg, env, "I2 = 5", stringResult);
     env->DeleteLocalRef(stringResult);
 
     JTestAbstractClass::privateFinalVoidMethod(env, jTestAbstractClass, jint(6));
+    checkException(errmsg, env);
 
     // --- Static methods ---
 
     longResult = JTestAbstractClass::privateStaticLongMethod(env, jlong(7));
+    checkException(errmsg, env);
     checkLong(errmsg, jlong(2007), longResult);
 
     stringResult = JTestAbstractClass::privateStaticStringMethod(env, jint(8));
+    checkException(errmsg, env);
     checkString(errmsg, env, "I3 = 8", stringResult);
     env->DeleteLocalRef(stringResult);
 
     JTestAbstractClass::privateStaticVoidMethod(env, jint(9));
+    checkException(errmsg, env);
 
     // --- Virtual methods ---
 
     longResult = JTestAbstractClass::protectedVirtualLongMethod(env, jTestAbstractClass, jlong(10));
+    checkException(errmsg, env);
     checkLong(errmsg, jlong(3010), longResult);
 
     stringResult = JTestAbstractClass::protectedVirtualStringMethod(env, jTestAbstractClass, jint(
             11));
+    checkException(errmsg, env);
     checkString(errmsg, env, "I4 = 11", stringResult);
     env->DeleteLocalRef(stringResult);
 
     JTestAbstractClass::protectedVirtualVoidMethod(env, jTestAbstractClass, jint(12));
+    checkException(errmsg, env);
 
     // --- Private fields ---
     longResult = JTestAbstractClass::privateLongField_Get(env, jTestAbstractClass);
@@ -191,7 +253,6 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsNativeInterface_testFinalCla
     jTestFinalClass2 = JTestFinalClass::newInstance(env);
     JTestFinalClass::id_Set(env, jTestFinalClass2, jlong(300));
     JTestFinalClass::privateJTestAbstractClassField_Set(env, jTestFinalClass, jTestFinalClass2);
-
 
     char const * errmsgstring = errmsg.str().c_str();
     if (*errmsgstring) {

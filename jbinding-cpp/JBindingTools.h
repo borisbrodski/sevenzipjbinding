@@ -69,7 +69,7 @@ class ThreadContext {
 public:
     JNIEnv * _env;
     int _attachedThreadCount;
-    std::list<int> _javaNativeContext;
+    std::list<JNINativeCallContext*> _javaNativeContext;
 
     ThreadContext() :
         _attachedThreadCount(-1), _env(NULL) {
@@ -93,12 +93,11 @@ class JBindingSession {
     void registerNativeContext(JNIEnv * initEnv, JNINativeCallContext * jniNativeCallContext) {
         ThreadId threadId = PlatformGetCurrentThreadId();
         _threadContextMapCriticalSection.Enter();
-        ;
         ThreadContext & threadContext = _threadContextMap[threadId];
         _threadContextMapCriticalSection.Leave();
         threadContext._env = initEnv;
         TRACE("JNINativeCallContext=" << jniNativeCallContext)
-        //threadContext._javaNativeContext.push_front(jniNativeCallContext);
+        threadContext._javaNativeContext.push_front(jniNativeCallContext);
     }
 
     void unregisterNativeContext(JNINativeCallContext & javaNativeContext) {
@@ -106,19 +105,19 @@ class JBindingSession {
 
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[threadId];
-        //MY_ASSERT(*(threadContext._javaNativeContext.begin()) == &javaNativeContext);
+        MY_ASSERT(*(threadContext._javaNativeContext.begin()) == &javaNativeContext);
 
-        //threadContext._javaNativeContext.pop_front();
-        //if (threadContext._javaNativeContext.size() == 0) {
+        threadContext._javaNativeContext.pop_front();
+        if (threadContext._javaNativeContext.size() == 0) {
             _threadContextMap.erase(threadId);
-        //}
+        }
         _threadContextMapCriticalSection.Leave();
     }
 
     JNIEnv * getJNIEnv(JNINativeCallContext & javaNativeContext) {
-        //_threadContextMapCriticalSection.Enter();
+        _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
-        //_threadContextMapCriticalSection.Leave();
+        _threadContextMapCriticalSection.Leave();
         if (threadContext._env) {
             return threadContext._env;
         }
@@ -144,9 +143,9 @@ public:
     }
 
     JNIEnv * beginCallback() {
-        //_threadContextMapCriticalSection.Enter();
+        _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
-        //_threadContextMapCriticalSection.Leave();
+        _threadContextMapCriticalSection.Leave();
         if (!threadContext._env) {
             // Attach new thread
             threadContext._attachedThreadCount = 0;
@@ -170,13 +169,13 @@ public:
     void endCallback() {
         ThreadId threadId = PlatformGetCurrentThreadId();
 
-        //_threadContextMapCriticalSection.Enter();
+        _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[threadId];
         if (!--threadContext._attachedThreadCount) {
             _vm->DetachCurrentThread();
             _threadContextMap.erase(threadId);
         }
-        //_threadContextMapCriticalSection.Leave();
+        _threadContextMapCriticalSection.Leave();
     }
 
     void addObject(IUnknown * object) {
@@ -257,8 +256,10 @@ class JNIEnvInstance {
     void * operator new(size_t i);
 
     void init() {
-        if (_isCallback = !_env) {
+        _isCallback = !_env;
+        if (_isCallback) {
             _env = _jbindingSession->beginCallback();
+            MY_ASSERT(_env);
         }
     }
 public:
@@ -277,12 +278,23 @@ public:
             MY_ASSERT(_env);
         }
     }
+
+    bool exceptionCheck() {
+        jni::prepareExceptionCheck(_env);
+        if (_env->ExceptionCheck()) {
+            // TODO Get and save exception
+            _env->ExceptionClear();
+            return true;
+        }
+        return false;
+    }
+
     operator JNIEnv*() {
         MY_ASSERT(_env);
         return _env;
     }
     JNIEnv * operator->() {
-        return (JNIEnv *) this;
+        return (JNIEnv *) *this;
     }
 };
 
