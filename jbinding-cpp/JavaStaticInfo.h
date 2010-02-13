@@ -33,6 +33,7 @@
 #define CALL_AND_ASSIGN_TO_RESULT(type, e)  CALL_AND_ASSIGN_TO_RESULT_I(CALL_AND_ASSIGN_TO_RESULT_##type,e)
 #define CALL_AND_ASSIGN_TO_RESULT_I(m, e)   m(e)
 
+#define CALL_AND_ASSIGN_TO_RESULT_Object(e) jobject result = static_cast<jobject>(e);
 #define CALL_AND_ASSIGN_TO_RESULT_String(e) jstring result = static_cast<jstring>(e);
 #define CALL_AND_ASSIGN_TO_RESULT_Long(e)   jlong result = static_cast<jlong>(e);
 #define CALL_AND_ASSIGN_TO_RESULT_Int(e)    jint result = static_cast<jint>(e);
@@ -48,16 +49,19 @@
 
 #define JNI_ENV_VIRTUAL_CALL_Int            CallIntMethodV
 #define JNI_ENV_VIRTUAL_CALL_Long           CallLongMethodV
+#define JNI_ENV_VIRTUAL_CALL_Object         CallObjectMethodV
 #define JNI_ENV_VIRTUAL_CALL_String         CallObjectMethodV
 #define JNI_ENV_VIRTUAL_CALL_Void           CallVoidMethodV
 
 #define JNI_ENV_NON_VIRTUAL_CALL_Int        CallNonvirtualIntMethodV
 #define JNI_ENV_NON_VIRTUAL_CALL_Long       CallNonvirtualLongMethodV
+#define JNI_ENV_NON_VIRTUAL_CALL_Object     CallNonvirtualObjectMethodV
 #define JNI_ENV_NON_VIRTUAL_CALL_String     CallNonvirtualObjectMethodV
 #define JNI_ENV_NON_VIRTUAL_CALL_Void       CallNonvirtualVoidMethodV
 
 #define JNI_ENV_STATIC_CALL_Int             CallStaticIntMethodV
 #define JNI_ENV_STATIC_CALL_Long            CallStaticLongMethodV
+#define JNI_ENV_STATIC_CALL_Object          CallStaticObjectMethodV
 #define JNI_ENV_STATIC_CALL_String          CallStaticObjectMethodV
 #define JNI_ENV_STATIC_CALL_Void            CallStaticVoidMethodV
 

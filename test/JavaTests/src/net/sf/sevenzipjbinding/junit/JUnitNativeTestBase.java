@@ -30,6 +30,7 @@ public class JUnitNativeTestBase {
     private static int deadCPPObjectCount = 0;
     private static boolean initializeNativeLibrary = true;
     private static boolean nonDebugLibraryWasReported = false;
+    private static boolean nonUseMyAssertLibraryWasReported = false;
 
     /**
      * Initialize native SevenZipJBinding library for all JUnit tests
@@ -57,9 +58,18 @@ public class JUnitNativeTestBase {
             assertEquals("Not all CPP Objects was freed", 0, newDeadObjectCount);
         } catch (UnsatisfiedLinkError e) {
             if (!nonDebugLibraryWasReported) {
-                System.out
-                        .println("WARNING! SevenZip native libraray was build without object tracing debug function.");
+                System.out.println("WARNING! SevenZip native libraray was build"
+                        + " without object tracing debug function.");
                 nonDebugLibraryWasReported = true;
+            }
+        }
+        try {
+            int threadCount = SevenZipDebug.getAttachedThreadCount();
+            assertEquals("Not all attached thread was detached from VM", 0, threadCount);
+        } catch (UnsatisfiedLinkError e) {
+            if (!nonUseMyAssertLibraryWasReported) {
+                System.out.println("WARNING! SevenZip native libraray was build without support for MY_ASSERTs.");
+                nonUseMyAssertLibraryWasReported = true;
             }
         }
     }

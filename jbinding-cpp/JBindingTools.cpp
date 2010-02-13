@@ -11,22 +11,29 @@
 
 JavaVM * JBindingSession::_vm = NULL;
 
-void JBindingSession::exceptionThrown(JNIEnv * env, jthrowable throwable) {
+void JBindingSession::handleThrownException(jthrowable exceptionLocalRef) {
     ThreadId threadId = PlatformGetCurrentThreadId();
 
     _threadContextMapCriticalSection.Enter();
-
-    JNIEnv * _env;
-    int _attachedThreadCount;
-    std::list<JNINativeCallContext *> _javaNativeContext;
-
-
     ThreadContext & threadContext = _threadContextMap[threadId];
+    MY_ASSERT(!threadContext._javaNativeContext.size())
 
-    if (/*threadContext.*/_javaNativeContext.size()) {
-        // Exception can be delivered directly to java caller within current thread
-        (*/*threadContext.*/_javaNativeContext.begin())->exceptionThrown(env, throwable);
+    // All active JNINativeCallContext objects should be notified
+    ThreadContextMap::iterator threadContextIterator = _threadContextMap.begin();
+    while (threadContextIterator != _threadContextMap.end()) {
+        std::list<JNINativeCallContext *> & jniNativeCallContextList = threadContextIterator->second._javaNativeContext;
+        if (jniNativeCallContextList.size()) {
+            (*jniNativeCallContextList.begin())->exceptionThrownInOtherThread(threadContext._env, exceptionLocalRef);
+        }
     }
-
     _threadContextMapCriticalSection.Leave();
 }
+
+
+#ifdef USE_MY_ASSERTS
+int JBindingSession::_attachedThreadCount = 0;
+extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetAttachedThreadCount(JNIEnv * env, jclass clazz)
+{
+    return JBindingSession::_attachedThreadCount;
+}
+#endif

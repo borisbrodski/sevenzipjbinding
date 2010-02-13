@@ -5,6 +5,7 @@ public class SevenZipDebug {
 
     private static native void nativePrintObjects();
 
+    private static native int nativeGetAttachedThreadCount();
 
     public static int getCPPObjectCount() {
         return nativeGetObjectCount();
@@ -12,5 +13,9 @@ public class SevenZipDebug {
 
     public static void printCPPObjects() {
         nativePrintObjects();
+    }
+
+    public static int getAttachedThreadCount() {
+        return nativeGetAttachedThreadCount();
     }
 }

@@ -10,6 +10,7 @@ import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import org.junit.Test;
 
 public class JNIToolsTest extends JUnitNativeTestBase {
+    // TODO Test Object methods
     private native String testAbstractClass(JTestAbstractClass jTestAbstractClass);
 
     private native String testFinalClass(JTestAbstractClass jTestFinalClass);

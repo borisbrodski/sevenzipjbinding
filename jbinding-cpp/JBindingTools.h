@@ -13,6 +13,13 @@
 #include "JObjectList.h"
 
 /*
+ TODO
+ BEGIN_JCLASS("net/sf/sevenzipjbinding", SevenZipException)
+ JCLASS_VIRTUAL_METHOD(Object, initCause, "(Ljava/lang/Throwable;)Ljava/lang/Throwable;")
+ END_JCLASS
+ */
+
+/*
  *    +--------------------------------------------------------------
  *    |
  *    |  +-----------------+
@@ -76,19 +83,26 @@ public:
     }
 };
 
-
 /*
  * Represents a single session of 7-Zip-JBinding.
  * For example OpenArchive->QueryArchiveItems->ExtractItems->CloseArchive.
  */
 class JBindingSession {
     friend class JNINativeCallContext;
+    typedef std::map<ThreadId, ThreadContext> ThreadContextMap;
 
     std::list<CMyComPtrWrapper<IUnknown> > _objectList;
     std::list<JNINativeCallContext> _jniNativeCallContextList;
-    std::map<ThreadId, ThreadContext> _threadContextMap;
+    ThreadContextMap _threadContextMap;
     PlatformCriticalSection _threadContextMapCriticalSection;
     static JavaVM * _vm;
+
+#ifdef USE_MY_ASSERTS
+public:
+    static int _attachedThreadCount;
+private:
+#endif
+
 
     void registerNativeContext(JNIEnv * initEnv, JNINativeCallContext * jniNativeCallContext) {
         ThreadId threadId = PlatformGetCurrentThreadId();
@@ -114,6 +128,7 @@ class JBindingSession {
         _threadContextMapCriticalSection.Leave();
     }
 
+    /*
     JNIEnv * getJNIEnv(JNINativeCallContext & javaNativeContext) {
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
@@ -123,6 +138,9 @@ class JBindingSession {
         }
 
         TRACE("Attaching current thread to VM.")
+#ifdef USE_MY_ASSERTS
+        _attachedVmCount++;
+#endif
         JNIEnv * env = NULL;
         jint result;
         if ((result = _vm->AttachCurrentThread((void**) &env, NULL)) || env == NULL) {
@@ -133,6 +151,9 @@ class JBindingSession {
         }
         TRACE("Thread attached. New env=" << (void *)env);
     }
+    */
+
+    void handleThrownException(jthrowable exceptionLocalRef);
 
 public:
     JBindingSession(JNIEnv * initEnv) {
@@ -142,7 +163,7 @@ public:
         MY_ASSERT(_vm);
     }
 
-    JNIEnv * beginCallback() {
+    JNIEnv * beginCallback(JNINativeCallContext ** jniNativeCallContext) {
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
         _threadContextMapCriticalSection.Leave();
@@ -151,6 +172,9 @@ public:
             threadContext._attachedThreadCount = 0;
 
             TRACE("Attaching current thread to VM.")
+#ifdef USE_MY_ASSERTS
+            _attachedThreadCount++;
+#endif
             jint result;
             if ((result = _vm->AttachCurrentThread((void**) &threadContext._env, NULL))
                     || threadContext._env == NULL) {
@@ -162,6 +186,9 @@ public:
             }
             TRACE("Thread attached. New env=" << (void *)threadContext._env);
         }
+        if (threadContext._javaNativeContext.size()) {
+            *jniNativeCallContext = *threadContext._javaNativeContext.begin();
+        }
         threadContext._attachedThreadCount++;
         return threadContext._env;
     }
@@ -172,10 +199,25 @@ public:
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[threadId];
         if (!--threadContext._attachedThreadCount) {
+#ifdef USE_MY_ASSERTS
+            _attachedThreadCount--;
+#endif
             _vm->DetachCurrentThread();
             _threadContextMap.erase(threadId);
         }
         _threadContextMapCriticalSection.Leave();
+    }
+
+    bool exceptionCheck(JNIEnv * env) {
+        jni::prepareExceptionCheck(env);
+        jthrowable exceptionLocalRef = env->ExceptionOccurred();
+        if (exceptionLocalRef) {
+            env->ExceptionClear();
+            handleThrownException(exceptionLocalRef);
+            env->DeleteLocalRef(exceptionLocalRef);
+            return true;
+        }
+        return false;
     }
 
     void addObject(IUnknown * object) {
@@ -191,8 +233,6 @@ public:
         MY_ASSERT(_threadContextMap.size() == 0);
         // TODO Check _threadContextMap
     }
-
-    void exceptionThrown(JNIEnv * env, jthrowable throwable);
 };
 
 class JNINativeCallContext {
@@ -201,21 +241,14 @@ class JNINativeCallContext {
 
     jthrowable _firstThrownException;
     jthrowable _lastThrownException;
+    jthrowable _firstThrownExceptionInOtherThread;
+    jthrowable _lastThrownExceptionInOtherThread;
+
     JBindingSession & _jbindingSession;
     JNIEnv * _jniCallOriginalEnv;
 
     JNINativeCallContext(JNINativeCallContext const &);
     void * operator new(size_t i);
-public:
-
-    JNINativeCallContext(JBindingSession & _jbindingSession, JNIEnv * initEnv) :
-        _jbindingSession(_jbindingSession), _jniCallOriginalEnv(initEnv), _firstThrownException(
-                NULL), _lastThrownException(NULL) {
-        _jbindingSession.registerNativeContext(initEnv, this);
-    }
-    ~JNINativeCallContext() {
-        _jbindingSession.unregisterNativeContext(*this);
-    }
 
     void exceptionThrown(JNIEnv * env, jthrowable throwableLocalRef) {
         jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
@@ -224,10 +257,60 @@ public:
             _firstThrownException = throwableGlobalRef;
         } else {
             if (_lastThrownException) {
-                env->DeleteLocalRef(_lastThrownException);
+                env->DeleteGlobalRef(_lastThrownException);
             }
             _lastThrownException = throwableGlobalRef;
         }
+    }
+    void exceptionThrownInOtherThread(JNIEnv * env, jthrowable throwableLocalRef) {
+        jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
+                throwableLocalRef));
+        if (!_firstThrownExceptionInOtherThread) {
+            _firstThrownExceptionInOtherThread = throwableGlobalRef;
+        } else {
+            if (_lastThrownExceptionInOtherThread) {
+                env->DeleteGlobalRef(_lastThrownException);
+            }
+            _lastThrownExceptionInOtherThread = throwableGlobalRef;
+        }
+    }
+public:
+
+    JNINativeCallContext(JBindingSession & _jbindingSession, JNIEnv * initEnv) :
+        _jbindingSession(_jbindingSession), _jniCallOriginalEnv(initEnv),
+        _firstThrownException(NULL), _lastThrownException(NULL),
+        _firstThrownExceptionInOtherThread(NULL), _lastThrownExceptionInOtherThread(NULL) {
+        _jbindingSession.registerNativeContext(initEnv, this);
+    }
+    ~JNINativeCallContext() {
+        _jbindingSession.unregisterNativeContext(*this);
+        if (_firstThrownException) {
+            _jniCallOriginalEnv->DeleteGlobalRef(_firstThrownException);
+        }
+        if (_lastThrownException) {
+            _jniCallOriginalEnv->DeleteGlobalRef(_lastThrownException);
+        }
+        if (_firstThrownExceptionInOtherThread) {
+            _jniCallOriginalEnv->DeleteGlobalRef(_firstThrownExceptionInOtherThread);
+        }
+        if (_lastThrownExceptionInOtherThread) {
+            _jniCallOriginalEnv->DeleteGlobalRef(_lastThrownExceptionInOtherThread);
+        }
+
+        // TODO Throw exception
+    }
+
+    bool exceptionCheck(JNIEnv * env) {
+        jni::prepareExceptionCheck(env);
+
+        jthrowable exceptionLocalRef = env->ExceptionOccurred();
+        if (exceptionLocalRef) {
+            env->ExceptionClear();
+            exceptionThrown(env, exceptionLocalRef);
+            env->DeleteLocalRef(exceptionLocalRef);
+            return true;
+        }
+        return false;
     }
 
     void endJNICall(JNIEnv * initEnv) {
@@ -248,45 +331,42 @@ public:
 };
 
 class JNIEnvInstance {
-    JBindingSession * _jbindingSession;
+    JBindingSession & _jbindingSession;
     JNINativeCallContext * _jniNativeCallContext;
     JNIEnv * _env;
     bool _isCallback;
 
     void * operator new(size_t i);
 
-    void init() {
-        _isCallback = !_env;
-        if (_isCallback) {
-            _env = _jbindingSession->beginCallback();
-            MY_ASSERT(_env);
-        }
+    void initCallback() {
+        MY_ASSERT(_isCallback);
+
+        _env = _jbindingSession.beginCallback(&_jniNativeCallContext);
+        MY_ASSERT(_env);
     }
 public:
-    JNIEnvInstance(JNIEnv * env, JNINativeCallContext & jniNativeCallContext,
-                   JBindingSession * jbindingSession) :
-        _env(env), _jniNativeCallContext(&jniNativeCallContext), _jbindingSession(jbindingSession) {
-        init();
+    JNIEnvInstance(JBindingSession & jbindingSession, JNINativeCallContext & jniNativeCallContext,
+            JNIEnv * env) :
+        _env(env), _jniNativeCallContext(&jniNativeCallContext), _jbindingSession(jbindingSession), _isCallback(false) {
+        MY_ASSERT(env);
     }
-    JNIEnvInstance(JBindingSession * jbindingSession, JNIEnv * env = NULL) :
-        _env(env), _jniNativeCallContext(NULL), _jbindingSession(jbindingSession) {
-        init();
+    JNIEnvInstance(JBindingSession & jbindingSession) :
+        _env(NULL), _jniNativeCallContext(NULL), _jbindingSession(jbindingSession), _isCallback(true) {
+        initCallback();
     }
     ~JNIEnvInstance() {
         if (_isCallback) {
-            _jbindingSession->endCallback();
+            _jbindingSession.endCallback();
             MY_ASSERT(_env);
         }
     }
 
     bool exceptionCheck() {
-        jni::prepareExceptionCheck(_env);
-        if (_env->ExceptionCheck()) {
-            // TODO Get and save exception
-            _env->ExceptionClear();
-            return true;
+        if (_jniNativeCallContext) {
+            return _jniNativeCallContext->exceptionCheck(_env);
         }
-        return false;
+
+        return _jbindingSession.exceptionCheck(_env);
     }
 
     operator JNIEnv*() {
@@ -305,7 +385,8 @@ protected:
     T & _javaClass;
     JBindingSession & _jbindingSession;
 
-    AbstractJavaCallback(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject implementation) :
+    AbstractJavaCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
+                         jobject implementation) :
         _jbindingSession(jbindingSession), _implementation(implementation), /**/
         _javaClass(T::getInstanceFromObject(initEnv, implementation)) {
         TRACE_OBJECT_CREATION("CPPToJavaAbstract");

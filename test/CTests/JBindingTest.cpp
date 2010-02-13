@@ -15,8 +15,12 @@
 #include "JBindingTools.h"
 
 BEGIN_JINTERFACE(Callback1)
-/*   */JINTERFACE_METHOD(String, test, "(I)")
+/*    */JINTERFACE_METHOD(String, test, "(I)")
 END_JINTERFACE
+
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbinding", JBindingTest)
+/*    */JCLASS_STATIC_METHOD(String, simpleCallbackMethod, "(I)")
+END_JCLASS
 
 class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
     int _index;
@@ -39,7 +43,7 @@ public:
 };
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSession1(JNIEnv * env,
+Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObjects(JNIEnv * env,
                                                                             jclass thiz,
                                                                             jint objectCount) {
     JBindingSession jbindingSession(env);
@@ -94,7 +98,7 @@ public:
         TRACE_OBJECT_CREATION("CPPToJavaSimpleClass");
     }
     char * callback1(long num) {
-        JNIEnvInstance envInstance(&_jbindingSession);
+        JNIEnvInstance envInstance(_jbindingSession);
 
 
         jstring result =_javaClass.test(envInstance, _implementation, jint(num));
