@@ -20,6 +20,7 @@ END_JINTERFACE
 
 BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbinding", JBindingTest)
 /*    */JCLASS_STATIC_METHOD(String, simpleCallbackMethod, "(I)")
+/*    */JCLASS_STATIC_METHOD(String, recursiveCallbackMethod, "(IZ)")
 END_JCLASS
 
 class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
@@ -89,6 +90,39 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObje
     }
 
     return env->NewStringUTF("OK");
+}
+
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callSimpleCallbackMethod(JNIEnv * env,
+                                                                                  jclass thiz,
+                                                                                  jint parameter) {
+    JBindingSession jbindingSession(env);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+    jstring value = jni::JBindingTest::simpleCallbackMethod(jniEnvInstance, parameter);
+    if (jniEnvInstance.exceptionCheck()) {
+        return env->NewStringUTF("Exception");
+    }
+
+    return value;
+}
+
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callRecursiveCallbackMethod(JNIEnv * env,
+                                                                                     jclass thiz,
+                                                                                     jint parameter,
+                                                                                     jboolean useException) {
+    JBindingSession jbindingSession(env);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+    jstring value = jni::JBindingTest::recursiveCallbackMethod(jniEnvInstance, parameter, useException);
+    if (jniEnvInstance.exceptionCheck()) {
+        return env->NewStringUTF("Exception");
+    }
+
+    return value;
 }
 
 class CPPToJavaSimpleClass : public AbstractJavaCallback<jni::Callback1> {

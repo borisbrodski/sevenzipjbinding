@@ -103,7 +103,6 @@ public:
 private:
 #endif
 
-
     void registerNativeContext(JNIEnv * initEnv, JNINativeCallContext * jniNativeCallContext) {
         ThreadId threadId = PlatformGetCurrentThreadId();
         _threadContextMapCriticalSection.Enter();

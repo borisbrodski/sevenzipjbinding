@@ -14,14 +14,27 @@ public class JBindingTest extends JUnitNativeTestBase {
 
     private static native String checkAddingRemovingObjects(int objectCount);
 
+    private static native String callSimpleCallbackMethod(int parameter);
+
+    private static native String callRecursiveCallbackMethod(int parameter, boolean useException);
+
     private static native String singleCallSessionWithCallback1(Callback1Impl callback1Impl, long number);
 
     static String simpleCallbackMethod(int i) {
         if (i < 0) {
-            System.out.println("Throwing exception");
             throw new RuntimeException("i < 0");
         }
         return "Java: i = " + i;
+    }
+
+    static String recursiveCallbackMethod(int i, boolean useException) {
+        if (i < 0) {
+            if (useException) {
+                throw new RuntimeException("EXCEPTION: i=" + i);
+            }
+            return "i=" + i;
+        }
+        return callRecursiveCallbackMethod(i - 1, useException) + ", i=" + i;
     }
 
     @Test
@@ -42,6 +55,76 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testSingleCallSession10() {
         assertEquals("OK", checkAddingRemovingObjects(10));
+    }
+
+    @Test
+    public void testCallSimpleCallbackMethod() {
+        assertEquals("Java: i = 2", callSimpleCallbackMethod(2));
+    }
+
+    @Test
+    public void testCallSimpleCallbackMethodWithException() {
+        assertEquals("Exception", callSimpleCallbackMethod(-2));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod() {
+        assertEquals("i=-1", callRecursiveCallbackMethod(-1, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethodWithException() {
+        assertEquals("Exception", callRecursiveCallbackMethod(-1, true));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod0() {
+        assertEquals("i=-1, i=0", callRecursiveCallbackMethod(0, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod0WithException() {
+        assertEquals("Exception, i=0", callRecursiveCallbackMethod(0, true));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod1() {
+        assertEquals("i=-1, i=0, i=1", callRecursiveCallbackMethod(1, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod1WithException() {
+        assertEquals("Exception, i=0, i=1", callRecursiveCallbackMethod(1, true));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod2() {
+        assertEquals("i=-1, i=0, i=1, i=2", callRecursiveCallbackMethod(2, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod2WithException() {
+        assertEquals("Exception, i=0, i=1, i=2", callRecursiveCallbackMethod(2, true));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod3() {
+        assertEquals("i=-1, i=0, i=1, i=2, i=3", callRecursiveCallbackMethod(3, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod3WithException() {
+        assertEquals("Exception, i=0, i=1, i=2, i=3", callRecursiveCallbackMethod(3, true));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod4() {
+        assertEquals("i=-1, i=0, i=1, i=2, i=3, i=4", callRecursiveCallbackMethod(4, false));
+    }
+
+    @Test
+    public void testCallRecursiveCallbackMethod4WithException() {
+        assertEquals("Exception, i=0, i=1, i=2, i=3, i=4", callRecursiveCallbackMethod(4, true));
     }
 
     @Test
