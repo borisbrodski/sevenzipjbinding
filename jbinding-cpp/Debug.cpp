@@ -169,7 +169,7 @@ void TraceObjectEnsureDestruction(void * thiz)
 
 }
 
-extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetObjectCount(JNIEnv * env, jobject thiz)
+extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetObjectCount(JNIEnv * env, jclass clazz)
 {
 	ENTER_CRITICAL_SECTION
 	int size = g_classes_map.size();
@@ -178,7 +178,7 @@ extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_Seven
     return (jint)size;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativePrintObjects(JNIEnv * env, jobject thiz)
+extern "C" JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativePrintObjects(JNIEnv * env, jclass clazz)
 {
 	TracePrintObjectsUsingPrintf();
 }

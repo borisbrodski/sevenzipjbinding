@@ -1,15 +1,16 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
 public class SevenZipDebug {
-    private native int nativeGetObjectCount();
+    private static native int nativeGetObjectCount();
 
-    private native void nativePrintObjects();
+    private static native void nativePrintObjects();
+
 
     public static int getCPPObjectCount() {
-        return new SevenZipDebug().nativeGetObjectCount();
+        return nativeGetObjectCount();
     }
 
     public static void printCPPObjects() {
-        new SevenZipDebug().nativePrintObjects();
+        nativePrintObjects();
     }
 }
