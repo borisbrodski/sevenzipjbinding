@@ -76,10 +76,17 @@ public class JUnitNativeTestBase {
 
     protected void runMultithreaded(final RunnableThrowsException runnable,
             final Class<? extends Exception> exceptionToBeExpected) throws Exception {
-        final int[] threadsFinished = new int[] { SINGLE_TEST_THREAD_COUNT };
+        runMultithreaded(runnable, exceptionToBeExpected, SINGLE_TEST_THREAD_COUNT, SINGLE_TEST_TIMEOUT
+                * SINGLE_TEST_REPEAT_COUNT);
+    }
+
+    protected void runMultithreaded(final RunnableThrowsException runnable,
+            final Class<? extends Exception> exceptionToBeExpected, int threadCount, int threadTimeout)
+            throws Exception {
+        final int[] threadsFinished = new int[] { threadCount };
         final Throwable[] firstThrowable = new Throwable[] { null };
         final Throwable[] firstExpectedThrowable = new Throwable[] { null };
-        for (int i = 0; i < SINGLE_TEST_THREAD_COUNT; i++) {
+        for (int i = 0; i < threadCount; i++) {
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -120,11 +127,11 @@ public class JUnitNativeTestBase {
                     if (threadsFinished[0] == 0) {
                         break;
                     }
-                    wait(SINGLE_TEST_THREAD_COUNT * SINGLE_TEST_TIMEOUT * SINGLE_TEST_REPEAT_COUNT);
+                    wait(threadCount * threadTimeout);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (System.currentTimeMillis() - start > SINGLE_TEST_TIMEOUT * SINGLE_TEST_REPEAT_COUNT) {
+                if (System.currentTimeMillis() - start > threadTimeout) {
                     fail("Time out");
                 }
             }
