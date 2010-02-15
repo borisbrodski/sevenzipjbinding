@@ -26,6 +26,13 @@
 // (using expectExceptionCheck()). The env should be repaired before
 // consequent use by calling prepareExceptionCheck().
 #   define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+
+
+// Define NATIVE_JUNIT_TEST_SUPPORT
+// --------------------------------------------------------
+//
+// This define enables JniTools&JBinding test code allowing corresponding JUnit test to work
+#   define NATIVE_JUNIT_TEST_SUPPORT
 #endif
 
 #ifdef _DEBUG
@@ -56,7 +63,7 @@
 #   define _TRACE(msg) {}
 #endif
 
-#ifdef TRACE_ON
+#if defined(TRACE_ON) || defined(NATIVE_JUNIT_TEST_SUPPORT)
 /**
  * Fatal error
  */

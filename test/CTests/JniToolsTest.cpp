@@ -5,6 +5,8 @@
 #include "SevenZipJBinding.h"
 #include "JavaStaticInfo.h"
 
+#ifdef NATIVE_JUNIT_TEST_SUPPORT
+
 using namespace std;
 using namespace jni;
 
@@ -287,3 +289,4 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_finalClassIsAssignableF
     return jni::JTestFinalClass::isAssingableFromInstanceOf(env, clazz);
 }
 
+#endif

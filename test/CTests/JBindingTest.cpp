@@ -14,6 +14,8 @@
 
 #include "JBindingTools.h"
 
+#ifdef NATIVE_JUNIT_TEST_SUPPORT
+
 BEGIN_JINTERFACE(Callback1)
 /*    */JINTERFACE_METHOD(String, test, "(I)")
 END_JINTERFACE
@@ -178,3 +180,5 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSessionWithCa
 
     return env->NewStringUTF(result);
 }
+
+#endif
