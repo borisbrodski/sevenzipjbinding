@@ -85,10 +85,11 @@ void checkNull(std::stringstream & errmsg, bool expectedNull, jobject actualValu
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testInterface1(JNIEnv * env, jobject thiz,
-                                                                        jobject interface1Impl,
-                                                                        jint offset,
-                                                                        jboolean fromClass) {
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterface1(JNIEnv * env,
+                                                                          jobject thiz,
+                                                                          jobject interface1Impl,
+                                                                          jint offset,
+                                                                          jboolean fromClass) {
     std::stringstream errmsg;
 
     Interface1 * interface1;
@@ -123,10 +124,49 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testInterface1(JNIEnv *
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testAbstractClass(
-                                                                           JNIEnv * env,
-                                                                           jobject thiz,
-                                                                           jobject jTestAbstractClass) {
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeAbstractClassStatic(
+                                                                                   JNIEnv * env,
+                                                                                   jobject thiz,
+                                                                                   jobject jTestAbstractClass) {
+    std::stringstream errmsg;
+
+    // --- Static methods ---
+
+    jlong longResult = JTestAbstractClass::privateStaticLongMethod(env, jlong(7));
+    checkException(errmsg, env);
+    checkLong(errmsg, jlong(2007), longResult);
+
+    jstring stringResult = JTestAbstractClass::privateStaticStringMethod(env, jint(8));
+    checkException(errmsg, env);
+    checkString(errmsg, env, "I3 = 8", stringResult);
+    env->DeleteLocalRef(stringResult);
+
+    JTestAbstractClass::privateStaticVoidMethod(env, jint(9));
+    checkException(errmsg, env);
+
+    // --- Private static fields ---
+    longResult = JTestAbstractClass::privateStaticLongField_Get(env);
+    checkLong(errmsg, jlong(-1), longResult);
+
+    JTestAbstractClass::privateStaticLongField_Set(env, jlong(15));
+
+    stringResult = JTestAbstractClass::privateStaticStringField_Get(env);
+    checkString(errmsg, env, "-1", stringResult);
+    env->DeleteLocalRef(stringResult);
+
+    JTestAbstractClass::privateStaticStringField_Set(env, env->NewStringUTF("16"));
+
+    char const * errmsgstring = errmsg.str().c_str();
+    if (*errmsgstring) {
+        return env->NewStringUTF(errmsgstring);
+    }
+    return NULL;
+}
+JBINDING_JNIEXPORT jstring JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeAbstractClass(
+                                                                             JNIEnv * env,
+                                                                             jobject thiz,
+                                                                             jobject jTestAbstractClass) {
 
     std::stringstream errmsg;
 
@@ -159,20 +199,6 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testAbstractClass(
     JTestAbstractClass::privateFinalVoidMethod(env, jTestAbstractClass, jint(6));
     checkException(errmsg, env);
 
-    // --- Static methods ---
-
-    longResult = JTestAbstractClass::privateStaticLongMethod(env, jlong(7));
-    checkException(errmsg, env);
-    checkLong(errmsg, jlong(2007), longResult);
-
-    stringResult = JTestAbstractClass::privateStaticStringMethod(env, jint(8));
-    checkException(errmsg, env);
-    checkString(errmsg, env, "I3 = 8", stringResult);
-    env->DeleteLocalRef(stringResult);
-
-    JTestAbstractClass::privateStaticVoidMethod(env, jint(9));
-    checkException(errmsg, env);
-
     // --- Virtual methods ---
 
     longResult = JTestAbstractClass::protectedVirtualLongMethod(env, jTestAbstractClass, jlong(10));
@@ -200,18 +226,6 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testAbstractClass(
 
     JTestAbstractClass::privateStringField_Set(env, jTestAbstractClass, env->NewStringUTF("14"));
 
-    // --- Private static fields ---
-    longResult = JTestAbstractClass::privateStaticLongField_Get(env);
-    checkLong(errmsg, jlong(-1), longResult);
-
-    JTestAbstractClass::privateStaticLongField_Set(env, jlong(15));
-
-    stringResult = JTestAbstractClass::privateStaticStringField_Get(env);
-    checkString(errmsg, env, "-1", stringResult);
-    env->DeleteLocalRef(stringResult);
-
-    JTestAbstractClass::privateStaticStringField_Set(env, env->NewStringUTF("16"));
-
     char const * errmsgstring = errmsg.str().c_str();
     if (*errmsgstring) {
         return env->NewStringUTF(errmsgstring);
@@ -220,15 +234,16 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testAbstractClass(
 }
 
 JBINDING_JNIEXPORT jobject JNICALL
-Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testJTestFinalClassNewInstance(
-                                                                                        JNIEnv * env,
-                                                                                        jobject thiz) {
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeJTestFinalClassNewInstance(
+                                                                                          JNIEnv * env,
+                                                                                          jobject thiz) {
     return JTestFinalClass::newInstance(env);
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testFinalClass(JNIEnv * env, jobject thiz,
-                                                                        jobject jTestFinalClass) {
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeFinalClass(JNIEnv * env,
+                                                                          jobject thiz,
+                                                                          jobject jTestFinalClass) {
     std::stringstream errmsg;
 
     jclass clazz = JTestFinalClass::privateClassField_Get(env, jTestFinalClass);
@@ -261,31 +276,31 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_testFinalClass(JNIEnv *
 
 JBINDING_JNIEXPORT jboolean JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_abstractClassIsInstance(JNIEnv * env,
-                                                                                    jobject thiz,
-                                                                                    jobject object) {
+                                                                                 jobject thiz,
+                                                                                 jobject object) {
     return jni::JTestAbstractClass::isInstance(env, object);
 }
 
 JBINDING_JNIEXPORT jboolean JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_finalClassIsInstance(JNIEnv * env,
-                                                                                 jobject thiz,
-                                                                                 jobject object) {
+                                                                              jobject thiz,
+                                                                              jobject object) {
     return jni::JTestFinalClass::isInstance(env, object);
 }
 
 JBINDING_JNIEXPORT jboolean JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_abstractClassIsAssignableFromInstanceOf(
-                                                                                                JNIEnv * env,
-                                                                                                jobject thiz,
-                                                                                                jclass clazz) {
+                                                                                                 JNIEnv * env,
+                                                                                                 jobject thiz,
+                                                                                                 jclass clazz) {
     return jni::JTestAbstractClass::isAssingableFromInstanceOf(env, clazz);
 }
 
 JBINDING_JNIEXPORT jboolean JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_finalClassIsAssignableFromInstanceOf(
-                                                                                             JNIEnv * env,
-                                                                                             jobject thiz,
-                                                                                             jclass clazz) {
+                                                                                              JNIEnv * env,
+                                                                                              jobject thiz,
+                                                                                              jclass clazz) {
     return jni::JTestFinalClass::isAssingableFromInstanceOf(env, clazz);
 }
 
