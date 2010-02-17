@@ -7,8 +7,13 @@ package net.sf.sevenzipjbinding;
  * @version 4.65-1
  */
 public class SevenZipException extends Exception {
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static final long serialVersionUID = 42L;
+
+    private Throwable causeFirstThrown;
+    private Throwable causeFirstPotentialThrown;
+    private Throwable causeLastPotentialThrown;
 
     /**
      * Constructs a new exception with <code>null</code> as its detail message. The cause is not initialized, and may
@@ -62,4 +67,124 @@ public class SevenZipException extends Exception {
         super(cause);
     }
 
+    /**
+     * This setter will be used by native code
+     */
+    @SuppressWarnings("unused")
+    private void setCauseFirstThrown(Throwable causeFirstThrown) {
+        this.causeFirstThrown = causeFirstThrown;
+    }
+
+    /**
+     * This setter will be used by native code
+     */
+    @SuppressWarnings("unused")
+    private void setCauseFirstPotentialThrown(Throwable causeFirstPotentialThrown) {
+        this.causeFirstPotentialThrown = causeFirstPotentialThrown;
+    }
+
+    /**
+     * This setter will be used by native code
+     */
+    @SuppressWarnings("unused")
+    private void setCauseLastPotentialThrown(Throwable causeLastPotentialThrown) {
+        this.causeLastPotentialThrown = causeLastPotentialThrown;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getMessage() {
+        StringBuilder stringBuilder = new StringBuilder();
+        printToStringBuilder("", stringBuilder);
+        // TODO
+        return super.getMessage();
+    }
+
+    private void printToStringBuilder(String prefix, StringBuilder stringBuilder) {
+        stringBuilder.append(super.getMessage());
+
+        Throwable causeLastThrown = getCause();
+
+        if (causeLastThrown != null) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (last thrown): ");
+            stringBuilder.append(super.getMessage());
+            printMessageToStringBuilder(prefix, stringBuilder, causeLastThrown);
+        }
+
+        if (causeFirstThrown != null) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (first thrown): ");
+            stringBuilder.append(super.getMessage());
+            printMessageToStringBuilder(prefix, stringBuilder, causeFirstThrown);
+        }
+
+        if (causeLastPotentialThrown != null) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (last potential thrown): ");
+            stringBuilder.append(super.getMessage());
+            printMessageToStringBuilder(prefix, stringBuilder, causeLastPotentialThrown);
+        }
+
+        if (causeFirstPotentialThrown != null) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (first potential thrown): ");
+            stringBuilder.append(super.getMessage());
+            printMessageToStringBuilder(prefix, stringBuilder, causeFirstPotentialThrown);
+        }
+    }
+
+    private void printMessageToStringBuilder(String prefix, StringBuilder stringBuilder, Throwable causeLastThrown) {
+        if (causeLastThrown instanceof SevenZipException) {
+            ((SevenZipException) causeLastThrown).printToStringBuilder(prefix + "  ", stringBuilder);
+        } else {
+            stringBuilder.append(causeLastThrown.getMessage());
+        }
+    }
+
+    /**
+     * Get last thrown exception as a cause for this exception.
+     */
+    @Override
+    public Throwable getCause() {
+        return super.getCause();
+    }
+
+    /**
+     * Get first thrown exception as a cause for this exception.
+     * 
+     * @return <code>null</code> if no other (different to {@link #getCause()}) exception known as a cause for this
+     *         exception.
+     */
+    public Throwable getCauseFirstThrown() {
+        return causeFirstThrown;
+    }
+
+    /**
+     * Get the last thrown exception that was the potential cause for this exception. The potential cause is an
+     * exception thrown in another thread where it's not possible to determine whether the exception has caused the
+     * current exception or not.
+     * 
+     * @return <code>null</code> if no such exception was thrown.
+     */
+    public Throwable getCauseLastPotentialThrown() {
+        return causeLastPotentialThrown;
+    }
+
+    /**
+     * Get the first thrown exception that was the potential cause for this exception. The potential cause is an
+     * exception thrown in another thread where it's not possible to determine whether the exception has caused the
+     * current exception or not.
+     * 
+     * @return <code>null</code> if no such exception was thrown.
+     */
+    public Throwable getCauseFirstPotentialThrown() {
+        return causeFirstPotentialThrown;
+    }
 }

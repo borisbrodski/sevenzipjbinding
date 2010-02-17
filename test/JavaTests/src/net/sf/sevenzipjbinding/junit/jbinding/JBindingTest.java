@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit.jbinding;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 import org.junit.Test;
@@ -124,7 +125,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallSimpleCallbackMethodWithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception", callSimpleCallbackMethod(-2));
+            try {
+                callSimpleCallbackMethod(-2);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("i < 0", runtimeException.getMessage());
+            }
         }
     }
 
@@ -156,7 +162,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethodWithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception", callRecursiveCallbackMethod(-1, true));
+            try {
+                callRecursiveCallbackMethod(-1, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -188,7 +199,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethod0WithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception, i=0", callRecursiveCallbackMethod(0, true));
+            try {
+                callRecursiveCallbackMethod(0, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -220,7 +236,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethod1WithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception, i=0, i=1", callRecursiveCallbackMethod(1, true));
+            try {
+                callRecursiveCallbackMethod(1, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -252,7 +273,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethod2WithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception, i=0, i=1, i=2", callRecursiveCallbackMethod(2, true));
+            try {
+                callRecursiveCallbackMethod(2, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -284,7 +310,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethod3WithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception, i=0, i=1, i=2, i=3", callRecursiveCallbackMethod(3, true));
+            try {
+                callRecursiveCallbackMethod(3, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -316,7 +347,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testCallRecursiveCallbackMethod4WithException() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("Exception, i=0, i=1, i=2, i=3, i=4", callRecursiveCallbackMethod(4, true));
+            try {
+                callRecursiveCallbackMethod(4, true);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("EXCEPTION: i=-1", runtimeException.getMessage());
+            }
         }
     }
 
@@ -348,7 +384,12 @@ public class JBindingTest extends JUnitNativeTestBase {
     @Test
     public void testSingleCallSessionWithCallback1Exception() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            assertEquals("EXCEPTION", singleCallSessionWithCallback1(new Callback1Impl(), -1));
+            try {
+                singleCallSessionWithCallback1(new Callback1Impl(), -1);
+                fail("No exception occurred");
+            } catch (RuntimeException runtimeException) {
+                assertEquals("i < 0", runtimeException.getMessage());
+            }
         }
     }
 

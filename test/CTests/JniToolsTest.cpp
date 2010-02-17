@@ -84,6 +84,14 @@ void checkNull(std::stringstream & errmsg, bool expectedNull, jobject actualValu
     }
 }
 
+void checkNoExceptions(std::stringstream & errmsg, JNIEnv * env) {
+    jni::prepareExceptionCheck(env);
+    if (env->ExceptionCheck()) {
+        env->ExceptionClear();
+        errmsg << "ERROR: Unexpected exception occurred" << std::endl;
+    }
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterface1(JNIEnv * env,
                                                                           jobject thiz,
@@ -237,7 +245,9 @@ JBINDING_JNIEXPORT jobject JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeJTestFinalClassNewInstance(
                                                                                           JNIEnv * env,
                                                                                           jobject thiz) {
-    return JTestFinalClass::newInstance(env);
+    jobject object = JTestFinalClass::newInstance(env);
+    jni::prepareExceptionCheck(env); // No exception check actually needed. The pending exception will be thrown after in java.
+    return object;
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
@@ -256,6 +266,7 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeFinalClass(JNIEnv
     checkNull(errmsg, true, object);
 
     jobject jTestFinalClass2 = JTestFinalClass::newInstance(env);
+    checkNoExceptions(errmsg, env);
     JTestFinalClass::id_Set(env, jTestFinalClass2, jlong(200));
     JTestFinalClass::privateJTestFinalClassField_Set(env, jTestFinalClass, jTestFinalClass2);
 
@@ -264,6 +275,7 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeFinalClass(JNIEnv
     checkNull(errmsg, true, object);
 
     jTestFinalClass2 = JTestFinalClass::newInstance(env);
+    checkNoExceptions(errmsg, env);
     JTestFinalClass::id_Set(env, jTestFinalClass2, jlong(300));
     JTestFinalClass::privateJTestAbstractClassField_Set(env, jTestFinalClass, jTestFinalClass2);
 

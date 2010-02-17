@@ -13,13 +13,6 @@
 #include "JObjectList.h"
 
 /*
- TODO
- BEGIN_JCLASS("net/sf/sevenzipjbinding", SevenZipException)
- JCLASS_VIRTUAL_METHOD(Object, initCause, "(Ljava/lang/Throwable;)Ljava/lang/Throwable;")
- END_JCLASS
- */
-
-/*
  *    +--------------------------------------------------------------
  *    |
  *    |  +-----------------+
@@ -252,25 +245,33 @@ class JNINativeCallContext {
     void exceptionThrown(JNIEnv * env, jthrowable throwableLocalRef) {
         jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
                 throwableLocalRef));
-        if (!_firstThrownException) {
-            _firstThrownException = throwableGlobalRef;
-        } else {
-            if (_lastThrownException) {
-                env->DeleteGlobalRef(_lastThrownException);
-            }
+        if (!_lastThrownException) {
             _lastThrownException = throwableGlobalRef;
+        } else {
+            if (_firstThrownException) {
+                env->DeleteGlobalRef(_firstThrownException);
+            }
+            _firstThrownException = throwableGlobalRef;
         }
     }
     void exceptionThrownInOtherThread(JNIEnv * env, jthrowable throwableLocalRef) {
         jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
                 throwableLocalRef));
-        if (!_firstThrownExceptionInOtherThread) {
-            _firstThrownExceptionInOtherThread = throwableGlobalRef;
-        } else {
-            if (_lastThrownExceptionInOtherThread) {
-                env->DeleteGlobalRef(_lastThrownException);
-            }
+        if (!_lastThrownExceptionInOtherThread) {
             _lastThrownExceptionInOtherThread = throwableGlobalRef;
+        } else {
+            if (_firstThrownExceptionInOtherThread) {
+                env->DeleteGlobalRef(_firstThrownExceptionInOtherThread);
+            }
+            _firstThrownExceptionInOtherThread = throwableGlobalRef;
+        }
+    }
+
+    void assertNoExceptionOnJniCallOriginalEnv() {
+        jni::prepareExceptionCheck(_jniCallOriginalEnv);
+        if (_jniCallOriginalEnv->ExceptionCheck()) {
+            // TODO Print unexpected exception
+            fatal("assertNoExceptionOnJniCallOriginalEnv(): Unexpected exception occurs.");
         }
     }
 public:
@@ -281,23 +282,8 @@ public:
         _firstThrownExceptionInOtherThread(NULL), _lastThrownExceptionInOtherThread(NULL) {
         _jbindingSession.registerNativeContext(initEnv, this);
     }
-    ~JNINativeCallContext() {
-        _jbindingSession.unregisterNativeContext(*this);
-        if (_firstThrownException) {
-            _jniCallOriginalEnv->DeleteGlobalRef(_firstThrownException);
-        }
-        if (_lastThrownException) {
-            _jniCallOriginalEnv->DeleteGlobalRef(_lastThrownException);
-        }
-        if (_firstThrownExceptionInOtherThread) {
-            _jniCallOriginalEnv->DeleteGlobalRef(_firstThrownExceptionInOtherThread);
-        }
-        if (_lastThrownExceptionInOtherThread) {
-            _jniCallOriginalEnv->DeleteGlobalRef(_lastThrownExceptionInOtherThread);
-        }
 
-        // TODO Throw exception
-    }
+    ~JNINativeCallContext();
 
     bool exceptionCheck(JNIEnv * env) {
         jni::prepareExceptionCheck(env);
@@ -312,21 +298,7 @@ public:
         return false;
     }
 
-    void endJNICall(JNIEnv * initEnv) {
-        if (_firstThrownException) {
-            // Throw Exceptions
-            // - throw SevenZipException directly
-            // - throw all other exceptions wrapped in SevenZipException
-            // - set lastThrownException
-        }
-
-        if (_firstThrownException) {
-            initEnv->DeleteGlobalRef(_firstThrownException);
-        }
-        if (_lastThrownException) {
-            initEnv->DeleteGlobalRef(_lastThrownException);
-        }
-    }
+    void throwException(char const * msg, ...);
 };
 
 class JNIEnvInstance {

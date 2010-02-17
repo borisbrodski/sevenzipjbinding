@@ -292,6 +292,25 @@
 
 namespace jni {
 
+inline void expectExceptionCheck(JNIEnv * env) {
+#ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+    char * p = (char*)env;
+    for (int i = 0; i < sizeof(*env); i++) {
+        p[i]++;
+    }
+#endif
+
+}
+
+inline void prepareExceptionCheck(JNIEnv * env) {
+#ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+    char * p = (char*)env;
+    for (int i = 0; i < sizeof(*env); i++) {
+        p[i]--;
+    }
+#endif
+}
+
 template<class T>
 class JavaClass {
     char const * _fullname;
@@ -329,7 +348,9 @@ public:
         jmethodID defaultConstructor = _instance._defaultConstructor.getMethodID(env, clazz);
         FATALIF1(defaultConstructor == NULL, "Class '%s' has no default constructor",
                 _instance._fullname);
-        return env->NewObject(clazz, defaultConstructor);
+        jobject newObject = env->NewObject(clazz, defaultConstructor);
+        expectExceptionCheck(env);
+        return newObject;
     }
 
     static bool isInstance(JNIEnv * env, jobject object) {
@@ -466,25 +487,6 @@ inline std::ostream & operator<<(std::ostream & stream, JField & field) {
     stream << field._name << " (" << field._signature << ")";
 }
 #endif
-
-inline void expectExceptionCheck(JNIEnv * env) {
-#ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
-    char * p = (char*)env;
-    for (int i = 0; i < sizeof(*env); i++) {
-        p[i]++;
-    }
-#endif
-
-}
-
-inline void prepareExceptionCheck(JNIEnv * env) {
-#ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
-    char * p = (char*)env;
-    for (int i = 0; i < sizeof(*env); i++) {
-        p[i]--;
-    }
-#endif
-}
 
 }
 
