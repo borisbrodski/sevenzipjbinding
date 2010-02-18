@@ -11,7 +11,7 @@
 
 BEGIN_JCLASS("net/sf/sevenzipjbinding", SevenZipException)
 /*    */JCLASS_VIRTUAL_METHOD(Object, initCause, "(Ljava/lang/Throwable;)Ljava/lang/Throwable;")
-/*    */JCLASS_FINAL_METHOD(Void, setCauseFirstThrown, "(Ljava/lang/Throwable;)") // (Throwable causeFirstThrown)
+/*    */JCLASS_FINAL_METHOD(Void, setCauseLastThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastThrown)
 /*    */JCLASS_FINAL_METHOD(Void, setCauseFirstPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeFirstPotentialThrown)
 /*    */JCLASS_FINAL_METHOD(Void, setCauseLastPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastPotentialThrown)
 END_JCLASS
@@ -46,13 +46,13 @@ JNINativeCallContext::~JNINativeCallContext() {
     //jthrowable firstThrownExceptionInOtherThread = NULL;
     //jthrowable lastThrownExceptionInOtherThread = NULL;
 
-    if (_lastThrownException && !_firstThrownException && !_lastThrownExceptionInOtherThread && !_firstThrownExceptionInOtherThread) {
+    if (_firstThrownException && !_lastThrownException && !_firstThrownExceptionInOtherThread && !_lastThrownExceptionInOtherThread ) {
         TRACE("Rethrowing exception " << _lastThrownException)
-        _jniCallOriginalEnv->Throw(_lastThrownException);
+        _jniCallOriginalEnv->Throw(_firstThrownException);
     } else {
-        if (_lastThrownException) {
+        if (_firstThrownException) {
             jthrowable sevenZipException;
-            if (jni::SevenZipException::isInstance(_jniCallOriginalEnv, _lastThrownException)) {
+            if (jni::SevenZipException::isInstance(_jniCallOriginalEnv, _firstThrownException)) {
                 // Last thrown exception is SevenZipException. Reuse it.
                 sevenZipException = _lastThrownException;
             } else {
@@ -60,20 +60,20 @@ JNINativeCallContext::~JNINativeCallContext() {
                 sevenZipException = static_cast<jthrowable>(jni::SevenZipException::newInstance(_jniCallOriginalEnv));
                 assertNoExceptionOnJniCallOriginalEnv();
 
-                jni::SevenZipException::initCause(_jniCallOriginalEnv, sevenZipException, _lastThrownException);
+                jni::SevenZipException::initCause(_jniCallOriginalEnv, sevenZipException, _firstThrownException);
                 assertNoExceptionOnJniCallOriginalEnv();
             }
 
-            if (_firstThrownException) {
-                jni::SevenZipException::setCauseFirstThrown(_jniCallOriginalEnv, sevenZipException, _firstThrownException);
-                assertNoExceptionOnJniCallOriginalEnv();
-            }
-            if (_lastThrownExceptionInOtherThread) {
-                jni::SevenZipException::setCauseLastPotentialThrown(_jniCallOriginalEnv, sevenZipException, _lastThrownExceptionInOtherThread);
+            if (_lastThrownException) {
+                jni::SevenZipException::setCauseLastThrown(_jniCallOriginalEnv, sevenZipException, _lastThrownException);
                 assertNoExceptionOnJniCallOriginalEnv();
             }
             if (_firstThrownExceptionInOtherThread) {
                 jni::SevenZipException::setCauseFirstPotentialThrown(_jniCallOriginalEnv, sevenZipException, _firstThrownExceptionInOtherThread);
+                assertNoExceptionOnJniCallOriginalEnv();
+            }
+            if (_lastThrownExceptionInOtherThread) {
+                jni::SevenZipException::setCauseLastPotentialThrown(_jniCallOriginalEnv, sevenZipException, _lastThrownExceptionInOtherThread);
                 assertNoExceptionOnJniCallOriginalEnv();
             }
             _jniCallOriginalEnv->Throw(sevenZipException);

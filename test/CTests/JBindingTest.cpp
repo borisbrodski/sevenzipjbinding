@@ -5,6 +5,7 @@
  *      Author: boris
  */
 #include <iostream>
+#include <sstream>
 
 #include <vector>
 
@@ -22,7 +23,7 @@ END_JINTERFACE
 
 BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbinding", JBindingTest)
 /*    */JCLASS_STATIC_METHOD(String, simpleCallbackMethod, "(I)")
-/*    */JCLASS_STATIC_METHOD(String, recursiveCallbackMethod, "(IZ)")
+/*    */JCLASS_STATIC_METHOD(String, recursiveCallbackMethod, "(IIZI)")
 END_JCLASS
 
 class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
@@ -46,9 +47,10 @@ public:
 };
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObjects(JNIEnv * env,
-                                                                            jclass thiz,
-                                                                            jint objectCount) {
+Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObjects(
+                                                                                    JNIEnv * env,
+                                                                                    jclass thiz,
+                                                                                    jint objectCount) {
     JBindingSession jbindingSession(env);
 
     std::vector<SimpleIUnknownClass *> objects(objectCount);
@@ -111,33 +113,55 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callSimpleCallbackMetho
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callRecursiveCallbackMethod(JNIEnv * env,
+Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callRecursiveCallbackMethod(
+                                                                                     JNIEnv * env,
                                                                                      jclass thiz,
-                                                                                     jint parameter,
+                                                                                     jint deep,
+                                                                                     jint width,
                                                                                      jboolean useException) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    jstring value = jni::JBindingTest::recursiveCallbackMethod(jniEnvInstance, parameter, useException);
-    if (jniEnvInstance.exceptionCheck()) {
+    std::stringstream sstream;
+
+    bool error = false;
+
+    if (width > 1) {
+        sstream << "(";
+    }
+    for (int i = 0; i < width; i++) {
+        jstring value = jni::JBindingTest::recursiveCallbackMethod(jniEnvInstance, deep, width,
+                useException, i);
+        error |= jniEnvInstance.exceptionCheck();
+
+        if (i) {
+            sstream << ",";
+        }
+
+        sstream << env << jstringNoQuotes() << value;
+    }
+    if (width > 1) {
+        sstream << ")";
+    }
+
+    if (error) {
         return env->NewStringUTF("Exception");
     }
 
-    return value;
+    return env->NewStringUTF(sstream.str().c_str());
 }
 
 class CPPToJavaSimpleClass : public AbstractJavaCallback<jni::Callback1> {
 public:
     CPPToJavaSimpleClass(JBindingSession & jbindingSession, JNIEnv * env, jobject implementation) :
-            AbstractJavaCallback<jni::Callback1>(jbindingSession, env, implementation) {
+        AbstractJavaCallback<jni::Callback1> (jbindingSession, env, implementation) {
         TRACE_OBJECT_CREATION("CPPToJavaSimpleClass");
     }
     char * callback1(long num) {
         JNIEnvInstance envInstance(_jbindingSession);
 
-
-        jstring result =_javaClass.test(envInstance, _implementation, jint(num));
+        jstring result = _javaClass.test(envInstance, _implementation, jint(num));
         if (envInstance.exceptionCheck()) {
             return strdup("EXCEPTION");
         }
@@ -150,7 +174,6 @@ public:
         return resultStringCopy;
     }
 };
-
 
 static THREAD_FUNC_DECL MFThread(void *threadInfo) {
     for (int i = 0; i < 10; i++) {
@@ -165,7 +188,8 @@ JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSessionWithCallback1(
                                                                                         JNIEnv * env,
                                                                                         jclass thiz,
-                                                                                        jobject object, jlong number) {
+                                                                                        jobject object,
+                                                                                        jlong number) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext nativeCallContext(jbindingSession, env);
 

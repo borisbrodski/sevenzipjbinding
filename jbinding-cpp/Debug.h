@@ -27,7 +27,6 @@
 // consequent use by calling prepareExceptionCheck().
 #   define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
 
-
 // Define NATIVE_JUNIT_TEST_SUPPORT
 // --------------------------------------------------------
 //
@@ -72,13 +71,21 @@ void fatal(const char * fmt, ...); // TODO Remove this!
 struct JOut {
     JNIEnv * _env;
     std::ostream & _stream;
+    bool _noQuotes;
     JOut(JNIEnv * env, std::ostream & stream) :
-        _env(env), _stream(stream) {
+        _env(env), _stream(stream), _noQuotes(false) {
     }
+};
+
+struct jstringNoQuotes {
 };
 
 inline JOut operator<<(std::ostream & stream, JNIEnv * env) {
     return JOut(env, stream);
+}
+inline JOut operator<<(JOut jout, jstringNoQuotes) {
+    jout._noQuotes = true;
+    return jout;
 }
 inline std::ostream & operator<<(JOut jout, jstring str) {
     if (jout._env->ExceptionCheck()) {
@@ -88,7 +95,11 @@ inline std::ostream & operator<<(JOut jout, jstring str) {
         return jout._stream << "<null>";
     }
     char const * s = jout._env->GetStringUTFChars(str, NULL);
-    jout._stream << '"' << s << '"';
+    if (jout._noQuotes) {
+        jout._stream << s;
+    } else {
+        jout._stream << '"' << s << '"';
+    }
     jout._env->ReleaseStringUTFChars(str, s);
     return jout._stream;
 }

@@ -245,25 +245,25 @@ class JNINativeCallContext {
     void exceptionThrown(JNIEnv * env, jthrowable throwableLocalRef) {
         jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
                 throwableLocalRef));
-        if (!_lastThrownException) {
-            _lastThrownException = throwableGlobalRef;
-        } else {
-            if (_firstThrownException) {
-                env->DeleteGlobalRef(_firstThrownException);
-            }
+        if (!_firstThrownException) {
             _firstThrownException = throwableGlobalRef;
+        } else {
+            if (_lastThrownException) {
+                env->DeleteGlobalRef(_lastThrownException);
+            }
+            _lastThrownException = throwableGlobalRef;
         }
     }
     void exceptionThrownInOtherThread(JNIEnv * env, jthrowable throwableLocalRef) {
         jthrowable throwableGlobalRef = static_cast<jthrowable> (env->NewGlobalRef(
                 throwableLocalRef));
-        if (!_lastThrownExceptionInOtherThread) {
-            _lastThrownExceptionInOtherThread = throwableGlobalRef;
-        } else {
-            if (_firstThrownExceptionInOtherThread) {
-                env->DeleteGlobalRef(_firstThrownExceptionInOtherThread);
-            }
+        if (!_firstThrownExceptionInOtherThread) {
             _firstThrownExceptionInOtherThread = throwableGlobalRef;
+        } else {
+            if (_lastThrownExceptionInOtherThread) {
+                env->DeleteGlobalRef(_lastThrownExceptionInOtherThread);
+            }
+            _lastThrownExceptionInOtherThread = throwableGlobalRef;
         }
     }
 

@@ -11,7 +11,7 @@ public class SevenZipException extends Exception {
 
     private static final long serialVersionUID = 42L;
 
-    private Throwable causeFirstThrown;
+    private Throwable causeLastThrown;
     private Throwable causeFirstPotentialThrown;
     private Throwable causeLastPotentialThrown;
 
@@ -71,8 +71,8 @@ public class SevenZipException extends Exception {
      * This setter will be used by native code
      */
     @SuppressWarnings("unused")
-    private void setCauseFirstThrown(Throwable causeFirstThrown) {
-        this.causeFirstThrown = causeFirstThrown;
+    private void setCauseLastThrown(Throwable causeLastThrown) {
+        this.causeLastThrown = causeLastThrown;
     }
 
     /**
@@ -98,22 +98,13 @@ public class SevenZipException extends Exception {
     public String getMessage() {
         StringBuilder stringBuilder = new StringBuilder();
         printToStringBuilder("", stringBuilder);
-        // TODO
         return super.getMessage();
     }
 
     private void printToStringBuilder(String prefix, StringBuilder stringBuilder) {
         stringBuilder.append(super.getMessage());
 
-        Throwable causeLastThrown = getCause();
-
-        if (causeLastThrown != null) {
-            stringBuilder.append(NEW_LINE);
-            stringBuilder.append(prefix);
-            stringBuilder.append("Caused by (last thrown): ");
-            stringBuilder.append(super.getMessage());
-            printMessageToStringBuilder(prefix, stringBuilder, causeLastThrown);
-        }
+        Throwable causeFirstThrown = getCause();
 
         if (causeFirstThrown != null) {
             stringBuilder.append(NEW_LINE);
@@ -123,12 +114,12 @@ public class SevenZipException extends Exception {
             printMessageToStringBuilder(prefix, stringBuilder, causeFirstThrown);
         }
 
-        if (causeLastPotentialThrown != null) {
+        if (causeLastThrown != null) {
             stringBuilder.append(NEW_LINE);
             stringBuilder.append(prefix);
-            stringBuilder.append("Caused by (last potential thrown): ");
+            stringBuilder.append("Caused by (last thrown): ");
             stringBuilder.append(super.getMessage());
-            printMessageToStringBuilder(prefix, stringBuilder, causeLastPotentialThrown);
+            printMessageToStringBuilder(prefix, stringBuilder, causeLastThrown);
         }
 
         if (causeFirstPotentialThrown != null) {
@@ -137,6 +128,14 @@ public class SevenZipException extends Exception {
             stringBuilder.append("Caused by (first potential thrown): ");
             stringBuilder.append(super.getMessage());
             printMessageToStringBuilder(prefix, stringBuilder, causeFirstPotentialThrown);
+        }
+
+        if (causeLastPotentialThrown != null) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (last potential thrown): ");
+            stringBuilder.append(super.getMessage());
+            printMessageToStringBuilder(prefix, stringBuilder, causeLastPotentialThrown);
         }
     }
 
@@ -149,7 +148,7 @@ public class SevenZipException extends Exception {
     }
 
     /**
-     * Get last thrown exception as a cause for this exception.
+     * Get first thrown exception as a cause for this exception.
      */
     @Override
     public Throwable getCause() {
@@ -157,13 +156,13 @@ public class SevenZipException extends Exception {
     }
 
     /**
-     * Get first thrown exception as a cause for this exception.
+     * Get last thrown exception as a cause for this exception.
      * 
      * @return <code>null</code> if no other (different to {@link #getCause()}) exception known as a cause for this
      *         exception.
      */
-    public Throwable getCauseFirstThrown() {
-        return causeFirstThrown;
+    public Throwable getCauseLastThrown() {
+        return causeLastThrown;
     }
 
     /**
