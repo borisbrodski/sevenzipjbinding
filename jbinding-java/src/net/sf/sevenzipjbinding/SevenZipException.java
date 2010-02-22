@@ -98,11 +98,16 @@ public class SevenZipException extends Exception {
     public String getMessage() {
         StringBuilder stringBuilder = new StringBuilder();
         printToStringBuilder("", stringBuilder);
-        return super.getMessage();
+        return stringBuilder.toString();
     }
 
     private void printToStringBuilder(String prefix, StringBuilder stringBuilder) {
-        stringBuilder.append(super.getMessage());
+        String message = super.getMessage();
+        if (message == null) {
+            stringBuilder.append("No message");
+        } else {
+            stringBuilder.append(message);
+        }
 
         Throwable causeFirstThrown = getCause();
 
@@ -110,7 +115,6 @@ public class SevenZipException extends Exception {
             stringBuilder.append(NEW_LINE);
             stringBuilder.append(prefix);
             stringBuilder.append("Caused by (first thrown): ");
-            stringBuilder.append(super.getMessage());
             printMessageToStringBuilder(prefix, stringBuilder, causeFirstThrown);
         }
 
@@ -118,7 +122,6 @@ public class SevenZipException extends Exception {
             stringBuilder.append(NEW_LINE);
             stringBuilder.append(prefix);
             stringBuilder.append("Caused by (last thrown): ");
-            stringBuilder.append(super.getMessage());
             printMessageToStringBuilder(prefix, stringBuilder, causeLastThrown);
         }
 
@@ -126,7 +129,6 @@ public class SevenZipException extends Exception {
             stringBuilder.append(NEW_LINE);
             stringBuilder.append(prefix);
             stringBuilder.append("Caused by (first potential thrown): ");
-            stringBuilder.append(super.getMessage());
             printMessageToStringBuilder(prefix, stringBuilder, causeFirstPotentialThrown);
         }
 
@@ -134,7 +136,6 @@ public class SevenZipException extends Exception {
             stringBuilder.append(NEW_LINE);
             stringBuilder.append(prefix);
             stringBuilder.append("Caused by (last potential thrown): ");
-            stringBuilder.append(super.getMessage());
             printMessageToStringBuilder(prefix, stringBuilder, causeLastPotentialThrown);
         }
     }

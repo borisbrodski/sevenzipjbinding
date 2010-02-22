@@ -21,8 +21,11 @@ BEGIN_JINTERFACE(Callback1)
 /*    */JINTERFACE_METHOD(String, test, "(I)")
 END_JINTERFACE
 
-BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbinding", JBindingTest)
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbindingtools", JBindingTest)
 /*    */JCLASS_STATIC_METHOD(String, simpleCallbackMethod, "(I)")
+END_JCLASS
+
+BEGIN_JCLASS("net/sf/sevenzipjbinding/junit/jbindingtools", ExceptionHandlingTest)
 /*    */JCLASS_STATIC_METHOD(String, recursiveCallbackMethod, "(IIZI)")
 END_JCLASS
 
@@ -46,12 +49,34 @@ public:
     }
 };
 
+#define METHOD(parameter) DO(PROCESS_##parameter)
+
+
+#define PROCESS_PARA(name, typ, cont) "PARA name=" #name " typ=" #typ #cont
+#define PROCESS__(x) #x
+#define PROCESS2__(x) #x
+#define PROCESS3__(x) #x
+#define PROCESS4__(x) #x
+
+#define PARAM(name, typ, cont)
+#define PROCESS_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS2_##cont)
+#define PROCESS2_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS3_##cont)
+#define PROCESS3_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS4_##cont)
+#define DO(d) d
+#define DO2 DO
+
+
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObjects(
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovingObjects(
                                                                                     JNIEnv * env,
                                                                                     jclass thiz,
                                                                                     jint objectCount) {
     JBindingSession jbindingSession(env);
+
+    //char const * str = METHOD(PARAM(a,"A", PARAM(b, "B", _)));
+    char const * str = METHOD(PARAM(a,"A", PARAM(1,2,_(x))));
+    std::cout << str << std::endl;
+
 
     std::vector<SimpleIUnknownClass *> objects(objectCount);
     std::vector<CMyComPtrWrapper<SimpleIUnknownClass> > objectMyComPtrs(objectCount);
@@ -97,7 +122,7 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_checkAddingRemovingObje
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callSimpleCallbackMethod(JNIEnv * env,
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_callSimpleCallbackMethod(JNIEnv * env,
                                                                                   jclass thiz,
                                                                                   jint parameter) {
     JBindingSession jbindingSession(env);
@@ -113,12 +138,12 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callSimpleCallbackMetho
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callRecursiveCallbackMethod(
-                                                                                     JNIEnv * env,
-                                                                                     jclass thiz,
-                                                                                     jint deep,
-                                                                                     jint width,
-                                                                                     jboolean useException) {
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecursiveCallbackMethod(
+                                                                                              JNIEnv * env,
+                                                                                              jclass thiz,
+                                                                                              jint depth,
+                                                                                              jint width,
+                                                                                              jboolean useException) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
@@ -131,7 +156,7 @@ Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_callRecursiveCallbackMe
         sstream << "(";
     }
     for (int i = 0; i < width; i++) {
-        jstring value = jni::JBindingTest::recursiveCallbackMethod(jniEnvInstance, deep, width,
+        jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, depth, width,
                 useException, i);
         error |= jniEnvInstance.exceptionCheck();
 
@@ -185,7 +210,7 @@ static THREAD_FUNC_DECL MFThread(void *threadInfo) {
 NWindows::CThread Thread;
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbinding_JBindingTest_singleCallSessionWithCallback1(
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_singleCallSessionWithCallback1(
                                                                                         JNIEnv * env,
                                                                                         jclass thiz,
                                                                                         jobject object,

@@ -59,7 +59,7 @@ JNINativeCallContext::~JNINativeCallContext() {
             jthrowable sevenZipException;
             if (jni::SevenZipException::isInstance(_jniCallOriginalEnv, _firstThrownException)) {
                 // Last thrown exception is SevenZipException. Reuse it.
-                sevenZipException = _lastThrownException;
+                sevenZipException = _firstThrownException;
             } else {
                 // Create new SevenZipException to pass more than one caused by.
                 sevenZipException = static_cast<jthrowable>(jni::SevenZipException::newInstance(_jniCallOriginalEnv));
@@ -118,6 +118,7 @@ int JBindingSession::_attachedThreadCount = 0;
 extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetAttachedThreadCount(
                                                                                                                       JNIEnv * env,
                                                                                                                       jclass clazz) {
+
     return JBindingSession::_attachedThreadCount;
 }
 #endif
