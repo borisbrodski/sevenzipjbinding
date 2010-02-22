@@ -9,8 +9,13 @@
 
 #include "JBindingTools.h"
 
+#define JPARAM_STRING(name, param_spec) JPARAM(String, "Ljava/lang/String;", name, param_spec)
+
 BEGIN_JCLASS("net/sf/sevenzipjbinding", SevenZipException)
 /*    */JCLASS_VIRTUAL_METHOD(Object, initCause, "(Ljava/lang/Throwable;)Ljava/lang/Throwable;")
+/*    */JCLASS_CONSTRUCTOR(JPARAM_STRING(message, JPARAM_STRING(param2, _)))
+/*    */JCLASS_CONSTRUCTOR(JPARAM_STRING(message, _))
+/*    */JCLASS_CONSTRUCTOR(_)
 /*    */JCLASS_FINAL_METHOD(Void, setCauseLastThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastThrown)
 /*    */JCLASS_FINAL_METHOD(Void, setCauseFirstPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeFirstPotentialThrown)
 /*    */JCLASS_FINAL_METHOD(Void, setCauseLastPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastPotentialThrown)
