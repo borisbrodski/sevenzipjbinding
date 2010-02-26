@@ -322,7 +322,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
 
-	jobject propertInfo = jni::PropertyInfo::newInstance(env);
+	jobject propertInfo = jni::PropertyInfo::_newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)
@@ -566,7 +566,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 	CHECK_HRESULT1(nativeMethodContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
-	jobject propertInfo = jni::PropertyInfo::newInstance(env);
+	jobject propertInfo = jni::PropertyInfo::_newInstance(env);
 
 	jstring javaName;
 	if (&name == NULL)

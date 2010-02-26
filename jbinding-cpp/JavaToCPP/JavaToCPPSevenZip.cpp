@@ -205,7 +205,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
         TRACE("Archive opened")
 
-        jobject inArchiveImplObject = jni::InArchiveImpl::newInstance(env);
+        jobject inArchiveImplObject = jni::InArchiveImpl::_newInstance(env);
 
         jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString), formatNameString.Length());
         jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);

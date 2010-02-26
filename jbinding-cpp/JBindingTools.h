@@ -359,7 +359,7 @@ protected:
     AbstractJavaCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
                          jobject implementation) :
         _jbindingSession(jbindingSession), _implementation(implementation), /**/
-        _javaClass(T::getInstanceFromObject(initEnv, implementation)) {
+        _javaClass(T::_getInstanceFromObject(initEnv, implementation)) {
         TRACE_OBJECT_CREATION("CPPToJavaAbstract");
     }
 

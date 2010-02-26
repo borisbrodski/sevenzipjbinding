@@ -9,17 +9,16 @@
 
 #include "JBindingTools.h"
 
-#define JPARAM_STRING(name, param_spec) JPARAM(String, "Ljava/lang/String;", name, param_spec)
 
-BEGIN_JCLASS("net/sf/sevenzipjbinding", SevenZipException)
-/*    */JCLASS_VIRTUAL_METHOD(Object, initCause, "(Ljava/lang/Throwable;)Ljava/lang/Throwable;")
-/*    */JCLASS_CONSTRUCTOR(JPARAM_STRING(message, JPARAM_STRING(param2, _)))
-/*    */JCLASS_CONSTRUCTOR(JPARAM_STRING(message, _))
-/*    */JCLASS_CONSTRUCTOR(_)
-/*    */JCLASS_FINAL_METHOD(Void, setCauseLastThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastThrown)
-/*    */JCLASS_FINAL_METHOD(Void, setCauseFirstPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeFirstPotentialThrown)
-/*    */JCLASS_FINAL_METHOD(Void, setCauseLastPotentialThrown, "(Ljava/lang/Throwable;)") // (Throwable causeLastPotentialThrown)
-END_JCLASS
+JT_BEGIN_CLASS("net/sf/sevenzipjbinding", SevenZipException)
+/*    */JT_CLASS_VIRTUAL_METHOD_OBJECT("Ljava/lang/Throwable;", initCause, JT_THROWABLE(cause,_))
+/*    */JT_CLASS_CONSTRUCTOR(JT_STRING(message, JT_STRING(param2, _))) // TODO remove if not needed
+/*    */JT_CLASS_CONSTRUCTOR(JT_STRING(message, _)) // TODO remove if not needed
+/*    */JT_CLASS_CONSTRUCTOR(_) // TODO remove if not needed
+/*    */JT_CLASS_FINAL_METHOD(Void, setCauseLastThrown, JT_THROWABLE(causeLastThrown,_))
+/*    */JT_CLASS_FINAL_METHOD(Void, setCauseFirstPotentialThrown, JT_THROWABLE(causeFirstPotentialThrown,_))
+/*    */JT_CLASS_FINAL_METHOD(Void, setCauseLastPotentialThrown, JT_THROWABLE(causeLastPotentialThrown,_))
+JT_END_CLASS
 
 JavaVM * JBindingSession::_vm = NULL;
 
@@ -57,7 +56,7 @@ JNINativeCallContext::~JNINativeCallContext() {
     } else {
         if (_firstThrownException) {
             jthrowable sevenZipException;
-            if (jni::SevenZipException::isInstance(_jniCallOriginalEnv, _firstThrownException)) {
+            if (jni::SevenZipException::_isInstance(_jniCallOriginalEnv, _firstThrownException)) {
                 // Last thrown exception is SevenZipException. Reuse it.
                 sevenZipException = _firstThrownException;
             } else {
