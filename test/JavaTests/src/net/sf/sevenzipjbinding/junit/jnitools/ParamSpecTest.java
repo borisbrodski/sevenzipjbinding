@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     private static final Random RANDOM = new Random(0);
+    private String initMessage;
 
     @SuppressWarnings("unused")
     private static native String nativeStringMethodWithNoParameters();
@@ -38,10 +40,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     private static native List<String> nativeListMethodWithNoParameters();
 
     @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWithNoParameters();
+
+    @SuppressWarnings("unused")
     private static native String nativeStringMethodWith1Parameter(long l1);
 
     @SuppressWarnings("unused")
     private static native List<String> nativeListMethodWith1Parameter(long l1);
+
+    @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith1Parameter(long l1);
 
     @SuppressWarnings("unused")
     private static native String nativeStringMethodWith2Parameters(int i1, String s2);
@@ -50,10 +58,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     private static native List<String> nativeListMethodWith2Parameters(int i1, String s2);
 
     @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith2Parameters(int i1, String s2);
+
+    @SuppressWarnings("unused")
     private static native String nativeStringMethodWith3Parameters(boolean b1, MyClass m2, int i3);
 
     @SuppressWarnings("unused")
     private static native List<String> nativeListMethodWith3Parameters(boolean b1, MyClass m2, int i3);
+
+    @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith3Parameters(boolean b1, MyClass m2, int i3);
 
     @SuppressWarnings("unused")
     private static native String nativeStringMethodWith4Parameters(MyClass m1, int i2, String s3, boolean b4);
@@ -62,10 +76,17 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     private static native List<String> nativeListMethodWith4Parameters(MyClass m1, int i2, String s3, boolean b4);
 
     @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith4Parameters(MyClass m1, int i2, String s3, boolean b4);
+
+    @SuppressWarnings("unused")
     private static native String nativeStringMethodWith5Parameters(boolean b1, String s2, long l3, int i4, MyClass m5);
 
     @SuppressWarnings("unused")
     private static native List<String> nativeListMethodWith5Parameters(boolean b1, String s2, long l3, int i4,
+            MyClass m5);
+
+    @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith5Parameters(boolean b1, String s2, long l3, int i4,
             MyClass m5);
 
     @SuppressWarnings("unused")
@@ -77,11 +98,19 @@ public class ParamSpecTest extends JUnitNativeTestBase {
             MyClass m6);
 
     @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith6Parameters(int i1, MyClass m2, long l3, int i4, boolean b5,
+            MyClass m6);
+
+    @SuppressWarnings("unused")
     private static native String nativeStringMethodWith7Parameters(String s1, int i2, long l3, MyClass m4, int i5,
             boolean b6, long l7);
 
     @SuppressWarnings("unused")
     private static native List<String> nativeListMethodWith7Parameters(String s1, int i2, long l3, MyClass m4, int i5,
+            boolean b6, long l7);
+
+    @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith7Parameters(String s1, int i2, long l3, MyClass m4, int i5,
             boolean b6, long l7);
 
     @SuppressWarnings("unused")
@@ -93,11 +122,19 @@ public class ParamSpecTest extends JUnitNativeTestBase {
             boolean b6, boolean b7, int i8);
 
     @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith8Parameters(String s1, int i2, long l3, long l4, int i5,
+            boolean b6, boolean b7, int i8);
+
+    @SuppressWarnings("unused")
     private static native String nativeStringMethodWith9Parameters(MyClass m1, String s2, int i3, MyClass m4,
             boolean b5, int i6, String s7, long l8, boolean b9);
 
     @SuppressWarnings("unused")
     private static native List<String> nativeListMethodWith9Parameters(MyClass m1, String s2, int i3, MyClass m4,
+            boolean b5, int i6, String s7, long l8, boolean b9);
+
+    @SuppressWarnings("unused")
+    private static native ParamSpecTest nativeConstructWith9Parameters(MyClass m1, String s2, int i3, MyClass m4,
             boolean b5, int i6, String s7, long l8, boolean b9);
 
     // Will be called from native code
@@ -112,8 +149,12 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         return toList("listMethodWithNoParameters()");
     }
 
+    // Will be called from native code and JUnit framework
+    public ParamSpecTest() {
+        initMessage = "No param";
+    }
+
     // Will be called from native code
-    @SuppressWarnings("unused")
     private static String stringMethodWith1Parameter(long l1) {
         return "stringMethodWith1Parameter(" + l1 + ")";
     }
@@ -126,6 +167,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(long l1) {
+        initMessage = stringMethodWith1Parameter(l1);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith2Parameters(int i1, String s2) {
         return "stringMethodWith2Parameters(" + i1 + "," + s2 + ")";
     }
@@ -138,6 +184,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(int i1, String s2) {
+        initMessage = stringMethodWith2Parameters(i1, s2);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith3Parameters(boolean b1, MyClass m2, int i3) {
         return "stringMethodWith3Parameters(" + b1 + "," + m2 + "," + i3 + ")";
     }
@@ -150,6 +201,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(boolean b1, MyClass m2, int i3) {
+        initMessage = stringMethodWith3Parameters(b1, m2, i3);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith4Parameters(MyClass m1, int i2, String s3, boolean b4) {
         return "stringMethodWith4Parameters(" + m1 + "," + i2 + "," + s3 + "," + b4 + ")";
     }
@@ -162,6 +218,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(MyClass m1, int i2, String s3, boolean b4) {
+        initMessage = stringMethodWith4Parameters(m1, i2, s3, b4);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith5Parameters(boolean b1, String s2, long l3, int i4, MyClass m5) {
         return "stringMethodWith5Parameters(" + b1 + "," + s2 + "," + l3 + "," + i4 + "," + m5 + ")";
     }
@@ -174,6 +235,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(boolean b1, String s2, long l3, int i4, MyClass m5) {
+        initMessage = stringMethodWith5Parameters(b1, s2, l3, i4, m5);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith6Parameters(int i1, MyClass m2, long l3, int i4, boolean b5, MyClass m6) {
         return "stringMethodWith6Parameters(" + i1 + "," + m2 + "," + l3 + "," + i4 + "," + b5 + "," + m6 + ")";
     }
@@ -186,6 +252,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(int i1, MyClass m2, long l3, int i4, boolean b5, MyClass m6) {
+        initMessage = stringMethodWith6Parameters(i1, m2, l3, i4, b5, m6);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith7Parameters(String s1, int i2, long l3, MyClass m4, int i5, boolean b6,
             long l7) {
         return "stringMethodWith7Parameters(" + s1 + "," + i2 + "," + l3 + "," + m4 + "," + i5 + "," + b6 + "," + l7
@@ -202,6 +273,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(String s1, int i2, long l3, MyClass m4, int i5, boolean b6, long l7) {
+        initMessage = stringMethodWith7Parameters(s1, i2, l3, m4, i5, b6, l7);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith8Parameters(String s1, int i2, long l3, long l4, int i5, boolean b6,
             boolean b7, int i8) {
         return "stringMethodWith8Parameters(" + s1 + "," + i2 + "," + l3 + "," + l4 + "," + i5 + "," + b6 + "," + b7
@@ -218,6 +294,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     // Will be called from native code
     @SuppressWarnings("unused")
+    private ParamSpecTest(String s1, int i2, long l3, long l4, int i5, boolean b6, boolean b7, int i8) {
+        initMessage = stringMethodWith8Parameters(s1, i2, l3, l4, i5, b6, b7, i8);
+    }
+
+    // Will be called from native code
     private static String stringMethodWith9Parameters(MyClass m1, String s2, int i3, MyClass m4, boolean b5, int i6,
             String s7, long l8, boolean b9) {
         return "stringMethodWith9Parameters(" + m1 + "," + s2 + "," + i3 + "," + m4 + "," + b5 + "," + i6 + "," + s7
@@ -230,6 +311,12 @@ public class ParamSpecTest extends JUnitNativeTestBase {
             int i6, String s7, long l8, boolean b9) {
         return toList("listMethodWith9Parameters(" + m1 + "," + s2 + "," + i3 + "," + m4 + "," + b5 + "," + i6 + ","
                 + s7 + "," + l8 + "," + b9 + ")");
+    }
+
+    // Will be called from native code
+    @SuppressWarnings("unused")
+    private ParamSpecTest(MyClass m1, String s2, int i3, MyClass m4, boolean b5, int i6, String s7, long l8, boolean b9) {
+        initMessage = stringMethodWith9Parameters(m1, s2, i3, m4, b5, i6, s7, l8, b9);
     }
 
     private static List<String> toList(String string) {
@@ -246,6 +333,11 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     @Test
     public void testListMethodWithNoParameters() throws Exception {
         testMethod("ListMethodWithNoParameters");
+    }
+
+    @Test
+    public void testConstructWithNoParameters() throws Exception {
+        testConstruct("nativeConstructWithNoParameters");
     }
 
     @Test
@@ -269,6 +361,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     @Test
+    public void testConstructWith1Parameter1() throws Exception {
+        testConstruct("nativeConstructWith1Parameter");
+    }
+
+    @Test
+    public void testConstructWith1Parameter2() throws Exception {
+        testConstruct("nativeConstructWith1Parameter");
+    }
+
+    @Test
     public void testStringMethodWith2Parameters1() throws Exception {
         testMethod("StringMethodWith2Parameters");
     }
@@ -286,6 +388,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     @Test
     public void testListMethodWith2Parameters2() throws Exception {
         testMethod("ListMethodWith2Parameters");
+    }
+
+    @Test
+    public void testConstructWith2Parameters1() throws Exception {
+        testConstruct("nativeConstructWith2Parameters");
+    }
+
+    @Test
+    public void testConstructWith2Parameters2() throws Exception {
+        testConstruct("nativeConstructWith2Parameters");
     }
 
     @Test
@@ -309,6 +421,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     @Test
+    public void testConstructWith3Parameters1() throws Exception {
+        testConstruct("nativeConstructWith3Parameters");
+    }
+
+    @Test
+    public void testConstructWith3Parameters2() throws Exception {
+        testConstruct("nativeConstructWith3Parameters");
+    }
+
+    @Test
     public void testStringMethodWith4Parameters1() throws Exception {
         testMethod("StringMethodWith4Parameters");
     }
@@ -326,6 +448,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     @Test
     public void testListMethodWith4Parameters2() throws Exception {
         testMethod("ListMethodWith4Parameters");
+    }
+
+    @Test
+    public void testConstructWith4Parameters1() throws Exception {
+        testConstruct("nativeConstructWith4Parameters");
+    }
+
+    @Test
+    public void testConstructWith4Parameters2() throws Exception {
+        testConstruct("nativeConstructWith4Parameters");
     }
 
     @Test
@@ -349,6 +481,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     @Test
+    public void testConstructWith5Parameters1() throws Exception {
+        testConstruct("nativeConstructWith5Parameters");
+    }
+
+    @Test
+    public void testConstructWith5Parameters2() throws Exception {
+        testConstruct("nativeConstructWith5Parameters");
+    }
+
+    @Test
     public void testStringMethodWith6Parameters1() throws Exception {
         testMethod("StringMethodWith6Parameters");
     }
@@ -366,6 +508,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     @Test
     public void testListMethodWith6Parameters2() throws Exception {
         testMethod("ListMethodWith6Parameters");
+    }
+
+    @Test
+    public void testConstructWith6Parameters1() throws Exception {
+        testConstruct("nativeConstructWith6Parameters");
+    }
+
+    @Test
+    public void testConstructWith6Parameters2() throws Exception {
+        testConstruct("nativeConstructWith6Parameters");
     }
 
     @Test
@@ -389,6 +541,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     @Test
+    public void testConstructWith7Parameters1() throws Exception {
+        testConstruct("nativeConstructWith7Parameters");
+    }
+
+    @Test
+    public void testConstructWith7Parameters2() throws Exception {
+        testConstruct("nativeConstructWith7Parameters");
+    }
+
+    @Test
     public void testStringMethodWith8Parameters1() throws Exception {
         testMethod("StringMethodWith8Parameters");
     }
@@ -406,6 +568,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     @Test
     public void testListMethodWith8Parameters2() throws Exception {
         testMethod("ListMethodWith8Parameters");
+    }
+
+    @Test
+    public void testConstructWith8Parameters1() throws Exception {
+        testConstruct("nativeConstructWith8Parameters");
+    }
+
+    @Test
+    public void testConstructWith8Parameters2() throws Exception {
+        testConstruct("nativeConstructWith8Parameters");
     }
 
     @Test
@@ -428,6 +600,16 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         testMethod("ListMethodWith9Parameters");
     }
 
+    @Test
+    public void testConstructWith9Parameters1() throws Exception {
+        testConstruct("nativeConstructWith9Parameters");
+    }
+
+    @Test
+    public void testConstructWith9Parameters2() throws Exception {
+        testConstruct("nativeConstructWith9Parameters");
+    }
+
     @SuppressWarnings("unchecked")
     private void testMethod(String name) throws Exception {
         Method nativeMethod = null;
@@ -446,9 +628,50 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         assertNotNull(javaMethod);
         assertArrayEquals(nativeMethod.getParameterTypes(), javaMethod.getParameterTypes());
 
-        Object[] parameter = new Object[nativeMethod.getParameterTypes().length];
+        Object[] parameter = getRandomParameters(nativeMethod);
+
+        Object nativeResult = nativeMethod.invoke(this, parameter);
+        Object javaResult = javaMethod.invoke(this, parameter);
+        if (nativeMethod.getReturnType() == String.class) {
+            assertEquals(javaResult, nativeResult);
+        } else {
+            myAssertEquals((List) javaResult, (List) nativeResult);
+        }
+    }
+
+    private void testConstruct(String name) throws Exception {
+        Method nativeMethod = null;
+        for (Method method : this.getClass().getDeclaredMethods()) {
+            if (method.getName().equalsIgnoreCase(name)) {
+                nativeMethod = method;
+            }
+        }
+        assertNotNull(nativeMethod);
+        Constructor<?> constructorUnterTest = null;
+        constructorSearchLoop: for (Constructor<?> constructor : this.getClass().getDeclaredConstructors()) {
+            if (constructor.getParameterTypes().length == nativeMethod.getParameterTypes().length) {
+                for (int i = 0; i < nativeMethod.getParameterTypes().length; i++) {
+                    if (!constructor.getParameterTypes()[i].equals(nativeMethod.getParameterTypes()[i])) {
+                        continue constructorSearchLoop;
+                    }
+                }
+                constructorUnterTest = constructor;
+                break;
+            }
+        }
+
+        assertNotNull(constructorUnterTest);
+
+        Object[] parameter = getRandomParameters(nativeMethod);
+        ParamSpecTest expectedParamSpecTest = (ParamSpecTest) constructorUnterTest.newInstance(parameter);
+        ParamSpecTest actualParamSpecTest = (ParamSpecTest) nativeMethod.invoke(this, parameter);
+        assertEquals(expectedParamSpecTest.initMessage, actualParamSpecTest.initMessage);
+    }
+
+    private Object[] getRandomParameters(Method method) {
+        Object[] parameter = new Object[method.getParameterTypes().length];
         int i = 0;
-        for (Class<?> parameterClass : nativeMethod.getParameterTypes()) {
+        for (Class<?> parameterClass : method.getParameterTypes()) {
             if (parameterClass == int.class) {
                 parameter[i] = RANDOM.nextInt();
             } else if (parameterClass == long.class) {
@@ -464,14 +687,7 @@ public class ParamSpecTest extends JUnitNativeTestBase {
             }
             i++;
         }
-
-        Object nativeResult = nativeMethod.invoke(this, parameter);
-        Object javaResult = javaMethod.invoke(this, parameter);
-        if (nativeMethod.getReturnType() == String.class) {
-            assertEquals(javaResult, nativeResult);
-        } else {
-            myAssertEquals((List) javaResult, (List) nativeResult);
-        }
+        return parameter;
     }
 
     private String nextRandomString() {

@@ -59,64 +59,94 @@ JT_END_INTERFACE
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", ParamSpecTest)
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWithNoParameters,
-        /*    */_)
+        /**/_)
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;",
-        /*    */listMethodWithNoParameters, _)
+        /**/listMethodWithNoParameters, _)
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith1Parameter,
-        /*    */JT_LONG(l1, _))
+        /**/JT_LONG(l1, _))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith1Parameter,
-        /*    */JT_LONG(l1, _))
+        /**/JT_LONG(l1, _))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith2Parameters,
-        /*    */JT_INT(l1, JT_STRING(s2, _)))
+        /**/JT_INT(l1, JT_STRING(s2, _)))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith2Parameters,
-        /*    */JT_INT(l1, JT_STRING(s2, _)))
+        /**/JT_INT(l1, JT_STRING(s2, _)))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith3Parameters,
-        /*    */JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith3Parameters,
-        /*    */JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith4Parameters,
-        /*    */JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith4Parameters,
-        /*    */JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith5Parameters,
-        /*    */JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith5Parameters,
-        /*    */JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith6Parameters,
-        /*    */JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith6Parameters,
-        /*    */JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith7Parameters,
-        /*    */JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith7Parameters,
-        /*    */JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith8Parameters,
-        /*    */JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
 
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith8Parameters,
-        /*    */JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
 
 /*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith9Parameters,
-        /*    */JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
-
+        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith9Parameters,
-        /*    */JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
+        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/_)
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_LONG(l1, _))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_INT(l1, JT_STRING(s2, _)))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+
+/*    */JT_CLASS_CONSTRUCTOR(
+        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
+
 JT_END_CLASS
 
 void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expectedValue,
@@ -402,6 +432,15 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWithNo
     return object;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWithNoParameters(
+                                                                                           JNIEnv * env,
+                                                                                           jclass) {
+    jobject object = jni::ParamSpecTest::newInstance(env);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith1Parameter(
                                                                                            JNIEnv * env,
@@ -418,6 +457,16 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith1P
                                                                                          jclass,
                                                                                          jlong l1) {
     jobject object = jni::ParamSpecTest::listMethodWith1Parameter(env, l1);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith1Parameter(
+                                                                                         JNIEnv * env,
+                                                                                         jclass,
+                                                                                         jlong l1) {
+    jobject object = jni::ParamSpecTest::newInstance(env, l1);
     jni::prepareExceptionCheck(env);
     return object;
 }
@@ -444,6 +493,17 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith2P
     return object;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith2Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jint i1,
+                                                                                          jstring s2) {
+    jobject object = jni::ParamSpecTest::newInstance(env, i1, s2);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith3Parameters(
                                                                                             JNIEnv * env,
@@ -464,6 +524,18 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith3P
                                                                                           jobject m2,
                                                                                           jint i3) {
     jobject object = jni::ParamSpecTest::listMethodWith3Parameters(env, b1, m2, i3);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith3Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jboolean b1,
+                                                                                          jobject m2,
+                                                                                          jint i3) {
+    jobject object = jni::ParamSpecTest::newInstance(env, b1, m2, i3);
     jni::prepareExceptionCheck(env);
     return object;
 }
@@ -494,6 +566,19 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith4P
     return object;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith4Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jobject m1,
+                                                                                          jint i2,
+                                                                                          jstring s3,
+                                                                                          jboolean b4) {
+    jobject object = jni::ParamSpecTest::newInstance(env, m1, i2, s3, b4);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith5Parameters(
                                                                                             JNIEnv * env,
@@ -518,6 +603,20 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith5P
                                                                                           jint i4,
                                                                                           jobject m5) {
     jobject object = jni::ParamSpecTest::listMethodWith5Parameters(env, b1, s2, l3, i4, m5);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith5Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jboolean b1,
+                                                                                          jstring s2,
+                                                                                          jlong l3,
+                                                                                          jint i4,
+                                                                                          jobject m5) {
+    jobject object = jni::ParamSpecTest::newInstance(env, b1, s2, l3, i4, m5);
     jni::prepareExceptionCheck(env);
     return object;
 }
@@ -552,6 +651,21 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith6P
     return object;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith6Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jint i1,
+                                                                                          jobject m2,
+                                                                                          jlong l3,
+                                                                                          jint i4,
+                                                                                          jboolean b5,
+                                                                                          jobject m6) {
+    jobject object = jni::ParamSpecTest::newInstance(env, i1, m2, l3, i4, b5, m6);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith7Parameters(
                                                                                             JNIEnv * env,
@@ -581,6 +695,22 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith7P
                                                                                           jboolean b6,
                                                                                           jlong l7) {
     jobject object = jni::ParamSpecTest::listMethodWith7Parameters(env, s1, i2, l3, m4, i5, b6, l7);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith7Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jstring s1,
+                                                                                          jint i2,
+                                                                                          jlong l3,
+                                                                                          jobject m4,
+                                                                                          jint i5,
+                                                                                          jboolean b6,
+                                                                                          jlong l7) {
+    jobject object = jni::ParamSpecTest::newInstance(env, s1, i2, l3, m4, i5, b6, l7);
     jni::prepareExceptionCheck(env);
     return object;
 }
@@ -621,6 +751,24 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith8P
     return object;
 }
 
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith8Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jstring s1,
+                                                                                          jint i2,
+                                                                                          jlong l3,
+                                                                                          jlong l4,
+                                                                                          jint i5,
+                                                                                          jboolean b6,
+                                                                                          jboolean b7,
+                                                                                          jint i8) {
+    jobject object = jni::ParamSpecTest::newInstance(env, s1, i2, l3, l4, i5, b6, b7,
+            i8);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith9Parameters(
                                                                                             JNIEnv * env,
@@ -634,7 +782,8 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeStringMethodWith
                                                                                             jstring s7,
                                                                                             jlong l8,
                                                                                             jboolean b9) {
-    jstring string = jni::ParamSpecTest::stringMethodWith9Parameters(env, m1, s2,i3,m4,b5,i6,s7,l8,b9);
+    jstring string = jni::ParamSpecTest::stringMethodWith9Parameters(env, m1, s2, i3, m4, b5, i6,
+            s7, l8, b9);
     jni::prepareExceptionCheck(env);
     return string;
 }
@@ -652,7 +801,27 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeListMethodWith9P
                                                                                           jstring s7,
                                                                                           jlong l8,
                                                                                           jboolean b9) {
-    jobject object = jni::ParamSpecTest::listMethodWith9Parameters(env, m1, s2,i3,m4,b5,i6,s7,l8,b9);
+    jobject object = jni::ParamSpecTest::listMethodWith9Parameters(env, m1, s2, i3, m4, b5, i6, s7,
+            l8, b9);
+    jni::prepareExceptionCheck(env);
+    return object;
+}
+
+JBINDING_JNIEXPORT jobject JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_ParamSpecTest_nativeConstructWith9Parameters(
+                                                                                          JNIEnv * env,
+                                                                                          jclass,
+                                                                                          jobject m1,
+                                                                                          jstring s2,
+                                                                                          jint i3,
+                                                                                          jobject m4,
+                                                                                          jboolean b5,
+                                                                                          jint i6,
+                                                                                          jstring s7,
+                                                                                          jlong l8,
+                                                                                          jboolean b9) {
+    jobject object = jni::ParamSpecTest::newInstance(env, m1, s2, i3, m4, b5, i6, s7,
+            l8, b9);
     jni::prepareExceptionCheck(env);
     return object;
 }
