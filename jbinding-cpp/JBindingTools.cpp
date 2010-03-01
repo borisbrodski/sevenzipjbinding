@@ -56,17 +56,19 @@ JNINativeCallContext::~JNINativeCallContext() {
     } else {
         if (_firstThrownException) {
             jthrowable sevenZipException;
-            if (jni::SevenZipException::_isInstance(_jniCallOriginalEnv, _firstThrownException)) {
+            // TODO Remove unneeded code
+            //if (jni::SevenZipException::_isInstance(_jniCallOriginalEnv, _firstThrownException)) {
                 // Last thrown exception is SevenZipException. Reuse it.
-                sevenZipException = _firstThrownException;
-            } else {
+                // sevenZipException = _firstThrownException;
+            //} else {
                 // Create new SevenZipException to pass more than one caused by.
+            // TODO Remove set exception message
                 sevenZipException = static_cast<jthrowable>(jni::SevenZipException::newInstance(_jniCallOriginalEnv));
                 assertNoExceptionOnJniCallOriginalEnv();
 
                 jni::SevenZipException::initCause(_jniCallOriginalEnv, sevenZipException, _firstThrownException);
                 assertNoExceptionOnJniCallOriginalEnv();
-            }
+            //}
 
             if (_lastThrownException) {
                 jni::SevenZipException::setCauseLastThrown(_jniCallOriginalEnv, sevenZipException, _lastThrownException);

@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import org.junit.Test;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     public static abstract class Width1 extends ExceptionHandlingTest {
         @Override
@@ -174,8 +175,6 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             StringBuilder stringBuilder = new StringBuilder();
             testRec(stringBuilder, getDepth(), getWidth());
-            //            System.out.println("Expected: " + stringBuilder);
-            //            System.out.println("Is:       " + callRecursiveCallbackMethod(getDepth(), getWidth(), false));
             assertEquals(stringBuilder.toString(), callRecursiveCallbackMethod(getDepth(), getWidth(), false));
         }
     }
@@ -191,21 +190,56 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
 
     @Test
     public void testCallRecursiveWithException() throws Exception {
-        //        for (int i = 0; i < TEST_REPEAT_COUNT; i++) 
-        {
+        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             try {
                 callRecursiveCallbackMethod(getDepth(), getWidth(), true);
                 fail("No exception occurred");
             } catch (RuntimeException runtimeException) {
                 checkException(runtimeException);
                 assertTrue(getWidth() == 1);
-                //assertEquals("EXCEPTION: i=-1:0", runtimeException.getMessage());
-                System.out.println(runtimeException.getLocalizedMessage());
+                assertEquals("EXCEPTION: i=-1:0", runtimeException.getMessage());
+                // TODO Check exception cause by
+                // System.out.println(runtimeException.getLocalizedMessage());
             } catch (SevenZipException sevenZipException) {
                 checkException(sevenZipException);
                 assertTrue(getWidth() > 1);
-                System.out.println(">" + sevenZipException.getLocalizedMessage() + "<");
+                // System.out.println(">" + sevenZipException.getLocalizedMessage() + "<");
+                // System.out.println(">" + getExceptionMessage() + "<");
+                assertEquals(getExceptionMessage(), sevenZipException.getLocalizedMessage());
+                // TODO Check exception cause by
             }
+        }
+    }
+
+    private String getExceptionMessage() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        getExceptionMessage(stringBuilder, "", getDepth() + 1, 0);
+
+        return stringBuilder.toString();
+    }
+
+    private void getExceptionMessage(StringBuilder stringBuilder, String prefix, int depth, int widthIndex) {
+        if (depth == -1) {
+            stringBuilder.append("EXCEPTION: i=-1:" + widthIndex + "");
+            return;
+        } else {
+            stringBuilder.append("No message");
+        }
+        for (int i = 0; i < getWidth(); i++) {
+            if (i != 0 && i != getWidth() - 1) {
+                continue;
+            }
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append(prefix);
+            stringBuilder.append("Caused by (");
+            if (i == 0) {
+                stringBuilder.append("first");
+            } else {
+                stringBuilder.append("last");
+            }
+            stringBuilder.append(" thrown): ");
+            getExceptionMessage(stringBuilder, prefix + "  ", depth - 1, i);
         }
     }
 
