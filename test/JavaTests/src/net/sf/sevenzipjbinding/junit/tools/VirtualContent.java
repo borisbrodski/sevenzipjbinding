@@ -69,7 +69,7 @@ public class VirtualContent {
         }
     }
 
-    private class Item {
+    class Item {
         private String path;
         private Date creationDate;
         private ByteArrayStream blob;

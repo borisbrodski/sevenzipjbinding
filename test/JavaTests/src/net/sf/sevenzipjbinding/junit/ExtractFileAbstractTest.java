@@ -1,6 +1,5 @@
 package net.sf.sevenzipjbinding.junit;
 
-import static net.sf.sevenzipjbinding.junit.JUnitNativeTestBase.SINGLE_TEST_REPEAT_COUNT;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
