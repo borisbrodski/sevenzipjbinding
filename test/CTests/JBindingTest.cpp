@@ -50,20 +50,6 @@ public:
     }
 };
 
-#define METHOD(parameter) DO(PROCESS_##parameter)
-
-#define PROCESS_PARA(name, typ, cont) "PARA name=" #name " typ=" #typ #cont
-#define PROCESS__(x) #x
-#define PROCESS2__(x) #x
-#define PROCESS3__(x) #x
-#define PROCESS4__(x) #x
-
-#define PARAM(name, typ, cont)
-#define PROCESS_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS2_##cont)
-#define PROCESS2_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS3_##cont)
-#define PROCESS3_PARAM(name, typ, cont) "process name=" #name " typ=" #typ DO2(PROCESS4_##cont)
-#define DO(d) d
-#define DO2 DO
 
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovingObjects(
@@ -71,10 +57,6 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_checkAddingRemovin
                                                                                          jclass thiz,
                                                                                          jint objectCount) {
     JBindingSession jbindingSession(env);
-
-    //char const * str = METHOD(PARAM(a,"A", PARAM(b, "B", _)));
-    char const * str = METHOD(PARAM(a,"A", PARAM(1,2,_(x))));
-    std::cout << str << std::endl;
 
     std::vector<SimpleIUnknownClass *> objects(objectCount);
     std::vector<CMyComPtrWrapper<SimpleIUnknownClass> > objectMyComPtrs(objectCount);
