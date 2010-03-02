@@ -18,7 +18,7 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
     }
 
     jniInstance.PrepareCall();
-	jlong returnedNewPosition = env->CallIntMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin);
+	jlong returnedNewPosition = env->CallLongMethod(_javaImplementation, _seekMethodID, (jlong)offset, (jint)seekOrigin);
 
 	if (jniInstance.IsExceptionOccurs()) {
 		return S_FALSE;

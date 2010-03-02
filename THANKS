@@ -11,3 +11,5 @@ Special thanks to
 - Masoud (for pointing me to the most wired error in the C++ <-> Java exception handling)
 
 - Victor Martinez (for getting 7-Zip-JBinding to work with JNLP)
+
+- Jeroen Frijters, IKVM developer (for finding bug: CallIntMethod instead of CallLongMethod by calling InStream.Seek)

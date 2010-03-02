@@ -1,6 +1,6 @@
 set(UPLOAD_URL "http://sevenzipjbind.sourceforge.net/upload.php")
 set(TMP_CHUCK_FILENAME "chunk.bin")
-set(CHUNK_LENGTH 500000)
+set(CHUNK_LENGTH 8192)
 
 
 macro(UPLOAD_FILE FILENAME DESCRIPTION)
@@ -66,13 +66,14 @@ macro(UPLOAD_FILE FILENAME DESCRIPTION)
                             -H "MD5:${MD5}"
                             "${UPLOAD_URL}"
                     RESULT_VARIABLE RESULT)
-    file(REMOVE "${TMP_CHUCK_FILENAME}")
-    foreach(CHUNK ${CHUNKS})
-        FILE(REMOVE "${CHUNK}")
-    endforeach()
 
     if(RESULT)
         message(FATAL_ERROR "Error uploading chunk: ${RESULT}")
+    else()
+        file(REMOVE "${TMP_CHUCK_FILENAME}")
+        foreach(CHUNK ${CHUNKS})
+            FILE(REMOVE "${CHUNK}")
+        endforeach()
     endif()
 endmacro()
 

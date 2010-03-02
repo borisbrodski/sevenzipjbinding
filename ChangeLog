@@ -1,6 +1,9 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* CallIntMethod->CallLongMethod Bugfix in InStream.Seek (found by IKVM developer Jeroen Frijters)
+
 Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Binary version for MacOS 64 bit (java 6)
 	
