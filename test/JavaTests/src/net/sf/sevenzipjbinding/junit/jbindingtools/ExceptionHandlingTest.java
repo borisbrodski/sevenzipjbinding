@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import org.junit.Test;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
+    private static final String NO_CUSTOM_MESSSAGE_TEXT = "Multiple exceptions were thrown. See multiple caused by exceptions for more information.";
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     public static abstract class Width1 extends ExceptionHandlingTest {
@@ -116,22 +117,23 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         }
     }
 
-    private static native String callRecursiveCallbackMethod(int depth, int width, boolean useException)
-            throws SevenZipException;
+    private static native String callRecursiveCallbackMethod(int depth, int width, boolean useException,
+            boolean customErrorMessage) throws SevenZipException;
 
     protected abstract int getWidth();
 
     protected abstract int getDepth();
 
-    static String recursiveCallbackMethod(int depth, int width, boolean useException, int widthIndex)
-            throws SevenZipException {
+    static String recursiveCallbackMethod(int depth, int width, boolean useException, boolean customErrorMessage,
+            int widthIndex) throws SevenZipException {
         if (depth < 0) {
             if (useException) {
                 throw new RuntimeException("EXCEPTION: i=" + depth + ":" + widthIndex);
             }
             return "i=" + depth + ":" + widthIndex;
         }
-        return callRecursiveCallbackMethod(depth - 1, width, useException) + "[i=" + depth + ":" + widthIndex + "]";
+        return callRecursiveCallbackMethod(depth - 1, width, useException, customErrorMessage) + "[i=" + depth + ":"
+                + widthIndex + "]";
     }
 
     private static void testRec(StringBuilder stringBuilder, int depth, int width) {
@@ -175,7 +177,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             StringBuilder stringBuilder = new StringBuilder();
             testRec(stringBuilder, getDepth(), getWidth());
-            assertEquals(stringBuilder.toString(), callRecursiveCallbackMethod(getDepth(), getWidth(), false));
+            assertEquals(stringBuilder.toString(), callRecursiveCallbackMethod(getDepth(), getWidth(), false, false));
         }
     }
 
@@ -192,39 +194,70 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     public void testCallRecursiveWithException() throws Exception {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             try {
-                callRecursiveCallbackMethod(getDepth(), getWidth(), true);
+                callRecursiveCallbackMethod(getDepth(), getWidth(), true, false);
                 fail("No exception occurred");
             } catch (RuntimeException runtimeException) {
                 checkException(runtimeException);
                 assertTrue(getWidth() == 1);
                 assertEquals("EXCEPTION: i=-1:0", runtimeException.getMessage());
-                // TODO Check exception cause by
-                // System.out.println(runtimeException.getLocalizedMessage());
             } catch (SevenZipException sevenZipException) {
                 checkException(sevenZipException);
                 assertTrue(getWidth() > 1);
-                // System.out.println(">" + sevenZipException.getLocalizedMessage() + "<");
-                // System.out.println(">" + getExceptionMessage() + "<");
-                assertEquals(getExceptionMessage(), sevenZipException.getLocalizedMessage());
-                // TODO Check exception cause by
+                assertEquals(getExceptionMessage(false), sevenZipException.getLocalizedMessage());
             }
         }
     }
 
-    private String getExceptionMessage() {
+    @Test
+    public void testCallRecursiveWithExceptionMultithreaded() throws Exception {
+        runMultithreaded(new RunnableThrowsException() {
+            public void run() throws Exception {
+                testCallRecursiveWithException();
+            }
+        }, null, THREAD_COUNT, THREAD_TIMEOUT);
+    }
+
+    @Test
+    public void testCallRecursiveWithExceptionWithCustomMessage() throws Exception {
+        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
+            try {
+                callRecursiveCallbackMethod(getDepth(), getWidth(), true, true);
+                fail("No exception occurred");
+            } catch (SevenZipException sevenZipException) {
+                checkException(sevenZipException);
+                assertEquals(getExceptionMessage(true), sevenZipException.getLocalizedMessage());
+            }
+        }
+    }
+
+    @Test
+    public void testCallRecursiveWithExceptionWithCustomMessageMultithreaded() throws Exception {
+        runMultithreaded(new RunnableThrowsException() {
+            public void run() throws Exception {
+                testCallRecursiveWithExceptionWithCustomMessage();
+            }
+        }, null, THREAD_COUNT, THREAD_TIMEOUT);
+    }
+
+    private String getExceptionMessage(boolean customErrorMessage) {
         StringBuilder stringBuilder = new StringBuilder();
 
-        getExceptionMessage(stringBuilder, "", getDepth() + 1, 0);
+        getExceptionMessage(stringBuilder, "", getDepth() + 1, 0, customErrorMessage);
 
         return stringBuilder.toString();
     }
 
-    private void getExceptionMessage(StringBuilder stringBuilder, String prefix, int depth, int widthIndex) {
+    private void getExceptionMessage(StringBuilder stringBuilder, String prefix, int depth, int widthIndex,
+            boolean customErrorMessage) {
         if (depth == -1) {
             stringBuilder.append("EXCEPTION: i=-1:" + widthIndex + "");
             return;
         } else {
-            stringBuilder.append("No message");
+            if (customErrorMessage) {
+                stringBuilder.append("Error: depth=" + (depth - 1) + ", width=" + getWidth());
+            } else {
+                stringBuilder.append(NO_CUSTOM_MESSSAGE_TEXT);
+            }
         }
         for (int i = 0; i < getWidth(); i++) {
             if (i != 0 && i != getWidth() - 1) {
@@ -239,17 +272,8 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
                 stringBuilder.append("last");
             }
             stringBuilder.append(" thrown): ");
-            getExceptionMessage(stringBuilder, prefix + "  ", depth - 1, i);
+            getExceptionMessage(stringBuilder, prefix + "  ", depth - 1, i, customErrorMessage);
         }
-    }
-
-    @Test
-    public void testCallRecursiveWithExceptionMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testCallRecursiveWithException();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
     }
 
     static void checkSevenZipException(SevenZipException sevenZipException) {

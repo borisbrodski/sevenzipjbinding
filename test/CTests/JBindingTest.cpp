@@ -27,7 +27,7 @@ JT_END_CLASS
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jbindingtools", ExceptionHandlingTest)
 /*    */JT_CLASS_STATIC_METHOD(String, recursiveCallbackMethod,
-/*            */JT_INT(depth, JT_INT(width, JT_BOOLEAN(useException, JT_INT(widthIndex,_)))))
+/*            */JT_INT(depth, JT_INT(width, JT_BOOLEAN(useException, JT_BOOLEAN(customErrorMessage, JT_INT(widthIndex,_))))))
 JT_END_CLASS
 
 class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
@@ -124,7 +124,8 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
                                                                                                    jclass thiz,
                                                                                                    jint depth,
                                                                                                    jint width,
-                                                                                                   jboolean useException) {
+                                                                                                   jboolean useException,
+                                                                                                   jboolean customErrorMessage) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
@@ -138,7 +139,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
     }
     for (int i = 0; i < width; i++) {
         jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, depth,
-                width, useException, i);
+                width, useException, customErrorMessage, i);
         error |= jniEnvInstance.exceptionCheck();
 
         if (i) {
@@ -152,7 +153,10 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
     }
 
     if (error) {
-        return env->NewStringUTF("Exception");
+        if (customErrorMessage) {
+            jniNativeCallContext.reportError("Error: depth=%i, width=%i", (int)depth, (int)width);
+        }
+        return NULL;
     }
 
     return env->NewStringUTF(sstream.str().c_str());

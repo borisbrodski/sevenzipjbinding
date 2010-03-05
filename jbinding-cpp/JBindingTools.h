@@ -12,41 +12,6 @@
 #include "BaseSystem.h"
 #include "JObjectList.h"
 
-/*
- *    +--------------------------------------------------------------
- *    |
- *    |  +-----------------+
- *    |  | JBindingSession |
- *    |  +-----------------+
- *    |
- *    |
- *             /-+-----------------\
- * -JNICall1-> | JavaNativeContext |
- *             \-+-----------------/
- *               |
- *               +-----------------------------------------------> 7-Zip
- *               |                                                   |
- *               |                                                   |
- *               +<--------------------------Callback (Thread 1)-----+
- *               +---------------------------return thread 1-------->+
- *               |                                                   |
- *               |                                                   |
- *               |<--------------------------Callback (Thread 2)-----+
- *               |                                                   |
- * <-JNICallback2+                                                   |
- *               |       /-------------------\                       |
- * --JNICall3----------> | JavaNativeContext |                       |
- *               |       \-+-----------------/                       |
- *               |         |                                         |
- * <--return3--------------+                                         |
- *               |                                                   |
- * ---return2--->+                                                   |
- *               +----------------------------return thread 2------->+
- *               |                                                   |
- *               +----------------------------return-----------------/
- * <--return1----+
- */
-
 class JNINativeCallContext;
 class JBindingSession;
 class JNIEnvInstance;
@@ -119,31 +84,6 @@ private:
         }
         _threadContextMapCriticalSection.Leave();
     }
-
-    /*
-    JNIEnv * getJNIEnv(JNINativeCallContext & javaNativeContext) {
-        _threadContextMapCriticalSection.Enter();
-        ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
-        _threadContextMapCriticalSection.Leave();
-        if (threadContext._env) {
-            return threadContext._env;
-        }
-
-        TRACE("Attaching current thread to VM.")
-#ifdef USE_MY_ASSERTS
-        _attachedVmCount++;
-#endif
-        JNIEnv * env = NULL;
-        jint result;
-        if ((result = _vm->AttachCurrentThread((void**) &env, NULL)) || env == NULL) {
-            TRACE("New thread couldn't be attached: " << result)
-            // throw SevenZipException("Can't attach current thread (id: %i) to the VM", currentThreadId);
-            // TODO Decide, what to do this it
-            fatal("Can't attach current thread (id: %i) to the VM", PlatformGetCurrentThreadId());
-        }
-        TRACE("Thread attached. New env=" << (void *)env);
-    }
-    */
 
     void handleThrownException(jthrowable exceptionLocalRef);
 
@@ -238,6 +178,7 @@ class JNINativeCallContext {
 
     JBindingSession & _jbindingSession;
     JNIEnv * _jniCallOriginalEnv;
+    char * _errorMessage;
 
     JNINativeCallContext(JNINativeCallContext const &);
     void * operator new(size_t i);
@@ -277,9 +218,9 @@ class JNINativeCallContext {
 public:
 
     JNINativeCallContext(JBindingSession & _jbindingSession, JNIEnv * initEnv) :
-        _jbindingSession(_jbindingSession), _jniCallOriginalEnv(initEnv),
-        _firstThrownException(NULL), _lastThrownException(NULL),
-        _firstThrownExceptionInOtherThread(NULL), _lastThrownExceptionInOtherThread(NULL) {
+        _jbindingSession(_jbindingSession), _jniCallOriginalEnv(initEnv), _firstThrownException(
+                NULL), _lastThrownException(NULL), _firstThrownExceptionInOtherThread(NULL),
+                _lastThrownExceptionInOtherThread(NULL), _errorMessage(NULL) {
         _jbindingSession.registerNativeContext(initEnv, this);
     }
 
@@ -295,10 +236,35 @@ public:
             env->DeleteLocalRef(exceptionLocalRef);
             return true;
         }
+
+        if (_errorMessage) {
+            free(_errorMessage);
+        }
         return false;
     }
 
     void throwException(char const * msg, ...);
+
+    void reportError(char * fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vReportError(fmt, args);
+        va_end(args);
+    }
+
+    void vReportError(char * fmt, va_list args) {
+        if (_errorMessage) {
+            free(_errorMessage);
+        }
+
+        char buffer[64 * 1024];
+        vsnprintf(buffer, sizeof(buffer), fmt, args);
+        buffer[sizeof(buffer) - 1] = '\0';
+        int length = strlen(buffer);
+
+        _errorMessage = (char *)malloc(length + 1);
+        memcpy(_errorMessage, buffer, length + 1);
+    }
 };
 
 class JNIEnvInstance {
@@ -317,12 +283,14 @@ class JNIEnvInstance {
     }
 public:
     JNIEnvInstance(JBindingSession & jbindingSession, JNINativeCallContext & jniNativeCallContext,
-            JNIEnv * env) :
-        _env(env), _jniNativeCallContext(&jniNativeCallContext), _jbindingSession(jbindingSession), _isCallback(false) {
+                   JNIEnv * env) :
+        _env(env), _jniNativeCallContext(&jniNativeCallContext), _jbindingSession(jbindingSession),
+                _isCallback(false) {
         MY_ASSERT(env);
     }
     JNIEnvInstance(JBindingSession & jbindingSession) :
-        _env(NULL), _jniNativeCallContext(NULL), _jbindingSession(jbindingSession), _isCallback(true) {
+        _env(NULL), _jniNativeCallContext(NULL), _jbindingSession(jbindingSession), _isCallback(
+                true) {
         initCallback();
     }
     ~JNIEnvInstance() {
