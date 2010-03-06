@@ -22,7 +22,7 @@ INCLUDE(cmake/FindJavaExtended.cmake)
 INCLUDE(CTest)
 
 # Uncomment this to build a version
-SET(SEVENZIPJBINDING_VERSON 4.65-1.04-TEST1-rc-extr-only)
+SET(SEVENZIPJBINDING_VERSON 4.65-1.04-rc-extr-only)
 
 SET(RELEASE_PATH ${PROJECT_BINARY_DIR})
 IF (SEVENZIPJBINDING_VERSON)
