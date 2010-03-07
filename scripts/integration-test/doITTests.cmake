@@ -1,6 +1,11 @@
-SET(URL "http://sevenzipjbind.sourceforge.net/download.php?filename=")
+SET(URL "boris_brodski,sevenzipjbind@frs.sourceforge.net:/home/frs/project/s/se/sevenzipjbind/OldFiles/")
 SET(IT_PACKAGE_NAME "sevenzipjbinding-it-test-pack.zip")
 SET(ITROOT "SevenZipJBinding.IT-Tests")
+
+IF(NOT PACKAGES)
+    MESSAGE(FATAL_ERROR "Use cmake \"-DPACKAGES=Linux-i386;AllLinux;AllPlatforms\" -P path/doITTests.cmake")
+ENDIF()
+
 
 FIND_PROGRAM(SEVEN_ZIP
         7z
@@ -45,6 +50,20 @@ IF(NOT JAVA)
     MESSAGE(FATAL_ERROR, "Can't find java executable. Please use -DJAVA=/path/to/java")
 ENDIF()
 
+
+FIND_PROGRAM(SCP
+        scp
+    PATHS
+        /bin            
+        /usr/bin
+        /usr/local/bin
+    DOC "Secure copy tool"
+)
+
+IF(NOT SCP)
+    MESSAGE(FATAL_ERROR, "Can't find secure copy tool SCP. Please use -DSCP=/path/to/scp")
+ENDIF()
+
 IF(NOT SD)
     IF(EXISTS "${ITROOT}")
         FILE(REMOVE_RECURSE "${ITROOT}")
@@ -52,13 +71,19 @@ IF(NOT SD)
     FILE(MAKE_DIRECTORY "${ITROOT}")
 
     MESSAGE("Download integration test pack from ${URL}${IT_PACKAGE_NAME}")
-    
-    FILE(DOWNLOAD "${URL}${IT_PACKAGE_NAME}" "${ITROOT}/${IT_PACKAGE_NAME}" STATUS status LOG log)
-    list(GET status 0 num_status)
-    IF (num_status GREATER 0)
-        list(GET status 1 str_status)
-        MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
-    ENDIF()
+
+    execute_process(COMMAND scp "${URL}${IT_PACKAGE_NAME}" ${ITROOT}/
+                    RESULT_VARIABLE RESULT)
+    if(RESULT)
+        message(FATAL_ERROR "Error downloading file: ${RESULT}")
+    endif()
+
+#    FILE(DOWNLOAD "${URL}${IT_PACKAGE_NAME}" "${ITROOT}/${IT_PACKAGE_NAME}" STATUS status LOG log)
+#    list(GET status 0 num_status)
+#    IF (num_status GREATER 0)
+#        list(GET status 1 str_status)
+#        MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
+#    ENDIF()
 ENDIF()
 
 MESSAGE("Extract ${ITROOT}/${IT_PACKAGE_NAME} using ${SEVEN_ZIP}")
@@ -98,46 +123,63 @@ STRING(REGEX REPLACE "(\nSite: )[^\n\r]+" "\\1${SITE}" DART_CONFIGURATION "${DAR
 STRING(REGEX REPLACE "(\nBuildName: )[^\n\r]+" "\\1${BUILD_NAME}" DART_CONFIGURATION "${DART_CONFIGURATION}")
 FILE(WRITE "${ITTEST_DIR}/DartConfiguration.tcl" "${DART_CONFIGURATION}")
 
-MACRO(TEST_PACKAGE PLATFORM)
-    SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")
-    MESSAGE("Download release from ${URL}${RELEASE_NAME}")
+MACRO(TEST_PACKAGE PLATFORMS)
+    MESSAGE("Download release from ${URL}")
 
-    FILE(DOWNLOAD "${URL}${RELEASE_NAME}.zip" "${ITTEST_DIR}/${RELEASE_NAME}.zip" STATUS status LOG log)
-    list(GET status 0 num_status)
-    IF (num_status GREATER 0)
-        list(GET status 1 str_status)
-        MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
-    ENDIF()
-
-    MESSAGE("Extract ${ITTEST_DIR}/${RELEASE_NAME}.zip using ${SEVEN_ZIP}")
-    EXECUTE_PROCESS(COMMAND ${SEVEN_ZIP} -y x "${RELEASE_NAME}.zip"
-                    WORKING_DIRECTORY "${ITTEST_DIR}"
-                    RESULT_VARIABLE archive_result
-                    OUTPUT_VARIABLE archive_output 
-                    ERROR_VARIABLE archive_err)
-    IF(archive_result)
-        MESSAGE(FATAL_ERROR "Error extracting archive ${ITTEST_DIR}/${RELEASE_NAME}\n\n${archive_output}\n${archive_err}")
-    ENDIF()
-
-    FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/lib/s*")
-    FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
-        FILE(REMOVE "${FILE}")
+    SET(FILES_TO_DOWNLOAD "")
+    FOREACH(PLATFORM ${PLATFORMS})
+        SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")
+        LIST(APPEND FILES_TO_DOWNLOAD "${URL}${RELEASE_NAME}.zip")
     ENDFOREACH()
+    
+    MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
+    
+    execute_process(COMMAND scp ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
+                    RESULT_VARIABLE RESULT)
+    if(RESULT)
+        message(FATAL_ERROR "Error downloading file: ${RESULT}")
+    endif()
 
-    FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/${RELEASE_NAME}/lib/s*")
-    FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
-        STRING(REGEX REPLACE "^.*/([^/]+)$" "\\1" NEW_FILENAME "${FILE}")
-        STRING(REGEX REPLACE "^(sevenzipjbinding-)[^.]+(.jar)$" "\\1Platform\\2" NEW_FILENAME "${NEW_FILENAME}")
-        EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "${FILE}" "${ITTEST_DIR}/lib/${NEW_FILENAME}")
+#    FILE(DOWNLOAD "${URL}${RELEASE_NAME}.zip" "${ITTEST_DIR}/${RELEASE_NAME}.zip" STATUS status LOG log)
+#    list(GET status 0 num_status)
+#    IF (num_status GREATER 0)
+#        list(GET status 1 str_status)
+#        MESSAGE(FATAL_ERROR "Error downloading file: ${str_status}\n\n${log}")
+#    ENDIF()
+
+    FOREACH(PLATFORM ${PLATFORMS})
+        SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")
+        MESSAGE("Extract ${ITTEST_DIR}/${RELEASE_NAME}.zip using ${SEVEN_ZIP}")
+        EXECUTE_PROCESS(COMMAND ${SEVEN_ZIP} -y x "${RELEASE_NAME}.zip"
+                        WORKING_DIRECTORY "${ITTEST_DIR}"
+                        RESULT_VARIABLE archive_result
+                        OUTPUT_VARIABLE archive_output 
+                        ERROR_VARIABLE archive_err)
+        IF(archive_result)
+            MESSAGE(FATAL_ERROR "Error extracting archive ${ITTEST_DIR}/${RELEASE_NAME}\n\n${archive_output}\n${archive_err}")
+        ENDIF()
+    
+        FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/lib/s*")
+        FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
+            FILE(REMOVE "${FILE}")
+        ENDFOREACH()
+    
+        FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/${RELEASE_NAME}/lib/s*")
+        FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
+            STRING(REGEX REPLACE "^.*/([^/]+)$" "\\1" NEW_FILENAME "${FILE}")
+            STRING(REGEX REPLACE "^(sevenzipjbinding-)[^.]+(.jar)$" "\\1Platform\\2" NEW_FILENAME "${NEW_FILENAME}")
+            EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "${FILE}" "${ITTEST_DIR}/lib/${NEW_FILENAME}")
+        ENDFOREACH()
+    
+        EXECUTE_PROCESS(COMMAND ${CMAKE_CTEST_COMMAND} -D Experimental
+                        WORKING_DIRECTORY "${ITTEST_DIR}")
     ENDFOREACH()
-
-    EXECUTE_PROCESS(COMMAND ${CMAKE_CTEST_COMMAND} -D Experimental
-                    WORKING_DIRECTORY "${ITTEST_DIR}")
 ENDMACRO()
+
 
 # Single platform packages
 #TEST_PACKAGE("Linux-amd64")
-#TEST_PACKAGE("Linux-i386")
+TEST_PACKAGE("${PACKAGES}")
 #TEST_PACKAGE("Mac-i386")
 #TEST_PACKAGE("Mac-x86_64")
 #TEST_PACKAGE("Windows-amd64")
@@ -147,5 +189,5 @@ ENDMACRO()
 #TEST_PACKAGE("AllLinux")
 #TEST_PACKAGE("AllWindows")
 #TEST_PACKAGE("AllMac")
-TEST_PACKAGE("AllPlatforms")
+#TEST_PACKAGE("AllPlatforms")
 
