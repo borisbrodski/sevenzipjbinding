@@ -84,8 +84,8 @@ public class JUnitNativeTestBase {
             final Class<? extends Exception> exceptionToBeExpected, int threadCount, int threadTimeout)
             throws Exception {
         final int[] threadsFinished = new int[] { threadCount };
-        final Throwable[] firstThrowable = new Throwable[] { null };
-        final Throwable[] firstExpectedThrowable = new Throwable[] { null };
+        final Throwable[] firstThrowableArray = new Throwable[] { null };
+        final Throwable[] firstExpectedThrowableArray = new Throwable[] { null };
         for (int i = 0; i < threadCount; i++) {
             new Thread(new Runnable() {
                 public void run() {
@@ -96,15 +96,15 @@ public class JUnitNativeTestBase {
                                     + exceptionToBeExpected.getCanonicalName());
                         }
                     } catch (Throwable e) {
-                        synchronized (firstThrowable) {
+                        synchronized (firstThrowableArray) {
                             boolean wasExceptionExpected = exceptionToBeExpected != null
                                     && exceptionToBeExpected.isAssignableFrom(e.getClass());
-                            if (firstThrowable[0] == null //
+                            if (firstThrowableArray[0] == null //
                                     && !wasExceptionExpected) {
-                                firstThrowable[0] = e;
+                                firstThrowableArray[0] = e;
                             }
                             if (wasExceptionExpected) {
-                                firstExpectedThrowable[0] = e;
+                                firstExpectedThrowableArray[0] = e;
                             }
                         }
                     } finally {
@@ -136,17 +136,20 @@ public class JUnitNativeTestBase {
                 }
             }
         }
-        if (firstThrowable[0] != null) {
-            if (firstThrowable[0] instanceof SevenZipException) {
-                throw (SevenZipException) firstThrowable[0];
+        Throwable firstThrowable = firstThrowableArray[0];
+        if (firstThrowable != null) {
+            if (firstThrowable instanceof SevenZipException) {
+                throw (SevenZipException) firstThrowable;
             }
-            throw new RuntimeException("Exception in underlying thread", firstThrowable[0]);
+            System.out.println(firstThrowable);
+            throw new RuntimeException("Exception in underlying thread", firstThrowable);
         }
-        if (firstExpectedThrowable[0] != null) {
-            if (firstExpectedThrowable[0] instanceof Exception) {
-                throw (Exception) firstExpectedThrowable[0];
+        Throwable firstExpectedThrowable = firstExpectedThrowableArray[0];
+        if (firstExpectedThrowable != null) {
+            if (firstExpectedThrowable instanceof Exception) {
+                throw (Exception) firstExpectedThrowable;
             }
-            throw (Error) firstExpectedThrowable[0];
+            throw (Error) firstExpectedThrowable;
         }
     }
 }
