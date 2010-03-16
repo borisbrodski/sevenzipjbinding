@@ -34,10 +34,11 @@ class ThreadContext {
 public:
     JNIEnv * _env;
     int _attachedThreadCount;
+    bool _wasAttached;
     std::list<JNINativeCallContext*> _javaNativeContext;
 
     ThreadContext() :
-        _attachedThreadCount(-1), _env(NULL) {
+        _attachedThreadCount(0), _env(NULL), _wasAttached(false) {
     }
 };
 
@@ -58,6 +59,7 @@ class JBindingSession {
 #ifdef USE_MY_ASSERTS
 public:
     static int _attachedThreadCount;
+    static PlatformCriticalSection _attachedThreadCountCriticalSection;
 private:
 #endif
 
@@ -66,7 +68,6 @@ private:
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[threadId];
         _threadContextMapCriticalSection.Leave();
-        threadContext._env = initEnv;
         TRACE("JNINativeCallContext=" << jniNativeCallContext)
         threadContext._javaNativeContext.push_front(jniNativeCallContext);
     }
@@ -79,7 +80,8 @@ private:
         MY_ASSERT(*(threadContext._javaNativeContext.begin()) == &javaNativeContext);
 
         threadContext._javaNativeContext.pop_front();
-        if (threadContext._javaNativeContext.size() == 0) {
+        if (!threadContext._javaNativeContext.size() && !threadContext._attachedThreadCount) {
+            MY_ASSERT(!threadContext._wasAttached);
             _threadContextMap.erase(threadId);
         }
         _threadContextMapCriticalSection.Leave();
@@ -99,13 +101,13 @@ public:
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
         _threadContextMapCriticalSection.Leave();
-        if (!threadContext._env) {
+        if (!threadContext._javaNativeContext.size() && !threadContext._env) {
             // Attach new thread
-            threadContext._attachedThreadCount = 0;
-
             TRACE("Attaching current thread to VM.")
 #ifdef USE_MY_ASSERTS
+            _attachedThreadCountCriticalSection.Enter();
             _attachedThreadCount++;
+            _attachedThreadCountCriticalSection.Leave();
 #endif
             jint result;
             if ((result = _vm->AttachCurrentThread((void**) &threadContext._env, NULL))
@@ -116,13 +118,18 @@ public:
                 fatal("Can't attach current thread (id: %i) to the VM",
                         PlatformGetCurrentThreadId());
             }
+            threadContext._wasAttached = true;
             TRACE("Thread attached. New env=" << (void *)threadContext._env);
         }
         if (threadContext._javaNativeContext.size()) {
             *jniNativeCallContext = *threadContext._javaNativeContext.begin();
         }
         threadContext._attachedThreadCount++;
-        return threadContext._env;
+        if (threadContext._env) {
+            return threadContext._env;
+        }
+        MY_ASSERT(*jniNativeCallContext)
+        return NULL;
     }
 
     void endCallback() {
@@ -130,9 +137,12 @@ public:
 
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[threadId];
-        if (!--threadContext._attachedThreadCount) {
+        if (!--threadContext._attachedThreadCount && threadContext._wasAttached) {
+            MY_ASSERT(threadContext._javaNativeContext.size() == 0);
 #ifdef USE_MY_ASSERTS
+            _attachedThreadCountCriticalSection.Enter();
             _attachedThreadCount--;
+            _attachedThreadCountCriticalSection.Leave();
 #endif
             _vm->DetachCurrentThread();
             _threadContextMap.erase(threadId);
@@ -162,8 +172,14 @@ public:
 
     ~JBindingSession() {
         MY_ASSERT(_objectList.size() == 0);
+//        ThreadContextMap::iterator i = _threadContextMap.begin();
+//        while (i != _threadContextMap.end()) {
+//            printf("Thread Id: %i, attached threads: %i, native contexts: %i\n", i->first,
+//                    i->second._attachedThreadCount, i->second._javaNativeContext.size());
+//            fflush(stdout);
+//            i++;
+//        }
         MY_ASSERT(_threadContextMap.size() == 0);
-        // TODO Check _threadContextMap
     }
 };
 
@@ -243,16 +259,14 @@ public:
         return false;
     }
 
-    void throwException(char const * msg, ...);
-
-    void reportError(char * fmt, ...) {
+    void reportError(const char * fmt, ...) {
         va_list args;
         va_start(args, fmt);
         vReportError(fmt, args);
         va_end(args);
     }
 
-    void vReportError(char * fmt, va_list args) {
+    void vReportError(const char * fmt, va_list args) {
         if (_errorMessage) {
             free(_errorMessage);
         }
@@ -262,7 +276,7 @@ public:
         buffer[sizeof(buffer) - 1] = '\0';
         int length = strlen(buffer);
 
-        _errorMessage = (char *)malloc(length + 1);
+        _errorMessage = (char *) malloc(length + 1);
         memcpy(_errorMessage, buffer, length + 1);
     }
 };
@@ -279,7 +293,11 @@ class JNIEnvInstance {
         MY_ASSERT(_isCallback);
 
         _env = _jbindingSession.beginCallback(&_jniNativeCallContext);
-        MY_ASSERT(_env);
+        if (!_env) {
+            MY_ASSERT(_jniNativeCallContext);
+            _env = _jniNativeCallContext->_jniCallOriginalEnv;
+            MY_ASSERT(_env);
+        }
     }
 public:
     JNIEnvInstance(JBindingSession & jbindingSession, JNINativeCallContext & jniNativeCallContext,

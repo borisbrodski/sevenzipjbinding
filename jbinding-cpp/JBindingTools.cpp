@@ -35,6 +35,7 @@ void JBindingSession::handleThrownException(jthrowable exceptionLocalRef) {
             (*jniNativeCallContextList.begin())->exceptionThrownInOtherThread(threadContext._env,
                     exceptionLocalRef);
         }
+        threadContextIterator++;
     }
     _threadContextMapCriticalSection.Leave();
 }
@@ -114,12 +115,10 @@ JNINativeCallContext::~JNINativeCallContext() {
 
 }
 
-void JNINativeCallContext::throwException(char const * msg, ...) {
-    // TODO
-}
-
 #ifdef USE_MY_ASSERTS
 int JBindingSession::_attachedThreadCount = 0;
+PlatformCriticalSection JBindingSession::_attachedThreadCountCriticalSection;
+
 extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetAttachedThreadCount(
                                                                                                                       JNIEnv * env,
                                                                                                                       jclass clazz) {
