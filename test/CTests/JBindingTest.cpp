@@ -127,14 +127,6 @@ public:
         _sstream(sstream), _error(false) {
     }
 
-    /*
-    void appendToSStream(JNIEnv * env, jstring string) {
-        _criticalSection.Enter();
-        _sstream << env << jstringNoQuotes() << string;
-        _criticalSection.Leave();
-    }
-    */
-
     void reportError() {
         _criticalSection.Enter();
         _error = true;
@@ -146,7 +138,6 @@ public:
 };
 
 struct CallRecursiveCallbackMethodMTParameter {
-    //bool _complete;
     ThreadHelper * _threadHelper;
     JBindingSession * _jbindingSession;
     jclass _thiz;
@@ -159,7 +150,6 @@ struct CallRecursiveCallbackMethodMTParameter {
     jint _mtwidthindex;
     jstring _message;
     CallRecursiveCallbackMethodMTParameter() :
-        // _complete(false),
                 _message(NULL) {
     }
 };
@@ -181,10 +171,6 @@ static THREAD_FUNC_DECL callRecursiveCallbackMethodMT(void * parameterPtr) {
             parameter->_message = (jstring) jniEnvInstance->NewGlobalRef(value);
         }
     }
-    //    for (int i = 0; i < 100000000; i++);
-    //    printf("Finish\n");
-    //    fflush(stdout);
-    // parameter->_complete = true;
     return 0;
 }
 
@@ -226,8 +212,6 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
     }
 
     if (mtwidth > 0) {
-        // printf("Starting %i threads\n", mtwidth);
-        // fflush(stdout);
         ThreadHelper threadHelper(sstream);
         NWindows::CThread * threads = new NWindows::CThread[mtwidth];
         CallRecursiveCallbackMethodMTParameter * parameters =
@@ -255,21 +239,10 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
             if (hr) {
                 fatal("Can't start new thread. Error: 0x%08X", hr);
             }
-            //        jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, depth,
-            //                width, mtwidth, useException, customErrorMessage, -1, i);
-            //        error |= jniEnvInstance.exceptionCheck();
-
-            //        if (i) {
-            //            sstream << ",";
-            //        }
-
-            //        sstream << env << jstringNoQuotes() << value;
         }
         for (int i = 0; i < mtwidth;) {
             threads[i].Wait();
-            //if (parameters[i]._complete) {
             i++;
-            //}
         }
         for (int i = 0; i < mtwidth; i++) {
             if (parameters[i]._message) {
@@ -284,9 +257,6 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         delete[] parameters;
 
         error |= threadHelper.isError();
-        //        threadCounter.waitForZeroCounter();
-        // printf("Complete\n");
-        // fflush(stdout);
     }
 
     if (error) {
@@ -332,11 +302,6 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_JBindingTest_singleCallSessionW
                                                                                              jlong number) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext nativeCallContext(jbindingSession, env);
-
-    // Thread.Create(MFThread, NULL);
-    //for (int i = 0; i < 10; i++) {
-    //    std::cout << "X: " << i << std::endl;
-    // }
 
     CPPToJavaSimpleClass callback(jbindingSession, env, object);
 

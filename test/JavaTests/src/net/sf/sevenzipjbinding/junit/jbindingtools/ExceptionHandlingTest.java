@@ -20,7 +20,6 @@ import org.junit.Test;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     private static final String NO_CUSTOM_MESSSAGE_TEXT = "Multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
-    private static final String NEW_LINE = System.getProperty("line.separator");
 
     public static abstract class Width1 extends ExceptionHandlingTest {
         @Override
@@ -592,14 +591,14 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         } catch (Throwable throwable) {
             assertTrue(useException);
             checkException(throwable);
-            // throwable.printStackTrace();
+            // throwable.printStackTrace(); 
             if (getWidth() == 1 && getMtWidth() == 0 && !customErrorMessage) {
                 assertFalse(throwable instanceof SevenZipException);
                 assertNull(throwable.getCause());
                 checkPathInSingleException(throwable);
             } else {
                 assertTrue(throwable instanceof SevenZipException);
-                checkPathInException(throwable, 0);
+                checkPathInException(throwable, 0, customErrorMessage);
             }
         }
     }
@@ -618,7 +617,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         }
     }
 
-    private List<int[]> checkPathInException(Throwable throwable, int level) {
+    private List<int[]> checkPathInException(Throwable throwable, int level, boolean customErrorMessage) {
         List<int[]> path = null;
         Throwable firstCause = throwable.getCause();
         Throwable lastCause = null;
@@ -629,6 +628,13 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
             lastCause = sevenZipException.getCauseLastThrown();
             firstPotentialCause = sevenZipException.getCauseFirstPotentialThrown();
             lastPotentialCause = sevenZipException.getCauseLastPotentialThrown();
+
+            if (customErrorMessage) {
+                assertEquals("Error: depth=" + (getDepth() - level) + ", width=" + getWidth(), //
+                        sevenZipException.getSevenZipExceptionMessage());
+            } else {
+                assertEquals(NO_CUSTOM_MESSSAGE_TEXT, sevenZipException.getSevenZipExceptionMessage());
+            }
         }
 
         if (firstCause != null) {
@@ -637,22 +643,24 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
             int[] firstPotentialCausePathElement = null;
             int[] lastPotentialCausePathElement = null;
 
-            List<int[]> firstCausePath = checkPathInException(firstCause, level + 1);
+            List<int[]> firstCausePath = checkPathInException(firstCause, level + 1, customErrorMessage);
             firstCausePathElement = firstCausePath.get(level);
             path = checkPathAndPutToResult(path, firstCausePath);
 
             if (lastCause != null) {
-                List<int[]> lastCausePath = checkPathInException(lastCause, level + 1);
+                List<int[]> lastCausePath = checkPathInException(lastCause, level + 1, customErrorMessage);
                 lastCausePathElement = lastCausePath.get(level);
                 path = checkPathAndPutToResult(path, lastCausePath);
             }
             if (firstPotentialCause != null) {
-                List<int[]> firstPotentialCausePath = checkPathInException(firstPotentialCause, level + 1);
+                List<int[]> firstPotentialCausePath = checkPathInException(firstPotentialCause, level + 1,
+                        customErrorMessage);
                 firstPotentialCausePathElement = firstPotentialCausePath.get(level);
                 path = checkPathAndPutToResult(path, firstPotentialCausePath);
             }
             if (lastPotentialCause != null) {
-                List<int[]> lastPotentialCausePath = checkPathInException(lastPotentialCause, level + 1);
+                List<int[]> lastPotentialCausePath = checkPathInException(lastPotentialCause, level + 1,
+                        customErrorMessage);
                 lastPotentialCausePathElement = lastPotentialCausePath.get(level);
                 path = checkPathAndPutToResult(path, lastPotentialCausePath);
             }
