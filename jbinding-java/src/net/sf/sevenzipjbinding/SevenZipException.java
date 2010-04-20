@@ -1,13 +1,106 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
+
 /**
- * SevenZip core exception.
+ * SevenZip core exception. This exception supports multiple 'cause by' exceptions. Multiple 'cause by' can occur, if
+ * native code is involved. If one of the call-back java methods an exception will be thrown, the native code can save
+ * this exception and proceed with the next call-back java methods, which can throw an exception as well. After native
+ * code completes, a new SevenZipException will be thrown. This exception has multiple 'cause by' exceptions attached:
+ * <ul>
+ * <li>exception, thrown from the first call-back java method (first 'cause by' exception)
+ * <li>exception, thrown from the second call-back java method (last 'cause by' exception)
+ * </ul>
+ * If more, then two 'cause by' exception was thrown, only first and last exception will be saved.<br>
+ * <br>
+ * 
+ * In case of multi-threaded native code potential 'cause by' exception could be available in a SevenZipException. A
+ * potential 'cause by' exception situation can occur, if during a pending native call, a call-back java method will be
+ * called from a new thread. Since an exception thrown from another thread, can't be connected as a cause to the
+ * subsequent exception from one of pending native call definitely, the 'cause by' exception will be saved as a
+ * potential first/last cause.
  * 
  * @author Boris Brodski
  * @version 4.65-1
  */
 public class SevenZipException extends Exception {
     private static final String NEW_LINE = System.getProperty("line.separator");
+
+    private static class StackTraceWriter extends Writer {
+        private PrintWriter writer;
+        private boolean newlineFound = true;
+        private final String message;
+        private int indexInMessage;
+
+        StackTraceWriter(PrintWriter writer, String message) {
+            super(writer);
+            this.writer = writer;
+            this.message = message;
+        }
+
+        @Override
+        public void close() {
+            writer.close();
+        }
+
+        @Override
+        public void flush() {
+            writer.flush();
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) {
+            for (int i = 0; i < len; i++) {
+                if (cbuf[i] == '\n' || cbuf[i] == '\r') {
+                    newlineFound = true;
+                } else {
+                    if (newlineFound) {
+                        if (message.charAt(indexInMessage) == ' ') {
+                            writer.write("| ");
+                        } else {
+                            writer.write(message.charAt(indexInMessage));
+                            writer.write(' ');
+                        }
+                        if (++indexInMessage >= message.length()) {
+                            indexInMessage = 0;
+                        }
+                    }
+                    newlineFound = false;
+                }
+                writer.write(cbuf[i]);
+            }
+        }
+    }
+
+    private static class PrintStreamWriter extends Writer {
+        private final PrintStream printStream;
+
+        PrintStreamWriter(PrintStream printStream) {
+            this.printStream = printStream;
+        }
+
+        @Override
+        public void close() throws IOException {
+            printStream.close();
+        }
+
+        @Override
+        public void flush() throws IOException {
+            printStream.flush();
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            if (off == 0 && len == cbuf.length) {
+                printStream.print(cbuf);
+            } else {
+                printStream.print(new String(cbuf, off, len));
+            }
+        }
+    }
 
     private static final long serialVersionUID = 42L;
 
@@ -96,17 +189,41 @@ public class SevenZipException extends Exception {
      */
     @Override
     public String getMessage() {
+        return getMessage(false);
+    }
+
+    /**
+     * Get 7-Zip-JBinding exception original error message (without 'cause by' messages)
+     * 
+     * @return original error message
+     */
+    public String getSevenZipExceptionMessage() {
+        return super.getMessage();
+    }
+
+    private String getMessage(boolean forPrintStackTraceExtended) {
+        if (causeLastThrown == null && causeFirstPotentialThrown == null && causeLastPotentialThrown == null) {
+            return super.getMessage();
+        }
         StringBuilder stringBuilder = new StringBuilder();
-        printToStringBuilder("", stringBuilder);
+        printToStringBuilder("", stringBuilder, forPrintStackTraceExtended);
         return stringBuilder.toString();
     }
 
-    private void printToStringBuilder(String prefix, StringBuilder stringBuilder) {
+    private void printToStringBuilder(String prefix, StringBuilder stringBuilder, boolean forPrintStackTraceExtended) {
         String message = super.getMessage();
         if (message == null) {
             stringBuilder.append("No message");
         } else {
             stringBuilder.append(message);
+        }
+
+        if (prefix.length() == 0 && !forPrintStackTraceExtended) {
+            stringBuilder.append(NEW_LINE);
+            stringBuilder.append("This " + SevenZipException.class.getSimpleName()
+                    + " has multiple 'cause by' exceptions. Use one of the " + SevenZipException.class.getSimpleName()
+                    + ".printStackTraceExtended(..) methods "
+                    + "to get stack trace of last thrown and first/last potiential thrown 'cause by' exceptions.");
         }
 
         Throwable causeFirstThrown = getCause();
@@ -140,11 +257,135 @@ public class SevenZipException extends Exception {
         }
     }
 
-    private void printMessageToStringBuilder(String prefix, StringBuilder stringBuilder, Throwable causeLastThrown) {
-        if (causeLastThrown instanceof SevenZipException) {
-            ((SevenZipException) causeLastThrown).printToStringBuilder(prefix + "  ", stringBuilder);
+    private void printMessageToStringBuilder(String prefix, StringBuilder stringBuilder, Throwable cause) {
+        stringBuilder.append(cause.getClass().getCanonicalName());
+        stringBuilder.append(": ");
+        if (cause instanceof SevenZipException) {
+            ((SevenZipException) cause).printToStringBuilder(prefix + "  ", stringBuilder, false);
         } else {
-            stringBuilder.append(causeLastThrown.getMessage());
+            stringBuilder.append(cause.getMessage());
+        }
+    }
+
+    /**
+     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified system
+     * error stream <code>System.err</code>.
+     */
+    public void printStackTraceExtended() {
+        printStackTraceExtended(System.err);
+    }
+
+    /**
+     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified print
+     * stream.
+     * 
+     * @param printStream
+     *            <code>PrintStream</code> to use for output
+     */
+    public void printStackTraceExtended(PrintStream printStream) {
+        synchronized (printStream) {
+            printStackTraceToPrintWriter(new PrintWriter(new PrintStreamWriter(printStream)), this, null);
+        }
+    }
+
+    /**
+     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified print
+     * writer.
+     * 
+     * @param printWriter
+     *            <code>PrintWriter</code> to use for output
+     */
+    public void printStackTraceExtended(PrintWriter printWriter) {
+        synchronized (printWriter) {
+            printStackTraceToPrintWriter(printWriter, this, null);
+        }
+    }
+
+    private static void printStackTraceOfThrowable(PrintWriter printWriter, Throwable throwable, Throwable successor) {
+        if (throwable instanceof SevenZipException) {
+            printStackTraceToPrintWriter(printWriter, (SevenZipException) throwable, successor);
+        } else {
+            printStackTraceRecursive(printWriter, throwable, successor);
+        }
+    }
+
+    private static void printStackTraceToPrintWriter(PrintWriter printWriter, SevenZipException sevenZipException,
+            Throwable successor) {
+        if (sevenZipException.causeLastThrown == null && sevenZipException.causeFirstPotentialThrown == null
+                && sevenZipException.causeLastPotentialThrown == null) {
+            printStackTraceRecursive(printWriter, sevenZipException, successor);
+        }
+
+        printWriter.println("+------ " + SevenZipException.class.getSimpleName()
+                + " with multiple 'cause by' exceptions. Stacktraces for all involved exceptions:");
+        printWriter.println("+-- The " + SevenZipException.class.getSimpleName()
+                + " itself with first thrown 'cause by' exception (first cause): ");
+        //        if (successor == null) {
+        //        } else {
+        //            printWriter.println("+-- First thrown 'cause by' exception (first cause): ");
+        //        }
+        printStackTraceRecursive(new PrintWriter(new StackTraceWriter(printWriter, "  FIRST THROWN CAUSE ")),
+                sevenZipException, successor);
+        if (sevenZipException.causeLastThrown != null) {
+            printWriter.println("+-- Last thrown 'cause by' exception (last cause): ");
+            printStackTraceOfThrowable(new PrintWriter(new StackTraceWriter(printWriter, "  LAST THROWN CAUSE ")),
+                    sevenZipException.causeLastThrown, sevenZipException);
+        }
+        if (sevenZipException.causeFirstPotentialThrown != null) {
+            printWriter.println(//
+                    "+-- First thrown potential 'cause by' exception, thrown in an other thread (first possible cause): ");
+            printStackTraceOfThrowable(new PrintWriter(new StackTraceWriter(printWriter,
+                    "  FIRST THROWN POTENTIAL CAUSE ")), sevenZipException.causeFirstPotentialThrown, sevenZipException);
+        }
+        if (sevenZipException.causeLastPotentialThrown != null) {
+            printWriter.println(//
+                    "+-- Last thrown potential 'cause by' exception, thrown in an other thread (last possible cause): ");
+            printStackTraceOfThrowable(new PrintWriter(new StackTraceWriter(printWriter,
+                    "  LAST THROWN POTENTIAL CAUSE ")), sevenZipException.causeLastPotentialThrown, sevenZipException);
+        }
+        printWriter.println("+------ End of stacktrace of " + SevenZipException.class.getSimpleName()
+                + " with multiple 'cause by' exceptions");
+
+    }
+
+    private static void printStackTraceRecursive(PrintWriter printWriter, Throwable throwable, Throwable successor) {
+        StackTraceElement[] stackTraceElements = throwable.getStackTrace();
+        int skipElements = 0;
+        if (successor != null) {
+            StackTraceElement[] successorStackTraceElements = throwable.getStackTrace();
+            int i = successorStackTraceElements.length - 1;
+            int j = stackTraceElements.length - 1;
+            while (i >= 3 && j >= 3 && successorStackTraceElements[i].equals(stackTraceElements[j])) {
+                i--;
+                j--;
+                skipElements++;
+            }
+        }
+        if (skipElements <= 3) {
+            skipElements = 0;
+        }
+        if (successor == null) {
+            printWriter.println(getMessageForPrintStackTraceExtended(throwable));
+        } else {
+            printWriter.println("Caused by: " + getMessageForPrintStackTraceExtended(throwable));
+        }
+        for (int i = 0; i < stackTraceElements.length - skipElements; i++) {
+            StackTraceElement stackTraceElement = stackTraceElements[i];
+            printWriter.println("\tat " + stackTraceElement);
+        }
+        if (skipElements > 0) {
+            printWriter.println("\t... " + skipElements + " more");
+        }
+        if (throwable.getCause() != null) {
+            printStackTraceOfThrowable(printWriter, throwable.getCause(), throwable);
+        }
+    }
+
+    private static String getMessageForPrintStackTraceExtended(Throwable throwable) {
+        if (throwable instanceof SevenZipException) {
+            return ((SevenZipException) throwable).getMessage(true);
+        } else {
+            return throwable.toString();
         }
     }
 
@@ -187,4 +428,5 @@ public class SevenZipException extends Exception {
     public Throwable getCauseFirstPotentialThrown() {
         return causeFirstPotentialThrown;
     }
+
 }
