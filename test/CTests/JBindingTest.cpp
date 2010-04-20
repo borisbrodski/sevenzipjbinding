@@ -27,8 +27,8 @@ JT_END_CLASS
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jbindingtools", ExceptionHandlingTest)
 /*    */JT_CLASS_STATIC_METHOD(String, recursiveCallbackMethod,
-        /*    */JT_INT(depth, JT_INT(width, JT_INT(mtwidth, JT_BOOLEAN(useException, JT_BOOLEAN(customErrorMessage,
-                                                JT_INT(widthIndex,JT_INT(mtwidthindex,_))))))))
+        /*    */JT_STRING(path, JT_INT(depth, JT_INT(width, JT_INT(mtwidth, JT_BOOLEAN(useException,
+                                                JT_BOOLEAN(customErrorMessage, JT_INT(widthIndex,JT_INT(mtwidthindex,_)))))))))
 JT_END_CLASS
 
 class SimpleIUnknownClass : public CMyUnknownImp, public Object, public IUnknown {
@@ -127,11 +127,13 @@ public:
         _sstream(sstream), _error(false) {
     }
 
+    /*
     void appendToSStream(JNIEnv * env, jstring string) {
         _criticalSection.Enter();
-        _sstream << '<' << env << jstringNoQuotes() << string << '>';
+        _sstream << env << jstringNoQuotes() << string;
         _criticalSection.Leave();
     }
+    */
 
     void reportError() {
         _criticalSection.Enter();
@@ -148,6 +150,7 @@ struct CallRecursiveCallbackMethodMTParameter {
     ThreadHelper * _threadHelper;
     JBindingSession * _jbindingSession;
     jclass _thiz;
+    jstring _path;
     jint _depth;
     jint _width;
     jint _mtwidth;
@@ -156,20 +159,20 @@ struct CallRecursiveCallbackMethodMTParameter {
     jint _mtwidthindex;
     jstring _message;
     CallRecursiveCallbackMethodMTParameter() :
-       // _complete(false),
-        _message(NULL) {
+        // _complete(false),
+                _message(NULL) {
     }
 };
 
 static THREAD_FUNC_DECL callRecursiveCallbackMethodMT(void * parameterPtr) {
     CallRecursiveCallbackMethodMTParameter *parameter =
-            (CallRecursiveCallbackMethodMTParameter *) parameterPtr;
+    (CallRecursiveCallbackMethodMTParameter *) parameterPtr;
 
     {
         JNIEnvInstance jniEnvInstance(*parameter->_jbindingSession);
 
         jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance,
-                parameter->_depth, parameter->_width, parameter->_mtwidth,
+                parameter->_path, parameter->_depth, parameter->_width, parameter->_mtwidth,
                 parameter->_useException, parameter->_customErrorMessage, -1,
                 parameter->_mtwidthindex);
         if (jniEnvInstance.exceptionCheck()) {
@@ -187,13 +190,14 @@ static THREAD_FUNC_DECL callRecursiveCallbackMethodMT(void * parameterPtr) {
 
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecursiveCallbackMethod(
-                                                                                                   JNIEnv * env,
-                                                                                                   jclass thiz,
-                                                                                                   jint depth,
-                                                                                                   jint width,
-                                                                                                   jint mtwidth,
-                                                                                                   jboolean useException,
-                                                                                                   jboolean customErrorMessage) {
+        JNIEnv * env,
+        jclass thiz,
+        jstring path,
+        jint depth,
+        jint width,
+        jint mtwidth,
+        jboolean useException,
+        jboolean customErrorMessage) {
     JBindingSession jbindingSession(env);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
@@ -206,7 +210,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         sstream << "(";
     }
     for (int i = 0; i < width; i++) {
-        jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, depth,
+        jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, path, depth,
                 width, mtwidth, useException, customErrorMessage, i, -1);
         error |= jniEnvInstance.exceptionCheck();
 
@@ -227,11 +231,12 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         ThreadHelper threadHelper(sstream);
         NWindows::CThread * threads = new NWindows::CThread[mtwidth];
         CallRecursiveCallbackMethodMTParameter * parameters =
-                new CallRecursiveCallbackMethodMTParameter[mtwidth];
+        new CallRecursiveCallbackMethodMTParameter[mtwidth];
         for (int i = 0; i < mtwidth; i++) {
             parameters[i]._threadHelper = &threadHelper;
             parameters[i]._jbindingSession = &jbindingSession;
             parameters[i]._thiz = thiz;
+            parameters[i]._path = path;
             parameters[i]._depth = depth;
             parameters[i]._width = width;
             parameters[i]._mtwidth = mtwidth;
@@ -263,12 +268,12 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         for (int i = 0; i < mtwidth;) {
             threads[i].Wait();
             //if (parameters[i]._complete) {
-                i++;
+            i++;
             //}
         }
         for (int i = 0; i < mtwidth; i++) {
             if (parameters[i]._message) {
-                sstream << '<' << env << jstringNoQuotes() << parameters[i]._message << '>';
+                sstream  << env << jstringNoQuotes() << parameters[i]._message;
             } else {
                 MY_ASSERT(threadHelper.isError());
                 sstream << "<message==NULL>";

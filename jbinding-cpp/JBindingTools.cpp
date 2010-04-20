@@ -59,8 +59,8 @@ JNINativeCallContext::~JNINativeCallContext() {
             if (_errorMessage) {
                 message = _jniCallOriginalEnv->NewStringUTF(_errorMessage);
             } else {
-                message = _jniCallOriginalEnv->NewStringUTF("Multiple exceptions were thrown. "
-                    "See multiple caused by exceptions for more information."); // TODO Spell check it
+                message = _jniCallOriginalEnv->NewStringUTF("Multiple exceptions without specific error message were thrown. "
+                    "See multiple 'caused by' exceptions for more information."); // TODO Spell check it
             }
             sevenZipException = static_cast<jthrowable> (jni::SevenZipException::newInstance(
                     _jniCallOriginalEnv, message));
