@@ -4,22 +4,23 @@
 
 
 
-#define CHECK_HRESULT(nativeMethodContext, call, msg)	CHECK_HRESULT5(nativeMethodContext, call, msg, NULL, NULL, NULL, NULL, NULL)
-#define CHECK_HRESULT1(nativeMethodContext, call, msg, p1)	CHECK_HRESULT5(nativeMethodContext, call, msg, p1, NULL, NULL, NULL, NULL)
-#define CHECK_HRESULT2(nativeMethodContext, call, msg, p1, p2)	CHECK_HRESULT5(nativeMethodContext, call, msg, p1, p2, NULL, NULL, NULL)
-#define CHECK_HRESULT3(nativeMethodContext, call, msg, p1, p2, p3)	CHECK_HRESULT5(nativeMethodContext, call, msg, p1, p2, p3, NULL, NULL)
-#define CHECK_HRESULT4(nativeMethodContext, call, msg, p1, p2, p3, p4)	CHECK_HRESULT5(nativeMethodContext, call, msg, p1, p2, p3, p4, NULL)
-#define CHECK_HRESULT5(nativeMethodContext, call, msg, p1, p2, p3, p4, p5)	\
+#define CHECK_HRESULT(jniNativeCallContext, call, msg)	CHECK_HRESULT5(jniNativeCallContext, call, msg, NULL, NULL, NULL, NULL, NULL)
+#define CHECK_HRESULT1(jniNativeCallContext, call, msg, p1)	CHECK_HRESULT5(jniNativeCallContext, call, msg, p1, NULL, NULL, NULL, NULL)
+#define CHECK_HRESULT2(jniNativeCallContext, call, msg, p1, p2)	CHECK_HRESULT5(jniNativeCallContext, call, msg, p1, p2, NULL, NULL, NULL)
+#define CHECK_HRESULT3(jniNativeCallContext, call, msg, p1, p2, p3)	CHECK_HRESULT5(jniNativeCallContext, call, msg, p1, p2, p3, NULL, NULL)
+#define CHECK_HRESULT4(jniNativeCallContext, call, msg, p1, p2, p3, p4)	CHECK_HRESULT5(jniNativeCallContext, call, msg, p1, p2, p3, p4, NULL)
+#define CHECK_HRESULT5(jniNativeCallContext, call, msg, p1, p2, p3, p4, p5)	\
 		{ 																	\
 			HRESULT hr = call;												\
 			if (hr != S_OK)													\
 			{																\
-				(nativeMethodContext).ThrowSevenZipException(               \
+				(jniNativeCallContext).reportError(                         \
 				        hr, msg, p1, p2, p3, p4, p5);					    \
 			}																\
 		}
 
-class JNIInstance;
+#include "JavaStaticInfo.h"
+#include "JBindingTools.h"
 
 // TODO Check all methods here and remove not used
 
@@ -37,7 +38,7 @@ void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute, jlon
 /**
  * Convert PropVariant into java object: Integer, Double, String
  */
-jobject PropVariantToObject(JNIInstance * jniInstance, NWindows::NCOM::CPropVariant * propVariant);
+jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPropVariant * propVariant);
 
 /**
  * Convert PropVariant into java string
@@ -47,9 +48,9 @@ jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &prop
 /**
  * Return Java-Class corresponding to the PropVariant Type 'vt'
  */
-jclass VarTypeToJavaType(JNIInstance * jniInstance, VARTYPE vt);
+jclass VarTypeToJavaType(JNIEnvInstance & jniEnvInstance, VARTYPE vt);
 
-void ObjectToPropVariant(JNIInstance * jniInstance, jobject object, PROPVARIANT * propVariant);
+void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVARIANT * propVariant);
 
 
 /**

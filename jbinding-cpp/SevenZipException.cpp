@@ -1,7 +1,10 @@
+// TODO Remove me
+/*
 #include <stdlib.h>
 
 #include "SevenZipJBinding.h"
 #include "SevenZipException.h"
+
 
 SevenZipException::SevenZipException(const char * fmt, ...)
 {
@@ -34,3 +37,4 @@ SevenZipException::SevenZipException(HRESULT hresult, char * fmt, ...)
     TRACE("Exception with message '" << _message << "' created. HResult: " << _hresult);
     _hresult = hresult;
 }
+*/

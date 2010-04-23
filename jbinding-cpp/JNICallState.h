@@ -1,3 +1,4 @@
+#ifdef TMP // TODO Remove this file
 #ifndef JNICALLSTATE_H_
 #define JNICALLSTATE_H_
 
@@ -184,3 +185,4 @@ public:
 };
 
 #endif /*JNICALLSTATE_H_*/
+#endif

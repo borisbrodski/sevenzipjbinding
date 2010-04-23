@@ -4,14 +4,14 @@
 #include "7zip/Archive/IArchive.h"
 #include "Common/MyCom.h"
 #include "CPPToJavaAbstract.h"
+#include "JavaStatInfos/JavaPackageSevenZip.h"
 
 class CPPToJavaSequentialOutStream : public CPPToJavaAbstract,
 	public virtual ISequentialOutStream,
 	public CMyUnknownImp
 {
 private:
-	jmethodID _writeMethodID;
-
+    jni::ISequentialOutStream _iSequentialOutStream;
 public:
 	MY_UNKNOWN_IMP1(ISequentialOutStream)
 
@@ -33,14 +33,11 @@ public:
 //    }
 
 
-	CPPToJavaSequentialOutStream(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject javaSequentialOutStreamImpl) :
-		CPPToJavaAbstract(nativeMethodContext, initEnv, javaSequentialOutStreamImpl)
+	CPPToJavaSequentialOutStream(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject javaSequentialOutStreamImpl) :
+		CPPToJavaAbstract(jbindingSession, initEnv, javaSequentialOutStreamImpl),
+		        _iSequentialOutStream(jni::ISequentialOutStream::_getInstanceFromObject(initEnv, javaSequentialOutStreamImpl))
 	{
 	    TRACE_OBJECT_CREATION("CPPToJavaSequentialOutStream")
-
-		// public int write(byte[] data);
-		_writeMethodID = GetMethodId(initEnv, "write", "([B)I");
-		classname = "CPPToJavaSequentialOutStream";
 	}
 
 	STDMETHOD(Write)(const void *data, UInt32 size, UInt32 *processedSize);

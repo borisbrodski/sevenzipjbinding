@@ -3,47 +3,26 @@
 
 #include "CPPToJavaAbstract.h"
 #include "CPPToJava/CPPToJavaInStream.h"
+#include "JavaStatInfos/JavaPackageSevenZip.h"
 
 class CPPToJavaArchiveOpenVolumeCallback : public CPPToJavaAbstract, //
-    public virtual IArchiveOpenVolumeCallback, public CMyUnknownImp
-{
+        public virtual IArchiveOpenVolumeCallback, public CMyUnknownImp {
 
 private:
-    jmethodID _getPropertyMethodID;
-    jmethodID _getStreamMethodID;
-
-	jclass _propIDClass;
-	jmethodID _propIDGetPropIDByIndexMethodID;
-	CPPToJavaInStream * lastVolume;
-
-	void Init(JNIEnv * initEnv);
-
+    jni::IArchiveOpenVolumeCallback _iArchiveOpenVolumeCallback;
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaArchiveOpenVolumeCallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv,
-    		jobject javaImplementation, CPPToJavaInStream * lastVolume) :
-        CPPToJavaAbstract(nativeMethodContext, initEnv, javaImplementation)
-    {
+    CPPToJavaArchiveOpenVolumeCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
+                                       jobject archiveOpenColumeCallback) :
+        CPPToJavaAbstract(jbindingSession, initEnv, archiveOpenColumeCallback),
+                _iArchiveOpenVolumeCallback(jni::IArchiveOpenVolumeCallback::_getInstanceFromObject(
+                        initEnv, archiveOpenColumeCallback)) {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenVolumeCallback")
-
-		Init(initEnv);
-		classname = "CPPToJavaArchiveOpenVolumeCallback";
-		this->lastVolume = lastVolume;
     }
 
     STDMETHOD(GetProperty)(PROPID propID, PROPVARIANT *value);
     STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream);
-
-    ~CPPToJavaArchiveOpenVolumeCallback()
-    {
-	    TRACE_OBJECT_CALL("~CPPToJavaArchiveOpenVolumeCallback");
-
-	    JNIInstance jniInstance(_nativeMethodContext);
-	    JNIEnv * env = jniInstance.GetEnv();
-
-		env->DeleteGlobalRef(_propIDClass);
-    }
 };
 
 #endif /*CPPTOJAVAARCHIVEOPENVOLUMECALLBACK_H_*/

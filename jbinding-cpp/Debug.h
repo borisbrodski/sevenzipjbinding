@@ -25,7 +25,8 @@
 // an exception check occurs. It destructs env after each method call
 // (using expectExceptionCheck()). The env should be repaired before
 // consequent use by calling prepareExceptionCheck().
-#   define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+//#   define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+// TODO define it
 
 // Define NATIVE_JUNIT_TEST_SUPPORT
 // --------------------------------------------------------

@@ -261,7 +261,14 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
 
     if (error) {
         if (customErrorMessage) {
-            jniNativeCallContext.reportError("Error: depth=%i, width=%i", (int) depth, (int) width);
+            if (depth % 2) {
+                jniNativeCallContext.reportError("Error: depth=%i, width=%i", (int) depth, (int) width);
+                jniNativeCallContext.reportError("Following error reports should be ignored!");
+            } else {
+                // TODO Test this
+                jniEnvInstance.reportError("Error: depth=%i, width=%i", (int) depth, (int) width);
+                jniEnvInstance.reportError("Following error reports should be ignored!");
+            }
         }
         return NULL;
     }

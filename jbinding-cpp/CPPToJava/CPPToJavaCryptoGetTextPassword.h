@@ -2,26 +2,22 @@
 #define CPPTOJAVACRYPTOGETTEXTPASSWORD_H_
 
 #include "CPPToJavaAbstract.h"
+#include "JavaStatInfos/JavaPackageSevenZip.h"
 
 class CPPToJavaCryptoGetTextPassword : public CPPToJavaAbstract, public virtual ICryptoGetTextPassword,
     public CMyUnknownImp
 {
 
 private:
-    jmethodID _cryptoGetTextPasswordMethodID;
-
+    jni::ICryptoGetTextPassword _iCryptoGetTextPassword;
 public:
     MY_UNKNOWN_IMP
 
-    CPPToJavaCryptoGetTextPassword(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject progress) :
-        CPPToJavaAbstract(nativeMethodContext, initEnv, progress)
+    CPPToJavaCryptoGetTextPassword(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject cryptoGetTextPassword) :
+        CPPToJavaAbstract(jbindingSession, initEnv, cryptoGetTextPassword),
+                _iCryptoGetTextPassword(jni::ICryptoGetTextPassword::_getInstanceFromObject(initEnv, cryptoGetTextPassword))
     {
         TRACE_OBJECT_CREATION("CPPToJavaCryptoGetTextPassword")
-        
-        classname = "CPPToJavaCryptoGetTextPassword";
-        
-        // public String cryptoGetTextPassword()
-        _cryptoGetTextPasswordMethodID = GetMethodId(initEnv, "cryptoGetTextPassword", "()" JAVA_STRING_T);
     }
 
     STDMETHOD(CryptoGetTextPassword)(BSTR *password);

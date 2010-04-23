@@ -31,8 +31,8 @@
 // TODO Remove
 // #define IN_ARCHIVE_IMPL "net/sf/sevenzipjbinding/impl/InArchiveImpl"
 //#define IN_ARCHIVE_IMPL_T JAVA_MAKE_SIGNATURE_TYPE(IN_ARCHIVE_IMPL)
-#define IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInstance"
-#define IN_STREAM_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInStreamInstance"
+//#define IN_ARCHIVE_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInstance"
+//#define IN_STREAM_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInStreamInstance"
 
 
 

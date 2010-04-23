@@ -21,17 +21,18 @@ void CodecTools::init() {
 
 }
 
+/**
+ * Return index of the archive type. Save to UString converted archive type name into 'formatNameString'.
+ * @param env instance of JNIEnv
+ * @param formatName archive type format name
+ * @param formatNameString instance of UString to put archive type name to
+ * @return index of the archive type or -1 if archive type not found.
+ */
 int CodecTools::getIndexByName(JNIEnv * env, jstring formatName, UString & formatNameString) {
-	int index;
 	const jchar * formatNameJChars = env->GetStringChars(formatName, NULL);
 	formatNameString = UnicodeHelper(formatNameJChars);
 	env->ReleaseStringChars(formatName, formatNameJChars);
 
 	TRACE("Format: " << formatNameString)
-	index = CodecTools::codecs.FindFormatForArchiveType(formatNameString);
-	if (index == -1) {
-		throw SevenZipException("Not registered archive format: '%S'", (const wchar_t*)formatNameString);
-	}
-
-	return index;
+	return CodecTools::codecs.FindFormatForArchiveType(formatNameString);
 }

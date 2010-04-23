@@ -1,3 +1,4 @@
+#ifdef TMP // TODO Remove this file
 #include "SevenZipJBinding.h"
 
 #include "JNICallState.h"
@@ -307,3 +308,4 @@ void NativeMethodContext::ThrowSevenZipException(SevenZipException * sevenZipExc
 }
 
 
+#endif

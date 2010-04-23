@@ -81,13 +81,13 @@ public final class InArchiveImpl implements ISevenZipInArchive {
     }
 
     @SuppressWarnings("unused")
-    private long bindingSession;
+    private long jbindingSession;
 
     @SuppressWarnings("unused")
     private long sevenZipArchiveInstance;
 
     @SuppressWarnings("unused")
-    private long sevenZipArchiveInStreamInstance;
+    private long sevenZipInStreamInstance;
 
     private int numberOfItems = -1;
 

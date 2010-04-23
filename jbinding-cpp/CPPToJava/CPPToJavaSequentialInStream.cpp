@@ -1,6 +1,6 @@
 #include "SevenZipJBinding.h"
 
-#include "JNITools.h"
+#include "JBindingTools.h"
 #include "CPPToJavaSequentialInStream.h"
 
 
@@ -8,26 +8,22 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 {
     TRACE_OBJECT_CALL("Read");
 
-    JNIInstance jniInstance(_nativeMethodContext);
-    JNIEnv * env = jniInstance.GetEnv();
+    JNIEnvInstance jniEnvInstance(_jbindingSession);
 
     if (processedSize) {
     	*processedSize = 0;
     }
 
-	jbyteArray byteArray = env->NewByteArray(size);
-	FATALIF(byteArray == NULL, "Out of local resource of out of memory: byteArray == NULL") // TODO Change to EXCEPTION_IF()
+	jbyteArray byteArray = jniEnvInstance->NewByteArray(size);
 
-//	jintArray intArray = env->NewIntArray(1);
-//	FATALIF(intArray == NULL, "Out of local resource of out of memory: intArray == NULL");
+	if (!byteArray) {
+	    jniEnvInstance.reportError("Out of local resources or out of memory");
+	}
 
-	jniInstance.PrepareCall();
-	jint wasRead = env->CallIntMethod(_javaImplementation, _readMethodID, byteArray);
-
-	if (jniInstance.IsExceptionOccurs())
+	jint wasRead = _iSequentialInStream.read(jniEnvInstance, _javaImplementation, byteArray);
+	if (jniEnvInstance.exceptionCheck())
 	{
-		env->DeleteLocalRef(byteArray);
-//		env->DeleteLocalRef(intArray);
+	    jniEnvInstance->DeleteLocalRef(byteArray);
 		return S_FALSE;
 	}
 
@@ -36,13 +32,11 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 		*processedSize = (UInt32)wasRead;
 	}
 
-	jbyte * buffer = env->GetByteArrayElements(byteArray, NULL);
+	jbyte * buffer = jniEnvInstance->GetByteArrayElements(byteArray, NULL);
 	memcpy(data, buffer, size);
-	env->ReleaseByteArrayElements(byteArray, buffer, JNI_ABORT);
+	jniEnvInstance->ReleaseByteArrayElements(byteArray, buffer, JNI_ABORT);
 
-	env->DeleteLocalRef(byteArray);
-//	env->DeleteLocalRef(intArray);
-//	env->ReleaseIntArrayElements(intArray, read, JNI_ABORT);
+	jniEnvInstance->DeleteLocalRef(byteArray);
 
 	return S_OK;
 }

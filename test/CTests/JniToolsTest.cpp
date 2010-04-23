@@ -10,6 +10,8 @@
 using namespace std;
 using namespace jni;
 
+// TODO Test "ByteArray"
+
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
 /*    */JT_CLASS_FINAL_METHOD(Long, privateLongMethod, JT_INT(i,_))
 /*    */JT_CLASS_FINAL_METHOD(String, privateStringMethod, JT_INT(i,_))

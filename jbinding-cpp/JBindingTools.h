@@ -12,6 +12,8 @@
 #include "BaseSystem.h"
 #include "JObjectList.h"
 
+#define NO_HRESULT -1
+
 class JNINativeCallContext;
 class JBindingSession;
 class JNIEnvInstance;
@@ -48,6 +50,7 @@ public:
  */
 class JBindingSession {
     friend class JNINativeCallContext;
+    friend class JNIEnvInstance;
     typedef std::map<ThreadId, ThreadContext> ThreadContextMap;
 
     std::list<CMyComPtrWrapper<IUnknown> > _objectList;
@@ -89,13 +92,14 @@ private:
 
     void handleThrownException(jthrowable exceptionLocalRef);
 
-public:
-    JBindingSession(JNIEnv * initEnv) {
-        if (!_vm && initEnv->GetJavaVM(&_vm)) {
-            fatal("Can't get JavaVM from JNIEnv");
-        }
-        MY_ASSERT(_vm);
+    void reportError(const char * fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vReportError(NO_HRESULT, fmt, args);
+        va_end(args);
     }
+
+    void vReportError(const int hresult, const char * fmt, va_list args);
 
     JNIEnv * beginCallback(JNINativeCallContext ** jniNativeCallContext) {
         _threadContextMapCriticalSection.Enter();
@@ -150,6 +154,14 @@ public:
         _threadContextMapCriticalSection.Leave();
     }
 
+public:
+    JBindingSession(JNIEnv * initEnv) {
+        if (!_vm && initEnv->GetJavaVM(&_vm)) {
+            fatal("Can't get JavaVM from JNIEnv");
+        }
+        MY_ASSERT(_vm);
+    }
+
     bool exceptionCheck(JNIEnv * env) {
         jni::prepareExceptionCheck(env);
         jthrowable exceptionLocalRef = env->ExceptionOccurred();
@@ -172,13 +184,13 @@ public:
 
     ~JBindingSession() {
         MY_ASSERT(_objectList.size() == 0);
-//        ThreadContextMap::iterator i = _threadContextMap.begin();
-//        while (i != _threadContextMap.end()) {
-//            printf("Thread Id: %i, attached threads: %i, native contexts: %i\n", i->first,
-//                    i->second._attachedThreadCount, i->second._javaNativeContext.size());
-//            fflush(stdout);
-//            i++;
-//        }
+        //        ThreadContextMap::iterator i = _threadContextMap.begin();
+        //        while (i != _threadContextMap.end()) {
+        //            printf("Thread Id: %i, attached threads: %i, native contexts: %i\n", i->first,
+        //                    i->second._attachedThreadCount, i->second._javaNativeContext.size());
+        //            fflush(stdout);
+        //            i++;
+        //        }
         MY_ASSERT(_threadContextMap.size() == 0);
     }
 };
@@ -253,32 +265,29 @@ public:
             return true;
         }
 
-        if (_errorMessage) {
-            free(_errorMessage);
-        }
+        // if (_errorMessage) {
+        //     free(_errorMessage);
+        // }
         return false;
     }
 
     void reportError(const char * fmt, ...) {
         va_list args;
         va_start(args, fmt);
-        vReportError(fmt, args);
+        vReportError(NO_HRESULT, fmt, args);
         va_end(args);
     }
 
-    void vReportError(const char * fmt, va_list args) {
-        if (_errorMessage) {
-            free(_errorMessage);
-        }
-
-        char buffer[64 * 1024];
-        vsnprintf(buffer, sizeof(buffer), fmt, args);
-        buffer[sizeof(buffer) - 1] = '\0';
-        int length = strlen(buffer);
-
-        _errorMessage = (char *) malloc(length + 1);
-        memcpy(_errorMessage, buffer, length + 1);
+    void reportError(const int hresult, const char * fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vReportError(hresult, fmt, args);
+        va_end(args);
     }
+
+    void vReportError(const int hresult, const char * fmt, va_list args);
+
+    bool willExceptionBeThrown();
 };
 
 class JNIEnvInstance {
@@ -333,8 +342,31 @@ public:
     JNIEnv * operator->() {
         return (JNIEnv *) *this;
     }
+
+    void reportError(const char * fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vReportError(NO_HRESULT, fmt, args);
+        va_end(args);
+    }
+
+    void reportError(const int hresult, const char * fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+        vReportError(hresult, fmt, args);
+        va_end(args);
+    }
+
+    void vReportError(const int hresult, const char * fmt, va_list args) {
+        if (_jniNativeCallContext) {
+            return _jniNativeCallContext->vReportError(hresult, fmt, args);
+        }
+
+        return _jbindingSession.vReportError(hresult, fmt, args);
+    }
 };
 
+// TODO Remove this
 template<class T>
 class AbstractJavaCallback : public Object {
 protected:
@@ -344,9 +376,14 @@ protected:
 
     AbstractJavaCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
                          jobject implementation) :
-        _jbindingSession(jbindingSession), _implementation(implementation), /**/
+        _jbindingSession(jbindingSession), _implementation(initEnv->NewGlobalRef(implementation)), /**/
         _javaClass(T::_getInstanceFromObject(initEnv, implementation)) {
         TRACE_OBJECT_CREATION("CPPToJavaAbstract");
+    }
+
+    ~AbstractJavaCallback() {
+        JNIEnvInstance jniEnvInstance(_jbindingSession);
+        jniEnvInstance->DeleteGlobalRef(_implementation);
     }
 
 };

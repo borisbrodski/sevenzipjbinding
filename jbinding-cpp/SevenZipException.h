@@ -1,3 +1,5 @@
+// TODO Remove it
+/*
 #ifndef SEVENZIPEXCEPTION_H_
 #define SEVENZIPEXCEPTION_H_
 
@@ -33,4 +35,5 @@ public:
     }
 };
 
-#endif /*SEVENZIPEXCEPTION_H_*/
+#endif //SEVENZIPEXCEPTION_H_
+*/

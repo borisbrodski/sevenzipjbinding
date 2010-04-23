@@ -18,38 +18,42 @@
  * Method:    updateItemsNative
  * Signature: (ILnet/sf/sevenzipjbinding/ISequentialOutStream;ILnet/sf/sevenzipjbinding/IArchiveUpdateCallback;)V
  */
-JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_updateItemsNative
-  (JNIEnv * env, jobject, jint archiveFormatIndex, jobject outStream, jint numberOfItems, jobject archiveUpdateCallback) {
-	TRACE("OutArchiveImpl.updateItemsNative()");
+JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_updateItemsNative(
+                                                                                                   JNIEnv * env,
+                                                                                                   jobject,
+                                                                                                   jint archiveFormatIndex,
+                                                                                                   jobject outStream,
+                                                                                                   jint numberOfItems,
+                                                                                                   jobject archiveUpdateCallback) {
+    TRACE("OutArchiveImpl.updateItemsNative()");
 
-	NativeMethodContext nativeMethodContext(env);
+    JBindingSession jbindingSession(env);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-	TRY
+    CMyComPtr<IOutArchive> outArchive;
+    HRESULT hresult = CodecTools::codecs.CreateOutArchive(archiveFormatIndex, outArchive);
+    if (hresult) {
+        jniEnvInstance.reportError(hresult, "Error creating OutArchive for archive format %S",
+                (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name);
+        return;
+    }
 
-	JNIInstance jniInstance(&nativeMethodContext);
+    CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
+            outStream);
 
-	CMyComPtr<IOutArchive> outArchive;
-	HRESULT hresult = CodecTools::codecs.CreateOutArchive(archiveFormatIndex, outArchive);
-	if (hresult) {
-		jniInstance.ThrowSevenZipException(hresult, "Error creating OutArchive for archive format %S",
-				(const wchar_t*)CodecTools::codecs.Formats[archiveFormatIndex].Name);
-		return;
-	}
+    CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
+            new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
+                    false);
 
-	CMyComPtr<IOutStream> cppToJavaOutStream =
-					new CPPToJavaOutStream(&nativeMethodContext, env, outStream);
+    hresult = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
+            cppToJavaArchiveUpdateCallback);
 
-	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
-					new CPPToJavaArchiveUpdateCallback(&nativeMethodContext, env, archiveUpdateCallback, false);
+    if (hresult) {
+        jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
+                (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
+                (int) numberOfItems);
+    }
 
-	hresult = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems, cppToJavaArchiveUpdateCallback);
-
-	if (hresult) {
-		jniInstance.ThrowSevenZipException(hresult, "Error creating '%S' archive with %i items",
-				(const wchar_t*)CodecTools::codecs.Formats[archiveFormatIndex].Name, (int)numberOfItems);
-	}
-
-	return;
-
-	CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, ;);
+    return;
 }

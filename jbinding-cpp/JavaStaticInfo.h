@@ -39,7 +39,6 @@
 
 #include <map>
 #include <stdarg.h>
-#include "JNITools.h"
 #include "JObjectList.h"
 
 // TODO Remove from here
@@ -87,6 +86,7 @@
 #define _JT_CTYPE_Class                         jclass
 #define _JT_CTYPE_String                        jstring
 #define _JT_CTYPE_Void                          void
+#define _JT_CTYPE_ByteArray                     jbyteArray
 
 #define _JT_JSIG_Boolean                        "Z"
 #define _JT_JSIG_Int                            "I"
@@ -95,6 +95,7 @@
 #define _JT_JSIG_Class                          "Ljava/lang/Class;"
 #define _JT_JSIG_String                         "Ljava/lang/String;"
 #define _JT_JSIG_Void                           "V"
+#define _JT_JSIG_ByteArray                      "[B"
 
 #define _JT_CALL_AND_ASSIGN_TO_RESULT(type, e)  _JT_APPLY1(_JT_CALL_AND_ASSIGN_TO_RESULT_##type,e)
 
@@ -102,51 +103,71 @@
 #define _JT_CALL_AND_ASSIGN_TO_RESULT_String(e) jstring __result = static_cast<jstring>(e);
 #define _JT_CALL_AND_ASSIGN_TO_RESULT_Long(e)   jlong __result = static_cast<jlong>(e);
 #define _JT_CALL_AND_ASSIGN_TO_RESULT_Int(e)    jint __result = static_cast<jint>(e);
+#define _JT_CALL_AND_ASSIGN_TO_RESULT_Boolean(e)                                                \
+                                                jboolean __result = static_cast<jboolean>(e);
 #define _JT_CALL_AND_ASSIGN_TO_RESULT_Class(e)  jclass __result = static_cast<jclass>(e);
 #define _JT_CALL_AND_ASSIGN_TO_RESULT_Void(e)   char const * __result = "<void>"; e;
+#define _JT_CALL_AND_ASSIGN_TO_RESULT_ByteArray(e)                                              \
+                                                jbyteArray __result = static_cast<jobject>(e);
 
 #define _JT_RETURN_RESULT_String                return __result;
 #define _JT_RETURN_RESULT_Long                  return __result;
 #define _JT_RETURN_RESULT_Int                   return __result;
+#define _JT_RETURN_RESULT_Boolean               return __result;
 #define _JT_RETURN_RESULT_Class                 return __result;
 #define _JT_RETURN_RESULT_Object                return __result;
+#define _JT_RETURN_RESULT_ByteArray             return __result;
 #define _JT_RETURN_RESULT_Void
 
 #define _JT_ENV_VIRTUAL_CALL_Int                CallIntMethod
 #define _JT_ENV_VIRTUAL_CALL_Long               CallLongMethod
+#define _JT_ENV_VIRTUAL_CALL_Boolean            CallBooleanMethod
 #define _JT_ENV_VIRTUAL_CALL_Object             CallObjectMethod
 #define _JT_ENV_VIRTUAL_CALL_String             CallObjectMethod
 #define _JT_ENV_VIRTUAL_CALL_Void               CallVoidMethod
+#define _JT_ENV_VIRTUAL_CALL_ByteArray          CallObjectMethod
 
 #define _JT_ENV_NON_VIRTUAL_CALL_Int            CallNonvirtualIntMethod
 #define _JT_ENV_NON_VIRTUAL_CALL_Long           CallNonvirtualLongMethod
+#define _JT_ENV_NON_VIRTUAL_CALL_Boolean        CallNonvirtualBooleanMethod
 #define _JT_ENV_NON_VIRTUAL_CALL_Object         CallNonvirtualObjectMethod
 #define _JT_ENV_NON_VIRTUAL_CALL_String         CallNonvirtualObjectMethod
 #define _JT_ENV_NON_VIRTUAL_CALL_Void           CallNonvirtualVoidMethod
+#define _JT_ENV_NON_VIRTUAL_CALL_ByteArray      CallNonvirtualObjectMethod
 
 #define _JT_ENV_STATIC_CALL_Int                 CallStaticIntMethod
 #define _JT_ENV_STATIC_CALL_Long                CallStaticLongMethod
+#define _JT_ENV_STATIC_CALL_Boolean             CallStaticBooleanMethod
 #define _JT_ENV_STATIC_CALL_Object              CallStaticObjectMethod
 #define _JT_ENV_STATIC_CALL_String              CallStaticObjectMethod
 #define _JT_ENV_STATIC_CALL_Void                CallStaticVoidMethod
+#define _JT_ENV_STATIC_CALL_ByteArray           CallStaticObjectMethod
 
 #define _JT_ENV_GET_Long                        GetLongField
+#define _JT_ENV_GET_Boolean                     GetBooleanField
 #define _JT_ENV_GET_String                      GetObjectField
 #define _JT_ENV_GET_Class                       GetObjectField
 #define _JT_ENV_GET_Object                      GetObjectField
+#define _JT_ENV_GET_ByteArray                   GetObjectField
 
 #define _JT_ENV_STATIC_GET_Long                 GetStaticLongField
+#define _JT_ENV_STATIC_GET_Boolean              GetStaticBooleanField
 #define _JT_ENV_STATIC_GET_String               GetStaticObjectField
 #define _JT_ENV_STATIC_GET_Object               GetStaticObjectField
+#define _JT_ENV_STATIC_GET_ByteArray            GetStaticObjectField
 
 #define _JT_ENV_SET_Long                        SetLongField
+#define _JT_ENV_SET_Boolean                     SetBooleanField
 #define _JT_ENV_SET_String                      SetObjectField
 #define _JT_ENV_SET_Object                      SetObjectField
 #define _JT_ENV_SET_Class                       SetObjectField
+#define _JT_ENV_SET_ByteArray                   SetObjectField
 
 #define _JT_ENV_STATIC_SET_Long                 SetStaticLongField
+#define _JT_ENV_STATIC_SET_Boolean              SetStaticBooleanField
 #define _JT_ENV_STATIC_SET_Object               SetStaticObjectField
 #define _JT_ENV_STATIC_SET_String               SetStaticObjectField
+#define _JT_ENV_STATIC_SET_ByteArray            SetStaticObjectField
 
 // -----------------------------
 // -- Parameter specification --
@@ -300,6 +321,12 @@
 #define JT_THROWABLE(name, param_spec)                                                          \
             JT_PARAM(Object, "Ljava/lang/Throwable;", name, param_spec)
 
+#define JT_BYTE_ARRAY(name, param_spec)                                                         \
+            JT_PARAM(ByteArray, "[B", name, param_spec)
+
+#define JT_LONG_OBJECT(name, param_spec)                                                        \
+            JT_PARAM(Object, "Ljava/lang/Long;", name, param_spec)
+
 // ------------------------------
 // -- Assert and trace defines --
 // ------------------------------
@@ -325,7 +352,7 @@
 #   define TRACE_JNI_SETTING(this, name, sig)   {}
 #   define TRACE_JNI_SET(this, name, sig)       {}
 #endif
-#define JT_BEGIN_CLASS(package, name)                                                             \
+#define JT_BEGIN_CLASS(package, name)                                                           \
     namespace jni {                                                                             \
     class name : public JavaClass<name> {                                                       \
         friend class JavaClass<name>;                                                           \

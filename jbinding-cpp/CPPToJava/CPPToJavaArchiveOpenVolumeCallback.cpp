@@ -5,93 +5,68 @@
 #include "CPPToJavaInStream.h"
 #include "UnicodeHelper.h"
 
-void CPPToJavaArchiveOpenVolumeCallback::Init(JNIEnv * initEnv) {
-	TRACE_OBJECT_CALL("Init")
+STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROPVARIANT *value) {
+    TRACE_OBJECT_CALL("GetProperty");
 
-	// public Object getProperty(PropID propID);
-	_getPropertyMethodID = GetMethodId(initEnv, "getProperty",
-			"(" PROPID_CLASS_T ")" JAVA_OBJECT_T);
+    TRACE("GetProperty(" << propID << ')')
 
-	// public IInStream getStream(String filename);
-	_getStreamMethodID = GetMethodId(initEnv, "getStream",
-			"(" JAVA_STRING_T ")" INSTREAM_CLASS_T);
+    JNIEnvInstance jniEnvInstance(_jbindingSession);
 
-	_propIDClass = GetClass(initEnv, PROPID_CLASS);
+    if (value) {
+        value->vt = VT_NULL;
+    }
 
-	_propIDGetPropIDByIndexMethodID = GetStaticMethodId(initEnv, _propIDClass,
-			"getPropIDByIndex", "(I)" PROPID_CLASS_T);
-}
+    jobject propIDObject = jni::PropID::getPropIDByIndex(jniEnvInstance, (jint) propID);
+    if (jniEnvInstance.exceptionCheck()) {
+        return S_FALSE;
+    }
 
-STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID,
-		PROPVARIANT *value) {
-	TRACE_OBJECT_CALL("GetProperty");
+    jobject result = _iArchiveOpenVolumeCallback.getProperty(jniEnvInstance, _javaImplementation,
+            propIDObject);
+    if (jniEnvInstance.exceptionCheck()) {
+        return S_FALSE;
+    }
 
-	TRACE("GetProperty(" << propID << ')')
+    ObjectToPropVariant(jniEnvInstance, result, value);
 
-	JNIInstance jniInstance(_nativeMethodContext);
-	JNIEnv * env = jniInstance.GetEnv();
-
-	if (value) {
-		value->vt = VT_NULL;
-	}
-
-	jniInstance.PrepareCall();
-	jobject propIDObject = env->CallStaticObjectMethod(_propIDClass,
-			_propIDGetPropIDByIndexMethodID, (jint) propID);
-	if (jniInstance.IsExceptionOccurs()) {
-		return S_FALSE;
-	}
-
-	jniInstance.PrepareCall();
-	jobject result = env->CallObjectMethod(_javaImplementation,
-			_getPropertyMethodID, propIDObject);
-	if (jniInstance.IsExceptionOccurs()) {
-		return S_FALSE;
-	}
-
-	ObjectToPropVariant(&jniInstance, result, value);
-
-	return S_OK;
+    return S_OK;
 }
 
 STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
-		IInStream **inStream) {
-	TRACE_OBJECT_CALL("GetStream");
+                                                           IInStream **inStream) {
+    TRACE_OBJECT_CALL("GetStream");
 
-	JNIInstance jniInstance(_nativeMethodContext);
-	JNIEnv * env = jniInstance.GetEnv();
+    JNIEnvInstance jniEnvInstance(_jbindingSession);
 
-	if (inStream) {
-		*inStream = NULL;
-	}
+    if (inStream) {
+        *inStream = NULL;
+    }
 
-	jstring nameString = env->NewString(UnicodeHelper(name), (jsize) wcslen(
-			name));
+    jstring nameString = jniEnvInstance->NewString(UnicodeHelper(name), (jsize) wcslen(name));
 
-	jniInstance.PrepareCall();
-	jobject inStreamImpl = env->CallObjectMethod(_javaImplementation,
-			_getStreamMethodID, nameString);
-	if (jniInstance.IsExceptionOccurs()) {
-		return S_FALSE;
-	}
+    jobject inStreamImpl = _iArchiveOpenVolumeCallback.getStream(jniEnvInstance,
+            _javaImplementation, nameString);
+    if (jniEnvInstance.exceptionCheck()) {
+        jniEnvInstance->DeleteLocalRef(nameString);
+        return S_FALSE;
+    }
+    jniEnvInstance->DeleteLocalRef(nameString);
 
-	if (inStream) {
-		if (inStreamImpl) {
-			CPPToJavaInStream * newInStream = new CPPToJavaInStream(
-					_nativeMethodContext, env, inStreamImpl);
-			lastVolume->AddInStream(newInStream);
-			lastVolume = newInStream;
+    if (inStream) {
+        if (inStreamImpl) {
+            CPPToJavaInStream * newInStream = new CPPToJavaInStream(_jbindingSession, jniEnvInstance,
+                    inStreamImpl);
 
-			CMyComPtr<IInStream> inStreamComPtr = newInStream;
-			*inStream = inStreamComPtr.Detach();
-		} else {
-//			jniInstance.ThrowSevenZipException(
-//					"IArchiveOpenVolumeCallback.GetStream() returns stream=null. "
-//						"Use non-zero return value if requested volume doesn't exists");
-			return S_FALSE;
-		}
-	}
+            CMyComPtr<IInStream> inStreamComPtr = newInStream;
+            *inStream = inStreamComPtr.Detach();
+        } else {
+            //			jniInstance.ThrowSevenZipException(
+            //					"IArchiveOpenVolumeCallback.GetStream() returns stream=null. "
+            //						"Use non-zero return value if requested volume doesn't exists");
+            return S_FALSE;
+        }
+    }
 
-	return S_OK;
+    return S_OK;
 }
 

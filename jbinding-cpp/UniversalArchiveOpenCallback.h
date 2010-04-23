@@ -20,15 +20,15 @@ private:
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
 
-    void Init(NativeMethodContext * nativeMethodContext, JNIEnv * initEnv,
-    		jobject archiveOpenCallbackImpl, CPPToJavaInStream * lastVolume);
+    void Init(JBindingSession & jbindingSession, JNIEnv * initEnv,
+    		jobject archiveOpenCallbackImpl);
 
 public:
 
-    UniversalArchiveOpencallback(CMyComPtr<NativeMethodContext> nativeMethodContext, JNIEnv * initEnv, jobject archiveOpenCallbackImpl, CPPToJavaInStream * lastVolume)
+    UniversalArchiveOpencallback(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject archiveOpenCallbackImpl)
     {
         TRACE_OBJECT_CREATION("UniversalArchiveOpencallback")
-        Init(nativeMethodContext, initEnv, archiveOpenCallbackImpl, lastVolume);
+        Init(jbindingSession, initEnv, archiveOpenCallbackImpl);
     }
 
     virtual ~UniversalArchiveOpencallback()
