@@ -200,30 +200,32 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     TRACE("InArchiveImpl::nativeClose(). ThreadID=" << PlatformGetCurrentThreadId());
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
-    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
-    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+    {
+        JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+        JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+        CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return;
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return;
+        }
+
+        CHECK_HRESULT(jniNativeCallContext, archive->Close(), "Error closing archive");
+
+        archive->Release();
+        inStream->Release();
+
+        jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
+        jni::InArchiveImpl::jbindingSession_Set(env, thiz, 0);
+        jni::InArchiveImpl::sevenZipInStreamInstance_Set(env, thiz, 0);
+
     }
-
-    CHECK_HRESULT(jniNativeCallContext, archive->Close(), "Error closing archive");
-
-    archive->Release();
-    inStream->Release();
-
-    jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
-    jni::InArchiveImpl::jbindingSession_Set(env, thiz, 0);
-    jni::InArchiveImpl::sevenZipInStreamInstance_Set(env, thiz, 0);
 
     delete &jbindingSession;
 
     TRACE("Archive closed")
-
 }
 
 /*

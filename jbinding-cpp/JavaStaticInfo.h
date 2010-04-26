@@ -341,7 +341,7 @@
 #   define TRACE_JNI_CALLING(this, name, sig)   {std::cout << "Calling " << *(this) << '.' << #name << sig << std::endl;}
 #   define TRACE_JNI_CALLED(this, name, sig)    {std::cout << "Called " << *(this) << '.' << #name << " returned " << __env << __result << std::endl;}
 #   define TRACE_JNI_GETTING(this, name, sig)   {std::cout << "Getting " << *(this) << '.' << #name << '(' << sig << ')' << std::endl;}
-#   define TRACE_JNI_GOT(this, name, sig)       {std::cout << "Got " << *(this) << '.' << #name << "='" << __env << __result << "'" << std::endl;}
+#   define TRACE_JNI_GOT(this, name, sig)       {std::cout << "Got " << *(this) << '.' << #name << "='" << env << __result << "'" << std::endl;}
 #   define TRACE_JNI_SETTING(this, name, sig)   {std::cout << "Setting " << *(this) << '.' << #name << '(' << sig << ')' << '=' << env << value << std::endl;}
 #   define TRACE_JNI_SET(this, name, sig)       {std::cout << "Set " << *(this) << '.' << #name << std::endl;}
 #else
@@ -733,7 +733,7 @@ JObjectMap<jclass, T> JInterface<T>::_jinterfaceMap;
 #ifdef TRACE_ON
 template<typename T>
 inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interface) {
-    stream << interface.getName();
+    stream << interface._getName();
 }
 #endif // TRACE_ON
 class JMethod {

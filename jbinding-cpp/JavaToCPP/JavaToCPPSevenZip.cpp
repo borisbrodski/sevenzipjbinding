@@ -83,7 +83,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
 #ifdef TRACE_ON
     for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
-        TRACE("Available codec: " << CodecTools::codecs.Formats[i].Name)
+        TRACE("Available codec: " << (const wchar_t *)CodecTools::codecs.Formats[i].Name) // TODO Get this to work
     }
 #endif // TRACE_ON
     //for (int i = 0; i < SevenZipJBinding::codecs.Formats.Size(); i++) {
