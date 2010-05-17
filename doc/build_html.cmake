@@ -36,7 +36,7 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     PROCESS_SNIPPET_COMMON_LINE_HTML(${LINE_VAR})
 
     STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${${LINE_VAR}}")
-    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default)($|[^a-zA-Z])" 
+    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default|final)($|[^a-zA-Z])" 
                             "\\1##keyword##\\2##end##\\3" TMP "${TMP}")
     STRING(REGEX REPLACE "(SevenZip\\.)(openInArchive|initSevenZipFromPlatformJAR)"
                             "\\1##staticmethod##\\2##end##" TMP "${TMP}")
