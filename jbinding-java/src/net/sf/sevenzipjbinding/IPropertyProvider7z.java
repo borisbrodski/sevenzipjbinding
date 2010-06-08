@@ -2,7 +2,13 @@ package net.sf.sevenzipjbinding;
 
 import java.util.Date;
 
-public interface IItemUpdateProperties7z {
+/**
+ * Provide properties for updating 7z archive items
+ * 
+ * @author Boris Brodski
+ * @version 9.04-2.00
+ */
+public interface IPropertyProvider7z {
     /**
      * {@link PropID#PATH} Property.
      * 

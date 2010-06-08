@@ -36,4 +36,11 @@ public interface ISevenZipOutArchive {
      */
     public ArchiveFormat getArchiveFormat();
 
+    /**
+     * Set compression level
+     * 
+     * @param compressionLevel
+     *            compression level to set
+     */
+    public void setLevel(int compressionLevel);
 }

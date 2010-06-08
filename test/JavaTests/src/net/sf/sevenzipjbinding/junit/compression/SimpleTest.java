@@ -11,8 +11,16 @@ import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
+import org.junit.Test;
+
+/**
+ * Remove this test
+ * 
+ * @author Boris Brodski
+ * @version 4.65-1
+ */
 public class SimpleTest {
-    @org.junit.Test
+    @Test
     public void testname() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(100, 3, 3, 100, 50);
@@ -28,5 +36,6 @@ public class SimpleTest {
         ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream);
         virtualContent.verifyInArchive(inArchive);
         byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
+        System.out.println("Archive size: " + byteArrayStream.getSize() + " Bytes");
     }
 }

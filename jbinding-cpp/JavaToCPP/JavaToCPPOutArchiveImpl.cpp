@@ -45,6 +45,23 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
     CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
             new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
                     false);
+    CMyComPtr<ISetProperties> p;
+    if (outArchive->QueryInterface(IID_ISetProperties, (void**)&p) == S_OK) {
+        printf("SetProperty: 0x%X\n", &p);
+
+        const int size = 1;
+        NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
+        propValues[0] = (unsigned int)0;
+
+        CRecordVector<const wchar_t *> names;
+        names.Add(L"X");
+
+        HRESULT hh = p->SetProperties(&names.Front(), propValues, names.Size());
+        printf("SetProperties hresult = %i\n", hh);
+
+    } else {
+        printf("ERROR\n");
+    }
 
     hresult = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
             cppToJavaArchiveUpdateCallback);

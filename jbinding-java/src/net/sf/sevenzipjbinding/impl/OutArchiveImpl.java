@@ -39,4 +39,12 @@ public class OutArchiveImpl implements ISevenZipOutArchive {
     public ArchiveFormat getArchiveFormat() {
         return archiveFormat;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setLevel(int compressionLevel) {
+        // TODO Auto-generated method stub
+
+    }
 }
