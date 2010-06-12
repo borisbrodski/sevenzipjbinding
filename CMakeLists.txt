@@ -17,6 +17,8 @@ IF (NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
+SET(JAVA_TMP CACHE PATH "Path to tmp directory (optional)")
+
 INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
 INCLUDE(CTest)
@@ -310,10 +312,14 @@ IF(BUILD_TESTING)
 
 
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
-    FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
+   FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
                                             ${JAVA_RUNTIME} -cp \"${JUNIT_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
-                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\"
-                                            org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
+                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" ")
+    IF(JAVA_TMP)
+       FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")
+    ENDIF()
+
+    FILE(APPEND ${JUNIT_TEST_RUNNER} "org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)
                                      IF(RESULT)
