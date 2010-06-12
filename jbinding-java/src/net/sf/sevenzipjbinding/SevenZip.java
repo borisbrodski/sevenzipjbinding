@@ -587,7 +587,6 @@ public class SevenZip {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Error initializing SevenZipJBinding native library: "
                     + "can't copy native library out of a resource file to the temporary location: '"
                     + toLibTmpFile.getAbsolutePath() + "'", e);
