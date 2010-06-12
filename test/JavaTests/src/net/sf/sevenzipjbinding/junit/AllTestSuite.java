@@ -6,6 +6,7 @@ import java.util.TreeMap;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import net.sf.sevenzipjbinding.junit.compression.*;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
@@ -197,6 +198,9 @@ public class AllTestSuite extends TestSuite {
             ReadMaxThreeBytesSeekCur.class, //
             ReadMaxThreeBytesSeekEnd.class, //
     };
+    static Class<?>[] compressionTests = { //
+    /*    */SimpleTest.class, //
+    };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
     static {
@@ -206,6 +210,7 @@ public class AllTestSuite extends TestSuite {
         tests.put("04 Single file tests", singleFileTests);
         tests.put("05 Multiple files tests", multipleFilesTests);
         tests.put("06 Bad archive tests", badArchiveTests);
+        tests.put("07 Compression tests", compressionTests);
     }
 
     public static Test suite() throws Exception {
