@@ -1,12 +1,5 @@
-/*
- * IInArchive.h
- *
- *  Created on: Jan 16, 2010
- *      Author: boris
- */
-
-#ifndef ISEQUENTIALINSTREAM_H_
-#define ISEQUENTIALINSTREAM_H_
+#ifndef JAVAPACKAGESEVENZIP_H_
+#define JAVAPACKAGESEVENZIP_H_
 
 #include "JavaStaticInfo.h"
 
@@ -124,4 +117,4 @@ JT_BEGIN_CLASS("net/sf/sevenzipjbinding", ExtractOperationResult)
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Lnet/sf/sevenzipjbinding/ExtractOperationResult;", getOperationResult, JT_INT(index, _)) // TODO Extract signature
 JT_END_CLASS
 
-#endif /* ISEQUENTIALINSTREAM_H_ */
+#endif /* JAVAPACKAGESEVENZIP_H_ */
