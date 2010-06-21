@@ -143,6 +143,7 @@
 #define _JT_ENV_STATIC_CALL_Void                CallStaticVoidMethod
 #define _JT_ENV_STATIC_CALL_ByteArray           CallStaticObjectMethod
 
+#define _JT_ENV_GET_Int                         GetIntField
 #define _JT_ENV_GET_Long                        GetLongField
 #define _JT_ENV_GET_Boolean                     GetBooleanField
 #define _JT_ENV_GET_String                      GetObjectField
@@ -150,12 +151,14 @@
 #define _JT_ENV_GET_Object                      GetObjectField
 #define _JT_ENV_GET_ByteArray                   GetObjectField
 
+#define _JT_ENV_STATIC_GET_Int                  GetStaticIntField
 #define _JT_ENV_STATIC_GET_Long                 GetStaticLongField
 #define _JT_ENV_STATIC_GET_Boolean              GetStaticBooleanField
 #define _JT_ENV_STATIC_GET_String               GetStaticObjectField
 #define _JT_ENV_STATIC_GET_Object               GetStaticObjectField
 #define _JT_ENV_STATIC_GET_ByteArray            GetStaticObjectField
 
+#define _JT_ENV_SET_Int                         SetIntField
 #define _JT_ENV_SET_Long                        SetLongField
 #define _JT_ENV_SET_Boolean                     SetBooleanField
 #define _JT_ENV_SET_String                      SetObjectField
@@ -163,6 +166,7 @@
 #define _JT_ENV_SET_Class                       SetObjectField
 #define _JT_ENV_SET_ByteArray                   SetObjectField
 
+#define _JT_ENV_STATIC_SET_Int                  SetStaticIntField
 #define _JT_ENV_STATIC_SET_Long                 SetStaticLongField
 #define _JT_ENV_STATIC_SET_Boolean              SetStaticBooleanField
 #define _JT_ENV_STATIC_SET_Object               SetStaticObjectField
