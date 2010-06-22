@@ -6,20 +6,23 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 
 public class OutArchiveImpl implements ISevenZipOutArchive {
+    @SuppressWarnings("unused")
+    private long jbindingSession;
+
+    @SuppressWarnings("unused")
+    private long sevenZipArchiveInstance;
+
     /**
      * Archive format enum value.
      */
-    private final ArchiveFormat archiveFormat;
+    private ArchiveFormat archiveFormat;
 
     /**
      * 7-zip CCoders-index of the archive format {@link #archiveFormat}
      */
-    private final int archiveFormatIndex;
+    private int archiveFormatIndex;
 
-    // TODO Make non public
-    public OutArchiveImpl(ArchiveFormat archiveFormat, int archiveFormatIndex) {
-        this.archiveFormat = archiveFormat;
-        this.archiveFormatIndex = archiveFormatIndex;
+    private OutArchiveImpl() {
     }
 
     private native void updateItemsNative(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
@@ -44,7 +47,9 @@ public class OutArchiveImpl implements ISevenZipOutArchive {
      * {@inheritDoc}
      */
     public void setLevel(int compressionLevel) {
-        // TODO Auto-generated method stub
-
+        setLevelNative(compressionLevel);
     }
+
+    private native void setLevelNative(int compressionLevel);
+
 }

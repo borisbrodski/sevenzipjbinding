@@ -654,9 +654,11 @@ public class SevenZip {
     private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
+    private static native ISevenZipOutArchive nativeCreateArchive(ArchiveFormat archiveFormat, int archiveFormatIndex) throws SevenZipException;
+
     private static native String nativeInitSevenZipLibrary();
 
-    public static ISevenZipOutArchive openOutArchive(ArchiveFormat archiveFormat) {
+    public static ISevenZipOutArchive openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (!archiveFormat.isOutArchiveSupported()) {
             throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
@@ -666,8 +668,7 @@ public class SevenZip {
             throw new IllegalStateException("Can't create OutArchive: archive format '" + archiveFormat
                     + "' doesn't support archive creation.");
         }
-
-        return new OutArchiveImpl(archiveFormat, archiveFormatIndex);
+        return nativeCreateArchive(archiveFormat, archiveFormatIndex);
     }
 
     /**

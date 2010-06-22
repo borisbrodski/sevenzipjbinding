@@ -96,6 +96,14 @@ JT_BEGIN_CLASS("net/sf/sevenzipjbinding/impl", InArchiveImpl)
 /*    */JT_CLASS_FINAL_METHOD(Void, setArchiveFormat, JT_STRING(archiveFormat,_))
 JT_END_CLASS
 
+JT_BEGIN_CLASS("net/sf/sevenzipjbinding/impl", OutArchiveImpl)
+/*    */JT_FIELD(Long, jbindingSession)
+/*    */JT_FIELD(Long, sevenZipArchiveInstance)
+/*    */JT_FIELD_OBJECT(archiveFormat, "Lnet/sf/sevenzipjbinding/ArchiveFormat;")
+/*    */JT_FIELD(Int, archiveFormatIndex)
+JT_END_CLASS
+
+
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding", PropertyInfo)
 /*    */JT_FIELD(String, name)
 /*    */JT_FIELD_OBJECT(propID, "Lnet/sf/sevenzipjbinding/PropID;")
