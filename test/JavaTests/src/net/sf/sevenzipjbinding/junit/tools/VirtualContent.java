@@ -165,29 +165,30 @@ public class VirtualContent {
             byte[] expectedData = new byte[data.length];
             assertEquals(Integer.valueOf(data.length), Integer.valueOf(byteArrayStream.read(expectedData)));
 
+            /*
+            for (int i=0;i<data.length;i++) {
+              if (expectedData[i] != data[i]) {
+                throw new RuntimeException("Different at pos " + i);
+              }
+            }
+            */
 
-  for (int i=0;i<data.length;i++) {
-    if (expectedData[i] != data[i]) {
-      throw new RuntimeException("Different at pos " + i);
-    }
-  }
-/*
-try {
-            assertArrayEquals(expectedData, data);
-} catch (org.junit.internal.ArrayComparisonFailure e) {
-  for (int i=0;i<data.length;i++) {
-    if (expectedData[i] != data[i]) {
-      System.out.println("Different at pos " + i);
-      break;
-    }
-  }
-  System.out.println("Length: " + data.length);
-  System.out.println("exp: " + expectedData[128]);
-  System.out.println("data: " + data[128]);
-  e.printStackTrace();
-  throw e;
-}
-*/
+            try {
+                assertArrayEquals(expectedData, data);
+            } catch (org.junit.internal.ArrayComparisonFailure e) {
+                for (int i = 0; i < data.length; i++) {
+                    if (expectedData[i] != data[i]) {
+                        System.out.println("Different at pos " + i);
+                        break;
+                    }
+                }
+                System.out.println("Length: " + data.length);
+                System.out.println("exp: " + expectedData[128]);
+                System.out.println("data: " + data[128]);
+                e.printStackTrace();
+                throw e;
+            }
+
             return data.length;
         }
 
