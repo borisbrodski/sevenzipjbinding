@@ -54,7 +54,9 @@
                      compression ratio and very fast decompression.</TD> </TR>
       <TR> <TD>LZMA2</TD> <TD>LZMA-based compression method. 
                      It provides better multithreading support than LZMA. But compression ratio
-                     can be worse in some cases.</TD> </TR>
+                     can be worse in some cases. For best compression ratio with LZMA2 use 1 
+                     or 2 CPU threads. If you use LZMA2 with more than 2 threads, 7-zip splits data 
+                     to chunks and compresses these chunks independently (2 threads per each chunk).</TD> </TR>
       <TR> <TD>PPMd</TD> <TD>Dmitry Shkarin's PPMdH algorithm with small changes. 
                   Usually it provides high compression ratio and high speed 
                   for text files.</TD> </TR>
@@ -279,9 +281,9 @@
     <P>Specifies password and encryption options.</P>
     <DL>
       <DT>Enter password</DT>
-        <DD>Specify passord here</DD>
+        <DD>Specify password here</DD>
       <DT>Reenter password</DT>
-        <DD>Reenter passord here for verification</DD>
+        <DD>Reenter password here for verification</DD>
       <DT>Show Password</DT>
         <DD>Shows Password</DD>
       <DT>Encryption method</DT>

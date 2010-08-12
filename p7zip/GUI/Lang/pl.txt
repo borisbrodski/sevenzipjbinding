@@ -1,7 +1,7 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.59
+; 7-Zip 9.07
 ; Translated by cienislaw, corrected by pixel
-; Last versions translated by F1xat / 2007-08-26
+; Last versions translated by F1xat
 ; Corrected and updated by Łukasz Maria P. Pastuszczak
 ;
 ;
@@ -17,7 +17,7 @@
 
 ; Info Page
 01000100="7-Zip - informacje"
-01000103="7-Zip jest programem darmowym. Możesz jednak\nwspomóc jego rozwój poprzez rejestrację."
+01000103="7-Zip jest programem darmowym. Możesz jednak wspomóc jego rozwój poprzez rejestrację."
 01000104="Wsparcie"
 01000105="Rejestracja"
 
@@ -52,7 +52,7 @@
 02000105="Wypakuj pliki..."
 02000106="Wypakowuje pliki z zaznaczonego archiwum."
 02000107="Dodaj do archiwum..."
-02000108="Dodaje zaznaczone pliki do archiwum."
+02000108="Dodaje zaznaczone elementy do archiwum."
 02000109="Testuj archiwum"
 0200010A="Testuje integralność zaznaczonego archiwum."
 0200010B="Wypakuj tutaj"
@@ -76,7 +76,7 @@
 02000206="Folder"
 02000207="Rozmiar"
 02000208="Rozmiar po spakowaniu"
-02000209="Atrybuty"; 
+02000209="Atrybuty"
 0200020A="Utworzony"
 0200020B="Ostatnio otwarty"
 0200020C="Zmodyfikowany"
@@ -90,7 +90,7 @@
 02000214="Typ"
 02000215="Anty"
 02000216="Metoda"
-02000217="System operacyjny"
+02000217="Pochodzenie"
 02000218="System plików"
 02000219="Użytkownik"
 0200021A="Grupa"
@@ -114,8 +114,14 @@
 0200022C="Rozmiar fizyczny"
 0200022D="Rozmiar nagłówków"
 0200022E="Suma kontrolna"
-0200022F="Charakterystyka"
+0200022F="Charakterystyki"
 02000230="Adres wirtualny"
+02000231="Numer seryjny woluminu"
+02000232="Krótka nazwa"
+02000233="Generator"
+02000234="Rozmiar sektora"
+02000235="Tryb"
+02000236="Dowiązanie"
 
 ; Status bar
 02000301="Zaznaczono {0} obiekt(ów)"
@@ -136,14 +142,14 @@
 ; ToolBar
 02000501="Wypakuj"
 
-; Messages 
+; Messages
 02000601="Operacje aktualizacji nie są obsługiwane dla tego archiwum."
 02000602="Nie można zaktualizować archiwum {0}"
 02000603="Nie można utworzyć folderu „{0}”"
 02000604="Plik nie jest obsługiwanym archiwum."
 02000605="Błąd"
 02000606="Zbyt dużo elementów"
-02000607="Żadna aplikacja nie jest skojarzona z tym rozszerzeniem nazwy pliku"
+02000607="Z określonym plikiem nie skojarzono żadnej aplikacji"
 02000608="Nie wykryto błędów"
 02000609="Nie można otworzyć pliku „{0}” jako archiwum"
 0200060A="Nie można otworzyć zaszyfrowanego archiwum „{0}”. Nieprawidłowe hasło?"
@@ -207,11 +213,11 @@
 
 02000A80="Komunikat"
 
-02000A91="Nieobsługiwana metoda kompresji dla „{0}”."
+02000A91="Nieobsługiwana metoda kompresji pliku „{0}”."
 02000A92="Błąd danych w „{0}”. Plik jest uszkodzony."
-02000A93="Błąd CRC w „{0}”. Plik jest uszkodzony."
+02000A93="CRC nie powiodła się dla „{0}”. Plik jest uszkodzony."
 02000A94="Błąd danych w zaszyfrowanym pliku „{0}”. Nieprawidłowe hasło?"
-02000A95="Błąd CRC w zaszyfrowanym pliku „{0}”. Nieprawidłowe hasło?"
+02000A95="CRC nie powiodła się dla zaszyfrowanego pliku „{0}”. Nieprawidłowe hasło?"
 
 ; Password dialog
 02000B00="Wprowadź hasło"
@@ -331,6 +337,7 @@
 03000240="Wł&aściwości"
 03000241="Ko&mentarz"
 03000242="Oblicz sumę kontrolną"
+03000243="Diff"
 03000250="Utwórz &folder"
 03000251="U&twórz plik"
 03000260="Za&kończ"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Edytor"
 03010201="&Edytor:"
+03010202="&Diff:"
 
 ; System
 03010300="System"
@@ -407,6 +415,7 @@
 03010410="Pokaż menu systemowe"
 03010420="Zaznaczaj &cały rząd"
 03010421="&Pokaż linie siatki"
+03010422="Pojedyncze kliknięcie otwiera element"
 03010430="&Alternatywny tryb zaznaczania"
 03010440="&Użyj dużych stron pamięci"
 
@@ -504,7 +513,6 @@
 03020A02="Musisz zaznaczyć jeden plik"
 03020A03="Musisz zaznaczyć jeden lub więcej plików"
 03020A04="Plik {0} już istnieje"
-
 
 ; Computer
 03031100="Całkowity rozmiar"

@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.59 Beta
+; 7-Zip 9.07
 ; Translated by Jeroen Tulp - Vertaald door Jeroen Tulp
 ;
 ; Changed and updated translations as done for 7-Zip 4.26 Beta by Jeroen van der Weijde.
@@ -116,6 +116,12 @@
 0200022E="Checksum"
 0200022F="Karakteristieken"
 02000230="Virtueel Adres"
+02000231="ID"
+02000232="Korte Naam"
+02000233="Aanmaak Applicatie"
+02000234="Sector Grootte"
+02000235="Modus"
+02000236="Link"
 
 ; Status bar
 02000301="{0} item(s) geselecteerd"
@@ -331,6 +337,7 @@
 03000240="Ei&genschappen"
 03000241="O&pmerking"
 03000242="&Checksum berekenen"
+03000243="Vergelijken"
 03000250="Nieuwe &map"
 03000251="Nieuw b&estand"
 03000260="&Sluiten"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Editor"
 03010201="&Editor:"
+03010202="&Vergelijken:"
 
 ; System
 03010300="Systeem"
@@ -407,6 +415,7 @@
 03010410="Toon &systeem contextmenu"
 03010420="&Selecteer gehele rij"
 03010421="Toon &rasterlijnen"
+03010422="Enkele klik om een item te openen"
 03010430="&Alternatieve selectiemodus"
 03010440="&Gebruik grote geheugenpagina's"
 
@@ -430,6 +439,7 @@
 03020215="Weet u zeker dat u deze {0} items wilt verwijderen?"
 03020216="Bezig met verwijderen..."
 03020217="Fout bij het verwijderen van een bestand of map"
+03020218="Het systeem kan een bestand met een lang pad niet verplaatsen naar de Prullenbak"
 
 03020220="Bezig met hernoemen..."
 03020221="Fout bij het hernoemen van een bestand of map"
@@ -456,6 +466,7 @@
 03020281="Kan bestand\n'{0}' niet bijwerken."
 03020282="Kan de editor niet starten."
 03020283="Bezig met openen..."
+03020284="Het bestand lijkt op een virus (het bevat veel opeenvolgende spaties in de naam)."
 
 03020290="Opmerking"
 03020291="&Opmerking:"

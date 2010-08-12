@@ -2,17 +2,23 @@ package net.sf.sevenzipjbinding.junit;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class TestTestSuite {
+    private List<String> missingClasses = new ArrayList<String>();
+
     @org.junit.Test
     public void testTestSuite() throws Exception {
         TestSuite allTestSuite = (TestSuite) AllTestSuite.suite();
@@ -29,6 +35,15 @@ public class TestTestSuite {
         assertTrue("Directory '" + file.getAbsolutePath() + "' doesn't exists", file.exists() && file.isDirectory());
 
         process(file, null, classNameSet);
+
+        if (missingClasses.size() > 0) {
+            Collections.sort(missingClasses);
+            System.out.println("Some test classes are missed in the AllTestSuite. Add this to the lists of tests:");
+            for (String string : missingClasses) {
+                System.out.println("   " + string + ".class, //");
+            }
+            fail("Test class wasn't added to the suite. First missed class: " + missingClasses.get(0));
+        }
     }
 
     private void addTestsFromTestSuite(TestSuite testSuite, Set<String> classNameSet) {
@@ -77,8 +92,9 @@ public class TestTestSuite {
             }
         }
         if (found && !clazz.equals(this.getClass())) {
-            assertTrue("Test class wasn't added to the suite. Missed class: " + clazz.getCanonicalName(), classNameSet
-                    .remove(clazz.getCanonicalName()));
+            if (!classNameSet.remove(clazz.getCanonicalName())) {
+                missingClasses.add(clazz.getCanonicalName());
+            }
         }
         for (Class<?> subclazz : clazz.getDeclaredClasses()) {
             if (Modifier.isStatic(subclazz.getModifiers())) {

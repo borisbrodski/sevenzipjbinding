@@ -1,9 +1,9 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 9.04-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 9.04 beta)
+Release - 9.04-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 9.13 beta)
 
-	* Bind 7-Zip 9.04 beta
+	* Bind 7-Zip 9.13 beta
 
 
 Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
@@ -22,7 +22,7 @@ Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platf
 	      initialization routine.
 	    - Detailed JavaDoc
 
-    * Integration test for all platforms for single and multiple platform distributions
+	* Integration test for all platforms for single and multiple platform distributions
 	
 	* Improve ISevenZipInArchive.extract()
 		- Check for wrong indices avoiding VM crash
@@ -37,9 +37,9 @@ Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* UDF format support + tests
 
-    * Source code repository: moved from svn to git (http://git-scm.com/)
-    	- Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
-    	- Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
+	* Source code repository: moved from svn to git (http://git-scm.com/)
+	  - Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
+	  - Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
 	
 
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
@@ -109,28 +109,28 @@ Release - 4.65-1.0rc-extr-only (Release candidate, extraction only, cross-platfo
 	* Brand new web site
 	
 Release - 0.4.1 (beta, bug fix release)
-    * Bug fixed: 2525877 (Memory leak)
-    
-Release - 0.4 (beta, extraction only)
-    * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
-        - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
-        
-    * New open/extract method for encrypted archives and items (standard and simple interface)
-    
-    * JUnit tests for the extraction of encrypted archives and exception handling 
+	* Bug fixed: 2525877 (Memory leak)
 
-    * New examples on the home page
-     
+Release - 0.4 (beta, extraction only)
+	* Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
+	  - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
+
+	* New open/extract method for encrypted archives and items (standard and simple interface)
+
+	* JUnit tests for the extraction of encrypted archives and exception handling 
+
+	* New examples on the home page
+
 Release - 0.3 (beta, extraction only, simple extraction interface)
-    Some memory problems was fixed:
-        - Bug fixed #1928623 - Large TAR files can't be extracted
-        - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
-    
-    * Simple extraction interface - allows easy information
-      gathering and extraction of archives
-    
-    * JUnit tests for simple extraction interface
-    
+	Some memory problems was fixed:
+	  - Bug fixed #1928623 - Large TAR files can't be extracted
+	  - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
+
+	* Simple extraction interface - allows easy information
+	  gathering and extraction of archives
+
+	* JUnit tests for simple extraction interface
+
 Release - 0.2 (alpha, extraction only)
 	* Major bug in release build configuration was fixed
 	

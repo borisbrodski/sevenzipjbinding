@@ -25,9 +25,12 @@ OBJS = \
   IntToString.o \
   MyString.o \
   StringConvert.o \
+  UTFConvert.o \
   StringToInt.o \
   MyVector.o \
   7zCrc.o \
+  7zCrcOpt.o \
+  Alloc.o \
   Bra86.o \
   LzFind.o \
   LzFindMt.o \
@@ -100,6 +103,9 @@ MyString.o: ../../../Common/MyString.cpp
 StringConvert.o: ../../../Common/StringConvert.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/StringConvert.cpp
 
+UTFConvert.o: ../../../Common/UTFConvert.cpp
+	$(CXX) $(CXXFLAGS) ../../../Common/UTFConvert.cpp
+
 StringToInt.o: ../../../Common/StringToInt.cpp
 	$(CXX) $(CXXFLAGS) ../../../Common/StringToInt.cpp
 
@@ -109,6 +115,9 @@ MyVector.o: ../../../Common/MyVector.cpp
 7zCrc.o: ../../../../C/7zCrc.c
 	$(CC) $(CFLAGS) ../../../../C/7zCrc.c
 
+7zCrcOpt.o: ../../../../C/7zCrcOpt.c
+	$(CC) $(CFLAGS) ../../../../C/7zCrcOpt.c
+
 LzmaRamDecode.o: LzmaRamDecode.c
 	$(CC) $(CFLAGS) LzmaRamDecode.c
 
@@ -117,6 +126,9 @@ System.o : ../../../Windows/System.cpp
 
 Threads.o : ../../../../C/Threads.c
 	$(CC) $(CFLAGS) ../../../../C/Threads.c
+
+Alloc.o: ../../../../C/Alloc.c
+	$(CC) $(CFLAGS) ../../../../C/Alloc.c
 
 Bra86.o: ../../../../C/Bra86.c
 	$(CC) $(CFLAGS) ../../../../C/Bra86.c

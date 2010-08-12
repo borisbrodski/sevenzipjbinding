@@ -15,6 +15,12 @@
 
 - Check @author and @version in the JavaDoc of test java source files.
 
+- Provide 7-zip version information to java (see 7zVersion.h)
+
+- Find optimal gcc optimization parameters (See CPP/7zip/CMAKE/*) (Consider using -D_7ZIP_LARGE_PAGES on 64bit systems), -pipe
+
+- Cab with support of volumes? If yes, test it
+
  
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.

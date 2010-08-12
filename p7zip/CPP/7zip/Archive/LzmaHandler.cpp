@@ -188,8 +188,7 @@ class CHandler:
   DECL_ISetCompressCodecsInfo
 
 public:
-  MY_QUERYINTERFACE_BEGIN
-  MY_QUERYINTERFACE_ENTRY(IInArchive)
+  MY_QUERYINTERFACE_BEGIN2(IInArchive)
   MY_QUERYINTERFACE_ENTRY(IArchiveOpenSeq)
   QUERY_ENTRY_ISetCompressCodecsInfo
   MY_QUERYINTERFACE_END
@@ -319,28 +318,23 @@ STDMETHODIMP CHandler::Close()
 }
 
 
-STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
-    Int32 _aTestMode, IArchiveExtractCallback *extractCallback)
+STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
+    Int32 testMode, IArchiveExtractCallback *extractCallback)
 {
   COM_TRY_BEGIN
-  bool allFilesMode = (numItems == (UInt32)-1);
-  if (!allFilesMode)
-  {
-    if (numItems == 0)
-      return S_OK;
-    if (numItems != 1 || indices[0] != 0)
-      return E_INVALIDARG;
-  }
+  if (numItems == 0)
+    return S_OK;
+  if (numItems != (UInt32)-1 && (numItems != 1 || indices[0] != 0))
+    return E_INVALIDARG;
 
-  bool testMode = (_aTestMode != 0);
   if (_stream)
     extractCallback->SetTotal(_packSize);
     
   
   CMyComPtr<ISequentialOutStream> realOutStream;
   Int32 askMode = testMode ?
-      NArchive::NExtract::NAskMode::kTest :
-      NArchive::NExtract::NAskMode::kExtract;
+      NExtract::NAskMode::kTest :
+      NExtract::NAskMode::kExtract;
   RINOK(extractCallback->GetStream(0, &realOutStream, askMode));
   if (!testMode && !realOutStream)
     return S_OK;
@@ -368,7 +362,7 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
       _lzma86, _seqStream);
   RINOK(result);
  
-  Int32 opRes = NArchive::NExtract::NOperationResult::kOK;
+  Int32 opRes = NExtract::NOperationResult::kOK;
   bool firstItem = true;
 
   for (;;)
@@ -395,12 +389,12 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
     result = decoder.Code(st, outStream, progress);
     if (result == E_NOTIMPL)
     {
-      opRes = NArchive::NExtract::NOperationResult::kUnSupportedMethod;
+      opRes = NExtract::NOperationResult::kUnSupportedMethod;
       break;
     }
     if (result == S_FALSE)
     {
-      opRes = NArchive::NExtract::NOperationResult::kDataError;
+      opRes = NExtract::NOperationResult::kDataError;
       break;
     }
     RINOK(result);

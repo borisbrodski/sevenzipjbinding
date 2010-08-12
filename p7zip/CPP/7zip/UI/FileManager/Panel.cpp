@@ -77,7 +77,9 @@ static LPCWSTR kClassName = L"7-Zip::Panel";
 
 
 HRESULT CPanel::Create(HWND mainWindow, HWND parentWindow, UINT id,
-    const UString &currentFolderPrefix, CPanelCallback *panelCallback, CAppState *appState,
+    const UString &currentFolderPrefix,
+    const UString &arcFormat,
+    CPanelCallback *panelCallback, CAppState *appState,
     bool &archiveIsOpened, bool &encrypted)
 {
   _mainWindow = mainWindow;
@@ -97,7 +99,7 @@ HRESULT CPanel::Create(HWND mainWindow, HWND parentWindow, UINT id,
     if (currentFolderPrefix[0] == L'.')
       if (!NFile::NDirectory::MyGetFullPathName(currentFolderPrefix, cfp))
         cfp = currentFolderPrefix;
-  RINOK(BindToPath(cfp, archiveIsOpened, encrypted));
+  RINOK(BindToPath(cfp, arcFormat, archiveIsOpened, encrypted));
 
 #ifdef _WIN32
   if (!CreateEx(0, kClassName, 0, WS_CHILD | WS_VISIBLE,
@@ -719,12 +721,11 @@ bool CPanel::OnNotify(UINT /* controlID */, LPNMHDR header, LRESULT &result)
 {
   if (!_processNotify)
     return false;
-#ifdef _WIN32
   if (header->hwndFrom == _headerComboBox)
     return OnNotifyComboBox(header, result);
+#ifdef _WIN32
   else if (header->hwndFrom == _headerReBar)
     return OnNotifyReBar(header, result);
-  // if (header->hwndFrom == _listView)
 #endif
   else if (header->hwndFrom == _listView)
     return OnNotifyList(header, result);
@@ -755,7 +756,7 @@ bool CPanel::OnCommand(int code, int itemID, LPARAM lParam, LRESULT &result)
   */
   if (itemID == _comboBoxID)
   {
-    // FIXME if (OnComboBoxCommand(code, lParam, result))
+    if (OnComboBoxCommand(code, lParam, result))
       return true;
   }
   return CWindow2::OnCommand(code, itemID, lParam, result);
@@ -816,19 +817,18 @@ UString CPanel::GetFolderTypeID() const
   return L"";
 }
 
-bool CPanel::IsRootFolder() const
+bool CPanel::IsFolderTypeEqTo(const wchar_t *s) const
 {
-  return (GetFolderTypeID() == L"RootFolder");
+  return GetFolderTypeID() == s;
 }
 
-bool CPanel::IsFSFolder() const
+bool CPanel::IsRootFolder() const { return IsFolderTypeEqTo(L"RootFolder"); }
+bool CPanel::IsFSFolder() const { return IsFolderTypeEqTo(L"FSFolder"); }
+bool CPanel::IsFSDrivesFolder() const { return IsFolderTypeEqTo(L"FSDrives"); }
+bool CPanel::IsArcFolder() const
 {
-  return (GetFolderTypeID() == L"FSFolder");
-}
-
-bool CPanel::IsFSDrivesFolder() const
-{
-  return (GetFolderTypeID() == L"FSDrives");
+  UString s = GetFolderTypeID();
+  return s.Left(5) == L"7-Zip";
 }
 
 UString CPanel::GetFsPath() const
@@ -897,7 +897,7 @@ void CPanel::AddToArchive()
 {
   CRecordVector<UInt32> indices;
   GetOperatedItemIndices(indices);
-  if (!IsFSFolder())
+  if (!IsFsOrDrivesFolder())
   {
     MessageBoxErrorLang(IDS_OPERATION_IS_NOT_SUPPORTED, 0x03020208);
     return;
@@ -908,20 +908,24 @@ void CPanel::AddToArchive()
     return;
   }
   UStringVector names;
-  for (int i = 0; i < indices.Size(); i++)
+
+  UString curPrefix = _currentFolderPrefix;
+  UString destCurDirPrefix = _currentFolderPrefix;
+  if (IsFSDrivesFolder())
   {
-    int index = indices[i];
-    names.Add(_currentFolderPrefix + GetItemRelPath(index));
+    destCurDirPrefix = ROOT_FS_FOLDER;
+    if (!IsDeviceDrivesPrefix())
+      curPrefix.Empty();
   }
-  const UString archiveName = CreateArchiveName(
-      names.Front(), (names.Size() > 1), false);
-  HRESULT res = CompressFiles(_currentFolderPrefix, archiveName, L"", names, false, true, false);
+
+  for (int i = 0; i < indices.Size(); i++)
+    names.Add(curPrefix + GetItemRelPath(indices[i]));
+  const UString archiveName = CreateArchiveName(names.Front(), (names.Size() > 1), false);
+  HRESULT res = CompressFiles(destCurDirPrefix, archiveName, L"", names, false, true, false);
   if (res != S_OK)
   {
-    if (_currentFolderPrefix.Length() >= MAX_PATH)
+    if (destCurDirPrefix.Length() >= MAX_PATH)
       MessageBoxErrorLang(IDS_MESSAGE_UNSUPPORTED_OPERATION_FOR_LONG_PATH_FOLDER, 0x03020A01);
-    else
-      MessageBoxError(res);
   }
   // KillSelection();
 }
@@ -947,7 +951,7 @@ void CPanel::GetFilePaths(const CRecordVector<UInt32> &indices, UStringVector &p
       paths.Clear();
       break;
     }
-    paths.Add(_currentFolderPrefix + GetItemRelPath(index));
+    paths.Add(GetItemFullPath(index));
   }
   if (paths.Size() == 0)
   {
@@ -974,42 +978,47 @@ void CPanel::ExtractArchives()
     folderName = GetSubFolderNameForExtract(GetItemRelPath(indices[0]));
   else
     folderName = L"*";
-  ::ExtractArchives(paths, _currentFolderPrefix + folderName + UString(WSTRING_PATH_SEPARATOR), true);
+  ::ExtractArchives(paths, _currentFolderPrefix + folderName + UString(WCHAR_PATH_SEPARATOR), true);
 }
-
-struct CThreadTest
-{
-  CRecordVector<UInt32> Indices;
-  CExtractCallbackImp *ExtractCallbackSpec;
-  CMyComPtr<IFolderArchiveExtractCallback> ExtractCallback;
-  CMyComPtr<IArchiveFolder> ArchiveFolder;
-  HRESULT Result;
-
-  void Test()
-  {
-    ExtractCallbackSpec->ProgressDialog.WaitCreating();
-    Result = ArchiveFolder->Extract(&Indices[0], Indices.Size(),
-        NExtract::NPathMode::kFullPathnames, NExtract::NOverwriteMode::kAskBefore,
-        NULL, BoolToInt(true), ExtractCallback);
-    ExtractCallbackSpec->ProgressDialog.MyClose();
-  }
-  
-  static THREAD_FUNC_DECL MyThreadFunction(void *param)
-  {
-    ((CThreadTest*)param)->Test();
-    return 0;
-  }
-};
 
 static void AddValuePair(UINT resourceID, UInt32 langID, UInt64 value, UString &s)
 {
   wchar_t sz[32];
   s += LangString(resourceID, langID);
-  s += L" ";
+  s += L' ';
   ConvertUInt64ToString(value, sz);
   s += sz;
-  s += L"\n";
+  s += L'\n';
 }
+
+class CThreadTest: public CProgressThreadVirt
+{
+  HRESULT ProcessVirt();
+public:
+  CRecordVector<UInt32> Indices;
+  CExtractCallbackImp *ExtractCallbackSpec;
+  CMyComPtr<IFolderArchiveExtractCallback> ExtractCallback;
+  CMyComPtr<IArchiveFolder> ArchiveFolder;
+};
+
+HRESULT CThreadTest::ProcessVirt()
+{
+  RINOK(ArchiveFolder->Extract(&Indices[0], Indices.Size(),
+      NExtract::NPathMode::kFullPathnames, NExtract::NOverwriteMode::kAskBefore,
+      NULL, BoolToInt(true), ExtractCallback));
+  if (ExtractCallbackSpec->IsOK())
+  {
+    UString s;
+    AddValuePair(IDS_FOLDERS_COLON, 0x02000321, ExtractCallbackSpec->NumFolders, s);
+    AddValuePair(IDS_FILES_COLON, 0x02000320, ExtractCallbackSpec->NumFiles, s);
+    // AddSizePair(IDS_SIZE_COLON, 0x02000322, Stat.UnpackSize, s);
+    // AddSizePair(IDS_COMPRESSED_COLON, 0x02000323, Stat.PackSize, s);
+    s += L'\n';
+    s += LangString(IDS_MESSAGE_NO_ERRORS, 0x02000608);
+    OkMessage = s;
+  }
+  return S_OK;
+};
 
 /*
 static void AddSizePair(UINT resourceID, UInt32 langID, UInt64 value, UString &s)
@@ -1023,7 +1032,7 @@ static void AddSizePair(UINT resourceID, UInt32 langID, UInt64 value, UString &s
   s += L" (";
   s += sz;
   s += L" MB)";
-  s += L"\n";
+  s += L'\n';
 }
 */
 
@@ -1041,8 +1050,7 @@ void CPanel::TestArchives()
     extracter.ArchiveFolder = archiveFolder;
     extracter.ExtractCallbackSpec = new CExtractCallbackImp;
     extracter.ExtractCallback = extracter.ExtractCallbackSpec;
-    extracter.ExtractCallbackSpec->ParentWindow = GetParent();
-    extracter.ExtractCallbackSpec->ShowMessages = true;
+    extracter.ExtractCallbackSpec->ProgressDialog = &extracter.ProgressDialog;
 
     if (indices.IsEmpty())
       return;
@@ -1052,35 +1060,17 @@ void CPanel::TestArchives()
     UString title = LangString(IDS_PROGRESS_TESTING, 0x02000F90);
     UString progressWindowTitle = LangString(IDS_APP_TITLE, 0x03000000);
     
-    extracter.ExtractCallbackSpec->ProgressDialog.CompressingMode = false;
-    extracter.ExtractCallbackSpec->ProgressDialog.MainWindow = GetParent();
-    extracter.ExtractCallbackSpec->ProgressDialog.MainTitle = progressWindowTitle;
-    extracter.ExtractCallbackSpec->ProgressDialog.MainAddTitle = title + L" ";
+    extracter.ProgressDialog.CompressingMode = false;
+    extracter.ProgressDialog.MainWindow = GetParent();
+    extracter.ProgressDialog.MainTitle = progressWindowTitle;
+    extracter.ProgressDialog.MainAddTitle = title + L" ";
     
     extracter.ExtractCallbackSpec->OverwriteMode = NExtract::NOverwriteMode::kAskBefore;
     extracter.ExtractCallbackSpec->Init();
     
-    NWindows::CThread extractThread;
-    if (extractThread.Create(CThreadTest::MyThreadFunction, &extracter) != S_OK)
+    if (extracter.Create(title, GetParent()) != S_OK)
       return;
-    extracter.ExtractCallbackSpec->StartProgressDialog(title);
     
-    if (extracter.ExtractCallbackSpec->Messages.IsEmpty() && extracter.Result == S_OK)
-    {
-      UString s;
-      AddValuePair(IDS_FOLDERS_COLON, 0x02000321, extracter.ExtractCallbackSpec->NumFolders, s);
-      AddValuePair(IDS_FILES_COLON, 0x02000320, extracter.ExtractCallbackSpec->NumFiles, s);
-      // AddSizePair(IDS_SIZE_COLON, 0x02000322, extracter.Stat.UnpackSize, s);
-      // AddSizePair(IDS_COMPRESSED_COLON, 0x02000323, extracter.Stat.PackSize, s);
-      s += L"\n";
-      s += LangString(IDS_MESSAGE_NO_ERRORS, 0x02000608);
-      MessageBoxInfo(s, LangString(IDS_PROGRESS_TESTING, 0x02000F90));
-    }
-    else
-    {
-      if (extracter.Result != S_OK && extracter.Result != E_ABORT)
-        MessageBoxError(extracter.Result, L"Testing Error");
-    }
     }
     RefreshTitleAlways();
     return;
@@ -1097,4 +1087,3 @@ void CPanel::TestArchives()
     return;
   ::TestArchives(paths);
 }
-

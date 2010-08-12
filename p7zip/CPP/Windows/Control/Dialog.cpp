@@ -4,7 +4,7 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
- 
+
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
@@ -15,8 +15,20 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+ 
 #include "Windows/Control/DialogImpl.h"
 #include "Windows/Synchronization.h"
+
+
+// FIXME
+class MyApp : public wxApp
+{
+public:
+    virtual bool OnInit();
+};
+
+DECLARE_APP(MyApp)
 
 // #include "../GUI/p7zip_32.xpm"
 extern const char * p7zip_32_xpm[];
@@ -28,12 +40,6 @@ const TCHAR * nameWindowToUnix(const TCHAR * lpFileName) {
 
 
 extern time_t g_T0; // FIXME
-
-extern wxWindow * g_window;
-
-enum { // FIXME - duplicate
-    WORKER_EVENT=100    // this one gets sent from the worker thread
-};
 
 #define DIALOG_ID_MESSAGEBOX  8100
 #define DIALOG_ID_DIR_DIALOG  8101
@@ -93,7 +99,7 @@ static NWindows::NSynchronization::CCriticalSection g_CriticalSection;
 	return ind;
 }
 
-static int WaitInd(int ind,int id,wxWindow * parent,UString &resultPath)
+static int WaitInd(wxWindow * destWindow, int ind,int id,wxWindow * parent,UString &resultPath)
 {
 	int ret = 0;
 
@@ -109,6 +115,14 @@ static int WaitInd(int ind,int id,wxWindow * parent,UString &resultPath)
 	}
 	else
 	{
+		if (destWindow == 0) {
+			extern wxWindow * g_window;
+        		if (g_window == 0)
+			{
+				printf("INTERNAL ERROR : g_window and destWindow == NULL\n"); abort();
+			}
+			destWindow = g_window;
+		}
 		g_tabCreate[ind].sem = new wxSemaphore(0);
 
 		// create any type of command event here
@@ -117,7 +131,7 @@ static int WaitInd(int ind,int id,wxWindow * parent,UString &resultPath)
 
 		// send in a thread-safe way
 		// DEBUG printf("T=0x%lx - %d : WaitInd(%d,%p): BEGIN\n", wxThread::GetCurrentId(),time(0)-g_T0,g_tabCreate[ind].id,g_tabCreate[ind].parentWindow);
-		wxPostEvent( g_window, event );
+		wxPostEvent( destWindow, event );
 
 		g_tabCreate[ind].sem->Wait();
 
@@ -133,21 +147,27 @@ static int WaitInd(int ind,int id,wxWindow * parent,UString &resultPath)
 	return ret;
 }
 
-static int WaitInd(int ind,int id,wxWindow * parent)
+static int WaitInd(wxWindow * destWindow,int ind,int id,wxWindow * parent)
 {
 	UString resultPath;
-	return WaitInd(ind,id,parent,resultPath);
+	return WaitInd(destWindow,ind,id,parent,resultPath);
 }
+
+void verify_main_thread(void);
 
 class LockGUI
 {
 	bool _IsMain;
 	public:
-		LockGUI() { 
+		LockGUI() {
+			
+			verify_main_thread();
+			
 			_IsMain = wxThread::IsMain();
 			if (!_IsMain) {
-				// DEBUG printf("GuiEnter(0x%lx)\n",wxThread::GetCurrentId());
-				wxMutexGuiEnter();
+				// DEBUG
+				printf("GuiEnter-Dialog(0x%lx)\n",wxThread::GetCurrentId());
+				abort(); // FIXME wxMutexGuiEnter();
 			}
 	       	}
 		~LockGUI() { 
@@ -173,7 +193,7 @@ namespace NWindows {
 
 	CSysString MyLoadString(unsigned int resourceID)
 	{
-		for(int i=0; i < g_NumDialogs; i++) {
+		for(unsigned i=0; i < g_NumDialogs; i++) {
 			if (g_Dialogs[i]->stringTable) {
 				int j = 0;
 				while(g_Dialogs[i]->stringTable[j].str) {
@@ -286,7 +306,7 @@ namespace NWindows {
 
 				g_tabCreate[ind].dialog = this;
 
-				return WaitInd(ind,id,parentWindow);
+				return WaitInd(0,  ind,id,parentWindow);
 			}
 
 			void CModalDialog::End(int result)
@@ -296,7 +316,7 @@ namespace NWindows {
 				g_tabCreate[ind].window  = _window;
 				g_tabCreate[ind].value   = result;
 
-				WaitInd(ind,DIALOG_ID_END_DIALOG,0);
+				WaitInd(this->_window,ind,DIALOG_ID_END_DIALOG,0);
 			}
 
 			void CModalDialog::PostMessage(UINT message)
@@ -306,7 +326,7 @@ namespace NWindows {
 				g_tabCreate[ind].dialog  = this;
 				g_tabCreate[ind].value   = message;
 
-				WaitInd(ind,DIALOG_ID_POST_DIALOG,0);
+				WaitInd(this->_window,ind,DIALOG_ID_POST_DIALOG,0);
 			}
 
 /////////////////////////////////////////// CModalDialogImpl ///////////////////////////////////////
@@ -342,7 +362,7 @@ namespace NWindows {
 				{
 					if (_dialog)
 					{
-						bool bret = _dialog->OnButtonClicked(id, FindWindow(id) );
+						/* bool bret = */ _dialog->OnButtonClicked(id, FindWindow(id) );
 					}
 				}
 			}
@@ -366,7 +386,7 @@ namespace NWindows {
 
 static int myCreateHandle2(int n)
 { 
-	int                                    id           = g_tabCreate[n].id;
+	unsigned int                           id           = g_tabCreate[n].id;
 	wxWindow *                             parentWindow = g_tabCreate[n].parentWindow;
 	NWindows::NControl::CModalDialogImpl * window       = 0;
 
@@ -375,7 +395,7 @@ static int myCreateHandle2(int n)
 	if (id == DIALOG_ID_END_DIALOG)
 	{
 		/* FIXME : the dialog must be shown before ending it ?
-		while (!_window->IsShownOnScreen()) Sleep(200);
+		while (!g_tabCreate[n].window->IsShownOnScreen()) Sleep(200);
 		Sleep(200);
 		*/
 		g_tabCreate[n].window->EndModal(g_tabCreate[n].value);
@@ -420,14 +440,14 @@ static int myCreateHandle2(int n)
 		wxString defaultFilename = g_tabCreate[n].initialFolderOrFile;
 		wxFileDialog fileDialog(g_tabCreate[n].parentWindow, g_tabCreate[n].title,
 				wxEmptyString, defaultFilename,
-		       		wxT("All Files (*.*)|*.*"), wxSAVE|wxOVERWRITE_PROMPT);
+		       		wxT("All Files (*.*)|*.*"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 		fileDialog.SetIcon(wxICON(p7zip_32));
 		int ret = fileDialog.ShowModal();
 		if (ret == wxID_OK) g_tabCreate[n].resultPath = fileDialog.GetPath();
 		return ret;
 	}
 
-	for(int i=0; i < g_NumDialogs; i++) {
+	for(unsigned  i=0; i < g_NumDialogs; i++) {
 		if (id == g_Dialogs[i]->id) {
 			// DEBUG printf("%d : Create(%d,%p): CreateDialog-1\n",time(0)-g_T0,id,parentWindow);
 			window = (g_Dialogs[i]->createDialog)(g_tabCreate[n].dialog,g_tabCreate[n].parentWindow);
@@ -439,6 +459,9 @@ static int myCreateHandle2(int n)
 	if (window) {
 
 		// DEBUG printf("%d : Create(%d,%p): %p->ShowModal()\n",time(0)-g_T0,id,parentWindow,window);
+
+		// window->Show(true);
+		// wxGetApp().ProcessPendingEvents();
 
 		INT_PTR ret = window->ShowModal();
 
@@ -472,7 +495,7 @@ int MessageBoxW(wxWindow * parent, const TCHAR * msg, const TCHAR * title,int fl
 	g_tabCreate[ind].title        = title;
 	g_tabCreate[ind].flag         = flag;
 	
-	return WaitInd(ind,DIALOG_ID_MESSAGEBOX,parent);
+	return WaitInd(parent,ind,DIALOG_ID_MESSAGEBOX,parent); // FIXME
 }
 
 
@@ -490,7 +513,7 @@ bool BrowseForFolder(HWND owner, LPCWSTR title, LPCWSTR initialFolder, UString &
 	g_tabCreate[ind].initialFolderOrFile = nameWindowToUnix(initialFolder);
 	
 	UString resTmp;
-	int ret = WaitInd(ind,DIALOG_ID_DIR_DIALOG,owner,resTmp);
+	int ret = WaitInd(0,ind,DIALOG_ID_DIR_DIALOG,owner,resTmp); // FIXME
 	if(ret == wxID_OK)
 	{
 		resultPath = resTmp;
@@ -513,7 +536,7 @@ namespace NWindows
 		g_tabCreate[ind].initialFolderOrFile = nameWindowToUnix(fullFileName);
 	
 		UString resTmp;
-		int ret = WaitInd(ind,DIALOG_ID_FILE_DIALOG,hwnd,resTmp);
+		int ret = WaitInd(0,ind,DIALOG_ID_FILE_DIALOG,hwnd,resTmp); // FIXME
 		if(ret == wxID_OK)
 		{
 			resPath = resTmp;

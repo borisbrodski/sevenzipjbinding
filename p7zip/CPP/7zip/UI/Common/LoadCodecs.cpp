@@ -92,11 +92,16 @@ CSysString GetBaseFolderPrefixFromRegistry()
     if (fi.IsDir())
       return moduleFolderPrefix;
   #ifdef _WIN32
-  CSysString path;
-  if (ReadPathFromRegistry(HKEY_CURRENT_USER, path))
-    return path;
-  if (ReadPathFromRegistry(HKEY_LOCAL_MACHINE, path))
-    return path;
+  if (!NFind::DoesFileExist(moduleFolderPrefix + kMainDll) &&
+      !NFind::DoesDirExist(moduleFolderPrefix + kCodecsFolderName) &&
+      !NFind::DoesDirExist(moduleFolderPrefix + kFormatsFolderName))
+  {
+    CSysString path;
+    if (ReadPathFromRegistry(HKEY_CURRENT_USER, path))
+      return path;
+    if (ReadPathFromRegistry(HKEY_LOCAL_MACHINE, path))
+      return path;
+  }
   #endif
   return moduleFolderPrefix;
 }
@@ -128,12 +133,12 @@ static HRESULT GetCoderClass(GetMethodPropertyFunc getMethodProperty, UInt32 ind
 HRESULT CCodecs::LoadCodecs()
 {
   CCodecLib &lib = Libs.Back();
-  lib.GetMethodProperty = (GetMethodPropertyFunc)lib.Lib.GetProcAddress("GetMethodProperty");
+  lib.GetMethodProperty = (GetMethodPropertyFunc)lib.Lib.GetProc("GetMethodProperty");
   if (lib.GetMethodProperty == NULL)
     return S_OK;
 
   UInt32 numMethods = 1;
-  GetNumberOfMethodsFunc getNumberOfMethodsFunc = (GetNumberOfMethodsFunc)lib.Lib.GetProcAddress("GetNumberOfMethods");
+  GetNumberOfMethodsFunc getNumberOfMethodsFunc = (GetNumberOfMethodsFunc)lib.Lib.GetProc("GetNumberOfMethods");
   if (getNumberOfMethodsFunc != NULL)
   {
     RINOK(getNumberOfMethodsFunc(&numMethods));
@@ -193,7 +198,7 @@ static HRESULT ReadStringProp(
 
 #endif
 
-static const unsigned int kNumArcsMax = 32;
+static const unsigned int kNumArcsMax = 48;
 static unsigned int g_NumArcs = 0;
 static const CArcInfo *g_Arcs[kNumArcsMax];
 void RegisterArc(const CArcInfo *arcInfo)
@@ -227,11 +232,11 @@ static void SplitString(const UString &srcString, UStringVector &destStrings)
     destStrings.Add(s);
 }
 
-void CArcInfoEx::AddExts(const wchar_t* ext, const wchar_t* addExt)
+void CArcInfoEx::AddExts(const wchar_t *ext, const wchar_t *addExt)
 {
   UStringVector exts, addExts;
-  if (ext)
-	SplitString(ext, exts);
+  if (ext != 0)
+    SplitString(ext, exts);
   if (addExt != 0)
     SplitString(addExt, addExts);
   for (int i = 0; i < exts.Size(); i++)
@@ -254,19 +259,16 @@ HRESULT CCodecs::LoadFormats()
 {
   const NDLL::CLibrary &lib = Libs.Back().Lib;
   GetHandlerPropertyFunc getProp = 0;
-  GetHandlerPropertyFunc2 getProp2 = (GetHandlerPropertyFunc2)
-      lib.GetProcAddress("GetHandlerProperty2");
+  GetHandlerPropertyFunc2 getProp2 = (GetHandlerPropertyFunc2)lib.GetProc("GetHandlerProperty2");
   if (getProp2 == NULL)
   {
-    getProp = (GetHandlerPropertyFunc)
-        lib.GetProcAddress("GetHandlerProperty");
+    getProp = (GetHandlerPropertyFunc)lib.GetProc("GetHandlerProperty");
     if (getProp == NULL)
       return S_OK;
   }
 
   UInt32 numFormats = 1;
-  GetNumberOfFormatsFunc getNumberOfFormats = (GetNumberOfFormatsFunc)
-    lib.GetProcAddress("GetNumberOfFormats");
+  GetNumberOfFormatsFunc getNumberOfFormats = (GetNumberOfFormatsFunc)lib.GetProc("GetNumberOfFormats");
   if (getNumberOfFormats != NULL)
   {
     RINOK(getNumberOfFormats(&numFormats));
@@ -312,54 +314,66 @@ HRESULT CCodecs::LoadFormats()
 }
 
 #ifdef NEW_FOLDER_INTERFACE
-void CCodecLib::LoadIcons()
+void CCodecIcons::LoadIcons(HMODULE m)
 {
 #ifdef _WIN32
-  UString iconTypes = MyLoadStringW((HMODULE)Lib, kIconTypesResId);
+  UString iconTypes = MyLoadStringW(m, kIconTypesResId);
   UStringVector pairs;
   SplitString(iconTypes, pairs);
   for (int i = 0; i < pairs.Size(); i++)
   {
     const UString &s = pairs[i];
     int pos = s.Find(L':');
-    if (pos < 0)
-      continue;
     CIconPair iconPair;
-    const wchar_t *end;
-    UString num = s.Mid(pos + 1);
-    iconPair.IconIndex = (UInt32)ConvertStringToUInt64(num, &end);
-    if (*end != L'\0')
-      continue;
+    iconPair.IconIndex = -1;
+    if (pos < 0)
+      pos = s.Length();
+    else
+    {
+      UString num = s.Mid(pos + 1);
+      if (!num.IsEmpty())
+      {
+        const wchar_t *end;
+        iconPair.IconIndex = (UInt32)ConvertStringToUInt64(num, &end);
+        if (*end != L'\0')
+          continue;
+      }
+    }
     iconPair.Ext = s.Left(pos);
     IconPairs.Add(iconPair);
   }
 #endif // #ifdef _WIN32
 }
 
-int CCodecLib::FindIconIndex(const UString &ext) const
+bool CCodecIcons::FindIconIndex(const UString &ext, int &iconIndex) const
 {
 #ifdef _WIN32
+  iconIndex = -1;
   for (int i = 0; i < IconPairs.Size(); i++)
   {
     const CIconPair &pair = IconPairs[i];
     if (ext.CompareNoCase(pair.Ext) == 0)
-      return pair.IconIndex;
+    {
+      iconIndex = pair.IconIndex;
+      return true;
+    }
   }
 #endif // #ifdef _WIN32
-  return -1;
+  return false;
 }
 #endif
 
 #ifdef _7ZIP_LARGE_PAGES
 extern "C"
 {
-  extern SIZE_T g_LargePageSize;
+  extern size_t g_LargePageSize;
 }
 #endif
 
-HRESULT CCodecs::LoadDll(const CSysString &dllPath)
+HRESULT CCodecs::LoadDll(const CSysString &dllPath, bool needCheckDll)
 {
 #ifdef _WIN32
+  if (needCheckDll)
   {
     NDLL::CLibrary library;
     if (!library.LoadEx(dllPath, LOAD_LIBRARY_AS_DATAFILE))
@@ -382,13 +396,13 @@ HRESULT CCodecs::LoadDll(const CSysString &dllPath)
     #ifdef _7ZIP_LARGE_PAGES
     if (g_LargePageSize != 0)
     {
-      SetLargePageModeFunc setLargePageMode = (SetLargePageModeFunc)lib.Lib.GetProcAddress("SetLargePageMode");
+      SetLargePageModeFunc setLargePageMode = (SetLargePageModeFunc)lib.Lib.GetProc("SetLargePageMode");
       if (setLargePageMode != 0)
         setLargePageMode();
     }
     #endif
 
-    lib.CreateObject = (CreateObjectFunc)lib.Lib.GetProcAddress("CreateObject");
+    lib.CreateObject = (CreateObjectFunc)lib.Lib.GetProc("CreateObject");
     if (lib.CreateObject != 0)
     {
       int startSize = Codecs.Size();
@@ -420,7 +434,7 @@ HRESULT CCodecs::LoadDllsFromFolder(const CSysString &folderPrefix)
   {
     if (fi.IsDir())
       continue;
-    RINOK(LoadDll(folderPrefix + fi.Name));
+    RINOK(LoadDll(folderPrefix + fi.Name, true));
   }
   return S_OK;
 }
@@ -437,6 +451,12 @@ static inline void SetBuffer(CByteBuffer &bb, const Byte *data, int size)
 
 HRESULT CCodecs::Load()
 {
+  #ifdef NEW_FOLDER_INTERFACE
+  #ifdef _WIN32
+  InternalIcons.LoadIcons(g_hInstance);
+  #endif
+  #endif
+
   Formats.Clear();
   #ifdef EXTERNAL_CODECS
   Codecs.Clear();
@@ -459,7 +479,7 @@ HRESULT CCodecs::Load()
   }
   #ifdef EXTERNAL_CODECS
   const CSysString baseFolder = GetBaseFolderPrefixFromRegistry();
-  RINOK(LoadDll(baseFolder + kMainDll));
+  RINOK(LoadDll(baseFolder + kMainDll, false));
   RINOK(LoadDllsFromFolder(baseFolder + kCodecsFolderName TEXT(STRING_PATH_SEPARATOR)));
   RINOK(LoadDllsFromFolder(baseFolder + kFormatsFolderName TEXT(STRING_PATH_SEPARATOR)));
   #endif
@@ -481,9 +501,7 @@ int CCodecs::FindFormatForArchiveName(const UString &arcPath) const
     const CArcInfoEx &arc = Formats[i];
     if (!arc.UpdateEnabled)
       continue;
-    // if (arc.FindExtension(ext) >= 0)
-    UString mainExt = arc.GetMainExt();
-    if (!mainExt.IsEmpty() && ext.CompareNoCase(mainExt) == 0)
+    if (arc.FindExtension(ext) >= 0)
       return i;
   }
   return -1;

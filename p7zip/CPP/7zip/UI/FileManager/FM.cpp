@@ -48,6 +48,7 @@ HINSTANCE g_hInstance;
 HWND g_HWND;
 bool g_OpenArchive = false;
 static UString g_MainPath;
+static UString g_ArcFormat;
 
 const int kNumDefaultPanels = 1;
 
@@ -549,18 +550,25 @@ int Main1(int argc,TCHAR **argv)
 
 void ExecuteCommand(UINT commandID)
 {
+//  CPanel::CDisableTimerProcessing disableTimerProcessing1(g_App.Panels[0]);
+//  CPanel::CDisableTimerProcessing disableTimerProcessing2(g_App.Panels[1]);
+
   printf("FM - ExecuteCommand(%d)\n",commandID);
   switch (commandID)
   {
-    case kAddCommand:
-      g_App.AddToArchive();
-      break;
-    case kExtractCommand:
-      g_App.ExtractArchives();
-      break;
-    case kTestCommand:
-      g_App.TestArchives();
-      break;
+    case kAddCommand: g_App.AddToArchive(); break;
+    case kExtractCommand: g_App.ExtractArchives(); break;
+    case kTestCommand: g_App.TestArchives(); break;
+	case IDEXIT: { // FIXME  only for MacOSX  ?
+		extern void appClose(void);
+		appClose();
+		break;
+	}
+	case IDM_ABOUT: { // FIXME  only for MacOSX  ?
+		extern void createAboutDialog(void);
+		createAboutDialog();
+		break;
+	}		  
   }
 }
 
@@ -853,7 +861,7 @@ static void local_WM_CREATE(HWND hWnd)
           if (!fileInfo.IsDir())
             needOpenFile = true;
       }
-      g_App.Create(hWnd, g_MainPath, xSizes, archiveIsOpened, encrypted);
+      g_App.Create(hWnd, g_MainPath, g_ArcFormat, xSizes, archiveIsOpened, encrypted);
 
       if (needOpenFile && !archiveIsOpened)
       {
@@ -911,4 +919,62 @@ void MoveSubWindows(HWND hWnd)
   }
 #endif
 }
+
+
+void CApp::MoveSubWindows()
+{
+#ifdef _WIN32
+  HWND hWnd = _window;
+  RECT rect;
+  if (hWnd == 0)
+    return;
+  ::GetClientRect(hWnd, &rect);
+  int xSize = rect.right;
+  if (xSize == 0)
+    return;
+  int headerSize = 0;
+  #ifdef UNDER_CE
+  _commandBar.AutoSize();
+  {
+    _commandBar.Show(true); // maybe we need it for
+    headerSize += _commandBar.Height();
+  }
+  #endif
+  if (_toolBar)
+  {
+    _toolBar.AutoSize();
+    #ifdef UNDER_CE
+    int h2 = Window_GetRealHeight(_toolBar);
+    _toolBar.Move(0, headerSize, xSize, h2);
+    #endif
+    headerSize += Window_GetRealHeight(_toolBar);
+  }
+  int ySize = MyMax((int)(rect.bottom - headerSize), 0);
+  
+  if (NumPanels > 1)
+  {
+    Panels[0].Move(0, headerSize, g_Splitter.GetPos(), ySize);
+    int xWidth1 = g_Splitter.GetPos() + kSplitterWidth;
+    Panels[1].Move(xWidth1, headerSize, xSize - xWidth1, ySize);
+  }
+  else
+  {
+    /*
+    int otherPanel = 1 - LastFocusedPanel;
+    if (PanelsCreated[otherPanel])
+      Panels[otherPanel].Move(0, headerSize, 0, ySize);
+    */
+    Panels[LastFocusedPanel].Move(0, headerSize, xSize, ySize);
+  }
+#endif
+}
+
+
+
+// FIXME for mac
+void doMacOpenFile(	const UString & fileName	 ) 
+{
+	g_App.GetFocusedPanel().BindToPathAndRefresh(fileName);
+}
+
 

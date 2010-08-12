@@ -6,8 +6,51 @@ import java.util.TreeMap;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import net.sf.sevenzipjbinding.junit.compression.*;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
+import net.sf.sevenzipjbinding.junit.compression.FirstTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth0;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth1;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth2;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth3;
+import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
+import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCpioTest;
@@ -78,6 +121,17 @@ import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchive7zTest;
 import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchiveRarTest;
 import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength3;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength4;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength5;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength6;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength7;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength8;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength9;
+import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithEmptyBuffer;
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekEnd;
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekSet;
@@ -175,13 +229,13 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] snippetsTests = { //
     /*    */GetNumberOfItemInArchive.class, //
-            ExtractItemsTest.class, //
+            /*ExtractItemsTest.class, //
             FirstStepsSimpleSnippets.class, //
             ListItemsTest.class, //
             OpenMultipartArchive7zTest.class, //
             OpenMultipartArchiveRarTest.class, //
             PrintCountOfItemsTest.class, //
-            SevenZipJBindingInitCheckTest.class, //
+            SevenZipJBindingInitCheckTest.class, //*/
     };
 
     static Class<?>[] toolsTests = { //
@@ -197,9 +251,63 @@ public class AllTestSuite extends TestSuite {
             ReadMaxThreeBytesSeekSet.class, //
             ReadMaxThreeBytesSeekCur.class, //
             ReadMaxThreeBytesSeekEnd.class, //
+            ByteArrayStreamTestWithEmptyBuffer.class, //
+            ByteArrayStreamTestWithBufferLength1.class, //
+            ByteArrayStreamTestWithBufferLength2.class, //
+            ByteArrayStreamTestWithBufferLength3.class, //
+            ByteArrayStreamTestWithBufferLength4.class, //
+            ByteArrayStreamTestWithBufferLength5.class, //
+            ByteArrayStreamTestWithBufferLength6.class, //
+            ByteArrayStreamTestWithBufferLength7.class, //
+            ByteArrayStreamTestWithBufferLength8.class, //
+            ByteArrayStreamTestWithBufferLength9.class, //
+            ByteArrayStreamTestWithBufferLength100.class, //
+            JBindingTest.class, //
+            Width1Depth0MtWidth0.class, //
+            Width1Depth1MtWidth0.class, //
+            Width1Depth2MtWidth0.class, //
+            Width2Depth0MtWidth0.class, //
+            Width2Depth1MtWidth0.class, //
+            Width2Depth2MtWidth0.class, //
+            Width3Depth0MtWidth0.class, //
+            Width3Depth1MtWidth0.class, //
+            Width3Depth2MtWidth0.class, //
+            Width1Depth0MtWidth1.class, //
+            Width1Depth1MtWidth1.class, //
+            Width1Depth2MtWidth1.class, //
+            Width2Depth0MtWidth1.class, //
+            Width2Depth1MtWidth1.class, //
+            Width2Depth2MtWidth1.class, //
+            Width3Depth0MtWidth1.class, //
+            Width3Depth1MtWidth1.class, //
+            Width3Depth2MtWidth1.class, //
+            Width1Depth0MtWidth2.class, //
+            Width1Depth1MtWidth2.class, //
+            Width1Depth2MtWidth2.class, //
+            Width2Depth0MtWidth2.class, //
+            Width2Depth1MtWidth2.class, //
+            Width2Depth2MtWidth2.class, //
+            Width3Depth0MtWidth2.class, //
+            Width3Depth1MtWidth2.class, //
+            Width3Depth2MtWidth2.class, //
+            Width1Depth0MtWidth3.class, //
+            Width1Depth1MtWidth3.class, //
+            Width1Depth2MtWidth3.class, //
+            Width2Depth0MtWidth3.class, //
+            Width2Depth1MtWidth3.class, //
+            Width2Depth2MtWidth3.class, //
+            Width3Depth0MtWidth3.class, //
+            Width3Depth1MtWidth3.class, //
+            Width3Depth2MtWidth3.class, //
+            JNIToolsTest.class, //
+            ParamSpecTest.class, //
     };
     static Class<?>[] compressionTests = { //
     /*    */SimpleTest.class, //
+            FirstTest.class, //
+            CompressMultipleFile7zStdConfTest.class, //
+            CompressMultipleFileTarStdConfTest.class, //
+            CompressMultipleFileZipStdConfTest.class, //
     };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 

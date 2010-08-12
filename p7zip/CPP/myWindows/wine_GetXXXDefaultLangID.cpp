@@ -8,6 +8,15 @@
 #include <ctype.h>
 #include <string.h>
 
+#ifdef __APPLE__
+#define  UInt32 mac_UInt32
+#include <CoreFoundation/CoreFoundation.h>
+#undef  UInt32
+#endif __APPLE__
+
+
+// #define TRACE printf
+
 typedef DWORD LCID;
 typedef void * ULONG_PTR; /* typedef unsigned long ULONG_PTR; */
 
@@ -634,7 +643,7 @@ static void LOCALE_Init(void)
     all_locales = CFLocaleCopyAvailableLocaleIdentifiers();
     preferred_locales = CFBundleCopyLocalizationsForPreferences( all_locales, NULL );
     if (preferred_locales && CFArrayGetCount( preferred_locales ))
-        user_language_string_ref = CFArrayGetValueAtIndex( preferred_locales, 0 );
+        user_language_string_ref = (CFStringRef)CFArrayGetValueAtIndex( preferred_locales, 0 ); // FIXME
     CFRelease( all_locales );
 #endif /* __APPLE__ */
 
@@ -642,7 +651,7 @@ static void LOCALE_Init(void)
 
     unix_cp = setup_unix_locales();
     if (!lcid_LC_MESSAGES) lcid_LC_MESSAGES = lcid_LC_CTYPE;
-#if 0
+
 #ifdef __APPLE__
     /* Override lcid_LC_MESSAGES with user_language if LC_MESSAGES is set to default */
     if (lcid_LC_MESSAGES == lcid_LC_CTYPE && user_language_string_ref)
@@ -653,12 +662,13 @@ static void LOCALE_Init(void)
         strcpynAtoW( buffer, user_locale, sizeof(buffer)/sizeof(WCHAR) );
         parse_locale_name( buffer, &locale_name );
         lcid_LC_MESSAGES = locale_name.lcid;
-        TRACE( "setting lcid_LC_MESSAGES to '%s'\n", user_locale );
+        // TRACE( "setting lcid_LC_MESSAGES to '%s'\n", user_locale );
     }
     if (preferred_locales)
         CFRelease( preferred_locales );
 #endif
 
+#if 0 // FIXME	
     NtSetDefaultUILanguage( LANGIDFROMLCID(lcid_LC_MESSAGES) );
     NtSetDefaultLocale( TRUE, lcid_LC_MESSAGES );
     NtSetDefaultLocale( FALSE, lcid_LC_CTYPE );

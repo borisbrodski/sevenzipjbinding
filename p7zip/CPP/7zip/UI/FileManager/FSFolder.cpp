@@ -2,24 +2,24 @@
 
 #include "StdAfx.h"
 
-#include "FSFolder.h"
-
+#include "Common/ComTry.h"
 #include "Common/StringConvert.h"
 #include "Common/UTFConvert.h"
-#include "Common/ComTry.h"
 
-#include "Windows/Defs.h"
-#include "Windows/PropVariant.h"
 #include "Windows/FileDir.h"
 #include "Windows/FileIO.h"
+#include "Windows/PropVariant.h"
 
 #include "../../PropID.h"
 
-#include "SysIconUtils.h"
-#ifdef _WIN32
 #include "FSDrives.h"
+#include "FSFolder.h"
+
+#ifdef _WIN32
 #include "NetFolder.h"
 #endif
+
+#include "SysIconUtils.h"
 
 namespace NWindows {
 namespace NFile {
@@ -34,10 +34,9 @@ using namespace NFind;
 
 namespace NFsFolder {
 
-static STATPROPSTG kProperties[] =
+static STATPROPSTG kProps[] =
 {
   { NULL, kpidName, VT_BSTR},
-  // { NULL, kpidIsDir, VT_BOOL},
   { NULL, kpidSize, VT_UI8},
   { NULL, kpidMTime, VT_FILETIME},
   { NULL, kpidCTime, VT_FILETIME},
@@ -67,8 +66,8 @@ HRESULT CFSFolder::Init(const UString &path, IFolderFolder *parentFolder)
   {
     DWORD lastError = GetLastError();
     CFindFile findFile;
-    CFileInfoW fileInfo;
-    if (!findFile.FindFirst(_path + UString(L"*"), fileInfo))
+    CFileInfoW fi;
+    if (!findFile.FindFirst(_path + UString(L"*"), fi))
       return lastError;
   }
 #endif
@@ -80,13 +79,13 @@ HRESULT GetFolderSize(const UString &path, UInt64 &numFolders, UInt64 &numFiles,
   RINOK(progress->SetCompleted(NULL));
   numFiles = numFolders = size = 0;
   CEnumeratorW enumerator(path + UString(WSTRING_PATH_SEPARATOR L"*"));
-  CFileInfoW fileInfo;
-  while (enumerator.Next(fileInfo))
+  CFileInfoW fi;
+  while (enumerator.Next(fi))
   {
-    if (fileInfo.IsDir())
+    if (fi.IsDir())
     {
       UInt64 subFolders, subFiles, subSize;
-      RINOK(GetFolderSize(path + UString(WSTRING_PATH_SEPARATOR) + fileInfo.Name, subFolders, subFiles, subSize, progress));
+      RINOK(GetFolderSize(path + UString(WSTRING_PATH_SEPARATOR) + fi.Name, subFolders, subFiles, subSize, progress));
       numFolders += subFolders;
       numFolders++;
       numFiles += subFiles;
@@ -95,7 +94,7 @@ HRESULT GetFolderSize(const UString &path, UInt64 &numFolders, UInt64 &numFiles,
     else
     {
       numFiles++;
-      size += fileInfo.Size;
+      size += fi.Size;
     }
   }
   return S_OK;
@@ -105,21 +104,21 @@ HRESULT CFSFolder::LoadSubItems(CDirItem &dirItem, const UString &path)
 {
   {
     CEnumeratorW enumerator(path + L"*");
-    CDirItem fileInfo;
-    while (enumerator.Next(fileInfo))
+    CDirItem fi;
+    while (enumerator.Next(fi))
     {
-      fileInfo.CompressedSizeIsDefined = false;
+      fi.CompressedSizeIsDefined = false;
       /*
-      if (!GetCompressedFileSize(_path + fileInfo.Name,
-      fileInfo.CompressedSize))
-      fileInfo.CompressedSize = fileInfo.Size;
+      if (!GetCompressedFileSize(_path + fi.Name,
+      fi.CompressedSize))
+      fi.CompressedSize = fi.Size;
       */
-      if (fileInfo.IsDir())
+      if (fi.IsDir())
       {
-        // fileInfo.Size = GetFolderSize(_path + fileInfo.Name);
-        fileInfo.Size = 0;
+        // fi.Size = GetFolderSize(_path + fi.Name);
+        fi.Size = 0;
       }
-      dirItem.Files.Add(fileInfo);
+      dirItem.Files.Add(fi);
     }
   }
   if (!_flatMode)
@@ -156,7 +155,7 @@ void CFSFolder::AddRefs(CDirItem &dirItem)
 STDMETHODIMP CFSFolder::LoadItems()
 {
   // OutputDebugString(TEXT("Start\n"));
-  INT32 dummy;
+  Int32 dummy;
   WasChanged(&dummy);
   Clear();
   RINOK(LoadSubItems(_root, _path));
@@ -245,7 +244,7 @@ STDMETHODIMP CFSFolder::GetNumberOfSubFolders(UInt32 *numSubFolders)
 */
 
 #ifdef _WIN32
-bool MyGetCompressedFileSizeW(LPCWSTR fileName, UInt64 &size)
+static bool MyGetCompressedFileSizeW(LPCWSTR fileName, UInt64 &size)
 {
   DWORD highPart;
   DWORD lowPart = ::GetCompressedFileSizeW(fileName, &highPart);
@@ -271,42 +270,40 @@ STDMETHODIMP CFSFolder::GetProperty(UInt32 itemIndex, PROPID propID, PROPVARIANT
   NCOM::CPropVariant prop;
   if (itemIndex >= (UInt32)_refs.Size())
     return E_INVALIDARG;
-  CDirItem &fileInfo = *_refs[itemIndex];
+  CDirItem &fi = *_refs[itemIndex];
   switch(propID)
   {
-    case kpidIsDir:  prop = fileInfo.IsDir(); break;
-    case kpidName:  prop = fileInfo.Name; break;
-    case kpidSize:  if (!fileInfo.IsDir()) prop = fileInfo.Size; break;
+    case kpidIsDir:  prop = fi.IsDir(); break;
+    case kpidName:  prop = fi.Name; break;
+    case kpidSize:  if (!fi.IsDir()) prop = fi.Size; break;
     case kpidPackSize:
-      if (!fileInfo.CompressedSizeIsDefined)
+      if (!fi.CompressedSizeIsDefined)
       {
-        fileInfo.CompressedSizeIsDefined = true;
+        fi.CompressedSizeIsDefined = true;
 #ifdef _WIN32
-        if (fileInfo.IsDir () ||
-            !MyGetCompressedFileSizeW(_path + GetRelPath(fileInfo), fileInfo.CompressedSize))
+        if (fi.IsDir () ||
+            !MyGetCompressedFileSizeW(_path + GetRelPath(fi), fi.CompressedSize))
 #endif
-          fileInfo.CompressedSize = fileInfo.Size;
+          fi.CompressedSize = fi.Size;
       }
-      prop = fileInfo.CompressedSize;
+      prop = fi.CompressedSize;
       break;
-    case kpidAttrib: prop = (UInt32)fileInfo.Attrib; break;
-    case kpidCTime: prop = fileInfo.CTime; break;
-    case kpidATime: prop = fileInfo.ATime; break;
-    case kpidMTime: prop = fileInfo.MTime; break;
+    case kpidAttrib: prop = (UInt32)fi.Attrib; break;
+    case kpidCTime: prop = fi.CTime; break;
+    case kpidATime: prop = fi.ATime; break;
+    case kpidMTime: prop = fi.MTime; break;
     case kpidComment:
     {
       LoadComments();
       UString comment;
-      if (_comments.GetValue(GetRelPath(fileInfo), comment))
+      if (_comments.GetValue(GetRelPath(fi), comment))
         prop = comment;
       break;
     }
     case kpidPrefix:
     {
       if (_flatMode)
-      {
-        prop = GetPrefix(fileInfo);
-      }
+        prop = GetPrefix(fi);
       break;
     }
   }
@@ -344,10 +341,10 @@ UString CFSFolder::GetRelPath(const CDirItem &item) const
 STDMETHODIMP CFSFolder::BindToFolder(UInt32 index, IFolderFolder **resultFolder)
 {
   *resultFolder = 0;
-  const CDirItem &fileInfo = *_refs[index];
-  if (!fileInfo.IsDir())
+  const CDirItem &fi = *_refs[index];
+  if (!fi.IsDir())
     return E_INVALIDARG;
-  return BindToFolderSpec(GetRelPath(fileInfo), resultFolder);
+  return BindToFolderSpec(GetRelPath(fi), resultFolder);
 }
 
 STDMETHODIMP CFSFolder::BindToFolder(const wchar_t *name, IFolderFolder **resultFolder)
@@ -423,24 +420,13 @@ STDMETHODIMP CFSFolder::BindToParentFolder(IFolderFolder **resultFolder)
 
 STDMETHODIMP CFSFolder::GetNumberOfProperties(UInt32 *numProperties)
 {
-  *numProperties = sizeof(kProperties) / sizeof(kProperties[0]);
+  *numProperties = sizeof(kProps) / sizeof(kProps[0]);
   if (!_flatMode)
     (*numProperties)--;
   return S_OK;
 }
 
-STDMETHODIMP CFSFolder::GetPropertyInfo(UInt32 index,
-    BSTR *name, PROPID *propID, VARTYPE *varType)
-{
-  if (index >= sizeof(kProperties) / sizeof(kProperties[0]))
-    return E_INVALIDARG;
-  const STATPROPSTG &prop = kProperties[index];
-  *propID = prop.propid;
-  *varType = prop.vt;
-  *name = 0;
-  return S_OK;
-}
-
+STDMETHODIMP CFSFolder::GetPropertyInfo IMP_IFolderFolder_GetProp(kProps)
 
 STDMETHODIMP CFSFolder::GetFolderProperty(PROPID propID, PROPVARIANT *value)
 {
@@ -456,7 +442,7 @@ STDMETHODIMP CFSFolder::GetFolderProperty(PROPID propID, PROPVARIANT *value)
   COM_TRY_END
 }
 
-STDMETHODIMP CFSFolder::WasChanged(INT32 *wasChanged)
+STDMETHODIMP CFSFolder::WasChanged(Int32 *wasChanged)
 {
   bool wasChangedMain = false;
 #ifdef _WIN32
@@ -502,11 +488,11 @@ HRESULT CFSFolder::GetItemsFullSize(const UInt32 *indices, UInt32 numItems,
     int index = indices[i];
     if (index >= _refs.Size())
       return E_INVALIDARG;
-    const CDirItem &fileInfo = *_refs[index];
-    if (fileInfo.IsDir())
+    const CDirItem &fi = *_refs[index];
+    if (fi.IsDir())
     {
       UInt64 subFolders, subFiles, subSize;
-      RINOK(GetFolderSize(_path + GetRelPath(fileInfo), subFolders, subFiles, subSize, progress));
+      RINOK(GetFolderSize(_path + GetRelPath(fi), subFolders, subFiles, subSize, progress));
       numFolders += subFolders;
       numFolders++;
       numFiles += subFiles;
@@ -515,7 +501,7 @@ HRESULT CFSFolder::GetItemsFullSize(const UInt32 *indices, UInt32 numItems,
     else
     {
       numFiles++;
-      size += fileInfo.Size;
+      size += fi.Size;
     }
   }
   return S_OK;
@@ -523,8 +509,8 @@ HRESULT CFSFolder::GetItemsFullSize(const UInt32 *indices, UInt32 numItems,
 
 HRESULT CFSFolder::GetItemFullSize(int index, UInt64 &size, IProgress *progress)
 {
-  const CDirItem &fileInfo = *_refs[index];
-  if (fileInfo.IsDir())
+  const CDirItem &fi = *_refs[index];
+  if (fi.IsDir())
   {
     /*
     CMyComPtr<IFolderFolder> subFolder;
@@ -544,9 +530,9 @@ HRESULT CFSFolder::GetItemFullSize(int index, UInt64 &size, IProgress *progress)
     }
     */
     UInt64 numFolders, numFiles;
-    return GetFolderSize(_path + GetRelPath(fileInfo), numFolders, numFiles, size, progress);
+    return GetFolderSize(_path + GetRelPath(fi), numFolders, numFiles, size, progress);
   }
-  size = fileInfo.Size;
+  size = fi.Size;
   return S_OK;
 }
 
@@ -605,23 +591,22 @@ STDMETHODIMP CFSFolder::CreateFile(const wchar_t *name, IProgress * /* progress 
 
 STDMETHODIMP CFSFolder::Rename(UInt32 index, const wchar_t *newName, IProgress * /* progress */)
 {
-  const CDirItem &fileInfo = *_refs[index];
-  const UString fullPrefix = _path + GetPrefix(fileInfo);
-  if (!NDirectory::MyMoveFile(fullPrefix + fileInfo.Name, fullPrefix + newName))
+  const CDirItem &fi = *_refs[index];
+  const UString fullPrefix = _path + GetPrefix(fi);
+  if (!NDirectory::MyMoveFile(fullPrefix + fi.Name, fullPrefix + newName))
     return GetLastError();
   return S_OK;
 }
 
 STDMETHODIMP CFSFolder::Delete(const UInt32 *indices, UInt32 numItems,IProgress *progress)
 {
-#ifdef _WIN32
   RINOK(progress->SetTotal(numItems));
   for (UInt32 i = 0; i < numItems; i++)
   {
-    const CDirItem &fileInfo = *_refs[indices[i]];
-    const UString fullPath = _path + GetRelPath(fileInfo);
+    const CDirItem &fi = *_refs[indices[i]];
+    const UString fullPath = _path + GetRelPath(fi);
     bool result;
-    if (fileInfo.IsDir())
+    if (fi.IsDir())
       result = NDirectory::RemoveDirectoryWithSubItems(fullPath);
     else
       result = NDirectory::DeleteFileAlways(fullPath);
@@ -630,7 +615,6 @@ STDMETHODIMP CFSFolder::Delete(const UInt32 *indices, UInt32 numItems,IProgress 
     UInt64 completed = i;
     RINOK(progress->SetCompleted(&completed));
   }
-#endif
   return S_OK;
 }
 
@@ -639,14 +623,14 @@ STDMETHODIMP CFSFolder::SetProperty(UInt32 index, PROPID propID,
 {
   if (index >= (UInt32)_refs.Size())
     return E_INVALIDARG;
-  CDirItem &fileInfo = *_refs[index];
-  if (fileInfo.Parent->Parent != 0)
+  CDirItem &fi = *_refs[index];
+  if (fi.Parent->Parent != 0)
     return E_NOTIMPL;
   switch(propID)
   {
     case kpidComment:
     {
-      UString filename = fileInfo.Name;
+      UString filename = fi.Name;
       filename.Trim();
       if (value->vt == VT_EMPTY)
         _comments.DeletePair(filename);
@@ -673,15 +657,15 @@ STDMETHODIMP CFSFolder::SetProperty(UInt32 index, PROPID propID,
   return S_OK;
 }
 
-STDMETHODIMP CFSFolder::GetSystemIconIndex(UInt32 index, INT32 *iconIndex)
+STDMETHODIMP CFSFolder::GetSystemIconIndex(UInt32 index, Int32 *iconIndex)
 {
 #ifdef _WIN32
   if (index >= (UInt32)_refs.Size())
     return E_INVALIDARG;
-  const CDirItem &fileInfo = *_refs[index];
+  const CDirItem &fi = *_refs[index];
   *iconIndex = 0;
   int iconIndexTemp;
-  if (GetRealIconIndex(_path + GetRelPath(fileInfo), fileInfo.Attributes, iconIndexTemp) != 0)
+  if (GetRealIconIndex(_path + GetRelPath(fi), fi.Attributes, iconIndexTemp) != 0)
   {
     *iconIndex = iconIndexTemp;
     return S_OK;

@@ -15,7 +15,9 @@
     #include "wx/wx.h"
 #endif 
 
-#include "resource.h"
+#undef _WIN32
+
+#include "resource2.h"
 #include "Windows/Control/DialogImpl.h"
 
 #include "CompressDialogRes.h"
@@ -273,11 +275,40 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-REGISTER_DIALOG(IDD_DIALOG_COMPRESS,CCompressDialog,0)
+static CStringTable g_stringTable[] =
+{
+ {   IDS_METHOD_STORE        ,L"Store" },
+ {   IDS_METHOD_NORMAL       ,L"Normal" },
+ {   IDS_METHOD_MAXIMUM      ,L"Maximum" },
+ {   IDS_METHOD_FAST         ,L"Fast" },
+ {   IDS_METHOD_FASTEST      ,L"Fastest" },
+ {   IDS_METHOD_ULTRA        ,L"Ultra" },
+
+ {   IDS_COMPRESS_NON_SOLID ,L"Non-solid" },
+ {   IDS_COMPRESS_SOLID ,L"Solid" },
+
+ {   IDS_COMPRESS_UPDATE_MODE_ADD ,L"Add and replace files" },
+ {   IDS_COMPRESS_UPDATE_MODE_UPDATE ,L"Update and add files" },
+ {   IDS_COMPRESS_UPDATE_MODE_FRESH ,L"Freshen existing files" },
+ {   IDS_COMPRESS_UPDATE_MODE_SYNCHRONIZE ,L"Synchronize files" },
+ {   IDS_COMPRESS_SET_ARCHIVE_DIALOG_TITLE ,L"Browse" },
+ {   IDS_COMPRESS_SPLIT_CONFIRM_MESSAGE ,L"Specified volume size: {0} bytes.\nAre you sure you want to split archive into such volumes?" },
+
+ {   IDS_OPEN_TYPE_ALL_FILES ,L"All Files" },
+
+ {   IDS_PASSWORD_USE_ASCII  ,L"Use only English letters, numbers and special characters (!, #, $, ...) for password." },
+ {   IDS_PASSWORD_PASSWORDS_DO_NOT_MATCH  ,L"Passwords do not match" },
+ {   IDS_PASSWORD_IS_TOO_LONG ,L"Password is too long" },
+
+	{ 0 , 0 }
+};
+
+REGISTER_DIALOG(IDD_DIALOG_COMPRESS,CCompressDialog,g_stringTable)
 
 BEGIN_EVENT_TABLE(CCompressDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)
 	EVT_CHECKBOX(wxID_ANY, CModalDialogImpl::OnAnyButton)
 	EVT_COMBOBOX(wxID_ANY, CModalDialogImpl::OnAnyChoice)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

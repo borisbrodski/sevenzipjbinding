@@ -60,11 +60,6 @@ static void configSubRef() {
 		return ERROR_SUCCESS;
 	}
 
-	CKey::~CKey()
-	{
-		Close();
-	}
-
 	LONG CKey::Create(HKEY parentKey, LPCTSTR keyName)
 	{
 		Close();
@@ -146,6 +141,25 @@ static void configSubRef() {
 		return ERROR_GET_VALUE;
 	}
 
+LONG CKey::GetValue_IfOk(LPCTSTR name, UInt32 &value)
+{
+  UInt32 newVal;
+  LONG res = QueryValue(name, newVal);
+  if (res == ERROR_SUCCESS)
+    value = newVal;
+  return res;
+}
+
+LONG CKey::GetValue_IfOk(LPCTSTR name, bool &value)
+{
+  bool newVal;
+  LONG res = QueryValue(name, newVal);
+  if (res == ERROR_SUCCESS)
+    value = newVal;
+  return res;
+}
+
+
 	LONG CKey::SetValue(LPCTSTR valueName, UInt32 value)
 	{
 		g_config->SetPath(_object->path);
@@ -183,7 +197,7 @@ static void configSubRef() {
 			str += 	hexa[ (buf[i]>>4) & 0x0f];
 			str += 	hexa[ buf[i] & 0x0f];
 		}
-		return SetValue(name,str);
+		return SetValue(name,(LPCTSTR)str);
 	}
 
 	LONG CKey::EnumKeys(CSysStringVector &keyNames)
@@ -246,6 +260,53 @@ static void configSubRef() {
 		value.SetCapacity(dataSize);
 		return QueryValue(name, (BYTE *)value, dataSize);
 	}
+
+
+LONG CKey::SetValue_Strings(LPCTSTR valueName, const UStringVector &strings)
+{
+  UInt32 numChars = 0;
+  int i;
+  for (i = 0; i < strings.Size(); i++)
+    numChars += strings[i].Length() + 1;
+  CBuffer<wchar_t> buffer;
+  buffer.SetCapacity(numChars);
+  int pos = 0;
+  for (i = 0; i < strings.Size(); i++)
+  {
+    const UString &s = strings[i];
+    MyStringCopy((wchar_t *)buffer + pos, (const wchar_t *)s);
+    pos += s.Length() + 1;
+  }
+  return SetValue(valueName, buffer, numChars * sizeof(wchar_t));
+}
+
+LONG CKey::GetValue_Strings(LPCTSTR valueName, UStringVector &strings)
+{
+  strings.Clear();
+  CByteBuffer buffer;
+  UInt32 dataSize;
+  LONG res = QueryValue(valueName, buffer, dataSize);
+  if (res != ERROR_SUCCESS)
+    return res;
+  if (dataSize % sizeof(wchar_t) != 0)
+    return E_FAIL;
+  const wchar_t *data = (const wchar_t *)(const Byte  *)buffer;
+  int numChars = dataSize / sizeof(wchar_t);
+  UString s;
+  for (int i = 0; i < numChars; i++)
+  {
+    wchar_t c = data[i];
+    if (c == 0)
+    {
+      strings.Add(s);
+      s.Empty();
+    }
+    else
+      s += c;
+  }
+  return res;
+}
+
 
 }
 }

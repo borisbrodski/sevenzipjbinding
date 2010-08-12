@@ -36,7 +36,7 @@ class CAgent;
 class CAgentFolder:
   public IFolderFolder,
   public IFolderProperties,
-  public IGetFolderArchiveProperties,
+  public IGetFolderArcProps,
   public IArchiveFolder,
   public IArchiveFolderInternal,
   public IInArchiveGetStream,
@@ -48,10 +48,9 @@ class CAgentFolder:
 {
 public:
 
-  MY_QUERYINTERFACE_BEGIN
-    MY_QUERYINTERFACE_ENTRY(IFolderFolder)
+  MY_QUERYINTERFACE_BEGIN2(IFolderFolder)
     MY_QUERYINTERFACE_ENTRY(IFolderProperties)
-    MY_QUERYINTERFACE_ENTRY(IGetFolderArchiveProperties)
+    MY_QUERYINTERFACE_ENTRY(IGetFolderArcProps)
     MY_QUERYINTERFACE_ENTRY(IArchiveFolder)
     MY_QUERYINTERFACE_ENTRY(IArchiveFolderInternal)
     MY_QUERYINTERFACE_ENTRY(IInArchiveGetStream)
@@ -69,7 +68,7 @@ public:
   INTERFACE_FolderFolder(;)
   INTERFACE_FolderProperties(;)
 
-  STDMETHOD(GetFolderArchiveProperties)(IFolderArchiveProperties **object);
+  STDMETHOD(GetFolderArcProps)(IFolderArcProps **object);
 
   // IArchiveFolder
   STDMETHOD(Extract)(const UINT32 *indices, UINT32 numItems,
@@ -133,7 +132,7 @@ private:
 
 class CAgent:
   public IInFolderArchive,
-  public IFolderArchiveProperties,
+  public IFolderArcProps,
   #ifndef EXTRACT_ONLY
   public IOutFolderArchive,
   public ISetProperties,
@@ -142,9 +141,8 @@ class CAgent:
 {
 public:
 
-  MY_QUERYINTERFACE_BEGIN
-    MY_QUERYINTERFACE_ENTRY(IInFolderArchive)
-    MY_QUERYINTERFACE_ENTRY(IFolderArchiveProperties)
+  MY_QUERYINTERFACE_BEGIN2(IInFolderArchive)
+    MY_QUERYINTERFACE_ENTRY(IFolderArcProps)
   #ifndef EXTRACT_ONLY
     MY_QUERYINTERFACE_ENTRY(IOutFolderArchive)
     MY_QUERYINTERFACE_ENTRY(ISetProperties)
@@ -153,7 +151,7 @@ public:
   MY_ADDREF_RELEASE
 
   INTERFACE_IInFolderArchive(;)
-  INTERFACE_IFolderArchiveProperties(;)
+  INTERFACE_IFolderArcProps(;)
 
   #ifndef EXTRACT_ONLY
   INTERFACE_IOutFolderArchive(;)
@@ -206,8 +204,8 @@ public:
   #endif
 
   const CArc &GetArc() { return _archiveLink.Arcs.Back(); }
-  IInArchive *GetArchive() { return GetArc().Archive; }
-  bool CanUpdate() const { return _archiveLink.Arcs.Size() == 1; }
+  IInArchive *GetArchive() { if ( _archiveLink.Arcs.IsEmpty()) return 0; return GetArc().Archive; }
+  bool CanUpdate() const { return _archiveLink.Arcs.Size() <= 1; }
 };
 
 #ifdef NEW_FOLDER_INTERFACE

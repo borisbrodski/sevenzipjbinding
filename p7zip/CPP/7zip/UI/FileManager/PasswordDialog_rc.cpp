@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 
 #include "PasswordDialogRes.h"
@@ -59,5 +61,6 @@ REGISTER_DIALOG(IDD_DIALOG_PASSWORD,CPasswordDialog,0)
 BEGIN_EVENT_TABLE(CPasswordDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)
 	EVT_CHECKBOX(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

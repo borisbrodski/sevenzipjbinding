@@ -1,6 +1,6 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.65
-; Translated by X-FoRcE 30.04.2009
+; 7-Zip 9.07
+; Translated by X-FoRcE 22.09.2009
 ;
 ; X-FoRcE
 ; Turkiye
@@ -116,6 +116,12 @@
 0200022E="Checksum"
 0200022F="Karakteristik"
 02000230="Sanal Adres"
+02000231="ID"
+02000232="Kısa İsim"
+02000233="Oluşturan Yazılım"
+02000234="Kesim Boyutu"
+02000235="Biçim"
+02000236="Bağlantı"
 
 ; Status bar
 02000301="{0} adet öğe seçili"
@@ -331,6 +337,7 @@
 03000240="Öz&ellikler"
 03000241="Açıkla&ma"
 03000242="Toplam checksum hesapla"
+03000243="Fark"
 03000250="Yeni k&lasör"
 03000251="Yeni dos&ya"
 03000260="Çı&k"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Düzenleyici"
 03010201="Metin &düzenleyici:"
+03010202="&Fark:"
 
 ; System
 03010300="Sistem"
@@ -407,6 +415,7 @@
 03010410="Sistem menüsü görünsün"
 03010420="&Tüm satır seçilsin"
 03010421="Tabl&o çizgileri görünsün"
+03010422="Öğeyi açmak için tek tıkla"
 03010430="&Alternatif seçim kipi"
 03010440="Geniş &bellek sayfaları kullan"
 

@@ -3,12 +3,12 @@ PROG=../../../../bin/7z.so
 LOCAL_FLAGS=\
   $(CC_SHARED) \
   -DEXTERNAL_CODECS \
-  -DCOMPRESS_MT \
-  -DCOMPRESS_BZIP2_MT \
-  -DCOMPRESS_MF_MT
+  -DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
+
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LOCAL_SHARED=$(LINK_SHARED)
 LIBS=$(LOCAL_LIBS_DLL)
@@ -61,23 +61,29 @@ WIN_OBJS = \
 AR_OBJS = \
   ArchiveExports.o \
   DllExports2.o \
+  ApmHandler.o \
   ArjHandler.o \
   Bz2Handler.o \
   CpioHandler.o \
   DebHandler.o \
+  DeflateProps.o \
   DmgHandler.o \
   ElfHandler.o \
   FatHandler.o \
+  FlvHandler.o \
   GzHandler.o \
   LzhHandler.o \
   LzmaHandler.o \
   MachoHandler.o \
   MbrHandler.o \
+  MslzHandler.o \
   MubHandler.o \
   NtfsHandler.o \
   PeHandler.o \
+  PpmdHandler.o \
   RpmHandler.o \
   SplitHandler.o \
+  SwfHandler.o \
   VhdHandler.o \
   XarHandler.o \
   XzHandler.o \
@@ -228,9 +234,11 @@ COMPRESS_OBJS = \
   PpmdDecoder.o \
   PpmdEncoder.o \
   PpmdRegister.o \
+  PpmdZip.o \
   QuantumDecoder.o \
   ShrinkDecoder.o \
   ZlibDecoder.o \
+  ZlibEncoder.o \
   ZDecoder.o \
 
 COMPRESS_OBJS_NON_FREE = \
@@ -255,11 +263,11 @@ CRYPTO_OBJS = \
   ZipStrong.o \
 
 
-# Alloc.o
 C_OBJS = \
   7zBuf2.o \
   7zStream.o \
   Aes.o \
+  Alloc.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
@@ -273,6 +281,12 @@ C_OBJS = \
   LzmaDec.o \
   LzmaEnc.o \
   MtCoder.o \
+  Ppmd7.o \
+  Ppmd7Dec.o \
+  Ppmd7Enc.o \
+  Ppmd8.o \
+  Ppmd8Dec.o \
+  Ppmd8Enc.o \
   Sha256.o \
   Sort.o \
   Threads.o \

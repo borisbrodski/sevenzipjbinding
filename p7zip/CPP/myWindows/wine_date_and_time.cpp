@@ -138,7 +138,8 @@ BOOL WINAPI FileTimeToDosDateTime( const FILETIME *ft, WORD *fatdate, WORD *fatt
   li.QuadPart = ft->dwHighDateTime;
   li.QuadPart = (li.QuadPart << 32) | ft->dwLowDateTime;
   RtlTimeToSecondsSince1970( &li, &t );
-  unixtime = t; /* FIXME unixtime = t - TIME_GetBias(); */
+  unixtime = t; /* unixtime = t; * FIXME unixtime = t - TIME_GetBias(); */
+
   tm = gmtime( &unixtime );
 
   fat_t = (tm->tm_hour << 11) + (tm->tm_min << 5) + (tm->tm_sec / 2);

@@ -15,7 +15,6 @@
 static const UInt64 k_Delta = 0x03;
 static const UInt64 k_BCJ = 0x03030103;
 static const UInt64 k_BCJ2 = 0x0303011B;
-static const UInt64 k_AES = 0x06F10701;
 
 namespace NArchive {
 namespace N7z {
@@ -76,7 +75,7 @@ HRESULT CEncoder::CreateMixerCoder(
 
     CMyComPtr<IUnknown> encoderCommon = encoder ? (IUnknown *)encoder : (IUnknown *)encoder2;
    
-    #ifdef COMPRESS_MT
+    #ifndef _7ZIP_ST
     {
       CMyComPtr<ICompressSetCoderMt> setCoderMt;
       encoderCommon.QueryInterface(IID_ICompressSetCoderMt, &setCoderMt);
@@ -164,8 +163,7 @@ HRESULT CEncoder::Encode(
   }
   for (i = 1; i < _bindInfo.OutStreams.Size(); i++)
   {
-    CSequentialOutTempBufferImp *tempBufferSpec =
-        new CSequentialOutTempBufferImp;
+    CSequentialOutTempBufferImp *tempBufferSpec = new CSequentialOutTempBufferImp;
     CMyComPtr<ISequentialOutStream> tempBuffer = tempBufferSpec;
     tempBufferSpec->Init(&inOutTempBuffers[i - 1]);
     tempBuffers.Add(tempBuffer);
@@ -260,9 +258,7 @@ HRESULT CEncoder::Encode(
   for (i = 1; i < _bindInfo.OutStreams.Size(); i++)
   {
     CInOutTempBuffer &inOutTempBuffer = inOutTempBuffers[i - 1];
-    inOutTempBuffer.FlushWrite();
-    inOutTempBuffer.InitReading();
-    inOutTempBuffer.WriteToStream(outStream);
+    RINOK(inOutTempBuffer.WriteToStream(outStream));
     packSizes.Add(inOutTempBuffer.GetDataSize());
   }
   

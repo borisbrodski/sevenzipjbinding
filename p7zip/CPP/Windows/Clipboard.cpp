@@ -12,6 +12,7 @@
 #else
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
+#undef _WIN32
 #endif
 
 #include "Common/StringConvert.h"

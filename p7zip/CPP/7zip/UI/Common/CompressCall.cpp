@@ -13,6 +13,7 @@
 #include "wx/wx.h"
 #endif
 
+#undef _WIN32
 
 #include "CompressCall.h"
 
@@ -115,7 +116,7 @@ HRESULT MyCreateProcess(const UString &params,
 #endif
 }
 
-static UString GetQuotedString(const UString &s)
+UString GetQuotedString(const UString &s)
 {
   return UString(L"\"") + s + UString(L"\"");
 }

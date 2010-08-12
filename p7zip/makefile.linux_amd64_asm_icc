@@ -8,6 +8,7 @@ OPTFLAGS=-m64 -O2 -march=core2 -xT # -ipo # -no-gcc
 ALLFLAGS=${OPTFLAGS} \
     	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
 	-DNDEBUG -D_REENTRANT -DENV_UNIX \
+	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
 CXX=icpc -i-static $(ALLFLAGS) # -DHAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
@@ -15,6 +16,8 @@ CC=icc $(ALLFLAGS)
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared
 ASM=yasm -f elf -m amd64
+
+PRE_COMPILED_HEADER=StdAfx.h.gch
 
 LOCAL_LIBS=-lpthread
 LOCAL_LIBS_DLL=$(LOCAL_LIBS) -ldl

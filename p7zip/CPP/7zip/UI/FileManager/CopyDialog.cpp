@@ -1,13 +1,13 @@
 // CopyDialog.cpp
 
 #include "StdAfx.h"
-#include "CopyDialog.h"
 
-#include "Common/StringConvert.h"
+#include "Windows/FileName.h"
 
 #include "Windows/Control/Static.h"
-#include "Windows/Shell.h"
-#include "Windows/FileName.h"
+
+#include "BrowseDialog.h"
+#include "CopyDialog.h"
 
 #ifdef LANG
 #include "LangUtils.h"
@@ -23,6 +23,10 @@ static CIDLangPair kIDLangPairs[] =
 };
 #endif
 
+#ifndef _WIN32
+extern const TCHAR * nameWindowToUnix(const TCHAR * lpFileName);
+#endif
+
 bool CCopyDialog::OnInit()
 {
   #ifdef LANG
@@ -34,10 +38,19 @@ bool CCopyDialog::OnInit()
   NControl::CStatic staticContol;
   staticContol.Attach(GetItem(IDC_COPY_STATIC));
   staticContol.SetText(Static);
+  #ifdef UNDER_CE
+  // we do it, since WinCE selects Value\something instead of Value !!!!
+  _path.AddString(Value);
+  #endif
   for (int i = 0; i < Strings.Size(); i++)
     _path.AddString(Strings[i]);
+#ifndef _WIN32
+  UString tmp = nameWindowToUnix(Value);
+  Value = tmp;
+#endif
   _path.SetText(Value);
   SetItemText(IDC_COPY_INFO, Info);
+  NormalizeSize(true);
   return CModalDialog::OnInit();
 }
 
@@ -57,18 +70,10 @@ void CCopyDialog::OnButtonSetPath()
   UString currentPath;
   _path.GetText(currentPath);
 
-  /*
-  #ifdef LANG
-  UString title = LangLoadString(IDS_EXTRACT_SET_FOLDER, 0x02000881);
-  #else
-  UString title = MyLoadString(IDS_EXTRACT_SET_FOLDER);
-  #endif
-  */
   UString title = LangStringSpec(IDS_SET_FOLDER, 0x03020209);
-  // UString title = L"Specify a location for output folder";
 
   UString resultPath;
-  if (!NShell::BrowseForFolder(HWND(*this), title, currentPath, resultPath))
+  if (!MyBrowseForFolder(HWND(*this), title, currentPath, resultPath))
     return;
   NFile::NName::NormalizeDirPathPrefix(resultPath);
   _path.SetCurSel(-1);

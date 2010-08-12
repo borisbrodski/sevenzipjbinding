@@ -9,7 +9,9 @@
 
 #include "../../PropID.h"
 
-#ifdef _WIN32
+#ifdef UNDER_CE
+#include "FSFolder.h"
+#else
 #include "FSDrives.h"
 #endif
 #include "LangUtils.h"
@@ -33,7 +35,7 @@ void CPanel::SetToRootFolder()
   rootFolderSpec->Init();
 }
 
-HRESULT CPanel::BindToPath(const UString &fullPath, bool &archiveIsOpened, bool &encrypted)
+HRESULT CPanel::BindToPath(const UString &fullPath, const UString &arcFormat, bool &archiveIsOpened, bool &encrypted)
 {
   archiveIsOpened = false;
   encrypted = false;
@@ -114,7 +116,7 @@ HRESULT CPanel::BindToPath(const UString &fullPath, bool &archiveIsOpened, bool 
       UString fileName;
       if (NDirectory::GetOnlyName(sysPath, fileName))
       {
-        HRESULT res = OpenItemAsArchive(fileName, encrypted);
+        HRESULT res = OpenItemAsArchive(fileName, arcFormat, encrypted);
         if (res != S_FALSE)
         {
           RINOK(res);
@@ -145,7 +147,7 @@ HRESULT CPanel::BindToPathAndRefresh(const UString &path)
 {
   CDisableTimerProcessing disableTimerProcessing1(*this);
   bool archiveIsOpened, encrypted;
-  RINOK(BindToPath(path, archiveIsOpened, encrypted));
+  RINOK(BindToPath(path, UString(), archiveIsOpened, encrypted));
   RefreshListCtrl(UString(), -1, true, UStringVector());
   return S_OK;
 }
@@ -196,7 +198,16 @@ void CPanel::LoadFullPathAndShow()
   LoadFullPath();
   _appState->FolderHistory.AddString(_currentFolderPrefix);
 
+#ifdef _WIN32
   _headerComboBox.SetText(_currentFolderPrefix);
+#else
+  {
+    extern const TCHAR * nameWindowToUnix(const TCHAR * lpFileName);
+	UString tmp = nameWindowToUnix(_currentFolderPrefix);
+	_headerComboBox.SetText(tmp);
+  }	
+#endif
+	
 #ifdef _WIN32 // FIXME
   COMBOBOXEXITEM item;
   item.mask = 0;
@@ -230,12 +241,12 @@ void CPanel::LoadFullPathAndShow()
   RefreshTitle();
 }
 
-#ifdef _WIN32
+#ifndef UNDER_CE
 LRESULT CPanel::OnNotifyComboBoxEnter(const UString &s)
 {
   if (BindToPathAndRefresh(GetUnicodeString(s)) == S_OK)
   {
-    PostMessage(kSetFocusToListView);
+		// FIXME PostMessage(kSetFocusToListView);
     return TRUE;
   }
   return FALSE;
@@ -246,7 +257,7 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result)
   if (info->iWhy == CBENF_ESCAPE)
   {
     _headerComboBox.SetText(_currentFolderPrefix);
-    PostMessage(kSetFocusToListView);
+		// FIXME PostMessage(kSetFocusToListView);
     result = FALSE;
     return true;
   }
@@ -269,6 +280,7 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result)
   }
   return false;
 }
+#endif
 
 #ifndef _UNICODE
 bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDIT info, LRESULT &result)
@@ -300,8 +312,19 @@ bool CPanel::OnNotifyComboBoxEndEdit(PNMCBEENDEDIT info, LRESULT &result)
 }
 #endif
 
+#ifdef _WIN32
 void CPanel::AddComboBoxItem(const UString &name, int iconIndex, int indent, bool addToList)
 {
+  #ifdef UNDER_CE
+
+  UString s;
+  iconIndex = iconIndex;
+  for (int i = 0; i < indent; i++)
+    s += L"  ";
+  _headerComboBox.AddString(s + name);
+  
+  #else
+  
   COMBOBOXEXITEMW item;
   item.mask = CBEIF_TEXT | CBEIF_INDENT;
   item.iSelectedImage = item.iImage = iconIndex;
@@ -311,6 +334,9 @@ void CPanel::AddComboBoxItem(const UString &name, int iconIndex, int indent, boo
   item.iIndent = indent;
   item.pszText = (LPWSTR)(LPCWSTR)name;
   _headerComboBox.InsertItem(&item);
+  
+  #endif
+
   if (addToList)
     ComboBoxPaths.Add(name);
 }
@@ -318,9 +344,12 @@ void CPanel::AddComboBoxItem(const UString &name, int iconIndex, int indent, boo
 extern UString RootFolder_GetName_Computer(int &iconIndex);
 extern UString RootFolder_GetName_Network(int &iconIndex);
 extern UString RootFolder_GetName_Documents(int &iconIndex);
+#endif
+
 
 bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
 {
+#ifdef _WIN32 // FIXME
   result = FALSE;
   switch(code)
   {
@@ -329,32 +358,30 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
       ComboBoxPaths.Clear();
       _headerComboBox.ResetContent();
       
-      int iconIndex;
-      UString name;
-
       int i;
       UStringVector pathParts;
       
       SplitPathToParts(_currentFolderPrefix, pathParts);
       UString sumPass;
+      if (!pathParts.IsEmpty())
+        pathParts.DeleteBack();
       for (i = 0; i < pathParts.Size(); i++)
       {
         UString name = pathParts[i];
-        if (name.IsEmpty())
-          continue;
         sumPass += name;
-        UString curName = sumPass;
-        if (i == 0)
-          curName += WCHAR_PATH_SEPARATOR;
+        sumPass += WCHAR_PATH_SEPARATOR;
         CFileInfoW info;
         DWORD attrib = FILE_ATTRIBUTE_DIRECTORY;
         if (info.Find(sumPass))
           attrib = info.Attrib;
-        sumPass += WCHAR_PATH_SEPARATOR;
-        AddComboBoxItem(name, GetRealIconIndex(curName, attrib), i, false);
+        AddComboBoxItem(name.IsEmpty() ? L"\\" : name, GetRealIconIndex(sumPass, attrib), i, false);
         ComboBoxPaths.Add(sumPass);
       }
 
+      #ifndef UNDER_CE
+
+      int iconIndex;
+      UString name;
       name = RootFolder_GetName_Documents(iconIndex);
       AddComboBoxItem(name, iconIndex, 0, true);
 
@@ -376,7 +403,7 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
       name = RootFolder_GetName_Network(iconIndex);
       AddComboBoxItem(name, iconIndex, 0, true);
 
-      // UStringVector strings; _appState->FolderHistory.GetList(strings);
+      #endif
     
       return false;
     }
@@ -389,10 +416,14 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
       {
         UString pass = ComboBoxPaths[index];
         _headerComboBox.SetCurSel(-1);
-        _headerComboBox.SetText(pass); // it's fix for seclecting by mouse.
+        // _headerComboBox.SetText(pass); // it's fix for seclecting by mouse.
         if (BindToPathAndRefresh(pass) == S_OK)
         {
           PostMessage(kSetFocusToListView);
+          #ifdef UNDER_CE
+          PostMessage(kRefreshHeaderComboBox);
+          #endif
+
           return true;
         }
       }
@@ -412,11 +443,13 @@ bool CPanel::OnComboBoxCommand(UINT code, LPARAM /* param */, LRESULT &result)
     }
     */
   }
+#endif
   return false;
 }
 
 bool CPanel::OnNotifyComboBox(LPNMHDR header, LRESULT &result)
 {
+  #ifndef UNDER_CE
   switch(header->code)
   {
     case CBEN_BEGINEDIT:
@@ -425,20 +458,22 @@ bool CPanel::OnNotifyComboBox(LPNMHDR header, LRESULT &result)
       _panelCallback->PanelWasFocused();
       break;
     }
+#ifdef _WIN32
     #ifndef _UNICODE
     case CBEN_ENDEDIT:
     {
       return OnNotifyComboBoxEndEdit((PNMCBEENDEDIT)header, result);
     }
     #endif
+#endif // #ifdef _WIN32
     case CBEN_ENDEDITW:
     {
       return OnNotifyComboBoxEndEdit((PNMCBEENDEDITW)header, result);
     }
   }
+  #endif
   return false;
 }
-#endif
 
 
 void CPanel::FoldersHistory()
@@ -472,16 +507,17 @@ void CPanel::OpenParentFolder()
 printf("CPanel::OpenParentFolder\n");
   LoadFullPath(); // Maybe we don't need it ??
   UString focucedName;
-  if (!_currentFolderPrefix.IsEmpty())
+  if (!_currentFolderPrefix.IsEmpty() &&
+      _currentFolderPrefix.Back() == WCHAR_PATH_SEPARATOR)
   {
-    UString string = _currentFolderPrefix;
-    string.Delete(string.Length() - 1);
-    int pos = string.ReverseFind(WCHAR_PATH_SEPARATOR);
-    if (pos < 0)
-      pos = 0;
-    else
-      pos++;
-    focucedName = string.Mid(pos);
+    focucedName = _currentFolderPrefix;
+    focucedName.DeleteBack();
+    if (focucedName != L"\\\\.")
+    {
+      int pos = focucedName.ReverseFind(WCHAR_PATH_SEPARATOR);
+      if (pos >= 0)
+        focucedName = focucedName.Mid(pos + 1);
+    }
   }
 
   printf("CPanel::OpenParentFolder focucedName=%ls\n",(const wchar_t *)focucedName);
@@ -565,15 +601,17 @@ void CPanel::OpenRootFolder()
 
 void CPanel::OpenDrivesFolder()
 {
-#ifdef _WIN32
   CloseOpenFolders();
-  CFSDrives *fsFolderSpec = new CFSDrives;
-  _folder = fsFolderSpec;
-  fsFolderSpec->Init();
+  #ifdef UNDER_CE
+  NFsFolder::CFSFolder *folderSpec = new NFsFolder::CFSFolder;
+  _folder = folderSpec;
+  folderSpec->InitToRoot();
+  #else
+  CFSDrives *folderSpec = new CFSDrives;
+  _folder = folderSpec;
+  folderSpec->Init();
+  #endif
   RefreshListCtrl();
-#else
-  printf("CPanel::OpenDrivesFolder : FIXME\n");
-#endif
 }
 
 void CPanel::OpenFolder(int index)

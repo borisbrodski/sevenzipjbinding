@@ -15,18 +15,27 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+ 
 #ifndef _UNICODE
 #include "Common/StringConvert.h"
 #endif
 #include "Windows/Window.h"
 
+void verify_main_thread(void);
+
 class LockGUI
 {
 	bool _IsMain;
 	public:
-		LockGUI() { 
+		LockGUI() {
+			verify_main_thread();
+			
 			_IsMain = wxThread::IsMain();
-			if (!_IsMain) wxMutexGuiEnter();
+			if (!_IsMain) {
+				printf("LockGUI-Windows\n");
+				abort(); // FIXME wxMutexGuiEnter();
+			}
 	       	}
 		~LockGUI() { if (!_IsMain) wxMutexGuiLeave(); }
 };

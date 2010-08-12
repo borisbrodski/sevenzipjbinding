@@ -13,7 +13,7 @@
 #include "../../Common/LimitedStreams.h"
 #include "../../Common/OutMemStream.h"
 #include "../../Common/ProgressUtils.h"
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 #include "../../Common/ProgressMt.h"
 #endif
 
@@ -40,7 +40,6 @@ static const Byte kMadeByHostOS = kHostOS;
 static const Byte kExtractHostOS = kHostOS;
 
 static const Byte kMethodForDirectory = NFileHeader::NCompressionMethod::kStored;
-static const Byte kExtractVersionForDirectory = NFileHeader::NCompressionMethod::kStoreExtractVersion;
 
 static HRESULT CopyBlockToArchive(ISequentialInStream *inStream,
     COutArchive &outArchive, ICompressProgressInfo *progress)
@@ -101,7 +100,7 @@ static void SetFileHeader(
   item.SetEncrypted(!isDir && options.PasswordIsDefined);
   if (isDir)
   {
-    item.ExtractVersion.Version = kExtractVersionForDirectory;
+    item.ExtractVersion.Version = NFileHeader::NCompressionMethod::kExtractVersion_Dir;
     item.CompressionMethod = kMethodForDirectory;
     item.PackSize = 0;
     item.FileCRC = 0; // test it
@@ -134,7 +133,7 @@ static void SetItemInfoFromCompressingResult(const CCompressingResult &compressi
   }
 }
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 
 static THREAD_FUNC_DECL CoderThread(void *threadCoderInfo);
 
@@ -399,7 +398,7 @@ static HRESULT Update2St(
     const CObjectVector<CItemEx> &inputItems,
     const CObjectVector<CUpdateItem> &updateItems,
     const CCompressionMethodMode *options,
-    const CByteBuffer &comment,
+    const CByteBuffer *comment,
     IArchiveUpdateCallback *updateCallback)
 {
   CLocalProgress *lps = new CLocalProgress;
@@ -483,7 +482,7 @@ static HRESULT Update2(
     const CObjectVector<CItemEx> &inputItems,
     const CObjectVector<CUpdateItem> &updateItems,
     const CCompressionMethodMode *options,
-    const CByteBuffer &comment,
+    const CByteBuffer *comment,
     IArchiveUpdateCallback *updateCallback)
 {
   UInt64 complexity = 0;
@@ -516,8 +515,8 @@ static HRESULT Update2(
     complexity += NFileHeader::kCentralBlockSize;
   }
 
-  if (comment != 0)
-    complexity += comment.GetCapacity();
+  if (comment)
+    complexity += comment->GetCapacity();
   complexity++; // end of central
   updateCallback->SetTotal(complexity);
 
@@ -525,7 +524,7 @@ static HRESULT Update2(
   
   complexity = 0;
   
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
 
   const size_t kNumMaxThreads = (1 << 10);
   UInt32 numThreads = options->NumThreads;
@@ -584,7 +583,7 @@ static HRESULT Update2(
         inputItems, updateItems, options, comment, updateCallback);
 
 
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
 
   // Warning : before memManager, threads and compressingCompletedEvents
   // in order to have a "good" order for the destructor
@@ -821,27 +820,27 @@ HRESULT Update(
   if (!outStream)
     return E_NOTIMPL;
 
-  CInArchiveInfo archiveInfo;
-  if(inArchive != 0)
+  if (inArchive)
   {
-    inArchive->GetArchiveInfo(archiveInfo);
-    if (archiveInfo.Base != 0)
+    if (inArchive->ArcInfo.Base != 0 ||
+        inArchive->ArcInfo.StartPosition != 0 ||
+        !inArchive->IsOkHeaders)
       return E_NOTIMPL;
   }
-  else
-    archiveInfo.StartPosition = 0;
   
   COutArchive outArchive;
   outArchive.Create(outStream);
-  if (archiveInfo.StartPosition > 0)
+  /*
+  if (inArchive && inArchive->ArcInfo.StartPosition > 0)
   {
     CMyComPtr<ISequentialInStream> inStream;
-    inStream.Attach(inArchive->CreateLimitedStream(0, archiveInfo.StartPosition));
+    inStream.Attach(inArchive->CreateLimitedStream(0, inArchive->ArcInfo.StartPosition));
     RINOK(CopyBlockToArchive(inStream, outArchive, NULL));
-    outArchive.MoveBasePosition(archiveInfo.StartPosition);
+    outArchive.MoveBasePosition(inArchive->ArcInfo.StartPosition);
   }
+  */
   CMyComPtr<IInStream> inStream;
-  if(inArchive != 0)
+  if (inArchive)
     inStream.Attach(inArchive->CreateStream());
 
   return Update2(
@@ -849,7 +848,8 @@ HRESULT Update(
       outArchive, inArchive, inStream,
       inputItems, updateItems,
       compressionMethodMode,
-      archiveInfo.Comment, updateCallback);
+      inArchive ? &inArchive->ArcInfo.Comment : NULL,
+      updateCallback);
 }
 
 }}

@@ -91,6 +91,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     //	fflush(stdout);
     //}
 
+
     int index = -1;
     UString formatNameString;
     if (formatName) {
@@ -207,6 +208,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     jobject inArchiveImplObject = jni::InArchiveImpl::_newInstance(env);
     jni::expectExceptionCheck(env);
+    return NULL;
 
     jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString),
             formatNameString.Length());
@@ -249,7 +251,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArch
     JBindingSession & jbindingSession = *(new JBindingSession(env));
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
-   
+
     CMyComPtr<IOutArchive> outArchive;
     HRESULT hresult = CodecTools::codecs.CreateOutArchive(archiveFormatIndex, outArchive);
     if (hresult) {
@@ -264,7 +266,7 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArch
 
 
 
- 
+
     jobject outArchiveImplObject = jni::OutArchiveImpl::_newInstance(env);
     jni::expectExceptionCheck(env);
 

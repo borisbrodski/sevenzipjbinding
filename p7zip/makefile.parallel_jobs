@@ -6,7 +6,7 @@ DEST_SHARE=$(DEST_HOME)/lib/p7zip
 DEST_SHARE_DOC=$(DEST_HOME)/share/doc/p7zip
 DEST_MAN=$(DEST_HOME)/man
 
-.PHONY: default all all2 7za 7zG sfx 7z 7zr Client7z common common7z clean tar_bin depend test test_7z test_7zr test_7zG test_Client7z all_test
+.PHONY: default all all2 7za 7zG 7zFM sfx 7z 7zr Client7z common common7z clean tar_bin depend test test_7z test_7zr test_7zG test_Client7z all_test app
 
 default:7za
 
@@ -16,8 +16,9 @@ all2: 7za sfx 7z
 
 all3: 7za sfx 7z 7zr
 
+all4: 7za sfx 7z 7zr Client7z 7zG 7zFM
+
 all_test : test test_7z test_7zr test_Client7z
-	$(MAKE) -C CPP/7zip/Compress/PPMD_Alone  test
 	$(MAKE) -C CPP/7zip/Compress/LZMA_Alone  test
 
 common:
@@ -34,6 +35,16 @@ Client7z: common
 	$(MAKE) -C CPP/7zip/Bundles/Format7zFree all
 	$(MAKE) -C CPP/7zip/UI/Client7z          all
 
+app: common 7zFM 7zG 7z sfx
+	$(MKDIR)          p7zip.app/Contents/MacOS
+	cp bin/7zFM       p7zip.app/Contents/MacOS/
+	cp bin/7zG        p7zip.app/Contents/MacOS/
+	cp bin/7z.so      p7zip.app/Contents/MacOS/
+	cp bin/7zCon.sfx  p7zip.app/Contents/MacOS/
+	cp -rp bin/Codecs p7zip.app/Contents/MacOS/
+	cp -rp GUI/Lang   p7zip.app/Contents/MacOS/
+	cp -rp GUI/help   p7zip.app/Contents/MacOS/
+
 depend:
 	$(MAKE) -C CPP/7zip/Bundles/Alone         depend
 	$(MAKE) -C CPP/7zip/Bundles/Alone7z       depend
@@ -43,6 +54,7 @@ depend:
 	$(MAKE) -C CPP/7zip/Bundles/Format7zFree  depend
 	$(MAKE) -C CPP/7zip/Compress/Rar          depend
 	$(MAKE) -C CPP/7zip/UI/GUI                depend
+	$(MAKE) -C CPP/7zip/UI/FileManager        depend
 
 sfx: common
 	$(MKDIR) bin
@@ -61,6 +73,11 @@ common7z:common
 	cd bin ; rm -f help ; ln -s ../GUI/help .
 	$(MAKE) -C CPP/7zip/UI/GUI               all
 
+7zFM: common7z
+	cd bin ; rm -f Lang ; ln -s ../GUI/Lang .
+	cd bin ; rm -f help ; ln -s ../GUI/help .
+	$(MAKE) -C CPP/7zip/UI/FileManager       all
+
 clean:
 	$(MAKE) -C CPP/myWindows                 clean
 	$(MAKE) -C CPP/7zip/Bundles/Alone        clean
@@ -73,19 +90,28 @@ clean:
 	$(MAKE) -C CPP/7zip/Bundles/Format7zFree clean
 	$(MAKE) -C CPP/7zip/Compress/Rar         clean
 	$(MAKE) -C CPP/7zip/Compress/LZMA_Alone  clean
-	$(MAKE) -C CPP/7zip/Compress/PPMD_Alone  clean
 	$(MAKE) -C CPP/7zip/Bundles/AloneGCOV    clean
+	$(MAKE) -C CPP/7zip/TEST/TestUI          clean
 	rm -fr bin
-	rm -fr CPP/7zip/CMAKE/Alone
+	rm -fr CPP/7zip/P7ZIP.*
+	rm -fr CPP/7zip/CMAKE/P7ZIP.*
+	rm -fr CPP/7zip/PREMAKE/P7ZIP.*
+	rm -f  CPP/7zip/QMAKE/*/*.o
+	rm -f  CPP/7zip/QMAKE/*/Makefile
+	rm -f  CPP/7zip/QMAKE/*/*.pro.user
+	rm -f  CPP/7zip/QMAKE/*/*.x
 	rm -f make.log 1 2
 	rm -f check/7z.so
-	find . -name "*~" -exec rm -f {} \;
-	find . -name "*.orig" -exec rm -fr {} \;
-	find . -name ".*.swp" -exec rm -f {} \;
-	find . -name "*.[ch]" -exec chmod -x {} \;
-	find . -name "*.cpp" -exec chmod -x {} \;
-	find . -name "*.asm" -exec chmod -x {} \;
+	rm -fr p7zip.app/Contents/MacOS
+	find . -name "*~"        -exec rm -f {} \;
+	find . -name "*.orig"    -exec rm -fr {} \;
+	find . -name ".*.swp"    -exec rm -f {} \;
+	find . -name "*.[ch]"    -exec chmod -x {} \;
+	find . -name "*.cpp"     -exec chmod -x {} \;
+	find . -name "*.asm"     -exec chmod -x {} \;
 	find . -name "makefile*" -exec chmod -x {} \;
+	find . -name ".DS_Store" -exec rm -f {} \;
+	find . -name "._*"       -exec rm -f {} \;
 	chmod -x ChangeLog README TODO man1/* DOCS/*.txt
 	chmod +x contrib/VirtualFileSystemForMidnightCommander/u7z
 	chmod +x contrib/gzip-like_CLI_wrapper_for_7z/p7zip

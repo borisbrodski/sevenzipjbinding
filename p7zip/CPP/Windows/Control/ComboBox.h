@@ -6,9 +6,23 @@
 #include "Windows/Window.h"
 #include "Windows/Defs.h"
 
+
+#include "Windows/Control/Window2.h" // NMHDR
+
 #ifndef _WIN32
 #define CB_ERR (-1)  // wxNOT_FOUND
 #endif
+
+typedef struct
+{
+	NMHDR hdr;
+#define CBENF_ESCAPE 1
+#define CBENF_RETURN 2
+	int iWhy;
+} NMCBEENDEDITW;
+
+typedef NMCBEENDEDITW * PNMCBEENDEDITW;
+
 
 class wxComboBox;
 
@@ -23,6 +37,7 @@ namespace NWindows {
 
 			void Attach(wxWindow * newWindow);
 			wxWindow * Detach();
+			operator HWND() const;
 
 			int AddString(const TCHAR * txt);
 

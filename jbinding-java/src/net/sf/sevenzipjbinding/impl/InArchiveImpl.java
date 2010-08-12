@@ -214,31 +214,31 @@ public final class InArchiveImpl implements ISevenZipInArchive {
         // Correct some returned values
         Object returnValue = nativeGetProperty(index, propID.getPropIDIndex());
         switch (propID) {
-        case SIZE:
-        case PACKED_SIZE:
-            // ARJ archive returns sized as Integer (32 bit).
-            // It isn't particular good idea, since every other archive returns Long (64 bit).
-            // So it will be corrected here.
-            if (returnValue instanceof Integer) {
-                return Long.valueOf(((Integer) returnValue).longValue());
-            }
+        // case SIZE:
+        // case PACKED_SIZE:
+        // ARJ archive returns sized as Integer (32 bit).
+        // It isn't particular good idea, since every other archive returns Long (64 bit).
+        // So it will be corrected here.
+        //            if (returnValue instanceof Integer) {
+        //                return Long.valueOf(((Integer) returnValue).longValue());
+        //            }
+        //
+        //            if (returnValue == null && archiveFormat != null && archiveFormat == ArchiveFormat.NSIS) {
+        //                return Long.valueOf(0);
+        //            }
+        //            break;
 
-            if (returnValue == null && archiveFormat != null && archiveFormat == ArchiveFormat.NSIS) {
-                return Long.valueOf(0);
-            }
-            break;
+        //        case IS_FOLDER:
+        //            // Some stream archive formats doesn't set this property.
+        //            if (returnValue == null) {
+        //                return Boolean.FALSE;
+        //            }
 
-        case IS_FOLDER:
-            // Some stream archive formats doesn't set this property.
-            if (returnValue == null) {
-                return Boolean.FALSE;
-            }
-
-        case ENCRYPTED:
-            // Some stream archive formats doesn't set this property.
-            if (returnValue == null) {
-                return Boolean.FALSE;
-            }
+        //        case ENCRYPTED:
+        //            // Some stream archive formats doesn't set this property.
+        //            if (returnValue == null) {
+        //                return Boolean.FALSE;
+        //            }
         }
         return returnValue;
     }

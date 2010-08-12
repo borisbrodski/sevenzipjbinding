@@ -3,6 +3,7 @@
 ; Translated by Milan Hrubý
 ; Updated for 4.33 version by Michal Molhanec
 ; 7-Zip 4.57 updated by Jiří Malák
+; 7-Zip 9.07 updated by Jiří Malák
 ;
 
 00000000="Czech"
@@ -52,8 +53,8 @@
 02000106="Rozbalí soubory z vybraného archivu."
 02000107="Přidat do archivu..."
 02000108="Přidá vybrané položky do archivu."
-02000109="Testovat archiv"
-0200010A="Otestuje integritu vybraného archivu."
+02000109="Zkontrolovat archiv"
+0200010A="Zkontroluje integritu vybraného archivu."
 0200010B="Rozbalit zde"
 0200010C="Rozbalí soubory z vybraného archivu do aktuální složky."
 0200010D="Rozbalit do {0}"
@@ -107,6 +108,21 @@
 02000226="Bloků"
 02000227="Dílů"
 
+02000229="64-bit"
+0200022A="Big-endian"
+0200022B="Pocesor"
+0200022C="Fyzická velikost"
+0200022D="Velikost hlaviček"
+0200022E="Kontrolní součet"
+0200022F="Charakteristiky"
+02000230="Virtuální adresa"
+02000231="ID"
+02000232="Krátké jméno"
+02000233="Autor"
+02000234="Velikost sektoru"
+02000235="Režim"
+02000236="Odkaz"
+
 ; Status bar
 02000301="vybráno {0} objekt(ů)"
 02000302="{0} objekt(ů)"
@@ -127,7 +143,7 @@
 02000501="Rozbalit"
 
 ; Messages
-02000601="Aktualizační operace nejsou podporovány pro tento archiv."
+02000601="Aktualizace není podporována pro tento archiv."
 02000602="Nelze aktualizovat archiv {0}"
 02000603="Nelze vytvořit složku '{0}'"
 02000604="Soubor není podporovaným archivem."
@@ -137,6 +153,9 @@
 02000608="Nedošlo k žádným chybám"
 02000609="Soubor '{0}' nelze otevřít jako archiv"
 0200060A="Zakódovaný archiv '{0}' nelze otevřít. Špatné heslo?"
+0200060B="Systém nemůže přidělit požadovanou velikost paměti"
+0200060C="Neznámá chyba"
+0200060D="Nepodporovaný typ archivu"
 
 ; Dialogs
 02000702="OK"
@@ -161,7 +180,7 @@
 02000810="Cesty"
 02000811="Plné cesty"
 02000812="Aktuální cesty"
-02000813="Žádné cesty"
+02000813="Bez cesty"
 
 02000820="Způsob přepisování"
 02000821="Zeptat se před přepisem"
@@ -246,7 +265,7 @@
 02000D0F="Spotřeba paměti pro rozbalení:"
 02000D10="Zakódování"
 02000D11="Metoda zakódování:"
-02000D12="Počet vláken CPU:"
+02000D12="Počet vláken procesoru:"
 02000D13="Velikost bloku:"
 02000D14="Podle velikosti souboru"
 02000D15="Pevný"
@@ -290,7 +309,7 @@
 02000E82="Šířka"
 
 ; Testing
-02000F90="Testování"
+02000F90="Konrola"
 
 
 ; File Manager
@@ -318,6 +337,7 @@
 03000240="Vlast&nosti"
 03000241="Poznámk&a"
 03000242="Vypočítat kontrolní součet"
+03000243="Porovnat soubory"
 03000250="Vytvořit složku"
 03000251="Vytvořit soubor"
 03000260="&Konec"
@@ -352,14 +372,14 @@
 03000449="\"Ploché\" zobrazení"
 03000450="&2 panely"
 03000451="Nástrojové lišty"
-03000460="Archivační nástrojová lišta"
-03000461="Standardní nástrojová lišta"
+03000460="Archivační lišta"
+03000461="Standardní lišta"
 03000462="Velká tlačítka"
 03000463="Zobrazovat text tlačítek"
 
 ; Tools
 03000510="&Možnosti..."
-03000511="&Test výkonu"
+03000511="&Zkouška výkonu"
 
 ; Help
 03000610="&Obsah..."
@@ -381,6 +401,7 @@
 ; Edit
 03010200="Editor"
 03010201="&Editor:"
+03010202="Program pro &porovnání souborů:"
 
 ; System
 03010300="Systém"
@@ -394,6 +415,7 @@
 03010410="Zobrazovat systémové menu"
 03010420="&Vybírat celý řádek"
 03010421="Zobrazovat &mřížku"
+03010422="Otevřít položku jedním kliknutím"
 03010430="&Alternativní způsob výběru"
 03010440="&Používat velké stránky paměti"
 
@@ -417,6 +439,7 @@
 03020215="Jste si jistí, že chcete vymazat tyto {0} položky?"
 03020216="Mazání..."
 03020217="Chyba při mazání souboru nebo složky"
+03020218="Systém nepodporuje přesun soubor s dlouhou cestou do Odpadkového koše"
 
 03020220="Přejmenování..."
 03020221="Chyba při přejmenování souboru nebo složky"
@@ -443,6 +466,7 @@
 03020281="Nelze aktualizovat soubor\n'{0}'"
 03020282="Editor nelze spustit."
 03020283="Otevírání..."
+03020284="Soubor se jeví jako virus (ve jménu souboru jsou dlouhé mezery)."
 
 03020290="Poznámka"
 03020291="&Poznámka:"
@@ -451,10 +475,11 @@
 
 03020300="Počítač"
 03020301="Síť"
+03020302="Dokumenty"
 
 03020400="Přidat"
 03020401="Rozbalit"
-03020402="Test"
+03020402="Zkontrolovat"
 
 03020420="Kopírovat"
 03020421="Přesunout"
@@ -471,7 +496,9 @@
 03020600="Sloučit soubory"
 03020601="Sloučit do:"
 03020610="Slučování..."
-03020620="Vybrat pouze první soubor"
+03020620="Musí se vybrat pouze první díl rozděleného soubor"
+03020621="Nepodařilo se rozpoznat rozdělený soubor"
+03020622="Nepodařilo se nalézt více než jeden díl rozděleného souboru"
 
 03020710="Vypočítávání kontrolního součtu..."
 03020720="Informace o kontrolním součtu"
@@ -481,6 +508,11 @@
 03020800="Prohledávání..."
 
 03020900="Vlastnosti"
+
+03020A01="Operace nemůže být provedena ze složky s dlouhou cestou."
+03020A02="Musíte vybrat jeden soubor"
+03020A03="Musíte vybrat jeden nebo více souborů"
+03020A04="Soubor {0} již existuje"
 
 ; Computer
 03031100="Celková velikost"
@@ -494,7 +526,7 @@
 
 ; Benchmark Dialog
 
-03080000="Test výkonu"
+03080000="Zkouška výkonu"
 03080001="Spotřeba paměti:"
 03080002="Komprimování"
 03080003="Rozbalování"
@@ -505,7 +537,9 @@
 03080008="Výsledné"
 03080009="Průchodů:"
 0308000A="Chyb:"
-0308000B="Využití CPU"
+0308000B="Využití procesoru"
 0308000C="Výkon / Využití"
 
 ;!@LangEnd@!
+
+ 	  	 

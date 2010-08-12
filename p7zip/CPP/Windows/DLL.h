@@ -40,7 +40,7 @@ public:
 
 
   bool Load(LPCTSTR fileName);
-  FARPROC GetProcAddress(LPCSTR procName) const;
+  FARPROC GetProc(LPCSTR procName) const;
 };
 
 }}

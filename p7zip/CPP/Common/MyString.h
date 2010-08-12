@@ -40,7 +40,9 @@ wchar_t MyCharUpper(wchar_t c);
 char * MyStringUpper(char *s);
 wchar_t * MyStringUpper(wchar_t *s);
 
+char MyCharLower(char c);
 char * MyStringLower(char *s);
+wchar_t MyCharLower(wchar_t c);
 wchar_t * MyStringLower(wchar_t *s);
 
 
@@ -201,6 +203,8 @@ public:
   ~CStringBase() {  delete []_chars; }
 
   operator const T*() const { return _chars;}
+
+  T Back() const { return _chars[_length - 1]; }
 
   // The minimum size of the character buffer in characters.
   // This value does not include space for a null terminator.
@@ -509,6 +513,7 @@ public:
     }
     return _length;
   }
+  void DeleteBack() { Delete(_length - 1); }
 };
 
 template <class T>

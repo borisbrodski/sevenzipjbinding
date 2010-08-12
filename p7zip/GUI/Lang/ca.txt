@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.60
+; 7-Zip 9.07
 ; Translated by Josep Casals and Marc Folch
 ;
 ;
@@ -116,6 +116,12 @@
 0200022E="Suma de verificació"
 0200022F="Característiques"
 02000230="Adreça virtual"
+02000231="ID"
+02000232="Nom curt"
+02000233="Aplicació creadora"
+02000234="Mida del sector"
+02000235="Mode"
+02000236="Enllaç"
 
 ; Status bar
 02000301="{0} objecte(s) seleccionat(s)"
@@ -331,6 +337,7 @@
 03000240="P&ropietats"
 03000241="Come&ntari"
 03000242="Calcula el checksum"
+03000243="Diff"
 03000250="Crea carpeta"
 03000251="Crea fitxer"
 03000260="Surt"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Editor"
 03010201="&Editor:"
+03010202="&Diff:"
 
 ; System
 03010300="Sistema"
@@ -407,6 +415,7 @@
 03010410="Mostra el menú de sistema"
 03010420="&Selecció de columna completa"
 03010421="Mostra les línies de &graella"
+03010422="Obre amb un sol clic els elements"
 03010430="Mode de selecció &alternatiu"
 03010440="Usa pàgines de memòria &grans"
 

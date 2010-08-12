@@ -21,10 +21,19 @@
 
 - zip format : better support of symbolic links
 
-7zG / p7zipForFilemanager
+7zG / 7zFM
 ==========================
 
 - better help displaying
 
 - better support for space in filenames
 
+
+7zG :
+ - sfx: wants 7z.sfx instead of 7zCon.sfx ?
+ - the dialogs are not on top of other windows => not visible ...
+
+
+7zFM :
+ - the path "/" does not work (on OSX ?)
+ - strange behaviour : selected/unselected items

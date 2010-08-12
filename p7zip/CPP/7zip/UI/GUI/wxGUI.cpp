@@ -15,11 +15,55 @@
     #include "wx/wx.h"
 #endif
 
+#undef _WIN32
+
+#ifdef __WXMAC__
+
+#define UInt32 max_UInt32
+#include <ApplicationServices/ApplicationServices.h>
+#undef UInt32
+
+#endif
+
 #define static const
 #include "../GUI/p7zip_32.xpm"
 #undef static
 
 #undef ACTIVATE_DIALOG_TESTS
+
+#ifdef _WIN32
+#error 5
+#endif
+
+#include "Windows/Window.h"
+#include "Windows/Control/DialogImpl.h"
+
+
+// FIXME
+
+static pthread_t g_main_thread;
+
+bool is_main_thread(void)
+{
+	return ( g_main_thread == pthread_self() );
+}
+
+void verify_main_thread(void)
+{
+		if ( ! is_main_thread() )
+		{
+			printf("verify_main_thread-wxGUI\n");
+			abort();
+		}
+}
+
+
+
+
+
+
+
+
 
 int Main1(int argc,TCHAR **argv);
 
@@ -35,6 +79,7 @@ using namespace NRegistry;
 #include "ExtractRes.h"
 #include "../Explorer/MyMessages.h"
 
+#include "../FileManager/resourceGui.h"
 #include "ExtractGUI.h"
 #include "UpdateGUI.h"
 #include "BenchmarkDialog.h"
@@ -384,10 +429,6 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-enum {
-    WORKER_EVENT=100    // this one gets sent from the worker thread
-};
-    
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(WORKER_EVENT, MyFrame::OnWorkerEvent)
     // EVT_IDLE(MyFrame::OnIdle)
@@ -463,6 +504,15 @@ bool MyApp::OnInit()
     // don't parse the command-line options !
     // : if ( !wxApp::OnInit() ) return false;
 
+#ifdef __WXMAC__
+ProcessSerialNumber PSN;
+GetCurrentProcess(&PSN);
+TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
+#endif
+	
+	
+	g_main_thread = pthread_self();
+
   { // define P7ZIP_HOME_DIR
     extern void my_windows_split_path(const AString &p_path, AString &dir , AString &base);
     static char p7zip_home_dir[MAX_PATH];
@@ -486,15 +536,16 @@ bool MyApp::OnInit()
   g_T0 = time(0);
   // DEBUG printf("MAIN Thread : 0x%lx\n",wxThread::GetCurrentId());
 
-   // Create the main frame window
-    MyFrame *frame = new MyFrame((wxFrame *)NULL, _T("7-zip Main Window"), 50, 50, 450, 340);
-   // Don't Show the frame !
-   // frame->Show(true);
+  // Create the main frame window
+  MyFrame *frame = new MyFrame((wxFrame *)NULL, _T("7-zip Main Window"), 50, 50, 450, 340);
+  // Don't Show the frame !
+  // frame->Show(true);
 
-    SetTopWindow(frame);
+  g_window = frame;
 
-    g_window = frame;
+  SetTopWindow(frame);
 
+/* FIXME ?	
     MyThread *thread = new MyThread(wxApp::argc,wxApp::argv);
     thread->Create(); //  != wxTHREAD_NO_ERROR
     thread->Run();
@@ -503,6 +554,13 @@ bool MyApp::OnInit()
   // loop and the application will run. If we returned false here, the
   // application would exit immediately.
     return true;
+*/
+	
+	int ret = Main1(wxApp::argc,wxApp::argv);
+	
+	exit(ret);
+	
+	return false;
 }
 
 DWORD WINAPI GetTickCount(VOID) {
@@ -512,34 +570,13 @@ DWORD WINAPI GetTickCount(VOID) {
 
 //////////////////////////////////////////
 
-#include "resource.h"
+#include "resource2.h"
 #include "ExtractRes.h"
 
 static CStringTable g_stringTable[] =
 {
   /* resource.rc */	  
   /***************/
-	{ IDS_OPEN_TYPE_ALL_FILES, L"All Files" },
-	{ IDS_METHOD_STORE, L"Store" },
-	{ IDS_METHOD_NORMAL, L"Normal" },
-	{ IDS_METHOD_MAXIMUM, L"Maximum" },
-	{ IDS_METHOD_FAST, L"Fast" },
-	{ IDS_METHOD_FASTEST, L"Fastest" },
-	{ IDS_METHOD_ULTRA, L"Ultra" },
-	{ IDS_COMPRESS_NON_SOLID, L"Non-solid" },
-	{ IDS_COMPRESS_SOLID, L"Solid" },
-
-	{ IDS_COMPRESS_UPDATE_MODE_ADD, L"Add and replace files" },
-	{ IDS_COMPRESS_UPDATE_MODE_UPDATE, L"Update and add files" },
-	{ IDS_COMPRESS_UPDATE_MODE_FRESH, L"Freshen existing files" },
-	{ IDS_COMPRESS_UPDATE_MODE_SYNCHRONIZE, L"Synchronize files" },
-	{ IDS_COMPRESS_SET_ARCHIVE_DIALOG_TITLE, L"Browse" },
-	{ IDS_COMPRESS_INCORRECT_VOLUME_SIZE, L"Incorrect volume size" },
-	{ IDS_COMPRESS_SPLIT_CONFIRM_MESSAGE, L"Specified volume size: {0} bytes.\nAre you sure you want to split archive into such volumes?" },
-
-	{ IDS_PASSWORD_USE_ASCII, L"Use only English letters, numbers and special characters (!, #, $, ...) for password." },
-	{ IDS_PASSWORD_PASSWORDS_DO_NOT_MATCH, L"Passwords do not match" },
-	{ IDS_PASSWORD_IS_TOO_LONG, L"Password is too long" },
 
 	{ IDS_PROGRESS_COMPRESSING, L"Compressing" },
 	{ IDS_PROGRESS_TESTING, L"Testing" },

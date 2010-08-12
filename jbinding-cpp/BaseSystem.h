@@ -8,11 +8,11 @@
 #ifndef BASESYSTEM_H_
 #define BASESYSTEM_H_
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 #include "Windows/Synchronization.h"
 #endif
 
-#if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
+#ifndef  _7ZIP_ST
 #ifndef MINGW
     #include <pthread.h>
 #endif
@@ -20,13 +20,13 @@
 
 typedef size_t ThreadId;
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
     typedef NWindows::NSynchronization::CCriticalSection PlatformCriticalSection;
 #endif
 
 
 inline ThreadId PlatformGetCurrentThreadId() {
-#if defined(COMPRESS_MT) || defined(COMPRESS_BZIP2_MT) || defined(COMPRESS_MF_MT) || defined(BENCH_MT)
+#ifndef _7ZIP_ST
     #ifdef MINGW
         return (ThreadId)GetCurrentThreadId();
     #else

@@ -1,8 +1,7 @@
-PROG=../../../../bin/7zFM
+PROG=../../../../bin/7zFM$(BINSUFFIX)
 
 LOCAL_FLAGS=\
-	-DUNICODE \
-	-D_UNICODE \
+	-DUNICODE -D_UNICODE \
 	-DLANG \
 	-DNEW_FOLDER_INTERFACE \
 	-DEXTERNAL_CODECS \
@@ -11,6 +10,8 @@ LOCAL_FLAGS=\
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
+
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=`wx-config --unicode=yes --libs` $(LOCAL_LIBS_DLL)
 
@@ -48,6 +49,7 @@ UpdateCallback100.o \
 ViewSettings.o \
 FileFolderPluginOpen.o \
 RootFolder.o \
+FSDrives.o \
 FSFolder.o \
 FSFolderCopy.o \
 FormatUtils.o \
@@ -127,6 +129,8 @@ CRC.o \
 wine_date_and_time.o \
 wine_GetXXXDefaultLangID.o \
 Sort.o \
+Sha256.o \
+Alloc.o \
 Threads.o \
 $(OBJ_CRC32)
 

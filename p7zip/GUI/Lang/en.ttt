@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.59
+; 7-Zip 9.07
 ; Translated by Igor Pavlov
 ;
 ;
@@ -116,6 +116,12 @@
 0200022E="Checksum"
 0200022F="Characteristics"
 02000230="Virtual Address"
+02000231="ID"
+02000232="Short Name"
+02000233="Creator Application"
+02000234="Sector Size"
+02000235="Mode"
+02000236="Link"
 
 ; Status bar
 02000301="{0} object(s) selected"
@@ -329,8 +335,9 @@
 03000232="&Move To..."
 03000233="&Delete"
 03000240="P&roperties"
-03000241="Comme&nt"
+03000241="Comme&nt..."
 03000242="Calculate checksum"
+03000243="Diff"
 03000250="Create Folder"
 03000251="Create File"
 03000260="E&xit"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Editor"
 03010201="&Editor:"
+03010202="&Diff:"
 
 ; System
 03010300="System"
@@ -407,6 +415,7 @@
 03010410="Show system menu"
 03010420="&Full row select"
 03010421="Show &grid lines"
+03010422="Single-click to open an item"
 03010430="&Alternative selection mode"
 03010440="Use &large memory pages"
 

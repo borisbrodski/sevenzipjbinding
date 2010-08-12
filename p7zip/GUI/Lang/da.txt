@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.65
+; 7-Zip 9.07
 ; Originaly Translated by Jakob Schmidt.
 ; Updated by Kian Andersen, Jørgen Rasmussen
 ;
@@ -116,9 +116,15 @@
 0200022E="Checksum"
 0200022F="Karakteristika"
 02000230="Virtuel adresse"
+02000231="ID"
+02000232="Kort navn"
+02000233="Oprettende program"
+02000234="Sektorstørrelse"
+02000235="Tilstand"
+02000236="Link"
 
 ; Status bar
-02000301="{0} objekt(er) valg"
+02000301="{0} objekt(er) valgt"
 02000302="{0} objekt(er)"
 
 02000320="Filer:"
@@ -139,7 +145,7 @@
 ; Messages
 02000601="Opdater operationer er ikke understøttet for dette arkiv."
 02000602="Kan ikke opdatere arkiv {0}"
-02000603="Kan ikke oprette folder '{0}'"
+02000603="Kan ikke oprette mappe '{0}'"
 02000604="Filen er ikke et understøttet arkiv."
 02000605="Fejl"
 02000606="For mange objekter"
@@ -150,6 +156,7 @@
 0200060B="Systemet kan ikke allokere den nødvendige mængde hukommelse"
 0200060C="Ukendt fejl"
 0200060D="Arkivtypen er ikke understøttet"
+
 ; Dialogs
 02000702="OK"
 02000705="&Ja"
@@ -202,7 +209,7 @@
 02000983="Ændret den"
 
 ; Messages dialog
-02000A00="Diagnostisk besked"
+02000A00="Diagnostiske beskeder"
 
 02000A80="Besked"
 
@@ -248,7 +255,7 @@
 02000D05="Opret &solid arkiv"
 02000D06="Pa&rameter:"
 02000D07="Funktioner"
-02000D08="Opret selv&udpakkende arkiv"
+02000D08="Opret selv&udpakkende arkiv (sfx)"
 02000D09="Multi-threading"
 02000D0A="Kr&ypter filnavne"
 02000D0B="Nedpaknings&niveau:"
@@ -266,7 +273,7 @@
 
 02000D40="Op&del i bind, bytes:"
 02000D41="Ukorrekt bindstørrelse"
-02000D42="Specificer bindstørrelse: {0} bytes.\nEr du sikker på du ønsker at opdele arkivet i sådanne bind?"
+02000D42="Specificer bindstørrelse: {0} bytes.\nEr du sikker på du ønsker, at opdele arkivet i sådanne bind?"
 
 02000D81="Kun gem"
 02000D82="Normal"
@@ -326,10 +333,11 @@
 03000230="O&mdøb"
 03000231="&Kopier til..."
 03000232="&Flyt til..."
-03000233="&Slet"
+03000233="S&let"
 03000240="&Egenskaber"
 03000241="Komme&ntar"
 03000242="Udregn &checksum"
+03000243="&Sammenlign"
 03000250="Opret mappe"
 03000251="Opret fil"
 03000260="&Afslut"
@@ -392,7 +400,8 @@
 
 ; Edit
 03010200="Editor"
-03010201="&Editor:"
+03010201="&Teksteditor:"
+03010202="&Sammenligningsværktøj:"
 
 ; System
 03010300="System"
@@ -401,11 +410,12 @@
 
 ; Settings
 03010400="Indstillinger"
-03010401="Vis \"..\" post"
+03010401="Vis \"..\" element"
 03010402="Vis rigtige filikoner"
 03010410="Vis systemmenu"
 03010420="&Markér hele rækken"
 03010421="Vis &gitter"
+03010422="Enkeltklik for at åbne et element"
 03010430="&Alternativ markeringsmetode"
 03010440="Benyt &store hukommelsessider"
 
@@ -430,6 +440,7 @@
 03020216="Sletter..."
 03020217="Fejl da en fil eller mappe skulle slettes"
 03020218="Systemet kan ikke flytte en fil med lang filsti til Papirkurven"
+
 03020220="Omdøber..."
 03020221="Fejl da en fil eller mappe skulle omdøbes"
 03020222="Bekræft filkopiering"
@@ -451,7 +462,7 @@
 
 03020260="Mappehistorik"
 
-03020280="Filen '{0}' er blevet ændret.\nVil du opdater den i arkivet?"
+03020280="Filen '{0}' er blevet ændret.\nVil du opdatere den i arkivet?"
 03020281="Kan ikke opdatere filen\n'{0}'"
 03020282="Kan ikke starte tekstbehandler."
 03020283="Åbner..."
@@ -480,25 +491,29 @@
 03020510="Opdeler..."
 03020520="Godkend opdeling"
 03020521="Er du sikker på du vil opdele filen i {0} bind?"
-03020522="Bind-størrelsen skal være mindre end størrelsen på den oprindelige fil"
+03020522="Bindstørrelsen skal være mindre end størrelsen på den oprindelige fil"
 
 03020600="Kombiner filer"
 03020601="&Kombiner til:"
 03020610="Kombinerer..."
-03020620="Vælg kun første fil"
+03020620="Vælg kun første del af opdelt fil"
 03020621="Kan ikke genkende fil, som en del af opdelt fil"
 03020622="Kan ikke finde mere end én del af opdelt fil"
+
 03020710="Beregner checksum.."
 03020720="Checksum information"
 03020721="CRC checksum for data:"
 03020722="CRC checksum for data og navne:"
 
 03020800="Skanner..."
+
 03020900="Egenskaber"
+
 03020A01="Handlingen kan ikke kaldes fra en mappe der har en lang sti."
 03020A02="Du skal vælge en fil"
 03020A03="Du skal vælge en eller flere filer"
-03020A04="Fil {0} findes allerede"
+03020A04="Filen {0} findes allerede"
+
 ; Computer
 03031100="Total størrelse"
 03031101="Fri plads"
@@ -513,8 +528,8 @@
 
 03080000="Benchmark"
 03080001="Hukommelsesbrug:"
-03080002="Nedpakning"
-03080003="Udpakning"
+03080002="Komprimering"
+03080003="Dekomprimering"
 03080004="Hastighed"
 03080005="Bedømmelse"
 03080006="Total bedømmelse"
@@ -526,7 +541,5 @@
 0308000C="Bedømmelse / Forbrug"
 
 ;!@LangEnd@!
-
- 	  	 
 
  	  	 

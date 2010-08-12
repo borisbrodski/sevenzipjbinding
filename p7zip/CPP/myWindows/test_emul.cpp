@@ -10,6 +10,12 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#ifdef __APPLE_CC__
+#define UInt32  macUIn32
+#include <CoreFoundation/CoreFoundation.h>
+#undef UInt32
+#endif
+
 #ifdef HAVE_WCHAR__H
 #include <wchar.h>
 #endif
@@ -226,7 +232,7 @@ static void test_time2()
 	FILETIME utcFileTime;
         FILETIME localFileTime;
 
-	if (NTime::DosTimeToFileTime(dosTime, localFileTime))
+	if (NTime::DosTimeToFileTime(dosTime, localFileTime)) /* DosDateTimeToFileTime */
 	{
 		if (!LocalFileTimeToFileTime(&localFileTime, &utcFileTime))
 			utcFileTime.dwHighDateTime = utcFileTime.dwLowDateTime = 0;
@@ -241,7 +247,7 @@ static void test_time2()
         FILETIME localFileTime2 = { 0, 0 };
 	UInt32 dosTime2 = 0;
         FileTimeToLocalFileTime(&utcFileTime, &localFileTime2);
-        NTime::FileTimeToDosTime(localFileTime2, dosTime2);
+        NTime::FileTimeToDosTime(localFileTime2, dosTime2);  /* FileTimeToDosDateTime */
 
 	printf("  - 0x%x <= 0x%x 0x%x <= 0x%x 0x%x\n",(unsigned)dosTime2,
 		(unsigned)localFileTime2.dwHighDateTime,(unsigned)localFileTime2.dwLowDateTime,
@@ -322,6 +328,310 @@ int test_thread(void) {
 	return 0;
 }
 
+
+void dumpStr(const char *title,const char *txt)
+{
+  size_t i,len = strlen(txt);
+
+  printf("%s - %d :",title,(int)len);
+
+  for(i  = 0 ; i<len;i++) {
+    printf(" 0x%02x",(unsigned)(txt[i] & 255)); 
+  }
+
+  printf("\n");
+}
+
+
+void dumpWStr(const char *title,const wchar_t *txt)
+{
+  size_t i,len = wcslen(txt);
+
+  printf("%s - %d :",title,(int)len);
+
+  for(i  = 0 ; i<len;i++) {
+    printf(" 0x%02x",(unsigned)(txt[i])); 
+  }
+
+  printf("\n");
+}
+
+#ifdef __APPLE_CC__
+
+void  testMaxOSX_stringConvert()
+{
+/*
+                         0xE8, // latin small letter e with grave
+                         0xE9, // latin small letter e with acute
+                         L'a',
+                         0xE0, // latin small letter a with grave
+                         0x20AC, // euro sign
+*/
+   struct
+   {
+     char astr [256];
+     wchar_t ustr [256];
+   }
+   tab [] =
+   {
+      {
+      //   'a' , 'e with acute'       , 'e with grave'     ,  'a with grave'    ,  'u with grave'    ,  'b' , '.'  ,  't' , 'x'  , 't'  
+         { 0x61,  0x65,  0xcc,  0x81  ,  0x65,  0xcc,  0x80,  0x61,  0xcc,  0x80,  0x75,  0xcc,  0x80,  0x62,  0x2e,  0x74,  0x78, 0x74,  0 },
+         { 0x61,  0xe9,                  0xe8,                0xe0,                0xf9,                0x62,  0x2e,  0x74,  0x78, 0x74, 0 }
+      },
+      {
+      //   'a' , 'euro sign'        ,  'b' , '.'  ,  't' , 'x'  , 't'  , '\n' 
+         { 0x61,  0xe2,  0x82,  0xac,  0x62,  0x2e,  0x74,  0x78,  0x74,  0x0a, 0 },
+         { 0x61,  0x20AC,              0x62,  0x2e,  0x74,  0x78,  0x74,  0x0a, 0 }  
+      },
+      {
+         { 0 },
+         { 0 }
+      }
+   };
+
+   int i;
+
+   printf("testMaxOSX_stringConvert : \n");
+
+   i = 0;
+   while (tab[i].astr[0])
+   {
+     printf("  %s\n",tab[i].astr);
+
+     UString ustr = GetUnicodeString(tab[i].astr);
+
+     // dumpWStr("1",&ustr[0]);
+
+     assert(MyStringCompare(&ustr[0],tab[i].ustr) == 0);
+     assert(ustr.Length() == wcslen(tab[i].ustr) );
+
+
+     AString astr = GetAnsiString(ustr);
+     assert(MyStringCompare(&astr[0],tab[i].astr) == 0);
+     assert(astr.Length() == strlen(tab[i].astr) );
+
+     i++;
+   }
+}
+
+void  testMacOSX()
+{
+//  char texte1[]= { 0xc3 , 0xa9  , 0xc3, 0xa0, 0};
+
+  wchar_t wpath1[4096] = {
+                         0xE9, // latin small letter e with acute
+                         0xE0,
+                         0xc7,
+                         0x25cc,
+                         0x327,
+                         0xe4,
+                         0xe2,
+                         0xc2,
+                         0xc3,
+                         0x2e,
+                         0x74,
+                         0x78,
+                         0x74,
+/*
+                         L'e',
+                         0xE8, // latin small letter e with grave
+                         0xE9, // latin small letter e with acute
+                         L'a',
+                         0xE0, // latin small letter a with grave
+                         0x20AC, // euro sign
+                         L'b',
+*/
+                         0 };
+
+    char utf8[4096];
+    wchar_t wpath2[4096];
+
+
+
+ // dumpStr("UTF8 standart",texte1);
+
+    dumpWStr("UCS32 standard",wpath1);
+
+// Translate into FS pathname
+ {
+    const wchar_t * wcs = wpath1;
+
+    UniChar unipath[4096];
+
+    long n = wcslen(wcs);
+
+    for(long i =   0 ; i<= n ;i++) {
+      unipath[i] = wcs[i];
+    }
+
+    CFStringRef cfpath = CFStringCreateWithCharacters(NULL,unipath,n);
+
+    CFMutableStringRef cfpath2 = CFStringCreateMutableCopy(NULL,0,cfpath);
+    CFRelease(cfpath);
+    CFStringNormalize(cfpath2,kCFStringNormalizationFormD);
+    
+    CFStringGetCString(cfpath2,(char *)utf8,4096,kCFStringEncodingUTF8);
+
+    CFRelease(cfpath2);  
+  }
+
+  dumpStr("UTF8 MacOSX",utf8);
+
+// Translate from FS pathname
+ {
+    const char * path = utf8;
+
+    long n = strlen(path);
+
+    CFStringRef cfpath = CFStringCreateWithCString(NULL,path,kCFStringEncodingUTF8);
+
+    if (cfpath)
+    {
+
+       CFMutableStringRef cfpath2 = CFStringCreateMutableCopy(NULL,0,cfpath);
+       CFRelease(cfpath);
+       CFStringNormalize(cfpath2,kCFStringNormalizationFormC);
+    
+       n = CFStringGetLength(cfpath2);
+       for(long i =   0 ; i<= n ;i++) {
+         wpath2[i] = CFStringGetCharacterAtIndex(cfpath2,i);
+       }
+       wpath2[n] = 0;
+
+       CFRelease(cfpath2);  
+    }
+    else
+    {
+       wpath2[0] = 0;
+    }
+  }
+
+  dumpWStr("UCS32 standard (2)",wpath2);
+
+/*
+ {
+   CFStringRef cfpath;
+
+    cfpath = CFStringCreateWithCString(kCFAllocatorDefault, texte1, kCFStringEncodingUTF8);
+
+    // TODO str = null ?
+
+    CFMutableStringRef cfpath2 = CFStringCreateMutableCopy(NULL,0,cfpaht);
+    CFRealease(cfpath);
+
+    
+
+    
+  }
+*/
+
+
+}
+#endif // __APPLE_CC__
+
+
+static const TCHAR *kMainDll = TEXT("7z.dll");
+
+static CSysString ConvertUInt32ToString(UInt32 value)
+{
+  TCHAR buffer[32];
+  ConvertUInt32ToString(value, buffer);
+  return buffer;
+}
+
+
+void test_csystring(void)
+{
+	{
+		const CSysString baseFolder = TEXT("bin/");
+		const CSysString b2 = baseFolder + kMainDll;
+
+		assert(MyStringCompare(&b2[0],TEXT("bin/7z.dll")) == 0);
+	}
+
+	{
+		LPCTSTR dirPath=TEXT("/tmp/");
+		LPCTSTR prefix=TEXT("foo");
+		CSysString resultPath;
+
+		UINT   number = 12345;
+		UInt32 count  = 6789;
+		
+/*
+		TCHAR * buf = resultPath.GetBuffer(MAX_PATH);
+		::swprintf(buf,MAX_PATH,L"%ls%ls#%d@%d.tmp",dirPath,prefix,(unsigned)number,count);
+		buf[MAX_PATH-1]=0;
+		resultPath.ReleaseBuffer();
+*/
+		resultPath  = dirPath;
+		resultPath += prefix;
+		resultPath += TEXT('#');
+		resultPath += ConvertUInt32ToString(number);
+		resultPath += TEXT('@');
+		resultPath += ConvertUInt32ToString(count);
+		resultPath += TEXT(".tmp");
+
+		// printf("##%ls##\n",&resultPath[0]);
+
+		assert(MyStringCompare(&resultPath[0],TEXT("/tmp/foo#12345@6789.tmp")) == 0);
+	}
+	
+}
+
+static void  test_AString()
+{
+   AString a;
+
+   a = "abc";
+   assert(MyStringCompare(&a[0],"abc") == 0);
+   assert(a.Length() == 3);
+
+   a = GetAnsiString(L"abc");
+   assert(MyStringCompare(&a[0],"abc") == 0);
+   assert(a.Length() == 3);
+}
+
+
+const TCHAR kAnyStringWildcard = '*';
+
+static void test_UString2(const UString &phyPrefix)
+{
+  UString tmp = phyPrefix + wchar_t(kAnyStringWildcard);
+  printf("Enum(%ls-%ls-%lc)\n",&tmp[0],&phyPrefix[0],wchar_t(kAnyStringWildcard));
+}
+
+
+
+static void test_UString()
+{
+  UString us = L"7za433_tar";
+
+   test_UString2(L"7za433_tar");
+
+   UString u1(us);
+   test_UString2(u1);
+   u1 = L"";
+   test_UString2(u1);
+   u1 = us;
+   test_UString2(u1);
+
+   UString u2 = us;
+   test_UString2(u2);
+   u2 = L"";
+   test_UString2(u2);
+   u2 = u1;
+   test_UString2(u2);
+
+   u1 = L"abc";
+   assert(MyStringCompare(&u1[0],L"abc") == 0);
+   assert(u1.Length() == 3);
+
+   u1 = GetUnicodeString("abc");
+   assert(MyStringCompare(&u1[0],L"abc") == 0);
+   assert(u1.Length() == 3);
+}
+
 /****************************************************************************************/
 int main() {
 
@@ -349,6 +659,10 @@ int main() {
   printf("sizeof(size_t) : %d\n",(int)sizeof(size_t));
   printf("sizeof(ptrdiff_t) : %d\n",(int)sizeof(ptrdiff_t));
   printf("sizeof(off_t) : %d\n",(int)sizeof(off_t));
+  printf("sizeof(wchar_t) : %d\n",(int)sizeof(wchar_t));
+#ifdef __APPLE_CC__
+  printf("sizeof(UniChar) : %d\n",(int)sizeof(UniChar));
+#endif
 
   union {
 	Byte b[2];
@@ -371,12 +685,35 @@ int main() {
   test_astring(12345);
   test_split_astring();
 
+  test_csystring();
+  test_AString();
+  test_UString();
 
   test_time();
 
   test_time2();
 
   test_semaphore();
+
+#ifdef __APPLE_CC__
+  testMacOSX();
+  testMaxOSX_stringConvert();
+#endif
+
+
+{
+	LANGID langID;
+	WORD primLang;
+	WORD subLang;
+
+	langID = GetUserDefaultLangID();
+	printf("langID=0x%x\n",langID);
+
+	primLang = (WORD)(PRIMARYLANGID(langID));
+	subLang = (WORD)(SUBLANGID(langID));
+
+	printf("primLang=%d subLang=%d\n",(unsigned)primLang,(unsigned)subLang);  
+}
 
   printf("\n### All Done ###\n\n");
 

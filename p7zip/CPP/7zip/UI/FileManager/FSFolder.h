@@ -3,13 +3,11 @@
 #ifndef __FSFOLDER_H
 #define __FSFOLDER_H
 
-#include "Common/MyString.h"
 #include "Common/MyCom.h"
+
 #include "Windows/FileFind.h"
-#include "Windows/PropVariant.h"
 
 #include "IFolder.h"
-
 #include "TextPairs.h"
 
 namespace NFsFolder {
@@ -18,8 +16,10 @@ class CFSFolder;
 
 struct CFileInfoEx: public NWindows::NFile::NFind::CFileInfoW
 {
+  #ifndef UNDER_CE
   bool CompressedSizeIsDefined;
   UInt64 CompressedSize;
+  #endif
 };
 
 struct CDirItem;
@@ -50,7 +50,7 @@ class CFSFolder:
 {
   UInt64 GetSizeOfItem(int anIndex) const;
 public:
-  MY_QUERYINTERFACE_BEGIN
+  MY_QUERYINTERFACE_BEGIN2(IFolderFolder)
     MY_QUERYINTERFACE_ENTRY(IFolderWasChanged)
     // MY_QUERYINTERFACE_ENTRY(IFolderOperationsDeleteToRecycleBin)
     MY_QUERYINTERFACE_ENTRY(IFolderOperations)
@@ -65,13 +65,13 @@ public:
   INTERFACE_FolderFolder(;)
   INTERFACE_FolderOperations(;)
 
-  STDMETHOD(WasChanged)(INT32 *wasChanged);
+  STDMETHOD(WasChanged)(Int32 *wasChanged);
   STDMETHOD(Clone)(IFolderFolder **resultFolder);
   STDMETHOD(GetItemFullSize)(UInt32 index, PROPVARIANT *value, IProgress *progress);
 
   STDMETHOD(SetFlatMode)(Int32 flatMode);
 
-  STDMETHOD(GetSystemIconIndex)(UInt32 index, INT32 *iconIndex);
+  STDMETHOD(GetSystemIconIndex)(UInt32 index, Int32 *iconIndex);
 
 private:
   UString _path;
@@ -99,6 +99,9 @@ private:
   void AddRefs(CDirItem &dirItem);
 public:
   HRESULT Init(const UString &path, IFolderFolder *parentFolder);
+  #ifdef UNDER_CE
+  HRESULT InitToRoot() { return Init(L"\\", NULL); }
+  #endif
 
   CFSFolder() : _flatMode(false) {}
 

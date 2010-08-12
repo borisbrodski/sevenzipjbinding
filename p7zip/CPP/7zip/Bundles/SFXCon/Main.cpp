@@ -13,6 +13,7 @@
 #else
 #include "Common/StringConvert.h"
 #include "Windows/System.h"
+#include "myPrivate.h"
 #endif
 
 #include "../../UI/Common/ExitCode.h"
@@ -23,8 +24,6 @@
 #include "../../UI/Console/OpenCallbackConsole.h"
 
 #include "../../MyVersion.h"
-
-#include "myPrivate.h"
 
 using namespace NWindows;
 using namespace NFile;
@@ -234,12 +233,12 @@ void AddToCensorFromNonSwitchesStrings(NWildcard::CCensor &wildcardCensor,
 
 
 #ifndef _WIN32
-static void GetArguments(int numArguments, const char *arguments[], UStringVector &parts)
+static void GetArguments(int numArgs, const char *args[], UStringVector &parts)
 {
   parts.Clear();
-  for(int i = 0; i < numArguments; i++)
+  for(int i = 0; i < numArgs; i++)
   {
-    UString s = MultiByteToUnicodeString(arguments[i]);
+    UString s = MultiByteToUnicodeString(args[i]);
     parts.Add(s);
   }
 }
@@ -247,11 +246,11 @@ static void GetArguments(int numArguments, const char *arguments[], UStringVecto
 
 int Main2(
   #ifndef _WIN32
-  int numArguments, const char *arguments[]
+  int numArgs, const char *args[]
   #endif
 )
 {
-  #ifdef _WIN32
+  #if defined(_WIN32) && !defined(UNDER_CE)
   SetFileApisToOEM();
   #endif
   
@@ -259,8 +258,8 @@ int Main2(
   #ifdef _WIN32
   NCommandLineParser::SplitCommandLine(GetCommandLineW(), commandStrings);
   #else
-  extern void mySplitCommandLine(int numArguments,const char *arguments[],UStringVector &parts);
-  mySplitCommandLine(numArguments,arguments,commandStrings);
+  extern void mySplitCommandLine(int numArgs,const char *args[],UStringVector &parts);
+  mySplitCommandLine(numArgs,args,commandStrings);
   #endif
 
   // After mySplitCommandLine

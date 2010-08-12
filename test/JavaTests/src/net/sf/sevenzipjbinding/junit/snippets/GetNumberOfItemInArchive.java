@@ -24,13 +24,18 @@ public class GetNumberOfItemInArchive {
 
         randomAccessFile = new RandomAccessFile(archiveFile, "r");
 
+        //        Field[] declaredFields = InArchiveImpl.class.getDeclaredFields();
+        //        for (Field field : declaredFields) {
+        //            System.out.println(field);
+        //        }
+
         archive = SevenZip.openInArchive(ArchiveFormat.ZIP, // null - autodetect
                 new RandomAccessFileInStream(//
                         randomAccessFile));
 
-        int numberOfItems = archive.getNumberOfItems();
+        int numberOfItems = 4;//archive.getNumberOfItems();
 
-        archive.close();
+        //archive.close();
         randomAccessFile.close();
 
         return numberOfItems;

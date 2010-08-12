@@ -10,6 +10,12 @@
 #pragma warning(disable : 4996 )
 #endif
 
+#ifdef _UNICODE
+#include "Common/StringConvert.h"
+#define NEED_NAME_WINDOWS_TO_UNIX
+#include "myPrivate.h"
+#endif
+
 static const char kIllegalChar = '\0';
 static const char kNewLineChar = '\n';
 
@@ -17,14 +23,20 @@ static const char *kEOFMessage = "Unexpected end of input stream";
 static const char *kReadErrorMessage  ="Error reading input stream";
 static const char *kIllegalCharMessage = "Illegal character in input stream";
 
-static LPCTSTR kFileOpenMode = TEXT("r");
+static const char * kFileOpenMode = "r";
 
 CStdInStream g_StdIn(stdin);
 
 bool CStdInStream::Open(LPCTSTR fileName)
 {
   Close();
-  _stream = _tfopen(fileName, kFileOpenMode);
+#ifdef _UNICODE
+  AString aStr = UnicodeStringToMultiByte(fileName, CP_ACP); // FIXME
+  const char * name = nameWindowToUnix(aStr);
+#else
+  const char * name = nameWindowToUnix(fileName);
+#endif
+  _stream = fopen(name, kFileOpenMode);
   _streamIsOpen = (_stream != 0);
   return _streamIsOpen;
 }
@@ -42,14 +54,18 @@ CStdInStream::~CStdInStream()
   Close();
 }
 
-AString CStdInStream::ScanStringUntilNewLine()
+AString CStdInStream::ScanStringUntilNewLine(bool allowEOF)
 {
   AString s;
   for (;;)
   {
     int intChar = GetChar();
     if (intChar == EOF)
+    {
+      if (allowEOF)
+        break;
       throw kEOFMessage;
+    }
     char c = char(intChar);
     if (c == kIllegalChar)
       throw kIllegalCharMessage;

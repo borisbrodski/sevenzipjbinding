@@ -20,6 +20,7 @@ SRCS=\
  ../../../Common/MyString.cpp \
  ../../../Common/MyWindows.cpp \
  ../../../Common/StringConvert.cpp \
+ ../../../Common/UTFConvert.cpp \
  ../../../Common/MyVector.cpp \
  ../../../Common/Wildcard.cpp \
  \
@@ -34,6 +35,7 @@ SRCS=\
  ../../../Windows/System.cpp \
  \
  ../../Common/CreateCoder.cpp \
+ ../../Common/CWrappers.cpp \
  ../../Common/FilePathAutoRename.cpp \
  ../../Common/FileStreams.cpp \
  ../../Common/InBuffer.cpp \
@@ -87,9 +89,12 @@ SRCS=\
 
 SRCS_C=\
  ../../../../C/Aes.c \
+ ../../../../C/Alloc.c \
  ../../../../C/Bra86.c \
  ../../../../C/Lzma2Dec.c \
  ../../../../C/LzmaDec.c \
+ ../../../../C/Ppmd7.c \
+ ../../../../C/Ppmd7Dec.c \
  ../../../../C/Sha256.c \
  ../../../../C/Threads.c \
 

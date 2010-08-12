@@ -6,8 +6,16 @@
 
 #include "Common/StringConvert.h"
 
+extern HINSTANCE g_hInstance;
+
 static inline UINT GetCurrentFileCodePage()
-  {  return AreFileApisANSI() ? CP_ACP : CP_OEMCP; }
+{
+  #ifdef UNDER_CE
+  return CP_ACP;
+  #else
+  return AreFileApisANSI() ? CP_ACP : CP_OEMCP;
+  #endif
+}
 
 void CArchiveFolderManager::LoadFormats()
 {
@@ -26,7 +34,8 @@ int CArchiveFolderManager::FindFormat(const UString &type)
   return -1;
 }
 
-STDMETHODIMP CArchiveFolderManager::OpenFolderFile(IInStream *inStream, const wchar_t *filePath,
+STDMETHODIMP CArchiveFolderManager::OpenFolderFile(IInStream *inStream,
+    const wchar_t *filePath, const wchar_t *arcFormat,
     IFolderFolder **resultFolder, IProgress *progress)
 {
   CMyComPtr<IArchiveOpenCallback> openArchiveCallback;
@@ -37,7 +46,7 @@ STDMETHODIMP CArchiveFolderManager::OpenFolderFile(IInStream *inStream, const wc
   }
   CAgent *agent = new CAgent();
   CMyComPtr<IInFolderArchive> archive = agent;
-  RINOK(agent->Open(inStream, filePath, NULL, openArchiveCallback));
+  RINOK(agent->Open(inStream, filePath, arcFormat, NULL, openArchiveCallback));
   return agent->BindToRootFolder(resultFolder);
 }
 
@@ -61,39 +70,53 @@ STDMETHODIMP CArchiveFolderManager::GetExtensions(const wchar_t *type, BSTR *ext
   return StringToBstr(_codecs.Formats[formatIndex].GetAllExtensions(), extensions);
 }
 */
+
+static void AddIconExt(const CCodecIcons &lib, UString &dest)
+{
+  for (int j = 0; j < lib.IconPairs.Size(); j++)
+  {
+    if (!dest.IsEmpty())
+      dest += L' ';
+    dest += lib.IconPairs[j].Ext;
+  }
+}
+
 STDMETHODIMP CArchiveFolderManager::GetExtensions(BSTR *extensions)
 {
   LoadFormats();
   *extensions = 0;
   UString res;
   for (int i = 0; i < _codecs->Libs.Size(); i++)
-  {
-    const CCodecLib &lib = _codecs->Libs[i];
-    for (int j = 0; j < lib.IconPairs.Size(); j++)
-    {
-      if (!res.IsEmpty())
-        res += L' ';
-      res += lib.IconPairs[j].Ext;
-    }
-  }
+    AddIconExt(_codecs->Libs[i], res);
+  AddIconExt(_codecs->InternalIcons, res);
   return StringToBstr(res, extensions);
 }
 
 STDMETHODIMP CArchiveFolderManager::GetIconPath(const wchar_t *ext, BSTR *iconPath, Int32 *iconIndex)
 {
-  LoadFormats();
   *iconPath = 0;
   *iconIndex = 0;
+#ifdef _WIN32
+  LoadFormats();
   for (int i = 0; i < _codecs->Libs.Size(); i++)
   {
     const CCodecLib &lib = _codecs->Libs[i];
-    int ii = lib.FindIconIndex(ext);
-    if (ii >= 0)
+    int ii;
+    if (lib.FindIconIndex(ext, ii))
     {
       *iconIndex = ii;
       return StringToBstr(GetUnicodeString(lib.Path, GetCurrentFileCodePage()), iconPath);
     }
   }
+  int ii;
+  if (_codecs->InternalIcons.FindIconIndex(ext, ii))
+  {
+    *iconIndex = ii;
+    UString path;
+    NWindows::NDLL::MyGetModuleFileName(g_hInstance, path);
+    return StringToBstr(path, iconPath);
+  }
+#endif // #ifdef _WIN32
   return S_OK;
 }
 

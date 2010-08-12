@@ -4,6 +4,7 @@ SRCS=\
  ../../../myWindows/myAddExeFlag.cpp \
  ../../../myWindows/mySplitCommandLine.cpp \
  \
+ ../../UI/Console/BenchCon.cpp \
  ../../UI/Console/ConsoleClose.cpp \
  ../../UI/Console/ExtractCallbackConsole.cpp \
  ../../UI/Console/List.cpp \
@@ -64,6 +65,7 @@ SRCS=\
  ../../UI/Common/ArchiveCommandLine.cpp \
  ../../UI/Common/ArchiveExtractCallback.cpp \
  ../../UI/Common/ArchiveOpenCallback.cpp \
+ ../../UI/Common/Bench.cpp \
  ../../UI/Common/DefaultName.cpp \
  ../../UI/Common/EnumDirItems.cpp \
  ../../UI/Common/Extract.cpp \
@@ -81,8 +83,10 @@ SRCS=\
  ../../UI/Common/UpdateProduce.cpp \
  \
  ../../Archive/Bz2Handler.cpp \
+ ../../Archive/DeflateProps.cpp \
  ../../Archive/GzHandler.cpp \
  ../../Archive/LzmaHandler.cpp \
+ ../../Archive/PpmdHandler.cpp \
  ../../Archive/SplitHandler.cpp \
  ../../Archive/XzHandler.cpp \
  ../../Archive/ZHandler.cpp \
@@ -173,12 +177,10 @@ SRCS=\
  ../../Compress/PpmdDecoder.cpp \
  ../../Compress/PpmdEncoder.cpp \
  ../../Compress/PpmdRegister.cpp \
+ ../../Compress/PpmdZip.cpp \
  ../../Compress/QuantumDecoder.cpp \
  ../../Compress/ShrinkDecoder.cpp \
  ../../Compress/ZDecoder.cpp \
- \
- ../../Compress/LZMA_Alone/LzmaBench.cpp \
- ../../Compress/LZMA_Alone/LzmaBenchCon.cpp \
  \
  ../../Crypto/7zAes.cpp \
  ../../Crypto/7zAesRegister.cpp \
@@ -194,6 +196,7 @@ SRCS=\
 SRCS_C=\
  ../../../../C/Aes.c \
  ../../../../C/7zStream.c \
+ ../../../../C/Alloc.c \
  ../../../../C/Bra.c \
  ../../../../C/Bra86.c \
  ../../../../C/BraIA64.c \
@@ -207,6 +210,12 @@ SRCS_C=\
  ../../../../C/LzmaDec.c \
  ../../../../C/LzmaEnc.c \
  ../../../../C/MtCoder.c \
+ ../../../../C/Ppmd7.c \
+ ../../../../C/Ppmd7Dec.c \
+ ../../../../C/Ppmd7Enc.c \
+ ../../../../C/Ppmd8.c \
+ ../../../../C/Ppmd8Dec.c \
+ ../../../../C/Ppmd8Enc.c \
  ../../../../C/Sha256.c \
  ../../../../C/Sort.c \
  ../../../../C/Threads.c \

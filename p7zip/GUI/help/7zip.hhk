@@ -18,10 +18,6 @@
     <param name="Local" value="general/license.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="Register">
-    <param name="Local" value="general/register.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="Formats">
     <param name="Local" value="general/formats.htm">
     </OBJECT>

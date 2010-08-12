@@ -27,7 +27,7 @@
 
 #include "LzmaBenchCon.h"
 
-#ifdef COMPRESS_MF_MT
+#ifndef _7ZIP_ST
 #include "../../../Windows/System.h"
 #endif
 
@@ -220,7 +220,7 @@ int main2(int n, const char *args[])
 
   UInt32 numThreads = (UInt32)-1;
 
-  #ifdef COMPRESS_MF_MT
+  #ifndef _7ZIP_ST
   if (parser[NKey::kMultiThread].ThereIs)
   {
     UInt32 numCPUs = NWindows::NSystem::GetNumberOfProcessors();

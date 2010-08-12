@@ -23,6 +23,7 @@ ELSE()
     ENDIF()
 ENDIF()
 
+
 IF(USE_MINGW)
     INCLUDE(../cmake/FindMinGWm10-DLL.cmake)
 ENDIF(USE_MINGW)
@@ -91,9 +92,11 @@ add_definitions(
     -D_LARGEFILE_SOURCE
     -D_REENTRANT
     -DENV_UNIX
-    -DCOMPRESS_MT
-    -DCOMPRESS_BZIP2_MT
-    -DCOMPRESS_MF_MT
+#    -DCOMPRESS_MT         # commented since 9.013
+#    -DCOMPRESS_BZIP2_MT   # commented since 9.013
+#    -DCOMPRESS_MF_MT      # commented since 9.013
+    -DUNICODE      # since 9.013
+    -D_UNICODE     # since 9.013
     -DBREAK_HANDLER
     -DBENCH_MT
 )
@@ -427,8 +430,10 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/DeflateProps.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/SplitHandler.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
     
@@ -572,6 +577,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdEncoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdRegister.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdZip.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/QuantumDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/Rar1Decoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/Rar2Decoder.cpp
@@ -609,14 +615,22 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/C/Sort.c
     ${P7ZIP_SRC}/C/Threads.c
     ${P7ZIP_SRC}/C/Aes.c
+    ${P7ZIP_SRC}/C/Alloc.c
     ${P7ZIP_SRC}/C/Sha256.c
     ${P7ZIP_SRC}/C/7zCrc.c
+    ${P7ZIP_SRC}/C/7zCrcOpt.c
 
     ${P7ZIP_SRC}/C/7zStream.c
     ${P7ZIP_SRC}/C/Delta.c
     ${P7ZIP_SRC}/C/Lzma2Dec.c
     ${P7ZIP_SRC}/C/Lzma2Enc.c
     ${P7ZIP_SRC}/C/MtCoder.c
+    ${P7ZIP_SRC}/C/Ppmd7.c
+    ${P7ZIP_SRC}/C/Ppmd7Dec.c
+    ${P7ZIP_SRC}/C/Ppmd7Enc.c
+    ${P7ZIP_SRC}/C/Ppmd8.c
+    ${P7ZIP_SRC}/C/Ppmd8Dec.c
+    ${P7ZIP_SRC}/C/Ppmd8Enc.c
     ${P7ZIP_SRC}/C/Xz.c
     ${P7ZIP_SRC}/C/XzCrc64.c
     ${P7ZIP_SRC}/C/XzDec.c

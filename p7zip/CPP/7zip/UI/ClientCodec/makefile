@@ -1,6 +1,6 @@
 PROG=../../../../bin/ClientCodec
 
-LOCAL_FLAGS=-DCOMPRESS_MT
+LOCAL_FLAGS=-DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine

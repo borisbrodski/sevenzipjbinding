@@ -8,6 +8,8 @@
 namespace NWindows {
 namespace NTime {
 
+static const UInt32 kFileTimeStartYear = 1601;
+
 bool DosTimeToFileTime(UInt32 dosTime, FILETIME &fileTime)
 {
   return BOOLToBool(::DosDateTimeToFileTime((UInt16)(dosTime >> 16), (UInt16)(dosTime & 0xFFFF), &fileTime));
@@ -60,10 +62,10 @@ bool GetSecondsSince1601(unsigned year, unsigned month, unsigned day,
   unsigned hour, unsigned min, unsigned sec, UInt64 &resSeconds)
 {
   resSeconds = 0;
-  if (year < 1601 || year >= 10000 || month < 1 || month > 12 ||
+  if (year < kFileTimeStartYear || year >= 10000 || month < 1 || month > 12 ||
       day < 1 || day > 31 || hour > 23 || min > 59 || sec > 59)
     return false;
-  UInt32 numYears = year - 1601;
+  UInt32 numYears = year - kFileTimeStartYear;
   UInt32 numDays = numYears * 365 + numYears / 4 - numYears / 100 + numYears / 400;
   Byte ms[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
   if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))

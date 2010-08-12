@@ -2,13 +2,16 @@
 
 #include "StdAfx.h"
 
-#include "RegistryUtils.h"
+#include "Common/IntToString.h"
+
 #include "Windows/Registry.h"
+
+#include "RegistryUtils.h"
 
 using namespace NWindows;
 using namespace NRegistry;
 
-#define REG_PATH_7Z TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("7-ZIP")
+#define REG_PATH_7Z TEXT("Software") TEXT(STRING_PATH_SEPARATOR) TEXT("7-Zip")
 
 static const TCHAR *kCUBasePath = REG_PATH_7Z;
 static const TCHAR *kCU_FMPath = REG_PATH_7Z TEXT(STRING_PATH_SEPARATOR) TEXT("FM");
@@ -16,6 +19,7 @@ static const TCHAR *kCU_FMPath = REG_PATH_7Z TEXT(STRING_PATH_SEPARATOR) TEXT("F
 
 static const WCHAR *kLangValueName = L"Lang";
 static const WCHAR *kEditor = L"Editor";
+static const WCHAR *kDiff = L"Diff";
 static const TCHAR *kShowDots = TEXT("ShowDots");
 static const TCHAR *kShowRealFileIcons = TEXT("ShowRealFileIcons");
 static const TCHAR *kShowSystemMenu = TEXT("ShowSystemMenu");
@@ -25,38 +29,34 @@ static const TCHAR *kShowGrid = TEXT("ShowGrid");
 static const TCHAR *kAlternativeSelection = TEXT("AlternativeSelection");
 // static const TCHAR *kLockMemoryAdd = TEXT("LockMemoryAdd");
 static const TCHAR *kLargePagesEnable = TEXT("LargePages");
-// static const TCHAR *kSingleClick = TEXT("SingleClick");
+static const TCHAR *kSingleClick = TEXT("SingleClick");
 // static const TCHAR *kUnderline = TEXT("Underline");
 
-void SaveRegLang(const UString &langFile)
+static const TCHAR *kFlatViewName = TEXT("FlatViewArc");
+
+static void SaveCuString(LPCTSTR keyPath, LPCWSTR valuePath, LPCWSTR value)
 {
   CKey key;
-  key.Create(HKEY_CURRENT_USER, kCUBasePath);
-  key.SetValue(kLangValueName, langFile);
+  key.Create(HKEY_CURRENT_USER, keyPath);
+  key.SetValue(valuePath, value);
 }
 
-void ReadRegLang(UString &langFile)
+static void ReadCuString(LPCTSTR keyPath, LPCWSTR valuePath, UString &res)
 {
-  langFile.Empty();
+  res.Empty();
   CKey key;
-  if (key.Open(HKEY_CURRENT_USER, kCUBasePath, KEY_READ) == ERROR_SUCCESS)
-    key.QueryValue(kLangValueName, langFile);
+  if (key.Open(HKEY_CURRENT_USER, keyPath, KEY_READ) == ERROR_SUCCESS)
+    key.QueryValue(valuePath, res);
 }
 
-void SaveRegEditor(const UString &editorPath)
-{
-  CKey key;
-  key.Create(HKEY_CURRENT_USER, kCU_FMPath);
-  key.SetValue(kEditor, editorPath);
-}
+void SaveRegLang(const UString &path) { SaveCuString(kCUBasePath, kLangValueName, path); }
+void ReadRegLang(UString &path) { ReadCuString(kCUBasePath, kLangValueName, path); }
 
-void ReadRegEditor(UString &editorPath)
-{
-  editorPath.Empty();
-  CKey key;
-  if (key.Open(HKEY_CURRENT_USER, kCU_FMPath, KEY_READ) == ERROR_SUCCESS)
-    key.QueryValue(kEditor, editorPath);
-}
+void SaveRegEditor(const UString &path) { SaveCuString(kCU_FMPath, kEditor, path); }
+void ReadRegEditor(UString &path) { ReadCuString(kCU_FMPath, kEditor, path); }
+
+void SaveRegDiff(const UString &path) { SaveCuString(kCU_FMPath, kDiff, path); }
+void ReadRegDiff(UString &path) { ReadCuString(kCU_FMPath, kDiff, path); }
 
 static void Save7ZipOption(const TCHAR *value, bool enabled)
 {
@@ -135,10 +135,10 @@ bool ReadShowGrid(){ return ReadOption(kShowGrid, false); }
 void SaveAlternativeSelection(bool enable) { SaveOption(kAlternativeSelection, enable); }
 bool ReadAlternativeSelection(){ return ReadOption(kAlternativeSelection, false); }
 
-/*
 void SaveSingleClick(bool enable) { SaveOption(kSingleClick, enable); }
 bool ReadSingleClick(){ return ReadOption(kSingleClick, false); }
 
+/*
 void SaveUnderline(bool enable) { SaveOption(kUnderline, enable); }
 bool ReadUnderline(){ return ReadOption(kUnderline, false); }
 */
@@ -149,4 +149,12 @@ bool ReadUnderline(){ return ReadOption(kUnderline, false); }
 void SaveLockMemoryEnable(bool enable) { Save7ZipOption(kLargePagesEnable, enable); }
 bool ReadLockMemoryEnable() { return Read7ZipOption(kLargePagesEnable, false); }
 
+static CSysString GetFlatViewName(UInt32 panelIndex)
+{
+  TCHAR panelString[16];
+  ConvertUInt32ToString(panelIndex, panelString);
+  return (CSysString)kFlatViewName + panelString;
+}
 
+void SaveFlatView(UInt32 panelIndex, bool enable) { SaveOption(GetFlatViewName(panelIndex), enable); }
+bool ReadFlatView(UInt32 panelIndex) { return ReadOption(GetFlatViewName(panelIndex), false); }

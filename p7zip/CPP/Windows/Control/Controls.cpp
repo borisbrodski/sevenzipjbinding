@@ -4,7 +4,7 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
- 
+
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
@@ -17,17 +17,23 @@
 	#include "wx/listctrl.h"
 #endif  
 
+#undef _WIN32
+ 
 #include "Windows/Control/Dialog.h"
+
+void verify_main_thread(void);
 
 class LockGUI
 {
 	bool _IsMain;
 	public:
-		LockGUI() { 
+		LockGUI() {
+			verify_main_thread();
 			_IsMain = wxThread::IsMain();
 			if (!_IsMain) {
-				// DEBUG printf("GuiEnter(0x%lx)\n",wxThread::GetCurrentId());
-				wxMutexGuiEnter();
+				// DEBUG
+				printf("GuiEnter-Controls(0x%lx)\n",wxThread::GetCurrentId());
+				abort(); // FIXME wxMutexGuiEnter();
 			}
 	       	}
 		~LockGUI() { 
@@ -39,13 +45,26 @@ class LockGUI
 };
 /////////////////////////
 
+static const wxString CLASS_NAME_wxStaticText = wxT("wxStaticText");
+static const wxString CLASS_NAME_wxTextCtrl = wxT("wxTextCtrl");
+
 namespace NWindows {
 	namespace NControl {
 
 		void CDialogChildControl::SetText(LPCWSTR s)
 		{
 			LockGUI lock;
-			((wxTextCtrl *)_window)->SetValue(s);
+			const wxChar * class_name = _window->GetClassInfo()->GetClassName ();
+
+			if ( CLASS_NAME_wxStaticText == class_name) {
+				((wxStaticText *)_window)->SetLabel(s);
+			} else if ( CLASS_NAME_wxTextCtrl == class_name) {
+				((wxTextCtrl *)_window)->SetLabel(s);
+			} else {
+				// ((wxControl *)_window)->SetValue(s); // FIXME
+				printf("INTERNAL ERROR - CDialogChildControl::SetText(class=%ls) not implemented\n",class_name);
+				exit(-1);
+			}
 		}
 
 		bool CDialogChildControl::GetText(CSysString &s)
@@ -53,7 +72,16 @@ namespace NWindows {
 			wxString str;
 			{
 				LockGUI lock;
-	  			str = ((wxTextCtrl *)_window)->GetValue();
+				const wxChar * class_name = _window->GetClassInfo()->GetClassName ();
+				if ( CLASS_NAME_wxStaticText == class_name) {
+	  				str = ((wxStaticText *)_window)->GetLabel();
+				} else if ( CLASS_NAME_wxTextCtrl == class_name) {
+					str = ((wxTextCtrl *)_window)->GetLabel();
+				} else {
+	  				// FIXME str = ((wxTextCtrl *)_window)->GetValue();
+					printf("INTERNAL ERROR - CDialogChildControl::GetText(class=%ls) not implemented\n",class_name);
+					exit(-1);
+				}
 			}
 	  		s = str;
 	  		return true;
@@ -75,6 +103,9 @@ namespace NWindows {
 			_choice = NULL;
 			return window;
 		}
+
+		CComboBox::operator HWND() const { return (HWND)_choice; }
+
 			
 			int CComboBox::AddString(const TCHAR * txt) {
 				LockGUI lock;
@@ -252,13 +283,17 @@ namespace NWindows {
 namespace NWindows {
 namespace NControl {
 
-	void CListView::Attach(wxWindow * newWindow) { _list = (wxListCtrl *)newWindow; }
+	void CListView::Attach(wxWindow * newWindow) {
+		_list = (wxListCtrl *)newWindow;
+	}
 
 	CListView::operator HWND() const { return (HWND)_list; }
 
 	int CListView::GetItemCount() const {return  _list->GetItemCount(); }
 
-	int CListView::InsertItem(int index, LPCTSTR text) { return _list->InsertItem(index, text);        }
+	int CListView::InsertItem(int index, LPCTSTR text) {
+		return _list->InsertItem(index, text);
+	}
 	int CListView::InsertItem(const LVITEM* item) {
 		/*
 		int col = item->iSubItem;
@@ -330,7 +365,10 @@ namespace NControl {
 		  _list->InsertColumn(columnIndex, text, format, width);
 	  }
 
-	  void CListView::DeleteAllItems() { _list->DeleteAllItems(); printf("%p->DeleteAllItems()\n",_list); }
+	  void CListView::DeleteAllItems() {
+		  _list->DeleteAllItems();
+		  printf("%p->DeleteAllItems()\n",_list);
+	  }
 
 	void CListView::SetRedraw(bool b) { 
 		if (b) _list->Thaw();
@@ -339,11 +377,13 @@ namespace NControl {
 	}
 
 	void CListView::SetItemCount(int count) {
-		_list->SetItemCount(count);
+		// ONLY IF VIRTUAL REPORT -- _list->SetItemCount(count);
 		printf(" %p->SetItemCount(%d)\n",_list,count);
 	}
 
-	  void CListView::InvalidateRect(void *, bool)  { printf("FIXME %p->InvalidateRect()\n",_list);/* FIXME */ }
+	  void CListView::InvalidateRect(void *, bool)  {
+		  printf("FIXME %p->InvalidateRect()\n",_list);/* FIXME */
+	  }
 
 	  int CListView::GetSelectedCount() const { 
 		  int nb = _list->GetSelectedItemCount();
@@ -352,8 +392,12 @@ namespace NControl {
 	  }
 
 	void /* bool */ CListView::EnsureVisible(int index, bool partialOK) {
+	 	
+		printf(" %p->EnsureVisible(%d)\n",_list,index);
+		
+		if (index == -1) index = 0;
 		_list->EnsureVisible(index);
-	 	printf(" %p->EnsureVisible(%d)\n",_list,index);
+
 		// return true;
 	}
 
@@ -371,6 +415,11 @@ namespace NControl {
 
 		_list->SetItem(info);
 		*/
+	 	
+		printf(" %p->EnsureVisible(%d)\n",_list,index);
+		
+		if (index == -1) return;
+		
 		if (mask & LVIS_FOCUSED) {
 			_list->SetItemState(index, state & LVIS_FOCUSED, mask & LVIS_FOCUSED);
 		}
@@ -379,7 +428,6 @@ namespace NControl {
 			_list->SetItemState(index, state & LVIS_SELECTED, mask & LVIS_SELECTED);
 		}
 
-		  printf("FIXME %p->SetItemState(index=%d,state=0x%x,mask=0x%x)\n",_list,index,(unsigned)state,(unsigned)mask); /* FIXME */
 	  }
 
 	  UINT CListView::GetItemState(int index, UINT mask) const
@@ -390,7 +438,9 @@ namespace NControl {
 		return state;
 	  }
 
-	  void /* bool */  CListView::Update() { printf("FIXME %p->Update()\n",_list); /* FIXME */ }
+	  void /* bool */  CListView::Update() {
+		  printf("FIXME %p->Update()\n",_list); /* FIXME */
+	  }
 
 	  bool CListView::DeleteColumn(int columnIndex) { 
 		  // printf("%p->DeleteColumn()\n",_list); 

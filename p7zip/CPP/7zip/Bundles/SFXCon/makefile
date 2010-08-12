@@ -3,10 +3,13 @@ PROG=../../../../bin/7zCon.sfx
 LOCAL_FLAGS= \
   -DEXTRACT_ONLY \
   -DNO_READ_FROM_CODER \
-  -D_SFX
+  -D_SFX \
+  -DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
+
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=$(LOCAL_LIBS)
 
@@ -31,6 +34,7 @@ COMMON_OBJS = \
   MyString.o \
   MyWindows.o\
   StringConvert.o \
+  UTFConvert.o \
   MyVector.o \
   Wildcard.o \
 
@@ -48,6 +52,7 @@ WIN_OBJS = \
 
 7ZIP_COMMON_OBJS = \
   CreateCoder.o \
+  CWrappers.o \
   FilePathAutoRename.o \
   FileStreams.o \
   InBuffer.o \
@@ -108,12 +113,14 @@ CRYPTO_OBJS = \
   7zAesRegister.o \
   MyAes.o \
 
-# Alloc.o
 C_OBJS = \
   Aes.o \
+  Alloc.o \
   Bra86.o \
   Lzma2Dec.o \
   LzmaDec.o \
+  Ppmd7.o \
+  Ppmd7Dec.o \
   Sha256.o \
   Threads.o \
 

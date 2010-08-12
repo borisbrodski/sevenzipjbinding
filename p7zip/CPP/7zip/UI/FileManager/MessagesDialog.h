@@ -1,12 +1,12 @@
 // MessagesDialog.h
 
-#ifndef __MESSAGESDIALOG_H
-#define __MESSAGESDIALOG_H
-
-#include "MessagesDialogRes.h"
+#ifndef __MESSAGES_DIALOG_H
+#define __MESSAGES_DIALOG_H
 
 #include "Windows/Control/Dialog.h"
 #include "Windows/Control/ListView.h"
+
+#include "MessagesDialogRes.h"
 
 class CMessagesDialog: public NWindows::NControl::CModalDialog
 {

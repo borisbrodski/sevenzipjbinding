@@ -3,34 +3,45 @@
 #ifndef __PANEL_H
 #define __PANEL_H
 
+#include "../../../../C/Alloc.h"
+
 #include "Common/MyCom.h"
 
 #include "Windows/DLL.h"
 #include "Windows/FileFind.h"
 #include "Windows/FileDir.h"
 #include "Windows/Synchronization.h"
-// #include "Windows/Handle.h"
 
-// #include "Windows/Control/ToolBar.h"
-// #include "Windows/Control/ReBar.h"
-#include "Windows/Control/ListView.h"
-#include "Windows/Control/Static.h"
-#include "Windows/Control/Edit.h"
 #include "Windows/Control/ComboBox.h"
-#include "Windows/Control/Window2.h"
+#include "Windows/Control/Edit.h"
+#include "Windows/Control/ListView.h"
+// #include "Windows/Control/ReBar.h"
+#include "Windows/Control/Static.h"
 #include "Windows/Control/StatusBar.h"
+// #include "Windows/Control/ToolBar.h"
+#include "Windows/Control/Window2.h"
 
-#include "SysIconUtils.h"
-#include "IFolder.h"
-#include "ViewSettings.h"
 #include "AppState.h"
-// #include "MyCom2.h"
+#include "IFolder.h"
+//#include "MyCom2.h"
+#include "ProgressDialog2.h"
+#include "SysIconUtils.h"
 
 const int kParentFolderID = 100;
 const int kPluginMenuStartID = 1000;
 const int kToolbarStartID = 2000;
 
 const int kParentIndex = -1;
+
+#ifdef UNDER_CE
+#define ROOT_FS_FOLDER L"\\"
+#else
+#ifdef _WIN32
+#define ROOT_FS_FOLDER L"C:\\\\"
+#else
+#define ROOT_FS_FOLDER L"\\"
+#endif
+#endif
 
 struct CPanelCallback
 {
@@ -166,7 +177,7 @@ struct CSelectedState
 
 class CPanel :public NWindows::NControl::CWindow2
 {
-  // FIXME CExtToIconMap _extToIconMap;
+  CExtToIconMap _extToIconMap;
   UINT _baseID;
   int _comboBoxID;
   UINT _statusBarID;
@@ -179,13 +190,23 @@ class CPanel :public NWindows::NControl::CWindow2
   // FIXME virtual bool OnSize(WPARAM wParam, int xSize, int ySize);
   virtual void OnDestroy();
   virtual bool OnNotify(UINT controlID, LPNMHDR lParam, LRESULT &result);
-  void OnComboBoxCommand(UINT code, LPARAM &aParam);
-  // FIXME bool OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result);
+
+  void AddComboBoxItem(const UString &name, int iconIndex, int indent, bool addToList);
+
+  bool OnComboBoxCommand(UINT code, LPARAM param, LRESULT &result);
+
+  #ifndef UNDER_CE
+
+  LRESULT OnNotifyComboBoxEnter(const UString &s);
+  bool OnNotifyComboBoxEndEdit(PNMCBEENDEDITW info, LRESULT &result);
   #ifndef _UNICODE
   bool OnNotifyComboBoxEndEdit(PNMCBEENDEDIT info, LRESULT &result);
   #endif
+
+  #endif
+
   // FIXME bool OnNotifyReBar(LPNMHDR lParam, LRESULT &result);
-  // FIXME bool OnNotifyComboBox(LPNMHDR lParam, LRESULT &result);
+  bool OnNotifyComboBox(LPNMHDR lParam, LRESULT &result);
   void OnItemChanged(NMLISTVIEW *item);
   bool OnNotifyList(LPNMHDR lParam, LRESULT &result);
   // FIXME void OnDrag(LPNMLISTVIEW nmListView);
@@ -310,6 +331,7 @@ public:
   UString GetItemName(int itemIndex) const;
   UString GetItemPrefix(int itemIndex) const;
   UString GetItemRelPath(int itemIndex) const;
+  UString GetItemFullPath(int itemIndex) const;
   bool IsItemFolder(int itemIndex) const;
   UInt64 GetItemSize(int itemIndex) const;
 
@@ -317,7 +339,7 @@ public:
   // PanelFolderChange.cpp
 
   void SetToRootFolder();
-  HRESULT BindToPath(const UString &fullPath, bool &archiveIsOpened, bool &encrypted); // can be prefix 
+  HRESULT BindToPath(const UString &fullPath, const UString &arcFormat, bool &archiveIsOpened, bool &encrypted); // can be prefix
   HRESULT BindToPathAndRefresh(const UString &path);
   void OpenDrivesFolder();
   
@@ -335,6 +357,7 @@ public:
   HRESULT Create(HWND mainWindow, HWND parentWindow,
       UINT id,
       const UString &currentFolderPrefix,
+      const UString &arcFormat,
       CPanelCallback *panelCallback,
       CAppState *appState, bool &archiveIsOpened, bool &encrypted);
   void SetFocusToList();
@@ -437,9 +460,14 @@ public:
   void KillSelection();
 
   UString GetFolderTypeID() const;
+  bool IsFolderTypeEqTo(const wchar_t *s) const;
   bool IsRootFolder() const;
   bool IsFSFolder() const;
   bool IsFSDrivesFolder() const;
+  bool IsArcFolder() const;
+  bool IsFsOrDrivesFolder() const { return IsFSFolder() || IsFSDrivesFolder(); }
+  bool IsDeviceDrivesPrefix() const { return _currentFolderPrefix == L"\\\\.\\"; }
+  bool IsFsOrPureDrivesFolder() const { return IsFSFolder() || (IsFSDrivesFolder() && !IsDeviceDrivesPrefix()); }
 
   UString GetFsPath() const;
   UString GetDriveOrNetworkPrefix() const;
@@ -494,6 +522,8 @@ public:
   void MessageBoxLastError(LPCWSTR caption);
   void MessageBoxLastError();
 
+  void MessageBoxErrorForUpdate(HRESULT errorCode, UINT resourceID, UInt32 langID);
+
   void MessageBoxErrorLang(UINT resourceID, UInt32 langID);
 
   void OpenFocusedItemAsInternal();
@@ -506,8 +536,9 @@ public:
   HRESULT OpenItemAsArchive(IInStream *inStream,
       const CTempFileInfo &tempFileInfo,
       const UString &virtualFilePath,
+      const UString &arcFormat,
       bool &encrypted);
-  HRESULT OpenItemAsArchive(const UString &name, bool &encrypted);
+  HRESULT OpenItemAsArchive(const UString &name, const UString &arcFormat, bool &encrypted);
   HRESULT OpenItemAsArchive(int index);
   void OpenItemInArchive(int index, bool tryInternal, bool tryExternal,
       bool editMode);
@@ -523,6 +554,7 @@ public:
 
   void SetListViewMode(UInt32 index);
   UInt32 GetListViewMode() const { return _ListViewMode; };
+  PROPID GetSortID() const { return _sortID; }
 
   void ChangeFlatMode();
   bool GetFlatMode() const { return _flatMode; };
@@ -572,6 +604,22 @@ public:
   void RefreshTitleAlways() { RefreshTitle(true);  }
 
   UString GetItemsInfoString(const CRecordVector<UInt32> &indices);  
+};
+
+class CMyBuffer
+{
+  void *_data;
+public:
+  CMyBuffer(): _data(0) {}
+  operator void *() { return _data; }
+  bool Allocate(size_t size)
+  {
+    if (_data != 0)
+      return false;
+    _data = ::MidAlloc(size);
+    return _data != 0;
+  }
+  ~CMyBuffer() { ::MidFree(_data); }
 };
 
 #endif

@@ -81,6 +81,8 @@ sure tar tvf 7za433_tar.tar
 
 sure ${PZIP7} a 7za433_7zip_lzma.7z 7za433_7zip_lzma
 
+sure ${PZIP7} a -sfx7zCon.sfx 7za433_7zip_lzma.x 7za433_7zip_lzma
+
 sure ${PZIP7} a -pqwerty -mhc=on -mhe=on 7za433_7zip_lzma_crypto.7z 7za433_7zip_lzma_crypto
 
 sure ${PZIP7} a -mx=9 -m0=ppmd:mem=64m:o=32 7za433_7zip_ppmd.7z 7za433_7zip_ppmd
@@ -97,6 +99,12 @@ sure ${PZIP7} x 7za433_tar.tar
 sure diff -r 7za433_ref 7za433_tar
 
 sure ${PZIP7} x 7za433_7zip_lzma.7z
+sure diff -r 7za433_ref 7za433_7zip_lzma
+
+sure rm -fr 7za433_7zip_lzma
+# FIXME - only for 7zG
+sure chmod +x ./7za433_7zip_lzma.x
+sure ./7za433_7zip_lzma.x
 sure diff -r 7za433_ref 7za433_7zip_lzma
 
 sure ${PZIP7} x -pqwerty 7za433_7zip_lzma_crypto.7z

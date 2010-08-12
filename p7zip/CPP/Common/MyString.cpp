@@ -53,6 +53,13 @@ LPSTR WINAPI CharNextA( LPCSTR ptr ) {
 //#endif
 }
 
+char MyCharLower(char c)
+{
+	int r = c & 0xFF;
+
+	return tolower(r);
+}
+
 wchar_t MyCharLower(wchar_t c)
 {
 #ifdef HAVE_TOWUPPER

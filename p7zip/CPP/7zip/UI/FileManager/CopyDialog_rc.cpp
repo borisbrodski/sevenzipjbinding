@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 
 #include "CopyDialogRes.h"
@@ -28,7 +30,7 @@ class CopyDialogImpl : public NWindows::NControl::CModalDialogImpl
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
 
-	topsizer->Add(new wxStaticText(this, IDC_COPY_STATIC, _T("")) , 0 ,wxALL | wxALIGN_LEFT, 5 );
+	topsizer->Add(new wxStaticText(this, IDC_COPY_STATIC, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
 
 
 	{
@@ -43,8 +45,9 @@ class CopyDialogImpl : public NWindows::NControl::CModalDialogImpl
 	topsizer->Add(pathSizer, 0 ,wxALL | wxALIGN_LEFT, 5 );
 	}
 
-	topsizer->Add(new wxStaticText(this, IDC_COPY_INFO, _T("line1\nline2\nline3\nline4\n")) , 0 ,wxALL | wxALIGN_LEFT, 5 );
-
+//	topsizer->Add(new wxStaticText(this, IDC_COPY_INFO, _T("line1\nline2\nline3\nline4\n")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
+	topsizer->Add(new wxStaticText(this, IDC_COPY_INFO, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
+	  
 	topsizer->Add(CreateButtonSizer(wxOK|wxCANCEL), 0, wxALL|wxEXPAND, 5);
 
 	this->OnInit();
@@ -69,5 +72,6 @@ REGISTER_DIALOG(IDD_DIALOG_COPY,CopyDialog,g_stringTable)
 BEGIN_EVENT_TABLE(CopyDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)
 	EVT_CHECKBOX(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

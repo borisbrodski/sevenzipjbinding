@@ -16,7 +16,11 @@ typedef struct
 	UINT  code;
 #define NM_DBLCLK       1
 #define LVN_ITEMCHANGED 2
-#define LVN_COLUMNCLICK 3
+#define LVN_COLUMNCLICK 3	
+#define CBEN_BEGINEDIT  10
+#define CBEN_ENDEDITW   11
+	
+	
 } NMHDR;
 typedef NMHDR * LPNMHDR;
 

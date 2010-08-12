@@ -14,7 +14,10 @@ SRCS=\
 ../Rar3Vm.cpp \
 ../RarCodecsRegister.cpp
 
-SRCS_C=
+SRCS_C=\
+ ../../../../C/Alloc.c \
+ ../../../../C/Ppmd7.c \
+ ../../../../C/Ppmd7Dec.c
 
 CRC.o : ../../../Common/CRC.cpp
 	$(CXX) $(CC_SHARED) $(CXXFLAGS) ../../../Common/CRC.cpp
@@ -44,9 +47,18 @@ Rar3Vm.o : ../Rar3Vm.cpp
 	$(CXX) $(CC_SHARED) $(CXXFLAGS) ../Rar3Vm.cpp
 RarCodecsRegister.o : ../RarCodecsRegister.cpp
 	$(CXX) $(CC_SHARED) $(CXXFLAGS) ../RarCodecsRegister.cpp
+Alloc.o : ../../../../C/Alloc.c
+	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/Alloc.c
+Ppmd7.o : ../../../../C/Ppmd7.c
+	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/Ppmd7.c
+Ppmd7Dec.o : ../../../../C/Ppmd7Dec.c
+	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/Ppmd7Dec.c
+
 # CRC32, C version
 7zCrc.o : ../../../../C/7zCrc.c
 	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/7zCrc.c
+7zCrcOpt.o : ../../../../C/7zCrcOpt.c
+	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/7zCrcOpt.c
 # CRC32, ASM version
 7zCrcT8.o : ../../../../C/7zCrcT8.c
 	$(CC) $(CC_SHARED) $(CFLAGS) ../../../../C/7zCrcT8.c

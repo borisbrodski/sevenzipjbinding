@@ -1,22 +1,22 @@
 
 RM=rm -f
-CFLAGS=-c \
+CFLAGS=-c -I. \
 -I../../../../C \
 -I../../../myWindows \
 -I../../../include_windows \
 -I../../..
 
-CXXFLAGS=-c \
+CXXFLAGS=-c -I. \
 -I../../../myWindows \
 -I../../../ \
 -I../../../include_windows
 
-DFLAGS=-MM \
+DFLAGS=-MM -I. \
 -I../../../myWindows \
 -I../../../ \
 -I../../../include_windows
 
-all:$(PROG)
+all: $(PCH_NAME) $(PROG)
 
 $(PROG): $(OBJS)
 	$(CXX) $(LOCAL_SHARED) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIBS)
@@ -29,7 +29,7 @@ depend:
 	$(CXX) $(DFLAGS) $(SRCS) > makefile.depend
 
 clean:
-	-@$(RM) $(PROG) core *.exe *.o *~ .*.swp *.orig $(PROGS)
+	-@$(RM) $(PROG) core *.exe *.o *~ .*.swp *.orig *.gch $(PROGS)
 	-@$(RM) -fr SunWS_cache/ 
 	-@$(RM) -r .inslog2 pchdir/ tca.map ir.out
 	-@$(RM) make.log tags 1 2

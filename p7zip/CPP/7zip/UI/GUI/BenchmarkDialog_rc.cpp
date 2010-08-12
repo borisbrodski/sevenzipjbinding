@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 #include "BenchmarkDialogRes.h"
 
@@ -241,5 +243,6 @@ BEGIN_EVENT_TABLE(CBenchmarkDialogImpl, wxDialog)
 	EVT_TIMER(wxID_ANY, CModalDialogImpl::OnAnyTimer)
 	EVT_BUTTON(wxID_ANY, CModalDialogImpl::OnAnyButton)
 	EVT_COMBOBOX(wxID_ANY,    CModalDialogImpl::OnAnyChoice)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

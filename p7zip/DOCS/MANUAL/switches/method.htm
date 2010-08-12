@@ -42,7 +42,7 @@
   <TR> 
     <TD>m={MethodID}</TD> 
     <TD align="center">Deflate</TD> 
-    <TD>Sets a method: Copy, Deflate, Deflate64, BZip2, LZMA.</TD> </TR>
+    <TD>Sets a method: Copy, Deflate, Deflate64, BZip2, LZMA, PPMd.</TD> </TR>
   <TR> 
     <TD><A class="parameter" href="#Deflate_FastBytes">fb={NumFastBytes}</A></TD>
     <TD align="center">32</TD>
@@ -55,6 +55,12 @@
     <TD><A class="parameter" href="#ZipDictionarySize">d={Size}[b|k|m]</A></TD> 
     <TD align="center">900000</TD>  
     <TD>Sets Dictionary size for BZip2</TD></TR>
+  <TR> 
+    <TD><A class="parameter" href="#ZipMemorySize">mem={Size}[b|k|m]</A></TD> 
+    <TD align="center">24</TD>  <TD>Sets size of used memory for PPMd.</TD></TR>
+  <TR> 
+    <TD><A class="parameter" href="#ZipOrder">o={Size}</A></TD> 
+    <TD align="center">8</TD>  <TD>Sets model order for PPMd.</TD></TR>
   <TR> 
     <TD><A class="parameter" href="#ZipMultiThread">mt=[off | on | {N}]</A></TD> 
     <TD align="center">on</TD>  
@@ -123,6 +129,21 @@ only for file names that contain symbols unsupported by local code page.</P>
        The maximum value for the Dictionary size is 900000b. If you do not specify any symbol 
        from set [b|k|m], dictionary size will be calculated as DictionarySize = 2^Size bytes.</P>
   </DD>
+
+  <DT><A name="ZipMemorySize"></A>mem={Size}[b|k|m]</DT>
+  <DD>
+    <P> Sets the size of memory used for PPMd. You must specify the size in bytes, kilobytes, or megabytes.
+       The maximum value is 256 MB = 2^28 bytes. The default value
+       is 24 (16MB). If you do not specify any symbol from the set [b|k|m], the
+       memory size will be calculated as (2^Size) bytes. PPMd uses the same 
+       amount of memory for compression and decompression.</P>
+  </DD>
+  
+  <DT><A name="ZipOrder"></A>o={Size}</DT>
+  <DD>
+    <P>Sets the model order for PPMd. The size must be in the range [2,16]. The default value is 8.</P>
+  </DD>
+  
   <DT><A name="ZipMultiThread"></A>mt=[off | on | {N}]</DT>
   <DD>
     <P>Sets multithread mode. If you have a multiprocessor or multicore system, 
@@ -136,7 +157,8 @@ only for file names that contain symbols unsupported by local code page.</P>
 
 <H2><A name="GZ"></A>GZip</H2>
 GZip uses the same parameters as Zip, but GZip compresses only with Deflate method.
-
+So GZip supports only the following parameters: x, fb, pass.
+                                                
 <H2><A name="BZ2"></A>BZip2</H2>
 <TABLE>
   <TR> 
@@ -152,6 +174,10 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
     <TD align="center">1</TD>
     <TD>Sets number of Passes for Bzip2 encoder.</TD></TR>
   <TR> 
+    <TD><A class="parameter" href="#BZip2DictionarySize">d={Size}[b|k|m]</A></TD> 
+    <TD align="center">900000</TD>  
+    <TD>Sets Dictionary size for BZip2</TD></TR>
+  <TR> 
     <TD><A class="parameter" href="#BZip2MultiThread">mt=[off | on | {N}]</A></TD> 
     <TD align="center">on</TD>  
     <TD>Sets multithreading mode.</TD></TR>
@@ -162,11 +188,20 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
   <DD>
     <P>Sets level of compression</P>
     <TABLE>
-      <TR> <TH>Level</TH> <TH>NumPasses</TH> <TH>Description</TH> </TR>
-      <TR> <TD>5</TD> <TD align="center">1</TD> <TD>Default compression method.</TD> </TR>
-      <TR> <TD>7</TD> <TD align="center">2</TD> <TD>Maximum compression method.</TD> </TR>
-      <TR> <TD>9</TD> <TD align="center">7</TD> <TD>Ultra  compression method.</TD> </TR>
+      <TR> <TH>Level</TH> <TH>Dictionary</TH> <TH>NumPasses</TH> <TH>Description</TH> </TR>
+      <TR> <TD class="cc">1</TD> <TD class="cc">100000</TD> <TD class="cc" rowspan=3>1</TD> <TD>Fastest</TD> </TR>
+      <TR> <TD class="cc">3</TD> <TD class="cc">500000</TD>  <TD>Fast</TD> </TR>
+      <TR> <TD class="cc">5</TD> <TD class="cc" rowspan=3>900000</TD> <TD>Normal</TD> </TR>
+      <TR> <TD class="cc">7</TD> <TD align="center">2</TD> <TD>Maximum</TD> </TR>
+      <TR> <TD class="cc">9</TD> <TD align="center">7</TD> <TD>Ultra</TD> </TR>
     </TABLE>
+  </DD>
+
+  <DT><A name="BZip2DictionarySize"></A>d={Size}[b|k|m]</DT>
+  <DD>
+    <P> Sets the Dictionary size for BZip2. You must specify the size in bytes, kilobytes, or megabytes.
+       The maximum value for the Dictionary size is 900000b. If you do not specify any symbol 
+       from set [b|k|m], dictionary size will be calculated as DictionarySize = 2^Size bytes.</P>
   </DD>
 
   <DT><A name="#BZip2Pass"></A>pass={NumPasses}</DT>
@@ -220,6 +255,7 @@ GZip uses the same parameters as Zip, but GZip compresses only with Deflate meth
       <TR> <TD align="center">7</TD> <TD align="center">LZMA</TD> <TD align="center">32 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ</TD> <TD>Maximum compressing</TD> </TR>
       <TR> <TD align="center">9</TD> <TD align="center">LZMA</TD> <TD align="center">64 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ2</TD><TD>Ultra compressing</TD> </TR>
     </TABLE>
+    <P>Note: "x" works as "x=9".</P>
   </DD>
 
   <DT><A name="Solid"></A>s=[off | on | [e] [{N}f] [{N}b | {N}k | {N}m | {N}g)]</DT>

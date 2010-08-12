@@ -24,9 +24,9 @@
     If file_name is not specified, data will be stored without a name.</DD>
 </DL>
 
-<P>Note: The current version of 7-Zip does not support reading of archives from stdin.</P>
+<P>Note: The current version of 7-Zip support reading of archives from stdin only for xz, lzma, tar, gzip and bzip2 archives.</P>
 
-<H4>Example</H4>
+<H4>Examples</H4>
 
 <PRE class="example">
 7z a archive.gz -tgzip -siDoc2.txt < Doc.txt
@@ -36,11 +36,19 @@
 <SPAN class="filename">archive.gz</SPAN> archive
 using <SPAN class="filename">Doc2.txt</SPAN> file name.</P>
 
+<PRE class="example">
+7z x 7z905.tar.gz -so | 7z x -si -ttar
+</PRE>
+
+<P>decompresses <SPAN class="filename">tar.gz</SPAN> archive.</P>
+
 <H4>Commands that can be used with this switch</H4>
 
 <P>
   <A href="../commands/add.htm">a (Add)</A>,
-  <A href="../commands/update.htm">u (Update)</A>
+  <A href="../commands/extract.htm">e (Extract)</A>,
+  <A href="../commands/update.htm">u (Update)</A>,
+  <A href="../commands/extract_full.htm">x (Extract with full paths)</A>
 </P>
 
 </BODY>

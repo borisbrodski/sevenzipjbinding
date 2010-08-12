@@ -1,4 +1,4 @@
-LZMA SDK 9.04
+LZMA SDK 9.12
 -------------
 
 LZMA SDK provides the documentation, samples, header files, libraries, 
@@ -19,6 +19,10 @@ LICENSE
 -------
 
 LZMA SDK is written and placed in the public domain by Igor Pavlov.
+
+Some code in LZMA is based on public domain code from another developers:
+  1) PPMd var.H (2001): Dmitry Shkarin
+  2) SHA-256: Wei Dai (Crypto++ library)
 
 
 LZMA SDK Contents
@@ -524,7 +528,8 @@ static ISzAlloc g_Alloc = { SzAlloc, SzFree };
   LzmaEnc_Destroy(enc, &g_Alloc, &g_Alloc);
 
 
-If callback function return some error code, LzmaEnc_Encode also returns that code.
+If callback function return some error code, LzmaEnc_Encode also returns that code
+or it can return the code like SZ_ERROR_READ, SZ_ERROR_WRITE or SZ_ERROR_PROGRESS.
 
 
 Single-call RAM->RAM Compression
@@ -546,8 +551,8 @@ Return code:
 
 
 
-LZMA Defines
-------------
+Defines
+-------
 
 _LZMA_SIZE_OPT - Enable some optimizations in LZMA Decoder to get smaller executable code.
 
@@ -557,6 +562,9 @@ _LZMA_PROB32   - It can increase the speed on some 32-bit CPUs, but memory usage
 _LZMA_UINT32_IS_ULONG  - Define it if int is 16-bit on your compiler and long is 32-bit.
 
 _LZMA_NO_SYSTEM_SIZE_T  - Define it if you don't want to use size_t type.
+
+
+_7ZIP_PPMD_SUPPPORT - Define it if you don't want to support PPMD method in AMSI-C .7z decoder.
 
 
 C++ LZMA Encoder/Decoder 

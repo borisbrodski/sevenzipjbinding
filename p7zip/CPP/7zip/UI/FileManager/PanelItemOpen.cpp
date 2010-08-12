@@ -14,6 +14,8 @@
 #endif
 #include "wx/mimetype.h"
 
+#undef _WIN32
+
 #include "resource.h"
 
 #include "Common/StringConvert.h"
@@ -26,6 +28,8 @@
 #include "Windows/Thread.h"
 #include "Windows/Synchronization.h"
 #include "Windows/Error.h"
+
+#include "App.h"
 
 #include "ExtractCallback.h"
 #include "UpdateCallback100.h"
@@ -44,6 +48,10 @@ using namespace NDirectory;
 extern HWND g_HWND;
 #ifndef _UNICODE
 extern bool g_IsNT;
+#endif
+
+#ifndef _WIN32
+void CloseHandle(HANDLE) {}
 #endif
 
 static const wchar_t *kTempDirPrefix = L"7zO";
@@ -81,6 +89,7 @@ public:
 HRESULT CPanel::OpenItemAsArchive(IInStream *inStream,
     const CTempFileInfo &tempFileInfo,
     const UString &virtualFilePath,
+    const UString &arcFormat,
     bool &encrypted)
 {
   encrypted = false;
@@ -109,6 +118,7 @@ HRESULT CPanel::OpenItemAsArchive(IInStream *inStream,
   UString password;
   RINOK(OpenFileFolderPlugin(inStream,
       folderLink.FilePath.IsEmpty() ? virtualFilePath : folderLink.FilePath,
+      arcFormat,
       &library, &newFolder, GetParent(), encrypted, password));
  
   folderLink.Password = password;
@@ -128,20 +138,20 @@ HRESULT CPanel::OpenItemAsArchive(IInStream *inStream,
   return S_OK;
 }
 
-HRESULT CPanel::OpenItemAsArchive(const UString &name, bool &encrypted)
+HRESULT CPanel::OpenItemAsArchive(const UString &name, const UString &arcFormat, bool &encrypted)
 {
   CTempFileInfo tfi;
   tfi.ItemName = name;
   tfi.FolderPath = _currentFolderPrefix;
   tfi.FilePath = _currentFolderPrefix + name;
-  return OpenItemAsArchive(NULL, tfi, _currentFolderPrefix + name, encrypted);
+  return OpenItemAsArchive(NULL, tfi, _currentFolderPrefix + name, arcFormat, encrypted);
 }
 
 HRESULT CPanel::OpenItemAsArchive(int index)
 {
   CDisableTimerProcessing disableTimerProcessing1(*this);
   bool encrypted;
-  RINOK(OpenItemAsArchive(GetItemRelPath(index), encrypted));
+  RINOK(OpenItemAsArchive(GetItemRelPath(index), UString(), encrypted));
   RefreshListCtrl();
   return S_OK;
 }
@@ -178,15 +188,20 @@ HRESULT CPanel::OpenParentArchiveFolder()
 
 static const wchar_t *kStartExtensions[] =
 {
+  #ifdef UNDER_CE
+  L"cab",
+  #endif
   L"exe", L"bat", L"com",
   L"chm",
   L"msi", L"doc", L"xls", L"ppt", L"pps", L"wps", L"wpt", L"wks", L"xlr", L"wdb",
 
   L"docx", L"docm", L"dotx", L"dotm", L"xlsx", L"xlsm", L"xltx", L"xltm", L"xlsb",
   L"xlam", L"pptx", L"pptm", L"potx", L"potm", L"ppam", L"ppsx", L"ppsm", L"xsn",
+  L"msg",
+  L"dwf",
 
-  L"dwf", 
-
+  L"flv", L"swf",
+  
   L"odt", L"ods",
   L"wb3",
   L"pdf"
@@ -205,23 +220,32 @@ static bool DoItemAlwaysStart(const UString &name)
   return false;
 }
 
-#ifdef _WIN32
+static UString GetQuotedString(const UString &s)
+{
+  return UString(L'\"') + s + UString(L'\"');
+}
+
 static HANDLE StartEditApplication(const UString &path, HWND window)
 {
   UString command;
   ReadRegEditor(command);
   if (command.IsEmpty())
   {
+#ifdef _WIN32
     if (!MyGetWindowsDirectory(command))
       return 0;
     NFile::NName::NormalizeDirPathPrefix(command);
     command += L"notepad.exe";
+#else
+    command += L"vi";
+#endif // _WIN32
   }
   command = UString(L"\"") + command + UString(L"\"");
   command += L" \"";
   command += UString(path);
   command += L"\"";
 
+#ifdef _WIN32
   PROCESS_INFORMATION processInformation;
   BOOL result;
   #ifndef _UNICODE
@@ -260,18 +284,71 @@ static HANDLE StartEditApplication(const UString &path, HWND window)
     ::CloseHandle(processInformation.hThread);
     return processInformation.hProcess;
   }
+#else
+  wxString cmd = (const wchar_t *)command;
+  long pid = wxExecute(cmd, wxEXEC_ASYNC);
+  if (pid) return 0;
+#endif
   ::MessageBoxW(window, LangString(IDS_CANNOT_START_EDITOR, 0x03020282),
       L"7-Zip", MB_OK  | MB_ICONSTOP);
   return 0;
+}
+
+void CApp::DiffFiles()
+{
+  const CPanel &panel = GetFocusedPanel();
+  
+  CRecordVector<UInt32> indices;
+  panel.GetSelectedItemsIndices(indices);
+
+  UString path1, path2;
+  if (indices.Size() == 2)
+  {
+    path1 = panel.GetItemFullPath(indices[0]);
+    path2 = panel.GetItemFullPath(indices[1]);
+  }
+  else if (indices.Size() == 1 && NumPanels >= 2)
+  {
+    const CPanel &destPanel = Panels[1 - LastFocusedPanel];
+    path1 = panel.GetItemFullPath(indices[0]);
+    const UString relPath = panel.GetItemRelPath(indices[0]);
+    CRecordVector<UInt32> indices2;
+    destPanel.GetSelectedItemsIndices(indices2);
+    if (indices2.Size() == 1)
+      path2 = destPanel.GetItemFullPath(indices2[0]);
+    else
+      path2 = destPanel._currentFolderPrefix + relPath;
+  }
+  else
+    return;
+
+  UString command;
+  ReadRegDiff(command);
+  if (command.IsEmpty())
+    return;
+
+  UString param = GetQuotedString(path1) + L' ' + GetQuotedString(path2);
+
+#ifdef _WIN32
+  HRESULT res = MyCreateProcess(command, param);
+  if (res == SZ_OK)
+    return;
+#else
+  wxString cmd = (const wchar_t *)command;
+  cmd += L" ";
+  cmd += (const wchar_t *)param;
+
+  long pid = wxExecute(cmd, wxEXEC_ASYNC);
+  if (pid) return ;
+#endif
+  ::MessageBoxW(_window, LangString(IDS_CANNOT_START_EDITOR, 0x03020282), L"7-Zip", MB_OK  | MB_ICONSTOP);
 }
 
 #ifndef _UNICODE
 typedef BOOL (WINAPI * ShellExecuteExWP)(LPSHELLEXECUTEINFOW lpExecInfo);
 #endif
 
-#endif // _WIN32
-
-static void StartApplication(const UString &path, HWND window)
+static HANDLE StartApplication(const UString &path, HWND window)
 {
   // FIXME
   extern const TCHAR * nameWindowToUnix(const TCHAR * lpFileName);
@@ -300,7 +377,7 @@ static void StartApplication(const UString &path, HWND window)
       {
         printf("StartApplication(%ls) cmd='%ls'\n",(const wchar_t *)filename,(const wchar_t *)cmd);
         long pid = wxExecute(cmd, wxEXEC_ASYNC);
-        if (pid) return ;
+        if (pid) return 0;
       }
     }	   
   }
@@ -308,6 +385,7 @@ static void StartApplication(const UString &path, HWND window)
           // NError::MyFormatMessageW(::GetLastError()),
           L"There is no application associated with the given file name extension",
           L"7-Zip", MB_OK | MB_ICONSTOP);
+  return 0;
 }
 
 void CPanel::EditItem(int index)
@@ -317,22 +395,16 @@ void CPanel::EditItem(int index)
     OpenItemInArchive(index, false, true, true);
     return;
   }
-#ifdef _WIN32
   HANDLE hProcess = StartEditApplication(_currentFolderPrefix + GetItemRelPath(index), (HWND)*this);
   if (hProcess != 0)
     ::CloseHandle(hProcess);
-#endif
 }
 
 void CPanel::OpenFolderExternal(int index)
 {
-#ifdef _WIN32
   HANDLE hProcess = StartApplication(GetFsPath() + GetItemRelPath(index), (HWND)*this);
   if (hProcess != 0)
     ::CloseHandle(hProcess);
-#else
-  printf(" CPanel::OpenFolderExternal : FIXME\n");
-#endif
 }
 
 void CPanel::OpenItem(int index, bool tryInternal, bool tryExternal)
@@ -366,15 +438,32 @@ void CPanel::OpenItem(int index, bool tryInternal, bool tryExternal)
   {
     // SetCurrentDirectory opens HANDLE to folder!!!
     // NDirectory::MySetCurrentDirectory(_currentFolderPrefix);
-#ifdef _WIN32
     HANDLE hProcess = StartApplication(fullPath, (HWND)*this);
     if (hProcess != 0)
       ::CloseHandle(hProcess);
-#else
-    StartApplication(fullPath, (HWND)*this);
-#endif
   }
 }
+
+class CThreadCopyFrom: public CProgressThreadVirt
+{
+  HRESULT ProcessVirt();
+public:
+  UString PathPrefix;
+  UString Name;
+
+  CMyComPtr<IFolderOperations> FolderOperations;
+  CMyComPtr<IProgress> UpdateCallback;
+  CUpdateCallback100Imp *UpdateCallbackSpec;
+};
+  
+HRESULT CThreadCopyFrom::ProcessVirt()
+{
+  UStringVector fileNames;
+  CRecordVector<const wchar_t *> fileNamePointers;
+  fileNames.Add(Name);
+  fileNamePointers.Add(fileNames[0]);
+  return FolderOperations->CopyFrom(PathPrefix, &fileNamePointers.Front(), fileNamePointers.Size(), UpdateCallback);
+};
       
 HRESULT CPanel::OnOpenItemChanged(const UString &folderPath, const UString &itemName,
     bool usePassword, const UString &password)
@@ -385,19 +474,18 @@ HRESULT CPanel::OnOpenItemChanged(const UString &folderPath, const UString &item
     MessageBoxErrorLang(IDS_OPERATION_IS_NOT_SUPPORTED, 0x03020208);
     return E_FAIL;
   }
-  UStringVector fileNames;
-  CRecordVector<const wchar_t *> fileNamePointers;
-  fileNames.Add(itemName);
-  fileNamePointers.Add(fileNames[0]);
 
-  UString pathPrefix = folderPath;
-  NName::NormalizeDirPathPrefix(pathPrefix);
-
-  CUpdateCallback100Imp *callbackSpec = new CUpdateCallback100Imp;
-  CMyComPtr<IProgress> callback = callbackSpec;
-  callbackSpec->Init((HWND)*this, usePassword, password);
-
-  return folderOperations->CopyFrom(pathPrefix, &fileNamePointers.Front(), fileNamePointers.Size(), callback);
+  CThreadCopyFrom t;
+  t.UpdateCallbackSpec = new CUpdateCallback100Imp;
+  t.UpdateCallback = t.UpdateCallbackSpec;
+  t.UpdateCallbackSpec->ProgressDialog = &t.ProgressDialog;
+  t.Name = itemName;
+  t.PathPrefix = folderPath;
+  NName::NormalizeDirPathPrefix(t.PathPrefix);
+  t.FolderOperations = folderOperations;
+  t.UpdateCallbackSpec->Init(usePassword, password);
+  RINOK(t.Create(itemName, (HWND)*this));
+  return t.Result;
 }
 
 LRESULT CPanel::OnOpenItemChanged(LPARAM lParam)

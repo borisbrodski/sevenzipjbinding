@@ -1,9 +1,11 @@
-PROG=../../../../bin/Client7z
+PROG=../../../../bin/Client7z$(BINSUFFIX)
 
-LOCAL_FLAGS=-DCOMPRESS_MT
+LOCAL_FLAGS=-DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
+
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=$(LOCAL_LIBS_DLL)
 
@@ -20,6 +22,7 @@ PropVariantConversions.o \
 IntToString.o \
 MyString.o \
 StringConvert.o \
+UTFConvert.o \
 MyVector.o \
 Wildcard.o \
 FileStreams.o \

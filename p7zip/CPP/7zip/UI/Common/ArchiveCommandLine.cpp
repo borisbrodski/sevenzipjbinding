@@ -3,7 +3,9 @@
 #include "StdAfx.h"
 
 #ifdef _WIN32
+#ifndef UNDER_CE
 #include <io.h>
+#endif
 #endif
 #include <stdio.h>
 
@@ -16,6 +18,8 @@
 #ifdef _WIN32
 #include "Windows/FileMapping.h"
 #include "Windows/Synchronization.h"
+#else
+#include "myPrivate.h"
 #endif
 
 #include "ArchiveCommandLine.h"
@@ -24,9 +28,13 @@
 #include "Update.h"
 #include "UpdateAction.h"
 
-#include "myPrivate.h"
-
 extern bool g_CaseSensitive;
+
+#ifdef UNDER_CE
+
+#define MY_IS_TERMINAL(x) false;
+
+#else
 
 #if _MSC_VER >= 1400
 #define MY_isatty_fileno(x) _isatty(_fileno(x))
@@ -35,6 +43,8 @@ extern bool g_CaseSensitive;
 #endif
 
 #define MY_IS_TERMINAL(x) (MY_isatty_fileno(x) != 0);
+
+#endif
 
 using namespace NCommandLineParser;
 using namespace NWindows;
@@ -70,6 +80,7 @@ enum Enum
   kOverwrite,
   kEmail,
   kShowDialog,
+  kLargePages,
   kUseLStat,
   kTechMode,
   kCaseSensitive,
@@ -136,6 +147,7 @@ static const CSwitchForm kSwitchForms[] =
     { L"AO", NSwitchType::kPostChar, false, 1, 1, kOverwritePostCharSet},
     { L"SEML", NSwitchType::kUnLimitedPostString, false, 0},
     { L"AD",  NSwitchType::kSimple, false },
+    { L"SLP", NSwitchType::kUnLimitedPostString, false, 0},
     { L"L",  NSwitchType::kSimple, false },
     { L"SLT", NSwitchType::kSimple, false },
     { L"SSC", NSwitchType::kPostChar, false, 0, 0, L"-" },
@@ -165,6 +177,7 @@ static const int kCommandIndex = 0;
 // exception messages
 
 static const char *kUserErrorMessage  = "Incorrect command line";
+static const char *kCannotFindListFile = "Cannot find listfile";
 static const char *kIncorrectListFile = "Incorrect item in listfile.\nCheck charset encoding and -scs switch.";
 static const char *kIncorrectWildCardInListFile = "Incorrect wildcard in listfile";
 static const char *kIncorrectWildCardInCommandLine  = "Incorrect wildcard in command line";
@@ -244,44 +257,33 @@ static bool ParseArchiveCommand(const UString &commandString, CArchiveCommand &c
 // ------------------------------------------------------------------
 // filenames functions
 
-static bool AddNameToCensor(NWildcard::CCensor &wildcardCensor,
+static void AddNameToCensor(NWildcard::CCensor &wildcardCensor,
     const UString &name, bool include, NRecursedType::EEnum type)
 {
-  bool isWildCard = DoesNameContainWildCard(name);
   bool recursed = false;
 
   switch (type)
   {
     case NRecursedType::kWildCardOnlyRecursed:
-      recursed = isWildCard;
+      recursed = DoesNameContainWildCard(name);
       break;
     case NRecursedType::kRecursed:
       recursed = true;
       break;
-    case NRecursedType::kNonRecursed:
-      recursed = false;
-      break;
   }
   wildcardCensor.AddItem(include, name, recursed);
-  return true;
 }
 
 static void AddToCensorFromListFile(NWildcard::CCensor &wildcardCensor,
     LPCWSTR fileName, bool include, NRecursedType::EEnum type, UINT codePage)
 {
   UStringVector names;
+  if (!NFind::DoesFileExist(fileName))
+    throw kCannotFindListFile;
   if (!ReadNamesFromListFile(fileName, names, codePage))
     throw kIncorrectListFile;
   for (int i = 0; i < names.Size(); i++)
-    if (!AddNameToCensor(wildcardCensor, names[i], include, type))
-      throw kIncorrectWildCardInListFile;
-}
-
-static void AddCommandLineWildCardToCensr(NWildcard::CCensor &wildcardCensor,
-    const UString &name, bool include, NRecursedType::EEnum recursedType)
-{
-  if (!AddNameToCensor(wildcardCensor, name, include, recursedType))
-    throw kIncorrectWildCardInCommandLine;
+    AddNameToCensor(wildcardCensor, names[i], include, type);
 }
 
 static void AddToCensorFromNonSwitchesStrings(
@@ -291,14 +293,14 @@ static void AddToCensorFromNonSwitchesStrings(
     bool thereAreSwitchIncludes, UINT codePage)
 {
   if (nonSwitchStrings.Size() == startIndex && (!thereAreSwitchIncludes))
-    AddCommandLineWildCardToCensr(wildcardCensor, kUniversalWildcard, true, type);
+    AddNameToCensor(wildcardCensor, kUniversalWildcard, true, type);
   for (int i = startIndex; i < nonSwitchStrings.Size(); i++)
   {
     const UString &s = nonSwitchStrings[i];
     if (s[0] == kFileListID)
       AddToCensorFromListFile(wildcardCensor, s.Mid(1), true, type, codePage);
     else
-      AddCommandLineWildCardToCensr(wildcardCensor, s, true, type);
+      AddNameToCensor(wildcardCensor, s, true, type);
   }
 }
 
@@ -324,9 +326,9 @@ static void ParseMapWithPaths(NWildcard::CCensor &wildcardCensor,
   UInt32 dataSize = (UInt32)dataSize64;
   {
     CFileMapping fileMapping;
-    if (!fileMapping.Open(FILE_MAP_READ, false, GetSystemString(mappingName)))
+    if (fileMapping.Open(FILE_MAP_READ, GetSystemString(mappingName)) != 0)
       ThrowException("Can not open mapping");
-    LPVOID data = fileMapping.MapViewOfFile(FILE_MAP_READ, 0, dataSize);
+    LPVOID data = fileMapping.Map(FILE_MAP_READ, 0, dataSize);
     if (data == NULL)
       ThrowException("MapViewOfFile error");
     try
@@ -341,8 +343,7 @@ static void ParseMapWithPaths(NWildcard::CCensor &wildcardCensor,
         wchar_t c = curData[i];
         if (c == L'\0')
         {
-          AddCommandLineWildCardToCensr(wildcardCensor,
-              name, include, commonRecursedType);
+          AddNameToCensor(wildcardCensor, name, include, commonRecursedType);
           name.Empty();
         }
         else
@@ -392,7 +393,7 @@ static void AddSwitchWildCardsToCensor(NWildcard::CCensor &wildcardCensor,
       ThrowUserErrorException();
     UString tail = name.Mid(pos + 1);
     if (name[pos] == kImmediateNameID)
-      AddCommandLineWildCardToCensr(wildcardCensor, tail, include, recursedType);
+      AddNameToCensor(wildcardCensor, tail, include, recursedType);
     else if (name[pos] == kFileListID)
       AddToCensorFromListFile(wildcardCensor, tail, include, recursedType, codePage);
     #ifdef _WIN32
@@ -703,7 +704,7 @@ void CArchiveCommandLineParser::Parse1(const UStringVector &commandStrings,
   options.EnableHeaders = !parser[NKey::kDisableHeaders].ThereIs;
   options.HelpMode = parser[NKey::kHelp1].ThereIs || parser[NKey::kHelp2].ThereIs  || parser[NKey::kHelp3].ThereIs;
 
-  #ifdef _WIN32
+  #ifdef _7ZIP_LARGE_PAGES
   options.LargePages = false;
   if (parser[NKey::kLargePages].ThereIs)
   {
@@ -808,13 +809,11 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
     NWildcard::CCensor archiveWildcardCensor;
 
     if (parser[NKey::kArInclude].ThereIs)
-    {
       AddSwitchWildCardsToCensor(archiveWildcardCensor,
-        parser[NKey::kArInclude].PostStrings, true, NRecursedType::kNonRecursed, codePage);
-    }
+          parser[NKey::kArInclude].PostStrings, true, NRecursedType::kNonRecursed, codePage);
     if (parser[NKey::kArExclude].ThereIs)
       AddSwitchWildCardsToCensor(archiveWildcardCensor,
-      parser[NKey::kArExclude].PostStrings, false, NRecursedType::kNonRecursed, codePage);
+          parser[NKey::kArExclude].PostStrings, false, NRecursedType::kNonRecursed, codePage);
 
     bool directlyAddArchiveName = false;
     if (thereIsArchiveName) {
@@ -822,7 +821,7 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
         // no wildcard => no need to scan
         directlyAddArchiveName = true;
       } else {
-      AddCommandLineWildCardToCensr(archiveWildcardCensor, options.ArchiveName, true, NRecursedType::kNonRecursed);
+        AddNameToCensor(archiveWildcardCensor, options.ArchiveName, true, NRecursedType::kNonRecursed);
       }
     }
 
@@ -888,7 +887,7 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
     }
     
     }
-
+    
     if (isExtractGroupCommand)
     {
       SetMethodOptions(parser, options.ExtractProperties);
@@ -902,8 +901,7 @@ void CArchiveCommandLineParser::Parse2(CArchiveCommandLineOptions &options)
 
       options.OverwriteMode = NExtract::NOverwriteMode::kAskBefore;
       if (parser[NKey::kOverwrite].ThereIs)
-        options.OverwriteMode =
-            k_OverwriteModes[parser[NKey::kOverwrite].PostCharIndex];
+        options.OverwriteMode = k_OverwriteModes[parser[NKey::kOverwrite].PostCharIndex];
       else if (options.YesToAll)
         options.OverwriteMode = NExtract::NOverwriteMode::kWithoutPrompt;
     }

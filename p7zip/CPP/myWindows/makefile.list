@@ -3,6 +3,7 @@ SRCS=myGetTickCount.cpp \
  myAddExeFlag.cpp \
  test_emul.cpp \
  wine_date_and_time.cpp \
+ wine_GetXXXDefaultLangID.cpp \
  ../Common/MyVector.cpp \
  ../Common/MyString.cpp \
  ../Common/MyWindows.cpp
@@ -17,6 +18,8 @@ test_emul.o : test_emul.cpp
 	$(CXX) $(CXXFLAGS) test_emul.cpp
 wine_date_and_time.o : wine_date_and_time.cpp
 	$(CXX) $(CXXFLAGS) wine_date_and_time.cpp
+wine_GetXXXDefaultLangID.o : wine_GetXXXDefaultLangID.cpp
+	$(CXX) $(CXXFLAGS) wine_GetXXXDefaultLangID.cpp
 MyVector.o : ../Common/MyVector.cpp
 	$(CXX) $(CXXFLAGS) ../Common/MyVector.cpp
 MyString.o : ../Common/MyString.cpp

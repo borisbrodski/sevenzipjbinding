@@ -2,7 +2,7 @@
 ; 7-Zip 4.07 Beta
 ; Translated by Leandro Spagnol
 ;
-; Updated to 7-Zip v4.60
+; Updated to 7-Zip v9.07
 ; by TJL73 <http://tjl73.altervista.org/>
 ; Some corrections by Vincenzo Reale
 ;
@@ -18,7 +18,7 @@
 
 ; Info Page
 01000100="Informazioni"
-01000103="7-Zip è un software gratuito e libero. Se vuoi supportare l'ulteriore sviluppo di 7-Zip, regìstrati: in qualità di utente registrato, potrai usufruire del servizio di supporto tecnico.\n\n\nLocalizzazione italiana a cura di: TJL73 <http://tjl73.altervista.org/>"
+01000103="7-Zip è un software gratuito e libero. Come utente registrato, potrai aiutare lo sviluppo di 7-Zip e usufruire del supporto tecnico.\n\nLocalizzazione italiana a cura di:\nTJL73 <http://tjl73.altervista.org/>"
 01000104="Supporto tecnico"
 01000105="Registra"
 
@@ -117,6 +117,12 @@
 0200022E="Checksum"
 0200022F="Caratteristiche"
 02000230="Indirizzo virtuale"
+02000231="ID"
+02000232="Nome breve"
+02000233="Applicativo origine"
+02000234="Dimensione settore"
+02000235="Modalità"
+02000236="Collegamento"
 
 ; Status bar
 02000301="Oggetti selezionati: {0}"
@@ -330,8 +336,9 @@
 03000232="&Sposta in..."
 03000233="&Elimina"
 03000240="&Proprietà"
-03000241="Comme&nto"
+03000241="Comme&nto..."
 03000242="Calcola chec&ksum"
+03000243="Comparazione differenze (Diff)"
 03000250="Crea cartella"
 03000251="Crea file"
 03000260="E&sci"
@@ -395,6 +402,7 @@
 ; Edit
 03010200="Editor"
 03010201="&Editor predefinito:"
+03010202="Comparatore &differenze (Diff):"
 
 ; System
 03010300="Sistema"
@@ -408,6 +416,7 @@
 03010410="Mostra le icone di sistema"
 03010420="Selezione a &riga intera"
 03010421="Mostra &griglia"
+03010422="Click singolo per aprire una voce"
 03010430="Modalità di selezione &alternativa"
 03010440="Utilizza pagine &larghe di memoria"
 

@@ -1,4 +1,67 @@
 
+Version 9.13
+============
+  - From Windows version of 7-zip 9.12
+    - Some bugs were fixed.
+
+  
+  - #2863580 "Crash in Rar decoder on a corrupted file" fixed
+
+  - #2860898 "Dereferencing a zero pointer in cab handler" fixed
+
+  - #2860679 "Division by zero in cab decoder" fixed
+
+
+
+Version 9.12
+============
+  - From Windows version of 7-zip 9.12
+    - ZIP / PPMd compression ratio was improved in Maximum and Ultra modes.
+    - The BUG in 7-Zip 9.* beta was fixed: LZMA2 codec didn't work,
+      if more than 10 threads were used (or more than 20 threads in some modes).
+
+  - makefile.openbsd is now compatible with OpenBSD ports tree.
+    (thanks to jggimi)
+
+  - cmake projects added.
+
+  - 7zFM and 7zG can be built on MacOSX but these ports are in very alpha stage.
+    make app to build p7zip.app (p7zip for MacOSX)
+
+
+Version 9.11 (never published)
+============
+  - From Windows version of 7-zip 9.11
+    - 7-Zip now supports PPMd compression in .ZIP archives.
+    - Speed optimizations in PPMd codec.
+    - The support for archives in installers was improved.
+    - Some bugs were fixed.
+
+
+Version 9.10 (never published)
+============
+
+  - From Windows version of 7-zip 9.05 to 9.10
+    - 7-Zip now can unpack Apple Partition Map (APM) disk images.
+    - 7-Zip now can unpack MSLZ archives.
+    - Partial parsing for EXE resources, SWF and FLV.
+    - Some bugs were fixed.
+
+  - p7zip can now use hugetlbfs on Linux (thank to Joachim Henke)
+    Like with the Windows large pages, this gives a nice speedup, 
+    when running memory intensive operations.
+
+  - p7zip now uses UTF8 (kCFStringNormalizationFormD) On MacOSX
+    fixes  #2831266 "p7zip can't find NFC Unicode  filename in OSX Terminal"
+    and    #2976169 "German Umlauts Failure"
+
+
+Version 9.05 (never published)
+============
+
+  - p7zip now uses precompiled header with gcc 4
+
+
 Version 9.04 (Major bugfixes and Major enhancements) 
 ============
 
@@ -21,7 +84,6 @@ Version 9.04 (Major bugfixes and Major enhancements)
     p7zip now displays the following error "Error: Too many open files"
     if you don't have enough rights to open all the splitted files
     ( on Linux : ulimit -n)
-  
 
 
 Version 4.65

@@ -11,6 +11,7 @@ SRCS=\
 ../../../Common/MyWindows.cpp \
 ../../../Common/MyString.cpp \
 ../../../Common/StringConvert.cpp \
+../../../Common/UTFConvert.cpp \
 ../../../Common/MyVector.cpp \
 ../../../Common/Wildcard.cpp \
 ../../Common/FileStreams.cpp \

@@ -44,7 +44,7 @@ class CKey
   HKEY _object;
 public:
   CKey(): _object(NULL) {}
-  ~CKey();
+  ~CKey() { Close(); }
 
   operator HKEY() const { return _object; }
 
@@ -84,12 +84,18 @@ public:
 
   LONG SetValue(LPCTSTR name, const void *value, UInt32 size);
 
+  LONG SetValue_Strings(LPCTSTR valueName, const UStringVector &strings);
+  LONG GetValue_Strings(LPCTSTR valueName, UStringVector &strings);
+
   LONG SetKeyValue(LPCTSTR keyName, LPCTSTR valueName, LPCTSTR value);
 
   LONG QueryValue(LPCTSTR name, UInt32 &value);
   LONG QueryValue(LPCTSTR name, bool &value);
   LONG QueryValue(LPCTSTR name, LPTSTR value, UInt32 &dataSize);
   LONG QueryValue(LPCTSTR name, CSysString &value);
+
+  LONG GetValue_IfOk(LPCTSTR name, UInt32 &value);
+  LONG GetValue_IfOk(LPCTSTR name, bool &value);
 
   #ifndef _UNICODE
   LONG QueryValue(LPCWSTR name, LPWSTR value, UInt32 &dataSize);

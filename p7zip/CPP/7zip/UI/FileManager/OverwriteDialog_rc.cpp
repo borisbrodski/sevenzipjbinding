@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+
 #include "OverwriteDialogRes.h"
 #include "Windows/Control/DialogImpl.h"
 
@@ -92,5 +94,6 @@ REGISTER_DIALOG(IDD_DIALOG_OVERWRITE,COverwriteDialog,g_stringTable)
 
 BEGIN_EVENT_TABLE(COverwriteDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

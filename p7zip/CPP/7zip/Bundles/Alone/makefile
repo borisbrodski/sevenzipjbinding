@@ -1,18 +1,19 @@
+PROG=../../../../bin/7za$(BINSUFFIX)
+
 LOCAL_FLAGS= \
-  -DCOMPRESS_MT \
-  -DCOMPRESS_BZIP2_MT \
-  -DCOMPRESS_MF_MT \
   -DBREAK_HANDLER \
-  -DBENCH_MT
+  -DUNICODE -D_UNICODE
+
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
 
-PROG=../../../../bin/7za$(BINSUFFIX)
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=$(LOCAL_LIBS)
 
 CONSOLE_OBJS = \
+  BenchCon.o \
   ConsoleClose.o \
   ExtractCallbackConsole.o \
   List.o \
@@ -79,6 +80,7 @@ UI_COMMON_OBJS = \
   ArchiveCommandLine.o \
   ArchiveExtractCallback.o \
   ArchiveOpenCallback.o \
+  Bench.o \
   DefaultName.o \
   EnumDirItems.o \
   Extract.o \
@@ -97,8 +99,10 @@ UI_COMMON_OBJS = \
 
 AR_OBJS = \
   Bz2Handler.o \
+  DeflateProps.o \
   GzHandler.o \
   LzmaHandler.o \
+  PpmdHandler.o \
   SplitHandler.o \
   XzHandler.o \
   ZHandler.o \
@@ -196,13 +200,10 @@ COMPRESS_OBJS = \
   PpmdDecoder.o \
   PpmdEncoder.o \
   PpmdRegister.o \
+  PpmdZip.o \
   QuantumDecoder.o \
   ShrinkDecoder.o \
   ZDecoder.o \
-
-LZMA_BENCH_OBJS = \
-  LzmaBench.o \
-  LzmaBenchCon.o \
 
 CRYPTO_OBJS = \
   7zAes.o \
@@ -216,10 +217,10 @@ CRYPTO_OBJS = \
   ZipCrypto.o \
   ZipStrong.o \
 
-# Alloc.o
 C_OBJS = \
   7zStream.o \
   Aes.o \
+  Alloc.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
@@ -233,6 +234,12 @@ C_OBJS = \
   LzmaDec.o \
   LzmaEnc.o \
   MtCoder.o \
+  Ppmd7.o \
+  Ppmd7Dec.o \
+  Ppmd7Enc.o \
+  Ppmd8.o \
+  Ppmd8Dec.o \
+  Ppmd8Enc.o \
   Sha256.o \
   Sort.o \
   Threads.o \
@@ -260,7 +267,6 @@ mySplitCommandLine.o \
   $(TAR_OBJS) \
   $(ZIP_OBJS) \
   $(COMPRESS_OBJS) \
-  $(LZMA_BENCH_OBJS) \
   $(CRYPTO_OBJS) \
   $(C_OBJS) \
   $(OBJ_CRC32)

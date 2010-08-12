@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.62
+; 7-Zip 9.10 beta
 ; Diterjemahkan oleh Frans Liando
 ;
 ; Sumber: http://ikc.dinus.ac.id/bukuputih/istilah-ti-indonesia.txt
@@ -17,7 +17,7 @@
 
 ; Info Page
 01000100="Mengenai 7-Zip"
-01000103="7-Zip merupakan perangkat lunak gratis. Bagaimanapun, Anda bisa mendukung pengembangan dari 7-Zip dengan melakukan pendaftaran.\n\nTerjemahan bahasa Indonesia oleh Frans Liando."
+01000103="7-Zip merupakan perangkat lunak gratis. Bagaimanapun, Anda bisa mendukung pengembangan 7-Zip dengan mendaftar.\n\nTerjemahan oleh Frans Liando."
 01000104="Dukung"
 01000105="Daftar"
 
@@ -34,7 +34,7 @@
 ; System Page
 01000300="Sistem"
 01000301="Integrasikan 7-Zip ke cangkang menu konteks"
-01000302="Menu konteks kaskade"
+01000302="Menu konteks dikaskade"
 01000310="Butir-butir pada menu konteks:"
 
 ; Language Page
@@ -51,20 +51,20 @@
 02000104="Buka arsip terpilih."
 02000105="Ekstrak berkas..."
 02000106="Ekstrak berkas arsip terpilih."
-02000107="Tambahkan ke arsip..."
-02000108="Tambahkan butir terpilih ke arsip."
+02000107="Tambah ke arsip..."
+02000108="Tambah butir terpilih ke arsip."
 02000109="Uji arsip"
 0200010A="Uji integritas dari arsip terpilih."
 0200010B="Ekstrak di sini"
 0200010C="Ekstrak berkas arsip terpilih ke pelipat ini."
 0200010D="Ekstrak ke {0}"
 0200010E="Ekstrak berkas ke sub pelipat."
-0200010F="Tambahkan ke {0}"
-02000110="Tambahkan butir terpilih ke arsip."
-02000111="Mampatkan dan surat kawat..."
-02000112="Mampatkan butir terpilih ke arsip dan kirim via surat kawat."
-02000113="Mampatkan ke {0} dan surat kawat"
-02000114="Mampatkan butir terpilih ke arsip dan kirim via surat kawat."
+0200010F="Tambah ke {0}"
+02000110="Tambah butir terpilih ke arsip."
+02000111="Mampat dan surat kawat..."
+02000112="Mampat butir terpilih ke arsip dan kirim via surat kawat."
+02000113="Mampat ke {0} dan surat kawat"
+02000114="Mampat butir terpilih ke arsip dan kirim via surat kawat."
 
 02000140="<Pelipat>"
 02000141="<Arsip>"
@@ -116,6 +116,12 @@
 0200022E="Ceksum"
 0200022F="Karakteristik"
 02000230="Alamat Maya"
+02000231="ID"
+02000232="Nama Singkat"
+02000233="Aplikasi Pembuat"
+02000234="Ukuran Sektor"
+02000235="Ragam"
+02000236="Taut"
 
 ; Status bar
 02000301="{0} objek terpilih"
@@ -138,7 +144,7 @@
 
 ; Messages
 02000601="Operasi pembaruan tidaklah didukung untuk arsip ini."
-02000602="Tak bisa memperbarui arsip {0}"
+02000602="Tak bisa perbarui arsip {0}"
 02000603="Tak bisa membuat pelipat '{0}'"
 02000604="Berkas arsip tak didukung."
 02000605="Kesalahan"
@@ -171,12 +177,12 @@
 02000801="E&kstrak ke:"
 02000802="Kata sandi"
 
-02000810="Mode lintasan"
+02000810="Ragam lintasan"
 02000811="Nama lengkap lintasan"
 02000812="Nama lintasan sekarang"
 02000813="Tidak ada nama lintasan"
 
-02000820="Mode tulis timpa"
+02000820="Ragam tulis timpa"
 02000821="Konfirmasikan sebelum tulis timpa"
 02000822="Tulis timpa tanpa konfirmasi"
 02000823="Lewati berkas yang ada"
@@ -189,7 +195,7 @@
 
 02000881="Tetapkan lokasi untuk berkas yang diekstrak."
 
-02000890="Sedang mengekstrak"
+02000890="Mengekstrak"
 
 ; Overwrite dialog
 02000900="Konfirmasi Penggantian Berkas"
@@ -197,7 +203,7 @@
 02000902="Maukah Anda mengganti berkas yang ada"
 02000903="dengan yang satu ini?"
 
-02000911="Nama Ulang Automatis"
+02000911="Nama &Ulang Automatis"
 
 02000982="{0} bita"
 02000983="dimodifikasi pada"
@@ -241,9 +247,9 @@
 02000C30="Anda yakin ingin membatalkannya?"
 
 ; Compress dialog
-02000D00="Tambahkan ke arsip"
+02000D00="Tambah ke arsip"
 02000D01="&Arsip:"
-02000D02="Mode pembar&uan:"
+02000D02="Ragam perbar&u:"
 02000D03="&Format arsip:"
 02000D04="&Metode kompresi:"
 02000D05="Buat ar&sip padat"
@@ -289,7 +295,7 @@
 
 ; Columns dialog
 02000E00="Kolom"
-02000E01="Cek kolom yang ingin ditampakkan pada pelipat ini. Gunakan tombol Pindah ke Atas dan Pindah ke Bawah untuk mengurutkan kolom."
+02000E01="Cek kolom yang ingin ditampakkan dalam pelipat ini. Gunakan tombol Pindah ke Atas dan Pindah ke Bawah untuk mengurutkan kolom."
 02000E02="Kolom yang terpilih harus"
 02000E03="ber-piksel &lebar."
 
@@ -313,15 +319,15 @@
 ; Menu
 03000102="&Berkas"
 03000103="&Sunting"
-03000104="&Pandangan"
+03000104="Tam&pilan"
 03000105="P&eralatan"
 03000106="Ban&tuan"
 03000107="&Kesukaan"
 
 ; File
-03000210="B&uka"
+03000210="&Buka"
 03000211="Buka Sisi &Dalam"
-03000212="Buka Sisi &Luar"
+03000212="Buka Sisi L&uar"
 03000220="&Pandangan"
 03000221="&Sunting"
 03000230="&Nama Ulang"
@@ -329,8 +335,9 @@
 03000232="P&indahkan Ke..."
 03000233="&Hapus"
 03000240="P&roperti"
-03000241="K&omentar"
+03000241="K&omentari"
 03000242="Hitung Ceksum"
+03000243="Beda"
 03000250="Buat Pelipat"
 03000251="Buat Berkas"
 03000260="&Keluar"
@@ -379,7 +386,7 @@
 03000620="Mengen&ai 7-Zip..."
 
 ; Favorites
-03000710="Tambahkan pelipat ke Kesukaan sebagai"
+03000710="Tambah pelipat ke Kesukaan sebagai"
 03000720="Marka Buku"
 
 ; Options Dialog
@@ -393,7 +400,8 @@
 
 ; Edit
 03010200="Penyunting"
-03010201="&Penyunting:"
+03010201="P&enyunting:"
+03010202="Be&da:"
 
 ; System
 03010300="Sistem"
@@ -407,7 +415,8 @@
 03010410="Perlihatkan menu sistem"
 03010420="&Memilih baris penuh"
 03010421="Perlihatkan &garis kisi-kisi"
-03010430="Mode pemilihan &alternatif"
+03010422="Sekali klik untuk membuka"
+03010430="Ragam pemilihan &alternatif"
 03010440="Gunakan halaman memori &besar"
 
 ; Strings
@@ -422,25 +431,25 @@
 03020208="Pengoperasian tak didukung untuk pelipat demikian."
 03020209="Pilih pelipat tujuan."
 
-03020210="Konfirmasi Penghapusan Berkas"
-03020211="Konfirmasi Penghapusan Pelipat"
-03020212="Konfirmasi Penghapusan Berkas-berkas"
-03020213="Anda yakin ingin menghapus '{0}'?"
-03020214="Anda yakin ingin menghapus pelipat '{0}' dan semua isinya?"
-03020215="Anda yakin ingin menghapus {0} butir?"
+03020210="Konfirmasi Hapus Berkas"
+03020211="Konfirmasi Hapus Pelipat"
+03020212="Konfirmasi Hapus Berkas-berkas"
+03020213="Anda yakin ingin hapus '{0}'?"
+03020214="Anda yakin ingin hapus pelipat '{0}' dan semua isinya?"
+03020215="Anda yakin ingin hapus {0} butir?"
 03020216="Menghapus..."
 03020217="Kesalahan Ketika Menghapus Berkas atau Pelipat"
-03020218="System tak bisa memindah suatu berkas yang berlintasan panjang ke Recycle Bin"
+03020218="Sistem tak bisa memindah suatu berkas yang berlintasan panjang ke Recycle Bin"
 
 03020220="Nama Ulang..."
 03020221="Kesalahan Ketika Penamaan Ulang Berkas atau Pelipat"
-03020222="Konfirmasi Penyalinan Berkas"
+03020222="Konfirmasi Salin Berkas"
 03020223="Anda yakin ingin menyalin berkas ke arsip?"
 
 03020230="Buat Pelipat"
 03020231="Nama pelipat:"
 03020232="Pelipat Baru"
-03020233="Kesalahan Pembuatan Pelipat"
+03020233="Kesalahan Membuat Pelipat"
 
 03020240="Buat Berkas"
 03020241="Nama berkas:"
@@ -449,18 +458,18 @@
 
 03020250="Pilih"
 03020251="Tak Memilih"
-03020252="Maser:"
+03020252="Masker:"
 
 03020260="Histori Pelipat"
 
-03020280="Berkas '{0}' telah termodifikasi.\nApakah Anda ingin perbarui pada arsip?"
-03020281="Tak bisa memperbarui berkas\n'{0}'"
-03020282="Tak bisa membuka penyunting."
+03020280="Berkas '{0}' telah termodifikasi.\nApakah Anda ingin perbarui berkas dalam arsip?"
+03020281="Tak bisa perbarui berkas\n'{0}'"
+03020282="Tak bisa memulai penyunting."
 03020283="Membuka..."
-03020284="Berkas ini tampaknya seperti virus (pada nama berkas berisi ruang kosong yang panjang)."
+03020284="Berkas ini tampaknya seperti virus (pada nama berkas berisi spasi yang panjang)."
 
 03020290="Komentar"
-03020291="&Komentar:"
+03020291="&Komentari:"
 
 030202A0="Sistem"
 
@@ -487,9 +496,9 @@
 03020600="Gabung Berkas"
 03020601="&Gabung ke:"
 03020610="Menggabung..."
-03020620="Pilih bagian pertama saja dari berkas yang dibelah"
-03020621="Tak bisa mendeteksi berkas sebagai bagian dari berkas yang dibelah"
-03020622="Tak bisa menemukan lebih dari satu bagian dari berkas yang dibelah"
+03020620="Pilih bagian pertama saja dari berkas belahan"
+03020621="Tak bisa mendeteksi berkas sebagai bagian berkas belahan"
+03020622="Tak bisa menemukan lebih dari satu bagian berkas belahan"
 
 03020710="Hitung ceksum..."
 03020720="Informasi ceksum"

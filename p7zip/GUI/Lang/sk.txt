@@ -1,5 +1,5 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.59 beta
+; 7-Zip 9.07 beta
 ; Translated by Pavel Devečka
 ;
 ;
@@ -116,6 +116,12 @@
 0200022E="Kontrolný súčet"
 0200022F="Charakteristiky"
 02000230="Virtuálna adresa"
+02000231="ID"
+02000232="Skrátený názov"
+02000233="Aplikácia"
+02000234="Veľkosť sektoru"
+02000235="Režim"
+02000236="Odkaz"
 
 ; Status bar
 02000301="{0} objekt(ov) vybraných"
@@ -331,6 +337,7 @@
 03000240="V&lastnosti"
 03000241="Ko&mentár"
 03000242="Vypočítať kontrolný súčet"
+03000243="Rozdiel (Diff)"
 03000250="Vytvoriť adresár"
 03000251="Vytvoriť súbor"
 03000260="Uko&nčiť"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Editor"
 03010201="Editor:"
+03010202="Vyhľadávač rozdielov (Diff):"
 
 ; System
 03010300="Systém"
@@ -407,6 +415,7 @@
 03010410="Ukázať systémové menu"
 03010420="Označiť celý riadok"
 03010421="Zobraziť čiary mriežky"
+03010422="Otvoriť položku jednoduchým kliknutím"
 03010430="Alternatívny mód výberu"
 03010440="Použitie veľkých stránok pamäti"
 

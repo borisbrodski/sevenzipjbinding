@@ -2,6 +2,8 @@
 
 #include "StdAfx.h"
 
+#include "../../../../C/CpuArch.h"
+
 #include "../../Common/LimitedStreams.h"
 #include "../../Common/ProgressUtils.h"
 
@@ -29,12 +31,15 @@ namespace N7z {
 static const UInt64 k_LZMA = 0x030101;
 static const UInt64 k_BCJ  = 0x03030103;
 static const UInt64 k_BCJ2 = 0x0303011B;
-static const UInt64 k_AES  = 0x06F10701;
 
 static const wchar_t *kMatchFinderForBCJ2_LZMA = L"BT2";
 static const UInt32 kDictionaryForBCJ2_LZMA = 1 << 20;
 static const UInt32 kAlgorithmForBCJ2_LZMA = 1;
 static const UInt32 kNumFastBytesForBCJ2_LZMA = 64;
+
+#ifdef MY_CPU_X86_OR_AMD64
+#define USE_86_FILTER
+#endif
 
 static HRESULT WriteRange(IInStream *inStream, ISequentialOutStream *outStream,
     UInt64 position, UInt64 size, ICompressProgressInfo *progress)
@@ -369,7 +374,9 @@ static bool IsExeFile(const CUpdateItem &ui)
 }
 #endif
 
-static void GetMethodFull(UInt64 methodID, UInt32 numInStreams, CMethodFull &methodResult)
+#ifdef USE_86_FILTER
+
+static inline void GetMethodFull(UInt64 methodID, UInt32 numInStreams, CMethodFull &methodResult)
 {
   methodResult.Id = methodID;
   methodResult.NumInStreams = numInStreams;
@@ -410,6 +417,12 @@ static void MakeExeMethod(const CCompressionMethodMode &method,
       prop.Value = kNumFastBytesForBCJ2_LZMA;
       methodFull.Props.Add(prop);
     }
+    {
+      CProp prop;
+      prop.Id = NCoderPropID::kNumThreads;
+      prop.Value = (UInt32)1;
+      methodFull.Props.Add(prop);
+    }
 
     exeMethod.Methods.Add(methodFull);
     exeMethod.Methods.Add(methodFull);
@@ -443,6 +456,8 @@ static void MakeExeMethod(const CCompressionMethodMode &method,
     exeMethod.Binds.Add(bind);
   }
 }
+
+#endif
 
 static void FromUpdateItemToFileItem(const CUpdateItem &ui,
     CFileItem &file, CFileItem2 &file2)
@@ -605,7 +620,7 @@ public:
   DECL_EXTERNAL_CODECS_VARS
   CDecoder Decoder;
 
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
   bool MtMode;
   UInt32 NumThreads;
   #endif
@@ -613,7 +628,7 @@ public:
   CThreadDecoder():
     Decoder(true)
   {
-    #ifdef COMPRESS_MT
+    #ifndef _7ZIP_ST
     MtMode = false;
     NumThreads = 1;
     #endif
@@ -642,7 +657,7 @@ void CThreadDecoder::Execute()
       #ifndef _NO_CRYPTO
       , GetTextPassword, passwordIsDefined
       #endif
-      #ifdef COMPRESS_MT
+      #ifndef _7ZIP_ST
       , MtMode, NumThreads
       #endif
       );
@@ -662,17 +677,6 @@ bool static Is86FilteredFolder(const CFolder &f)
   {
     CMethodId m = f.Coders[i].MethodID;
     if (m == k_BCJ || m == k_BCJ2)
-      return true;
-  }
-  return false;
-}
-
-bool static IsEncryptedFolder(const CFolder &f)
-{
-  for (int i = 0; i < f.Coders.Size(); i++)
-  {
-    CMethodId m = f.Coders[i].MethodID;
-    if (m == k_AES)
       return true;
   }
   return false;
@@ -700,7 +704,9 @@ STDMETHODIMP CCryptoGetTextPassword::CryptoGetTextPassword(BSTR *password)
 
 static const int kNumGroupsMax = 4;
 
+#ifdef USE_86_FILTER
 static bool Is86Group(int group) { return (group & 1) != 0; }
+#endif
 static bool IsEncryptedGroup(int group) { return (group & 2) != 0; }
 static int GetGroupIndex(bool encrypted, int bcjFiltered)
   { return (encrypted ? 2 : 0) + (bcjFiltered ? 1 : 0); }
@@ -783,7 +789,7 @@ HRESULT Update(
       rep.FolderIndex = i;
       rep.NumCopyFiles = numCopyItems;
       const CFolder &f = db->Folders[i];
-      bool isEncrypted = IsEncryptedFolder(f);
+      bool isEncrypted = f.IsEncrypted();
       rep.Group = GetGroupIndex(isEncrypted, Is86FilteredFolder(f));
       folderRefs.Add(rep);
       if (numCopyItems == numUnpackStreams)
@@ -904,9 +910,11 @@ HRESULT Update(
     const CSolidGroup &group = groups[groupIndex];
 
     CCompressionMethodMode method;
+    #ifdef USE_86_FILTER
     if (Is86Group(groupIndex))
       MakeExeMethod(*options.Method, options.MaxFilter, method);
     else
+    #endif
       method = *options.Method;
 
     if (IsEncryptedGroup(groupIndex))

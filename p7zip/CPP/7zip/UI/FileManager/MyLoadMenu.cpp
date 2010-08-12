@@ -13,6 +13,10 @@
 #include "wx/wx.h"
 #endif
 
+#undef _WIN32
+
+#include <wx/aboutdlg.h>
+
 typedef wxMenuBar * HMENU;
 
 #include "Common/StringConvert.h"
@@ -31,6 +35,8 @@ typedef wxMenuBar * HMENU;
 #include "HelpUtils.h"
 #include "LangUtils.h"
 #include "PluginInterface.h"
+
+#include "../../MyVersion.h"
 
 static const UINT kOpenBookmarkMenuID = 730;
 static const UINT kSetBookmarkMenuID = 740;
@@ -93,6 +99,7 @@ static CIDLangPair kIDLangPairs[] =
   { IDM_FILE_PROPERTIES, 0x03000240 },
   { IDM_FILE_COMMENT, 0x03000241 },
   { IDM_FILE_CRC, 0x03000242 },
+  { IDM_FILE_DIFF, 0x03000243 },
   { IDM_FILE_SPLIT, 0x03000270 },
   { IDM_FILE_COMBINE, 0x03000271 },
   { IDM_CREATE_FOLDER, 0x03000250 },
@@ -527,11 +534,16 @@ bool ExecuteFileCommand(int id)
 #ifdef _WIN32 // FIXME
       bool shift = (::GetKeyState(VK_SHIFT) & 0x8000) != 0;
       g_App.Delete(!shift);
+#else
+      g_App.Delete(true);
 #endif
       break;
     }
     case IDM_FILE_CRC:
       g_App.CalculateCrc();
+      break;
+    case IDM_FILE_DIFF:
+      g_App.DiffFiles();
       break;
     case IDM_FILE_SPLIT:
       g_App.Split();
@@ -558,6 +570,25 @@ bool ExecuteFileCommand(int id)
   return true;
 }
 
+void createAboutDialog(void)
+{
+    wxAboutDialogInfo info;
+
+    UString msg;
+  
+    msg = LangString(0x01000103); // IDC_ABOUT_STATIC_REGISTER_INFO
+    if (msg == L"") msg = L"7-Zip is free software. However, you can support development of 7-Zip by registering.";
+    info.SetDescription((const wchar_t *)msg);
+    
+
+    info.SetName(_("P7ZIP"));
+    info.SetVersion(wxString(MY_7ZIP_VERSION, wxConvUTF8));
+    info.SetCopyright(wxString(MY_COPYRIGHT, wxConvUTF8));
+    info.SetWebSite(_T("www.7-zip.org"));
+
+    wxAboutBox(info);
+}
+
 bool OnMenuCommand(HWND hWnd, int id)
 {
   printf("DEBUG : OnMenuCommand(%p,id=%d)-0\n",hWnd,id);
@@ -570,12 +601,13 @@ bool OnMenuCommand(HWND hWnd, int id)
   switch (id)
   {
     // File
-    /* FIXME
     case IDCLOSE:
+    /* FIXME
       SendMessage(hWnd, WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, 0), (LPARAM)hWnd);
       SendMessage (hWnd, WM_CLOSE, 0, 0);
-      break;
     */
+      hWnd->Close(true);
+      break;
     
     // Edit
     case IDM_EDIT_CUT:
@@ -710,7 +742,7 @@ bool OnMenuCommand(HWND hWnd, int id)
       CAboutDialog dialog;
       dialog.Create(hWnd);
       */
-	    printf("IDM_ABOUT ...\n");
+      createAboutDialog();
       break;
     }
     default:

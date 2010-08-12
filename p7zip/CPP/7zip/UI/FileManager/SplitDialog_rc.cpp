@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif  
 
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 
 #include "SplitDialogRes.h"
@@ -65,7 +67,6 @@ private:
 
 static CStringTable g_stringTable[] =
 {
-	{ IDS_COMPRESS_INCORRECT_VOLUME_SIZE, L"Incorrect volume size" },
 	{ 0 , 0 }
 };
 
@@ -75,5 +76,6 @@ REGISTER_DIALOG(IDD_DIALOG_SPLIT,CSplitDialog,g_stringTable)
 BEGIN_EVENT_TABLE(CSplitDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)
 	EVT_CHECKBOX(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

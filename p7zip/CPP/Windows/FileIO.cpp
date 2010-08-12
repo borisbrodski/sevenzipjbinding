@@ -22,7 +22,6 @@
 #define FD_LINK (-2)
 #endif
 
-#define FILE_SHARE_READ	1
 #define GENERIC_READ	0x80000000
 #define GENERIC_WRITE	0x40000000
 
@@ -42,12 +41,11 @@ bool CFileBase::Create(LPCSTR filename, DWORD dwDesiredAccess,
 {
   Close();
   
+  int   flags = 0;
   const char * name = nameWindowToUnix(filename);
 
 #ifdef O_BINARY
-  int   flags = O_BINARY;
-#else
-  int   flags = 0;
+  flags |= O_BINARY;
 #endif
 
 #ifdef O_LARGEFILE

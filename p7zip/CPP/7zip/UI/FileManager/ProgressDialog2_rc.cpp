@@ -15,6 +15,8 @@
     #include "wx/wx.h"
 #endif
 
+#undef _WIN32
+
 #include "ProgressDialog2Res.h"
 
 #include "Windows/Control/DialogImpl.h"
@@ -126,7 +128,10 @@ class CProgressDialogImpl : public NWindows::NControl::CModalDialogImpl
 	pInfoSizer->Add(pTimeSizer, 0, wxALL|wxEXPAND, 5);
 	pInfoSizer->Add(pSizeSpeedSizer, 0, wxALL|wxEXPAND, 5);
 
-	wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDC_PROGRESS_FILE_NAME, wxT(" \n "));
+	// wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDC_PROGRESS_FILE_NAME, wxT(" \n "));
+	wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDC_PROGRESS_FILE_NAME, wxT(""));
+	// m_pStaticArchiveName->Wrap( -1 ); // No Wrapping 
+	  
 	wxGauge *m_pGaugeProgress = new wxGauge(this, IDC_PROGRESS1, 100);
 
 	wxBoxSizer *pButtonSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -139,7 +144,7 @@ class CProgressDialogImpl : public NWindows::NControl::CModalDialogImpl
 	pButtonSizer->Add(m_pButtonCancel, 0, wxALL|wxEXPAND, 5);
 
 	topsizer->Add(pInfoSizer, 0, wxBOTTOM|wxEXPAND, 5);
-	topsizer->Add(m_pStaticArchiveName, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
+	topsizer->Add(m_pStaticArchiveName, 0, wxEXPAND | wxALL | wxALIGN_LEFT, 10);
 	topsizer->Add(m_pGaugeProgress, 0, wxALL|wxEXPAND, 10);
 	topsizer->Add(pButtonSizer, 0, wxALL|wxEXPAND, 5);
 
@@ -148,6 +153,7 @@ class CProgressDialogImpl : public NWindows::NControl::CModalDialogImpl
 	SetSizer(topsizer); // use the sizer for layout
 	topsizer->SetSizeHints(this); // set size hints to honour minimum size
   }
+
 private:
 	// Any class wishing to process wxWindows events must use this macro
 	DECLARE_EVENT_TABLE()
@@ -159,6 +165,8 @@ static CStringTable g_stringTable[] =
 	{ IDS_PROGRESS_FOREGROUND , L"&Foreground" },
 	{ IDS_PROGRESS_CONTINUE   , L"&Continue" },
 	{ IDS_PROGRESS_ASK_CANCEL , L"Are you sure you want to cancel?" },
+	{ IDS_CLOSE               , L"&Close" },
+	{ IDS_MESSAGES_DIALOG_MESSAGE_COLUMN , L"Message"},
 	{ 0 , 0 }
 };
 
@@ -167,5 +175,6 @@ REGISTER_DIALOG(IDD_DIALOG_PROGRESS,CProgressDialog,g_stringTable)
 BEGIN_EVENT_TABLE(CProgressDialogImpl, wxDialog)
 	EVT_TIMER(wxID_ANY, CModalDialogImpl::OnAnyTimer)
 	EVT_BUTTON(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

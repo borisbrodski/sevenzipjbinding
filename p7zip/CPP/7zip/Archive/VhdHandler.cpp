@@ -220,7 +220,6 @@ class CHandler:
   HRESULT ReadPhy(UInt64 offset, void *data, UInt32 size);
 
   bool NeedParent() const { return Footer.Type == kDiskType_Diff; }
-  UInt64 GetSize() const { return Footer.CurrentSize; }
   UInt64 GetPackSize() const
     { return Footer.ThereIsDynamic() ? ((UInt64)NumUsedBlocks << Dyn.BlockSizeLog) : Footer.CurrentSize; }
 
@@ -317,7 +316,12 @@ HRESULT CHandler::Open3()
   
   if (Dyn.NumBlocks >= (UInt32)1 << 31)
     return S_FALSE;
-  if (GetSize() != ((UInt64)Dyn.NumBlocks << Dyn.BlockSizeLog))
+  if (Footer.CurrentSize == 0)
+  {
+    if (Dyn.NumBlocks != 0)
+      return S_FALSE;
+  }
+  else if (((Footer.CurrentSize - 1) >> Dyn.BlockSizeLog) + 1 != Dyn.NumBlocks)
     return S_FALSE;
 
   Bat.Reserve(Dyn.NumBlocks);
@@ -341,8 +345,11 @@ STDMETHODIMP CHandler::Read(void *data, UInt32 size, UInt32 *processedSize)
 {
   if (processedSize != NULL)
     *processedSize = 0;
-  if (_virtPos >= GetSize())
-    return (GetSize() == _virtPos) ? S_OK: E_FAIL;
+  if (_virtPos >= Footer.CurrentSize)
+    return (Footer.CurrentSize == _virtPos) ? S_OK: E_FAIL;
+  UInt64 rem = Footer.CurrentSize - _virtPos;
+  if (size > rem)
+    size = (UInt32)rem;
   if (size == 0)
     return S_OK;
   UInt32 blockIndex = (UInt32)(_virtPos >> Dyn.BlockSizeLog);
@@ -406,7 +413,7 @@ STDMETHODIMP CHandler::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition
   {
     case STREAM_SEEK_SET: _virtPos = offset; break;
     case STREAM_SEEK_CUR: _virtPos += offset; break;
-    case STREAM_SEEK_END: _virtPos = GetSize() + offset; break;
+    case STREAM_SEEK_END: _virtPos = Footer.CurrentSize + offset; break;
     default: return STG_E_INVALIDFUNCTION;
   }
   if (newPosition)
@@ -627,7 +634,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 /* index */, PROPID propID, PROPVARIAN
 
   switch(propID)
   {
-    case kpidSize: prop = GetSize(); break;
+    case kpidSize: prop = Footer.CurrentSize; break;
     case kpidPackSize: prop = GetPackSize(); break;
     case kpidCTime: VhdTimeToFileTime(Footer.CTime, prop); break;
     /*
@@ -641,24 +648,20 @@ STDMETHODIMP CHandler::GetProperty(UInt32 /* index */, PROPID propID, PROPVARIAN
   COM_TRY_END
 }
 
-STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
-    Int32 _aTestMode, IArchiveExtractCallback *extractCallback)
+STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
+    Int32 testMode, IArchiveExtractCallback *extractCallback)
 {
   COM_TRY_BEGIN
-  if (numItems == UInt32(-1))
-    numItems = 1;
   if (numItems == 0)
     return S_OK;
-  if (numItems != 1 || indices[0] != 0)
+  if (numItems != (UInt32)-1 && (numItems != 1 || indices[0] != 0))
     return E_INVALIDARG;
 
-  bool testMode = (_aTestMode != 0);
-
-  RINOK(extractCallback->SetTotal(GetSize()));
+  RINOK(extractCallback->SetTotal(Footer.CurrentSize));
   CMyComPtr<ISequentialOutStream> outStream;
   Int32 askMode = testMode ?
-      NArchive::NExtract::NAskMode::kTest :
-      NArchive::NExtract::NAskMode::kExtract;
+      NExtract::NAskMode::kTest :
+      NExtract::NAskMode::kExtract;
   RINOK(extractCallback->GetStream(0, &outStream, askMode));
   if (!testMode && !outStream)
     return S_OK;
@@ -671,19 +674,19 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
   CMyComPtr<ICompressProgressInfo> progress = lps;
   lps->Init(extractCallback, false);
 
-  int res = NArchive::NExtract::NOperationResult::kDataError;
+  int res = NExtract::NOperationResult::kDataError;
   CMyComPtr<ISequentialInStream> inStream;
   HRESULT hres = GetStream(0, &inStream);
   if (hres == S_FALSE)
-    res = NArchive::NExtract::NOperationResult::kUnSupportedMethod;
+    res = NExtract::NOperationResult::kUnSupportedMethod;
   else
   {
     RINOK(hres);
     HRESULT hres = copyCoder->Code(inStream, outStream, NULL, NULL, progress);
     if (hres == S_OK)
     {
-      if (copyCoderSpec->TotalSize == GetSize())
-        res = NArchive::NExtract::NOperationResult::kOK;
+      if (copyCoderSpec->TotalSize == Footer.CurrentSize)
+        res = NExtract::NOperationResult::kOK;
     }
     else
     {
@@ -707,7 +710,7 @@ STDMETHODIMP CHandler::GetStream(UInt32 /* index */, ISequentialInStream **strea
     CLimitedInStream *streamSpec = new CLimitedInStream;
     CMyComPtr<ISequentialInStream> streamTemp = streamSpec;
     streamSpec->SetStream(Stream);
-    streamSpec->InitAndSeek(0, GetSize());
+    streamSpec->InitAndSeek(0, Footer.CurrentSize);
     RINOK(streamSpec->SeekToStart());
     *stream = streamTemp.Detach();
     return S_OK;
@@ -721,7 +724,7 @@ STDMETHODIMP CHandler::GetStream(UInt32 /* index */, ISequentialInStream **strea
   COM_TRY_END
 }
 
-static IInArchive *CreateArc() { return new CHandler;  }
+static IInArchive *CreateArc() { return new CHandler; }
 
 static CArcInfo g_ArcInfo =
   { L"VHD", L"vhd", L".mbr", 0xDC, { 'c', 'o', 'n', 'e', 'c', 't', 'i', 'x', 0, 0 }, 10, false, CreateArc, 0 };

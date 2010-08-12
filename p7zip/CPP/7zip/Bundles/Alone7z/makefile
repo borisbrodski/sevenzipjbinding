@@ -1,20 +1,20 @@
+PROG=../../../../bin/7zr$(BINSUFFIX)
+
 LOCAL_FLAGS= \
   -D_NO_CRYPTO \
-  -DCOMPRESS_MT \
-  -DCOMPRESS_MF_MT \
   -D_NO_CRYPTO \
   -DBREAK_HANDLER \
-  -DBENCH_MT
+  -DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
 
-PROG=../../../../bin/7zr$(BINSUFFIX)
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=$(LOCAL_LIBS)
 
-
 CONSOLE_OBJS = \
+  BenchCon.o \
   ConsoleClose.o \
   ExtractCallbackConsole.o \
   List.o \
@@ -79,6 +79,7 @@ UI_COMMON_OBJS = \
   ArchiveCommandLine.o \
   ArchiveExtractCallback.o \
   ArchiveOpenCallback.o \
+  Bench.o \
   DefaultName.o \
   EnumDirItems.o \
   Extract.o \
@@ -148,13 +149,9 @@ COMPRESS_OBJS = \
   LzmaEncoder.o \
   LzmaRegister.o \
 
-LZMA_BENCH_OBJS = \
-  LzmaBench.o \
-  LzmaBenchCon.o \
-
-# 7zCrc.o Alloc.o
 C_OBJS = \
   7zStream.o \
+  Alloc.o \
   Bra.o \
   Bra86.o \
   BraIA64.o \
@@ -188,9 +185,8 @@ OBJS = \
   $(AR_COMMON_OBJS) \
   $(7Z_OBJS) \
   $(COMPRESS_OBJS) \
-  $(LZMA_BENCH_OBJS) \
   $(C_OBJS) \
-$(OBJ_CRC32) \
+  $(OBJ_CRC32) \
 
 include ../../../../makefile.glb
 

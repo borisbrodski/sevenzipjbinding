@@ -82,10 +82,12 @@ public:
 bool FindFile(LPCSTR wildcard, CFileInfo &fileInfo);
 
 bool DoesFileExist(LPCSTR name);
+bool DoesDirExist(LPCTSTR name);
 bool DoesFileOrDirExist(LPCSTR name);
 // #ifndef _UNICODE
 bool FindFile(LPCWSTR wildcard, CFileInfoW &fileInfo);
 bool DoesFileExist(LPCWSTR name);
+bool DoesDirExist(LPCWSTR name);
 bool DoesFileOrDirExist(LPCWSTR name);
 // #endif
 

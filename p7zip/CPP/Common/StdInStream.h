@@ -19,7 +19,7 @@ public:
   bool Open(LPCTSTR fileName);
   bool Close();
 
-  AString ScanStringUntilNewLine();
+  AString ScanStringUntilNewLine(bool allowEOF = false);
   void ReadToString(AString &resultString);
   UString ScanUStringUntilNewLine();
 

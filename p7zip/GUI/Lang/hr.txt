@@ -3,7 +3,7 @@
 ; Translated by Alan Šimek
 ; 7-Zip 4.53
 ; Corrected and updated by Hasan Osmanagić
-; 7-Zip 4.60 beta
+; 7-Zip 9.07 beta
 ; Corrected and updated by Stjepan Treger
 
 00000000="Croatian"
@@ -61,8 +61,8 @@
 0200010E="Raspakiraj podatke u pod-mapu"
 0200010F="Dodaj u {0}"
 02000110="Dodaj odabrane podatke u arhiv"
-02000113="Sažimanje i slanje e-poštom"
-02000114="Sažimanje odabranih podataka u arhiv i slanje e-poštom"
+02000111="Sažimanje i slanje e-poštom"
+02000112="Sažimanje odabranih podataka u arhiv i slanje e-poštom"
 02000113="Sažimanje u {0} i slanje e-poštom"
 02000114="Sažimanje odabranih podataka u arhiv i slanje e-poštom"
 
@@ -116,6 +116,12 @@
 0200022E="Kontrolni zbroj"
 0200022F="Karakteristike"
 02000230="Virtualna adresa"
+02000231="Jedinstvena oznaka"
+02000232="Kratko ime"
+02000233="Aplikacija stvaranja"
+02000234="Veličina sektora"
+02000235="Način"
+02000236="Poveznica"
 
 ; Status bar
 02000301="{0} objekt(a) izabrano"
@@ -331,6 +337,7 @@
 03000240="Svojs&tva"
 03000241="Komentar"
 03000242="Izračun kontrolnog zbroja"
+03000243="Uspoređivanje"
 03000250="Stvo&ri mapu"
 03000251="Stvori &datoteku"
 03000260="&Izlaz"
@@ -393,7 +400,8 @@
 
 ; Edit
 03010200="Uređivač"
-03010201="&Program:"
+03010201="&Program za uređivanje:"
+03010202="Program za uspoređivanje:"
 
 ; System
 03010300="Sustav"
@@ -407,6 +415,7 @@
 03010410="Prikaži sistemski izbornik"
 03010420="&Označi cijeli redak"
 03010421="Prikaži &linije mreže"
+03010422="Jedan klik za otvaranje stavke"
 03010430="Drugi n&ačin označavanja"
 03010440="Koristi raspo&loživu memoriju"
 
@@ -529,7 +538,7 @@
 03080009="Prolazi:"
 0308000A="Greške:"
 0308000B="CPU zauzeće"
-0308000C="Ocjena/Zauzeće"
+0308000C="Ocjena / Zauzeće"
 
 ;!@LangEnd@!
 

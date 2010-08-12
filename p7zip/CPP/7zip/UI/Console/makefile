@@ -1,20 +1,22 @@
-PROG=../../../../bin/7z
+PROG=../../../../bin/7z$(BINSUFFIX)
 
 LOCAL_FLAGS=\
-  -DCOMPRESS_MT \
   -DEXTERNAL_LZMA \
   -DEXTERNAL_CODECS \
   -DBREAK_HANDLER \
-  -DBENCH_MT
+  -DUNICODE -D_UNICODE
 
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
+
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=$(LOCAL_LIBS_DLL)
 
 CONSOLE_OBJS = \
   ConsoleClose.o \
   ExtractCallbackConsole.o \
+  BenchCon.o \
   List.o \
   Main.o \
   MainAr.o \
@@ -53,8 +55,10 @@ WIN_OBJS = \
   Time.o \
 
 7ZIP_COMMON_OBJS = \
+  CreateCoder.o \
   FilePathAutoRename.o \
   FileStreams.o \
+  FilterCoder.o \
   ProgressUtils.o \
   StreamUtils.o \
 
@@ -66,6 +70,7 @@ UI_COMMON_OBJS = \
   DefaultName.o \
   EnumDirItems.o \
   Extract.o \
+  Bench.o \
   ExtractingFilePath.o \
   LoadCodecs.o \
   OpenArchive.o \
@@ -82,12 +87,8 @@ UI_COMMON_OBJS = \
 AR_COMMON_OBJS = \
   OutStreamWithCRC.o \
 
-LZMA_BENCH_OBJS = \
-  LzmaBench.o \
-  LzmaBenchCon.o \
-
-# Alloc.o
 C_OBJS = \
+  Alloc.o \
   Threads.o \
 
 OBJS = \
@@ -101,7 +102,6 @@ OBJS = \
   $(UI_COMMON_OBJS) \
   $(AR_COMMON_OBJS) \
   CopyCoder.o \
-  $(LZMA_BENCH_OBJS) \
   $(C_OBJS) \
   $(OBJ_CRC32)
 

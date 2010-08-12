@@ -43,6 +43,7 @@ bool CComboDialog::OnInit()
   _comboBox.SetText(Value);
   for(int i = 0; i < Strings.Size(); i++)
     _comboBox.AddString(Strings[i]);
+  NormalizeSize();
   return CModalDialog::OnInit();
 }
 

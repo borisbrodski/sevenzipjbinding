@@ -19,6 +19,8 @@
 #endif
 
 // FIXME
+#define IDCLOSE   (5001) // wxID_CLOSE
+#define IDEXIT    (5006) // wxID_EXIT
 #define IDOK      (5100) // wxID_OK
 #define IDCANCEL  (5101) // wxID_CANCEL
 #define IDABORT   (5115) // wxID_ABORT
@@ -56,6 +58,9 @@ namespace NWindows {
 			virtual bool OnMessage(UINT message, WPARAM wParam, LPARAM lParam) { return false; }
 			virtual bool OnCommand(int code, int itemID, LPARAM lParam) { return false; }
 			virtual bool OnTimer(WPARAM /* timerID */, LPARAM /* callback */) { return false; }
+
+			void NormalizeSize(bool fullNormalize = false)  { /* FIXME */ }
+			void NormalizePosition() { /* FIXME */ }
 		};
 
 		class CModalDialog : public CDialog
@@ -99,6 +104,8 @@ namespace NWindows {
 
 			void ShowItem(int itemID, int cmdShow) const;
 
+			void HideItem(int itemID) const { ShowItem(itemID, SW_HIDE); }
+
 			void End(int result);
 
 			void SetText(const TCHAR *_title); // {  _dialog->SetTitle(_title); }
@@ -139,13 +146,13 @@ public:
 
 struct CStringTable
 {
-	int id;
+	unsigned int id;
 	const wchar_t *str;
 };
 
 struct CDialogInfo
 {
-	int id;
+	unsigned int id;
 	NWindows::NControl::CModalDialogImpl * (*createDialog)(NWindows::NControl::CModalDialog * dialog, HWND parentWindow);
 	CStringTable * stringTable;
 };

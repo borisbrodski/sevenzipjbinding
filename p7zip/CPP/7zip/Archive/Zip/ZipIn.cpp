@@ -63,7 +63,7 @@ static inline bool TestMarkerCandidate2(const Byte *p, UInt32 &value)
 
 HRESULT CInArchive::FindAndReadMarker(IInStream *stream, const UInt64 *searchHeaderSizeLimit)
 {
-  m_ArchiveInfo.Clear();
+  ArcInfo.Clear();
   m_Position = m_StreamStartPosition;
 
   Byte marker[NSignature::kMarkerSize];
@@ -99,7 +99,7 @@ HRESULT CInArchive::FindAndReadMarker(IInStream *stream, const UInt64 *searchHea
       if (TestMarkerCandidate2(buffer + pos, m_Signature))
       {
         curTestPos += pos;
-        m_ArchiveInfo.StartPosition = curTestPos;
+        ArcInfo.StartPosition = curTestPos;
         m_Position = curTestPos + NSignature::kMarkerSize;
         return S_OK;
       }
@@ -208,11 +208,6 @@ void CInArchive::ReadFileName(UInt32 nameSize, AString &dest)
   dest.ReleaseBuffer();
 }
 
-void CInArchive::GetArchiveInfo(CInArchiveInfo &archiveInfo) const
-{
-  archiveInfo = m_ArchiveInfo;
-}
-
 void CInArchive::ReadExtra(UInt32 extraSize, CExtraBlock &extraBlock,
     UInt64 &unpackSize, UInt64 &packSize, UInt64 &localHeaderOffset, UInt32 &diskStartNumber)
 {
@@ -305,33 +300,42 @@ HRESULT CInArchive::ReadLocalItem(CItemEx &item)
   return S_OK;
 }
 
+static bool FlagsAreSame(CItem &i1, CItem &i2)
+{
+  if (i1.CompressionMethod != i2.CompressionMethod)
+    return false;
+  // i1.Time
+
+  if (i1.Flags == i2.Flags)
+    return true;
+  UInt32 mask = 0xFFFF;
+  switch(i1.CompressionMethod)
+  {
+    case NFileHeader::NCompressionMethod::kDeflated:
+      mask = 0x7FF9;
+      break;
+    default:
+      if (i1.CompressionMethod <= NFileHeader::NCompressionMethod::kImploded)
+        mask = 0x7FFF;
+  }
+  return ((i1.Flags & mask) == (i2.Flags & mask));
+}
+
 HRESULT CInArchive::ReadLocalItemAfterCdItem(CItemEx &item)
 {
   if (item.FromLocal)
     return S_OK;
   try
   {
-    RINOK(Seek(m_ArchiveInfo.Base + item.LocalHeaderPosition));
+    RINOK(Seek(ArcInfo.Base + item.LocalHeaderPosition));
     CItemEx localItem;
     if (ReadUInt32() != NSignature::kLocalFileHeader)
       return S_FALSE;
     RINOK(ReadLocalItem(localItem));
-    if (item.Flags != localItem.Flags)
-    {
-      if (
-          (item.CompressionMethod != NFileHeader::NCompressionMethod::kDeflated ||
-            (item.Flags & 0x7FF9) != (localItem.Flags & 0x7FF9)) &&
-          (item.CompressionMethod != NFileHeader::NCompressionMethod::kStored ||
-            (item.Flags & 0x7FFF) != (localItem.Flags & 0x7FFF)) &&
-          (item.CompressionMethod != NFileHeader::NCompressionMethod::kImploded ||
-            (item.Flags & 0x7FFF) != (localItem.Flags & 0x7FFF))
-        )
-        return S_FALSE;
-    }
+    if (!FlagsAreSame(item, localItem))
+      return S_FALSE;
 
-    if (item.CompressionMethod != localItem.CompressionMethod ||
-        // item.Time != localItem.Time ||
-        (!localItem.HasDescriptor() &&
+    if ((!localItem.HasDescriptor() &&
           (
             item.FileCRC != localItem.FileCRC ||
             item.PackSize != localItem.PackSize ||
@@ -410,7 +414,7 @@ HRESULT CInArchive::ReadLocalItemAfterCdItemFull(CItemEx &item)
     RINOK(ReadLocalItemAfterCdItem(item));
     if (item.HasDescriptor())
     {
-      RINOK(Seek(m_ArchiveInfo.Base + item.GetDataPosition() + item.PackSize));
+      RINOK(Seek(ArcInfo.Base + item.GetDataPosition() + item.PackSize));
       if (ReadUInt32() != NSignature::kDataDescriptor)
         return S_FALSE;
       UInt32 crc = ReadUInt32();
@@ -501,7 +505,9 @@ HRESULT CInArchive::FindCd(CCdInfo &cdInfo)
   UInt64 endPosition;
   RINOK(m_Stream->Seek(0, STREAM_SEEK_END, &endPosition));
   const UInt32 kBufSizeMax = (1 << 16) + kEcdSize + kZip64EcdLocatorSize;
-  Byte buf[kBufSizeMax];
+  CByteBuffer byteBuffer;
+  byteBuffer.SetCapacity(kBufSizeMax);
+  Byte *buf = byteBuffer;
   UInt32 bufSize = (endPosition < kBufSizeMax) ? (UInt32)endPosition : kBufSizeMax;
   if (bufSize < kEcdSize)
     return S_FALSE;
@@ -523,9 +529,9 @@ HRESULT CInArchive::FindCd(CCdInfo &cdInfo)
           UInt64 ecd64Offset = Get64(locator + 8);
           if (TryEcd64(ecd64Offset, cdInfo) == S_OK)
             return S_OK;
-          if (TryEcd64(m_ArchiveInfo.StartPosition + ecd64Offset, cdInfo) == S_OK)
+          if (TryEcd64(ArcInfo.StartPosition + ecd64Offset, cdInfo) == S_OK)
           {
-            m_ArchiveInfo.Base = m_ArchiveInfo.StartPosition;
+            ArcInfo.Base = ArcInfo.StartPosition;
             return S_OK;
           }
         }
@@ -537,8 +543,8 @@ HRESULT CInArchive::FindCd(CCdInfo &cdInfo)
         cdInfo.Offset = Get32(buf + i + 16);
         UInt64 curPos = endPosition - bufSize + i;
         UInt64 cdEnd = cdInfo.Size + cdInfo.Offset;
-        if (curPos > cdEnd)
-          m_ArchiveInfo.Base = curPos - cdEnd;
+        if (curPos != cdEnd)
+          ArcInfo.Base = curPos - cdEnd;
         return S_OK;
       }
     }
@@ -574,27 +580,28 @@ HRESULT CInArchive::TryReadCd(CObjectVector<CItemEx> &items, UInt64 cdOffset, UI
 
 HRESULT CInArchive::ReadCd(CObjectVector<CItemEx> &items, UInt64 &cdOffset, UInt64 &cdSize, CProgressVirt *progress)
 {
-  m_ArchiveInfo.Base = 0;
+  ArcInfo.Base = 0;
   CCdInfo cdInfo;
   RINOK(FindCd(cdInfo));
   HRESULT res = S_FALSE;
   cdSize = cdInfo.Size;
   cdOffset = cdInfo.Offset;
-  res = TryReadCd(items, m_ArchiveInfo.Base + cdOffset, cdSize, progress);
-  if (res == S_FALSE && m_ArchiveInfo.Base == 0)
+  res = TryReadCd(items, ArcInfo.Base + cdOffset, cdSize, progress);
+  if (res == S_FALSE && ArcInfo.Base == 0)
   {
-    res = TryReadCd(items, cdInfo.Offset + m_ArchiveInfo.StartPosition, cdSize, progress);
+    res = TryReadCd(items, cdInfo.Offset + ArcInfo.StartPosition, cdSize, progress);
     if (res == S_OK)
-      m_ArchiveInfo.Base = m_ArchiveInfo.StartPosition;
+      ArcInfo.Base = ArcInfo.StartPosition;
   }
   if (!ReadUInt32(m_Signature))
     return S_FALSE;
   return res;
 }
 
-HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt *progress, UInt64 &cdOffset)
+HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt *progress, UInt64 &cdOffset, int &numCdItems)
 {
   items.Clear();
+  numCdItems = 0;
   while (m_Signature == NSignature::kLocalFileHeader)
   {
     // FSeek points to next byte after signature
@@ -611,10 +618,14 @@ HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt
       break;
   }
   cdOffset = m_Position - 4;
-  for (int i = 0; i < items.Size(); i++)
+  int i;
+  for (i = 0; i < items.Size(); i++, numCdItems++)
   {
     if (progress && i % 1000 == 0)
       RINOK(progress->SetCompleted(items.Size()));
+    if (m_Signature == NSignature::kEndOfCentralDir)
+      break;
+
     if (m_Signature != NSignature::kCentralFileHeader)
       return S_FALSE;
 
@@ -623,8 +634,18 @@ HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt
 
     if (i == 0)
     {
-      if (cdItem.LocalHeaderPosition == 0)
-        m_ArchiveInfo.Base = m_ArchiveInfo.StartPosition;
+      int j;
+      for (j = 0; j < items.Size(); j++)
+      {
+        CItemEx &item = items[j];
+        if (item.Name == cdItem.Name)
+        {
+          ArcInfo.Base = item.LocalHeaderPosition - cdItem.LocalHeaderPosition;
+          break;
+        }
+      }
+      if (j == items.Size())
+        return S_FALSE;
     }
 
     int index;
@@ -634,7 +655,7 @@ HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt
       if (left >= right)
         return S_FALSE;
       index = (left + right) / 2;
-      UInt64 position = items[index].LocalHeaderPosition - m_ArchiveInfo.Base;
+      UInt64 position = items[index].LocalHeaderPosition - ArcInfo.Base;
       if (cdItem.LocalHeaderPosition == position)
         break;
       if (cdItem.LocalHeaderPosition < position)
@@ -643,15 +664,13 @@ HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt
         left = index + 1;
     }
     CItemEx &item = items[index];
-    item.LocalHeaderPosition = cdItem.LocalHeaderPosition;
+    // item.LocalHeaderPosition = cdItem.LocalHeaderPosition;
     item.MadeByVersion = cdItem.MadeByVersion;
     item.CentralExtra = cdItem.CentralExtra;
 
     if (
         // item.ExtractVersion != cdItem.ExtractVersion ||
-        item.Flags != cdItem.Flags ||
-        item.CompressionMethod != cdItem.CompressionMethod ||
-        // item.Time != cdItem.Time ||
+        !FlagsAreSame(item, cdItem) ||
         item.FileCRC != cdItem.FileCRC)
       return S_FALSE;
 
@@ -668,6 +687,8 @@ HRESULT CInArchive::ReadLocalsAndCd(CObjectVector<CItemEx> &items, CProgressVirt
     if (!ReadUInt32(m_Signature))
       return S_FALSE;
   }
+  for (i = 0; i < items.Size(); i++)
+    items[i].LocalHeaderPosition -= ArcInfo.Base;
   return S_OK;
 }
 
@@ -733,7 +754,15 @@ HRESULT CInArchive::ReadHeaders(CObjectVector<CItemEx> &items, CProgressVirt *pr
   items.Clear();
 
   UInt64 cdSize, cdStartOffset;
-  HRESULT res = ReadCd(items, cdStartOffset, cdSize, progress);
+  HRESULT res;
+  try
+  {
+    res = ReadCd(items, cdStartOffset, cdSize, progress);
+  }
+  catch(CInArchiveException &)
+  {
+    res = S_FALSE;
+  }
   if (res != S_FALSE && res != S_OK)
     return res;
 
@@ -743,23 +772,24 @@ HRESULT CInArchive::ReadHeaders(CObjectVector<CItemEx> &items, CProgressVirt *pr
   res = S_FALSE;
   */
 
+  int numCdItems = items.Size();
   if (res == S_FALSE)
   {
     _inBufMode = false;
-    m_ArchiveInfo.Base = 0;
-    RINOK(m_Stream->Seek(m_ArchiveInfo.StartPosition, STREAM_SEEK_SET, &m_Position));
-    if (m_Position != m_ArchiveInfo.StartPosition)
+    ArcInfo.Base = 0;
+    RINOK(m_Stream->Seek(ArcInfo.StartPosition, STREAM_SEEK_SET, &m_Position));
+    if (m_Position != ArcInfo.StartPosition)
       return S_FALSE;
     if (!ReadUInt32(m_Signature))
       return S_FALSE;
-    RINOK(ReadLocalsAndCd(items, progress, cdStartOffset));
+    RINOK(ReadLocalsAndCd(items, progress, cdStartOffset, numCdItems));
     cdSize = (m_Position - 4) - cdStartOffset;
-    cdStartOffset -= m_ArchiveInfo.Base;
+    cdStartOffset -= ArcInfo.Base;
   }
 
   CEcd64 ecd64;
   bool isZip64 = false;
-  UInt64 zip64EcdStartOffset = m_Position - 4 - m_ArchiveInfo.Base;
+  UInt64 zip64EcdStartOffset = m_Position - 4 - ArcInfo.Base;
   if (m_Signature == NSignature::kZip64EndOfCentralDir)
   {
     IsZip64 = isZip64 = true;
@@ -775,8 +805,8 @@ HRESULT CInArchive::ReadHeaders(CObjectVector<CItemEx> &items, CProgressVirt *pr
       return S_FALSE;
     if (ecd64.thisDiskNumber != 0 || ecd64.startCDDiskNumber != 0)
       throw CInArchiveException(CInArchiveException::kMultiVolumeArchiveAreNotSupported);
-    if (ecd64.numEntriesInCDOnThisDisk != items.Size() ||
-        ecd64.numEntriesInCD != items.Size() ||
+    if (ecd64.numEntriesInCDOnThisDisk != numCdItems ||
+        ecd64.numEntriesInCD != numCdItems ||
         ecd64.cdSize != cdSize ||
         (ecd64.cdStartOffset != cdStartOffset &&
         (!items.IsEmpty())))
@@ -793,7 +823,7 @@ HRESULT CInArchive::ReadHeaders(CObjectVector<CItemEx> &items, CProgressVirt *pr
       return S_FALSE;
   }
   if (m_Signature != NSignature::kEndOfCentralDir)
-      return S_FALSE;
+    return S_FALSE;
 
   const int kBufSize = kEcdSize - 4;
   Byte buf[kBufSize];
@@ -808,19 +838,21 @@ HRESULT CInArchive::ReadHeaders(CObjectVector<CItemEx> &items, CProgressVirt *pr
   COPY_ECD_ITEM_32(cdSize);
   COPY_ECD_ITEM_32(cdStartOffset);
 
-  ReadBuffer(m_ArchiveInfo.Comment, ecd.commentSize);
+  ReadBuffer(ArcInfo.Comment, ecd.commentSize);
 
   if (ecd64.thisDiskNumber != 0 || ecd64.startCDDiskNumber != 0)
     throw CInArchiveException(CInArchiveException::kMultiVolumeArchiveAreNotSupported);
-  if ((UInt16)ecd64.numEntriesInCDOnThisDisk != ((UInt16)items.Size()) ||
-      (UInt16)ecd64.numEntriesInCD != ((UInt16)items.Size()) ||
+  if ((UInt16)ecd64.numEntriesInCDOnThisDisk != ((UInt16)numCdItems) ||
+      (UInt16)ecd64.numEntriesInCD != ((UInt16)numCdItems) ||
       (UInt32)ecd64.cdSize != (UInt32)cdSize ||
       ((UInt32)(ecd64.cdStartOffset) != (UInt32)cdStartOffset &&
         (!items.IsEmpty())))
-      return S_FALSE;
+    return S_FALSE;
   
   _inBufMode = false;
   _inBuffer.Free();
+  IsOkHeaders = (numCdItems == items.Size());
+  ArcInfo.FinishPosition = m_Position;
   return S_OK;
 }
 
@@ -828,7 +860,7 @@ ISequentialInStream* CInArchive::CreateLimitedStream(UInt64 position, UInt64 siz
 {
   CLimitedSequentialInStream *streamSpec = new CLimitedSequentialInStream;
   CMyComPtr<ISequentialInStream> stream(streamSpec);
-  SeekInArchive(m_ArchiveInfo.Base + position);
+  SeekInArchive(ArcInfo.Base + position);
   streamSpec->SetStream(m_Stream);
   streamSpec->Init(size);
   return stream.Detach();

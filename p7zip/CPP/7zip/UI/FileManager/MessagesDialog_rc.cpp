@@ -15,6 +15,10 @@
     #include "wx/wx.h"
 #endif
 
+#include <wx/listctrl.h>
+
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 #include "MessagesDialogRes.h"
 
@@ -44,6 +48,7 @@ class CMessagesDialogImpl : public NWindows::NControl::CModalDialogImpl
   {
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
+
 	wxListCtrl *list = new wxListCtrl(this, IDC_MESSAGE_LIST, wxDefaultPosition, wxSize(645,195), wxLC_REPORT );
 
 #if 0
@@ -55,6 +60,8 @@ class CMessagesDialogImpl : public NWindows::NControl::CModalDialogImpl
 	list->SetItem(1, 1, L"message 2");
 #endif
 	topsizer->Add(list ,  1, wxALL|wxEXPAND, 5);
+
+
 	topsizer->Add(new wxButton(this, wxID_OK, _T("&Close")) ,  0, wxALL | wxALIGN_RIGHT, 5);
 
 	this->OnInit();
@@ -77,5 +84,6 @@ REGISTER_DIALOG(IDD_DIALOG_MESSAGES,CMessagesDialog,g_stringTable)
 
 BEGIN_EVENT_TABLE(CMessagesDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

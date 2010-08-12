@@ -2,6 +2,10 @@
 
 #include "StdAfx.h"
 
+#if defined( _7ZIP_LARGE_PAGES)
+#include "../../../../C/Alloc.h"
+#endif
+
 #include "Common/MyInitGuid.h"
 
 #include "Common/CommandLineParser.h"
@@ -11,16 +15,10 @@
 #include "Common/StringConvert.h"
 #include "Common/StringToInt.h"
 
-#include "Windows/Defs.h"
 #include "Windows/Error.h"
-#include "Windows/FileDir.h"
-#include "Windows/FileName.h"
 #ifdef _WIN32
 #include "Windows/MemoryLock.h"
 #endif
-
-#include "../../ICoder.h"
-#include "../../IPassword.h"
 
 #include "../Common/ArchiveCommandLine.h"
 #include "../Common/ExitCode.h"
@@ -29,21 +27,14 @@
 #include "../Common/LoadCodecs.h"
 #endif
 #include "../Common/PropIDUtils.h"
-#include "../Common/Update.h"
-#include "../Common/UpdateAction.h"
 
-#include "../../Compress/LZMA_Alone/LzmaBenchCon.h"
-
+#include "BenchCon.h"
 #include "ExtractCallbackConsole.h"
 #include "List.h"
 #include "OpenCallbackConsole.h"
 #include "UpdateCallbackConsole.h"
 
 #include "../../MyVersion.h"
-
-#if defined( _WIN32) && defined( _7ZIP_LARGE_PAGES)
-#include "../../../../C/Alloc.h"
-#endif
 
 #include "myPrivate.h"
 #include "Windows/System.h"
@@ -97,29 +88,17 @@ static const char *kHelpString =
     "  -ax[r[-|0]]{@listfile|!wildcard}: eXclude archives\n"
     "  -bd: Disable percentage indicator\n"
     "  -i[r[-|0]]{@listfile|!wildcard}: Include filenames\n"
-    "  -m{Parameters}: set compression Method (see the manual)\n"
-#ifdef HAVE_LSTAT
-    "  -l: don't store symlinks; store the files/directories they point to\n"
-    "  CAUTION : the scanning stage can never end because of symlinks like '..'\n"
-    "            (ex:  ln -s .. ldir)\n"
-#endif
+    "  -m{Parameters}: set compression Method\n"
     "  -o{Directory}: set Output directory\n"
     #ifndef _NO_CRYPTO
     "  -p{Password}: set Password\n"
     #endif
     "  -r[-|0]: Recurse subdirectories\n"
-    "  (CAUTION: this flag does not do what you think, avoid using it)\n"
+    "  -scs{UTF-8 | WIN | DOS}: set charset for list files\n"
     "  -sfx[{name}]: Create SFX archive\n"
     "  -si[{name}]: read data from stdin\n"
     "  -slt: show technical information for l (List) command\n"
-    "  -so: write data to stdout (eg: "
-        "7z"
-#ifdef _NO_CRYPTO
-        "r"
-#elif EXCLUDE_COM
-        "a"
-#endif
-        " a dummy -tgzip -so Doc.txt > archive.gz)\n"
+    "  -so: write data to stdout\n"
     "  -ssc[-]: set sensitive case mode\n"
     "  -t{Type}: Set type of archive\n"
     "  -u[-][p#][q#][r#][x#][y#][z#][!newArchiveName]: Update options\n"
@@ -132,8 +111,9 @@ static const char *kHelpString =
 // exception messages
 
 static const char *kEverythingIsOk = "Everything is Ok";
-static const char *kUserErrorMessage  = "Incorrect command line"; // NExitCode::kUserError
+static const char *kUserErrorMessage = "Incorrect command line";
 static const char *kNoFormats = "7-Zip cannot find the code that works with archives.";
+static const char *kUnsupportedArcTypeMessage = "Unsupported archive type";
 
 static const wchar_t *kDefaultSfxModule = L"7zCon.sfx";
 
@@ -143,19 +123,19 @@ static void ShowMessageAndThrowException(CStdOutStream &s, LPCSTR message, NExit
   throw code;
 }
 
-static void PrintHelpAndExit(CStdOutStream &s) // yyy
+static void PrintHelpAndExit(CStdOutStream &s)
 {
   s << kHelpString;
   ShowMessageAndThrowException(s, kUserErrorMessage, NExitCode::kUserError);
 }
 
 #ifndef _WIN32
-static void GetArguments(int numArguments, const char *arguments[], UStringVector &parts)
+static void GetArguments(int numArgs, const char *args[], UStringVector &parts)
 {
   parts.Clear();
-  for(int i = 0; i < numArguments; i++)
+  for (int i = 0; i < numArgs; i++)
   {
-    UString s = MultiByteToUnicodeString(arguments[i]);
+    UString s = MultiByteToUnicodeString(args[i]);
     parts.Add(s);
   }
 }
@@ -200,15 +180,13 @@ static inline char GetHex(Byte value)
   return (char)((value < 10) ? ('0' + value) : ('A' + (value - 10)));
 }
 
-const char *kUnsupportedArcTypeMessage = "Unsupported archive type";
-
 int Main2(
   #ifndef _WIN32
-  int numArguments, const char *arguments[]
+  int numArgs, const char *args[]
   #endif
 )
 {
-  #ifdef _WIN32
+  #if defined(_WIN32) && !defined(UNDER_CE)
   SetFileApisToOEM();
   #endif
   
@@ -216,9 +194,9 @@ int Main2(
   #ifdef _WIN32
   NCommandLineParser::SplitCommandLine(GetCommandLineW(), commandStrings);
   #else
-  // GetArguments(numArguments, arguments, commandStrings);
-  extern void mySplitCommandLine(int numArguments,const char *arguments[],UStringVector &parts);
-  mySplitCommandLine(numArguments,arguments,commandStrings);
+  // GetArguments(numArgs, args, commandStrings);
+  extern void mySplitCommandLine(int numArgs,const char *args[],UStringVector &parts);
+  mySplitCommandLine(numArgs,args,commandStrings);
   #endif
 
   if (commandStrings.Size() == 1)
@@ -240,11 +218,13 @@ int Main2(
     return 0;
   }
 
-  #if defined(_WIN32) && defined(_7ZIP_LARGE_PAGES)
+  #if defined(_7ZIP_LARGE_PAGES)
   if (options.LargePages)
   {
     SetLargePageSize();
+#ifdef _WIN32
     NSecurity::EnableLockMemoryPrivilege();
+#endif
   }
   #endif
 
@@ -389,10 +369,17 @@ int Main2(
     }
     else
     {
-      HRESULT res = LzmaBenchCon(
-        #ifdef EXTERNAL_LZMA
-        codecs,
-        #endif
+      HRESULT res;
+      #ifdef EXTERNAL_CODECS
+      CObjectVector<CCodecInfoEx> externalCodecs;
+      res = LoadExternalCodecs(compressCodecsInfo, externalCodecs);
+      if (res != S_OK)
+        throw CSystemException(res);
+      #endif
+      res = LzmaBenchCon(
+          #ifdef EXTERNAL_CODECS
+          compressCodecsInfo, &externalCodecs,
+          #endif
         (FILE *)stdStream, options.NumIterations, options.NumThreads, options.DictionarySize);
       if (res != S_OK)
       {
@@ -438,7 +425,7 @@ int Main2(
       eo.OutputDir = options.OutputDir;
       eo.YesToAll = options.YesToAll;
       eo.CalcCrc = options.CalcCrc;
-      #ifdef COMPRESS_MT
+      #if !defined(_7ZIP_ST) && !defined(_SFX)
       eo.Properties = options.ExtractProperties;
       #endif
       UString errorMessage;

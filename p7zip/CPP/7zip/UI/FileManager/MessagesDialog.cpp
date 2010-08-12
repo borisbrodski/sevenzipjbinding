@@ -1,10 +1,12 @@
 // MessagesDialog.cpp
  
 #include "StdAfx.h"
-#include "MessagesDialog.h"
-#include "Common/StringConvert.h"
+
 #include "Common/IntToString.h"
+
 #include "Windows/ResourceString.h"
+
+#include "MessagesDialog.h"
 
 #ifdef LANG
 #include "LangUtils.h"
@@ -49,9 +51,12 @@ bool CMessagesDialog::OnInit()
   LangSetDlgItemsText(HWND(*this), kIDLangPairs, sizeof(kIDLangPairs) / sizeof(kIDLangPairs[0]));
   #endif
   _messageList.Attach(GetItem(IDC_MESSAGE_LIST));
-  _messageList.SetUnicodeFormat(true);
 
-  _messageList.InsertColumn(0, L"#", 30);
+  #ifndef UNDER_CE
+  _messageList.SetUnicodeFormat(true);
+  #endif
+
+  _messageList.InsertColumn(0, L"", 30);
 
   const UString s =
     #ifdef LANG
@@ -62,15 +67,11 @@ bool CMessagesDialog::OnInit()
 
   _messageList.InsertColumn(1, s, 600);
 
-  for(int i = 0; i < Messages->Size(); i++)
+  for (int i = 0; i < Messages->Size(); i++)
     AddMessage((*Messages)[i]);
 
-  /*
-  if(_messageList.GetItemCount() > 0)
-  {
-    UINT aState = LVIS_SELECTED | LVIS_FOCUSED;
-    _messageList.SetItemState(0, aState, aState);
-  }
-  */
+  _messageList.SetColumnWidthAuto(0);
+  _messageList.SetColumnWidthAuto(1);
+  NormalizeSize();
   return CModalDialog::OnInit();
 }

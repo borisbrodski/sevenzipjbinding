@@ -3,6 +3,7 @@ SRCS=\
  ../../../myWindows/myAddExeFlag.cpp \
  ../../../myWindows/mySplitCommandLine.cpp \
  \
+ ../../UI/Console/BenchCon.cpp \
  ../../UI/Console/ConsoleClose.cpp \
  ../../UI/Console/ExtractCallbackConsole.cpp \
  ../../UI/Console/List.cpp \
@@ -61,6 +62,7 @@ SRCS=\
  ../../UI/Common/ArchiveCommandLine.cpp \
  ../../UI/Common/ArchiveExtractCallback.cpp \
  ../../UI/Common/ArchiveOpenCallback.cpp \
+ ../../UI/Common/Bench.cpp \
  ../../UI/Common/DefaultName.cpp \
  ../../UI/Common/EnumDirItems.cpp \
  ../../UI/Common/Extract.cpp \
@@ -125,14 +127,11 @@ SRCS=\
  ../../Compress/Lzma2Register.cpp \
  ../../Compress/LzmaDecoder.cpp \
  ../../Compress/LzmaEncoder.cpp \
- ../../Compress/LzmaRegister.cpp \
- \
- ../../Compress/LZMA_Alone/LzmaBench.cpp \
- ../../Compress/LZMA_Alone/LzmaBenchCon.cpp \
-
+ ../../Compress/LzmaRegister.cpp 
 
 SRCS_C=\
  ../../../../C/7zStream.c \
+ ../../../../C/Alloc.c \
  ../../../../C/Bra.c \
  ../../../../C/Bra86.c \
  ../../../../C/BraIA64.c \

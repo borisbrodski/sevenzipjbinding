@@ -12,7 +12,7 @@
 #include "ZipIn.h"
 #include "ZipCompressionMode.h"
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 #include "../../../Windows/System.h"
 #endif
 
@@ -53,6 +53,9 @@ private:
   UInt32 m_NumPasses;
   UInt32 m_NumFastBytes;
   UInt32 m_NumMatchFinderCycles;
+  UInt32 m_MemSize;
+  UInt32 m_Order;
+
   bool m_NumMatchFinderCyclesDefined;
 
   bool m_ForceAesMode;
@@ -63,7 +66,7 @@ private:
   bool m_ForseLocal;
   bool m_ForseUtf8;
 
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
   UInt32 _numThreads;
   #endif
 
@@ -77,6 +80,8 @@ private:
     m_DicSize =
     m_NumPasses =
     m_NumFastBytes =
+    m_Order =
+    m_MemSize =
     m_NumMatchFinderCycles = 0xFFFFFFFF;
     m_NumMatchFinderCyclesDefined = false;
     m_ForceAesMode = false;
@@ -85,7 +90,7 @@ private:
     m_WriteNtfsTimeExtra = false;
     m_ForseLocal = false;
     m_ForseUtf8 = false;
-    #ifdef COMPRESS_MT
+    #ifndef _7ZIP_ST
     _numThreads = NWindows::NSystem::GetNumberOfProcessors();;
     #endif
   }

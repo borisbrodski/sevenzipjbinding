@@ -18,7 +18,7 @@ static UString GetExtension(const UString &name)
   return name.Mid(dotPos);
 }
 
-int CALLBACK CompareItems2(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
+static int CALLBACK CompareItems2(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
 {
   if (lpData == 0) // FIXME NULL)
     return 0;
@@ -32,6 +32,8 @@ int CALLBACK CompareItems2(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
       const UString name1 = panel->GetItemName((int)lParam1);
       const UString name2 = panel->GetItemName((int)lParam2);
       int res = name1.CompareNoCase(name2);
+	
+//		printf("CompareNoCase(%ls,%ls)=%d\n",(const wchar_t *)name1,(const wchar_t *)name2,res);		
       /*
       if (res != 0 || !panel->_flatMode)
         return res;
@@ -79,7 +81,7 @@ int CALLBACK CompareItems2(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
   // return 0;
 }
 
-int CALLBACK CompareItems(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
+static int CALLBACK CompareItems(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
 {
   if (lpData == 0) // FIXME NULL)
 	  return 0;
@@ -96,6 +98,16 @@ int CALLBACK CompareItems(LPARAM lParam1, LPARAM lParam2, LPARAM lpData)
 
   int result = CompareItems2(lParam1, lParam2, lpData);
   return panel->_ascending ? result: (-result);
+}
+
+
+int 
+#if defined(__WIN32__) && !defined(__WXMICROWIN__) // FIXME
+  wxCALLBACK
+#endif
+ CompareItems_WX(long item1, long item2, long sortData)
+{
+        return CompareItems(item1,item2,sortData);
 }
 
 
@@ -119,7 +131,11 @@ void CPanel::SortItems(int index)
       break;
     }
   }
-  _listView.SortItems(CompareItems, (LPARAM)this);
+  if (sizeof(long) != sizeof(LPARAM)) {
+    printf("INTERNAL ERROR : sizeof(long) != sizeof(LPARAM)\n");
+    exit(-1);
+  }
+  _listView.SortItems(CompareItems_WX, (LPARAM)this);
   _listView.EnsureVisible(_listView.GetFocusedItem(), false);
 }
 void CPanel::SortItemsWithPropID(PROPID propID)

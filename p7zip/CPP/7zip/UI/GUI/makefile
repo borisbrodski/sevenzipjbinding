@@ -1,8 +1,8 @@
+PROG=../../../../bin/7zG$(BINSUFFIX)
+
 LOCAL_FLAGS=\
-	-DUNICODE \
-	-D_UNICODE \
+	-DUNICODE -D_UNICODE \
 	-DLANG \
-	-DCOMPRESS_MT \
 	-DEXTERNAL_LZMA \
 	-DEXTERNAL_CODECS \
 	-DBENCH_MT \
@@ -12,7 +12,7 @@ LOCAL_FLAGS=\
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
 
-PROG=../../../../bin/7zG
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
 LIBS=`wx-config --unicode=yes --libs` $(LOCAL_LIBS_DLL)
 
@@ -64,8 +64,10 @@ Dialog.o \
 Controls.o \
 
 7ZIP_COMMON_OBJS = \
+CreateCoder.o \
 FilePathAutoRename.o \
 FileStreams.o \
+FilterCoder.o \
 ProgressUtils.o \
 StreamUtils.o \
 
@@ -73,6 +75,7 @@ UI_COMMON_OBJS = \
 ArchiveCommandLine.o \
 ArchiveExtractCallback.o \
 ArchiveOpenCallback.o \
+Bench.o \
 DefaultName.o \
 EnumDirItems.o \
 Extract.o \
@@ -94,9 +97,6 @@ ZipRegistry.o \
 AR_COMMON_OBJS = \
  OutStreamWithCRC.o
 
-LZMA_BENCH_OBJS = \
- LzmaBench.o \
-
 FM_OBJS = \
 ExtractCallback.o \
 FormatUtils.o \
@@ -115,6 +115,7 @@ ProgressDialog2_rc.o \
 
 
 C_OBJS = \
+  Alloc.o \
   Threads.o \
 
 OBJS=\
@@ -128,7 +129,6 @@ OBJS=\
   $(FM_OBJS)\
   MyMessages.o \
   CopyCoder.o \
-  $(LZMA_BENCH_OBJS) \
   $(C_OBJS) \
   MyWindows.o \
   wine_date_and_time.o \

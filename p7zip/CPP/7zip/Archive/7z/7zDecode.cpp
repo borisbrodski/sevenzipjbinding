@@ -97,7 +97,7 @@ HRESULT CDecoder::Decode(
     #ifndef _NO_CRYPTO
     , ICryptoGetTextPassword *getTextPassword, bool &passwordIsDefined
     #endif
-    #ifdef COMPRESS_MT
+    #if !defined(_7ZIP_ST) && !defined(_SFX)
     , bool mtMode, UInt32 numThreads
     #endif
     )
@@ -232,14 +232,14 @@ HRESULT CDecoder::Decode(
         size_t size = props.GetCapacity();
         if (size > 0xFFFFFFFF)
           return E_NOTIMPL;
-        if (size > 0)
+        // if (size > 0)
         {
           RINOK(setDecoderProperties->SetDecoderProperties2((const Byte *)props, (UInt32)size));
         }
       }
     }
 
-    #ifdef COMPRESS_MT
+    #if !defined(_7ZIP_ST) && !defined(_SFX)
     if (mtMode)
     {
       CMyComPtr<ICompressSetCoderMt> setCoderMt;

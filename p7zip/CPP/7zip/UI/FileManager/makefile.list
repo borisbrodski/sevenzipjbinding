@@ -32,6 +32,7 @@ ClassDefs.cpp \
 	RegistryAssociations.cpp \
 	FileFolderPluginOpen.cpp \
 	RootFolder.cpp \
+	FSDrives.cpp \
 	FSFolder.cpp \
 	FSFolderCopy.cpp \
 	FormatUtils.cpp \
@@ -86,6 +87,7 @@ ClassDefs.cpp \
 	../../../Common/MyVector.cpp \
 	../../../Common/StringConvert.cpp \
 	../../../Common/StringToInt.cpp \
+	../../../Common/IntToString.cpp \
 	../../../Common/MyWindows.cpp \
 	../../../Common/Wildcard.cpp \
 	../../../Windows/DLL.cpp \
@@ -122,13 +124,15 @@ SRCS_OUT=\
 	../Common/Update.cpp \
 	../Explorer/MyMessages.cpp \
 	../../../Common/CommandLineParser.cpp \
-	../../../Common/IntToString.cpp \
 	../../../Common/ListFileUtils.cpp \
 	../../../myWindows/myGetTickCount.cpp \
 
 
 SRCS_C=\
 	../../../../C/7zCrc.c \
+	../../../../C/7zCrcOpt.c \
+	../../../../C/Alloc.c \
+	../../../../C/Sha256.c \
 	../../../../C/Sort.c \
 	../../../../C/Threads.c
 
@@ -215,12 +219,12 @@ FileFolderPluginOpen.o : FileFolderPluginOpen.cpp
 	$(CXX) $(CXXFLAGS) FileFolderPluginOpen.cpp
 RootFolder.o : RootFolder.cpp
 	$(CXX) $(CXXFLAGS) RootFolder.cpp
+FSDrives.o : FSDrives.cpp
+	$(CXX) $(CXXFLAGS) FSDrives.cpp
 FSFolder.o : FSFolder.cpp
 	$(CXX) $(CXXFLAGS) FSFolder.cpp
 FSFolderCopy.o : FSFolderCopy.cpp
 	$(CXX) $(CXXFLAGS) FSFolderCopy.cpp
-FormatUtils.o : FormatUtils.cpp
-	$(CXX) $(CXXFLAGS) FormatUtils.cpp
 SysIconUtils.o : SysIconUtils.cpp
 	$(CXX) $(CXXFLAGS) SysIconUtils.cpp
 TextPairs.o : TextPairs.cpp

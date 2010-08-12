@@ -15,6 +15,10 @@
     #include "wx/wx.h"
 #endif  
 
+#include <wx/listctrl.h>
+
+#undef _WIN32
+
 #include "Windows/Control/DialogImpl.h"
 
 #include "ListViewDialogRes.h"
@@ -51,5 +55,6 @@ REGISTER_DIALOG(IDD_DIALOG_LISTVIEW,CListViewDialog,0)
 BEGIN_EVENT_TABLE(CListViewDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)
 	EVT_CHECKBOX(wxID_ANY, CModalDialogImpl::OnAnyButton)
+	EVT_MENU(WORKER_EVENT, CModalDialogImpl::OnWorkerEvent)
 END_EVENT_TABLE()
 

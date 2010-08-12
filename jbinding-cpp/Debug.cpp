@@ -22,11 +22,11 @@ int trace_printf(const char * fmt, ...) {
 #endif // TRACE_ON
 #ifdef TRACE_OBJECTS_ON
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 #include "Windows/Synchronization.h"
 #endif
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
 	#define ENTER_CRITICAL_SECTION   {g_criticalSection.Enter();}
 	#define LEAVE_CRITICAL_SECTION   {g_criticalSection.Leave();}
 #else
@@ -34,7 +34,7 @@ int trace_printf(const char * fmt, ...) {
 	#define LEAVE_CRITICAL_SECTION   {}
 #endif
 
-#ifdef COMPRESS_MT
+#ifndef _7ZIP_ST
     NWindows::NSynchronization::CCriticalSection g_criticalSection;
 #endif
 

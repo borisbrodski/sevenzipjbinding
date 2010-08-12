@@ -6,6 +6,12 @@
 #include "Windows/Window.h"
 #include "Windows/Control/Dialog.h"
 
+void myCreateHandle(int n); // FIXME - duplicate
+
+enum {
+    WORKER_EVENT=100    // this one gets sent from the worker thread
+};
+
 namespace NWindows {
 	namespace NControl {
 
@@ -37,12 +43,12 @@ namespace NWindows {
 			void OnAnyChoice(wxCommandEvent &event);
 			void OnAnyTimer(wxTimerEvent &event);
 
-			virtual void SetLabel(const wxString &title)
+/* FIXME			virtual void SetLabel(const wxString &title)
 			{
 				// Why we must do this "alias" ?
 				this->SetTitle(title);
 			}
-
+*/
 			//////////////////
 			UINT_PTR SetTimer(UINT_PTR /* FIXME idEvent */, unsigned milliseconds)
 			{
@@ -52,6 +58,12 @@ namespace NWindows {
 			void KillTimer(UINT_PTR idEvent)
 			{
 				if (idEvent == TIMER_ID_IMPL) _timer.Stop();
+			}
+			void OnWorkerEvent(wxCommandEvent& event)
+			{
+				int n = event.GetInt();
+				// printf("CModalDialogImpl::OnWorkerEvent(n=%d)\n",n);
+				myCreateHandle(n);
 			}
 		};
 }

@@ -39,10 +39,6 @@
       <param name="Local" value="general/license.htm">
       </OBJECT>
     <LI> <OBJECT type="text/sitemap">
-      <param name="Name" value="Register 7-Zip">
-      <param name="Local" value="general/register.htm">
-      </OBJECT>
-    <LI> <OBJECT type="text/sitemap">
       <param name="Name" value="Thanks">
       <param name="Local" value="general/thanks.htm">
       </OBJECT>

@@ -7,6 +7,9 @@
 
 #ifndef _WIN32
 
+#define FILE_SHARE_READ	1
+#define FILE_SHARE_WRITE 2
+
 #define FILE_BEGIN	SEEK_SET
 #define FILE_CURRENT	SEEK_CUR
 #define FILE_END	SEEK_END

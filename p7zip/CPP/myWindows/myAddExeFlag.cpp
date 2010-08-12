@@ -10,16 +10,11 @@
 
 #include "Common/StringConvert.h"
 
-
-void myAddExeFlag(LPCTSTR filename)
+void myAddExeFlag(const UString &u_name)
 {
+	AString filename = UnicodeStringToMultiByte(u_name, CP_ACP); // FIXME
 	const char * name = nameWindowToUnix(filename);
 	// printf("myAddExeFlag(%s)\n",name);
 	chmod(name,0700);
-}
-
-void myAddExeFlag(const UString &u_name)
-{
-	myAddExeFlag(UnicodeStringToMultiByte(u_name, CP_ACP));
 }
 

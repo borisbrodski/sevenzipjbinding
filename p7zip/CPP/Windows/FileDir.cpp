@@ -7,6 +7,7 @@
 #include "FileFind.h"
 #include "Defs.h"
 #include "../Common/StringConvert.h"
+#include "../Common/IntToString.h"
 
 #define NEED_NAME_WINDOWS_TO_UNIX
 #include "myPrivate.h"
@@ -140,6 +141,7 @@ DWORD WINAPI GetFullPathName( LPCTSTR name, DWORD len, LPTSTR buffer, LPTSTR *la
 
 #endif
 
+#if 0
 DWORD WINAPI GetFullPathName( LPCSTR name, DWORD len, LPSTR buffer, LPSTR *lastpart ) {
   if (name == 0) return 0;
 
@@ -241,6 +243,8 @@ static BOOL WINAPI RemoveDirectory(LPCSTR path) {
   }
   return TRUE;
 }
+#endif
+
 #ifdef _UNICODE
 static BOOL WINAPI RemoveDirectory(LPCWSTR path) {
   if (!path || !*path) {
@@ -700,6 +704,29 @@ bool DeleteFileAlways(LPCWSTR name)
 }
 #endif
 
+
+static bool RemoveDirectorySubItems2(const UString &pathPrefix, const NFind::CFileInfoW &fileInfo)
+{
+  if (fileInfo.IsDir())
+    return RemoveDirectoryWithSubItems(pathPrefix + fileInfo.Name);
+  return DeleteFileAlways(pathPrefix + fileInfo.Name);
+}
+
+bool RemoveDirectoryWithSubItems(const UString &path)
+{
+  NFind::CFileInfoW fileInfo;
+  UString pathPrefix = path + NName::kDirDelimiter;
+  {
+    NFind::CEnumeratorW enumerator(pathPrefix + TCHAR(NName::kAnyStringWildcard));
+    while (enumerator.Next(fileInfo))
+      if (!RemoveDirectorySubItems2(pathPrefix, fileInfo))
+        return false;
+  }
+  if (!MySetFileAttributes(path, 0))
+    return false;
+  return MyRemoveDirectory(path);
+}
+
 #ifndef _WIN32_WCE
 
 bool MyGetFullPathName(LPCTSTR fileName, CSysString &resultPath, 
@@ -806,10 +833,17 @@ bool MyGetTempPath(UString &path)
 
 static NSynchronization::CCriticalSection g_CountCriticalSection;
 
+static CSysString CSysConvertUInt32ToString(UInt32 value)
+{
+  TCHAR buffer[32];
+  ConvertUInt32ToString(value, buffer);
+  return buffer;
+}
+
 UINT CTempFile::Create(LPCTSTR dirPath, LPCTSTR prefix, CSysString &resultPath)
 {
-  static int memo_count = 0;
-  int count;
+  static UInt32 memo_count = 0;
+  UInt32 count;
 
   g_CountCriticalSection.Enter();
   count = memo_count++;
@@ -818,21 +852,31 @@ UINT CTempFile::Create(LPCTSTR dirPath, LPCTSTR prefix, CSysString &resultPath)
   Remove();
 /* UINT number = ::GetTempFileName(dirPath, prefix, 0, path.GetBuffer(MAX_PATH)); */
   UINT number = (UINT)getpid();
-  TCHAR * buf = resultPath.GetBuffer(MAX_PATH);
-#ifdef _UNICODE
-  swprintf(buf,MAX_PATH,L"%s%s#%x@%x.tmp",dirPath,prefix,(unsigned)number,count);
-#else
-  snprintf(buf,MAX_PATH,"%s%s#%x@%x.tmp",dirPath,prefix,(unsigned)number,count);
-#endif
- 
-  buf[MAX_PATH-1]=0;
-  resultPath.ReleaseBuffer();
+
+  resultPath  = dirPath;
+  resultPath += prefix;
+  resultPath += TEXT('#');
+  resultPath += CSysConvertUInt32ToString(number);
+  resultPath += TEXT('@');
+  resultPath += CSysConvertUInt32ToString(count);
+  resultPath += TEXT(".tmp");
   
   _fileName = resultPath;
   _mustBeDeleted = true;
  
   return number;
 }
+
+bool CTempFile::Create(LPCTSTR prefix, CSysString &resultPath)
+{
+  CSysString tempPath;
+  if (!MyGetTempPath(tempPath))
+    return false;
+  if (Create(tempPath, prefix, resultPath) != 0)
+    return true;
+  return false;
+}
+
 
 bool CTempFile::Remove()
 {
@@ -841,5 +885,43 @@ bool CTempFile::Remove()
   _mustBeDeleted = !DeleteFileAlways(_fileName);
   return !_mustBeDeleted;
 }
+
+bool CreateTempDirectory(LPCWSTR prefix, UString &dirName)
+{
+  /*
+  CSysString prefix = tempPath + prefixChars;
+  CRandom random;
+  random.Init();
+  */
+  for (;;)
+  {
+    {
+      CTempFileW tempFile;
+      if (!tempFile.Create(prefix, dirName))
+        return false;
+      if (!tempFile.Remove())
+        return false;
+    }
+    /*
+    UINT32 randomNumber = random.Generate();
+    TCHAR randomNumberString[32];
+    _stprintf(randomNumberString, _T("%04X"), randomNumber);
+    dirName = prefix + randomNumberString;
+    */
+    if (NFind::DoesFileOrDirExist(dirName))
+      continue;
+    if (MyCreateDirectory(dirName))
+      return true;
+    if (::GetLastError() != ERROR_ALREADY_EXISTS)
+      return false;
+  }
+}
+
+bool CTempDirectory::Create(LPCTSTR prefix)
+{
+  Remove();
+  return (_mustBeDeleted = CreateTempDirectory(prefix, _tempDir));
+}
+
 
 }}}

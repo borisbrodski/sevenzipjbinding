@@ -123,6 +123,8 @@ public:
 
 	void SetItemState(int index, UINT state, UINT mask);
 
+	void SetItemState_FocusedSelected(int index) { SetItemState(index, LVIS_FOCUSED | LVIS_SELECTED, LVIS_FOCUSED | LVIS_SELECTED); }
+
 	UINT GetItemState(int index, UINT mask) const;
 
 	void /* bool */  Update();
@@ -149,6 +151,11 @@ public:
 
 	// HWND EditLabel(int itemIndex)
 	void EditLabel(int itemIndex);
+
+	bool SetColumnWidthAuto(int iCol) { 
+		return true; // FIXME SetColumnWidth(iCol, LVSCW_AUTOSIZE);
+	}
+
 
 };
 
