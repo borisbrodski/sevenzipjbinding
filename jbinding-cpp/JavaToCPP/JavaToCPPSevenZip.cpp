@@ -208,7 +208,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     jobject inArchiveImplObject = jni::InArchiveImpl::_newInstance(env);
     jni::expectExceptionCheck(env);
-    return NULL;
 
     jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString),
             formatNameString.Length());
