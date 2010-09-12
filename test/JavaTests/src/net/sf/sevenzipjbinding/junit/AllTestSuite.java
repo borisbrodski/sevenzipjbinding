@@ -9,10 +9,8 @@ import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.FirstTest;
 import net.sf.sevenzipjbinding.junit.compression.SimpleTest;
-import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
@@ -49,6 +47,7 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3D
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth2;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
@@ -229,13 +228,13 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] snippetsTests = { //
     /*    */GetNumberOfItemInArchive.class, //
-            /*ExtractItemsTest.class, //
+            ExtractItemsTest.class, //
             FirstStepsSimpleSnippets.class, //
             ListItemsTest.class, //
             OpenMultipartArchive7zTest.class, //
             OpenMultipartArchiveRarTest.class, //
             PrintCountOfItemsTest.class, //
-            SevenZipJBindingInitCheckTest.class, //*/
+            SevenZipJBindingInitCheckTest.class, //
     };
 
     static Class<?>[] toolsTests = { //
@@ -307,7 +306,7 @@ public class AllTestSuite extends TestSuite {
             FirstTest.class, //
             CompressMultipleFile7zStdConfTest.class, //
             CompressMultipleFileTarStdConfTest.class, //
-            CompressMultipleFileZipStdConfTest.class, //
+    // CompressMultipleFileZipStdConfTest.class, //
     };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
