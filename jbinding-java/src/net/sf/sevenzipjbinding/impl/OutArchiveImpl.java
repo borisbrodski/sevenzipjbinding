@@ -6,10 +6,8 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 
 public class OutArchiveImpl implements ISevenZipOutArchive {
-    @SuppressWarnings("unused")
-    private long jbindingSession;
 
-    @SuppressWarnings("unused")
+    private long jbindingSession;
     private long sevenZipArchiveInstance;
 
     /**

@@ -80,13 +80,8 @@ public final class InArchiveImpl implements ISevenZipInArchive {
         }
     }
 
-    @SuppressWarnings("unused")
     private long jbindingSession;
-
-    @SuppressWarnings("unused")
     private long sevenZipArchiveInstance;
-
-    @SuppressWarnings("unused")
     private long sevenZipInStreamInstance;
 
     private int numberOfItems = -1;
@@ -274,7 +269,6 @@ public final class InArchiveImpl implements ISevenZipInArchive {
      * @param archiveFormat
      *            format of the opened archive
      */
-    @SuppressWarnings("unused")
     private void setArchiveFormat(String archiveFormatString) {
         for (ArchiveFormat archiveFormat : ArchiveFormat.values()) {
             if (archiveFormat.getMethodName().equalsIgnoreCase(archiveFormatString)) {

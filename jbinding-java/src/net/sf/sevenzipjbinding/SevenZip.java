@@ -596,7 +596,7 @@ public class SevenZip {
                 // Ignore errors here
             }
             try {
-                if (fromLibInputStream != null) {
+                if (libTmpOutputStream != null) {
                     libTmpOutputStream.close();
                 }
             } catch (IOException e) {
