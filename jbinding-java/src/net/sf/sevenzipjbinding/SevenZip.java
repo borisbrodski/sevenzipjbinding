@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
-import net.sf.sevenzipjbinding.impl.OutArchiveImpl;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 
@@ -364,12 +363,12 @@ public class SevenZip {
             if (tmpDirectory != null) {
                 tmpDirFile = tmpDirectory;
             } else {
-                tmpDirFile = new File(System.getProperty(SYSTEM_PROPERTY_TMP));
-            }
-
-            if (tmpDirFile == null) {
-                throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
-                        + "=<path to tmp dir> parameter for jvm to fix this.");
+                String systemPropertyTmp = System.getProperty(SYSTEM_PROPERTY_TMP);
+                if (systemPropertyTmp == null) {
+                    throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
+                            + "=<path to tmp dir> parameter for jvm to fix this.");
+                }
+                tmpDirFile = new File(systemPropertyTmp);
             }
 
             if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
@@ -654,7 +653,8 @@ public class SevenZip {
     private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
-    private static native ISevenZipOutArchive nativeCreateArchive(ArchiveFormat archiveFormat, int archiveFormatIndex) throws SevenZipException;
+    private static native ISevenZipOutArchive nativeCreateArchive(ArchiveFormat archiveFormat, int archiveFormatIndex)
+            throws SevenZipException;
 
     private static native String nativeInitSevenZipLibrary();
 
