@@ -691,6 +691,7 @@ inline std::ostream & operator<<(std::ostream & stream, JavaClass<T> & javaClass
     stream << javaClass._fullname;
 }
 #endif // TRACE_ON
+
 template<typename T>
 class JInterface {
     static JObjectMap<jclass, T> _jinterfaceMap;

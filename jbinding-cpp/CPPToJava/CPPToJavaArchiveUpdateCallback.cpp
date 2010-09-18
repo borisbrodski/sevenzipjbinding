@@ -3,6 +3,7 @@
 #include "JNITools.h"
 #include "CPPToJavaArchiveUpdateCallback.h"
 #include "CPPToJavaSequentialInStream.h"
+#include "CPPToJavaInStream.h"
 
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
 Int32 *newProperties, /* 1 - new properties, 0 - old properties */
@@ -96,11 +97,20 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
     }
 
     if (inStreamImpl) {
-        CPPToJavaSequentialInStream * newInStream = new CPPToJavaSequentialInStream(
-                _jbindingSession, jniEnvInstance, inStreamImpl);
 
-        CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
-        *inStream = inStreamComPtr.Detach();
+        jclass inStreamInterface = jniEnvInstance->FindClass(INSTREAM_CLASS);
+        FATALIF(!inStreamInterface, "Class " INSTREAM_CLASS " not found");
+
+        if (jniEnvInstance->IsInstanceOf(inStreamImpl, inStreamInterface)) {
+            CPPToJavaInStream * newInStream = new CPPToJavaInStream(_jbindingSession, jniEnvInstance, inStreamImpl);
+            CMyComPtr<IInStream> inStreamComPtr = newInStream;
+            *inStream = inStreamComPtr.Detach();
+        } else {
+            CPPToJavaSequentialInStream * newInStream = new CPPToJavaSequentialInStream(
+                    _jbindingSession, jniEnvInstance, inStreamImpl);
+            CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
+            *inStream = inStreamComPtr.Detach();
+        }
     } else {
         return S_FALSE;
     }

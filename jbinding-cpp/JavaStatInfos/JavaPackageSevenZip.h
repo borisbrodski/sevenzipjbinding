@@ -60,7 +60,7 @@ JT_END_INTERFACE
 
 JT_BEGIN_INTERFACE(IOutStream)
 //      public void setSize(long newSize)
-/*    */JT_INTERFACE_METHOD(Int, setSize, JT_LONG(newSize, _))
+/*    */JT_INTERFACE_METHOD(Void, setSize, JT_LONG(newSize, _))
 JT_END_INTERFACE
 
 JT_BEGIN_INTERFACE(ISeekableStream)
