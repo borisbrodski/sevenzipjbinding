@@ -35,7 +35,7 @@
 //#define IN_STREAM_IMPL_OBJ_ATTRIBUTE "sevenZipArchiveInStreamInstance"
 
 
-
+// TODO Switch to use JavaStaticInfo for this
 #define PROPERTYINFO_CLASS "net/sf/sevenzipjbinding/PropertyInfo"
 #define PROPERTYINFO_CLASS_T JAVA_MAKE_SIGNATURE_TYPE(PROPERTYINFO_CLASS)
 
