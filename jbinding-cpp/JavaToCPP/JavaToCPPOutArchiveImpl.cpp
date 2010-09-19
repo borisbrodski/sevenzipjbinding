@@ -92,7 +92,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_setLevel
 
     // TODO Move query interface to the central location in J2C+SevenZip.cpp
     CMyComPtr<ISetProperties> setProperties;
-    HRESULT result = setProperties->QueryInterface(IID_ISetProperties, (void**)&setProperties);
+    HRESULT result = outArchive->QueryInterface(IID_ISetProperties, (void**)&setProperties);
     if (result != S_OK) {
         TRACE("Error getting IID_ISetProperties interface. Result: 0x" << std::hex << result)
         jniNativeCallContext.reportError(result, "Error getting IID_ISetProperties interface.");
