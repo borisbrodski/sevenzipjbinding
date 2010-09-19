@@ -153,7 +153,8 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
 public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //
     /*    */JUnitInitializationTest.class, //
-            ArchiveFormatTest.class //
+            ArchiveFormatTest.class, //
+            DeclareThrowsSevenZipExceptionTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //

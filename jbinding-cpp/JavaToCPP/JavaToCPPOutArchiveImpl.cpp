@@ -32,7 +32,7 @@ static IOutArchive * GetArchive(JNIEnv * env, jobject thiz) {
  * Method:    updateItemsNative
  * Signature: (ILnet/sf/sevenzipjbinding/ISequentialOutStream;ILnet/sf/sevenzipjbinding/IArchiveUpdateCallback;)V
  */
-JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_updateItemsNative(
+JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeUpdateItems(
                                                                                                    JNIEnv * env,
                                                                                                    jobject thiz,
                                                                                                    jint archiveFormatIndex,
@@ -42,29 +42,29 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
     TRACE("OutArchiveImpl.updateItemsNative()");
 
     JBindingSession & jbindingSession(GetJBindingSession(env, thiz));
-{
-    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
-    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+    {
+        JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+        JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
+        CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
 
-    CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
-            outStream);
+        CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
+                outStream);
 
-    CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
-            new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
-                    false);
+        CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
+                new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
+                        false);
 
-    HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
-            cppToJavaArchiveUpdateCallback);
+        HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
+                cppToJavaArchiveUpdateCallback);
 
-    if (hresult) {
-        jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
-                (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
-                (int) numberOfItems);
+        if (hresult) {
+            jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
+                    (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
+                    (int) numberOfItems);
+        }
+        outArchive->Release();
     }
-    outArchive->Release();
-}
     delete &jbindingSession;
 
     return;
@@ -75,7 +75,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
  * Method:    setLevelNative
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_setLevelNative
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSetLevel
   (JNIEnv * env, jobject thiz, jint level) {
     TRACE("OutArchiveImpl::setLevelNative(). ThreadID=" << PlatformGetCurrentThreadId());
 

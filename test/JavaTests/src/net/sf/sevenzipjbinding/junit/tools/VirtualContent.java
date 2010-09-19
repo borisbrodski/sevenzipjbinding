@@ -279,7 +279,8 @@ public class VirtualContent {
         }
     }
 
-    public void updateOutArchive(ISevenZipOutArchive outArchive, ISequentialOutStream outputStream) {
+    public void updateOutArchive(ISevenZipOutArchive outArchive, ISequentialOutStream outputStream)
+            throws SevenZipException {
         outArchive.updateItems(outputStream, itemList.size(), new ArchiveUpdateCallback());
     }
 

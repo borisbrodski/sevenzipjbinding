@@ -656,7 +656,7 @@ public class SevenZip {
     private static native ISevenZipOutArchive nativeCreateArchive(ArchiveFormat archiveFormat, int archiveFormatIndex)
             throws SevenZipException;
 
-    private static native String nativeInitSevenZipLibrary();
+    private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
     public static ISevenZipOutArchive openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
         ensureLibraryIsInitialized();
@@ -685,7 +685,8 @@ public class SevenZip {
      *         <code>-1</code> - if <code>checkForOutArchive == true</code> and 7-Zip can't create/update archives of
      *         archive format <code>archiveFormat</code>.
      */
-    private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive);
+    private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
+            throws SevenZipException;
 
     private static class DummyOpenArchiveCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
         /**

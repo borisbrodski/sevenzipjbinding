@@ -25,9 +25,11 @@ public interface ISevenZipOutArchive {
      *            number of items in the new archive
      * @param archiveUpdateCallback
      *            update call back object to provide more information for archive create/update operation.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IArchiveUpdateCallback archiveUpdateCallback);
+            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
 
     /**
      * Return archive format used with this instance of {@link IOutStream}
@@ -41,6 +43,8 @@ public interface ISevenZipOutArchive {
      * 
      * @param compressionLevel
      *            compression level to set
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
-    public void setLevel(int compressionLevel);
+    public void setLevel(int compressionLevel) throws SevenZipException;
 }

@@ -4,6 +4,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipOutArchive;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 public class OutArchiveImpl implements ISevenZipOutArchive {
 
@@ -23,15 +24,15 @@ public class OutArchiveImpl implements ISevenZipOutArchive {
     private OutArchiveImpl() {
     }
 
-    private native void updateItemsNative(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
-            IArchiveUpdateCallback archiveUpdateCallback);
+    private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
+            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
 
     /**
      * {@inheritDoc}
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IArchiveUpdateCallback archiveUpdateCallback) {
-        updateItemsNative(archiveFormatIndex, outStream, numberOfItems, archiveUpdateCallback);
+            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException {
+        nativeUpdateItems(archiveFormatIndex, outStream, numberOfItems, archiveUpdateCallback);
     }
 
     /**
@@ -44,10 +45,10 @@ public class OutArchiveImpl implements ISevenZipOutArchive {
     /**
      * {@inheritDoc}
      */
-    public void setLevel(int compressionLevel) {
-        setLevelNative(compressionLevel);
+    public void setLevel(int compressionLevel) throws SevenZipException {
+        nativeSetLevel(compressionLevel);
     }
 
-    private native void setLevelNative(int compressionLevel);
+    private native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 
 }

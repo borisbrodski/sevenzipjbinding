@@ -22,7 +22,7 @@ public interface ISevenZipInArchive {
      * this call no more Methods should be called.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public void close() throws SevenZipException;
 
@@ -31,7 +31,7 @@ public interface ISevenZipInArchive {
      * 
      * @return count of items in archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public int getNumberOfItems() throws SevenZipException;
 
@@ -44,7 +44,7 @@ public interface ISevenZipInArchive {
      *            property to get value of
      * @return value of property <code>propID</code> of item with index <code>index</code>
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public Object getProperty(int index, PropID propID) throws SevenZipException;
 
@@ -59,7 +59,7 @@ public interface ISevenZipInArchive {
      * @return property <code>propID</code> of item with id <code>index</code> in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public String getStringProperty(int index, PropID propID) throws SevenZipException;
 
@@ -81,7 +81,7 @@ public interface ISevenZipInArchive {
      *            extraction callback object. Optional implementation of {@link ICryptoGetTextPassword} is possible.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
             throws SevenZipException;
@@ -94,7 +94,7 @@ public interface ISevenZipInArchive {
      * @param outStream
      *            sequential output stream to get inhalt of the item
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      * @return result status of the extraction
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException;
@@ -109,7 +109,7 @@ public interface ISevenZipInArchive {
      * @param password
      *            password to use
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      * @return result status of the extraction
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
@@ -123,7 +123,7 @@ public interface ISevenZipInArchive {
      * @return value of archive property <code>propID</code>
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -135,7 +135,7 @@ public interface ISevenZipInArchive {
      * @return property <code>propID</code> of archive in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public String getStringArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -144,7 +144,7 @@ public interface ISevenZipInArchive {
      * 
      * @return count of properties of each archive item
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public int getNumberOfProperties() throws SevenZipException;
 
@@ -155,7 +155,7 @@ public interface ISevenZipInArchive {
      *            item property
      * @return information about property of archive item
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public PropertyInfo getPropertyInfo(PropID propID) throws SevenZipException;
 
@@ -164,7 +164,7 @@ public interface ISevenZipInArchive {
      * 
      * @return count of properties of archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public int getNumberOfArchiveProperties() throws SevenZipException;
 
@@ -177,7 +177,7 @@ public interface ISevenZipInArchive {
      *            archive property
      * @return information about archive property
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
     public PropertyInfo getArchivePropertyInfo(PropID propID) throws SevenZipException;
 
