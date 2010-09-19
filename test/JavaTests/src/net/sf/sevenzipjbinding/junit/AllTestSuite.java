@@ -151,7 +151,7 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
  * @author Boris Brodski
  * @version 4.65-1
  */
-public abstract class AllTestSuite extends TestSuite {
+public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //
     /*    */JUnitInitializationTest.class, //
             ArchiveFormatTest.class, //
@@ -322,7 +322,7 @@ public abstract class AllTestSuite extends TestSuite {
         tests.put("07 Compression tests", compressionTests);
     }
 
-    static Test suite() throws Exception { // TODO REACTIVATE
+    public static Test suite() throws Exception {
         String singleBundle = System.getProperty("SINGLEBUNDLE");
         if (singleBundle != null) {
             Class<?>[] classes = tests.get(singleBundle);
