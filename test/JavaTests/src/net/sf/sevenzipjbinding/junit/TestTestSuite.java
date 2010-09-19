@@ -53,8 +53,8 @@ public class TestTestSuite {
                 addTestsFromTestSuite((TestSuite) test, classNameSet);
             } else {
                 String className = test.toString().replace('$', '.');
-                assertFalse("Class '" + className + "' contains in the test suite more that ones", classNameSet
-                        .contains(className));
+                assertFalse("Class '" + className + "' contains in the test suite more that ones",
+                        classNameSet.contains(className));
                 classNameSet.add(className);
             }
         }

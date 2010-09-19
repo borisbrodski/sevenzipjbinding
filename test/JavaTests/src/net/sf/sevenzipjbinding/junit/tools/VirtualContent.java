@@ -353,8 +353,8 @@ public class VirtualContent {
         BigDecimal countOfDirectories;
         if (maxSubdirectories > 1 && directoriesDepth > 1) {
             // count of directories = \[ \frac{maxSubdirectories^{directoriesDepth + 1} - 1}{maxSubdirectories - 1} \]$ (maxSubdirectories > 1)
-            countOfDirectories = BigDecimal.valueOf(maxSubdirectories).pow(directoriesDepth + 1).subtract(
-                    BigDecimal.ONE).divide(BigDecimal.valueOf(maxSubdirectories - 1));
+            countOfDirectories = BigDecimal.valueOf(maxSubdirectories).pow(directoriesDepth + 1)
+                    .subtract(BigDecimal.ONE).divide(BigDecimal.valueOf(maxSubdirectories - 1));
         } else {
             countOfDirectories = BigDecimal.valueOf(Math.max(directoriesDepth, maxSubdirectories));
         }
