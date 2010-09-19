@@ -4,6 +4,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -16,7 +17,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SimpleTest {
+public class SimpleTest extends JUnitNativeTestBase {
     @Test
     public void testname() throws Exception {
         try {
@@ -34,10 +35,14 @@ public class SimpleTest {
             //    net.sf.sevenzipjbinding.IInStream inStream = new net.sf.sevenzipjbinding.impl.RandomAccessFileInStream(new RandomAccessFile("test-2.7z", "r"));
             byteArrayStream.rewind();
             ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream);
-            // ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, inStream);
-            virtualContent.verifyInArchive(inArchive);
-            // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
-            System.out.println("Archive size: " + byteArrayStream.getSize() + " Bytes");
+            try {
+                // ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, inStream);
+                virtualContent.verifyInArchive(inArchive);
+                // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
+                System.out.println("Archive size: " + byteArrayStream.getSize() + " Bytes");
+            } finally {
+                inArchive.close();
+            }
         } catch (net.sf.sevenzipjbinding.SevenZipException sevenZipException) {
             sevenZipException.printStackTraceExtended();
             throw sevenZipException;
