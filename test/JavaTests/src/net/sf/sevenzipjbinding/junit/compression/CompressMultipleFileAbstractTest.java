@@ -170,12 +170,18 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
         ISevenZipOutArchive outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
+        if (archiveFormat != ArchiveFormat.TAR) {
+            outArchive.setLevel(3);
+        }
         virtualContent.updateOutArchive(outArchive, byteArrayStream);
         byteArrayStream.rewind();
         ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
-        virtualContent.verifyInArchive(inArchive);
-        byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
-        inArchive.close();
+        try {
+            virtualContent.verifyInArchive(inArchive);
+            byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
+        } finally {
+            inArchive.close();
+        }
         return virtualContent;
     }
 }
