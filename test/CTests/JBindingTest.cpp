@@ -234,7 +234,7 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
                     break;
                 }
 
-                sleep(1);
+                PlatformSleep(1);
             }
             if (hr) {
                 fatal("Can't start new thread. Error: 0x%08X", hr);

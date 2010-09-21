@@ -37,6 +37,11 @@ inline ThreadId PlatformGetCurrentThreadId() {
 #endif
 }
 
+#ifdef MINGW
+#   define PlatformSleep(seconds) Sleep((seconds) * 1000)
+#else
+#   define PlatformSleep(seconds) sleep(seconds)
+#endif
 
 
 #endif /* BASESYSTEM_H_ */
