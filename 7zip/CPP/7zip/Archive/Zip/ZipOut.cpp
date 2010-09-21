@@ -2,10 +2,9 @@
 
 #include "StdAfx.h"
 
-#include "ZipOut.h"
-#include "Common/StringConvert.h"
 #include "../../Common/OffsetStream.h"
-#include "../../Common/StreamUtils.h"
+
+#include "ZipOut.h"
 
 namespace NArchive {
 namespace NZip {
@@ -115,7 +114,12 @@ void COutArchive::WriteLocalHeader(const CLocalItem &item)
   bool isZip64 = m_IsZip64 || item.PackSize >= 0xFFFFFFFF || item.UnPackSize >= 0xFFFFFFFF;
   
   WriteUInt32(NSignature::kLocalFileHeader);
-  WriteByte(item.ExtractVersion.Version);
+  {
+    Byte ver = item.ExtractVersion.Version;
+    if (isZip64 && ver < NFileHeader::NCompressionMethod::kExtractVersion_Zip64)
+      ver = NFileHeader::NCompressionMethod::kExtractVersion_Zip64;
+    WriteByte(ver);
+  }
   WriteByte(item.ExtractVersion.HostOS);
   WriteUInt16(item.Flags);
   WriteUInt16(item.CompressionMethod);
@@ -162,7 +166,12 @@ void COutArchive::WriteCentralHeader(const CItem &item)
   WriteUInt32(NSignature::kCentralFileHeader);
   WriteByte(item.MadeByVersion.Version);
   WriteByte(item.MadeByVersion.HostOS);
-  WriteByte(item.ExtractVersion.Version);
+  {
+    Byte ver = item.ExtractVersion.Version;
+    if (isZip64 && ver < NFileHeader::NCompressionMethod::kExtractVersion_Zip64)
+      ver = NFileHeader::NCompressionMethod::kExtractVersion_Zip64;
+    WriteByte(ver);
+  }
   WriteByte(item.ExtractVersion.HostOS);
   WriteUInt16(item.Flags);
   WriteUInt16(item.CompressionMethod);
@@ -212,7 +221,7 @@ void COutArchive::WriteCentralHeader(const CItem &item)
     WriteBytes(item.Comment, (UInt32)item.Comment.GetCapacity());
 }
 
-void COutArchive::WriteCentralDir(const CObjectVector<CItem> &items, const CByteBuffer &comment)
+void COutArchive::WriteCentralDir(const CObjectVector<CItem> &items, const CByteBuffer *comment)
 {
   SeekTo(m_BasePosition);
   
@@ -251,10 +260,10 @@ void COutArchive::WriteCentralDir(const CObjectVector<CItem> &items, const CByte
   WriteUInt16((UInt16)(items64 ? 0xFFFF: items.Size()));
   WriteUInt32(cdSize64 ? 0xFFFFFFFF: (UInt32)cdSize);
   WriteUInt32(cdOffset64 ? 0xFFFFFFFF: (UInt32)cdOffset);
-  UInt16 commentSize = (UInt16)comment.GetCapacity();
-  WriteUInt16(commentSize);
+  UInt32 commentSize = (UInt32)(comment ? comment->GetCapacity() : 0);
+  WriteUInt16((UInt16)commentSize);
   if (commentSize > 0)
-    WriteBytes((const Byte *)comment, commentSize);
+    WriteBytes((const Byte *)*comment, commentSize);
   m_OutBuffer.FlushWithCheck();
 }
 

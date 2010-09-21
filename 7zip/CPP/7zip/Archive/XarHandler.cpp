@@ -198,25 +198,28 @@ static bool AddItem(const CXmlItem &item, CObjectVector<CFile> &files, int paren
       file.Sha1IsDefined = ParseSha1(dataItem, "extracted-checksum", file.Sha1);
       // file.packSha1IsDefined = ParseSha1(dataItem, "archived-checksum",  file.packSha1);
       int encodingIndex = dataItem.FindSubTag("encoding");
-      const CXmlItem &encodingItem = dataItem.SubItems[encodingIndex];
-      if (encodingItem.IsTag)
+      if (encodingIndex >= 0)
       {
-        AString s = encodingItem.GetPropertyValue("style");
-        if (s.Length() >= 0)
+        const CXmlItem &encodingItem = dataItem.SubItems[encodingIndex];
+        if (encodingItem.IsTag)
         {
-          AString appl = "application/";
-          if (s.Left(appl.Length()) == appl)
+          AString s = encodingItem.GetPropertyValue("style");
+          if (s.Length() >= 0)
           {
-            s = s.Mid(appl.Length());
-            AString xx = "x-";
-            if (s.Left(xx.Length()) == xx)
+            AString appl = "application/";
+            if (s.Left(appl.Length()) == appl)
             {
-              s = s.Mid(xx.Length());
-              if (s == "gzip")
-                s = METHOD_NAME_ZLIB;
+              s = s.Mid(appl.Length());
+              AString xx = "x-";
+              if (s.Left(xx.Length()) == xx)
+              {
+                s = s.Mid(xx.Length());
+                if (s == "gzip")
+                  s = METHOD_NAME_ZLIB;
+              }
             }
+            file.Method = s;
           }
-          file.Method = s;
         }
       }
     }
@@ -359,7 +362,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
       case kpidMethod:
       {
         UString name;
-        if (ConvertUTF8ToUnicode(item.Method, name))
+        if (!item.Method.IsEmpty() && ConvertUTF8ToUnicode(item.Method, name))
           prop = name;
         break;
       }
@@ -401,12 +404,11 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
   COM_TRY_END
 }
 
-STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
-    Int32 _aTestMode, IArchiveExtractCallback *extractCallback)
+STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
+    Int32 testMode, IArchiveExtractCallback *extractCallback)
 {
   COM_TRY_BEGIN
-  bool testMode = (_aTestMode != 0);
-  bool allFilesMode = (numItems == UInt32(-1));
+  bool allFilesMode = (numItems == (UInt32)-1);
   if (allFilesMode)
     numItems = _files.Size();
   if (numItems == 0)
@@ -474,8 +476,8 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
     RINOK(lps->SetCur());
     CMyComPtr<ISequentialOutStream> realOutStream;
     Int32 askMode = testMode ?
-        NArchive::NExtract::NAskMode::kTest :
-        NArchive::NExtract::NAskMode::kExtract;
+        NExtract::NAskMode::kTest :
+        NExtract::NAskMode::kExtract;
     Int32 index = allFilesMode ? i : indices[i];
     RINOK(extractCallback->GetStream(index, &realOutStream, askMode));
     
@@ -485,19 +487,19 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
       if (item.IsDir)
       {
         RINOK(extractCallback->PrepareOperation(askMode));
-        RINOK(extractCallback->SetOperationResult(NArchive::NExtract::NOperationResult::kOK));
+        RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kOK));
         continue;
       }
     }
 
-    if (!testMode && (!realOutStream))
+    if (!testMode && !realOutStream)
       continue;
     RINOK(extractCallback->PrepareOperation(askMode));
 
     outStreamSha1Spec->SetStream(realOutStream);
     realOutStream.Release();
 
-    Int32 opRes = NArchive::NExtract::NOperationResult::kOK;
+    Int32 opRes = NExtract::NOperationResult::kOK;
     #ifdef XAR_SHOW_RAW
     if (index == _files.Size())
     {
@@ -522,17 +524,17 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
         HRESULT res = S_OK;
         
         ICompressCoder *coder = NULL;
-        if (item.Method == "octet-stream")
+        if (item.Method.IsEmpty() || item.Method == "octet-stream")
           if (item.PackSize == item.Size)
             coder = copyCoder;
           else
-            opRes = NArchive::NExtract::NOperationResult::kUnSupportedMethod;
+            opRes = NExtract::NOperationResult::kUnSupportedMethod;
         else if (item.Method == METHOD_NAME_ZLIB)
           coder = zlibCoder;
         else if (item.Method == "bzip2")
           coder = bzip2Coder;
         else
-          opRes = NArchive::NExtract::NOperationResult::kUnSupportedMethod;
+          opRes = NExtract::NOperationResult::kUnSupportedMethod;
         
         if (coder)
           res = coder->Code(inStream, outStream, NULL, NULL, progress);
@@ -540,32 +542,32 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
         if (res != S_OK)
         {
           if (!outStreamLimSpec->IsFinishedOK())
-            opRes = NArchive::NExtract::NOperationResult::kDataError;
+            opRes = NExtract::NOperationResult::kDataError;
           else if (res != S_FALSE)
             return res;
-          if (opRes == NArchive::NExtract::NOperationResult::kOK)
-            opRes = NArchive::NExtract::NOperationResult::kDataError;
+          if (opRes == NExtract::NOperationResult::kOK)
+            opRes = NExtract::NOperationResult::kDataError;
         }
 
-        if (opRes == NArchive::NExtract::NOperationResult::kOK)
+        if (opRes == NExtract::NOperationResult::kOK)
         {
           if (outStreamLimSpec->IsFinishedOK() &&
               outStreamSha1Spec->GetSize() == item.Size)
           {
             if (!outStreamLimSpec->IsFinishedOK())
             {
-              opRes = NArchive::NExtract::NOperationResult::kDataError;
+              opRes = NExtract::NOperationResult::kDataError;
             }
             else if (item.Sha1IsDefined)
             {
               Byte digest[NCrypto::NSha1::kDigestSize];
               outStreamSha1Spec->Final(digest);
               if (memcmp(digest, item.Sha1, NCrypto::NSha1::kDigestSize) != 0)
-                opRes = NArchive::NExtract::NOperationResult::kCRCError;
+                opRes = NExtract::NOperationResult::kCRCError;
             }
           }
           else
-            opRes = NArchive::NExtract::NOperationResult::kDataError;
+            opRes = NExtract::NOperationResult::kDataError;
         }
       }
     }
@@ -576,7 +578,7 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
   COM_TRY_END
 }
 
-static IInArchive *CreateArc() { return new NArchive::NXar::CHandler;  }
+static IInArchive *CreateArc() { return new NArchive::NXar::CHandler; }
 
 static CArcInfo g_ArcInfo =
   { L"Xar", L"xar", 0, 0xE1, { 'x', 'a', 'r', '!', 0, 0x1C }, 6, false, CreateArc, 0 };

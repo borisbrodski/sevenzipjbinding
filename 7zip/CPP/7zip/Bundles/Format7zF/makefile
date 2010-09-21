@@ -1,23 +1,22 @@
 PROG = 7z.dll
 DEF_FILE = ../../Archive/Archive2.def
-LIBS = $(LIBS) user32.lib oleaut32.lib
 CFLAGS = $(CFLAGS) -I ../../../ \
   -DEXTERNAL_CODECS \
-  -DCOMPRESS_MT \
-  -DCOMPRESS_BZIP2_MT \
-  -DCOMPRESS_MF_MT \
-  -D_7ZIP_LARGE_PAGES \
+
+!IFNDEF UNDER_CE
+CFLAGS = $(CFLAGS) -D_7ZIP_LARGE_PAGES
+!ENDIF
 
 COMMON_OBJS = \
   $O\CRC.obj \
   $O\IntToString.obj \
-  $O\NewHandler.obj \
   $O\MyMap.obj \
   $O\MyString.obj \
+  $O\MyVector.obj \
   $O\MyXml.obj \
+  $O\NewHandler.obj \
   $O\StringConvert.obj \
   $O\StringToInt.obj \
-  $O\MyVector.obj \
   $O\UTFConvert.obj \
   $O\Wildcard.obj \
 
@@ -32,16 +31,16 @@ WIN_OBJS = \
   $O\Time.obj \
 
 7ZIP_COMMON_OBJS = \
-  $O\InBuffer.obj \
-  $O\InOutTempBuffer.obj \
   $O\CreateCoder.obj \
   $O\CWrappers.obj \
+  $O\InBuffer.obj \
+  $O\InOutTempBuffer.obj \
   $O\FilterCoder.obj \
   $O\LimitedStreams.obj \
   $O\LockedStream.obj \
+  $O\MemBlocks.obj \
   $O\MethodId.obj \
   $O\MethodProps.obj \
-  $O\MemBlocks.obj \
   $O\OffsetStream.obj \
   $O\OutBuffer.obj \
   $O\OutMemStream.obj \
@@ -55,23 +54,29 @@ WIN_OBJS = \
 AR_OBJS = \
   $O\ArchiveExports.obj \
   $O\DllExports2.obj \
+  $O\ApmHandler.obj \
   $O\ArjHandler.obj \
   $O\Bz2Handler.obj \
   $O\CpioHandler.obj \
   $O\DebHandler.obj \
+  $O\DeflateProps.obj \
   $O\DmgHandler.obj \
   $O\ElfHandler.obj \
   $O\FatHandler.obj \
+  $O\FlvHandler.obj \
   $O\GzHandler.obj \
   $O\LzhHandler.obj \
   $O\LzmaHandler.obj \
   $O\MachoHandler.obj \
   $O\MbrHandler.obj \
+  $O\MslzHandler.obj \
   $O\MubHandler.obj \
   $O\NtfsHandler.obj \
   $O\PeHandler.obj \
+  $O\PpmdHandler.obj \
   $O\RpmHandler.obj \
   $O\SplitHandler.obj \
+  $O\SwfHandler.obj \
   $O\VhdHandler.obj \
   $O\XarHandler.obj \
   $O\XzHandler.obj \
@@ -222,6 +227,7 @@ COMPRESS_OBJS = \
   $O\PpmdDecoder.obj \
   $O\PpmdEncoder.obj \
   $O\PpmdRegister.obj \
+  $O\PpmdZip.obj \
   $O\QuantumDecoder.obj \
   $O\Rar1Decoder.obj \
   $O\Rar2Decoder.obj \
@@ -230,6 +236,7 @@ COMPRESS_OBJS = \
   $O\RarCodecsRegister.obj \
   $O\ShrinkDecoder.obj \
   $O\ZlibDecoder.obj \
+  $O\ZlibEncoder.obj \
   $O\ZDecoder.obj \
 
 CRYPTO_OBJS = \
@@ -250,12 +257,12 @@ CRYPTO_OBJS = \
 C_OBJS = \
   $O\7zBuf2.obj \
   $O\7zStream.obj \
-  $O\Aes.obj \
   $O\Alloc.obj \
   $O\Bra.obj \
   $O\Bra86.obj \
   $O\BraIA64.obj \
   $O\BwtSort.obj \
+  $O\CpuArch.obj \
   $O\Delta.obj \
   $O\HuffEnc.obj \
   $O\LzFind.obj \
@@ -265,6 +272,12 @@ C_OBJS = \
   $O\LzmaDec.obj \
   $O\LzmaEnc.obj \
   $O\MtCoder.obj \
+  $O\Ppmd7.obj \
+  $O\Ppmd7Dec.obj \
+  $O\Ppmd7Enc.obj \
+  $O\Ppmd8.obj \
+  $O\Ppmd8Dec.obj \
+  $O\Ppmd8Enc.obj \
   $O\Sha256.obj \
   $O\Sort.obj \
   $O\Threads.obj \
@@ -274,7 +287,8 @@ C_OBJS = \
   $O\XzEnc.obj \
   $O\XzIn.obj \
 
-!include "../../Crc2.mak"
+!include "../../Aes.mak"
+!include "../../Crc.mak"
 
 OBJS = \
   $O\StdAfx.obj \
@@ -299,7 +313,7 @@ OBJS = \
   $(COMPRESS_OBJS) \
   $(CRYPTO_OBJS) \
   $(C_OBJS) \
-  $(CRC_OBJS) \
+  $(ASM_OBJS) \
   $O\resource.res
 
 
@@ -350,4 +364,4 @@ $(CRYPTO_OBJS): ../../Crypto/$(*B).cpp
 $(C_OBJS): ../../../../C/$(*B).c
 	$(COMPL_O2)
 
-!include "../../Crc.mak"
+!include "../../Asm.mak"

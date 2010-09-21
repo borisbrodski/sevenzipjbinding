@@ -27,7 +27,13 @@ static const wchar_t *kDefaultMethodName = kLZMAMethodName;
 
 static const UInt32 kLzmaAlgorithmX5 = 1;
 static const wchar_t *kLzmaMatchFinderForHeaders = L"BT2";
-static const UInt32 kDictionaryForHeaders = 1 << 20;
+static const UInt32 kDictionaryForHeaders =
+  #ifdef UNDER_CE
+  1 << 18
+  #else
+  1 << 20
+  #endif
+;
 static const UInt32 kNumFastBytesForHeaders = 273;
 static const UInt32 kAlgorithmForHeaders = kLzmaAlgorithmX5;
 
@@ -45,7 +51,7 @@ HRESULT CHandler::SetCompressionMethod(
     CCompressionMethodMode &headerMethod)
 {
   HRESULT res = SetCompressionMethod(methodMode, _methods
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
   , _numThreads
   #endif
   );
@@ -85,8 +91,8 @@ HRESULT CHandler::SetCompressionMethod(
     }
     headerMethodInfoVector.Add(oneMethodInfo);
     HRESULT res = SetCompressionMethod(headerMethod, headerMethodInfoVector
-      #ifdef COMPRESS_MT
-      ,1
+      #ifndef _7ZIP_ST
+      , 1
       #endif
     );
     RINOK(res);
@@ -97,7 +103,7 @@ HRESULT CHandler::SetCompressionMethod(
 HRESULT CHandler::SetCompressionMethod(
     CCompressionMethodMode &methodMode,
     CObjectVector<COneMethodInfo> &methodsInfo
-    #ifdef COMPRESS_MT
+    #ifndef _7ZIP_ST
     , UInt32 numThreads
     #endif
     )
@@ -116,7 +122,7 @@ HRESULT CHandler::SetCompressionMethod(
   {
     COneMethodInfo &oneMethodInfo = methodsInfo[i];
     SetCompressionMethod2(oneMethodInfo
-      #ifdef COMPRESS_MT
+      #ifndef _7ZIP_ST
       , numThreads
       #endif
       );
@@ -321,7 +327,7 @@ STDMETHODIMP CHandler::UpdateItems(ISequentialOutStream *outStream, UInt32 numIt
 
   CCompressionMethodMode methodMode, headerMethod;
   RINOK(SetCompressionMethod(methodMode, headerMethod));
-  #ifdef COMPRESS_MT
+  #ifndef _7ZIP_ST
   methodMode.NumThreads = _numThreads;
   headerMethod.NumThreads = 1;
   #endif

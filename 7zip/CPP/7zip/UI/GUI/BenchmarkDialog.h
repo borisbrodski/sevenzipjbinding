@@ -1,18 +1,16 @@
 // BenchmarkDialog.h
 
-#ifndef __BENCHMARKDIALOG_H
-#define __BENCHMARKDIALOG_H
+#ifndef __BENCHMARK_DIALOG_H
+#define __BENCHMARK_DIALOG_H
+
+#include "Windows/Synchronization.h"
+#include "Windows/Control/ComboBox.h"
+
+#include "../Common/Bench.h"
+
+#include "../FileManager/DialogSize.h"
 
 #include "BenchmarkDialogRes.h"
-
-#include "Windows/Control/Dialog.h"
-#include "Windows/Control/ComboBox.h"
-#include "Windows/Synchronization.h"
-#include "../../Compress/LZMA_Alone/LzmaBench.h"
-
-#ifdef EXTERNAL_LZMA
-#include "../Common/LoadCodecs.h"
-#endif
 
 struct CBenchInfo2 : public CBenchInfo
 {
@@ -116,16 +114,22 @@ class CBenchmarkDialog:
   UInt32 OnChangeDictionary();
   void OnChangeSettings();
 public:
-  CProgressSyncInfo _syncInfo;
+  CProgressSyncInfo Sync;
 
   CBenchmarkDialog(): _timer(0) {}
-  INT_PTR Create(HWND wndParent = 0) { return CModalDialog::Create(IDD_DIALOG_BENCHMARK, wndParent); }
+  INT_PTR Create(HWND wndParent = 0)
+  {
+    BIG_DIALOG_SIZE(332, 228);
+    return CModalDialog::Create(SIZED_DIALOG(IDD_DIALOG_BENCHMARK), wndParent);
+  }
+  void MessageBoxError(LPCWSTR message)
+  {
+    MessageBoxW(*this, message, L"7-Zip", MB_ICONERROR);
+  }
 };
 
 HRESULT Benchmark(
-  #ifdef EXTERNAL_LZMA
-  CCodecs *codecs,
-  #endif
-  UInt32 dictionarySize, UInt32 numThreads);
+    DECL_EXTERNAL_CODECS_LOC_VARS
+    UInt32 numThreads, UInt32 dictionarySize, HWND hwndParent = NULL);
 
 #endif

@@ -1,5 +1,4 @@
 PROG = 7zS.sfx
-LIBS = $(LIBS) user32.lib oleaut32.lib shell32.lib ole32.lib comctl32.lib
 CFLAGS = $(CFLAGS) -I ../../../ \
   -DNO_REGISTRY \
   -DEXTRACT_ONLY \
@@ -87,16 +86,20 @@ COMPRESS_OBJS = \
   $O\BcjRegister.obj \
   $O\CopyCoder.obj \
   $O\CopyRegister.obj \
+  $O\Lzma2Decoder.obj \
+  $O\Lzma2Register.obj \
   $O\LzmaDecoder.obj \
   $O\LzmaRegister.obj \
 
 C_OBJS = \
   $O\Alloc.obj \
   $O\Bra86.obj \
+  $O\CpuArch.obj \
+  $O\Lzma2Dec.obj \
   $O\LzmaDec.obj \
   $O\Threads.obj \
 
-!include "../../Crc2.mak"
+!include "../../Crc.mak"
 
 OBJS = \
   $O\StdAfx.obj \
@@ -112,7 +115,7 @@ OBJS = \
   $(COMPRESS_OBJS) \
   $O\MyMessages.obj \
   $(C_OBJS) \
-  $(CRC_OBJS) \
+  $(ASM_OBJS) \
   $O\resource.res
 
 
@@ -147,4 +150,4 @@ $O\MyMessages.obj: ../../UI/Explorer/MyMessages.cpp
 $(C_OBJS): ../../../../C/$(*B).c
 	$(COMPL_O2)
 
-!include "../../Crc.mak"
+!include "../../Asm.mak"

@@ -1,5 +1,5 @@
 PROG = 7zCon.sfx
-LIBS = $(LIBS) user32.lib oleaut32.lib
+MY_CONSOLE = 1
 CFLAGS = $(CFLAGS) -I ../../../ \
   -DEXTRACT_ONLY \
   -DNO_READ_FROM_CODER \
@@ -38,10 +38,11 @@ WIN_OBJS = \
   $O\FileName.obj \
   $O\PropVariant.obj \
   $O\PropVariantConversions.obj \
-  $O\Synchronization.obj
+  $O\Synchronization.obj \
 
 7ZIP_COMMON_OBJS = \
   $O\CreateCoder.obj \
+  $O\CWrappers.obj \
   $O\FilePathAutoRename.obj \
   $O\FileStreams.obj \
   $O\InBuffer.obj \
@@ -103,15 +104,18 @@ CRYPTO_OBJS = \
   $O\MyAes.obj \
 
 C_OBJS = \
-  $O\Aes.obj \
   $O\Alloc.obj \
   $O\Bra86.obj \
+  $O\CpuArch.obj \
   $O\Lzma2Dec.obj \
   $O\LzmaDec.obj \
+  $O\Ppmd7.obj \
+  $O\Ppmd7Dec.obj \
   $O\Sha256.obj \
   $O\Threads.obj \
 
-!include "../../Crc2.mak"
+!include "../../Aes.mak"
+!include "../../Crc.mak"
 
 OBJS = \
   $O\StdAfx.obj \
@@ -126,7 +130,7 @@ OBJS = \
   $(COMPRESS_OBJS) \
   $(CRYPTO_OBJS) \
   $(C_OBJS) \
-  $(CRC_OBJS) \
+  $(ASM_OBJS) \
   $O\resource.res
 
 
@@ -157,4 +161,4 @@ $(CRYPTO_OBJS): ../../Crypto/$(*B).cpp
 $(C_OBJS): ../../../../C/$(*B).c
 	$(COMPL_O2)
 
-!include "../../Crc.mak"
+!include "../../Asm.mak"

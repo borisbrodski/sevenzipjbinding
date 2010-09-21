@@ -1,18 +1,20 @@
 // SettingsPage.cpp
 
 #include "StdAfx.h"
-#include "SettingsPageRes.h"
-#include "SettingsPage.h"
 
 #include "Common/StringConvert.h"
 
-#include "Windows/Defs.h"
+#ifndef UNDER_CE
 #include "Windows/MemoryLock.h"
+#endif
 
-#include "RegistryUtils.h"
 #include "HelpUtils.h"
 #include "LangUtils.h"
 #include "ProgramLocation.h"
+#include "RegistryUtils.h"
+#include "SettingsPage.h"
+
+#include "SettingsPageRes.h"
 
 using namespace NWindows;
 
@@ -23,10 +25,10 @@ static CIDLangPair kIDLangPairs[] =
   { IDC_SETTINGS_SHOW_SYSTEM_MENU, 0x03010410},
   { IDC_SETTINGS_FULL_ROW, 0x03010420},
   { IDC_SETTINGS_SHOW_GRID, 0x03010421},
+  { IDC_SETTINGS_SINGLE_CLICK, 0x03010422},
+  // { IDC_SETTINGS_UNDERLINE, 0x03010423}
   { IDC_SETTINGS_ALTERNATIVE_SELECTION, 0x03010430},
   { IDC_SETTINGS_LARGE_PAGES, 0x03010440}
-  // { IDC_SETTINGS_SINGLE_CLICK, 0x03010422},
-  // { IDC_SETTINGS_UNDERLINE, 0x03010423}
 };
 
 static LPCWSTR kEditTopic = L"FM/options.htm#settings";
@@ -48,7 +50,7 @@ bool CSettingsPage::OnInit()
     CheckButton(IDC_SETTINGS_LARGE_PAGES, ReadLockMemoryEnable());
   else
     EnableItem(IDC_SETTINGS_LARGE_PAGES, false);
-  // CheckButton(IDC_SETTINGS_SINGLE_CLICK, ReadSingleClick());
+  CheckButton(IDC_SETTINGS_SINGLE_CLICK, ReadSingleClick());
   // CheckButton(IDC_SETTINGS_UNDERLINE, ReadUnderline());
 
   // EnableSubItems();
@@ -72,14 +74,16 @@ LONG CSettingsPage::OnApply()
   SaveFullRow(IsButtonCheckedBool(IDC_SETTINGS_FULL_ROW));
   SaveShowGrid(IsButtonCheckedBool(IDC_SETTINGS_SHOW_GRID));
   SaveAlternativeSelection(IsButtonCheckedBool(IDC_SETTINGS_ALTERNATIVE_SELECTION));
+  #ifndef UNDER_CE
   if (IsLargePageSupported())
   {
     bool enable = IsButtonCheckedBool(IDC_SETTINGS_LARGE_PAGES);
     NSecurity::EnableLockMemoryPrivilege(enable);
     SaveLockMemoryEnable(enable);
   }
+  #endif
   
-  // SaveSingleClick(IsButtonCheckedBool(IDC_SETTINGS_SINGLE_CLICK));
+  SaveSingleClick(IsButtonCheckedBool(IDC_SETTINGS_SINGLE_CLICK));
   // SaveUnderline(IsButtonCheckedBool(IDC_SETTINGS_UNDERLINE));
 
   return PSNRET_NOERROR;
@@ -94,8 +98,8 @@ bool CSettingsPage::OnButtonClicked(int buttonID, HWND buttonHWND)
 {
   switch(buttonID)
   {
-    /*
     case IDC_SETTINGS_SINGLE_CLICK:
+    /*
       EnableSubItems();
       break;
     */

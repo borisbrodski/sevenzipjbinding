@@ -1,7 +1,9 @@
 /* Threads.c -- multithreading library
-2009-03-27 : Igor Pavlov : Public domain */
+2009-09-20 : Igor Pavlov : Public domain */
 
+#ifndef _WIN32_WCE
 #include <process.h>
+#endif
 
 #include "Threads.h"
 
@@ -29,8 +31,11 @@ WRes Thread_Create(CThread *p, THREAD_FUNC_TYPE func, LPVOID param)
 {
   unsigned threadId; /* Windows Me/98/95: threadId parameter may not be NULL in _beginthreadex/CreateThread functions */
   *p =
-    /* CreateThread(0, 0, startAddress, param, 0, &threadId); */
+    #ifdef UNDER_CE
+    CreateThread(0, 0, func, param, 0, &threadId);
+    #else
     (HANDLE)_beginthreadex(NULL, 0, func, param, 0, &threadId);
+    #endif
     /* maybe we must use errno here, but probably GetLastError() is also OK. */
   return HandleToWRes(*p);
 }
@@ -65,11 +70,15 @@ WRes Semaphore_Release1(CSemaphore *p) { return Semaphore_ReleaseN(p, 1); }
 WRes CriticalSection_Init(CCriticalSection *p)
 {
   /* InitializeCriticalSection can raise only STATUS_NO_MEMORY exception */
+  #ifdef _MSC_VER
   __try
+  #endif
   {
     InitializeCriticalSection(p);
     /* InitializeCriticalSectionAndSpinCount(p, 0); */
   }
+  #ifdef _MSC_VER
   __except (EXCEPTION_EXECUTE_HANDLER) { return 1; }
+  #endif
   return 0;
 }

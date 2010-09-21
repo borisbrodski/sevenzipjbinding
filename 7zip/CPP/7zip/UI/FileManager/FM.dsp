@@ -404,18 +404,6 @@ SOURCE=.\PanelSplitFile.cpp
 # Begin Group "Options"
 
 # PROP Default_Filter ""
-# Begin Group "Settings"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\SettingsPage.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SettingsPage.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\EditPage.cpp
@@ -423,6 +411,14 @@ SOURCE=.\EditPage.cpp
 # Begin Source File
 
 SOURCE=.\EditPage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FoldersPage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FoldersPage.h
 # End Source File
 # Begin Source File
 
@@ -434,11 +430,23 @@ SOURCE=.\LangPage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\PluginsPage.cpp
+SOURCE=.\MenuPage.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\PluginsPage.h
+SOURCE=.\MenuPage.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\OptionsDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsPage.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SettingsPage.h
 # End Source File
 # Begin Source File
 
@@ -449,33 +457,6 @@ SOURCE=.\SystemPage.cpp
 SOURCE=.\SystemPage.h
 # End Source File
 # End Group
-# Begin Group "Password"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\PasswordDialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PasswordDialog.h
-# End Source File
-# End Group
-# Begin Group "Progress"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\ProgressDialog2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ProgressDialog2.h
-# End Source File
-# End Group
-# Begin Group "About"
-
-# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\AboutDialog.cpp
@@ -484,19 +465,14 @@ SOURCE=.\AboutDialog.cpp
 
 SOURCE=.\AboutDialog.h
 # End Source File
-# End Group
-# Begin Group "Split"
-
-# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\SplitDialog.cpp
+SOURCE=.\BrowseDialog.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\SplitDialog.h
+SOURCE=.\BrowseDialog.h
 # End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\ComboDialog.cpp
@@ -512,6 +488,10 @@ SOURCE=CopyDialog.cpp
 # Begin Source File
 
 SOURCE=CopyDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DialogSize.h
 # End Source File
 # Begin Source File
 
@@ -536,6 +516,30 @@ SOURCE=OverwriteDialog.cpp
 # Begin Source File
 
 SOURCE=OverwriteDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\PasswordDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PasswordDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ProgressDialog2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ProgressDialog2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SplitDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SplitDialog.h
 # End Source File
 # End Group
 # Begin Group "FM Common"
@@ -648,12 +652,66 @@ SOURCE=..\..\..\..\C\7zCrc.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\C\7zCrcOpt.c
+
+!IF  "$(CFG)" == "FM - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 ReleaseU"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 DebugU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\C\Alloc.c
 # SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\..\C\Alloc.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\CpuArch.c
+
+!IF  "$(CFG)" == "FM - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 ReleaseU"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "FM - Win32 DebugU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\CpuArch.h
 # End Source File
 # Begin Source File
 
@@ -855,6 +913,10 @@ SOURCE=..\..\..\Windows\FileIO.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\Windows\FileMapping.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\Windows\FileName.cpp
 # End Source File
 # Begin Source File
@@ -904,6 +966,10 @@ SOURCE=..\..\..\Windows\Net.cpp
 # Begin Source File
 
 SOURCE=..\..\..\Windows\Net.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Windows\Process.cpp
 # End Source File
 # Begin Source File
 
@@ -1190,10 +1256,6 @@ SOURCE=..\Common\ExtractMode.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\Common\HandlerLoader.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\Common\IFileExtractCallback.h
 # End Source File
 # Begin Source File
@@ -1333,6 +1395,26 @@ SOURCE=..\Agent\UpdateCallbackAgent.cpp
 SOURCE=..\Agent\UpdateCallbackAgent.h
 # End Source File
 # End Group
+# Begin Group "Explorer"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\Explorer\ContextMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\Explorer\ContextMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\Explorer\RegistryContextMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\Explorer\RegistryContextMenu.h
+# End Source File
+# End Group
 # End Group
 # Begin Group "Compress"
 
@@ -1433,10 +1515,6 @@ SOURCE=.\OpenCallback.cpp
 # Begin Source File
 
 SOURCE=.\OpenCallback.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\OptionsDialog.cpp
 # End Source File
 # Begin Source File
 

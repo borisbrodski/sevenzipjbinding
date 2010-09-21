@@ -55,8 +55,9 @@ static HRESULT DecompressArchive(
   UString outDir = options.OutputDir;
   outDir.Replace(L"*", GetCorrectFsPath(arc.DefaultName));
   #ifdef _WIN32
-  outDir.TrimRight();
-  outDir = GetCorrectFullFsPath(outDir);
+  // GetCorrectFullFsPath doesn't like "..".
+  // outDir.TrimRight();
+  // outDir = GetCorrectFullFsPath(outDir);
   #endif
 
   if (!outDir.IsEmpty())
@@ -78,7 +79,7 @@ static HRESULT DecompressArchive(
       removePathParts,
       packSize);
 
-  #ifdef COMPRESS_MT
+  #if !defined(_7ZIP_ST) && !defined(_SFX)
   RINOK(SetProperties(archive, options.Properties));
   #endif
 

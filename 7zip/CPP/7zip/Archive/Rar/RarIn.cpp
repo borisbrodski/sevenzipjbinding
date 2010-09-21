@@ -70,7 +70,7 @@ bool CInArchive::ReadBytesAndTestSize(void *data, UInt32 size)
 {
   if (m_CryptoMode)
   {
-    const Byte *bufData = (const Byte *)m_DecryptedData;
+    const Byte *bufData = m_DecryptedDataAligned;
     UInt32 bufSize = m_DecryptedDataSize;
     UInt32 i;
     for (i = 0; i < size && m_CryptoPos < bufSize; i++)
@@ -372,8 +372,9 @@ void CInArchive::AddToSeekValue(UInt64 addValue)
   m_Position += addValue;
 }
 
-HRESULT CInArchive::GetNextItem(CItemEx &item, ICryptoGetTextPassword *getTextPassword)
+HRESULT CInArchive::GetNextItem(CItemEx &item, ICryptoGetTextPassword *getTextPassword, bool &decryptionError)
 {
+  decryptionError = false;
   if (m_SeekOnArchiveComment)
     SkipArchiveComment();
   for (;;)
@@ -422,13 +423,15 @@ HRESULT CInArchive::GetNextItem(CItemEx &item, ICryptoGetTextPassword *getTextPa
       const UInt32 kDecryptedBufferSize = (1 << 12);
       if (m_DecryptedData.GetCapacity() == 0)
       {
-        m_DecryptedData.SetCapacity(kDecryptedBufferSize);
+        const UInt32 kAlign = 16;
+        m_DecryptedData.SetCapacity(kDecryptedBufferSize + kAlign);
+        m_DecryptedDataAligned = (Byte *)((ptrdiff_t)((Byte *)m_DecryptedData + kAlign - 1) & ~(ptrdiff_t)(kAlign - 1));
       }
       RINOK(m_RarAES->Init());
       size_t decryptedDataSizeT = kDecryptedBufferSize;
-      RINOK(ReadStream(m_Stream, (Byte *)m_DecryptedData, &decryptedDataSizeT));
+      RINOK(ReadStream(m_Stream, m_DecryptedDataAligned, &decryptedDataSizeT));
       m_DecryptedDataSize = (UInt32)decryptedDataSizeT;
-      m_DecryptedDataSize = m_RarAES->Filter((Byte *)m_DecryptedData, m_DecryptedDataSize);
+      m_DecryptedDataSize = m_RarAES->Filter(m_DecryptedDataAligned, m_DecryptedDataSize);
 
       m_CryptoMode = true;
       m_CryptoPos = 0;
@@ -469,8 +472,11 @@ HRESULT CInArchive::GetNextItem(CItemEx &item, ICryptoGetTextPassword *getTextPa
       AddToSeekValue(item.PackSize);  // m_Position points to next header;
       return S_OK;
     }
-    if (m_CryptoMode && m_BlockHeader.HeadSize > (1 << 12))
-      return E_FAIL; // it's for bad passwords
+    if (m_CryptoMode && m_BlockHeader.HeadSize > (1 << 10))
+    {
+      decryptionError = true;
+      return S_FALSE;
+    }
     if ((m_BlockHeader.Flags & NHeader::NBlock::kLongBlock) != 0)
     {
       m_FileHeaderData.EnsureCapacity(7 + 4);
@@ -480,7 +486,10 @@ HRESULT CInArchive::GetNextItem(CItemEx &item, ICryptoGetTextPassword *getTextPa
       UInt32 dataSize = ReadUInt32();
       AddToSeekValue(dataSize);
       if (m_CryptoMode && dataSize > (1 << 27))
-        return E_FAIL; // it's for bad passwords
+      {
+        decryptionError = true;
+        return S_FALSE;
+      }
       m_CryptoPos = m_BlockHeader.HeadSize;
     }
     else

@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /Gr /MT /W3 /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /D "NO_REGISTRY" /D "COMPRESS_MF_MT" /D "COMPRESS_MT" /D "COMPRESS_BZIP2_MT" /D "EXTERNAL_CODECS" /D "_7ZIP_LARGE_PAGES" /D "_LZMA_PROB32_" /FAcs /Yu"StdAfx.h" /FD /c
+# ADD CPP /nologo /Gr /MT /W3 /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /D "NO_REGISTRY" /D "EXTERNAL_CODECS" /D "_7ZIP_LARGE_PAGES" /FAcs /Yu"StdAfx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
@@ -70,7 +70,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /YX /FD /GZ /c
-# ADD CPP /nologo /Gr /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\..\SDK" /I "..\..\..\\" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /D "NO_REGISTRY" /D "COMPRESS_MF_MT" /D "COMPRESS_MT" /D "COMPRESS_BZIP2_MT" /D "EXTERNAL_CODECS" /D "_7ZIP_LARGE_PAGES" /D "_LZMA_PROB32" /Yu"StdAfx.h" /FD /GZ /c
+# ADD CPP /nologo /Gr /MTd /W3 /Gm /GX /ZI /Od /I "..\..\..\..\SDK" /I "..\..\..\\" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "MY7Z_EXPORTS" /D "NO_REGISTRY" /D "EXTERNAL_CODECS" /D "_7ZIP_LARGE_PAGES" /Yu"StdAfx.h" /FD /GZ /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
@@ -234,6 +234,10 @@ SOURCE=..\..\..\Common\CRC.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\Common\DynamicBuffer.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\Common\IntToString.cpp
 # End Source File
 # Begin Source File
@@ -345,15 +349,17 @@ SOURCE=..\..\..\Common\Wildcard.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=..\..\Compress\PpmdContext.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\Compress\PpmdDecode.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\Compress\PpmdDecoder.cpp
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -361,11 +367,17 @@ SOURCE=..\..\Compress\PpmdDecoder.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\Compress\PpmdEncode.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\Compress\PpmdEncoder.cpp
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -430,6 +442,16 @@ SOURCE=..\..\Compress\Rar2Decoder.h
 # Begin Source File
 
 SOURCE=..\..\Compress\Rar3Decoder.cpp
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -541,6 +563,14 @@ SOURCE=..\..\Compress\ImplodeHuffmanDecoder.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Compress\PpmdZip.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\PpmdZip.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Compress\ShrinkDecoder.cpp
 # End Source File
 # Begin Source File
@@ -554,6 +584,14 @@ SOURCE=..\..\Compress\ZlibDecoder.cpp
 # Begin Source File
 
 SOURCE=..\..\Compress\ZlibDecoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\ZlibEncoder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\ZlibEncoder.h
 # End Source File
 # End Group
 # Begin Group "7z Compress"
@@ -1304,6 +1342,11 @@ SOURCE=..\..\..\..\C\BwtSort.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\C\CpuArch.c
+# SUBTRACT CPP /YX /Yc /Yu
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\C\CpuArch.h
 # End Source File
 # Begin Source File
@@ -1467,6 +1510,114 @@ SOURCE=..\..\..\..\C\MtCoder.c
 # Begin Source File
 
 SOURCE=..\..\..\..\C\MtCoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd7.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd7.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd7Dec.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd7Enc.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd8.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd8.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd8Dec.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Ppmd8Enc.c
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -2163,6 +2314,10 @@ SOURCE=..\..\Archive\Udf\UdfRegister.cpp
 # End Group
 # Begin Source File
 
+SOURCE=..\..\Archive\ApmHandler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Archive\ArjHandler.cpp
 # End Source File
 # Begin Source File
@@ -2179,6 +2334,14 @@ SOURCE=..\..\Archive\DebHandler.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Archive\DeflateProps.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Archive\DeflateProps.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Archive\DmgHandler.cpp
 # End Source File
 # Begin Source File
@@ -2188,6 +2351,10 @@ SOURCE=..\..\Archive\ElfHandler.cpp
 # Begin Source File
 
 SOURCE=..\..\Archive\FatHandler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Archive\FlvHandler.cpp
 # End Source File
 # Begin Source File
 
@@ -2215,6 +2382,10 @@ SOURCE=..\..\Archive\MbrHandler.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Archive\MslzHandler.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Archive\MubHandler.cpp
 # End Source File
 # Begin Source File
@@ -2227,11 +2398,29 @@ SOURCE=..\..\Archive\PeHandler.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Archive\PpmdHandler.cpp
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Archive\RpmHandler.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\Archive\SplitHandler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Archive\SwfHandler.cpp
 # End Source File
 # Begin Source File
 
@@ -2348,6 +2537,78 @@ SOURCE=..\..\..\Windows\Time.cpp
 # Begin Source File
 
 SOURCE=..\..\..\Windows\Time.h
+# End Source File
+# End Group
+# Begin Group "Asm"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\..\Asm\x86\7zAsm.asm
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\Asm\x86\7zCrcOpt.asm
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# Begin Custom Build
+OutDir=.\Release
+InputPath=..\..\..\..\Asm\x86\7zCrcOpt.asm
+InputName=7zCrcOpt
+
+"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	ml.exe -c -Fo$(OutDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# Begin Custom Build
+OutDir=.\Debug
+InputPath=..\..\..\..\Asm\x86\7zCrcOpt.asm
+InputName=7zCrcOpt
+
+"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	ml.exe -c -omf -Fo$(OutDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\Asm\x86\AesOpt.asm
+
+!IF  "$(CFG)" == "7z - Win32 Release"
+
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+OutDir=.\Release
+InputPath=..\..\..\..\Asm\x86\AesOpt.asm
+InputName=AesOpt
+
+"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	ml.exe -c -Fo$(OutDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "7z - Win32 Debug"
+
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+OutDir=.\Debug
+InputPath=..\..\..\..\Asm\x86\AesOpt.asm
+InputName=AesOpt
+
+"$(OutDir)\$(InputName).obj" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	ml.exe -c -omf -WX -W3 -Fo$(OutDir)\$(InputName).obj $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
 # End Source File
 # End Group
 # End Target

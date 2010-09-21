@@ -2,7 +2,7 @@
 ;Defines
 
 !define VERSION_MAJOR 9
-!define VERSION_MINOR 04
+!define VERSION_MINOR 13
 !define VERSION_POSTFIX_FULL " beta"
 !ifdef WIN64
 !ifdef IA64
@@ -54,7 +54,7 @@
   ;Compressor
 !ifndef NO_COMPRESSION
   SetCompressor /solid lzma
-  SetCompressorFilter 1
+  ; SetCompressorFilter 1
 !ifdef IA64
   SetCompressorDictSize 8
 !else
@@ -216,6 +216,7 @@ Section
   File it.txt
   File ja.txt
   File ka.txt
+  File kk.txt
   File ko.txt
   File ku.txt
   File ku-ckb.txt
@@ -247,6 +248,7 @@ Section
   File th.txt
   File tr.txt
   File tt.txt
+  File ug.txt
   File uk.txt
   File uz.txt
   File va.txt
@@ -405,6 +407,7 @@ Section "Uninstall"
   Delete $INSTDIR\Lang\it.txt
   Delete $INSTDIR\Lang\ja.txt
   Delete $INSTDIR\Lang\ka.txt
+  Delete $INSTDIR\Lang\kk.txt
   Delete $INSTDIR\Lang\ko.txt
   Delete $INSTDIR\Lang\ku.txt
   Delete $INSTDIR\Lang\ku-ckb.txt
@@ -437,6 +440,7 @@ Section "Uninstall"
   Delete $INSTDIR\Lang\th.txt
   Delete $INSTDIR\Lang\tr.txt
   Delete $INSTDIR\Lang\tt.txt
+  Delete $INSTDIR\Lang\ug.txt
   Delete $INSTDIR\Lang\uk.txt
   Delete $INSTDIR\Lang\uz.txt
   Delete $INSTDIR\Lang\va.txt

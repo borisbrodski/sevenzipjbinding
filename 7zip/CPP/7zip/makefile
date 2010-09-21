@@ -8,4 +8,3 @@ $(DIRS):
 	cd $(@D)
 	$(MAKE) -nologo
 	cd ..
-

@@ -2,6 +2,9 @@
 
 #include "StdAfx.h"
 
+#include "../../../../C/Alloc.h"
+
+#include "Common/Buffer.h"
 #include "Common/ComTry.h"
 #include "Common/Defs.h"
 #include "Common/IntToString.h"
@@ -12,6 +15,7 @@
 #include "Windows/Time.h"
 
 #include "../../Common/ProgressUtils.h"
+#include "../../Common/StreamUtils.h"
 
 #include "../../Compress/CopyCoder.h"
 #include "../../Compress/DeflateDecoder.h"
@@ -229,17 +233,14 @@ STDMETHODIMP CHandler::Open(IInStream *inStream,
   HRESULT res = S_FALSE;
   CInArchive archive;
   CMyComPtr<IArchiveOpenVolumeCallback> openVolumeCallback;
-  {
-    CMyComPtr<IArchiveOpenCallback> openArchiveCallbackWrap = callback;
-    openArchiveCallbackWrap.QueryInterface(IID_IArchiveOpenVolumeCallback, &openVolumeCallback);
-  }
-
+  callback->QueryInterface(IID_IArchiveOpenVolumeCallback, (void **)&openVolumeCallback);
+  
   CMyComPtr<IInStream> nextStream = inStream;
   bool prevChecked = false;
   UInt64 numItems = 0;
   try
   {
-    while(nextStream != 0)
+    while (nextStream != 0)
     {
       CDatabaseEx db;
       db.Stream = nextStream;
@@ -279,7 +280,7 @@ STDMETHODIMP CHandler::Open(IInStream *inStream,
         {
           const CInArchiveInfo &ai = m_Database.Volumes.Front().ArchiveInfo;
           if (ai.IsTherePrev())
-            otherArchive = &ai.PreviousArchive;
+            otherArchive = &ai.PrevArc;
           else
             prevChecked = true;
         }
@@ -287,11 +288,14 @@ STDMETHODIMP CHandler::Open(IInStream *inStream,
         {
           const CInArchiveInfo &ai = m_Database.Volumes.Back().ArchiveInfo;
           if (ai.IsThereNext())
-            otherArchive = &ai.NextArchive;
+            otherArchive = &ai.NextArc;
         }
         if (!otherArchive)
           break;
         const UString fullName = MultiByteToUnicodeString(otherArchive->FileName, CP_ACP);
+        if (!openVolumeCallback)
+          break;
+
         HRESULT result = openVolumeCallback->GetStream(fullName, &nextStream);
         if (result == S_OK)
           break;
@@ -328,7 +332,7 @@ STDMETHODIMP CHandler::Close()
   return S_OK;
 }
 
-class CCabFolderOutStream:
+class CFolderOutStream:
   public ISequentialOutStream,
   public CMyUnknownImp
 {
@@ -339,6 +343,13 @@ public:
 private:
   const CMvDatabaseEx *m_Database;
   const CRecordVector<bool> *m_ExtractStatuses;
+  
+  Byte *TempBuf;
+  UInt32 TempBufSize;
+  int NumIdenticalFiles;
+  bool TempBufMode;
+  UInt32 m_BufStartFolderOffset;
+
   int m_StartIndex;
   int m_CurrentIndex;
   CMyComPtr<IArchiveExtractCallback> m_ExtractCallback;
@@ -348,15 +359,25 @@ private:
 
   bool m_IsOk;
   bool m_FileIsOpen;
-  UInt64 m_RemainFileSize;
+  UInt32 m_RemainFileSize;
   UInt64 m_FolderSize;
   UInt64 m_PosInFolder;
 
+  void FreeTempBuf()
+  {
+    ::MyFree(TempBuf);
+    TempBuf = NULL;
+  }
+
   HRESULT OpenFile();
+  HRESULT CloseFileWithResOp(Int32 resOp);
+  HRESULT CloseFile();
   HRESULT Write2(const void *data, UInt32 size, UInt32 *processedSize, bool isOK);
 public:
   HRESULT WriteEmptyFiles();
 
+  CFolderOutStream(): TempBuf(NULL) {}
+  ~CFolderOutStream() { FreeTempBuf(); }
   void Init(
       const CMvDatabaseEx *database,
       const CRecordVector<bool> *extractStatuses,
@@ -371,7 +392,7 @@ public:
   UInt64 GetPosInFolder() const { return m_PosInFolder; }
 };
 
-void CCabFolderOutStream::Init(
+void CFolderOutStream::Init(
     const CMvDatabaseEx *database,
     const CRecordVector<bool> *extractStatuses,
     int startIndex,
@@ -391,25 +412,92 @@ void CCabFolderOutStream::Init(
   m_PosInFolder = 0;
   m_FileIsOpen = false;
   m_IsOk = true;
+  TempBufMode = false;
+  NumIdenticalFiles = 0;
 }
 
-HRESULT CCabFolderOutStream::OpenFile()
+HRESULT CFolderOutStream::CloseFileWithResOp(Int32 resOp)
 {
+  m_RealOutStream.Release();
+  m_FileIsOpen = false;
+  NumIdenticalFiles--;
+  return m_ExtractCallback->SetOperationResult(resOp);
+}
+
+HRESULT CFolderOutStream::CloseFile()
+{
+  return CloseFileWithResOp(m_IsOk ?
+      NExtract::NOperationResult::kOK:
+      NExtract::NOperationResult::kDataError);
+}
+
+HRESULT CFolderOutStream::OpenFile()
+{
+  if (NumIdenticalFiles == 0)
+  {
+    const CMvItem &mvItem = m_Database->Items[m_StartIndex + m_CurrentIndex];
+    const CItem &item = m_Database->Volumes[mvItem.VolumeIndex].Items[mvItem.ItemIndex];
+    int numExtractItems = 0;
+    int curIndex;
+    for (curIndex = m_CurrentIndex; curIndex < m_ExtractStatuses->Size(); curIndex++)
+    {
+      const CMvItem &mvItem2 = m_Database->Items[m_StartIndex + curIndex];
+      const CItem &item2 = m_Database->Volumes[mvItem2.VolumeIndex].Items[mvItem2.ItemIndex];
+      if (item.Offset != item2.Offset ||
+          item.Size != item2.Size ||
+          item.Size == 0)
+        break;
+      if (!m_TestMode && (*m_ExtractStatuses)[curIndex])
+        numExtractItems++;
+    }
+    NumIdenticalFiles = (curIndex - m_CurrentIndex);
+    if (NumIdenticalFiles == 0)
+      NumIdenticalFiles = 1;
+    TempBufMode = false;
+    if (numExtractItems > 1)
+    {
+      if (!TempBuf || item.Size > TempBufSize)
+      {
+        FreeTempBuf();
+        TempBuf = (Byte *)MyAlloc(item.Size);
+        TempBufSize = item.Size;
+        if (TempBuf == NULL)
+          return E_OUTOFMEMORY;
+      }
+      TempBufMode = true;
+      m_BufStartFolderOffset = item.Offset;
+    }
+    else if (numExtractItems == 1)
+    {
+      while (NumIdenticalFiles && !(*m_ExtractStatuses)[m_CurrentIndex])
+      {
+        CMyComPtr<ISequentialOutStream> stream;
+        RINOK(m_ExtractCallback->GetStream(m_StartIndex + m_CurrentIndex, &stream, NExtract::NAskMode::kSkip));
+        if (stream)
+          return E_FAIL;
+        RINOK(m_ExtractCallback->PrepareOperation(NExtract::NAskMode::kSkip));
+        m_CurrentIndex++;
+        m_FileIsOpen = true;
+        CloseFile();
+      }
+    }
+  }
+
   Int32 askMode = (*m_ExtractStatuses)[m_CurrentIndex] ? (m_TestMode ?
       NExtract::NAskMode::kTest :
       NExtract::NAskMode::kExtract) :
       NExtract::NAskMode::kSkip;
   RINOK(m_ExtractCallback->GetStream(m_StartIndex + m_CurrentIndex, &m_RealOutStream, askMode));
   if (!m_RealOutStream && !m_TestMode)
-    askMode = NArchive::NExtract::NAskMode::kSkip;
+    askMode = NExtract::NAskMode::kSkip;
   return m_ExtractCallback->PrepareOperation(askMode);
 }
 
-HRESULT CCabFolderOutStream::WriteEmptyFiles()
+HRESULT CFolderOutStream::WriteEmptyFiles()
 {
   if (m_FileIsOpen)
     return S_OK;
-  for(;m_CurrentIndex < m_ExtractStatuses->Size(); m_CurrentIndex++)
+  for (; m_CurrentIndex < m_ExtractStatuses->Size(); m_CurrentIndex++)
   {
     const CMvItem &mvItem = m_Database->Items[m_StartIndex + m_CurrentIndex];
     const CItem &item = m_Database->Volumes[mvItem.VolumeIndex].Items[mvItem.ItemIndex];
@@ -419,22 +507,23 @@ HRESULT CCabFolderOutStream::WriteEmptyFiles()
     HRESULT result = OpenFile();
     m_RealOutStream.Release();
     RINOK(result);
-    RINOK(m_ExtractCallback->SetOperationResult(NArchive::NExtract::NOperationResult::kOK));
+    RINOK(m_ExtractCallback->SetOperationResult(NExtract::NOperationResult::kOK));
   }
   return S_OK;
 }
 
 // This is Write function
-HRESULT CCabFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *processedSize, bool isOK)
+HRESULT CFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *processedSize, bool isOK)
 {
+  COM_TRY_BEGIN
   UInt32 realProcessed = 0;
   if (processedSize != NULL)
    *processedSize = 0;
-  while(size != 0)
+  while (size != 0)
   {
     if (m_FileIsOpen)
     {
-      UInt32 numBytesToWrite = (UInt32)MyMin(m_RemainFileSize, (UInt64)(size));
+      UInt32 numBytesToWrite = MyMin(m_RemainFileSize, size);
       HRESULT res = S_OK;
       if (numBytesToWrite > 0)
       {
@@ -446,6 +535,8 @@ HRESULT CCabFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *proce
           res = m_RealOutStream->Write((const Byte *)data, numBytesToWrite, &processedSizeLocal);
           numBytesToWrite = processedSizeLocal;
         }
+        if (TempBufMode && TempBuf)
+          memcpy(TempBuf + (m_PosInFolder - m_BufStartFolderOffset), data, numBytesToWrite);
       }
       realProcessed += numBytesToWrite;
       if (processedSize != NULL)
@@ -458,12 +549,27 @@ HRESULT CCabFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *proce
         return res;
       if (m_RemainFileSize == 0)
       {
-        m_RealOutStream.Release();
-        RINOK(m_ExtractCallback->SetOperationResult(
-          m_IsOk ?
-            NArchive::NExtract::NOperationResult::kOK:
-            NArchive::NExtract::NOperationResult::kDataError));
-        m_FileIsOpen = false;
+        RINOK(CloseFile());
+
+        while (NumIdenticalFiles)
+        {
+          HRESULT result = OpenFile();
+          m_FileIsOpen = true;
+          m_CurrentIndex++;
+          if (result == S_OK && m_RealOutStream && TempBuf)
+            result = WriteStream(m_RealOutStream, TempBuf, (size_t)(m_PosInFolder - m_BufStartFolderOffset));
+          
+          if (!TempBuf && TempBufMode && m_RealOutStream)
+          {
+            RINOK(CloseFileWithResOp(NExtract::NOperationResult::kUnSupportedMethod));
+          }
+          else
+          {
+            RINOK(CloseFile());
+          }
+          RINOK(result);
+        }
+        TempBufMode = false;
       }
       if (realProcessed > 0)
         break; // with this break this function works as Write-Part
@@ -483,7 +589,7 @@ HRESULT CCabFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *proce
         return E_FAIL;
       if (fileOffset > m_PosInFolder)
       {
-        UInt32 numBytesToWrite = (UInt32)MyMin((UInt64)fileOffset - m_PosInFolder, UInt64(size));
+        UInt32 numBytesToWrite = MyMin(fileOffset - (UInt32)m_PosInFolder, size);
         realProcessed += numBytesToWrite;
         if (processedSize != NULL)
           *processedSize = realProcessed;
@@ -501,14 +607,15 @@ HRESULT CCabFolderOutStream::Write2(const void *data, UInt32 size, UInt32 *proce
     }
   }
   return WriteEmptyFiles();
+  COM_TRY_END
 }
 
-STDMETHODIMP CCabFolderOutStream::Write(const void *data, UInt32 size, UInt32 *processedSize)
+STDMETHODIMP CFolderOutStream::Write(const void *data, UInt32 size, UInt32 *processedSize)
 {
   return Write2(data, size, processedSize, true);
 }
 
-HRESULT CCabFolderOutStream::FlushCorrupted()
+HRESULT CFolderOutStream::FlushCorrupted()
 {
   const UInt32 kBufferSize = (1 << 10);
   Byte buffer[kBufferSize];
@@ -525,7 +632,7 @@ HRESULT CCabFolderOutStream::FlushCorrupted()
   }
 }
 
-HRESULT CCabFolderOutStream::Unsupported()
+HRESULT CFolderOutStream::Unsupported()
 {
   while(m_CurrentIndex < m_ExtractStatuses->Size())
   {
@@ -533,23 +640,23 @@ HRESULT CCabFolderOutStream::Unsupported()
     if (result != S_FALSE && result != S_OK)
       return result;
     m_RealOutStream.Release();
-    RINOK(m_ExtractCallback->SetOperationResult(NArchive::NExtract::NOperationResult::kUnSupportedMethod));
+    RINOK(m_ExtractCallback->SetOperationResult(NExtract::NOperationResult::kUnSupportedMethod));
     m_CurrentIndex++;
   }
   return S_OK;
 }
 
 
-STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
-    Int32 _aTestMode, IArchiveExtractCallback *extractCallback)
+STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
+    Int32 testModeSpec, IArchiveExtractCallback *extractCallback)
 {
   COM_TRY_BEGIN
-  bool allFilesMode = (numItems == (UInt32)(-1));
+  bool allFilesMode = (numItems == (UInt32)-1);
   if (allFilesMode)
     numItems = m_Database.Items.Size();
   if(numItems == 0)
     return S_OK;
-  bool testMode = (_aTestMode != 0);
+  bool testMode = (testModeSpec != 0);
   UInt64 totalUnPacked = 0;
 
   UInt32 i;
@@ -610,14 +717,14 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
     i++;
     if (item.IsDir())
     {
-      Int32 askMode= testMode ?
-          NArchive::NExtract::NAskMode::kTest :
-          NArchive::NExtract::NAskMode::kExtract;
+      Int32 askMode = testMode ?
+          NExtract::NAskMode::kTest :
+          NExtract::NAskMode::kExtract;
       CMyComPtr<ISequentialOutStream> realOutStream;
       RINOK(extractCallback->GetStream(index, &realOutStream, askMode));
       RINOK(extractCallback->PrepareOperation(askMode));
       realOutStream.Release();
-      RINOK(extractCallback->SetOperationResult(NArchive::NExtract::NOperationResult::kOK));
+      RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kOK));
       continue;
     }
     int folderIndex = m_Database.GetFolderIndex(&mvItem);
@@ -625,13 +732,13 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
     {
       // If we need previous archive
       Int32 askMode= testMode ?
-          NArchive::NExtract::NAskMode::kTest :
-          NArchive::NExtract::NAskMode::kExtract;
+          NExtract::NAskMode::kTest :
+          NExtract::NAskMode::kExtract;
       CMyComPtr<ISequentialOutStream> realOutStream;
       RINOK(extractCallback->GetStream(index, &realOutStream, askMode));
       RINOK(extractCallback->PrepareOperation(askMode));
       realOutStream.Release();
-      RINOK(extractCallback->SetOperationResult(NArchive::NExtract::NOperationResult::kDataError));
+      RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kDataError));
       continue;
     }
     int startIndex2 = m_Database.FolderStartFileIndex[folderIndex];
@@ -664,7 +771,7 @@ STDMETHODIMP CHandler::Extract(const UInt32* indices, UInt32 numItems,
     lps->InSize = totalPacked;
     RINOK(lps->SetCur());
 
-    CCabFolderOutStream *cabFolderOutStream = new CCabFolderOutStream;
+    CFolderOutStream *cabFolderOutStream = new CFolderOutStream;
     CMyComPtr<ISequentialOutStream> outStream(cabFolderOutStream);
 
     const CFolder &folder = db.Folders[item.GetFolderIndex(db.Folders.Size())];

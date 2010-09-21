@@ -42,6 +42,7 @@ SET(_7ZIP_SRC ../7zip)
 
 IF(USE_MINGW)
     include_directories(PlatformMinGW/)
+    add_definitions(-include PlatformMinGW/StdAfx.h)
 ELSE(USE_MINGW)
     include_directories(PlatformUnix/)
 ENDIF(USE_MINGW)
@@ -92,11 +93,11 @@ add_definitions(
     -D_LARGEFILE_SOURCE
     -D_REENTRANT
     -DENV_UNIX
-#    -DCOMPRESS_MT         # commented since 9.013
-#    -DCOMPRESS_BZIP2_MT   # commented since 9.013
-#    -DCOMPRESS_MF_MT      # commented since 9.013
-    -DUNICODE      # since 9.013
-    -D_UNICODE     # since 9.013
+#    -DCOMPRESS_MT         # commented since 9.13
+#    -DCOMPRESS_BZIP2_MT   # commented since 9.13
+#    -DCOMPRESS_MF_MT      # commented since 9.13
+    -DUNICODE      # since 9.13
+    -D_UNICODE     # since 9.13
     -DBREAK_HANDLER
     -DBENCH_MT
 )
@@ -107,6 +108,8 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/Threads.c
     ${_7ZIP_SRC}/C/Alloc.c
     ${_7ZIP_SRC}/C/Aes.c
+    ${_7ZIP_SRC}/C/AesOpt.c
+    ${_7ZIP_SRC}/C/Alloc.c
     ${_7ZIP_SRC}/C/LzmaDec.c
     ${_7ZIP_SRC}/C/LzmaEnc.c
     ${_7ZIP_SRC}/C/Bra.c
@@ -116,6 +119,12 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/Lzma2Dec.c
     ${_7ZIP_SRC}/C/Lzma2Enc.c
     ${_7ZIP_SRC}/C/MtCoder.c
+    ${_7ZIP_SRC}/C/Ppmd7.c
+    ${_7ZIP_SRC}/C/Ppmd7Dec.c
+    ${_7ZIP_SRC}/C/Ppmd7Enc.c
+    ${_7ZIP_SRC}/C/Ppmd8.c
+    ${_7ZIP_SRC}/C/Ppmd8Dec.c
+    ${_7ZIP_SRC}/C/Ppmd8Enc.c
     ${_7ZIP_SRC}/C/Xz.c
     ${_7ZIP_SRC}/C/XzCrc64.c
     ${_7ZIP_SRC}/C/XzDec.c
@@ -127,11 +136,13 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/C/HuffEnc.c
     ${_7ZIP_SRC}/C/BwtSort.c
     ${_7ZIP_SRC}/C/7zCrc.c # What about 7zCrcT8.c =
+    ${_7ZIP_SRC}/C/7zCrcOpt.c
     ${_7ZIP_SRC}/C/Sha256.c
     ${_7ZIP_SRC}/C/LzFind.c
     ${_7ZIP_SRC}/C/LzFindMt.c
     ${_7ZIP_SRC}/C/Sort.c
-    
+    ${_7ZIP_SRC}/C/CpuArch.c
+
     ${_7ZIP_SRC}/CPP/Common/MyVector.cpp
     ${_7ZIP_SRC}/CPP/Common/MyMap.cpp
     ${_7ZIP_SRC}/CPP/Common/IntToString.cpp
@@ -183,8 +194,10 @@ SET(P7ZIP_SOURCE_FILES
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/DeflateProps.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/SplitHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
     
@@ -327,6 +340,7 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/PpmdDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/PpmdEncoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/PpmdRegister.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Compress/PpmdZip.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/QuantumDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/Rar1Decoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/Rar2Decoder.cpp
@@ -335,8 +349,8 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Compress/RarCodecsRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ShrinkDecoder.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
-    ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+#    ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
+#    ${_7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
     ${_7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
     
     ${_7ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
@@ -586,8 +600,8 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Compress/RarCodecsRegister.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ShrinkDecoder.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
+#    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
     ${P7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
     
     
@@ -736,10 +750,10 @@ ENDIF(USE_CYGWIN)
 
 
 IF(USE_CYGWIN)
-    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -mno-cygwin -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(USE_CYGWIN)
     IF(USE_MINGW)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads -Wl,--enable-auto-import") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
     ELSE(USE_MINGW)
         SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -lpthread")
     ENDIF(USE_MINGW)

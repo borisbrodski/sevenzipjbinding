@@ -1,16 +1,13 @@
 PROG = 7za.exe
-LIBS = $(LIBS) user32.lib oleaut32.lib Advapi32.lib
-CFLAGS = $(CFLAGS) -I ../../../  \
-  -DWIN_LONG_PATH \
-  -DCOMPRESS_MT \
-  -DCOMPRESS_BZIP2_MT \
-  -DCOMPRESS_MF_MT \
-  -D_7ZIP_LARGE_PAGES \
-  -DBREAK_HANDLER \
-  -DBENCH_MT \
-  -DSUPPORT_DEVICE_FILE \
+MY_CONSOLE = 1
+CFLAGS = $(CFLAGS) -I ../../../
+
+!IFNDEF UNDER_CE
+CFLAGS = $(CFLAGS) -DWIN_LONG_PATH -D_7ZIP_LARGE_PAGES -DSUPPORT_DEVICE_FILE
+!ENDIF
 
 CONSOLE_OBJS = \
+  $O\BenchCon.obj \
   $O\ConsoleClose.obj \
   $O\ExtractCallbackConsole.obj \
   $O\List.obj \
@@ -77,6 +74,7 @@ UI_COMMON_OBJS = \
   $O\ArchiveCommandLine.obj \
   $O\ArchiveExtractCallback.obj \
   $O\ArchiveOpenCallback.obj \
+  $O\Bench.obj \
   $O\DefaultName.obj \
   $O\EnumDirItems.obj \
   $O\Extract.obj \
@@ -96,8 +94,10 @@ UI_COMMON_OBJS = \
 
 AR_OBJS = \
   $O\Bz2Handler.obj \
+  $O\DeflateProps.obj \
   $O\GzHandler.obj \
   $O\LzmaHandler.obj \
+  $O\PpmdHandler.obj \
   $O\SplitHandler.obj \
   $O\XzHandler.obj \
   $O\ZHandler.obj \
@@ -196,13 +196,10 @@ COMPRESS_OBJS = \
   $O\PpmdDecoder.obj \
   $O\PpmdEncoder.obj \
   $O\PpmdRegister.obj \
+  $O\PpmdZip.obj \
   $O\QuantumDecoder.obj \
   $O\ShrinkDecoder.obj \
   $O\ZDecoder.obj \
-
-LZMA_BENCH_OBJS = \
-  $O\LzmaBench.obj \
-  $O\LzmaBenchCon.obj \
 
 CRYPTO_OBJS = \
   $O\7zAes.obj \
@@ -218,12 +215,12 @@ CRYPTO_OBJS = \
 
 C_OBJS = \
   $O\7zStream.obj \
-  $O\Aes.obj \
   $O\Alloc.obj \
   $O\Bra.obj \
   $O\Bra86.obj \
   $O\BraIA64.obj \
   $O\BwtSort.obj \
+  $O\CpuArch.obj \
   $O\Delta.obj \
   $O\HuffEnc.obj \
   $O\LzFind.obj \
@@ -233,6 +230,12 @@ C_OBJS = \
   $O\LzmaDec.obj \
   $O\LzmaEnc.obj \
   $O\MtCoder.obj \
+  $O\Ppmd7.obj \
+  $O\Ppmd7Dec.obj \
+  $O\Ppmd7Enc.obj \
+  $O\Ppmd8.obj \
+  $O\Ppmd8Dec.obj \
+  $O\Ppmd8Enc.obj \
   $O\Sha256.obj \
   $O\Sort.obj \
   $O\Threads.obj \
@@ -242,7 +245,8 @@ C_OBJS = \
   $O\XzEnc.obj \
   $O\XzIn.obj \
 
-!include "../../Crc2.mak"
+!include "../../Aes.mak"
+!include "../../Crc.mak"
 
 OBJS = \
   $O\StdAfx.obj \
@@ -262,7 +266,7 @@ OBJS = \
   $(LZMA_BENCH_OBJS) \
   $(CRYPTO_OBJS) \
   $(C_OBJS) \
-  $(CRC_OBJS) \
+  $(ASM_OBJS) \
   $O\resource.res
 
 
@@ -296,12 +300,10 @@ $(ZIP_OBJS): ../../Archive/Zip/$(*B).cpp
 $(COMPRESS_OBJS): ../../Compress/$(*B).cpp
 	$(COMPL_O2)
 
-$(LZMA_BENCH_OBJS): ../../Compress/LZMA_Alone/$(*B).cpp
-	$(COMPL)
-
 $(CRYPTO_OBJS): ../../Crypto/$(*B).cpp
 	$(COMPL_O2)
 
 $(C_OBJS): ../../../../C/$(*B).c
 	$(COMPL_O2)
-!include "../../Crc.mak"
+
+!include "../../Asm.mak"

@@ -97,7 +97,7 @@ LINK32=link.exe
 # PROP Intermediate_Dir "ReleaseD"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MD /W3 /GX /O1 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "EXTRACT_ONLY" /D "EXCLUDE_COM" /D "NO_REGISTRY" /D "FORMAT_7Z" /D "COMPRESS_LZMA" /D "COMPRESS_BCJ_X86" /D "COMPRESS_BCJ2" /D "COMPRESS_COPY" /D "_SFX" /Yu"StdAfx.h" /FD /c
+# ADD BASE CPP /nologo /MD /W3 /GX /O1 /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "EXTRACT_ONLY" /D "EXCLUDE_COM" /D "NO_REGISTRY" /D "_SFX" /Yu"StdAfx.h" /FD /c
 # ADD CPP /nologo /Gz /MD /W3 /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "EXTRACT_ONLY" /D "NO_REGISTRY" /D "_SFX" /D "_NO_CRYPTO" /Yu"StdAfx.h" /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -270,6 +270,18 @@ SOURCE=..\..\Compress\CopyCoder.cpp
 # Begin Source File
 
 SOURCE=..\..\Compress\CopyRegister.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\Lzma2Decoder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\Lzma2Decoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\Lzma2Register.cpp
 # End Source File
 # Begin Source File
 
@@ -619,18 +631,6 @@ SOURCE=..\..\UI\Common\OpenArchive.h
 # Begin Group "File Manager"
 
 # PROP Default_Filter ""
-# Begin Group "Dialog"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\UI\FileManager\ProgressDialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\UI\FileManager\ProgressDialog.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=..\..\UI\FileManager\FormatUtils.cpp
@@ -638,6 +638,14 @@ SOURCE=..\..\UI\FileManager\FormatUtils.cpp
 # Begin Source File
 
 SOURCE=..\..\UI\FileManager\FormatUtils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\UI\FileManager\ProgressDialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\UI\FileManager\ProgressDialog.h
 # End Source File
 # End Group
 # Begin Group "C"
@@ -651,6 +659,11 @@ SOURCE=..\..\..\..\C\7zCrc.c
 # Begin Source File
 
 SOURCE=..\..\..\..\C\7zCrc.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\7zCrcOpt.c
+# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
@@ -669,6 +682,24 @@ SOURCE=..\..\..\..\C\Bra.h
 
 SOURCE=..\..\..\..\C\Bra86.c
 # SUBTRACT CPP /YX /Yc /Yu
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\CpuArch.c
+# SUBTRACT CPP /YX /Yc /Yu
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\CpuArch.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Lzma2Dec.c
+# SUBTRACT CPP /YX /Yc /Yu
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Lzma2Dec.h
 # End Source File
 # Begin Source File
 
