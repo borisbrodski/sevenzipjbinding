@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBase {
 
-    private static final int OUTARCHIVE_MAX_SIZE = 2000000;
+    private static final int OUTARCHIVE_MAX_SIZE = 5000000;
     private VirtualContentConfiguration virtualContentConfiguration;
 
     @Before
@@ -133,11 +133,16 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
         fillRandomlyAndTest(10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, true);
     }
 
-    // TODO Core dump was caused by this test ones
-    //    @Test
-    //    public void compress10BigFiles() throws Exception {
-    //        fillRandomlyAndTest(100, 1, 2, 80000, 5000).writeToDirectory(new File("testoutput-1"));
-    //    }
+    /**
+     * Core dump was caused ones by this test.
+     * 
+     * @throws Exception
+     *             not expected
+     */
+    @Test
+    public void compress100BigFilesCoreDump() throws Exception {
+        fillRandomlyAndTest(50, 1, 2, 80000, 5000, false); //.writeToDirectory(new File("testoutput-1"));
+    }
 
     protected abstract ArchiveFormat getArchiveFormat();
 
