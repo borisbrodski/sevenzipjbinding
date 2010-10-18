@@ -144,6 +144,11 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
         fillRandomlyAndTest(50, 1, 2, 80000, 5000, false); //.writeToDirectory(new File("testoutput-1"));
     }
 
+    @Test
+    public void compress100BigFilesCoreDumpMultithreaded() throws Exception {
+        fillRandomlyAndTest(50, 1, 2, 80000, 5000, true);
+    }
+
     protected abstract ArchiveFormat getArchiveFormat();
 
     private VirtualContent fillRandomlyAndTest(final int countOfFiles, final int directoriesDepth,
