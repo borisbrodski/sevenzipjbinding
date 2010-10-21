@@ -26,7 +26,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * Provide read/write access to the content represented as a byte array. Provide bridge to {@link InputStream} and
  * {@link OutputStream} through various methods.
  * 
- * @author boris
+ * @author Boris Brodski
  * 
  */
 public class ByteArrayStream implements IInStream, IOutStream {
@@ -161,7 +161,13 @@ public class ByteArrayStream implements IInStream, IOutStream {
             throw new IllegalStateException("Invalid start position (" + startPosition + ") and length (" + length
                     + ")");
         }
+
+        if (seekToPosition > size) {
+            return 0;
+        }
+
         performDelayedSeek();
+
         int read = currentPosition + length > size ? size - currentPosition : length;
         int toRead = read;
 

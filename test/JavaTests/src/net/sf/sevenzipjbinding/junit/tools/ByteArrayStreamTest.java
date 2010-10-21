@@ -524,6 +524,50 @@ public abstract class ByteArrayStreamTest {
         testSeekTo(50);
     }
 
+    /**
+     * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
+     * 
+     * @throws Exception
+     *             not expected
+     */
+    @Test
+    public void testSeekToPlus0AndRead() throws Exception {
+        testSeekToXAndRead(testBuffer.length);
+    }
+
+    /**
+     * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
+     * 
+     * @throws Exception
+     *             not expected
+     */
+    @Test
+    public void testSeekToPlus1AndRead() throws Exception {
+        testSeekToXAndRead(testBuffer.length + 1);
+    }
+
+    /**
+     * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
+     * 
+     * @throws Exception
+     *             not expected
+     */
+    @Test
+    public void testSeekToPlus2AndRead() throws Exception {
+        testSeekToXAndRead(testBuffer.length + 2);
+    }
+
+    /**
+     * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
+     * 
+     * @throws Exception
+     *             not expected
+     */
+    @Test
+    public void testSeekToPlus10AndRead() throws Exception {
+        testSeekToXAndRead(testBuffer.length + 10);
+    }
+
     @Test
     public void testReadFromBeginningEmptyArray() throws Exception {
         write(testBuffer);
@@ -765,6 +809,19 @@ public abstract class ByteArrayStreamTest {
         compareWithExpectedBuffer(testBuffer);
     }
 
+    private void testSeekToXAndRead(int pos) throws Exception {
+        write(testBuffer);
+        seek(pos);
+        byte[] buffer = new byte[1];
+        assertEquals("EOF expected", 0, read(buffer));
+        if (testBuffer.length > 0) {
+            seek(0);
+            assertEquals(1, read(buffer));
+            assertEquals(testBuffer[0], buffer[0]);
+        }
+        compareWithExpectedBuffer(testBuffer);
+    }
+
     private byte[] subarray(byte[] data, int startPosition, int length) {
         byte[] array = new byte[length];
         int lengthToCopy = data.length < length ? data.length : length;
@@ -780,8 +837,8 @@ public abstract class ByteArrayStreamTest {
         assertEquals(Integer.valueOf(buffer.length), Integer.valueOf(wrote));
         checkInvariant();
         assertEquals("Current position in the stream is incorrect. Initial position: " + currentPosition
-                + ", buffer length: " + buffer.length, Integer.valueOf(currentPosition + buffer.length), Integer
-                .valueOf(byteArrayStream.getCurrentPosition()));
+                + ", buffer length: " + buffer.length, Integer.valueOf(currentPosition + buffer.length),
+                Integer.valueOf(byteArrayStream.getCurrentPosition()));
     }
 
     private void setBytes(byte[] buffer) throws Exception {
@@ -873,8 +930,8 @@ public abstract class ByteArrayStreamTest {
     private void checkArray(byte[] array1, int startPosition1, byte[] array2, int startPosition2, int length) {
         for (int i = 0; i < length; i++) {
             assertEquals("Byte content differs i=" + i + ", startPosition1=" + startPosition1 + ", startPosition2="
-                    + startPosition2, Byte.valueOf(array1[startPosition1 + i]), Byte
-                    .valueOf(array2[startPosition2 + i]));
+                    + startPosition2, Byte.valueOf(array1[startPosition1 + i]),
+                    Byte.valueOf(array2[startPosition2 + i]));
         }
     }
 
@@ -920,8 +977,8 @@ public abstract class ByteArrayStreamTest {
 
         if (byteArrayStream.isEOF()) {
             assertTrue("In EOF situation current position " + byteArrayStream.getCurrentPosition()
-                    + " less then the size of the stream " + byteArrayStream.getSize(), byteArrayStream
-                    .getCurrentPosition() >= byteArrayStream.getSize());
+                    + " less then the size of the stream " + byteArrayStream.getSize(),
+                    byteArrayStream.getCurrentPosition() >= byteArrayStream.getSize());
         } else {
             assertTrue(byteArrayStream.getCurrentPosition() < byteArrayStream.getSize());
         }
