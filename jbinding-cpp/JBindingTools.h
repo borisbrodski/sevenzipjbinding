@@ -366,7 +366,7 @@ public:
     }
 };
 
-// TODO Remove this
+// TODO Remove this (used by a test only)
 template<class T>
 class AbstractJavaCallback : public Object {
 protected:
@@ -387,4 +387,26 @@ protected:
     }
 
 };
+
+template<class T>
+class DeleteInErrorCase {
+private:
+    T & _object;
+    bool _errorCase;
+public:
+    DeleteInErrorCase(T & object) :
+        _object(object), _errorCase(false) {
+    }
+
+    ~DeleteInErrorCase() {
+        if (_errorCase) {
+            delete &_object;
+        }
+    }
+
+    void setErrorCase() {
+        _errorCase = true;
+    }
+};
+
 #endif /* JBINDINGTOOLS_H_ */

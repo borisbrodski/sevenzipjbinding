@@ -78,6 +78,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     TRACE("SevenZip.nativeOpenArchive()")
 
     JBindingSession & jbindingSession = *(new JBindingSession(env));
+    DeleteInErrorCase<JBindingSession> deleteInErrorCase(jbindingSession);
+
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
@@ -99,6 +101,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         if (index == -1) {
             jniNativeCallContext.reportError("Not registered archive format: '%S'",
                     (const wchar_t*) formatNameString);
+            deleteInErrorCase.setErrorCase();
             return NULL;
         }
     }
@@ -131,7 +134,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             TRACE("Result = 0x" << std::hex << result << ", throwing exception...")
             jniEnvInstance.reportError(result, "Archive file (format: %S) can't be opened",
                     (const wchar_t *) formatNameString);
-            return NULL;  // TODO JBindingSession must be destroyed here.
+            deleteInErrorCase.setErrorCase();
+            return NULL;
         }
     } else {
         // Try all known codecs
@@ -161,7 +165,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
             jniEnvInstance.reportError(
                     "Archive file can't be opened with none of the registered codecs");
-            return NULL; // TODO JBindingSession must be destroyed here.
+            deleteInErrorCase.setErrorCase();
+            return NULL;
 
         }
 
@@ -201,6 +206,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     if (jniNativeCallContext.willExceptionBeThrown()) {
         archive->Close();
+        deleteInErrorCase.setErrorCase();
         return NULL;
     }
 
@@ -214,6 +220,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);
     if (jniEnvInstance.exceptionCheck()) {
         archive->Close();
+        deleteInErrorCase.setErrorCase();
         return NULL;
     }
 
@@ -233,21 +240,26 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     return inArchiveImplObject;
 
+    // TODO Remove such comments
     //CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
-
-// private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
 
 /*
  * Class:     net_sf_sevenzipjbinding_SevenZip
  * Method:    nativeCreateArchive
- * Signature: (Lnet/sf/sevenzipjbinding/ArchiveFormat;I)Lnet/sf/sevenzipjbinding/ISevenZipOutArchive;
+ * Signature: (Lnet/sf/sevenzipjbinding/impl/OutArchiveImpl;Lnet/sf/sevenzipjbinding/ArchiveFormat;I)V
  */
-JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
-  (JNIEnv * env, jclass thiz, jobject archiveFormat, jint archiveFormatIndex) {
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive(
+                                                                                 JNIEnv * env,
+                                                                                 jclass thiz,
+                                                                                 jobject outArchiveImpl,
+                                                                                 jobject archiveFormat,
+                                                                                 jint archiveFormatIndex) {
     TRACE("SevenZip.nativeCreateArchive()")
 
     JBindingSession & jbindingSession = *(new JBindingSession(env));
+    DeleteInErrorCase<JBindingSession> deleteInErrorCase(jbindingSession);
+
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
@@ -256,30 +268,23 @@ JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArch
     if (hresult) {
         jniEnvInstance.reportError(hresult, "Error creating OutArchive for archive format %S",
                 (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name);
-        // TODO JBindingSession must be destroyed here.
-        // delete &jbindingSession;
-
-        return NULL;
+        deleteInErrorCase.setErrorCase();
+        return;
     }
 
-
-
-
-
-    jobject outArchiveImplObject = jni::OutArchiveImpl::_newInstance(env);
     jni::expectExceptionCheck(env);
 
-    jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImplObject, //
+    jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
             (jlong) (size_t) (void*) (outArchive.Detach()));
 
-    jni::OutArchiveImpl::jbindingSession_Set(env, outArchiveImplObject, //
+    jni::OutArchiveImpl::jbindingSession_Set(env, outArchiveImpl, //
             (jlong) (size_t) (void*) (&jbindingSession));
 
-    jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImplObject, archiveFormat);
-    jni::OutArchiveImpl::archiveFormatIndex_Set(env, outArchiveImplObject, archiveFormatIndex);
-
-    return outArchiveImplObject;
+    jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
+    jni::OutArchiveImpl::archiveFormatIndex_Set(env, outArchiveImpl, archiveFormatIndex);
 }
+
+// private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
 
 /*
  * Class:     net_sf_sevenzipjbinding_SevenZip
