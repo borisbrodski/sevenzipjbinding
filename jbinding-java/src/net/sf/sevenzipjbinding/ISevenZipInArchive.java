@@ -12,6 +12,8 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
  * The last call should be a call of the method {@link ISevenZipInArchive#close()}. After this call no more Methods
  * should be called.
  * 
+ * TODO Rename to <code>IInArchive</code> !!!!!
+ * 
  * @author Boris Brodski
  * @version 4.65-1
  * 
@@ -39,7 +41,7 @@ public interface ISevenZipInArchive {
      * Get value of property <code>propID</code> of item with index <code>index</code>.
      * 
      * @param index
-     *            index of item to get property value
+     *            index of item to get property value. 0 - first archive item.
      * @param propID
      *            property to get value of
      * @return value of property <code>propID</code> of item with index <code>index</code>
@@ -53,7 +55,7 @@ public interface ISevenZipInArchive {
      * directory.
      * 
      * @param index
-     *            index of item in archive to get property of
+     *            index of item in archive to get property of. 0 - first archive item.
      * @param propID
      *            property to return
      * @return property <code>propID</code> of item with id <code>index</code> in human readable form.
@@ -90,9 +92,9 @@ public interface ISevenZipInArchive {
      * Extract one item from archive. Multiple calls of this operations very slow on some archive types.
      * 
      * @param index
-     *            index of the item to extract
+     *            index of the item to extract. 0 - first archive item.
      * @param outStream
-     *            sequential output stream to get inhalt of the item
+     *            sequential output stream to get content of the item
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      * @return result status of the extraction
@@ -103,9 +105,9 @@ public interface ISevenZipInArchive {
      * Extract one item from archive. Multiple calls of this operations very slow on some archive types.
      * 
      * @param index
-     *            index of the item to extract
+     *            index of the item to extract. 0 - first archive item.
      * @param outStream
-     *            sequential output stream to get inhalt of the item
+     *            sequential output stream to get content of the item
      * @param password
      *            password to use
      * @throws SevenZipException

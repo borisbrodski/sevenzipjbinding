@@ -6,7 +6,7 @@ import java.io.RandomAccessFile;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.ISevenZipOutArchive;
+import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -22,7 +22,7 @@ public class FirstTest extends JUnitNativeTestBase {
     @Ignore
     // TODO Remove or bring to work
     public void test() throws Exception {
-        ISevenZipOutArchive outArchive = SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP);
+        IOutArchive outArchive = SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP);
         RandomAccessFileOutStream outputStream = new RandomAccessFileOutStream(new RandomAccessFile("test.7z", "rw"));
         try {
             outArchive.updateItems(outputStream, 100, new TestUpdateCallback());

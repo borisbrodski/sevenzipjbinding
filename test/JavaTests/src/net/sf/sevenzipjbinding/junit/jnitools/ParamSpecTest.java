@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
@@ -30,7 +29,6 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         }
     }
 
-    private static final Random RANDOM = new Random(0);
     private String initMessage;
 
     @SuppressWarnings("unused")

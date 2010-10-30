@@ -1,10 +1,8 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
-import java.io.FileOutputStream;
-
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
-import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -177,18 +175,15 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength);
         ArchiveFormat archiveFormat = getArchiveFormat();
-        ISevenZipOutArchive outArchive = SevenZip.openOutArchive(archiveFormat);
+        IOutArchive outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-        if (archiveFormat != ArchiveFormat.TAR) {
-            outArchive.setLevel(3);
-        }
         virtualContent.updateOutArchive(outArchive, byteArrayStream);
         byteArrayStream.rewind();
         ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
         try {
             virtualContent.verifyInArchive(inArchive);
-            byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
+            // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
         } finally {
             inArchive.close();
         }

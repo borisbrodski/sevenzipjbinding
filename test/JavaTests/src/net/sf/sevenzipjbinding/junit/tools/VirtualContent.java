@@ -22,10 +22,10 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
+import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
-import net.sf.sevenzipjbinding.ISevenZipOutArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -119,6 +119,8 @@ public class VirtualContent {
             return true;
         }
 
+        // TODO Split in a couple of methods, like getPath(), isFolder(), ...
+        // Put the archive type specific methods in a separate interfaces, like IOutArchiveXXX.
         public Object getProperty(int index, PropID propID) {
             switch (propID) {
             case PATH:
@@ -279,8 +281,7 @@ public class VirtualContent {
         }
     }
 
-    public void updateOutArchive(ISevenZipOutArchive outArchive, ISequentialOutStream outputStream)
-            throws SevenZipException {
+    public void updateOutArchive(IOutArchive outArchive, ISequentialOutStream outputStream) throws SevenZipException {
         outArchive.updateItems(outputStream, itemList.size(), new ArchiveUpdateCallback());
     }
 

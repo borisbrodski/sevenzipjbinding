@@ -2,22 +2,22 @@ package net.sf.sevenzipjbinding;
 
 /**
  * The interface provides functionality to create a new archive or update an existing archive.<br>
- * <br>
+ * TODO Split creation and update. <br>
  * Standard way to get implementation is to use {@link SevenZip}.<br>
  * <br>
  * The last call should be a call of the method {@link ISevenZipInArchive#close()}. After this call no more Methods
- * should be called.
+ * should be called. TODO Remove this one.
  * 
  * @author Boris Brodski
  * @version 9.04-2.0
  * 
  */
-public interface ISevenZipOutArchive {
+public interface IOutArchive {
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
      * class, only new archive creation is possible. To update an existing archive open it first and then use
-     * {@link ISevenZipInArchive} to get a {@link ISevenZipOutArchive} implementation.
+     * {@link ISevenZipInArchive} to get a {@link IOutArchive} implementation.
      * 
      * @param outStream
      *            output stream to get the new archive
@@ -37,14 +37,4 @@ public interface ISevenZipOutArchive {
      * @return archive format used with this instance of {@link IOutStream}
      */
     public ArchiveFormat getArchiveFormat();
-
-    /**
-     * Set compression level
-     * 
-     * @param compressionLevel
-     *            compression level to set
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
-     */
-    public void setLevel(int compressionLevel) throws SevenZipException;
 }

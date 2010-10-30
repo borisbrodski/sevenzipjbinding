@@ -1,5 +1,12 @@
 package net.sf.sevenzipjbinding;
 
+import net.sf.sevenzipjbinding.impl.OutArchiveBZip2Impl;
+import net.sf.sevenzipjbinding.impl.OutArchiveGZipImpl;
+import net.sf.sevenzipjbinding.impl.OutArchiveImpl;
+import net.sf.sevenzipjbinding.impl.OutArchiveSevenZipImpl;
+import net.sf.sevenzipjbinding.impl.OutArchiveTarImpl;
+import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
+
 /**
  * Enumeration of all supported archive types. <blockquote>
  * 
@@ -188,12 +195,12 @@ public enum ArchiveFormat {
     /**
      * Zip format.
      */
-    ZIP("Zip", true),
+    ZIP("Zip", OutArchiveZipImpl.class),
 
     /**
      * Tar format.
      */
-    TAR("Tar", true),
+    TAR("Tar", OutArchiveTarImpl.class),
 
     /**
      * Split format.
@@ -223,7 +230,7 @@ public enum ArchiveFormat {
     /**
      * Gzip format
      */
-    GZIP("GZip", true),
+    GZIP("GZip", OutArchiveGZipImpl.class),
 
     /**
      * Cpio format.
@@ -233,12 +240,12 @@ public enum ArchiveFormat {
     /**
      * BZip2 format.
      */
-    BZIP2("BZIP2", true),
+    BZIP2("BZIP2", OutArchiveBZip2Impl.class),
 
     /**
      * 7z format.
      */
-    SEVEN_ZIP("7z", true),
+    SEVEN_ZIP("7z", OutArchiveSevenZipImpl.class),
 
     /**
      * Z format.
@@ -291,15 +298,15 @@ public enum ArchiveFormat {
     XAR("Xar");
 
     private String methodName;
-    private boolean outArchiveSupported;
+    Class<? extends OutArchiveImpl> outArchiveImplementation;
 
     private ArchiveFormat(String methodName) {
-        this(methodName, false);
+        this(methodName, null);
     }
 
-    private ArchiveFormat(String methodName, boolean outArchiveSupported) {
+    private ArchiveFormat(String methodName, Class<? extends OutArchiveImpl> outArchiveImplementation) {
         this.methodName = methodName;
-        this.outArchiveSupported = outArchiveSupported;
+        this.outArchiveImplementation = outArchiveImplementation;
     }
 
     /**
@@ -318,7 +325,16 @@ public enum ArchiveFormat {
      *         <code>false</code> - only archive extraction is supported
      */
     public boolean isOutArchiveSupported() {
-        return outArchiveSupported;
+        return outArchiveImplementation != null;
+    }
+
+    /**
+     * Get corresponding implementation class for archive update operations.
+     * 
+     * @return the {@link IOutArchive} implementation class
+     */
+    Class<? extends OutArchiveImpl> getOutArchiveImplementation() {
+        return outArchiveImplementation;
     }
 
     /**
@@ -327,5 +343,32 @@ public enum ArchiveFormat {
     @Override
     public String toString() {
         return methodName;
+    }
+
+    /**
+     * Finds the {@link ArchiveFormat} corresponding to the given out-archive interface.
+     * 
+     * @param outArchiveInterface
+     *            out-archive interface
+     * @return corresponding out-archive implementation class
+     * @throws SevenZipException
+     *             if no implementation class could be found.
+     */
+    static ArchiveFormat findOutArchiveImplementationToInterface(Class<? extends IOutArchive> outArchiveInterface)
+            throws SevenZipException {
+        if (outArchiveInterface == IOutArchive.class) {
+            String ioutArchiveName = IOutArchive.class.getSimpleName();
+            throw new SevenZipException("Can't determine corresponding archive format to the interface "
+                    + ioutArchiveName + ". Please, provide a one of the concrete " + ioutArchiveName
+                    + "XXX interfaces.");
+        }
+        for (ArchiveFormat archiveFormat : values()) {
+            Class<? extends OutArchiveImpl> implementation = archiveFormat.getOutArchiveImplementation();
+            if (implementation != null && outArchiveInterface.isAssignableFrom(implementation)) {
+                return archiveFormat;
+            }
+        }
+        throw new SevenZipException("Can't determine corresponding archive format to the interface " + IOutArchive.class.getSimpleName()
+                + ".");
     }
 }

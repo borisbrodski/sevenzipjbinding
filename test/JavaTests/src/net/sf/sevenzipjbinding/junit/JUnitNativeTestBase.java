@@ -2,6 +2,9 @@ package net.sf.sevenzipjbinding.junit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import java.util.Random;
+
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
@@ -31,6 +34,9 @@ public class JUnitNativeTestBase {
     private static boolean initializeNativeLibrary = true;
     private static boolean nonDebugLibraryWasReported = false;
     private static boolean nonUseMyAssertLibraryWasReported = false;
+
+    protected final Random random = new Random(this.getClass().getCanonicalName().hashCode());
+    protected static final Random RANDOM = new Random(0);
 
     /**
      * Initialize native SevenZipJBinding library for all JUnit tests

@@ -1,9 +1,6 @@
 package net.sf.sevenzipjbinding.junit.badarchive;
 
 import static org.junit.Assert.fail;
-
-import java.util.Random;
-
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -21,7 +18,6 @@ import org.junit.Test;
 public class GarbageArchiveFileTest extends JUnitNativeTestBase {
     private static final int SINGLE_TEST_THREAD_COUNT = 10;
     private static final int SINGLE_TEST_TIMEOUT = 1000 * 60 * SINGLE_TEST_THREAD_COUNT;
-    private final Random random = new Random(this.getClass().getCanonicalName().hashCode());
 
     @Test
     public void openBadArchiveAutodetect() throws Throwable {

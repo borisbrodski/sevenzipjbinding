@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
+import net.sf.sevenzipjbinding.impl.OutArchiveImpl;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 
@@ -653,12 +654,18 @@ public class SevenZip {
     private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
-    private static native ISevenZipOutArchive nativeCreateArchive(ArchiveFormat archiveFormat, int archiveFormatIndex)
-            throws SevenZipException;
+    private static native void nativeCreateArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat,
+            int archiveFormatIndex) throws SevenZipException;
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
-    public static ISevenZipOutArchive openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
+    @SuppressWarnings("unchecked")
+    public static <T extends IOutArchive> T openOutArchive(Class<T> outArchiveInterface) throws SevenZipException {
+        ArchiveFormat archiveFormat = ArchiveFormat.findOutArchiveImplementationToInterface(outArchiveInterface);
+        return (T) openOutArchive(archiveFormat);
+    }
+
+    public static IOutArchive openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (!archiveFormat.isOutArchiveSupported()) {
             throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
@@ -668,7 +675,17 @@ public class SevenZip {
             throw new IllegalStateException("Can't create OutArchive: archive format '" + archiveFormat
                     + "' doesn't support archive creation.");
         }
-        return nativeCreateArchive(archiveFormat, archiveFormatIndex);
+
+        OutArchiveImpl outArchiveImpl;
+        try {
+            outArchiveImpl = archiveFormat.getOutArchiveImplementation().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Internal error: Can't create new instance of the class "
+                    + archiveFormat.getOutArchiveImplementation() + " using default constructor.");
+        }
+
+        nativeCreateArchive(outArchiveImpl, archiveFormat, archiveFormatIndex);
+        return outArchiveImpl;
     }
 
     /**
