@@ -197,12 +197,21 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime) {
     localinit(env);
 
+
     LONGLONG time = (((LONGLONG) filetime.dwHighDateTime) << 32) | filetime.dwLowDateTime;
-    LONGLONG javaTime = (time - (((LONGLONG) 0x19db1de) << 32 | 0xd53e8000)) / 10000;
+    LONGLONG javaTime = (time - FILETIME_TO_JAVATIME_SHIFT) / FILETIME_TO_JAVATIME_FACTOR;
 
     jobject dateObject = env->NewObject(g_DateClass, g_DateConstructor, (jlong) javaTime);
     FATALIF(dateObject == NULL, "Error creating instance of java.util.Date using Date(long) constructor");
     return dateObject;
+}
+
+void ObjectToFILETIME(JNIEnv * env, jobject obj, FILETIME & filetime) {
+    LONGLONG javaTime = (LONGLONG)(jni::Date::getTime(env, obj));
+    LONGLONG time = javaTime * FILETIME_TO_JAVATIME_FACTOR + FILETIME_TO_JAVATIME_SHIFT;
+
+    filetime.dwHighDateTime = (DWORD)(time >> 32);
+    filetime.dwLowDateTime = (DWORD)(time);
 }
 
 /**
@@ -235,6 +244,10 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
         } else if (jniEnvInstance->IsInstanceOf(object, g_LongClass)) {
             jlong value = jniEnvInstance->CallLongMethod(object, g_LongLongValue);
             cPropVariant = (UInt64) value;
+        } else if (jniEnvInstance->IsInstanceOf(object, g_DateClass)) {
+            FILETIME filetime;
+            ObjectToFILETIME(jniEnvInstance, object, filetime);
+            cPropVariant = filetime;
         } else {
             jniEnvInstance.reportError("Can't convert object to PropVariant"); // TODO Improve error message by giving name of the class
         }
