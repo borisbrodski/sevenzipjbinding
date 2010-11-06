@@ -10,6 +10,11 @@ import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressSingleFile7zTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileBZip2Test;
+import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileGZipTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileTarTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileZipTest;
 import net.sf.sevenzipjbinding.junit.compression.FirstTest;
 import net.sf.sevenzipjbinding.junit.compression.SimpleTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
@@ -309,6 +314,11 @@ public class AllTestSuite extends TestSuite {
             CompressMultipleFile7zStdConfTest.class, //
             CompressMultipleFileTarStdConfTest.class, //
             CompressMultipleFileZipStdConfTest.class, //
+            CompressSingleFile7zTest.class, //
+            CompressSingleFileBZip2Test.class, //
+            CompressSingleFileGZipTest.class, //
+            CompressSingleFileTarTest.class, //
+            CompressSingleFileZipTest.class, //
     };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
