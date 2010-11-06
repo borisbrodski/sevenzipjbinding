@@ -2,7 +2,7 @@
 #include "JNITools.h"
 #include "JNICallState.h"
 #include "UnicodeHelper.h"
-static bool initialized = 0;
+static bool initialized = 0; // TODO Synchronize access to this variableor call the init method from the global initialization routing (better)
 
 //static jclass g_NumberClass;
 
