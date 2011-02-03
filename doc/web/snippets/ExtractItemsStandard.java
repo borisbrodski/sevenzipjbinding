@@ -27,10 +27,13 @@ public class ExtractItemsStandard {
         public ISequentialOutStream getStream(int index, 
                 ExtractAskMode extractAskMode) throws SevenZipException {
             this.index = index;
+            if (extractAskMode != ExtractAskMode.EXTRACT) {
+                return null;
+            }
             return new ISequentialOutStream() {
 
                 public int write(byte[] data) throws SevenZipException {
-                    hash |= Arrays.hashCode(data);
+                    hash ^= Arrays.hashCode(data);
                     return data.length; // Return amount of proceed data
                 }
             };

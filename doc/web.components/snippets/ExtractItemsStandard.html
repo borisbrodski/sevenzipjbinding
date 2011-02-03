@@ -27,10 +27,13 @@
         <span class="java-keyword">public</span> ISequentialOutStream getStream(<span class="java-keyword">int</span> index, 
                 ExtractAskMode extractAskMode) <span class="java-keyword">throws</span> SevenZipException {
             this.<span class="java-field">index</span> = index;
+            <span class="java-keyword">if</span> (extractAskMode != ExtractAskMode.<span class="java-staticfield">EXTRACT</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> ISequentialOutStream() {
 
                 <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
-                    <span class="java-field">hash</span> |= Arrays.<span class="java-staticmethod">hashCode</span>(data);
+                    <span class="java-field">hash</span> ^= Arrays.<span class="java-staticmethod">hashCode</span>(data);
                     <span class="java-keyword">return</span> data.<span class="java-field">length</span>; <span class="java-comment">// Return amount of proceed data</span>
                 }
             };
