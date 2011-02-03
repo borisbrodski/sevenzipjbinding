@@ -31,7 +31,7 @@ public class ExtractItemsStandardCallback {
 			this./*f*/index/* */= index;
 			/*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
 					.getProperty(index, PropID./*sf*/IS_FOLDER/**/);
-			if (/*f*/skipExtraction/**/) {
+			if (/*f*/skipExtraction/**/|| extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
 				return null;
 			}
 			return new ISequentialOutStream() {
