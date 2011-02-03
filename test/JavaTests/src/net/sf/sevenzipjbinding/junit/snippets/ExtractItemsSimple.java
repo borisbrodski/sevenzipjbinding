@@ -38,7 +38,7 @@ public class ExtractItemsSimple {
 					ExtractOperationResult result;
 					result = item.extractSlow(new ISequentialOutStream() {
 						public int write(byte[] data) throws SevenZipException {
-							hash[0] |= Arrays.hashCode(data); // Consume data
+							hash[0] ^= Arrays.hashCode(data); // Consume data
 							return data.length; // Return amount of consumed data
 						}
 					});
