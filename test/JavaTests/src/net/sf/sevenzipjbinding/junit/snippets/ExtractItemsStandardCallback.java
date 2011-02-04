@@ -31,12 +31,12 @@ public class ExtractItemsStandardCallback {
             this./*f*/index/* */= index;
             /*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
                     .getProperty(index, PropID./*sf*/IS_FOLDER/**/);
-            if (/*f*/skipExtraction/**/) {
+            if (/*f*/skipExtraction/**/|| extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
                 return null;
             }
             return new ISequentialOutStream() {
                 public int write(byte[] data) throws SevenZipException {
-                    /*f*/hash/* */|= Arrays.hashCode(data);
+                    /*f*/hash/* */^= Arrays.hashCode(data);
                     return data./*f*/length/**/; // Return amount of proceed data
                 }
             };

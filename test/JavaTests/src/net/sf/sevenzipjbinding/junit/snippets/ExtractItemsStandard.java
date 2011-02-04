@@ -30,10 +30,13 @@ public class ExtractItemsStandard {
         public ISequentialOutStream getStream(int index, //
                 ExtractAskMode extractAskMode) throws SevenZipException {
             this./*f*/index/* */= index;
+            if (extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
+                return null;
+            }
             return new ISequentialOutStream() {
 
                 public int write(byte[] data) throws SevenZipException {
-                    /*f*/hash/* */|= Arrays.hashCode(data);
+                    /*f*/hash/* */^= Arrays.hashCode(data);
                     return data./*f*/length/**/; // Return amount of proceed data
                 }
             };

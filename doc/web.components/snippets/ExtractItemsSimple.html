@@ -30,13 +30,13 @@
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
 
             <span class="java-keyword">for</span> (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
-                final <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
+                <span class="java-keyword">final</span> <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
                     ExtractOperationResult result;
                     result = item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
                         <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
-                            hash[0] |= Arrays.<span class="java-staticmethod">hashCode</span>(data);
-                            <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of proceed data</span>
+                            hash[0] ^= Arrays.<span class="java-staticmethod">hashCode</span>(data); <span class="java-comment">// Consume data</span>
+                            <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of consumed data</span>
                         }
                     });
                     <span class="java-keyword">if</span> (result == ExtractOperationResult.OK) {

@@ -28,12 +28,12 @@ public class ExtractItemsStandardCallback {
             this.index = index;
             skipExtraction = (Boolean) inArchive
                     .getProperty(index, PropID.IS_FOLDER);
-            if (skipExtraction) {
+            if (skipExtraction|| extractAskMode != ExtractAskMode.EXTRACT) {
                 return null;
             }
             return new ISequentialOutStream() {
                 public int write(byte[] data) throws SevenZipException {
-                    hash |= Arrays.hashCode(data);
+                    hash ^= Arrays.hashCode(data);
                     return data.length; // Return amount of proceed data
                 }
             };
