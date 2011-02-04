@@ -28,7 +28,7 @@ public class ExtractItemsStandardCallback {
             this.index = index;
             skipExtraction = (Boolean) inArchive
                     .getProperty(index, PropID.IS_FOLDER);
-            if (skipExtraction|| extractAskMode != ExtractAskMode.EXTRACT) {
+            if (skipExtraction || extractAskMode != ExtractAskMode.EXTRACT) {
                 return null;
             }
             return new ISequentialOutStream() {
@@ -51,7 +51,7 @@ public class ExtractItemsStandardCallback {
             if (extractOperationResult != ExtractOperationResult.OK) {
                 System.err.println("Extraction error");
             } else {
-                System.out.println(String.format("%9X | %s", // 
+                System.out.println(String.format("%9X | %s", 
                         hash, inArchive.getProperty(index, PropID.PATH)));
                 hash = 0;
             }

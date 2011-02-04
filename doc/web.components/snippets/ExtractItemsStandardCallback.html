@@ -28,7 +28,7 @@
             this.<span class="java-field">index</span> = index;
             <span class="java-field">skipExtraction</span> = (Boolean) <span class="java-field">inArchive</span>
                     .getProperty(index, PropID.<span class="java-staticfield">IS_FOLDER</span>);
-            <span class="java-keyword">if</span> (<span class="java-field">skipExtraction</span>|| extractAskMode != ExtractAskMode.<span class="java-staticfield">EXTRACT</span>) {
+            <span class="java-keyword">if</span> (<span class="java-field">skipExtraction</span> || extractAskMode != ExtractAskMode.<span class="java-staticfield">EXTRACT</span>) {
                 <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
             }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> ISequentialOutStream() {
@@ -51,7 +51,7 @@
             <span class="java-keyword">if</span> (extractOperationResult != ExtractOperationResult.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
             } else {
-                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, 
                         <span class="java-field">hash</span>, <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, PropID.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
             }
