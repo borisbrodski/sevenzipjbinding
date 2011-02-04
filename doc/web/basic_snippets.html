@@ -450,7 +450,7 @@ archive using standard interface and call back method as a filter</a></h4>
             this.<span class="java-field">index</span> = index;
             <span class="java-field">skipExtraction</span> = (Boolean) <span class="java-field">inArchive</span>
                     .getProperty(index, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">IS_FOLDER</span>);
-            <span class="java-keyword">if</span> (<span class="java-field">skipExtraction</span>|| extractAskMode != <a href="javadoc/net/sf/sevenzipjbinding/ExtractAskMode.html">ExtractAskMode</a>.<span class="java-staticfield">EXTRACT</span>) {
+            <span class="java-keyword">if</span> (<span class="java-field">skipExtraction</span> || extractAskMode != <a href="javadoc/net/sf/sevenzipjbinding/ExtractAskMode.html">ExtractAskMode</a>.<span class="java-staticfield">EXTRACT</span>) {
                 <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
             }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialOutStream.html">ISequentialOutStream</a>() {
@@ -473,7 +473,7 @@ archive using standard interface and call back method as a filter</a></h4>
             <span class="java-keyword">if</span> (extractOperationResult != <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a>.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
             } else {
-                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, 
                         <span class="java-field">hash</span>, <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
             }

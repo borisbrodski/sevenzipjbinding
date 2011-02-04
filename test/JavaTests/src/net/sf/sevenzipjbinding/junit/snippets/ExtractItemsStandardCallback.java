@@ -31,7 +31,7 @@ public class ExtractItemsStandardCallback {
 			this./*f*/index/* */= index;
 			/*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
 					.getProperty(index, PropID./*sf*/IS_FOLDER/**/);
-			if (/*f*/skipExtraction/**/|| extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
+            if (/*f*/skipExtraction/* */|| extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
 				return null;
 			}
 			return new ISequentialOutStream() {
@@ -54,7 +54,7 @@ public class ExtractItemsStandardCallback {
 			if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
 				System.err.println("Extraction error");
 			} else {
-				System.out.println(String.format("%9X | %s", // 
+                System.out.println(String.format("%9X | %s", //
 						/*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
 				/*f*/hash/* */= 0;
 			}
