@@ -21,6 +21,8 @@
 
 - Cab with support of volumes? If yes, test it
 
+- Separate stress tests from functional tests
+
  
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
