@@ -101,7 +101,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 
     const int size = 1;
     NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
-    propValues[0] = (unsigned int)0;
+    propValues[0] = (unsigned int)level;
 
     CRecordVector<const wchar_t *> names;
     names.Add(L"X");

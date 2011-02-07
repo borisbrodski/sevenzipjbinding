@@ -12,7 +12,16 @@ package net.sf.sevenzipjbinding;
 public interface IFeatureSetLevel {
 
     /**
-     * Set compression level
+     * Set compression level:
+     * <ul>
+     * <li>0 - Copy mode (no compression)
+     * <li>1 - Fastest
+     * <li>3 - Fast
+     * <li>5 - Normal
+     * <li>7 - Maximum
+     * <li>9 - Ultra
+     * </ul>
+     * Note, that the meaning of compression level can differ through algorithms.
      * 
      * @param compressionLevel
      *            compression level to set

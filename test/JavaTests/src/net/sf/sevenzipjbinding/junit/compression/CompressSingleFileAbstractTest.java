@@ -1,23 +1,11 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
-import java.util.Date;
-import java.util.Random;
-
-import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
-import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.IOutArchive;
-import net.sf.sevenzipjbinding.ISeekableStream;
-import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
-import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -26,220 +14,67 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public abstract class CompressSingleFileAbstractTest extends JUnitNativeTestBase {
-    static class RandomContext implements IInStream {
-
-        private long currentPosition;
-        private final long size;
-        private long step;
-
-        RandomContext(long size, long entropy) {
-            this.size = size;
-            currentPosition = 0;
-            if (entropy > 0) {
-                step = size / entropy;
-            } else {
-                step = 0;
-            }
-        }
-
-        /**
-         * ${@inheritDoc}
-         */
-        public int read(byte[] data) throws SevenZipException {
-            byte[] buffer = new byte[1];
-            for (int i = 0; i < data.length; i++, currentPosition++) {
-                if (currentPosition >= size) {
-                    return i; // EOF
-                }
-                long section = step == 0 ? 1 : currentPosition / step;
-                if (section % 2 == 0) {
-                    new Random(currentPosition).nextBytes(buffer);
-                } else {
-                    Random sectionRandom = new Random(section * 1000 + size);
-                    switch (sectionRandom.nextInt(3)) {
-                    case 0:
-                        sectionRandom.nextBytes(buffer);
-                        break;
-                    case 1:
-                        sectionRandom.nextBytes(buffer);
-                        buffer[0] = (byte) (buffer[0] + currentPosition);
-                        break;
-                    case 2:
-                        sectionRandom.nextBytes(buffer);
-                        buffer[0] = (byte) (buffer[0] - currentPosition * 7);
-                        break;
-                    default:
-                        throw new IllegalStateException("Invalid switch value");
-                    }
-                }
-                data[i] = buffer[0];
-            }
-
-            return data.length;
-        }
-
-        /**
-         * ${@inheritDoc}
-         */
-        public long seek(long offset, int seekOrigin) throws SevenZipException {
-            switch (seekOrigin) {
-            case SEEK_SET:
-                currentPosition = offset;
-                break;
-
-            case SEEK_CUR:
-                currentPosition = currentPosition + offset;
-                break;
-
-            case SEEK_END:
-                currentPosition = size + offset;
-                break;
-
-            default:
-                throw new SevenZipException("Seek: unknown origin: " + seekOrigin);
-            }
-            return currentPosition;
-        }
-
-    }
-
-    public class TestSequentionOutputStream implements ISequentialOutStream {
-
-        private final IInStream inStream;
-
-        public TestSequentionOutputStream(IInStream inStream) {
-            this.inStream = inStream;
-        }
-
-        public int write(byte[] data) throws SevenZipException {
-            byte[] expected = new byte[data.length];
-            Assert.assertEquals("Extracted data exceeds expected.", data.length, inStream.read(expected));
-            Assert.assertArrayEquals("Extracted data doesn't match expected", expected, data);
-            return data.length;
-        }
-
-    }
-
-    public class SingleFileArchiveUpdateCallback implements IArchiveUpdateCallback {
-        private long size;
-        private IInStream inputStream;
-
-        SingleFileArchiveUpdateCallback(long size, IInStream inputStream) {
-            super();
-            this.size = size;
-            this.inputStream = inputStream;
-        }
-
-        public Object getProperty(int index, PropID propID) {
-            switch (propID) {
-            case PATH:
-                return "content";
-
-            case IS_FOLDER:
-            case IS_ANTI:
-                return Boolean.FALSE;
-
-            case SIZE:
-                return Long.valueOf(size);
-            case LAST_MODIFICATION_TIME:
-                return new Date();
-            default:
-                System.out.println("Unknown property: " + propID);
-            }
-            return null;
-        }
-
-        public ISequentialInStream getStream(int index) {
-            return inputStream;
-        }
-
-        public void setOperationResult(boolean operationResultOk) {
-
-        }
-
-        public void setTotal(long total) throws SevenZipException {
-        }
-
-        public void setCompleted(long completeValue) throws SevenZipException {
-
-        }
-
-        public boolean isNewData(int index) {
-            return true;
-        }
-
-        public boolean isNewProperties(int index) {
-            return true;
-        }
-
-        public int getOldArchiveItemIndex(int index) {
-            return 0;
-        }
-
-    }
+public abstract class CompressSingleFileAbstractTest extends CompressAbstractTest {
 
     private static final int MINIMUM_STREAM_LENGTH = 32769;
 
-    protected abstract ArchiveFormat getArchiveFormat();
-
     @Test
-    public void test0() throws Exception {
+    public void test0Entropy0() throws Exception {
         doTest(0, 0, false);
     }
 
     @Test
-    public void test0Multithreaded() throws Exception {
+    public void test0Entropy0Multithreaded() throws Exception {
         doTest(0, 0, true);
     }
 
     @Test
-    public void test1() throws Exception {
+    public void test1Entropy0() throws Exception {
         doTest(1, 0, false);
     }
 
     @Test
-    public void test1Multithreaded() throws Exception {
+    public void test1Entropy0Multithreaded() throws Exception {
         doTest(1, 0, true);
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2Entropy0() throws Exception {
         doTest(2, 0, false);
     }
 
     @Test
-    public void test2Multithreaded() throws Exception {
+    public void test2Entropy0Multithreaded() throws Exception {
         doTest(2, 0, true);
     }
 
     @Test
-    public void test3() throws Exception {
+    public void test3Entropy0() throws Exception {
         doTest(3, 0, false);
     }
 
     @Test
-    public void test3Multithreaded() throws Exception {
+    public void test3Entropy0Multithreaded() throws Exception {
         doTest(3, 0, true);
     }
 
     @Test
-    public void test4() throws Exception {
+    public void test4Entropy0() throws Exception {
         doTest(4, 0, false);
     }
 
     @Test
-    public void test4Multithreaded() throws Exception {
+    public void test4Entropy0Multithreaded() throws Exception {
         doTest(4, 0, true);
     }
 
     @Test
-    public void test5() throws Exception {
+    public void test5Entropy0() throws Exception {
         doTest(5, 0, false);
     }
 
     @Test
-    public void test5Multithreaded() throws Exception {
+    public void test5Entropy0Multithreaded() throws Exception {
         doTest(5, 0, true);
     }
 
@@ -624,16 +459,22 @@ public abstract class CompressSingleFileAbstractTest extends JUnitNativeTestBase
     }
 
     @Test
+    @Ignore
+    // TODO Separate stress tests from functional tests
     public void test20000000Entropy50() throws Exception {
         doTest(20000000, 50, false);
     }
 
     @Test
+    @Ignore
+    // TODO Separate stress tests from functional tests
     public void test20000000Entropy50Multithreaded() throws Exception {
         doTest(20000000, 50, true);
     }
 
     @Test
+    @Ignore
+    // TODO Separate stress tests from functional tests
     public void test500000000Entropy50() throws Exception {
         doTest(500000000, 50);
     }
@@ -667,32 +508,12 @@ public abstract class CompressSingleFileAbstractTest extends JUnitNativeTestBase
         //        if (outArchiveInitialization != null) {
         //            outArchiveInitialization.initializeOutArchive(outArchive);
         //        }
-        outArchive.updateItems(outputByteArrayStream, 1, new SingleFileArchiveUpdateCallback(dataSize, randomContext));
+        outArchive.updateItems(outputByteArrayStream, 1, new SingleFileArchiveUpdateCallback(randomContext));
 
         System.out.println("Length: " + dataSize + ", entropy: " + entropy + ": compressed size: "
                 + outputByteArrayStream.getSize());
 
-        randomContext.seek(0, ISeekableStream.SEEK_SET);
-        outputByteArrayStream.rewind();
-
-        ISevenZipInArchive inArchive = null;
-        boolean successfull = false;
-        try {
-            inArchive = SevenZip.openInArchive(null, outputByteArrayStream);
-            Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
-            inArchive.extractSlow(0, new TestSequentionOutputStream(randomContext));
-            successfull = true;
-        } finally {
-            try {
-                if (inArchive != null) {
-                    inArchive.close();
-                }
-            } catch (Throwable throwable) {
-                if (successfull) {
-                    throw new RuntimeException("Error closing InArchive", throwable);
-                }
-            }
-        }
+        verifyCompressedArchive(randomContext, outputByteArrayStream);
 
         return outputByteArrayStream.getSize();
     }
