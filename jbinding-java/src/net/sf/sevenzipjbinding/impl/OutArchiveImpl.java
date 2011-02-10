@@ -39,5 +39,31 @@ public class OutArchiveImpl implements IOutArchive {
         return archiveFormat;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setSolid() throws SevenZipException {
+        nativeSetSolidSpec(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSolidFiles(int countOfFilesPerBlock) throws SevenZipException {
+        nativeSetSolidSpec("" + countOfFilesPerBlock + "F");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setSolidSize(long countOfBytesPerBlock) throws SevenZipException {
+        nativeSetSolidSpec("" + countOfBytesPerBlock + "B");
+    }
+
+
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
+
+    private native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
+
+
 }
