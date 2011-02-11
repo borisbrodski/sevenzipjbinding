@@ -3,8 +3,8 @@
 /*
  * JavaStaticInfo.h
  *
- *  Created on: Jan 14, 2010
- *      Author: Boris Brodski
+ * Created on: Jan 14, 2010
+ * Author: Boris Brodski
  */
 
 /*

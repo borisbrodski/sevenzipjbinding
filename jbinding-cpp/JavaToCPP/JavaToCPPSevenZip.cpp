@@ -77,6 +77,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
                                                                                            jobject archiveOpenCallbackImpl) {
     TRACE("SevenZip.nativeOpenArchive()")
 
+
+
     JBindingSession & jbindingSession = *(new JBindingSession(env));
     DeleteInErrorCase<JBindingSession> deleteInErrorCase(jbindingSession);
 
