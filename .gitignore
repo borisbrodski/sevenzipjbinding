@@ -28,3 +28,4 @@ hs_err_pid*.log
 /jbinding-java/bin-test/
 scrapbook.jpage
 /Testing/
+/.cproject
