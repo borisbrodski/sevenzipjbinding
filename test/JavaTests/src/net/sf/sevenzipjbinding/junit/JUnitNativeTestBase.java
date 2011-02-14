@@ -28,7 +28,7 @@ public class JUnitNativeTestBase {
 
     private static final int SINGLE_TEST_THREAD_COUNT = 2;//15;
     protected static final int SINGLE_TEST_REPEAT_COUNT = 2;//60;
-    private static final int SINGLE_TEST_TIMEOUT = 100000;
+    static final int SINGLE_TEST_TIMEOUT = 100000;
 
     private static int deadCPPObjectCount = 0;
     private static boolean initializeNativeLibrary = true;
