@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.junittools;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

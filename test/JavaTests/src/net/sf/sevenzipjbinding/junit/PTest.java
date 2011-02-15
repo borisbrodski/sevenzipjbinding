@@ -3,13 +3,12 @@ package net.sf.sevenzipjbinding.junit;
 import java.util.Arrays;
 import java.util.Collection;
 
+import net.sf.sevenzipjbinding.junit.junittools.Multithreaded;
+
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(MyRunner.class)
-@Multithreaded
-public class PTest {
+public class PTest extends TestBase {
     private final String a;
     private final int b;
 
@@ -26,6 +25,7 @@ public class PTest {
     }
 
     @Test
+    @Multithreaded
     public void test1() throws Exception {
         System.out.println("Testing 1: " + a + ", " + b);
     }
