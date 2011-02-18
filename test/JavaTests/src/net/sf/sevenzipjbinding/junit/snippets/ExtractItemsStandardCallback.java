@@ -16,97 +16,98 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 public class ExtractItemsStandardCallback {
-	public static class MyExtractCallback implements IArchiveExtractCallback {
-		private int /*f*/hash/* */= 0;
-		private int /*f*/index/**/;
-		private boolean /*f*/skipExtraction/**/;
-		private ISevenZipInArchive /*f*/inArchive/**/;
+    public static class MyExtractCallback implements IArchiveExtractCallback {
+        private int /*f*/hash/* */= 0;
+        private int /*f*/index/**/;
+        private boolean /*f*/skipExtraction/**/;
+        private ISevenZipInArchive /*f*/inArchive/**/;
 
-		public MyExtractCallback(ISevenZipInArchive inArchive) {
-			this./*f*/inArchive/* */= inArchive;
-		}
+        public MyExtractCallback(ISevenZipInArchive inArchive) {
+            this./*f*/inArchive/* */= inArchive;
+        }
 
-		public ISequentialOutStream getStream(int index, //
-				ExtractAskMode extractAskMode) throws SevenZipException {
-			this./*f*/index/* */= index;
-			/*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
-					.getProperty(index, PropID./*sf*/IS_FOLDER/**/);
+        public ISequentialOutStream getStream(int index, //
+                ExtractAskMode extractAskMode) throws SevenZipException {
+            this./*f*/index/* */= index;
+            /*f*/skipExtraction/* */= (Boolean) /*f*/inArchive/**///
+                    .getProperty(index, PropID./*sf*/IS_FOLDER/**/);
             if (/*f*/skipExtraction/* */|| extractAskMode != ExtractAskMode./*sf*/EXTRACT/**/) {
-				return null;
-			}
-			return new ISequentialOutStream() {
-				public int write(byte[] data) throws SevenZipException {
-					/*f*/hash/* */^= Arrays.hashCode(data);
-					return data./*f*/length/**/; // Return amount of proceed data
-				}
-			};
-		}
+                return null;
+            }
+            return new ISequentialOutStream() {
+                public int write(byte[] data) throws SevenZipException {
+                    /*f*/hash/* */^= Arrays.hashCode(data);
+                    return data./*f*/length/**/; // Return amount of proceed data
+                }
+            };
+        }
 
-		public void prepareOperation(ExtractAskMode extractAskMode) //
-				throws SevenZipException {
-		}
+        public void prepareOperation(ExtractAskMode extractAskMode) //
+                throws SevenZipException {
+        }
 
-		public void setOperationResult(ExtractOperationResult //
-				extractOperationResult) throws SevenZipException {
-			if (/*f*/skipExtraction/**/) {
-				return;
-			}
-			if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
-				System.err.println("Extraction error");
-			} else {
+        public void setOperationResult(ExtractOperationResult //
+                extractOperationResult) throws SevenZipException {
+            if (/*f*/skipExtraction/**/) {
+                return;
+            }
+            if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
+                System.err.println("Extraction error");
+            } else {
                 System.out.println(String.format("%9X | %s", //
-						/*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
-				/*f*/hash/* */= 0;
-			}
-		}
+                        /*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
+                /*f*/hash/* */= 0;
+            }
+        }
 
-		public void setCompleted(long completeValue) throws SevenZipException {
-		}
+        public void setCompleted(long completeValue) throws SevenZipException {
+        }
 
-		public void setTotal(long total) throws SevenZipException {
-		}
+        public void setTotal(long total) throws SevenZipException {
+        }
 
-	}
+    }
 
-	public static void main(String[] args) {
-		if (args./*f*/length/* */== 0) {
-			System.out.println("Usage: java ExtractItemsStandard <arch-name>");
-		}
-		RandomAccessFile randomAccessFile = null;
-		ISevenZipInArchive inArchive = null;
-		try {
-			randomAccessFile = new RandomAccessFile(args[0], "r");
-			inArchive = SevenZip.openInArchive(null, // autodetect archive type
-					new RandomAccessFileInStream(randomAccessFile));
+    public static void main(String[] args) {
+        if (args./*f*/length/* */== 0) {
+            System.out.println("Usage: java ExtractItemsStandard <arch-name>");
+            return;
+        }
+        RandomAccessFile randomAccessFile = null;
+        ISevenZipInArchive inArchive = null;
+        try {
+            randomAccessFile = new RandomAccessFile(args[0], "r");
+            inArchive = SevenZip.openInArchive(null, // autodetect archive type
+                    new RandomAccessFileInStream(randomAccessFile));
 
-			System.out.println("   Hash   | Filename");
-			System.out.println("----------+---------");
+            System.out.println("   Hash   | Filename");
+            System.out.println("----------+---------");
 
-			int[] in = new int[inArchive.getNumberOfItems()];
-			for (int i = 0; i < in.length; i++) {
-				in[i] = i;
-			}
-			inArchive.extract(in, false, // Non-test mode
-					new MyExtractCallback(inArchive));
-		} catch (Exception e) {
-			System.err.println("Error occurs: " + e);
-			System.exit(1);
-		} finally {
-			if (inArchive != null) {
-				try {
-					inArchive.close();
-				} catch (SevenZipException e) {
-					System.err.println("Error closing archive: " + e);
-				}
-			}
-			if (randomAccessFile != null) {
-				try {
-					randomAccessFile.close();
-				} catch (IOException e) {
-					System.err.println("Error closing file: " + e);
-				}
-			}
-		}
-	}
+            int[] in = new int[inArchive.getNumberOfItems()];
+            for (int i = 0; i < in.length; i++) {
+                in[i] = i;
+            }
+            inArchive.extract(in, false, // Non-test mode
+                    new MyExtractCallback(inArchive));
+        } catch (Exception e) {
+            System.err.println("Error occurs: " + e);
+            System.exit(1);
+        } finally {
+            if (inArchive != null) {
+                try {
+                    inArchive.close();
+                } catch (SevenZipException e) {
+                    System.err.println("Error closing archive: " + e);
+                }
+            }
+            if (randomAccessFile != null) {
+                try {
+                    randomAccessFile.close();
+                } catch (IOException e) {
+                    System.err.println("Error closing file: " + e);
+                }
+            }
+        }
+    }
 }
 /* END_SNIPPET */
