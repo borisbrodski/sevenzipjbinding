@@ -46,7 +46,6 @@ public class MyRunner extends Suite {
 
         @Override
         protected List<FrameworkMethod> getChildren() {
-            //            List<FrameworkMethod> computeTestMethods = super.getChildren();
             List<FrameworkMethod> computeTestMethods = new ArrayList<FrameworkMethod>();
             TestClass targetClass = getTestClass();
             boolean multithreadedOnClass = targetClass.getJavaClass().getAnnotation(Multithreaded.class) != null;
@@ -102,14 +101,6 @@ public class MyRunner extends Suite {
         }
 
         @Override
-        protected Statement withBefores(FrameworkMethod method, Object target, Statement statement) {
-            //            if (multithreaded) {
-            //                return new MultithreadedTestRunner(super.withBefores(method, target, statement), method, target);
-            //            }
-            return super.withBefores(method, target, statement);
-        }
-
-        @Override
         protected Statement withPotentialTimeout(FrameworkMethod method, Object test, Statement next) {
             long timeout = 0;
             Test annotation = method.getAnnotation(Test.class);
@@ -126,9 +117,6 @@ public class MyRunner extends Suite {
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
-    /**
-     * Only called reflectively. Do not use programmatically.
-     */
     public MyRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner> emptyList());
         List<Object[]> parametersList = getParametersList(getTestClass());

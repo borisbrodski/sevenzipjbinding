@@ -27,6 +27,7 @@ public class MyRunnerSimpleTest extends MyRunnerTestBase {
     @BeforeClass
     public static void beforeClass() {
         beforeClassCallNumber = nextNumber();
+        setTestCount(0);
     }
 
     @AfterClass
@@ -40,6 +41,7 @@ public class MyRunnerSimpleTest extends MyRunnerTestBase {
         assertTrue(beforeClassCallNumber < callNumberMinimum);
         assertTrue(beforeClassCallNumber < afterClassCallNumber);
         assertTrue(afterClassCallNumber > callNumberMaximum);
+        assertEquals(3, getTestCount());
         baseClassCheck(callNumberMaximum);
     }
 
@@ -82,17 +84,20 @@ public class MyRunnerSimpleTest extends MyRunnerTestBase {
         assertEquals(0, testCallNumber);
         testCallNumber = localNextNumber();
         addInstanceToCheck(this);
+        countCalledTest();
     }
 
     @Test
     public void test2() {
         assertEquals(0, testCallNumber);
         testCallNumber = localNextNumber();
+        countCalledTest();
     }
 
     @Test
     public void test3() {
         assertEquals(0, testCallNumber);
         testCallNumber = localNextNumber();
+        countCalledTest();
     }
 }

@@ -33,6 +33,8 @@ public class MyRunnerTestBase {
     private static List<Class<?>> classesToCheck = new ArrayList<Class<?>>();
     private static List<Object> instancesToCheck = new ArrayList<Object>();
 
+    private static int testCount = 0;
+
     private int beforeCallNumber;
     private int afterCallNumber;
 
@@ -93,6 +95,18 @@ public class MyRunnerTestBase {
 
     protected synchronized void addInstanceToCheck(Object object) {
         instancesToCheck.add(object);
+    }
+
+    protected synchronized void countCalledTest() {
+        testCount++;
+    }
+
+    public static int getTestCount() {
+        return testCount;
+    }
+
+    public static void setTestCount(int testCount) {
+        MyRunnerTestBase.testCount = testCount;
     }
 
     private static void runClassChecks() throws Exception {
