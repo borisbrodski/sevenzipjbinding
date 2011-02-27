@@ -33,6 +33,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileArjTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileBzip2Test;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCabTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCabVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileChmTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileDebTest;
@@ -133,6 +134,7 @@ public class AllTestSuite extends TestSuite {
 	/*    */ExtractSingleFileArjTest.class, //
 			ExtractSingleFileBzip2Test.class, //
 			ExtractSingleFileCabTest.class, //
+			ExtractSingleFileCabVolumeTest.class, //
 			ExtractSingleFileChmTest.class, //
 			ExtractSingleFileCpioTest.class, //
 			ExtractSingleFileDebTest.class, //
