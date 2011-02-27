@@ -186,8 +186,6 @@ public class VolumedArchiveInStream implements IInStream {
 			throw new RuntimeException("Seek: unknown origin: " + seekOrigin);
 		}
 
-		//		System.out.println("Setting absolute offset to: " + newOffset
-		//				+ " (origin: " + seekOrigin + ", offset: " + offset + ")");
 		if (newOffset == absoluteOffset && !proceedWithSeek) {
 			return newOffset;
 		}
@@ -220,8 +218,6 @@ public class VolumedArchiveInStream implements IInStream {
 		absoluteOffset += read;
 		currentVolumeOffset += read;
 
-		//		System.out.println("Was read: " + read + " (asked for " + data.length
-		//				+ ")");
 		if (currentVolumeOffset >= currentVolumeLength) {
 			openVolume(currentIndex + 1, true);
 		}
