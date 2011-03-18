@@ -14,6 +14,8 @@ void UniversalArchiveOpencallback::Init(NativeMethodContext * nativeMethodContex
     _archiveOpenVolumeCallback = NULL;
     _cryptoGetTextPassword = NULL;
 
+    _simulateArchiveOpenVolumeCallback = false;
+
     jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
     FATALIF(cryptoGetTextPasswordClass == NULL,
             "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
@@ -53,7 +55,18 @@ STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **o
         return S_OK;
     }
 
-    if (memcmp(&iid, &IID_IArchiveOpenVolumeCallback, sizeof(GUID)) == 0 && _archiveOpenVolumeCallback)
+    // The special case for CAB archives get handled here.
+    // The problem with the CAB implementation is, that the
+    // extraction routine calls IArchiveOpenVolumeCallback
+    // methods without ever testing, whether the interface
+    // is implemented in the first place. 
+    //
+    // The solution is to provide a C++ side dummy
+    // implementation of the interface and raise the
+    // exception there, if not real implementation was
+    // provided.
+    if (_simulateArchiveOpenVolumeCallback ||
+            (memcmp(&iid, &IID_IArchiveOpenVolumeCallback, sizeof(GUID)) == 0 && _archiveOpenVolumeCallback))
     {
 //    	TRACE("OpenVolume")
         *outObject = (void *)(IArchiveOpenVolumeCallback *)this;
