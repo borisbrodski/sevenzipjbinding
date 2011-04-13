@@ -15,6 +15,7 @@
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> ExtractItemsStandardCallback {
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback <span class="java-keyword">implements</span> IArchiveExtractCallback {
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">hash</span> = 0;
+        <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">size</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> boolean <span class="java-field">skipExtraction</span>;
         <span class="java-keyword">private</span> ISevenZipInArchive <span class="java-field">inArchive</span>;
@@ -34,6 +35,7 @@
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> ISequentialOutStream() {
                 <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
                     <span class="java-field">hash</span> ^= Arrays.<span class="java-staticmethod">hashCode</span>(data);
+                    size += data.length;
                     <span class="java-keyword">return</span> data.<span class="java-field">length</span>; <span class="java-comment">// Return amount of proceed data</span>
                 }
             };
@@ -51,9 +53,10 @@
             <span class="java-keyword">if</span> (extractOperationResult != ExtractOperationResult.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
             } else {
-                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, 
-                        <span class="java-field">hash</span>, <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, PropID.<span class="java-staticfield">PATH</span>)));
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-field">hash</span>, <span class="java-field">size</span>,<span class="java-comment">// </span>
+                        <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, PropID.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
+                <span class="java-field">size</span> = 0;
             }
         }
 
@@ -62,7 +65,6 @@
 
         <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> SevenZipException {
         }
-
     }
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
@@ -77,8 +79,8 @@
             inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
                     <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile));
 
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   | Filename"</span>);
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   |    Size    | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+------------+---------"</span>);
 
             <span class="java-keyword">int</span>[] in = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[inArchive.getNumberOfItems()];
             <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; in.length; i++) {

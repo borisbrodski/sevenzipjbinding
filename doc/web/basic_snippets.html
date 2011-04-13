@@ -359,22 +359,25 @@ checksum will be calculated.</p>
             <span class="java-comment">// Getting simple interface of the archive inArchive</span>
             <a href="javadoc/net/sf/sevenzipjbinding/simple/ISimpleInArchive.html">ISimpleInArchive</a> simpleInArchive = inArchive.getSimpleInterface();
 
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   | Filename"</span>);
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   |    Size    | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+------------+---------"</span>);
 
             <span class="java-keyword">for</span> (<a href="javadoc/net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html">ISimpleInArchiveItem</a> item : simpleInArchive.getArchiveItems()) {
                 <span class="java-keyword">final</span> <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
                     <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a> result;
+
+                    <span class="java-keyword">final</span> <span class="java-keyword">long</span>[] sizeArray = <span class="java-keyword">new</span> <span class="java-keyword">long</span>[1];
                     result = item.extractSlow(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialOutStream.html">ISequentialOutStream</a>() {
                         <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
                             hash[0] ^= Arrays.<span class="java-staticmethod">hashCode</span>(data); <span class="java-comment">// Consume data</span>
+                            sizeArray[0] += data.length;
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of consumed data</span>
                         }
                     });
                     <span class="java-keyword">if</span> (result == <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a>.OK) {
-                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
-                                hash[0], item.getPath()));
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-comment">// </span>
+                                hash[0], sizeArray[0], item.getPath()));
                     } else {
                         System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);
                     }
@@ -405,11 +408,11 @@ checksum will be calculated.</p>
 <div class="snippet-info"><a href="snippets/ExtractItemsSimple.java">download java code</a></div>
 <p>Here is the output of the last snippet:</p>
 <div class="fragment"><pre class="fragment">
-   Hash   | Filename
-----------+---------
- C1FD1029 | file1.txt
- 8CB12E6A | file2.txt
- E8EEC7F4 | folder/file in folder.txt
+   Hash   |    Size    | Filename
+----------+------------+---------
+ C1FD1029 |       4481 | file1.txt
+ 8CB12E6A |         75 | file2.txt
+ E8EEC7F4 |          6 | folder/file in folder.txt
 </pre></div>
 <h3><a name="extraction-single-file-std-int">Standard interface</a></h3>
 <p>The following two examples show how to perform the same
@@ -440,6 +443,7 @@ archive using standard interface and call back method as a filter</a></h4>
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> ExtractItemsStandardCallback {
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a> {
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">hash</span> = 0;
+        <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">size</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> boolean <span class="java-field">skipExtraction</span>;
         <span class="java-keyword">private</span> <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> <span class="java-field">inArchive</span>;
@@ -459,6 +463,7 @@ archive using standard interface and call back method as a filter</a></h4>
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialOutStream.html">ISequentialOutStream</a>() {
                 <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
                     <span class="java-field">hash</span> ^= Arrays.<span class="java-staticmethod">hashCode</span>(data);
+                    size += data.length;
                     <span class="java-keyword">return</span> data.<span class="java-field">length</span>; <span class="java-comment">// Return amount of proceed data</span>
                 }
             };
@@ -476,9 +481,10 @@ archive using standard interface and call back method as a filter</a></h4>
             <span class="java-keyword">if</span> (extractOperationResult != <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a>.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
             } else {
-                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, 
-                        <span class="java-field">hash</span>, <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">PATH</span>)));
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-field">hash</span>, <span class="java-field">size</span>,<span class="java-comment">// </span>
+                        <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
+                <span class="java-field">size</span> = 0;
             }
         }
 
@@ -487,7 +493,6 @@ archive using standard interface and call back method as a filter</a></h4>
 
         <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
         }
-
     }
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
@@ -502,8 +507,8 @@ archive using standard interface and call back method as a filter</a></h4>
             inArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
                     <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(randomAccessFile));
 
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   | Filename"</span>);
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   |    Size    | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+------------+---------"</span>);
 
             <span class="java-keyword">int</span>[] in = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[inArchive.getNumberOfItems()];
             <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; in.length; i++) {
@@ -557,6 +562,7 @@ to extract</a></h4>
 <span class="java-keyword">public</span> <span class="java-keyword">class</span> ExtractItemsStandard {
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyExtractCallback <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a> {
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">hash</span> = 0;
+        <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">size</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> <span class="java-field">inArchive</span>;
 
@@ -574,6 +580,7 @@ to extract</a></h4>
 
                 <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
                     <span class="java-field">hash</span> ^= Arrays.<span class="java-staticmethod">hashCode</span>(data);
+                    <span class="java-field">size</span> += data.length;
                     <span class="java-keyword">return</span> data.<span class="java-field">length</span>; <span class="java-comment">// Return amount of proceed data</span>
                 }
             };
@@ -588,9 +595,10 @@ to extract</a></h4>
             <span class="java-keyword">if</span> (extractOperationResult != <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a>.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
             } else {
-                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
-                        <span class="java-field">hash</span>, <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">PATH</span>)));
+                System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-field">hash</span>, <span class="java-field">size</span>,<span class="java-comment">// </span>
+                        <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, <a href="javadoc/net/sf/sevenzipjbinding/PropID.html">PropID</a>.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
+                <span class="java-field">size</span> = 0;
             }
         }
 
@@ -614,8 +622,8 @@ to extract</a></h4>
             inArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
                     <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(randomAccessFile));
 
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   | Filename"</span>);
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   |    Size    | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+------------+---------"</span>);
 
             <span class="java-keyword">int</span> count = inArchive.getNumberOfItems();
             List&#60;Integer&#62; itemsToExtract = <span class="java-keyword">new</span> ArrayList&#60;Integer&#62;();
