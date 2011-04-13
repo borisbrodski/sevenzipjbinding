@@ -363,13 +363,14 @@ public class SevenZip {
 			if (tmpDirectory != null) {
 				tmpDirFile = tmpDirectory;
 			} else {
-				tmpDirFile = new File(System.getProperty(SYSTEM_PROPERTY_TMP));
+				String systemPropertyTmp = System.getProperty(SYSTEM_PROPERTY_TMP);
+				if (systemPropertyTmp == null) {
+					throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
+							+ "=<path to tmp dir> parameter for jvm to fix this.");
+				}
+				tmpDirFile = new File(systemPropertyTmp);
 			}
 
-			if (tmpDirFile == null) {
-				throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
-						+ "=<path to tmp dir> parameter for jvm to fix this.");
-			}
 
 			if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
 				throwInitException("invalid tmp directory '" + tmpDirectory + "'");
