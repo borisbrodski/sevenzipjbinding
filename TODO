@@ -11,6 +11,8 @@
 
 - In JavaDoc of ArchiveFormat: add columns (single file tests and multiple files tests)
 
+- Add privileged initialization of the native part. See forum "Help"
+
 
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
