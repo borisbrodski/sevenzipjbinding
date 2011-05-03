@@ -1,6 +1,10 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
+    * Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
+      interface caused JVM crash.
+
 Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Bugfix: it was not possible to open some archives over 4GB
 	  (CallIntMethod->CallLongMethod bug in InStream.Seek [found by IKVM developer Jeroen Frijters])
