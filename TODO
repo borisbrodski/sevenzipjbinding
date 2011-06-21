@@ -23,6 +23,8 @@
 
 - Separate stress tests from functional tests
 
+- Cherry-pick <"Privileged access to native dlls" bug fix> from master branch
+
  
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
