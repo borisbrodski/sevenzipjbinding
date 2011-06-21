@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -16,7 +18,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * 7-Zip-JBinding entry point class. Finds and initializes 7-Zip-JBinding native library. Opens archives and returns
  * implementation of {@link ISevenZipInArchive}
  * 
- * <h3>Initialization of the native library.</h3>
+ * <h3>Initialization of the native library</h3>
  * 
  * Typically the library doesn't need an explicit initialization. The first call to an open archive method will try to
  * initialize the native library by calling {@link #initSevenZipFromPlatformJAR()} method. This initialization process
@@ -40,10 +42,10 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * The single and multiple platform jar files can be determined by counting dashes in the filename. Single platform jar
  * files always contain two dashes in their names.<br>
  * <br>
- * Here is a schema of the different initialization processes.
+ * Here is a schema of the different initialization processes:
  * 
  * <ul>
- * <li>Initialization using platform jar.
+ * <li>Initialization using platform jar
  * <ul>
  * <li>First, the list of available native libraries is read out of the
  * <code>/sevenzipjbinding-platforms.properties</code> file in the class path by calling {@link #getPlatformList()}
@@ -61,7 +63,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li>The dynamic libraries are loaded into JVM using {@link System#load(String)} method.</li>
  * <li>7-Zip-JBinding native initialization method called to complete initialization process.</li>
  * </ul>
- * <li>Manual initialization.
+ * <li>Manual initialization
  * <ul>
  * <li>User loads 7-Zip-JBinding native dynamic libraries manually into JVM using {@link System#load(String)} or
  * {@link System#loadLibrary(String)}</li>
@@ -70,7 +72,13 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * </li>
  * </ul>
  * 
- * <h3>Opening archives.</h3>
+ * <br>
+ * By default the initialization occurred within the
+ * {@link AccessController#doPrivileged(java.security.PrivilegedAction)} block. This can be overruled by setting
+ * <code>sevenzip.no_doprivileged_initialization</code> system property. For example: <blockquote>
+ * <code>java -Dsevenzip.no_doprivileged_initialization=1 ...</code> </blockquote>
+ * 
+ * <h3>Opening archives</h3>
  * 
  * The methods for opening archive files (read-only):
  * <ul>
@@ -95,6 +103,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  */
 public class SevenZip {
 	private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
+	private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
 	private static final String PROPERTY_SEVENZIPJBINDING_LIBNAME = "sevenzipjbinding.libname.%s";
 	private static final String SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME = "sevenzipjbinding-lib.properties";
 	private static final String SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME = "/sevenzipjbinding-platforms.properties";
@@ -371,7 +380,6 @@ public class SevenZip {
 				tmpDirFile = new File(systemPropertyTmp);
 			}
 
-
 			if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
 				throwInitException("invalid tmp directory '" + tmpDirectory + "'");
 			}
@@ -443,10 +451,31 @@ public class SevenZip {
 	}
 
 	private static void nativeInitialization() throws SevenZipNativeInitializationException {
-		String errorMessage = nativeInitSevenZipLibrary();
-		if (errorMessage != null) {
+		String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
+		final String errorMessage[] = new String[1];
+		final Throwable throwable[] = new Throwable[1];
+		if (doPrivileged == null || doPrivileged.trim().equals("0")) {
+			AccessController.doPrivileged(new PrivilegedAction<Void>() {
+				public Void run() {
+					try {
+						errorMessage[0] = nativeInitSevenZipLibrary();
+					}
+					catch (Throwable e) {
+						throwable[0] = e;
+					}
+					return null;
+				}
+			});
+		} else {
+			errorMessage[0] = nativeInitSevenZipLibrary();
+		}
+		if (errorMessage[0] != null || throwable[0] != null) {
+			String message = errorMessage[0];
+			if (message == null) {
+				message = "No message";
+			}
 			lastInitializationException = new SevenZipNativeInitializationException(
-					"Error initializing 7-Zip-JBinding: " + errorMessage);
+					"Error initializing 7-Zip-JBinding: " + message, throwable[0]);
 			throw lastInitializationException;
 		}
 		initializationSuccessful = true;

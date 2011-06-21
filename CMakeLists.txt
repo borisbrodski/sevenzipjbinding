@@ -313,9 +313,10 @@ IF(BUILD_TESTING)
 
 
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
-    FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
+    FILE(WRITE ${JUNIT_TEST_RUNNER} "STRING(REPLACE \"%3D\" \"=\" JAVA_OPT_TO_USE \"\${JAVA_OPT}\")
+                                     EXECUTE_PROCESS(COMMAND
                                             ${JAVA_RUNTIME} -cp \"${JUNIT_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
-                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\"
+                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" \${JAVA_OPT_TO_USE}
                                             org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)
@@ -324,8 +325,10 @@ IF(BUILD_TESTING)
                                      ENDIF(RESULT)
                                      ")
     add_test(JUnit-init                         ${CMAKE_COMMAND} -D "SINGLEBUNDLE=01 Common tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-no-privileged-init      ${CMAKE_COMMAND} -D "SINGLEBUNDLE=01 Common tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-tools                        ${CMAKE_COMMAND} -D "SINGLEBUNDLE=02 Tools tests" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-snippets                     ${CMAKE_COMMAND} -D "SINGLEBUNDLE=03 Snippets tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets-no-privileged-init  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=03 Snippets tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=04 Single file tests" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=05 Multiple files tests" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=06 Bad archive tests" -P ${JUNIT_TEST_RUNNER})
