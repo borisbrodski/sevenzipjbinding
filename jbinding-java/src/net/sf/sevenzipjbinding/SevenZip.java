@@ -186,7 +186,7 @@ public class SevenZip {
 		InputStream propertiesInputStream = SevenZip.class
 				.getResourceAsStream(SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME);
 		if (propertiesInputStream == null) {
-			throw new SevenZipNativeInitializationException("Can'nt find 7-Zip-JBinding platform property file "
+			throw new SevenZipNativeInitializationException("Can not find 7-Zip-JBinding platform property file "
 					+ SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME
 					+ ". Make sure the 'sevenzipjbinding-<Platform>.jar' file is "
 					+ "in the class path or consider initializing SevenZipJBinding manualy using one of "
