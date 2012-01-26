@@ -118,6 +118,7 @@ public class OpenMultipartArchiveRar {
         if (args./*f*/length/* */== 0) {
             System.out.println(//
                     "Usage: java OpenMultipartArchiveRar <first-volume>");
+            return;
         }
         ArchiveOpenVolumeCallback archiveOpenVolumeCallback = null;
         ISevenZipInArchive inArchive = null;

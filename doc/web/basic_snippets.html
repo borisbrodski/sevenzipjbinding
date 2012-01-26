@@ -194,6 +194,7 @@ simple interface.</p>
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java ListItemsSimple &#60;archive-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -268,6 +269,7 @@ standard interface.</p>
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java ListItemsStandard &#60;archive-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -345,6 +347,7 @@ checksum will be calculated.</p>
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java ExtractItemsSimple &#60;archive-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -490,6 +493,7 @@ archive using standard interface and call back method as a filter</a></h4>
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java ExtractItemsStandard &#60;arch-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -601,6 +605,7 @@ to extract</a></h4>
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java ExtractItemsStandard &#60;arch-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -835,6 +840,7 @@ directly opened.</p>
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(
                     <span class="java-string">"Usage: java OpenMultipartArchive7z &#60;first-volume&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         ArchiveOpenVolumeCallback archiveOpenVolumeCallback = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;
@@ -1013,6 +1019,7 @@ Here is an example:
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(
                     <span class="java-string">"Usage: java OpenMultipartArchiveRar &#60;first-volume&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         ArchiveOpenVolumeCallback archiveOpenVolumeCallback = <span class="java-keyword">null</span>;
         <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> inArchive = <span class="java-keyword">null</span>;

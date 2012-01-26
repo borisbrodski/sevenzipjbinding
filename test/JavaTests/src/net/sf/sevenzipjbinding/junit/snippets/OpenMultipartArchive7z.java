@@ -105,6 +105,7 @@ public class OpenMultipartArchive7z {
         if (args./*f*/length/* */== 0) {
             System.out.println(//
                     "Usage: java OpenMultipartArchive7z <first-volume>");
+            return;
         }
         ArchiveOpenVolumeCallback archiveOpenVolumeCallback = null;
         ISevenZipInArchive inArchive = null;

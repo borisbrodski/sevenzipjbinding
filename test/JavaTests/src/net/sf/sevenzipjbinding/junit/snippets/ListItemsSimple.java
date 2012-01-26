@@ -15,6 +15,7 @@ public class ListItemsSimple {
     public static void main(String[] args) {
         if (args./*f*/length/* */== 0) {
             System.out.println("Usage: java ListItemsSimple <archive-name>");
+            return;
         }
         RandomAccessFile randomAccessFile = null;
         ISevenZipInArchive inArchive = null;

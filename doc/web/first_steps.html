@@ -165,6 +165,7 @@ Here is a complete program to print count of items in the archive:
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 0) {
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java PrintCountOfItems &#60;archive-name&#62;"</span>);
+            <span class="java-keyword">return</span>;
         }
         String archiveFilename = args[0];
 

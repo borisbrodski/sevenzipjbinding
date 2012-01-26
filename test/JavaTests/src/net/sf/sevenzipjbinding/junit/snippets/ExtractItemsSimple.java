@@ -18,6 +18,7 @@ public class ExtractItemsSimple {
     public static void main(String[] args) {
         if (args./*f*/length/* */== 0) {
             System.out.println("Usage: java ExtractItemsSimple <archive-name>");
+            return;
         }
         RandomAccessFile randomAccessFile = null;
         ISevenZipInArchive inArchive = null;
