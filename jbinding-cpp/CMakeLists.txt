@@ -755,7 +755,8 @@ ELSE(USE_CYGWIN)
     IF(USE_MINGW)
         SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads -Wl,--enable-auto-import") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
     ELSE(USE_MINGW)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -lpthread")
+	#SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -lpthread")
+	TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT})
     ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 

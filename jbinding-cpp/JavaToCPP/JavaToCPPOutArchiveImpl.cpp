@@ -146,7 +146,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
     const int size = 1;
     NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
     if (solidSpec == NULL) {
-        propValues[0] = NULL;
+        propValues[0] = (void *)NULL;
     } else {
         const jchar * jchars = env->GetStringChars(solidSpec, NULL);
         propValues[0] = UString(UnicodeHelper(jchars));
