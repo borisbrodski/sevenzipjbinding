@@ -21,15 +21,26 @@ public class OutArchiveImpl implements IOutArchive {
      */
     private int archiveFormatIndex;
 
-    private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
-            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
+    private int compressionLevel = -1;
 
     /**
      * {@inheritDoc}
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
             IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException {
+        applyFeatures();
         nativeUpdateItems(archiveFormatIndex, outStream, numberOfItems, archiveUpdateCallback);
+    }
+
+    protected void featureSetLevel(int compressionLevel) {
+        this.compressionLevel = compressionLevel;
+    }
+
+    protected void applyFeatures() throws SevenZipException {
+        // Set compression level
+        if (compressionLevel != -1) {
+            nativeSetLevel(compressionLevel);
+        }
     }
 
     /**
@@ -39,31 +50,10 @@ public class OutArchiveImpl implements IOutArchive {
         return archiveFormat;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setSolid() throws SevenZipException {
-        nativeSetSolidSpec(null);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSolidFiles(int countOfFilesPerBlock) throws SevenZipException {
-        nativeSetSolidSpec("" + countOfFilesPerBlock + "F");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setSolidSize(long countOfBytesPerBlock) throws SevenZipException {
-        nativeSetSolidSpec("" + countOfBytesPerBlock + "B");
-    }
-
-
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 
-    private native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
+    protected native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
 
-
+    private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
+            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
 }

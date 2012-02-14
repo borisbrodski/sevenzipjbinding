@@ -1,7 +1,6 @@
 package net.sf.sevenzipjbinding.impl;
 
 import net.sf.sevenzipjbinding.IOutArchiveGZip;
-import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * TODO
@@ -15,8 +14,8 @@ public class OutArchiveGZipImpl extends OutArchiveImpl implements IOutArchiveGZi
     /**
      * {@inheritDoc}
      */
-    public void setLevel(int compressionLevel) throws SevenZipException {
-        nativeSetLevel(compressionLevel);
+    public void setLevel(int compressionLevel) {
+        featureSetLevel(compressionLevel);
     }
 
 }

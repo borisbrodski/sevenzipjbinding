@@ -24,10 +24,8 @@ public interface IFeatureSetLevel {
      * Note, that the meaning of compression level can differ through algorithms.
      * 
      * @param compressionLevel
-     *            compression level to set
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
+     *            compression level to set. <code>-1</code> - use default
      */
-    public void setLevel(int compressionLevel) throws SevenZipException;
+    public void setLevel(int compressionLevel);
 
 }

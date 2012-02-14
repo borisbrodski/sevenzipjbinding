@@ -74,8 +74,8 @@ public abstract class CompressFeatureSetLevel extends CompressAbstractTest {
         }
     }
 
-    private static final int ENTROPY = 1000;
-    private static final int DATA_SIZE = 100000;
+    private static final int ENTROPY = 100;
+    private static final int DATA_SIZE = 300000;
     private static final int EXPECTED_TESTS_COUNT = 6;
 
     private static Map<ArchiveFormat, SortedMap<Integer, Integer>> archiveLengthMapMap = new HashMap<ArchiveFormat, SortedMap<Integer, Integer>>();
@@ -117,10 +117,10 @@ public abstract class CompressFeatureSetLevel extends CompressAbstractTest {
     }
 
     private static boolean checkCompressionLenghts(ArchiveFormat archiveFormat) {
-        SortedMap<Integer, Integer> archiveLengthMap = archiveLengthMapMap.get(archiveFormat);
         if (archiveLengthCheckedMap.contains(archiveFormat)) {
             return true;
         }
+        SortedMap<Integer, Integer> archiveLengthMap = archiveLengthMapMap.get(archiveFormat);
         if (archiveLengthMap == null || archiveLengthMap.size() != EXPECTED_TESTS_COUNT) {
             return false;
         }
@@ -137,6 +137,7 @@ public abstract class CompressFeatureSetLevel extends CompressAbstractTest {
             assertTrue(length <= (int) (lastLength * 1.01));
             lastLength = length;
         }
+        assertTrue(archiveLengthMap.get(archiveLengthMap.keySet().iterator().next()) > lastLength);
         archiveLengthCheckedMap.add(archiveFormat);
         return true;
     }
@@ -162,6 +163,6 @@ public abstract class CompressFeatureSetLevel extends CompressAbstractTest {
         }
 
         archiveLengthMap.put(compressionLevel, outputByteArrayStream.getSize());
-        System.out.println("" + compressionLevel + " -  " + outputByteArrayStream.getSize());
+        // System.out.println("" + compressionLevel + " -  " + outputByteArrayStream.getSize());
     }
 }
