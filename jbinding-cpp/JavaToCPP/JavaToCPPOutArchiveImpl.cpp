@@ -117,7 +117,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 
 /*
  * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
- * Method:    nativeSetSolid
+ * Method:    nativeSetSolidSpec
  * Signature: (Ljava/land/String;)V
  */
 JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSetSolidSpec(JNIEnv * env, jobject thiz, jstring solidSpec) {
