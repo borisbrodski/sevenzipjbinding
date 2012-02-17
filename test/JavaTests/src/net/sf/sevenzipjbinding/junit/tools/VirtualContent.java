@@ -245,6 +245,10 @@ public class VirtualContent {
         }
     }
 
+    public interface FilenameGenerator {
+        String nextFilename();
+    }
+
     /**
      * Constant seed is used here. The test should be deterministic. This way is it better debuggable and testable.
      */
@@ -270,12 +274,21 @@ public class VirtualContent {
     }
 
     public void print() {
-        List<Item> values = new ArrayList<Item>(itemList);
-        Collections.sort(values, new Comparator<Item>() {
-            public int compare(Item item1, Item item2) {
-                return item1.getPath().compareTo(item2.getPath());
-            }
-        });
+        print(true);
+    }
+
+    public void print(boolean sort) {
+        List<Item> values;
+        if (sort) {
+            values = new ArrayList<Item>(itemList);
+            Collections.sort(values, new Comparator<Item>() {
+                public int compare(Item item1, Item item2) {
+                    return item1.getPath().compareTo(item2.getPath());
+                }
+            });
+        } else {
+            values = itemList;
+        }
         for (Item item : values) {
             System.out.println(item.getPath() + "   (" + item.getBlob().getSize() + " bytes)");
         }
@@ -293,7 +306,7 @@ public class VirtualContent {
     }
 
     public void fillRandomly(int countOfFiles, int directoriesDepth, int maxSubdirectories, int averageFileLength,
-            int deltaFileLength) {
+            int deltaFileLength, FilenameGenerator filenameGenerator) {
         itemList.clear();
         List<String> directoryList = getRandomDirectory(directoriesDepth, maxSubdirectories, countOfFiles);
         for (int i = 0; i < countOfFiles; i++) {
@@ -307,7 +320,7 @@ public class VirtualContent {
 
             Item item = new Item(fileContent);
             for (int j = 0; j < 50; j++) {
-                String filename = getRandomFilename();
+                String filename = filenameGenerator == null ? getRandomFilename() : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
                     item.setPath(directory + filename);
                     break;

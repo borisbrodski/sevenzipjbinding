@@ -22,7 +22,7 @@ public class SimpleTest extends JUnitNativeTestBase {
     public void testname() throws Exception {
         try {
             VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-            virtualContent.fillRandomly(100, 3, 3, 100, 50);
+            virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
             // virtualContent.print();
             // File directory = new File("testoutput");
             // virtualContent.writeToDirectory(directory);

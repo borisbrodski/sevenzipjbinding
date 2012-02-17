@@ -12,11 +12,11 @@ package net.sf.sevenzipjbinding;
 public interface IFeatureSetSolid {
 
     /**
-     * Put all files in a single solid block. If activated, all other solid configuration (such as 'solid files') will
-     * take no effect.
+     * Put all files in a single solid block. If deactivated, some other solid options like 'solid files' will take no
+     * effect.
      * 
      * @param solid
-     *            <code>true</code> - activate this feature, <code>false</code> - use default configuration
+     *            <code>true</code> - use default configuration, <code>false</code> - deactivate solid block mode
      */
     public void setSolid(boolean solid);
 

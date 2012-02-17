@@ -173,7 +173,7 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
             int deltaFileLength) throws Exception {
         VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
-                deltaFileLength);
+                deltaFileLength, null);
         ArchiveFormat archiveFormat = getArchiveFormat();
         IOutArchive outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);

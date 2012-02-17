@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * 
  */
 public class OutArchiveSevenZipImpl extends OutArchiveImpl implements IOutArchiveSevenZip {
-    private boolean solid;
+    private boolean solid = true;
     private int countOfFilesPerBlock = -1;
     private long countOfBytesPerBlock = -1;
     private boolean solidExtension;
@@ -52,25 +52,25 @@ public class OutArchiveSevenZipImpl extends OutArchiveImpl implements IOutArchiv
     protected void applyFeatures() throws SevenZipException {
         super.applyFeatures();
 
+        StringBuilder stringBuilder = new StringBuilder();
+        if (solidExtension) {
+            stringBuilder.append("E");
+        }
+        if (countOfFilesPerBlock != -1) {
+            stringBuilder.append(countOfFilesPerBlock);
+            stringBuilder.append("F");
+        }
+        if (countOfBytesPerBlock != -1) {
+            stringBuilder.append(countOfBytesPerBlock);
+            stringBuilder.append("B");
+        }
+        if (stringBuilder.length() > 0) {
+            nativeSetSolidSpec(stringBuilder.toString());
+        }
+
         // Set solid block configuration
-        if (solid) {
+        if (!solid) {
             nativeSetSolidSpec(null);
-        } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            if (solidExtension) {
-                stringBuilder.append("E");
-            }
-            if (countOfFilesPerBlock != -1) {
-                stringBuilder.append(countOfFilesPerBlock);
-                stringBuilder.append("F");
-            }
-            if (countOfBytesPerBlock != -1) {
-                stringBuilder.append(countOfBytesPerBlock);
-                stringBuilder.append("B");
-            }
-            if (stringBuilder.length() > 0) {
-                nativeSetSolidSpec(stringBuilder.toString());
-            }
         }
     }
 }

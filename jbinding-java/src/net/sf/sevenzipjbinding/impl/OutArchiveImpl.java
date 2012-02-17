@@ -52,6 +52,14 @@ public class OutArchiveImpl implements IOutArchive {
 
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 
+    /**
+     * Set solid features.
+     * 
+     * @param solidBlockSpec
+     *            <code>null</code> - turn solid off
+     * @throws SevenZipException
+     *             if fails
+     */
     protected native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
 
     private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
