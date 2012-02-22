@@ -121,7 +121,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
  * Signature: (Ljava/land/String;)V
  */
 JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSetSolidSpec(JNIEnv * env, jobject thiz, jstring solidSpec) {
-    TRACE("OutArchiveImpl::setLevelNative(). ThreadID=" << PlatformGetCurrentThreadId());
+    TRACE("OutArchiveImpl::nativeSetSolidSpec(). ThreadID=" << PlatformGetCurrentThreadId());
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
@@ -159,8 +159,56 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 
     result = setProperties->SetProperties(&names.Front(), propValues, names.Size());
     if (result) {
-        TRACE("Error setting 'Level' property. Result: 0x" << std::hex << result)
+        TRACE("Error setting 'Solid' property. Result: 0x" << std::hex << result)
         jniNativeCallContext.reportError(result, "Error setting 'Solid' property.");
+        return;
+    }
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
+ * Method:    nativeSetMultithreading
+ * Signature: (Ljava/land/String;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSetMultithreading(JNIEnv * env, jobject thiz, jint threadCount) {
+    TRACE("OutArchiveImpl::nativeSetMultithreading(). ThreadID=" << PlatformGetCurrentThreadId());
+
+    JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+    CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
+    // TODO Delete this and all other such ifs, also in J2CppInArchive.cpp, since this is already tested in GetArchive()
+    if (outArchive == NULL) {
+        TRACE("Archive==NULL. Do nothing...");
+        return;
+    }
+
+    // TODO Move query interface to the central location in J2C+SevenZip.cpp
+    CMyComPtr<ISetProperties> setProperties;
+    HRESULT result = outArchive->QueryInterface(IID_ISetProperties, (void**)&setProperties);
+    if (result != S_OK) {
+        TRACE("Error getting IID_ISetProperties interface. Result: 0x" << std::hex << result)
+        jniNativeCallContext.reportError(result, "Error getting IID_ISetProperties interface.");
+        return;
+    }
+
+    const int size = 1;
+    NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
+	printf("[MT:%i]", (int)threadCount);fflush(stdout);
+    if (threadCount) {
+        propValues[0] = (UInt32)threadCount;
+    } else {
+    	// Use count of available processors
+        propValues[0] = true;
+    }
+    CRecordVector<const wchar_t *> names;
+    names.Add(L"MT");
+
+    result = setProperties->SetProperties(&names.Front(), propValues, names.Size());
+    if (result) {
+        TRACE("Error setting 'Multithreading' property. Result: 0x" << std::hex << result)
+        jniNativeCallContext.reportError(result, "Error setting 'Multithreading' property.");
         return;
     }
 }

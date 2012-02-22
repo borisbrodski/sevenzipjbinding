@@ -22,6 +22,7 @@ public class OutArchiveImpl implements IOutArchive {
     private int archiveFormatIndex;
 
     private int compressionLevel = -1;
+    private int threadCount = -1;
 
     /**
      * {@inheritDoc}
@@ -36,10 +37,18 @@ public class OutArchiveImpl implements IOutArchive {
         this.compressionLevel = compressionLevel;
     }
 
+    protected void featureSetThreadCount(int threadCount) {
+        this.threadCount = threadCount;
+    }
+
     protected void applyFeatures() throws SevenZipException {
         // Set compression level
         if (compressionLevel != -1) {
             nativeSetLevel(compressionLevel);
+        }
+
+        if (threadCount >= 0) {
+            nativeSetMultithreading(threadCount);
         }
     }
 
@@ -61,6 +70,8 @@ public class OutArchiveImpl implements IOutArchive {
      *             if fails
      */
     protected native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
+
+    protected native void nativeSetMultithreading(int threadCount) throws SevenZipException;
 
     private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
             IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;

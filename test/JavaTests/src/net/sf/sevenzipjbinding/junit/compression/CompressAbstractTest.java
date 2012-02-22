@@ -21,7 +21,7 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
     public class SingleFileArchiveUpdateCallback implements IArchiveUpdateCallback {
         private RandomContext randomContext;
 
-        SingleFileArchiveUpdateCallback(RandomContext randomContext) {
+        protected SingleFileArchiveUpdateCallback(RandomContext randomContext) {
             this.randomContext = randomContext;
         }
 

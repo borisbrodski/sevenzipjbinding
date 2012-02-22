@@ -11,5 +11,5 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutArchiveSevenZip extends IFeatureSetLevel, IFeatureSetSolid {
+public interface IOutArchiveSevenZip extends IFeatureSetLevel, IFeatureSetSolid, IFeatureSetMultithreading {
 }

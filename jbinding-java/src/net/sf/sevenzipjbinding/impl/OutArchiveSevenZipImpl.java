@@ -73,4 +73,11 @@ public class OutArchiveSevenZipImpl extends OutArchiveImpl implements IOutArchiv
             nativeSetSolidSpec(null);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setThreadCount(int threadCount) {
+        featureSetThreadCount(threadCount);
+    }
 }

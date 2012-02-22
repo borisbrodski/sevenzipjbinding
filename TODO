@@ -25,6 +25,7 @@
 
 - Cherry-pick <"Privileged access to native dlls" bug fix> from master branch
 
+- Bind SetProperty("CRC", ...) for extraction of 7z archives and compression of XZ-archives
  
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
