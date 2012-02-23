@@ -195,7 +195,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 
     const int size = 1;
     NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
-	printf("[MT:%i]", (int)threadCount);fflush(stdout);
+	// printf("[MT:%i]", (int)threadCount);fflush(stdout);
     if (threadCount) {
         propValues[0] = (UInt32)threadCount;
     } else {
