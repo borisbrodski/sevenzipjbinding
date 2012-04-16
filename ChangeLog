@@ -4,6 +4,11 @@
 Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
     * Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
       interface caused JVM crash.
+    * Bugfix: JVM Crash 30 char passw. rar archive
+      A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters. Details from dmesg:
+      7z[17413] general protection ip:7f0aa8803ca9 sp:7fff766ec950 error:0 in 7z.so[7f0aa8664000+1f5000]
+      - https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
+      - https://sourceforge.net/projects/sevenzipjbind/forums/forum/757965/topic/5152496
 
     * Feature: Initialize native module withing a AccessController#doPrivileged block
 

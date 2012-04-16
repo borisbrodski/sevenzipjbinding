@@ -7,6 +7,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
+import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
@@ -95,7 +96,7 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
 
 /**
  * Suite builder for all JUnit tests.
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -104,10 +105,14 @@ public class AllTestSuite extends TestSuite {
 	/*    */JUnitInitializationTest.class //
 	};
 	static Class<?>[] badArchiveTests = { //
-	/*    */GarbageArchiveFileTest.class // 
+	/*    */GarbageArchiveFileTest.class //
 	};
 
-	static Class<?>[] multipleFilesTests = { //
+    static Class<?>[] bugArchiveTests = { //
+    /*    */RarPasswordToLongCrash.class //
+    };
+
+    static Class<?>[] multipleFilesTests = { //
 	/*    */ExtractMultipleFileArjTest.class, //
 			ExtractMultipleFileCabTest.class, //
 			ExtractMultipleFileCabVolumeTest.class, //
@@ -209,7 +214,8 @@ public class AllTestSuite extends TestSuite {
 		tests.put("03 Snippets tests", snippetsTests);
 		tests.put("04 Single file tests", singleFileTests);
 		tests.put("05 Multiple files tests", multipleFilesTests);
-		tests.put("06 Bad archive tests", badArchiveTests);
+        tests.put("06 Bad archive tests", badArchiveTests);
+        tests.put("07 Bug report tests", bugArchiveTests);
 	}
 
 	public static Test suite() throws Exception {
