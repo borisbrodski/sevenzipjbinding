@@ -19,7 +19,6 @@ ENDIF()
 
 INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
-INCLUDE(CTest)
 
 # Uncomment this to build a version
 SET(SEVENZIPJBINDING_VERSON 4.65-1.05-rc-extr-only)
@@ -298,12 +297,13 @@ INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
 
 # -------------------------- CTest
 
+SET(DART_TESTING_TIMEOUT "36000" CACHE STRING "")	# Increase time out up to 10 hours
+INCLUDE(CTest)
 IF(BUILD_TESTING)
     MESSAGE("-- Prepare for testing")
     SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
     SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar)
     SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.6.jar)
-    SET(DART_TESTING_TIMEOUT 36000)	# Increase time out up to 10 hours
     
     CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_JAR}" "${JUNIT_LIB}" ${SEVENZIP_JBINDING_JAR})
 
