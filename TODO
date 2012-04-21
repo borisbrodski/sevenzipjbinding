@@ -13,6 +13,9 @@
 
 - Add privileged initialization of the native part. See forum "Help"
 
+- Add to integration tests
+  - Test, that the release and not the debug compilation of the binary was used to build each platform jar
+
 
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
