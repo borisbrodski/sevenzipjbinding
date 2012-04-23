@@ -75,7 +75,7 @@ IF(NOT SD)
 
     MESSAGE("Download integration test pack from ${URL}${IT_PACKAGE_NAME}")
 
-    execute_process(COMMAND ${SCP} "${URL}${IT_PACKAGE_NAME}" ${ITROOT}/
+    execute_process(COMMAND "${SCP}" "${URL}${IT_PACKAGE_NAME}" "${ITROOT}/"
                     RESULT_VARIABLE RESULT)
     if(RESULT)
         message(FATAL_ERROR "Error downloading file: ${RESULT}")
@@ -137,7 +137,7 @@ MACRO(TEST_PACKAGE PLATFORMS)
     
     MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
     
-    execute_process(COMMAND ${SCP} ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
+    execute_process(COMMAND "${SCP}" ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
                     RESULT_VARIABLE RESULT)
     if(RESULT)
         message(FATAL_ERROR "Error downloading file: ${RESULT}")
