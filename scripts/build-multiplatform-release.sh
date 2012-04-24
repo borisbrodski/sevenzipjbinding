@@ -49,6 +49,9 @@ for i in $*; do
         multiplatformname="$i"
         continue
     fi
+    if [ "$i" == "sevenzipjbinding-it-test-pack.zip" ] ; then
+        continue
+    fi
     GetTargetName target $i
     GetReleaseName release $i
     if [[ $target =~ .*binding.*  ]] ; then
