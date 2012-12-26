@@ -22,10 +22,10 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * 
  * Typically the library doesn't need an explicit initialization. The first call to an open archive method will try to
  * initialize the native library by calling {@link #initSevenZipFromPlatformJAR()} method. This initialization process
- * requires a platform jar to be in a class path. Automatic initialization starts before first opening an archive, if
- * native library wasn't already initialized manually with one of the <code>initSevenZip...</code> methods. If manual or
- * automatic initialization failed, no further automatic initialization attempts will be made. The initialization status
- * and error messages can be obtained by following methods:
+ * requires a platform jar to be in a class path. The automatic initialization starts before the first access to an
+ * archive, if native library wasn't already initialized manually with one of the <code>initSevenZip...</code> methods.
+ * If manual or automatic initialization failed, no further automatic initialization attempts will be made. The
+ * initialization status and error messages can be obtained by following methods:
  * <ul>
  * <li>{@link #isInitializedSuccessfully()} - get initialization status</li>
  * <li>{@link #isAutoInitializationWillOccur()} - determine, if an initialization attempt was made</li>
@@ -53,13 +53,13 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li>The platform is chosen by calling {@link #getPlatformBestMatch()} method. If the list of available platforms
  * contains exact one platform the platform is always considered the best match. If more, that one platforms are
  * available to choose from, the system properties <code>os.arch</code> and <code>os.name</code> (first part) are used
- * to make a choice.</li>
+ * to make the choice.</li>
  * <li>The list of the native libraries is determined by reading
  * <code>/ChosenPlatform/sevenzipjbinding-lib.properties</code> in the class path. The list contains names of the
- * dynamic libraries to saved in <code>/ChosenPlatform/</code> directory in the class path.</li>
- * <li>The dynamic libraries for the chosen platform are copied to the temporary directory. If not passed as a parameter
- * for one of <code>initSevenZipFromPlatformJAR(...)</code> methods, the temporary directory is determined using system
- * property <code>java.io.tmpdir</code>.</li>
+ * dynamic libraries situated in the <code>/ChosenPlatform/</code> directory in the same jar.</li>
+ * <li>The dynamic libraries for the chosen platform are copied (if not already) to the unique temporary directory using
+ * "build-ref" postfix. If not passed as a parameter for one of <code>initSevenZipFromPlatformJAR(...)</code> methods,
+ * the temporary directory is determined using system property <code>java.io.tmpdir</code>.</li>
  * <li>The dynamic libraries are loaded into JVM using {@link System#load(String)} method.</li>
  * <li>7-Zip-JBinding native initialization method called to complete initialization process.</li>
  * </ul>
@@ -67,7 +67,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <ul>
  * <li>User loads 7-Zip-JBinding native dynamic libraries manually into JVM using {@link System#load(String)} or
  * {@link System#loadLibrary(String)}</li>
- * <li>User calls {@link #initLoadedLibraries()} method to initialize loaded native library</li>
+ * <li>User calls {@link #initLoadedLibraries()} method to initialize manually loaded native library</li>
  * </ul>
  * </li>
  * </ul>
@@ -105,6 +105,7 @@ public class SevenZip {
 	private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
 	private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
 	private static final String PROPERTY_SEVENZIPJBINDING_LIBNAME = "sevenzipjbinding.libname.%s";
+    private static final String PROPERTY_BUILD_REF = "build.ref";
 	private static final String SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME = "sevenzipjbinding-lib.properties";
 	private static final String SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME = "/sevenzipjbinding-platforms.properties";
 
@@ -387,41 +388,47 @@ public class SevenZip {
 			if (!tmpDirFile.canWrite()) {
 				throwInitException("can't create files in '" + tmpDirFile.getAbsolutePath() + "'");
 			}
-			File tmpSubdirFile = new File(tmpDirFile.getAbsolutePath() + File.separator + "SevenZipJBinding-"
-					+ new Random().nextInt(10000000));
 
-			if (!tmpSubdirFile.mkdir()) {
-				throwInitException("Directory '" + tmpDirFile.getAbsolutePath() + "' couldn't be created");
-			}
-			tmpSubdirFile.deleteOnExit();
+            String ref = properties.getProperty(PROPERTY_BUILD_REF);
+            if (ref == null) {
+                ref = Integer.toString(new Random().nextInt(10000000));
+            }
 
-			List<File> librariesToInit = new ArrayList<File>(2);
-			for (int i = 1;; i++) {
-				String propertyName = String.format(PROPERTY_SEVENZIPJBINDING_LIBNAME, Integer.valueOf(i));
-				String libname = properties.getProperty(propertyName);
-				if (libname == null) {
-					if (librariesToInit.size() == 0) {
-						throwInitException("property file '"
-								+ SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-								+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
-								+ propertyName + "'");
-					} else {
-						break;
-					}
-				}
+            File tmpSubdirFile = new File(tmpDirFile.getAbsolutePath() + File.separator + "SevenZipJBinding-" + ref);
+            boolean copyLibs = !tmpSubdirFile.exists();
+            if (copyLibs) {
+                if (!tmpSubdirFile.mkdir()) {
+                    throwInitException("Directory '" + tmpDirFile.getAbsolutePath() + "' couldn't be created");
+                }
+            }
 
-				File libTmpFile = new File(tmpSubdirFile.getAbsolutePath() + File.separatorChar + libname);
-				libTmpFile.deleteOnExit();
+            List<File> librariesToInit = new ArrayList<File>(5);
+            for (int i = 1;; i++) {
+                String propertyName = String.format(PROPERTY_SEVENZIPJBINDING_LIBNAME, Integer.valueOf(i));
+                String libname = properties.getProperty(propertyName);
+                if (libname == null) {
+                    if (librariesToInit.size() == 0) {
+                        throwInitException("property file '"
+                                + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+                                + "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
+                                + propertyName + "'");
+                    } else {
+                        break;
+                    }
+                }
+                File libTmpFile = new File(tmpSubdirFile.getAbsolutePath() + File.separatorChar + libname);
 
-				InputStream libInputStream = SevenZip.class.getResourceAsStream(pathInJAR + libname);
-				if (libInputStream == null) {
-					throwInitException("error loading native library '" + libname
-							+ "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
-				}
+                if (copyLibs) {
+                    InputStream libInputStream = SevenZip.class.getResourceAsStream(pathInJAR + libname);
+                    if (libInputStream == null) {
+                        throwInitException("error loading native library '" + libname
+                                + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
+                    }
 
-				copyLibraryToFS(libTmpFile, libInputStream);
-				librariesToInit.add(libTmpFile);
-			}
+                    copyLibraryToFS(libTmpFile, libInputStream);
+                }
+                librariesToInit.add(libTmpFile);
+            }
 
 			// Load native libraries in to reverse order
 			for (int i = librariesToInit.size() - 1; i != -1; i--) {
