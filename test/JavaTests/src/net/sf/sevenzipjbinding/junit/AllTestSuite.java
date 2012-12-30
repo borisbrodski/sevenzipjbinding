@@ -8,6 +8,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
+import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
@@ -206,21 +208,30 @@ public class AllTestSuite extends TestSuite {
 			ReadMaxThreeBytesSeekCur.class, //
 			ReadMaxThreeBytesSeekEnd.class, //
 	};
+    static Class<?>[] initStdTests = { //
+    /*    */StandardInitializationTest.class, //
+    };
+    static Class<?>[] initVerifyTests = { //
+    /*    */InitializationDoesNotVerifyArtifactsTest.class, //
+    };
 	static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
 	static {
-		tests.put("01 Common tests", commonTests);
-		tests.put("02 Tools tests", toolsTests);
-		tests.put("03 Snippets tests", snippetsTests);
-		tests.put("04 Single file tests", singleFileTests);
-		tests.put("05 Multiple files tests", multipleFilesTests);
-        tests.put("06 Bad archive tests", badArchiveTests);
-        tests.put("07 Bug report tests", bugArchiveTests);
+        tests.put("Common tests", commonTests);
+        tests.put("Init tests (Std)", initStdTests);
+        tests.put("Init tests (Verify)", initVerifyTests);
+        tests.put("Tools tests", toolsTests);
+        tests.put("Snippets tests", snippetsTests);
+        tests.put("Single file tests", singleFileTests);
+        tests.put("Multiple files tests", multipleFilesTests);
+        tests.put("Bad archive tests", badArchiveTests);
+        tests.put("Bug report tests", bugArchiveTests);
 	}
 
 	public static Test suite() throws Exception {
 		String singleBundle = System.getProperty("SINGLEBUNDLE");
 		if (singleBundle != null) {
+            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
 			Class<?>[] classes = tests.get(singleBundle);
 			if (classes == null) {
 				throw new Exception("No tests found for test bundle: " + singleBundle + "'");
