@@ -8,6 +8,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
+import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
@@ -110,8 +112,13 @@ public class AllTestSuite extends TestSuite {
 	/*    */GarbageArchiveFileTest.class //
 	};
 
+    static Class<?>[] encodingArchiveTests = { //
+    /*    */UnicodeFilenamesInArchive7z.class, //
+            UnicodeFilenamesInArchiveZip.class, //
+    };
+
     static Class<?>[] bugArchiveTests = { //
-    /*    */RarPasswordToLongCrash.class //
+    /*    */RarPasswordToLongCrash.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //
@@ -222,16 +229,18 @@ public class AllTestSuite extends TestSuite {
         tests.put("Init tests (Verify)", initVerifyTests);
         tests.put("Tools tests", toolsTests);
         tests.put("Snippets tests", snippetsTests);
+        tests.put("Encoding tests", encodingArchiveTests);
+        tests.put("Bug report tests", bugArchiveTests);
         tests.put("Single file tests", singleFileTests);
         tests.put("Multiple files tests", multipleFilesTests);
         tests.put("Bad archive tests", badArchiveTests);
-        tests.put("Bug report tests", bugArchiveTests);
 	}
 
 	public static Test suite() throws Exception {
 		String singleBundle = System.getProperty("SINGLEBUNDLE");
 		if (singleBundle != null) {
-            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
+            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "");
+            singleBundle = singleBundle.replaceAll("\\[[^]]*\\]", "").trim();
 			Class<?>[] classes = tests.get(singleBundle);
 			if (classes == null) {
 				throw new Exception("No tests found for test bundle: " + singleBundle + "'");

@@ -1,2 +1,0 @@
-PROJECT(SevenZipjBindingJava Java)
-
