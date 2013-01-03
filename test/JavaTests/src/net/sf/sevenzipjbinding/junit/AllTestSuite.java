@@ -105,12 +105,12 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
  * @version 4.65-1
  */
 public class AllTestSuite extends TestSuite {
-	static Class<?>[] commonTests = { //
-	/*    */JUnitInitializationTest.class //
-	};
-	static Class<?>[] badArchiveTests = { //
-	/*    */GarbageArchiveFileTest.class //
-	};
+    static Class<?>[] commonTests = { //
+    /*    */JUnitInitializationTest.class //
+    };
+    static Class<?>[] badArchiveTests = { //
+    /*    */GarbageArchiveFileTest.class //
+    };
 
     static Class<?>[] encodingArchiveTests = { //
     /*    */UnicodeFilenamesInArchive7z.class, //
@@ -122,108 +122,108 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] multipleFilesTests = { //
-	/*    */ExtractMultipleFileArjTest.class, //
-			ExtractMultipleFileCabTest.class, //
-			ExtractMultipleFileCabVolumeTest.class, //
-			ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
-			ExtractMultipleFileCpioTest.class, //
-			ExtractMultipleFileDebTest.class, //
-			ExtractMultipleFileIsoTest.class, //
-			ExtractMultipleFileLzhTest.class, //
-			ExtractMultipleFileRarHeaderPassTest.class, //
-			ExtractMultipleFileRarPassTest.class, //
-			ExtractMultipleFileRarTest.class, //
-			ExtractMultipleFileRarVolumeHeaderPassTest.class, //
-			ExtractMultipleFileRarVolumePassTest.class, //
-			ExtractMultipleFileRarVolumeTest.class, //
-			ExtractMultipleFileSevenZipHeaderPassTest.class, //
-			ExtractMultipleFileSevenZipPassTest.class, //
-			ExtractMultipleFileSevenZipTest.class, //
-			ExtractMultipleFileSevenZipVolumeHeaderPassTest.class, //
-			ExtractMultipleFileSevenZipVolumePassTest.class, //
-			ExtractMultipleFileSevenZipVolumeTest.class, //
-			ExtractMultipleFileTarTest.class, //
-			ExtractMultipleFileUdfTest.class, //
-			ExtractMultipleFileXarTest.class, //
-			ExtractMultipleFileZipPassTest.class, //
-			ExtractMultipleFileZipTest.class, //
-	};
-	static Class<?>[] singleFileTests = { //
-	/*    */ExtractSingleFileArjTest.class, //
-			ExtractSingleFileBzip2Test.class, //
-			ExtractSingleFileCabTest.class, //
-			ExtractSingleFileCabVolumeTest.class, //
-			ExtractSingleFileChmTest.class, //
-			ExtractSingleFileCpioTest.class, //
-			ExtractSingleFileDebTest.class, //
-			ExtractSingleFileGzipTest.class, //
-			ExtractSingleFileIsoTest.class, //
-			ExtractSingleFileLzhTest.class, //
-			ExtractSingleFileLzmaTest.class, //
-			ExtractSingleFileNsisSolidTest.class, //
-			ExtractSingleFileNsisTest.class, //
-			ExtractSingleFileRarHeaderPassCallbackTest.class, //
-			ExtractSingleFileRarHeaderPassTest.class, //
-			ExtractSingleFileRarPassCallbackTest.class, //
-			ExtractSingleFileRarPassTest.class, //
-			ExtractSingleFileRarTest.class, //
-			ExtractSingleFileRarVolumeHeaderPassCallbackTest.class, //
-			ExtractSingleFileRarVolumePassCallbackTest.class, //
-			ExtractSingleFileRarVolumePassTest.class, //
-			ExtractSingleFileRarVolumeTest.class, //
-			ExtractSingleFileRpmTest.class, //
-			ExtractSingleFileSevenZipHeaderPassCallbackTest.class, //
-			ExtractSingleFileSevenZipHeaderPassTest.class, //
-			ExtractSingleFileSevenZipPassCallbackTest.class, //
-			ExtractSingleFileSevenZipPassTest.class, //
-			ExtractSingleFileSevenZipTest.class, //
-			ExtractSingleFileSevenZipVolumeHeaderPassCallbackTest.class, //
-			ExtractSingleFileSevenZipVolumeHeaderPassTest.class, //
-			ExtractSingleFileSevenZipVolumePassCallbackTest.class, //
-			ExtractSingleFileSevenZipVolumePassTest.class, //
-			ExtractSingleFileSevenZipVolumeTest.class, //
-			ExtractSingleFileTarTest.class, //
-			ExtractSingleFileUdfTest.class, //
-			ExtractSingleFileXarTest.class, //
-			ExtractSingleFileZipPassCallbackTest.class, //
-			ExtractSingleFileZipPassTest.class, //
-			ExtractSingleFileZipTest.class, //
-			ExtractSingleFileZTest.class, //
-	};
-	static Class<?>[] snippetsTests = { //
-	/*    */GetNumberOfItemInArchive.class, //
-			ExtractItemsTest.class, //
-			FirstStepsSimpleSnippets.class, //
-			ListItemsTest.class, //
-			OpenMultipartArchive7zTest.class, //
-			OpenMultipartArchiveRarTest.class, //
-			PrintCountOfItemsTest.class, //
-			SevenZipJBindingInitCheckTest.class, //
-	};
+    /*    */ExtractMultipleFileArjTest.class, //
+            ExtractMultipleFileCabTest.class, //
+            ExtractMultipleFileCabVolumeTest.class, //
+            ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
+            ExtractMultipleFileCpioTest.class, //
+            ExtractMultipleFileDebTest.class, //
+            ExtractMultipleFileIsoTest.class, //
+            ExtractMultipleFileLzhTest.class, //
+            ExtractMultipleFileRarHeaderPassTest.class, //
+            ExtractMultipleFileRarPassTest.class, //
+            ExtractMultipleFileRarTest.class, //
+            ExtractMultipleFileRarVolumeHeaderPassTest.class, //
+            ExtractMultipleFileRarVolumePassTest.class, //
+            ExtractMultipleFileRarVolumeTest.class, //
+            ExtractMultipleFileSevenZipHeaderPassTest.class, //
+            ExtractMultipleFileSevenZipPassTest.class, //
+            ExtractMultipleFileSevenZipTest.class, //
+            ExtractMultipleFileSevenZipVolumeHeaderPassTest.class, //
+            ExtractMultipleFileSevenZipVolumePassTest.class, //
+            ExtractMultipleFileSevenZipVolumeTest.class, //
+            ExtractMultipleFileTarTest.class, //
+            ExtractMultipleFileUdfTest.class, //
+            ExtractMultipleFileXarTest.class, //
+            ExtractMultipleFileZipPassTest.class, //
+            ExtractMultipleFileZipTest.class, //
+    };
+    static Class<?>[] singleFileTests = { //
+    /*    */ExtractSingleFileArjTest.class, //
+            ExtractSingleFileBzip2Test.class, //
+            ExtractSingleFileCabTest.class, //
+            ExtractSingleFileCabVolumeTest.class, //
+            ExtractSingleFileChmTest.class, //
+            ExtractSingleFileCpioTest.class, //
+            ExtractSingleFileDebTest.class, //
+            ExtractSingleFileGzipTest.class, //
+            ExtractSingleFileIsoTest.class, //
+            ExtractSingleFileLzhTest.class, //
+            ExtractSingleFileLzmaTest.class, //
+            ExtractSingleFileNsisSolidTest.class, //
+            ExtractSingleFileNsisTest.class, //
+            ExtractSingleFileRarHeaderPassCallbackTest.class, //
+            ExtractSingleFileRarHeaderPassTest.class, //
+            ExtractSingleFileRarPassCallbackTest.class, //
+            ExtractSingleFileRarPassTest.class, //
+            ExtractSingleFileRarTest.class, //
+            ExtractSingleFileRarVolumeHeaderPassCallbackTest.class, //
+            ExtractSingleFileRarVolumePassCallbackTest.class, //
+            ExtractSingleFileRarVolumePassTest.class, //
+            ExtractSingleFileRarVolumeTest.class, //
+            ExtractSingleFileRpmTest.class, //
+            ExtractSingleFileSevenZipHeaderPassCallbackTest.class, //
+            ExtractSingleFileSevenZipHeaderPassTest.class, //
+            ExtractSingleFileSevenZipPassCallbackTest.class, //
+            ExtractSingleFileSevenZipPassTest.class, //
+            ExtractSingleFileSevenZipTest.class, //
+            ExtractSingleFileSevenZipVolumeHeaderPassCallbackTest.class, //
+            ExtractSingleFileSevenZipVolumeHeaderPassTest.class, //
+            ExtractSingleFileSevenZipVolumePassCallbackTest.class, //
+            ExtractSingleFileSevenZipVolumePassTest.class, //
+            ExtractSingleFileSevenZipVolumeTest.class, //
+            ExtractSingleFileTarTest.class, //
+            ExtractSingleFileUdfTest.class, //
+            ExtractSingleFileXarTest.class, //
+            ExtractSingleFileZipPassCallbackTest.class, //
+            ExtractSingleFileZipPassTest.class, //
+            ExtractSingleFileZipTest.class, //
+            ExtractSingleFileZTest.class, //
+    };
+    static Class<?>[] snippetsTests = { //
+    /*    */GetNumberOfItemInArchive.class, //
+            ExtractItemsTest.class, //
+            FirstStepsSimpleSnippets.class, //
+            ListItemsTest.class, //
+            OpenMultipartArchive7zTest.class, //
+            OpenMultipartArchiveRarTest.class, //
+            PrintCountOfItemsTest.class, //
+            SevenZipJBindingInitCheckTest.class, //
+    };
 
-	static Class<?>[] toolsTests = { //
-	/*    */NoReadLimitSeekSet.class, //
-			NoReadLimitSeekCur.class, //
-			NoReadLimitSeekEnd.class, //
-			ReadSingleBytesSeekSet.class, //
-			ReadSingleBytesSeekCur.class, //
-			ReadSingleBytesSeekEnd.class, //
-			ReadMaxTwoBytesSeekSet.class, //
-			ReadMaxTwoBytesSeekCur.class, //
-			ReadMaxTwoBytesSeekEnd.class, //
-			ReadMaxThreeBytesSeekSet.class, //
-			ReadMaxThreeBytesSeekCur.class, //
-			ReadMaxThreeBytesSeekEnd.class, //
-	};
+    static Class<?>[] toolsTests = { //
+    /*    */NoReadLimitSeekSet.class, //
+            NoReadLimitSeekCur.class, //
+            NoReadLimitSeekEnd.class, //
+            ReadSingleBytesSeekSet.class, //
+            ReadSingleBytesSeekCur.class, //
+            ReadSingleBytesSeekEnd.class, //
+            ReadMaxTwoBytesSeekSet.class, //
+            ReadMaxTwoBytesSeekCur.class, //
+            ReadMaxTwoBytesSeekEnd.class, //
+            ReadMaxThreeBytesSeekSet.class, //
+            ReadMaxThreeBytesSeekCur.class, //
+            ReadMaxThreeBytesSeekEnd.class, //
+    };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
     };
     static Class<?>[] initVerifyTests = { //
     /*    */InitializationDoesNotVerifyArtifactsTest.class, //
     };
-	static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
+    static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
-	static {
+    static {
         tests.put("Common tests", commonTests);
         tests.put("Init tests (Std)", initStdTests);
         tests.put("Init tests (Verify)", initVerifyTests);
@@ -234,33 +234,32 @@ public class AllTestSuite extends TestSuite {
         tests.put("Single file tests", singleFileTests);
         tests.put("Multiple files tests", multipleFilesTests);
         tests.put("Bad archive tests", badArchiveTests);
-	}
+    }
 
-	public static Test suite() throws Exception {
-		String singleBundle = System.getProperty("SINGLEBUNDLE");
-		if (singleBundle != null) {
-            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "");
-            singleBundle = singleBundle.replaceAll("\\[[^]]*\\]", "").trim();
-			Class<?>[] classes = tests.get(singleBundle);
-			if (classes == null) {
-				throw new Exception("No tests found for test bundle: " + singleBundle + "'");
-			}
-			TestSuite testSuite = new TestSuite(singleBundle);
-			for (Class<?> testClass : classes) {
-				testSuite.addTest(new JUnit4TestAdapter(testClass));
-			}
-			return testSuite;
-		}
+    public static Test suite() throws Exception {
+        String singleBundle = System.getProperty("SINGLEBUNDLE");
+        if (singleBundle != null) {
+            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
+            Class<?>[] classes = tests.get(singleBundle);
+            if (classes == null) {
+                throw new Exception("No tests found for test bundle: '" + singleBundle + "'");
+            }
+            TestSuite testSuite = new TestSuite(singleBundle);
+            for (Class<?> testClass : classes) {
+                testSuite.addTest(new JUnit4TestAdapter(testClass));
+            }
+            return testSuite;
+        }
 
-		TestSuite allTestSuite = new TestSuite("All tests");
-		for (String testBundle : tests.keySet()) {
-			TestSuite testSuite = new TestSuite(testBundle);
-			for (Class<?> testClass : tests.get(testBundle)) {
-				testSuite.addTest(new JUnit4TestAdapter(testClass));
-			}
-			allTestSuite.addTest(testSuite);
-		}
+        TestSuite allTestSuite = new TestSuite("All tests");
+        for (String testBundle : tests.keySet()) {
+            TestSuite testSuite = new TestSuite(testBundle);
+            for (Class<?> testClass : tests.get(testBundle)) {
+                testSuite.addTest(new JUnit4TestAdapter(testClass));
+            }
+            allTestSuite.addTest(testSuite);
+        }
 
-		return allTestSuite;
-	}
+        return allTestSuite;
+    }
 }

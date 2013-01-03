@@ -324,7 +324,7 @@ IF(BUILD_TESTING)
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)
                                      IF(RESULT)
-                                         MESSAGE(SEND_ERROR \"Error during JUnit Tests\")
+                                         MESSAGE(SEND_ERROR \"Error during JUnit Tests. Return code: \${RESULT}\")
                                      ENDIF(RESULT)
                                      ")
     add_test(JUnit-common                       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Common tests" -P ${JUNIT_TEST_RUNNER})
