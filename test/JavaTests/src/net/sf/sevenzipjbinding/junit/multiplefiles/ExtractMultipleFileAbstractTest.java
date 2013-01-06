@@ -18,7 +18,7 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  * <ul>
  * <li>PATH
  * </ul>
- * 
+ *
  * Following properties will be NOT verified:
  * <ul>
  * <li>SIZE
@@ -56,8 +56,8 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  * <li>LOCAL_NAM
  * <li>PROVIDER
  * </ul>
- * 
- * 
+ *
+ *
  * @author Boris Brodski
  * @version 1.0
  */
@@ -96,12 +96,19 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
 					false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+            if (archiveFormat == ArchiveFormat.WIM) {
+                zipContentComparator1.addToIgnoreList("1.xml");
+            }
 			assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
 
 			ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
 					true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
 
-			assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
+            if (archiveFormat == ArchiveFormat.WIM) {
+                zipContentComparator2.addToIgnoreList("1.xml");
+            }
+
+            assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		} finally {

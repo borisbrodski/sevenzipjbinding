@@ -156,9 +156,9 @@ package net.sf.sevenzipjbinding;
  * </tr>
  * <tr align="center">
  * <td>Wim</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
+ * <td>X</td>
+ * <td>X</td>
+ * <td>{@link #WIM}</td>
  * </tr>
  * <tr align="center">
  * <td>Xar</td>
@@ -285,9 +285,14 @@ public enum ArchiveFormat {
 	 */
 	UDF("Udf"),
 
-	/**
-	 * Xar
-	 */
+	    /**
+     * Udf
+     */
+    WIM("Wim"),
+
+    /**
+     * Xar
+     */
 	XAR("Xar");
 
 	private String methodName;

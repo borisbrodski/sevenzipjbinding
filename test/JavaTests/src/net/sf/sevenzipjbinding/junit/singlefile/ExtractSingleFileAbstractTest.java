@@ -35,7 +35,7 @@ import org.junit.Test;
  * <li>IS_FOLDER
  * <li>ENCRYPTED
  * </ul>
- * 
+ *
  * Following properties will be NOT verified:
  * <ul>
  * <li>HANDLER_ITEM_INDEX
@@ -69,8 +69,8 @@ import org.junit.Test;
  * <li>LOCAL_NAM
  * <li>PROVIDER
  * </ul>
- * 
- * 
+ *
+ *
  * @author Boris Brodski
  * @version 1.0
  */
@@ -377,6 +377,11 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			// File name are not supported by this stream compression methods
 			Object nameInArchive = inArchive.getProperty(index, PropID.PATH);
 			String nameInArchiveUsingStringProperty = inArchive.getStringProperty(index, PropID.PATH);
+            if (archiveFormat == ArchiveFormat.WIM) {
+                // Remove '1\' at the beginning of the file name
+                nameInArchive = ((String) nameInArchive).replaceAll("\\A1\\\\", "");
+                nameInArchiveUsingStringProperty = nameInArchiveUsingStringProperty.replaceAll("\\A1\\\\", "");
+            }
 			assertEquals("Wrong name of the file in archive", uncommpressedFilename, nameInArchive);
 			assertEquals("Wrong name of the file in archive (using getStringProperty() method)", uncommpressedFilename,
 					nameInArchiveUsingStringProperty);

@@ -222,6 +222,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
+
 # Com ??
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
@@ -283,10 +287,6 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarOut.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarUpdate.cpp
-
-# Udf
-
-# Wim
     
     ${_7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipAddCommon.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandler.cpp
@@ -488,6 +488,9 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 
 # Com ??
 
