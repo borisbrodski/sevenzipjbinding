@@ -53,15 +53,6 @@ AString UnicodeStringToMultiByte(const UString &srcString, UINT codePage)
   return UnicodeStringToMultiByte(srcString, codePage, '_', defaultCharWasUsed);
 }
 
-#ifndef _WIN32_WCE
-AString SystemStringToOemString(const CSysString &srcString)
-{
-  AString result;
-  CharToOem(srcString, result.GetBuffer(srcString.Length() * 2));
-  result.ReleaseBuffer();
-  return result;
-}
-#endif
 
 #else
 
