@@ -498,7 +498,7 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
     ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
-    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 
 # Com ??
