@@ -99,7 +99,7 @@ void SysFreeString(BSTR bstr)
     FreeForBSTR((UINT *)bstr - 1);
 }
 
-
+extern "C" void __stdcall __imp_MessageBoxA() {}
 
 
 #ifndef _WIN32
