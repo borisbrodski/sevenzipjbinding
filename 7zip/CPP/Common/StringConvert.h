@@ -66,8 +66,5 @@ inline AString GetOemString(const UString &unicodeString)
     { return UnicodeStringToMultiByte(unicodeString, codePage); }
 #endif
 
-#ifndef _WIN32_WCE
-AString SystemStringToOemString(const CSysString &srcString);
-#endif
 
 #endif

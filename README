@@ -14,7 +14,8 @@ Content
 5. Compile
 5.1 Compile on Linux
 5.2 Compile on Windows
-
+6. Developer notes
+6.1 Applying new 7-Zip release
 
 1. License Info
 ---------------
@@ -146,5 +147,23 @@ f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary pac
 If you have any troubles with 7-Zip-JBinding please, ask for help. Use forum or issue tracker on sourceforge:
 Forum: http://sourceforge.net/forum/?group_id=210915
 Tracker: http://sourceforge.net/tracker/?group_id=210915
+
+
+6 Developer notes
+
+6.1 Applying new 7-Zip release
+
+TODO describe this
+
+- In StringConvert.cpp
+  - Remove SystemStringToOemString() method
+- In StringConvert.h 
+  - Remove SystemStringToOemString() method definition
+- Verify, that the implementations in
+  - PlatformMinGW/MyWindows.cpp
+  - PlatformMinGW/MyUser32.cpp
+  still match corresponding implementation in the p7zip
+
+
 
 Have fun!	 

@@ -1,17 +1,20 @@
 #!/bin/bash
 
+IMAGEX_SUBST_DRIVE=f
+
 CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
 CREATE_SIMPLE_CPIO=n
 CREATE_SIMPLE_LZH=n
 CREATE_SIMPLE_ISO=n
 CREATE_SIMPLE_7Z=n
-CREATE_SIMPLE_RAR=y
+CREATE_SIMPLE_RAR=n
 CREATE_SIMPLE_TAR=n
 CREATE_SIMPLE_ZIP=n
 CREATE_SIMPLE_DEB=n
 CREATE_SIMPLE_XAR=n
 CREATE_SIMPLE_UDF=n
+CREATE_SIMPLE_WIM=n
 
 
 TMP=/tmp
@@ -177,3 +180,23 @@ if test $CREATE_SIMPLE_UDF = y -o $CREATE_ALL = y ; then
     done
 fi
 
+if test $CREATE_SIMPLE_WIM = y -o $CREATE_ALL = y ;then
+    if [ ! -d "/$IMAGEX_SUBST_DRIVE/" ]; then
+        echo "'/$IMAGEX_SUBST_DRIVE' not a directory"
+        exit 1
+    fi
+    if [ "$(ls -A "/$IMAGEX_SUBST_DRIVE/")" ]; then
+        echo "Directory '/$IMAGEX_SUBST_DRIVE' isn't empty! Aborting"
+        exit 1
+    fi
+    rm wim/*.wim
+    for i in 0:maximum 1:fast 2:none
+    do
+        for j in *.zip
+        do
+            rm -rf /$IMAGEX_SUBST_DRIVE/*
+            cp -r $TMP_CONTENT_DIR/$j/* /$IMAGEX_SUBST_DRIVE/
+            cmd "/c imagex /capture f: wim/$j.${i:0:1}.wim Multiple_files_test__$j /compress ${i:2}"
+        done
+    done
+fi
