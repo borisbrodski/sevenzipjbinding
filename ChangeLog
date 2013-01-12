@@ -2,23 +2,24 @@
 ========================
 
 Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
-    * Feature: Initialization performance boost. Don't delete extracted native libraries
-      in the temporary directory (specified by -Djava.io.tmpdir=<dir>) and use those later during
-      subsequent 7-Zip-JBinding initializations.
-
-    * Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
-      Special thanks to Daniel Santos for the provided patch!
+	* Feature: Initialization performance boost. Don't delete extracted native libraries
+	  in the temporary directory (specified by -Djava.io.tmpdir=<dir>) and use those later during
+	  subsequent 7-Zip-JBinding initializations.
+	
+	* Bugfix: Fix cross-platform encoding problems
+	* Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
+	  Special thanks to Daniel Santos for the provided patch!
 
 Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
-    * Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
-      interface caused JVM crash.
-    * Bugfix: JVM Crash 30 char passw. rar archive
-      A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters. Details from dmesg:
-      7z[17413] general protection ip:7f0aa8803ca9 sp:7fff766ec950 error:0 in 7z.so[7f0aa8664000+1f5000]
-      - https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
-      - https://sourceforge.net/projects/sevenzipjbind/forums/forum/757965/topic/5152496
+	* Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
+	  interface caused JVM crash.
+	* Bugfix: JVM Crash 30 char passw. rar archive
+	  A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters. Details from dmesg:
+	  7z[17413] general protection ip:7f0aa8803ca9 sp:7fff766ec950 error:0 in 7z.so[7f0aa8664000+1f5000]
+	  - https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
+	  - https://sourceforge.net/projects/sevenzipjbind/forums/forum/757965/topic/5152496
 
-    * Feature: Initialize native module withing a AccessController#doPrivileged block
+	* Feature: Initialize native module withing a AccessController#doPrivileged block
 
 Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Bugfix: it was not possible to open some archives over 4GB
@@ -40,7 +41,7 @@ Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platf
 	      initialization routine.
 	    - Detailed JavaDoc
 
-    * Integration test for all platforms for single and multiple platform distributions
+	* Integration test for all platforms for single and multiple platform distributions
 	
 	* Improve ISevenZipInArchive.extract()
 		- Check for wrong indices avoiding VM crash
@@ -55,9 +56,9 @@ Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platf
 
 	* UDF format support + tests
 
-    * Source code repository: moved from svn to git (http://git-scm.com/)
-    	- Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
-    	- Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
+	* Source code repository: moved from svn to git (http://git-scm.com/)
+		- Repository on sourceforge: git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind
+		- Repository on github: git://github.com/borisbrodski/sevenzipjbinding.git
 	
 Release - 4.65-1.02rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
@@ -126,28 +127,28 @@ Release - 4.65-1.0rc-extr-only (Release candidate, extraction only, cross-platfo
 	* Brand new web site
 	
 Release - 0.4.1 (beta, bug fix release)
-    * Bug fixed: 2525877 (Memory leak)
-    
+	* Bug fixed: 2525877 (Memory leak)
+	
 Release - 0.4 (beta, extraction only)
-    * Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
-        - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
-        
-    * New open/extract method for encrypted archives and items (standard and simple interface)
-    
-    * JUnit tests for the extraction of encrypted archives and exception handling 
+	* Full rework of c++ code: thread safe JNI-calls, correct exception handling between threads
+	    - Bug fixed #2441909 - Can't extract encrypted 7-Zip files
+	    
+	* New open/extract method for encrypted archives and items (standard and simple interface)
+	
+	* JUnit tests for the extraction of encrypted archives and exception handling 
 
-    * New examples on the home page
-     
+	* New examples on the home page
+	 
 Release - 0.3 (beta, extraction only, simple extraction interface)
-    Some memory problems was fixed:
-        - Bug fixed #1928623 - Large TAR files can't be extracted
-        - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
-    
-    * Simple extraction interface - allows easy information
-      gathering and extraction of archives
-    
-    * JUnit tests for simple extraction interface
-    
+	Some memory problems was fixed:
+	    - Bug fixed #1928623 - Large TAR files can't be extracted
+	    - Bug fixed #1928111 - Error extracting files larger that 8192 bytes
+	
+	* Simple extraction interface - allows easy information
+	  gathering and extraction of archives
+	
+	* JUnit tests for simple extraction interface
+	
 Release - 0.2 (alpha, extraction only)
 	* Major bug in release build configuration was fixed
 	
@@ -176,4 +177,4 @@ Release - 0.1 (alpha, extraction only)
 		  Supports:
 			- Progress information
 			- Archive item password
- 
+
