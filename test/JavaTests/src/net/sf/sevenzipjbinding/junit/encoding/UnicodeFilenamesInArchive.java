@@ -40,14 +40,14 @@ public abstract class UnicodeFilenamesInArchive extends JUnitNativeTestBase {
     protected abstract ArchiveFormat getArchiveFormat();
 
     @Test
-    public void testUppwerLowerCaseUnicode() throws Throwable {
+    public void testUpperLowerCaseUnicode() throws Throwable {
         RandomAccessFile randomAccessFile = null;
         ISevenZipInArchive inArchive = null;
         Throwable throwable = null;
 
         try {
             randomAccessFile = new RandomAccessFile("testdata/encoding/unicode_file_names."
-                    + getArchiveFormat().getMethodName(), "r");
+                    + getArchiveFormat().getMethodName().toLowerCase(), "r");
             inArchive = SevenZip.openInArchive(getArchiveFormat(), new RandomAccessFileInStream(randomAccessFile));
             ISimpleInArchive simpleInterface = inArchive.getSimpleInterface();
             assertEquals(2, simpleInterface.getNumberOfItems());
