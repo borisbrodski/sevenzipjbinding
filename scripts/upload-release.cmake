@@ -18,7 +18,7 @@ macro(UPLOAD_FILE FILENAME)
     message("Uploading: ${FILENAME}")
     
     
-    execute_process(COMMAND ${scp} ${FILENAME} "${UPLOAD_URL}"
+    execute_process(COMMAND ${SCP} ${FILENAME} "${UPLOAD_URL}"
                     RESULT_VARIABLE RESULT)
     if(RESULT)
         message(FATAL_ERROR "Error uploading file: ${RESULT}")
