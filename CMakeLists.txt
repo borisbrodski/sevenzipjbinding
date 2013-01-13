@@ -21,7 +21,7 @@ INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
 
 # Uncomment this to build a version
-SET(SEVENZIPJBINDING_VERSON 4.65-1.05-rc-extr-only)
+SET(SEVENZIPJBINDING_VERSON 4.65-1.06-rc-extr-only)
 
 SET(RELEASE_PATH ${PROJECT_BINARY_DIR})
 IF (SEVENZIPJBINDING_VERSON)
