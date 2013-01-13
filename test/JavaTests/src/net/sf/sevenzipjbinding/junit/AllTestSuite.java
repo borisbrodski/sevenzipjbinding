@@ -8,6 +8,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
@@ -121,6 +122,7 @@ public class AllTestSuite extends TestSuite {
 
     static Class<?>[] bugArchiveTests = { //
     /*    */RarPasswordToLongCrash.class, //
+            WrongCRCGetterInSimpleInterface.class
     };
 
     static Class<?>[] multipleFilesTests = { //

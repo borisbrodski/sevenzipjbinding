@@ -7,8 +7,14 @@ Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7z
 	  subsequent 7-Zip-JBinding initializations.
 
 	* Test: Test cross-platform encoding functionality
+	
+	* Bugfix: Get ride of the dependency to USER32.DLL improving performance and robustness
+	 
 	* Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
 	  Special thanks to Daniel Santos for the provided patch!
+
+	* Bugfix: 5Simple Interface returns wrong CRC (Bug ID: 3535546)
+	  Special thanks to M. Hamer
 
 Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
