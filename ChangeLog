@@ -5,8 +5,8 @@ Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7z
 	* Feature: Initialization performance boost. Don't delete extracted native libraries
 	  in the temporary directory (specified by -Djava.io.tmpdir=<dir>) and use those later during
 	  subsequent 7-Zip-JBinding initializations.
-	
-	* Bugfix: Fix cross-platform encoding problems
+
+	* Test: Test cross-platform encoding functionality
 	* Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
 	  Special thanks to Daniel Santos for the provided patch!
 

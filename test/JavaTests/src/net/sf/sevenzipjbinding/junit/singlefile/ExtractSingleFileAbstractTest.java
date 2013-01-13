@@ -378,9 +378,9 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			Object nameInArchive = inArchive.getProperty(index, PropID.PATH);
 			String nameInArchiveUsingStringProperty = inArchive.getStringProperty(index, PropID.PATH);
             if (archiveFormat == ArchiveFormat.WIM) {
-                // Remove '1\' at the beginning of the file name
-                nameInArchive = ((String) nameInArchive).replaceAll("\\A1\\\\", "");
-                nameInArchiveUsingStringProperty = nameInArchiveUsingStringProperty.replaceAll("\\A1\\\\", "");
+                // Remove '1\' or '1/' at the beginning of the file name
+                nameInArchive = ((String) nameInArchive).replaceAll("\\A1[\\\\/]", "");
+                nameInArchiveUsingStringProperty = nameInArchiveUsingStringProperty.replaceAll("\\A1[\\\\/]", "");
             }
 			assertEquals("Wrong name of the file in archive", uncommpressedFilename, nameInArchive);
 			assertEquals("Wrong name of the file in archive (using getStringProperty() method)", uncommpressedFilename,
