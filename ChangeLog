@@ -2,6 +2,8 @@
 ========================
 
 Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Feature: WIM format support + tests
+
 	* Feature: Initialization performance boost. Don't delete extracted native libraries
 	  in the temporary directory (specified by -Djava.io.tmpdir=<dir>) and use those later during
 	  subsequent 7-Zip-JBinding initializations.
@@ -13,7 +15,7 @@ Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7z
 	* Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
 	  Special thanks to Daniel Santos for the provided patch!
 
-	* Bugfix: 5Simple Interface returns wrong CRC (Bug ID: 3535546)
+	* Bugfix: Simple Interface returns wrong CRC (Bug ID: 3535546)
 	  Special thanks to M. Hamer
 
 Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
@@ -25,7 +27,7 @@ Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7z
 	  - https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
 	  - https://sourceforge.net/projects/sevenzipjbind/forums/forum/757965/topic/5152496
 
-	* Feature: Initialize native module withing a AccessController#doPrivileged block
+	* Feature: Initialize native module within a AccessController#doPrivileged block
 
 Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Bugfix: it was not possible to open some archives over 4GB
