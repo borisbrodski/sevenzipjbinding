@@ -100,6 +100,9 @@ const char * load7ZipLibrary(CreateObjectFunc * createObjectFunc) {
 	TRACE("Loading 7-Zip library")
 
 	*createObjectFunc = NULL;
+
+	return NULL;
+
 	/*
 	static NWindows::NDLL::CLibrary library;
 
