@@ -17,7 +17,7 @@ template <class T> class CDynamicBuffer: public CBuffer<T>
     else
       delta = 4;
     delta = MyMax(delta, size);
-    SetCapacity(this->_capacity + delta);
+    this->SetCapacity(this->_capacity + delta);
   }
 public:
   CDynamicBuffer(): CBuffer<T>() {};
