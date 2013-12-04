@@ -1,5 +1,5 @@
 // Client7z.cpp
-
+#ifdef TMP  // TODO Remove file
 #include "StdAfx.h"
 
 #include "Common/IntToString.h"
@@ -867,3 +867,4 @@ extern "C" void Java_test_Main_clientTest(JNIEnv * env)
 
 	printf("Bye\n");
 }
+#endif
