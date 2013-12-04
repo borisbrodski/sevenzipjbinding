@@ -477,10 +477,15 @@ public class SevenZip {
     public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
         ensureLibraryIsInitialized();
-        if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, archiveOpenCallback);
+        IArchiveOpenCallback openArchiveCallbackToUse = archiveOpenCallback;
+        if (openArchiveCallbackToUse == null) {
+            // TODO Test this!
+            openArchiveCallbackToUse = new DummyOpenArchiveCallback();
         }
-        return callNativeOpenArchive(null, inStream, archiveOpenCallback);
+        if (archiveFormat != null) {
+            return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, openArchiveCallbackToUse);
+        }
+        return callNativeOpenArchive(null, inStream, openArchiveCallbackToUse);
     }
 
     /**

@@ -30,6 +30,7 @@ public interface IArchiveOpenVolumeCallback {
      *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
      *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
      */
+    // TODO Change 'throws SevenZipException' to 'throws Throwable'
     public Object getProperty(PropID propID) throws SevenZipException;
 
     /**
@@ -45,5 +46,6 @@ public interface IArchiveOpenVolumeCallback {
      *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
      *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
      */
+    // TODO Change 'throws SevenZipException' to 'throws Throwable'
     public IInStream getStream(String filename) throws SevenZipException;
 }

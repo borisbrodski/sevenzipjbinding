@@ -90,6 +90,8 @@ public:
         {
             return _archiveOpenVolumeCallback->GetProperty(propID, value);
         }
+        // TODO Generate exception explaining situation:
+        // IArchiveOpenCallback implementation must also implement IArchiveOpenVolumeCallback
         return E_NOINTERFACE;
     }
     STDMETHOD(GetStream)(const wchar_t *name, IInStream **inStream)
@@ -101,6 +103,8 @@ public:
         {
             return _archiveOpenVolumeCallback->GetStream(name, inStream);
         }
+        // TODO Generate exception explaining situation:
+        // IArchiveOpenCallback implementation must also implement IArchiveOpenVolumeCallback
         return E_NOINTERFACE;
     }
 

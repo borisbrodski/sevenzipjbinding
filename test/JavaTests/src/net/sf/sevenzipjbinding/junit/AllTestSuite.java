@@ -7,6 +7,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
+import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
@@ -173,8 +174,8 @@ public class AllTestSuite extends TestSuite {
     static Class<?>[] multipleFilesTests = { //
     /*    */ExtractMultipleFileArjTest.class, //
             ExtractMultipleFileCabTest.class, //
-			ExtractMultipleFileCabVolumeTest.class, //
-			ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
+            ExtractMultipleFileCabVolumeTest.class, //
+            ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
             ExtractMultipleFileCpioTest.class, //
             ExtractMultipleFileDebTest.class, //
             ExtractMultipleFileIsoTest.class, //
@@ -201,7 +202,7 @@ public class AllTestSuite extends TestSuite {
     /*    */ExtractSingleFileArjTest.class, //
             ExtractSingleFileBzip2Test.class, //
             ExtractSingleFileCabTest.class, //
-			ExtractSingleFileCabVolumeTest.class, //
+            ExtractSingleFileCabVolumeTest.class, //
             ExtractSingleFileChmTest.class, //
             ExtractSingleFileCpioTest.class, //
             ExtractSingleFileDebTest.class, //
@@ -238,6 +239,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileZipPassTest.class, //
             ExtractSingleFileZipTest.class, //
             ExtractSingleFileZTest.class, //
+            OpenMultipartCabWithNonVolumedCallbackTest.class, // // TODO extract to a special group
     };
     static Class<?>[] snippetsTests = { //
     /*    */GetNumberOfItemInArchive.class, //
