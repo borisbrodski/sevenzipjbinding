@@ -50,8 +50,14 @@ mkdir lib
 cp $SOURCE_DIR/test/JavaTests/lib/junit-4.6.jar lib/
 
 rm -rf testdata
-find $SOURCE_DIR/test/JavaTests/testdata -not -path "*/.svn*" -printf "%P\0" | \
-	xargs -0 -n 1 sh -c "if [ -d $SOURCE_DIR/test/JavaTests/testdata/\$0 ] ; then mkdir testdata/\$0; else cp $SOURCE_DIR/test/JavaTests/testdata/\$0 testdata/\$0 ; fi"
+find $SOURCE_DIR/test/JavaTests/testdata -not -path "*/.svn*" -printf "%P\0" | while read -d $'\0' file
+do
+  if [ -d "$SOURCE_DIR/test/JavaTests/testdata/$file" ] ; then
+    mkdir "testdata/$file"
+  else
+    cp "$SOURCE_DIR/test/JavaTests/testdata/$file" "testdata/$file" 
+  fi
+done
 
 echo Compressing it tests into $ITTEST_PACKAGE_ZIP
 cd - > /dev/null
@@ -59,5 +65,5 @@ cd - > /dev/null
 
 read -p "Upload to the sourceforge web space (y/n)? "
 if [ "$REPLY" == "y" ] ; then
-    cmake -DFILENAME="$ITTEST_PACKAGE_ZIP" -DDESCRIPTION="Integration test pack" -P $SCRIPT_HOME/../upload-release-to-frs-OldFiles.cmake
+    cmake -DFILENAME="$ITTEST_PACKAGE_ZIP" -DDESCRIPTION="Integration test pack" -P $SCRIPT_HOME/../upload-release.cmake
 fi

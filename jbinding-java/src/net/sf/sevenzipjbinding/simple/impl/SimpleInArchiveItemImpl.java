@@ -69,7 +69,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
      */
 
     public Integer getCRC() throws SevenZipException {
-        return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.ATTRIBUTES);
+        return (Integer) simpleInArchiveImpl.testAndGetSafeSevenZipInArchive().getProperty(index, PropID.CRC);
     }
 
     /**

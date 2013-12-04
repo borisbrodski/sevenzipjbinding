@@ -89,4 +89,3 @@ void fatal(const char * fmt, ...) {
 	*i = 0;
 }
 
-

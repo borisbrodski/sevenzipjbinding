@@ -18,6 +18,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 public class ExtractItemsStandardCallback {
     public static class MyExtractCallback implements IArchiveExtractCallback {
         private int /*f*/hash/* */= 0;
+        private int /*f*/size/* */= 0;
         private int /*f*/index/**/;
         private boolean /*f*/skipExtraction/**/;
         private ISevenZipInArchive /*f*/inArchive/**/;
@@ -37,6 +38,7 @@ public class ExtractItemsStandardCallback {
             return new ISequentialOutStream() {
                 public int write(byte[] data) throws SevenZipException {
                     /*f*/hash/* */^= Arrays.hashCode(data);
+                    size += data.length;
                     return data./*f*/length/**/; // Return amount of proceed data
                 }
             };
@@ -54,9 +56,10 @@ public class ExtractItemsStandardCallback {
             if (extractOperationResult != ExtractOperationResult./*sf*/OK/**/) {
                 System.err.println("Extraction error");
             } else {
-                System.out.println(String.format("%9X | %s", //
-                        /*f*/hash/**/, /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
+                System.out.println(String.format("%9X | %10s | %s", /*f*/hash/**/, /*f*/size/**/,// 
+                        /*f*/inArchive/**/.getProperty(/*f*/index/**/, PropID./*sf*/PATH/**/)));
                 /*f*/hash/* */= 0;
+                /*f*/size/* */= 0;
             }
         }
 
@@ -65,7 +68,6 @@ public class ExtractItemsStandardCallback {
 
         public void setTotal(long total) throws SevenZipException {
         }
-
     }
 
     public static void main(String[] args) {
@@ -80,8 +82,8 @@ public class ExtractItemsStandardCallback {
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
                     new RandomAccessFileInStream(randomAccessFile));
 
-            System.out.println("   Hash   | Filename");
-            System.out.println("----------+---------");
+            System.out.println("   Hash   |    Size    | Filename");
+            System.out.println("----------+------------+---------");
 
             int[] in = new int[inArchive.getNumberOfItems()];
             for (int i = 0; i < in.length; i++) {

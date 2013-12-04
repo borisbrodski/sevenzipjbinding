@@ -27,22 +27,25 @@ public class ExtractItemsSimple {
             // Getting simple interface of the archive inArchive
             ISimpleInArchive simpleInArchive = inArchive.getSimpleInterface();
 
-            System.out.println("   Hash   | Filename");
-            System.out.println("----------+---------");
+            System.out.println("   Hash   |    Size    | Filename");
+            System.out.println("----------+------------+---------");
 
             for (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
                 final int[] hash = new int[] { 0 };
                 if (!item.isFolder()) {
                     ExtractOperationResult result;
+
+                    final long[] sizeArray = new long[1];
                     result = item.extractSlow(new ISequentialOutStream() {
                         public int write(byte[] data) throws SevenZipException {
                             hash[0] ^= Arrays.hashCode(data); // Consume data
+                            sizeArray[0] += data.length;
                             return data.length; // Return amount of consumed data
                         }
                     });
                     if (result == ExtractOperationResult.OK) {
-                        System.out.println(String.format("%9X | %s", // 
-                                hash[0], item.getPath()));
+                        System.out.println(String.format("%9X | %10s | %s", // 
+                                hash[0], sizeArray[0], item.getPath()));
                     } else {
                         System.err.println("Error extracting item: " + result);
                     }

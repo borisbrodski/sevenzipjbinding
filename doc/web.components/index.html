@@ -1,7 +1,7 @@
 <h2>What's this all about?</h2>
 
 <p>7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
-many archive formats using a very fast native library directly from java through JNI. Featues: </p>
+many archive formats using a very fast native library directly from java through JNI. Features: </p>
 <ul class="Features">
 	<li> Extraction of 
 		<table border="0" class="ArchiveTypeEnum"><tr>
@@ -26,6 +26,7 @@ many archive formats using a very fast native library directly from java through
 		<tr>
 		<td>Deb</td>
 		<td>Rpm</td>
+		<td>Wim</td>
 		<td>Udf</td></tr>
 		</table></li>
 	<li> It's cross-platform. Binaries are available for 
@@ -36,7 +37,7 @@ many archive formats using a very fast native library directly from java through
 		</table></li>
 	<li> Full support for password protected and volumed archives</li> 
 	<li> 12 example code snippets</li>
-	<li> Over 3600 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Over 3881 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
 	<li> Planned: Creation of 7-Zip/Zip archives</li>
 	<li> Planned: Extraction of more archive formats: Compound, Dmg, Elf, Hfs, Macho, Mub, Pa, Split, Wim</li>
 </ul>
@@ -73,6 +74,36 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br/>
 <h2>News</h2>
 <div class="infobox">
+16 Januar 2013: <b>7-Zip-JBinding Release: 4.65-1.06rc-extr-only</b>
+<br/><br/>
+Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
+<ul>
+	<li>Feature: WIM format support + tests</li> 
+
+	<li>Feature: Initialization performance boost. Don't delete extracted native libraries
+	  in the temporary directory (specified by -Djava.io.tmpdir=&lt;dir&gt;) and use those later during
+	  subsequent 7-Zip-JBinding initializations.</li>
+
+	<li>Test: Test cross-platform encoding functionality</li>
+	
+	<li>Bugfix: Get ride of the dependency to USER32.DLL improving performance and robustness</li>
+	 
+	<li>Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)<br/>
+	  Special thanks to Daniel Santos for the provided patch!</li>
+
+	<li>Bugfix: Simple Interface returns wrong CRC (Bug ID: 3535546)<br/>
+	  Special thanks to M. Hamer</li>
+</ul>
+<br/>
+24 April 2012: <b>7-Zip-JBinding Release: 4.65-1.05rc-extr-only</b>
+<br/><br/>
+Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
+<ul>
+	<li>Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback</li>
+	<li>Bugfix: A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters.</li>
+	<li>Feature: Initialize native module within a AccessController#doPrivileged block</li>
+</ul>
+<br/>
 8 March 2010: <b>7-Zip-JBinding Release: 4.65-1.04rc-extr-only</b>
 <br/><br/>
 Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65

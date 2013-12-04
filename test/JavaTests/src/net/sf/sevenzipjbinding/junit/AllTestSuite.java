@@ -8,6 +8,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
+import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
@@ -18,6 +20,10 @@ import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileTarTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileZipTest;
 import net.sf.sevenzipjbinding.junit.compression.FirstTest;
 import net.sf.sevenzipjbinding.junit.compression.SimpleTest;
+import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
+import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
+import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
@@ -79,6 +85,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVo
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileTarTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileUdfTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileWimTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileXarTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipTest;
@@ -117,6 +124,7 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeP
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileTarTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileUdfTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileWimTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileXarTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipPassCallbackTest;
@@ -154,9 +162,10 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekEnd;
 import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekSet;
 
+
 /**
  * Suite builder for all JUnit tests.
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -168,7 +177,17 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] badArchiveTests = { //
-    /*    */GarbageArchiveFileTest.class // 
+    /*    */GarbageArchiveFileTest.class //
+    };
+
+    static Class<?>[] encodingArchiveTests = { //
+    /*    */UnicodeFilenamesInArchive7z.class, //
+            UnicodeFilenamesInArchiveZip.class, //
+    };
+
+    static Class<?>[] bugArchiveTests = { //
+    /*    */RarPasswordToLongCrash.class, //
+            WrongCRCGetterInSimpleInterface.class
     };
 
     static Class<?>[] multipleFilesTests = { //
@@ -194,6 +213,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileSevenZipVolumeTest.class, //
             ExtractMultipleFileTarTest.class, //
             ExtractMultipleFileUdfTest.class, //
+            ExtractMultipleFileWimTest.class, //
             ExtractMultipleFileXarTest.class, //
             ExtractMultipleFileZipPassTest.class, //
             ExtractMultipleFileZipTest.class, //
@@ -234,6 +254,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileSevenZipVolumeTest.class, //
             ExtractSingleFileTarTest.class, //
             ExtractSingleFileUdfTest.class, //
+            ExtractSingleFileWimTest.class, //
             ExtractSingleFileXarTest.class, //
             ExtractSingleFileZipPassCallbackTest.class, //
             ExtractSingleFileZipPassTest.class, //
@@ -328,24 +349,35 @@ public class AllTestSuite extends TestSuite {
             CompressSingleFileTarTest.class, //
             CompressSingleFileZipTest.class, //
     };
+    static Class<?>[] initStdTests = { //
+    /*    */StandardInitializationTest.class, //
+    };
+    static Class<?>[] initVerifyTests = { //
+    /*    */InitializationDoesNotVerifyArtifactsTest.class, //
+    };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 
     static {
-        tests.put("01 Common tests", commonTests);
-        tests.put("02 Tools tests", toolsTests);
-        tests.put("03 Snippets tests", snippetsTests);
-        tests.put("04 Single file tests", singleFileTests);
-        tests.put("05 Multiple files tests", multipleFilesTests);
-        tests.put("06 Bad archive tests", badArchiveTests);
-        tests.put("07 Compression tests", compressionTests);
+        tests.put("Common tests", commonTests);
+        tests.put("Init tests (Std)", initStdTests);
+        tests.put("Init tests (Verify)", initVerifyTests);
+        tests.put("Tools tests", toolsTests);
+        tests.put("Snippets tests", snippetsTests);
+        tests.put("Encoding tests", encodingArchiveTests);
+        tests.put("Bug report tests", bugArchiveTests);
+        tests.put("Single file tests", singleFileTests);
+        tests.put("Multiple files tests", multipleFilesTests);
+        tests.put("Bad archive tests", badArchiveTests);
+        tests.put("Compression tests", compressionTests);
     }
 
     public static Test suite() throws Exception {
         String singleBundle = System.getProperty("SINGLEBUNDLE");
         if (singleBundle != null) {
+            singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
             Class<?>[] classes = tests.get(singleBundle);
             if (classes == null) {
-                throw new Exception("No tests found for test bundle: " + singleBundle + "'");
+                throw new Exception("No tests found for test bundle: '" + singleBundle + "'");
             }
             TestSuite testSuite = new TestSuite(singleBundle);
             for (Class<?> testClass : classes) {

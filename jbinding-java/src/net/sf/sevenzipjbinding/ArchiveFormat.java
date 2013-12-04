@@ -163,9 +163,9 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * </tr>
  * <tr align="center">
  * <td>Wim</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
+ * <td>X</td>
+ * <td>X</td>
+ * <td>{@link #WIM}</td>
  * </tr>
  * <tr align="center">
  * <td>Xar</td>
@@ -291,6 +291,11 @@ public enum ArchiveFormat {
      * Udf
      */
     UDF("Udf"),
+
+    /**
+     * Udf
+     */
+    WIM("Wim"),
 
     /**
      * Xar

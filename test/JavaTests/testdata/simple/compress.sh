@@ -1,6 +1,7 @@
 #!/bin/bash
 
 TMP=/tmp
+IMAGEX_SUBST_DRIVE=f
 
 CREATE_ALL=n
 CREATE_SIMPLE_ARJ=n
@@ -16,6 +17,7 @@ CREATE_SIMPLE_BZIP2=n
 CREATE_SIMPLE_DEB=n
 CREATE_SIMPLE_XAR=n
 CREATE_SIMPLE_UDF=n
+CREATE_SIMPLE_WIM=n
 
 if test $CREATE_SIMPLE_ARJ = y -o $CREATE_ALL = y ;then
     rm arj/*.arj
@@ -185,3 +187,15 @@ if test $CREATE_SIMPLE_UDF = y -o $CREATE_ALL = y ; then
     done
 fi
 
+if test $CREATE_SIMPLE_WIM = y -o $CREATE_ALL = y ;then
+    rm wim/*.wim
+    for i in 0:maximum 1:fast 2:none
+    do
+        for j in *.dat
+        do
+            rm /$IMAGEX_SUBST_DRIVE/*.dat
+            cp $j /$IMAGEX_SUBST_DRIVE/
+            cmd /c "imagex /capture $IMAGEX_SUBST_DRIVE: wim/$j.${i:0:1}.wim Simple_test__$j /compress ${i:2}"
+        done
+    done
+fi

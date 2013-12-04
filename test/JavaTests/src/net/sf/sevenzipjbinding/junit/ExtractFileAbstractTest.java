@@ -367,12 +367,14 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                 throws SevenZipException {
             randomAccessFileInStream = null;
             ISevenZipInArchive inArchive = null;
+            RandomAccessFile randomAccessFile = null;
             try {
                 if (usingZippedTestArchive()) {
                     ZipFile zipFile = new ZipFile(new File(archiveFilename + ".zip"));
                     randomAccessFileInStream = new ZipInStream(zipFile, zipFile.entries().nextElement());
                 } else {
-                    randomAccessFileInStream = new RandomAccessFileInStream(new RandomAccessFile(archiveFilename, "r"));
+                    randomAccessFile = new RandomAccessFile(archiveFilename, "r");
+                    randomAccessFileInStream = new RandomAccessFileInStream(randomAccessFile);
                 }
                 volumeArchiveOpenCallback = null;
                 VolumedArchiveInStream volumedArchiveInStream;
@@ -413,7 +415,25 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                                 archiveOpenCallbackToUse);
                     }
                 }
-            } catch (IOException exception) {
+            } catch (Throwable exception) {
+                if (randomAccessFile != null) {
+                    try {
+                        randomAccessFile.close();
+                    } catch (IOException e) {
+                    }
+                    randomAccessFileInStream = null;
+                }
+
+                if (randomAccessFileInStream instanceof ZipInStream) {
+                    try {
+                        ((ZipInStream) randomAccessFileInStream).close();
+                    } catch (IOException e) {
+                    }
+                    randomAccessFileInStream = null;
+                }
+                if (exception instanceof SevenZipException) {
+                    throw (SevenZipException) exception;
+                }
                 throw new RuntimeException(exception);
             }
 

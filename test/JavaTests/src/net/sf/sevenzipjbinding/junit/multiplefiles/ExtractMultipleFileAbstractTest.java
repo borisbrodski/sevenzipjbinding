@@ -18,7 +18,7 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  * <ul>
  * <li>PATH
  * </ul>
- * 
+ *
  * Following properties will be NOT verified:
  * <ul>
  * <li>SIZE
@@ -56,65 +56,72 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  * <li>LOCAL_NAM
  * <li>PROVIDER
  * </ul>
- * 
- * 
+ *
+ *
  * @author Boris Brodski
  * @version 1.0
  */
 public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstractTest {
-    private static final String MULTIPLE_FILES_TEST_DATA_PATH = "testdata/multiple-files";
+	private static final String MULTIPLE_FILES_TEST_DATA_PATH = "testdata/multiple-files";
 
-    public ExtractMultipleFileAbstractTest(ArchiveFormat archiveFormat, int compression1, int compression2,
-            int compression3) {
-        super(archiveFormat, compression1, compression2, compression3);
-    }
+	public ExtractMultipleFileAbstractTest(ArchiveFormat archiveFormat, int compression1, int compression2,
+			int compression3) {
+		super(archiveFormat, compression1, compression2, compression3);
+	}
 
-    public ExtractMultipleFileAbstractTest(ArchiveFormat archiveFormat, String extention, int compression1,
-            int compression2, int compression3) {
-        super(archiveFormat, extention, compression1, compression2, compression3);
-    }
+	public ExtractMultipleFileAbstractTest(ArchiveFormat archiveFormat, String extention, int compression1,
+			int compression2, int compression3) {
+		super(archiveFormat, extention, compression1, compression2, compression3);
+	}
 
-    @Override
-    protected String getTestDataPath() {
-        return MULTIPLE_FILES_TEST_DATA_PATH;
-    }
+	@Override
+	protected String getTestDataPath() {
+		return MULTIPLE_FILES_TEST_DATA_PATH;
+	}
 
-    @Override
-    protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
-            throws Exception {
-        String sollArchiveFilename = "archive" + fileIndex + ".zip";
-        String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
+	@Override
+	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
+			throws Exception {
+		String sollArchiveFilename = "archive" + fileIndex + ".zip";
+		String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
 
-        ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
-        ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
-                compressionIndex, autodetectFormat, "archive", "zip");
+		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
+		ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
+				compressionIndex, autodetectFormat, "archive", "zip");
 
-        ZipFile zipFile = null;
-        try {
-            zipFile = new ZipFile(new File(sollFullFilename));
-            assertTrue(inArchive.getNumberOfItems() > 0);
+		ZipFile zipFile = null;
+		try {
+			zipFile = new ZipFile(new File(sollFullFilename));
+			assertTrue(inArchive.getNumberOfItems() > 0);
 
-            ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-                    false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
-            assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
+			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
+					false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+            if (archiveFormat == ArchiveFormat.WIM) {
+                zipContentComparator1.addToIgnoreList("1.xml");
+            }
+			assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
 
-            ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-                    true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+			ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
+					true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
 
-            assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        } finally {
-            inArchive.close();
-            if (zipFile != null) {
-                try {
-                    zipFile.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            if (archiveFormat == ArchiveFormat.WIM) {
+                zipContentComparator2.addToIgnoreList("1.xml");
             }
 
-            extractionInArchiveTestHelper.closeAllStreams();
-        }
-    }
+            assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
+		} catch (IOException exception) {
+			throw new RuntimeException(exception);
+		} finally {
+			inArchive.close();
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			extractionInArchiveTestHelper.closeAllStreams();
+		}
+	}
 }

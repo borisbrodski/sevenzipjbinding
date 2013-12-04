@@ -15,6 +15,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 public class ExtractItemsStandardCallback {
     public static class MyExtractCallback implements IArchiveExtractCallback {
         private int hash = 0;
+        private int size = 0;
         private int index;
         private boolean skipExtraction;
         private ISevenZipInArchive inArchive;
@@ -34,6 +35,7 @@ public class ExtractItemsStandardCallback {
             return new ISequentialOutStream() {
                 public int write(byte[] data) throws SevenZipException {
                     hash ^= Arrays.hashCode(data);
+                    size += data.length;
                     return data.length; // Return amount of proceed data
                 }
             };
@@ -51,9 +53,10 @@ public class ExtractItemsStandardCallback {
             if (extractOperationResult != ExtractOperationResult.OK) {
                 System.err.println("Extraction error");
             } else {
-                System.out.println(String.format("%9X | %s", 
-                        hash, inArchive.getProperty(index, PropID.PATH)));
+                System.out.println(String.format("%9X | %10s | %s", hash, size,// 
+                        inArchive.getProperty(index, PropID.PATH)));
                 hash = 0;
+                size = 0;
             }
         }
 
@@ -62,7 +65,6 @@ public class ExtractItemsStandardCallback {
 
         public void setTotal(long total) throws SevenZipException {
         }
-
     }
 
     public static void main(String[] args) {
@@ -77,8 +79,8 @@ public class ExtractItemsStandardCallback {
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
                     new RandomAccessFileInStream(randomAccessFile));
 
-            System.out.println("   Hash   | Filename");
-            System.out.println("----------+---------");
+            System.out.println("   Hash   |    Size    | Filename");
+            System.out.println("----------+------------+---------");
 
             int[] in = new int[inArchive.getNumberOfItems()];
             for (int i = 0; i < in.length; i++) {

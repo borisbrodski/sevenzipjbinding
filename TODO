@@ -19,11 +19,7 @@
 
 - Find optimal gcc optimization parameters (See CPP/7zip/CMAKE/*) (Consider using -D_7ZIP_LARGE_PAGES on 64bit systems), -pipe
 
-- Cab with support of volumes? If yes, test it
-
 - Separate stress tests from functional tests
-
-- Cherry-pick <"Privileged access to native dlls" bug fix> from master branch
 
 - Bind SetProperty("CRC", ...) for extraction of 7z archives and compression of XZ-archives
 
@@ -32,7 +28,12 @@
   - NCoderID
   - ExtractAskMode
   - ExtractOperationResult
- 
+
+- Add privileged initialization of the native part. See forum "Help"
+
+- Add to integration tests
+  - Test, that the release and not the debug compilation of the binary was used to build each platform jar
+
 Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
 - Test some untested archive formats

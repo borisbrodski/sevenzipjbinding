@@ -28,7 +28,7 @@ public:
     this->Free();
     if (buffer._capacity > 0)
     {
-      SetCapacity(buffer._capacity);
+      this->SetCapacity(buffer._capacity);
       memmove(this->_items, buffer._items, buffer._capacity * sizeof(T));
     }
     return *this;

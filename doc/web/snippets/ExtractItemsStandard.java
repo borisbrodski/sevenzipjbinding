@@ -17,6 +17,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 public class ExtractItemsStandard {
     public static class MyExtractCallback implements IArchiveExtractCallback {
         private int hash = 0;
+        private int size = 0;
         private int index;
         private ISevenZipInArchive inArchive;
 
@@ -34,6 +35,7 @@ public class ExtractItemsStandard {
 
                 public int write(byte[] data) throws SevenZipException {
                     hash ^= Arrays.hashCode(data);
+                    size += data.length;
                     return data.length; // Return amount of proceed data
                 }
             };
@@ -48,9 +50,10 @@ public class ExtractItemsStandard {
             if (extractOperationResult != ExtractOperationResult.OK) {
                 System.err.println("Extraction error");
             } else {
-                System.out.println(String.format("%9X | %s", // 
-                        hash, inArchive.getProperty(index, PropID.PATH)));
+                System.out.println(String.format("%9X | %10s | %s", hash, size,// 
+                        inArchive.getProperty(index, PropID.PATH)));
                 hash = 0;
+                size = 0;
             }
         }
 
@@ -74,8 +77,8 @@ public class ExtractItemsStandard {
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
                     new RandomAccessFileInStream(randomAccessFile));
 
-            System.out.println("   Hash   | Filename");
-            System.out.println("----------+---------");
+            System.out.println("   Hash   |    Size    | Filename");
+            System.out.println("----------+------------+---------");
 
             int count = inArchive.getNumberOfItems();
             List<Integer> itemsToExtract = new ArrayList<Integer>();

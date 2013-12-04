@@ -27,22 +27,25 @@
             <span class="java-comment">// Getting simple interface of the archive inArchive</span>
             ISimpleInArchive simpleInArchive = inArchive.getSimpleInterface();
 
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   | Filename"</span>);
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+---------"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"   Hash   |    Size    | Filename"</span>);
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"----------+------------+---------"</span>);
 
             <span class="java-keyword">for</span> (ISimpleInArchiveItem item : simpleInArchive.getArchiveItems()) {
                 <span class="java-keyword">final</span> <span class="java-keyword">int</span>[] hash = <span class="java-keyword">new</span> <span class="java-keyword">int</span>[] { 0 };
                 <span class="java-keyword">if</span> (!item.isFolder()) {
                     ExtractOperationResult result;
+
+                    <span class="java-keyword">final</span> <span class="java-keyword">long</span>[] sizeArray = <span class="java-keyword">new</span> <span class="java-keyword">long</span>[1];
                     result = item.extractSlow(<span class="java-keyword">new</span> ISequentialOutStream() {
                         <span class="java-keyword">public</span> <span class="java-keyword">int</span> write(<span class="java-keyword">byte</span>[] data) <span class="java-keyword">throws</span> SevenZipException {
                             hash[0] ^= Arrays.<span class="java-staticmethod">hashCode</span>(data); <span class="java-comment">// Consume data</span>
+                            sizeArray[0] += data.length;
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of consumed data</span>
                         }
                     });
                     <span class="java-keyword">if</span> (result == ExtractOperationResult.OK) {
-                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %s"</span>, <span class="java-comment">// </span>
-                                hash[0], item.getPath()));
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-comment">// </span>
+                                hash[0], sizeArray[0], item.getPath()));
                     } else {
                         System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);
                     }

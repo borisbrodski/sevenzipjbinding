@@ -15,11 +15,11 @@ import org.junit.Test;
 public class ExtractItemsTest extends SnippetTest {
     private String getExpectedOutput() {
         /* BEGIN_OUTPUT(ExtractItems) */
-        String expected = "   Hash   | Filename\n";
-        expected += "----------+---------\n";
-        expected += " C1FD1029 | file1.txt\n";
-        expected += " 8CB12E6A | file2.txt\n";
-        expected += " E8EEC7F4 | folder/file in folder.txt\n";
+        String expected = "   Hash   |    Size    | Filename\n";
+        expected += "----------+------------+---------\n";
+        expected += " C1FD1029 |       4481 | file1.txt\n";
+        expected += " 8CB12E6A |         75 | file2.txt\n";
+        expected += " E8EEC7F4 |          6 | folder/file in folder.txt\n";
         /* END_OUTPUT */
 
         expected = expected.replace("\n", System.getProperty("line.separator"));

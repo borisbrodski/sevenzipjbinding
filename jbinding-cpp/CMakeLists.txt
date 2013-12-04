@@ -23,10 +23,9 @@ ELSE()
     ENDIF()
 ENDIF()
 
-
-IF(USE_MINGW)
+IF(USE_MINGW_W64)
     INCLUDE(../cmake/FindMinGWm10-DLL.cmake)
-ENDIF(USE_MINGW)
+ENDIF(USE_MINGW_W64)
 
 SET_PROPERTY(GLOBAL PROPERTY USE_MINGW ${USE_MINGW}) 
 
@@ -40,9 +39,14 @@ ENDIF(HAVE_WCHAR_H)
 SET(P7ZIP_SRC ../p7zip)
 SET(_7ZIP_SRC ../7zip)
 
+SET(JBINDING_PLATFORM_CPP_FILES)
 IF(USE_MINGW)
     include_directories(PlatformMinGW/)
-    add_definitions(-include PlatformMinGW/StdAfx.h)
+    add_definitions(-include PlatformMinGW/StdAfx.h) # TODO Check if we really need it
+    SET(JBINDING_PLATFORM_CPP_FILES
+        PlatformMinGW/MyWindows.cpp
+        PlatformMinGW/MyUser32.cpp
+    )
 ELSE(USE_MINGW)
     include_directories(PlatformUnix/)
 ENDIF(USE_MINGW)
@@ -71,7 +75,11 @@ IF(USE_CYGWIN)
 ENDIF(USE_CYGWIN)
 
 IF(USE_MINGW)
-    add_definitions(-DMINGW -mthreads)
+	IF(USE_MINGW_W64)
+		add_definitions(-DMINGW -mthreads -D_JNI_IMPLEMENTATION_ -D_OLEAUT32_ -D_USER32_)
+	ELSE()
+		add_definitions(-DMINGW -mthreads -D_JNI_IMPLEMENTATION_)
+	ENDIF()
 ENDIF(USE_MINGW)
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -248,6 +256,10 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
+    ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
+
 # Com ??
 
     ${_7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
@@ -291,10 +303,6 @@ SET(P7ZIP_SOURCE_FILES
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarRegister.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Tar/TarUpdate.cpp
 
-# Udf
-
-# Wim
-    
     ${_7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipAddCommon.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandler.cpp
     ${_7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandlerOut.cpp
@@ -498,6 +506,9 @@ SET(P7ZIP_SOURCE_FILES
     ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
     ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
+    ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 
 # Com ??
 
@@ -725,7 +736,12 @@ add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
                    COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
 )
 
-add_library(7-Zip-JBinding SHARED ${JBINDING_CPP_FILES} ${P7ZIP_SOURCE_FILES} ${JBINDING_JAVAH_H_FILES})
+add_library(7-Zip-JBinding
+            SHARED
+            ${JBINDING_CPP_FILES}
+            ${JBINDING_PLATFORM_CPP_FILES}
+            ${P7ZIP_SOURCE_FILES}
+            ${JBINDING_JAVAH_H_FILES})
 
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
@@ -753,10 +769,18 @@ IF(USE_CYGWIN)
     SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-mno-cygwin -Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(USE_CYGWIN)
     IF(USE_MINGW)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads -Wl,--enable-auto-import") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
-    ELSE(USE_MINGW)
-	#SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -lpthread")
-	TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT})
+
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wall -Wl,--kill-at -static -mthreads")
+        
+        # Remove default libraries 
+        #SET(CMAKE_CXX_STANDARD_LIBRARIES "-g") #-luser32 -loleaut32 -lole32 -lshell32 -lgdi32 -lwinspool -luuid -lcomdlg32 -ladvapi32 -lkernel32 
+        #SET(CMAKE_C_STANDARD_LIBRARIES "-g") #-luser32 -loleaut32 -lole32 -lshell32 -lgdi32 -lwinspool -luuid -lcomdlg32 -ladvapi32 -lkernel32 
+
+	# TODO This is from RW branch. Remove later on.
+	#        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads -Wl,--enable-auto-import") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+	#    ELSE(USE_MINGW)
+	#	TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT})
+	#        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
     ENDIF(USE_MINGW)
 ENDIF(USE_CYGWIN)
 

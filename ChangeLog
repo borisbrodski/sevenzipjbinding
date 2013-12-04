@@ -8,6 +8,34 @@ Release - 9.13-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 
 		- Creating archives: 7z, BZip2, Tar, Zip
 
 
+Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Feature: WIM format support + tests
+
+	* Feature: Initialization performance boost. Don't delete extracted native libraries
+	  in the temporary directory (specified by -Djava.io.tmpdir=<dir>) and use those later during
+	  subsequent 7-Zip-JBinding initializations.
+
+	* Test: Test cross-platform encoding functionality
+	
+	* Bugfix: Get ride of the dependency to USER32.DLL improving performance and robustness
+	 
+	* Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)
+	  Special thanks to Daniel Santos for the provided patch!
+
+	* Bugfix: Simple Interface returns wrong CRC (Bug ID: 3535546)
+	  Special thanks to M. Hamer
+
+Release - 4.65-1.05-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback
+	  interface caused JVM crash.
+	* Bugfix: JVM Crash 30 char passw. rar archive
+	  A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters. Details from dmesg:
+	  7z[17413] general protection ip:7f0aa8803ca9 sp:7fff766ec950 error:0 in 7z.so[7f0aa8664000+1f5000]
+	  - https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
+	  - https://sourceforge.net/projects/sevenzipjbind/forums/forum/757965/topic/5152496
+
+	* Feature: Initialize native module within a AccessController#doPrivileged block
+
 Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Bugfix: it was not possible to open some archives over 4GB
 	  (CallIntMethod->CallLongMethod bug in InStream.Seek [found by IKVM developer Jeroen Frijters])

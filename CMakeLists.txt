@@ -21,7 +21,6 @@ SET(JAVA_TMP CACHE PATH "Path to tmp directory (optional)")
 
 INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
-INCLUDE(CTest)
 
 SET(SEVENZIPJBINDING_VERSON 9.04-2.00alpha)
 
@@ -80,6 +79,7 @@ MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND
     FILE(GLOB_RECURSE JAVA_SOURCE_FILES RELATIVE ${P_SRC_DIR} ${P_SRC_DIR}/*.java)
 
     FILE(WRITE ${JAVAC_ARGS_FILE} "-source 1.5 -target 1.5\n")
+    FILE(APPEND ${JAVAC_ARGS_FILE} "-encoding UTF-8\n")
     FILE(APPEND ${JAVAC_ARGS_FILE} "-d ${BIN_DIR}\n")
     IF(NOT "${ARGN}" STREQUAL "")
         FILE(APPEND ${JAVAC_ARGS_FILE} "-cp ")
@@ -124,24 +124,27 @@ ENDIF()
 ADD_DEPENDENCIES(7-Zip-JBinding sevenzipjbinding-jar)
 
 GET_PROPERTY(USE_MINGW                GLOBAL PROPERTY     USE_MINGW) 
+GET_PROPERTY(USE_MINGW_W64            GLOBAL PROPERTY     USE_MINGW_W64)
 GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 GET_FILENAME_COMPONENT(SEVENZIP_JBINDING_LIB_FILENAME "${SEVENZIP_JBINDING_LIB}" NAME)
 
 FILE(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/${PLATFORM})
 SET(SEVENZIP_JBINDING_LIB_PROPERTY_FILE ${PROJECT_BINARY_DIR}/${PLATFORM}/sevenzipjbinding-lib.properties)
 FILE(WRITE ${SEVENZIP_JBINDING_LIB_PROPERTY_FILE} "sevenzipjbinding.libname.1=${SEVENZIP_JBINDING_LIB_FILENAME}\n")
-IF(USE_MINGW)
-    IF (MINW_RUNTIME_DLL_FILENAME MATCHES "/.*" AND USE_CYGWIN)
+IF(USE_MINGW_W64)
+    IF (MINGW_RUNTIME_DLL_FILENAME MATCHES "/.*" AND USE_CYGWIN)
         IF(NOT CYGPATH_EXE_FILENAME)
             MESSAGE(FATAL_ERROR "cygpath.exe wasn't found")
         ENDIF(NOT CYGPATH_EXE_FILENAME)
-        EXECUTE_PROCESS(COMMAND cygpath.exe -m ${MINW_RUNTIME_DLL_FILENAME} OUTPUT_VARIABLE MINW_RUNTIME_DLL_FILENAME)
+        EXECUTE_PROCESS(COMMAND cygpath.exe -m ${MINGW_RUNTIME_DLL_FILENAME} OUTPUT_VARIABLE MINGW_RUNTIME_DLL_FILENAME)
     ENDIF()
 # !!! TODO
-#    GET_FILENAME_COMPONENT(MINWG_RUNTIME_DLL_DIR ${MINW_RUNTIME_DLL_FILENAME} PATH)
-    GET_FILENAME_COMPONENT(MINWG_RUNTIME_DLL_NAME ${MINW_RUNTIME_DLL_FILENAME} NAME)
-    FILE(APPEND ${SEVENZIP_JBINDING_LIB_PROPERTY_FILE} "sevenzipjbinding.libname.2=${MINWG_RUNTIME_DLL_NAME}")
-ENDIF(USE_MINGW)
+#    GET_FILENAME_COMPONENT(MINGW_RUNTIME_DLL_DIR ${MINGW_RUNTIME_DLL_FILENAME} PATH)
+    GET_FILENAME_COMPONENT(MINGW_RUNTIME_DLL_NAME ${MINGW_RUNTIME_DLL_FILENAME} NAME)
+    FILE(APPEND ${SEVENZIP_JBINDING_LIB_PROPERTY_FILE} "sevenzipjbinding.libname.2=${MINGW_RUNTIME_DLL_NAME}\n")
+ENDIF(USE_MINGW_W64)
+STRING(RANDOM BUILD_REF)
+FILE(APPEND ${SEVENZIP_JBINDING_LIB_PROPERTY_FILE} "build.ref=${BUILD_REF}\n")
 
 SET(SEVENZIPJBINDING_PLATFORMS_PROPERTY_FILE sevenzipjbinding-platforms.properties)
 FILE(WRITE ${PROJECT_BINARY_DIR}/${SEVENZIPJBINDING_PLATFORMS_PROPERTY_FILE} "platform.1=${PLATFORM}\n")
@@ -154,12 +157,8 @@ MESSAGE("Java compiler: ${JAVA_COMPILE}")
 MESSAGE("Java header compiler: ${JAVA_HEADER_COMPILE}")
 MESSAGE("Java documentation tool: ${JAVA_DOC}")
 MESSAGE("Java archiver: ${JAVA_ARCHIVE}")
-IF(USE_MINGW)
     IF(USE_MINGW_W64)
-        MESSAGE("libgcc_s_sjlj-1.dll to use: ${MINW_RUNTIME_DLL_FILENAME}")
-    ELSE()
-        MESSAGE("mingwm10.dll to use: ${MINW_RUNTIME_DLL_FILENAME}")
-    ENDIF()
+    MESSAGE("libgcc_s_sjlj-1.dll to use: ${MINGW_RUNTIME_DLL_FILENAME}")
 ENDIF()
 MESSAGE("Output package: ./${SEVENZIPJBINDING_FILENAME}.zip")
 MESSAGE("")
@@ -193,14 +192,14 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                    COMMENT Building Platformdependend jar)
 
-IF(CMAKE_HOST_WIN32)
+IF(USE_MINGW_W64)
     ADD_CUSTOM_COMMAND(TARGET sevenzipjbinding-lib-jar POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                                           ${MINW_RUNTIME_DLL_FILENAME}
+                                           ${MINGW_RUNTIME_DLL_FILENAME}
                                            ${PLATFORM}
                    COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
                                                -C ${PROJECT_BINARY_DIR}
-                                               ${PLATFORM}/${MINWG_RUNTIME_DLL_NAME}
+                                               ${PLATFORM}/${MINGW_RUNTIME_DLL_NAME}
                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                    COMMENT Adding MinGW runtime dll to the jar)
 ENDIF()
@@ -297,12 +296,13 @@ INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
 
 # -------------------------- CTest
 
+SET(DART_TESTING_TIMEOUT "36000" CACHE STRING "")	# Increase time out up to 10 hours
+INCLUDE(CTest)
 IF(BUILD_TESTING)
     MESSAGE("-- Prepare for testing")
     SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
     SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar)
     SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.6.jar)
-    SET(DART_TESTING_TIMEOUT 36000)	# Increase time out up to 10 hours
     
     CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_JAR}" "${JUNIT_LIB}" ${SEVENZIP_JBINDING_JAR})
 
@@ -312,9 +312,10 @@ IF(BUILD_TESTING)
 
 
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
-   FILE(WRITE ${JUNIT_TEST_RUNNER} "EXECUTE_PROCESS(COMMAND
+    FILE(WRITE ${JUNIT_TEST_RUNNER} "STRING(REPLACE \"%3D\" \"=\" JAVA_OPT_TO_USE \"\${JAVA_OPT}\")
+                                     EXECUTE_PROCESS(COMMAND
                                             ${JAVA_RUNTIME} -cp \"${JUNIT_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
-                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" ")
+                                            \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" \${JAVA_OPT_TO_USE} ")
     IF(JAVA_TMP)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")
     ENDIF()
@@ -323,15 +324,30 @@ IF(BUILD_TESTING)
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)
                                      IF(RESULT)
-                                         MESSAGE(SEND_ERROR \"Error during JUnit Tests\")
+                                         MESSAGE(SEND_ERROR \"Error during JUnit Tests. Return code: \${RESULT}\")
                                      ENDIF(RESULT)
                                      ")
-    add_test(JUnit-init                         ${CMAKE_COMMAND} -D "SINGLEBUNDLE=01 Common tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-tools                        ${CMAKE_COMMAND} -D "SINGLEBUNDLE=02 Tools tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -D "SINGLEBUNDLE=03 Snippets tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=04 Single file tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=05 Multiple files tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=06 Bad archive tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-compression                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=07 Compression tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-common                       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Common tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-common-no-privileged-init    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Common tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
+    
+    add_test(JUnit-init-std-1                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Std) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-std-2                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Std) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+
+    add_test(JUnit-init-verify-1                ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Verify) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-verify-2                ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Verify) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+    
+    add_test(JUnit-tools                        ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Tools tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Snippets tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets-no-privileged-init  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Snippets tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
+    
+    add_test(JUnit-encoding-utf-8               ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 1" -D "JAVA_OPT=-Dfile.encoding%3DUTF8" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-encoding-cp1252              ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 2" -D "JAVA_OPT=-Dfile.encoding%3DCP1252" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-encoding-cp1251              ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 3" -D "JAVA_OPT=-Dfile.encoding%3DCP1251" -P ${JUNIT_TEST_RUNNER})
+    
+    add_test(JUnit-bug-reports                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bug report tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Single file tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Multiple files tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-compression                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Compression tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bad archive tests" -P ${JUNIT_TEST_RUNNER})
 #                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
 ENDIF(BUILD_TESTING)

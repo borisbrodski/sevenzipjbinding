@@ -56,6 +56,7 @@ public class ZipContentComparator {
     private final ArchiveFormat archiveFormat;
     private final boolean expectFailure;
     private String corruptDataErrorMessage;
+    private List<String> ignoreList = new ArrayList<String>();
 
     public ZipContentComparator(ArchiveFormat archiveFormat, ISevenZipInArchive sevenZipArchive, ZipFile zipFile,
             boolean useSimpleInterface, String password, boolean expectFailure) {
@@ -92,6 +93,9 @@ public class ZipContentComparator {
 
                 String actualFilename = actualInfo.filename;
                 if (archiveFormat == ArchiveFormat.TAR && actualFilename.startsWith("./")) {
+                    actualFilename = actualFilename.substring(2);
+                }
+                if (archiveFormat == ArchiveFormat.WIM && actualFilename.startsWith("1/")) {
                     actualFilename = actualFilename.substring(2);
                 }
 
@@ -254,7 +258,7 @@ public class ZipContentComparator {
             ISimpleInArchiveItem[] archiveItems = simpleInArchive.getArchiveItems();
 
             for (ISimpleInArchiveItem simpleInArchiveItem : archiveItems) {
-                if (simpleInArchiveItem.isFolder()) {
+                if (simpleInArchiveItem.isFolder() || ignoreList.contains(simpleInArchiveItem.getPath())) {
                     continue;
                 }
 
@@ -271,6 +275,9 @@ public class ZipContentComparator {
         } else {
             for (int i = 0; i < actualSevenZipArchive.getNumberOfItems(); i++) {
                 if (((Boolean) actualSevenZipArchive.getProperty(i, PropID.IS_FOLDER)).booleanValue()) {
+                    continue;
+                }
+                if (ignoreList.contains(actualSevenZipArchive.getProperty(i, PropID.PATH))) {
                     continue;
                 }
                 UniversalFileEntryInfo info = new UniversalFileEntryInfo();
@@ -337,6 +344,9 @@ public class ZipContentComparator {
         return stringBuffer.toString();
     }
 
+    public void addToIgnoreList(String string) {
+        ignoreList.add(string);
+    }
     public void print() throws SevenZipException {
         List<UniversalFileEntryInfo> expectedFileNames;
         List<UniversalFileEntryInfo> actualFileNames;
