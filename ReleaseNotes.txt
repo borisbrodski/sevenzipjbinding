@@ -1,7 +1,7 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Main features of 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+Main features of 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 
 	* Extraction of
 		- 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,

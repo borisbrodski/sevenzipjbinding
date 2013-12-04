@@ -380,7 +380,8 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                 IArchiveOpenCallback archiveOpenCallbackToUse = null;
 
                 if (usingVolumes) {
-                    volumeArchiveOpenCallback = new VolumeArchiveOpenCallback(archiveFilename);
+					volumeArchiveOpenCallback = new VolumeArchiveOpenCallback(archiveFilename, getTestDataPath()
+							+ File.separatorChar + getTestSubdir());
                     if (archiveFormat == ArchiveFormat.SEVEN_ZIP) {
                         volumedArchiveInStream = new VolumedArchiveInStream(archiveFilename, volumeArchiveOpenCallback);
                         inStreamToUse = volumedArchiveInStream;
@@ -580,9 +581,11 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
         private RandomAccessFile randomAccessFile;
         private String currentFilename;
         private Map<String, RandomAccessFile> randomAccessFileMap = new HashMap<String, RandomAccessFile>();
+		private final String currentDir;
 
-        public VolumeArchiveOpenCallback(String firstFilename) {
+		public VolumeArchiveOpenCallback(String firstFilename, String currentDir) {
             currentFilename = firstFilename;
+			this.currentDir = currentDir;
         }
 
         /**
@@ -602,14 +605,15 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
         public IInStream getStream(String filename) {
             try {
-                currentFilename = filename;
-                randomAccessFile = randomAccessFileMap.get(filename);
+				String fullfilename = new File(currentDir, new File(filename).getName()).getCanonicalPath();
+				currentFilename = fullfilename;
+				randomAccessFile = randomAccessFileMap.get(fullfilename);
                 if (randomAccessFile != null) {
                     randomAccessFile.seek(0);
                     return new RandomAccessFileInStream(randomAccessFile);
                 }
-                randomAccessFile = new RandomAccessFile(filename, "r");
-                randomAccessFileMap.put(filename, randomAccessFile);
+				randomAccessFile = new RandomAccessFile(fullfilename, "r");
+				randomAccessFileMap.put(fullfilename, randomAccessFile);
                 return new RandomAccessFileInStream(randomAccessFile);
             } catch (FileNotFoundException fileNotFoundException) {
                 return null;

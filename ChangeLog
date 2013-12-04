@@ -8,6 +8,10 @@ Release - 9.13-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 
 		- Creating archives: 7z, BZip2, Tar, Zip
 
 
+Release - 4.65-1.04rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+	* Bugfix: it was not possible to open some archives over 4GB
+	  (CallIntMethod->CallLongMethod bug in InStream.Seek [found by IKVM developer Jeroen Frijters])
+
 Release - 4.65-1.03rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Binary version for MacOS 64 bit (java 6)
 	

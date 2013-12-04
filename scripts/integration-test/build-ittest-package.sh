@@ -59,5 +59,5 @@ cd - > /dev/null
 
 read -p "Upload to the sourceforge web space (y/n)? "
 if [ "$REPLY" == "y" ] ; then
-    cmake -DFILENAME="$ITTEST_PACKAGE_ZIP" -DDESCRIPTION="Integration test pack" -P $SCRIPT_HOME/../upload-release.cmake
+    cmake -DFILENAME="$ITTEST_PACKAGE_ZIP" -DDESCRIPTION="Integration test pack" -P $SCRIPT_HOME/../upload-release-to-frs-OldFiles.cmake
 fi
