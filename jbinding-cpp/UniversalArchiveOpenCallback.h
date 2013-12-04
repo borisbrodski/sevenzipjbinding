@@ -19,6 +19,7 @@ private:
     IArchiveOpenCallback * _archiveOpenCallback;
     IArchiveOpenVolumeCallback * _archiveOpenVolumeCallback;
     ICryptoGetTextPassword * _cryptoGetTextPassword;
+    bool _simulateArchiveOpenVolumeCallback;
 
     void Init(JBindingSession & jbindingSession, JNIEnv * initEnv,
     		jobject archiveOpenCallbackImpl);
@@ -45,6 +46,10 @@ public:
         }
 
         // TRACE_OBJECT_DESTRUCTION
+    }
+
+    void setSimulateArchiveOpenVolumeCallback(bool value) {
+        _simulateArchiveOpenVolumeCallback = value;
     }
 
     STDMETHOD(QueryInterface)(REFGUID iid, void **outObject);

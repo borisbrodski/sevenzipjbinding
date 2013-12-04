@@ -33,4 +33,5 @@ hs_err_pid*.log
 *.vim*
 tags
 *.tmp
+Session.vim
 

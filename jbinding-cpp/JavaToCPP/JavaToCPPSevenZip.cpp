@@ -85,16 +85,15 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
+    int cabIndex = -1;
+	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
+        const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
+        if (wcscmp(name, L"Cab") == 0)
+            cabIndex = i;
 #ifdef TRACE_ON
-    for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
-        TRACE("Available codec: " << (const wchar_t *)CodecTools::codecs.Formats[i].Name) // TODO Get this to work
-    }
+		TRACE1("Available codec: '%S'", name)
 #endif // TRACE_ON
-    //for (int i = 0; i < SevenZipJBinding::codecs.Formats.Size(); i++) {
-    //	printf("Available codec: '%S'\n", (const wchar_t*)SevenZipJBinding::codecs.Formats[i].Name);
-    //	fflush(stdout);
-    //}
-
+	}
 
     int index = -1;
     UString formatNameString;
@@ -111,14 +110,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     CMyComPtr<IInArchive> archive;
     CMyComPtr<CPPToJavaInStream> stream = new CPPToJavaInStream(jbindingSession, env, inStream);
 
-    CMyComPtr<IArchiveOpenCallback> archiveOpenCallback;
-
-    if (archiveOpenCallbackImpl) {
-        TRACE("Using archive open callback")
-
-        archiveOpenCallback = new UniversalArchiveOpencallback(jbindingSession, env,
-                archiveOpenCallbackImpl);
-    }
+    UniversalArchiveOpencallback * universalArchiveOpencallback = new UniversalArchiveOpencallback(jbindingSession, env, archiveOpenCallbackImpl);
+	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback = universalArchiveOpencallback;
 
     UInt64 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
 
@@ -130,6 +123,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         }
 
         TRACE("Opening using codec " << CodecTools::codecs.Formats[index].Name);
+
+        universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(index == cabIndex);
+
         HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
 
         if (result != S_OK) {
@@ -152,6 +148,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             if (!archive) {
                 continue;
             }
+
+            universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(i == cabIndex);
+
             HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
             if (result != S_OK) {
                 continue;

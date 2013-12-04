@@ -58,6 +58,8 @@ import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeWithoutVolumedTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileDebTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileIsoTest;
@@ -171,6 +173,8 @@ public class AllTestSuite extends TestSuite {
     static Class<?>[] multipleFilesTests = { //
     /*    */ExtractMultipleFileArjTest.class, //
             ExtractMultipleFileCabTest.class, //
+			ExtractMultipleFileCabVolumeTest.class, //
+			ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
             ExtractMultipleFileCpioTest.class, //
             ExtractMultipleFileDebTest.class, //
             ExtractMultipleFileIsoTest.class, //
