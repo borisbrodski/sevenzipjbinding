@@ -60,7 +60,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *            <code>newContent</code> will be reflected by the byte array stream.
      * 
      * @param maxSize
-     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     *            maximal length of the stored data. Use {@link Integer#MAX} to disable maximal length constraint.
      */
     public ByteArrayStream(byte[] content, boolean copyContentArray, int maxSize) {
         this(1024, maxSize);
@@ -93,7 +93,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * Create new empty instance of ByteArrayStream specifying maximal length of the stored data.
      * 
      * @param maxSize
-     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     *            maximal length of the stored data. Use {@link Integer#MAX} to disable maximal length constraint.
      */
     public ByteArrayStream(int maxSize) {
         this(1024, maxSize);
@@ -103,7 +103,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * Create new empty instance of ByteArrayStream specifing maximal length of the stored data.
      * 
      * @param maxSize
-     *            maximal length of the stored data. Use {@link Integer.MAX} to disable maximal length constraint.
+     *            maximal length of the stored data. Use {@link Integer#MAX} to disable maximal length constraint.
      * @param initialSize
      *            size of the first data chunk. The first data chunk (byte array) will be allocated after first writing
      *            request.
