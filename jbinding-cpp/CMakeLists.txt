@@ -42,7 +42,8 @@ SET(_7ZIP_SRC ../7zip)
 SET(JBINDING_PLATFORM_CPP_FILES)
 IF(USE_MINGW)
     include_directories(PlatformMinGW/)
-    add_definitions(-include PlatformMinGW/StdAfx.h) # TODO Check if we really need it
+    set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
+    add_definitions(-include PlatformMinGW/StdAfx.h)
     SET(JBINDING_PLATFORM_CPP_FILES
         PlatformMinGW/MyWindows.cpp
         PlatformMinGW/MyUser32.cpp
