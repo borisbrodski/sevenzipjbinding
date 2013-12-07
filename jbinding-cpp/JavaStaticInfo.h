@@ -375,8 +375,8 @@
     namespace jni {                                                                             \
     class name : public JInterface<name> {                                                      \
         friend class JObjectMap<jclass, name>;                                                  \
-        name() : JInterface<name>(#name) {}                                                     \
-    public:
+    public:                                                                                     \
+        name() : JInterface<name>(#name) {}
 
 #define JT_END_INTERFACE                      };};
 
