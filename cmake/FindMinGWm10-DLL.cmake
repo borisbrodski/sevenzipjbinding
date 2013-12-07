@@ -1,6 +1,6 @@
 IF(CMAKE_HOST_WIN32) #true for win64 also
     IF(USE_MINGW_W64)
-        SET(MINGW_RUNTIME_DLL_SIMPLE_FILENAME "libgcc_s_sjlj-1.dll")
+        SET(MINGW_RUNTIME_DLL_SIMPLE_FILENAME "libgcc_s_seh-1.dll")
     ELSE()
         SET(MINGW_RUNTIME_DLL_SIMPLE_FILENAME "mingwm10.dll")
     ENDIF()
