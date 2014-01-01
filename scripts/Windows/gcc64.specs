@@ -1,0 +1,2 @@
+*lib:
+%{pg:-lgmon} %{pthread:-lpthread} %{!no-pthread: } -lkernel32
