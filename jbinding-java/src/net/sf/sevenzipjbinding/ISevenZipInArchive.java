@@ -9,7 +9,7 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
  * <br>
  * Standard way to get implementation is to use {@link SevenZip}.<br>
  * <br>
- * The last call should be a call of the method {@link ISevenZipInArchive#close()}. After this call no more methods
+ * The last call should be a call to the method {@link ISevenZipInArchive#close()}. After this call no more methods
  * should be called.
  * 
  * TODO Rename to <code>IInArchive</code> !!!!!
