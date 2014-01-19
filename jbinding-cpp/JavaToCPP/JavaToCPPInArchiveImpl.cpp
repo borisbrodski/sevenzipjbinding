@@ -225,7 +225,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
     delete &jbindingSession;
 
-    TRACE("Archive closed")
+    TRACE("InArchive closed")
 }
 
 /*

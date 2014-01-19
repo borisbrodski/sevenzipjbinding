@@ -43,7 +43,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * </ul>
  * VirtualContent uses ByteArrayStream to represents virtual file content (blob). This simplifies passing virtual file
  * content to the callback method.
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -119,7 +119,7 @@ public class VirtualContent {
             return true;
         }
 
-        // TODO Split in a couple of methods, like getPath(), isFolder(), ...
+        // TODO Split in methods, like getPath(), isFolder(), ...
         // Put the archive type specific methods in a separate interfaces, like IOutArchiveXXX.
         public Object getProperty(int index, PropID propID) {
             switch (propID) {
@@ -250,7 +250,7 @@ public class VirtualContent {
     }
 
     /**
-     * Constant seed is used here. The test should be deterministic. This way is it better debuggable and testable.
+     * Constant seed used here. Tests should be deterministic in order to ensure easy debugging.
      */
     private static final Random random = new Random(0);
     private static final char[] SYMBOLS = new char[] { ' ', '_', '-', '+', '=' };
@@ -340,7 +340,7 @@ public class VirtualContent {
         byte[] content = new byte[length];
         switch (random.nextInt(3)) {
         case 0:
-            // Random content 
+            // Random content
             random.nextBytes(content);
             break;
 

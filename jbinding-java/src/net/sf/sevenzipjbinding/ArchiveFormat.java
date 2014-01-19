@@ -373,7 +373,7 @@ public enum ArchiveFormat {
                 return archiveFormat;
             }
         }
-        throw new SevenZipException("Can't determine corresponding archive format to the interface " + IOutArchive.class.getSimpleName()
-                + ".");
+        throw new SevenZipException("Can't determine corresponding archive format to the interface "
+                + IOutArchive.class.getSimpleName() + ".");
     }
 }

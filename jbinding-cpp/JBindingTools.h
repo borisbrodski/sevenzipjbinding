@@ -118,7 +118,7 @@ private:
                     || threadContext._env == NULL) {
                 TRACE("New thread couldn't be attached: " << result)
                 // throw SevenZipException("Can't attach current thread (id: %i) to the VM", currentThreadId);
-                // TODO Decide, what to do this it
+                // TODO Decide, what to do with it
                 fatal("Can't attach current thread (id: %i) to the VM",
                         PlatformGetCurrentThreadId());
             }

@@ -45,6 +45,9 @@ Minor TODOs:
 Major TODOs:
 - Implement archive creation
 - Move to version 9.X of 7-zip/p7zip
+- Support 7-zip volumes (see INTERFACE_IArchiveUpdateCallback2)
+- Support ICompressProgressInfo
+- Generate random build number on each build not on each CMake run
 
 Info:
 - Quasijarus compression
