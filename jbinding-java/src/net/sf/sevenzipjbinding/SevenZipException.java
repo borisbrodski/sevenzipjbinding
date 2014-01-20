@@ -26,7 +26,7 @@ import java.io.Writer;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SevenZipException extends Exception {
+public class SevenZipException extends IOException {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static class StackTraceWriter extends Writer {
@@ -130,7 +130,8 @@ public class SevenZipException extends Exception {
      * @since 1.4
      */
     public SevenZipException(String message, Throwable cause) {
-        super(message, cause);
+        super(message);
+        initCause(cause);
     }
 
     /**
@@ -157,7 +158,8 @@ public class SevenZipException extends Exception {
      * @since 1.4
      */
     public SevenZipException(Throwable cause) {
-        super(cause);
+        super();
+        initCause(cause);
     }
 
     /**

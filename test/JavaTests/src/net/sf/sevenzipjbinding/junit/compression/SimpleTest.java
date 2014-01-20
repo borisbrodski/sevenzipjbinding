@@ -4,6 +4,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -12,14 +13,14 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 /**
- * Remove this test
- * 
+ * TODO Remove this test
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
 public class SimpleTest extends JUnitNativeTestBase {
     @Test
-    public void testname() throws Exception {
+    public void testCompression() throws Exception {
         try {
             VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
             virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
@@ -30,7 +31,11 @@ public class SimpleTest extends JUnitNativeTestBase {
             ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
 
             IOutArchive outArchive = SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP);
-            virtualContent.updateOutArchive(outArchive, byteArrayStream);
+            try {
+                virtualContent.updateOutArchive(outArchive, byteArrayStream);
+            } finally {
+                outArchive.close();
+            }
 
             //    net.sf.sevenzipjbinding.IInStream inStream = new net.sf.sevenzipjbinding.impl.RandomAccessFileInStream(new RandomAccessFile("test-2.7z", "r"));
             byteArrayStream.rewind();
@@ -43,7 +48,7 @@ public class SimpleTest extends JUnitNativeTestBase {
             } finally {
                 inArchive.close();
             }
-        } catch (net.sf.sevenzipjbinding.SevenZipException sevenZipException) {
+        } catch (SevenZipException sevenZipException) {
             sevenZipException.printStackTraceExtended();
             throw sevenZipException;
         }

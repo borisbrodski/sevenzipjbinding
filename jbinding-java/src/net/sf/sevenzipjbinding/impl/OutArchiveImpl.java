@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.impl;
 
+import java.io.IOException;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.IOutArchive;
@@ -75,4 +77,10 @@ public class OutArchiveImpl implements IOutArchive {
 
     private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
             IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
+
+    public void close() throws IOException {
+        nativeClose();
+    }
+
+    private native void nativeClose() throws SevenZipException;
 }

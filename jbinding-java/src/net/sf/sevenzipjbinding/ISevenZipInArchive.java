@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.Closeable;
 import java.util.Arrays;
 
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
@@ -18,7 +19,7 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
  * @version 4.65-1
  * 
  */
-public interface ISevenZipInArchive {
+public interface ISevenZipInArchive extends Closeable {
     /**
      * Close archive. This method should be the last one called on the implementation of this interface. After this call
      * no more methods should be called.

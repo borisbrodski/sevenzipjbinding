@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.Closeable;
+
 /**
  * The interface provides functionality to create a new archive or update an existing archive.<br>
  * TODO Split creation and update. <br>
@@ -12,7 +14,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.04-2.0
  * 
  */
-public interface IOutArchive {
+public interface IOutArchive extends Closeable {
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}

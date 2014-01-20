@@ -42,33 +42,27 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
                                                                                                    jobject archiveUpdateCallback) {
     TRACE("OutArchiveImpl.updateItemsNative()");
 
-    JBindingSession & jbindingSession(GetJBindingSession(env, thiz));
-    {
-        JNINativeCallContext jniNativeCallContext(jbindingSession, env);
-        JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+    JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-        CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
+	CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
 
-        CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
-                outStream);
+	CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
+			outStream);
 
-        CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
-                new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
-                        false);
+	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
+			new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
+					false);
 
-        HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
-                cppToJavaArchiveUpdateCallback);
+	HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
+			cppToJavaArchiveUpdateCallback);
 
-        if (hresult) {
-            jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
-                    (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
-                    (int) numberOfItems);
-        }
-        outArchive->Release();
-    }
-    delete &jbindingSession;
-
-    return;
+	if (hresult) {
+		jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
+				(const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
+				(int) numberOfItems);
+	}
 }
 
 /*
@@ -213,3 +207,31 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
     }
 }
 
+/*
+ * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
+ * Method:    nativeClose
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeClose
+  (JNIEnv * env, jobject thiz) {
+
+    TRACE("InArchiveImpl::nativeClose(). ThreadID=" << PlatformGetCurrentThreadId());
+
+    JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
+    {
+        JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+        JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+        CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
+
+        outArchive->Release();
+
+        jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
+        jni::OutArchiveImpl::jbindingSession_Set(env, thiz, 0);
+
+        TRACE("sevenZipArchiveInstance and jbindingSession references cleared, outArchive released")
+    }
+    delete &jbindingSession;
+
+    TRACE("OutArchive closed")
+}
