@@ -6,6 +6,7 @@
 //#define TRACE_ON
 //#define TRACE_OBJECTS_ON
 
+//#define TRACE_ON
 //#define TRACE_THREADS_ON
 //#define TRACE_THREAD_LOG_FILENAME "sevenzipjbinding-thread-%i.log"
 
@@ -164,6 +165,8 @@ inline std::ostream & operator<<(JOut jout, char const * str) {
 /**/void TraceObjectDestruction(void * thiz);
 /**/void TraceObjectCall(void * thiz, const char * methodname);
 /**/void TraceObjectEnsureDestruction(void * object);
+/**/void TraceJBindingSessionCreation();
+/**/void TraceJBindingSessionDestruction();
 
 #   define TRACE_OBJECT_CREATION(classname) {TraceObjectCreation(classname, (Object *)this);}
 #   define TRACE_OBJECT_DESTRUCTION         {TraceObjectDestruction((Object *)this);}

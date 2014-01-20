@@ -160,6 +160,9 @@ public:
             fatal("Can't get JavaVM from JNIEnv");
         }
         MY_ASSERT(_vm);
+#ifdef TRACE_OBJECTS_ON
+        TraceJBindingSessionCreation();
+#endif
     }
 
     bool exceptionCheck(JNIEnv * env) {
@@ -192,6 +195,9 @@ public:
         //            i++;
         //        }
         MY_ASSERT(_threadContextMap.size() == 0);
+#ifdef TRACE_OBJECTS_ON
+        TraceJBindingSessionDestruction();
+#endif
     }
 };
 

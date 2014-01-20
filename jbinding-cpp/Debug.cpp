@@ -18,6 +18,7 @@ int trace_printf(const char * fmt, ...) {
 	vprintf(fmt, args);
 #endif // TRACE_THREADS_ON
 	va_end(args);
+	return 0;
 }
 #endif // TRACE_ON
 #ifdef TRACE_OBJECTS_ON
@@ -47,6 +48,22 @@ struct ClassInfo
 };
 
 map<void *, ClassInfo *> g_classes_map;
+long g_jbindingSessionCount;
+
+
+void TraceJBindingSessionCreation()
+{
+	ENTER_CRITICAL_SECTION
+	g_jbindingSessionCount++;
+    LEAVE_CRITICAL_SECTION
+}
+
+void TraceJBindingSessionDestruction()
+{
+	ENTER_CRITICAL_SECTION
+	g_jbindingSessionCount--;
+    LEAVE_CRITICAL_SECTION
+}
 
 void TracePrintObjects()
 {
@@ -78,6 +95,7 @@ void TracePrintObjectsUsingPrintf()
 		std::cout.flush();
     }
 
+    std::cout << "Count of JBindingSession objects: " << g_jbindingSessionCount << std::endl;
     LEAVE_CRITICAL_SECTION
 }
 void TraceObjectCreation(const char * classname, void * thiz)
@@ -172,10 +190,11 @@ void TraceObjectEnsureDestruction(void * thiz)
 extern "C" JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativeGetObjectCount(JNIEnv * env, jclass clazz)
 {
 	ENTER_CRITICAL_SECTION
-	int size = g_classes_map.size();
+	int classes_size = g_classes_map.size();
+	int jbindindSession_count = g_jbindingSessionCount;
     LEAVE_CRITICAL_SECTION
 
-    return (jint)size;
+    return (jint)classes_size + jbindindSession_count;
 }
 
 extern "C" JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_junit_tools_SevenZipDebug_nativePrintObjects(JNIEnv * env, jclass clazz)
