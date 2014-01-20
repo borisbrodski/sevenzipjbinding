@@ -85,13 +85,14 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
+    // TODO Do it once in the initialization procedure
     int cabIndex = -1;
 	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
         const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
         if (wcscmp(name, L"Cab") == 0)
             cabIndex = i;
 #ifdef TRACE_ON
-		TRACE1("Available codec: '%S'", name)
+		TRACE("Available codec: '" << name << "'")
 #endif // TRACE_ON
 	}
 
