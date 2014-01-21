@@ -338,7 +338,7 @@ public enum ArchiveFormat {
      * 
      * @return the {@link IOutArchive} implementation class
      */
-    Class<? extends OutArchiveImpl> getOutArchiveImplementation() {
+    public Class<? extends OutArchiveImpl> getOutArchiveImplementation() {
         return outArchiveImplementation;
     }
 
