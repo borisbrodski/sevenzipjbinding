@@ -19,3 +19,5 @@ Special thanks to
 - Daniel Santos (for providing gcc 4.7 patch, bug-id: 3593757)
 
 - M. Hamer (for reporting bug "Simple Interface returns wrong CRC", bug-id: 3535546)
+
+- Gert Hulselmans for reporting Bug #17 (WIM archive format contains Udf comment)

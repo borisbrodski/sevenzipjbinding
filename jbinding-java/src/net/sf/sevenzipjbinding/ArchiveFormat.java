@@ -293,7 +293,7 @@ public enum ArchiveFormat {
     UDF("Udf"),
 
     /**
-     * Udf
+     * Wim
      */
     WIM("Wim"),
 
