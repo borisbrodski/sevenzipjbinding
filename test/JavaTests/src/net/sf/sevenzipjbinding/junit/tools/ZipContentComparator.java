@@ -21,7 +21,7 @@ import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
@@ -49,7 +49,7 @@ public class ZipContentComparator {
     private final ZipFile expectedZipFile;
     private Enumeration<? extends ZipEntry> expectedZipEntries;
 
-    private final ISevenZipInArchive actualSevenZipArchive;
+    private final IInArchive actualSevenZipArchive;
     List<String> errorMessages = null;
     private final boolean useSimpleInterface;
     private final String password;
@@ -58,7 +58,7 @@ public class ZipContentComparator {
     private String corruptDataErrorMessage;
     private List<String> ignoreList = new ArrayList<String>();
 
-    public ZipContentComparator(ArchiveFormat archiveFormat, ISevenZipInArchive sevenZipArchive, ZipFile zipFile,
+    public ZipContentComparator(ArchiveFormat archiveFormat, IInArchive sevenZipArchive, ZipFile zipFile,
             boolean useSimpleInterface, String password, boolean expectFailure) {
         this.archiveFormat = archiveFormat;
         this.actualSevenZipArchive = sevenZipArchive;
@@ -241,7 +241,7 @@ public class ZipContentComparator {
         errorMessages.add(message);
     }
 
-    private String getStringProperty(ISevenZipInArchive sevenZip, int index, PropID propID) throws SevenZipException {
+    private String getStringProperty(IInArchive sevenZip, int index, PropID propID) throws SevenZipException {
         String string = (String) sevenZip.getProperty(index, propID);
         if (string == null) {
             return "";

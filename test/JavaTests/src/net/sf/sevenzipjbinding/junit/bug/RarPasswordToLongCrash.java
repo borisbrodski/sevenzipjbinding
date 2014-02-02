@@ -3,7 +3,7 @@ package net.sf.sevenzipjbinding.junit.bug;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
@@ -15,7 +15,7 @@ public class RarPasswordToLongCrash {
     @Test
     public void openArchiveWithCorrectPassword() throws Throwable {
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
 
         Throwable throwable = null;
         try {

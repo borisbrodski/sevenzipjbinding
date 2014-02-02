@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -15,7 +15,7 @@ import org.junit.Test;
 public class FirstStepsSimpleSnippets {
 
     private static final String TEST_ARCHIVE_SIMPLE = "testdata/snippets/simple.zip";
-    private ISevenZipInArchive inArchive;
+    private IInArchive inArchive;
     private RandomAccessFile randomAccessFile;
 
     @Test

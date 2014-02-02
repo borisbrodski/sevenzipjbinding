@@ -2,7 +2,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutArchive;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
@@ -39,7 +39,7 @@ public class SimpleTest extends JUnitNativeTestBase {
 
             //    net.sf.sevenzipjbinding.IInStream inStream = new net.sf.sevenzipjbinding.impl.RandomAccessFileInStream(new RandomAccessFile("test-2.7z", "r"));
             byteArrayStream.rewind();
-            ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream);
+            IInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream);
             try {
                 // ISevenZipInArchive inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, inStream);
                 virtualContent.verifyInArchive(inArchive);

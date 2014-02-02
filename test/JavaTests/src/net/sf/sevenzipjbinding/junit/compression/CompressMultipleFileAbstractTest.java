@@ -2,7 +2,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutArchive;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -185,7 +185,7 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
             outArchive.close();
         }
         byteArrayStream.rewind();
-        ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
+        IInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
         try {
             virtualContent.verifyInArchive(inArchive);
             // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);

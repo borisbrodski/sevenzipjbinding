@@ -6,7 +6,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.ISeekableStream;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -78,7 +78,7 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
         randomContext.seek(0, ISeekableStream.SEEK_SET);
         outputByteArrayStream.rewind();
 
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         boolean successfull = false;
         try {
             inArchive = SevenZip.openInArchive(null, outputByteArrayStream);

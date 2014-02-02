@@ -1,11 +1,11 @@
 package net.sf.sevenzipjbinding.simple;
 
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Simplified interface for C++ <code>IInArchive</code>. For binding of original 7-Zip C++ interface see
- * {@link ISevenZipInArchive}.
+ * {@link IInArchive}.
  * 
  * 
  * @author Boris Brodski

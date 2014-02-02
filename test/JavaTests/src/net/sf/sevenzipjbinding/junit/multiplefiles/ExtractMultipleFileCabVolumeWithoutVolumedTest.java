@@ -9,7 +9,7 @@ import java.io.RandomAccessFile;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -33,7 +33,7 @@ public class ExtractMultipleFileCabVolumeWithoutVolumedTest extends JUnitNativeT
 
 	public void test(boolean useAutodetect) throws Exception {
 		RandomAccessFile randomAccessFile = null;
-		ISevenZipInArchive inArchive = null;
+		IInArchive inArchive = null;
 		boolean ok = false;
 		try {
 			randomAccessFile = new RandomAccessFile("testdata/multiple-files/cab/vol-archive1.zip.0.disk1.cab", "r");

@@ -9,7 +9,7 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -21,9 +21,9 @@ public class ExtractItemsStandardCallback {
         private int /*f*/size/* */= 0;
         private int /*f*/index/**/;
         private boolean /*f*/skipExtraction/**/;
-        private ISevenZipInArchive /*f*/inArchive/**/;
+        private IInArchive /*f*/inArchive/**/;
 
-        public MyExtractCallback(ISevenZipInArchive inArchive) {
+        public MyExtractCallback(IInArchive inArchive) {
             this./*f*/inArchive/* */= inArchive;
         }
 
@@ -76,7 +76,7 @@ public class ExtractItemsStandardCallback {
             return;
         }
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         try {
             randomAccessFile = new RandomAccessFile(args[0], "r");
             inArchive = SevenZip.openInArchive(null, // autodetect archive type

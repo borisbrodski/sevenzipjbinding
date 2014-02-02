@@ -7,7 +7,7 @@ import java.io.Closeable;
  * TODO Split creation and update. <br>
  * Standard way to get implementation is to use {@link SevenZip}.<br>
  * <br>
- * The last call should be a call to the method {@link ISevenZipInArchive#close()}. After this call no more Methods
+ * The last call should be a call to the method {@link IInArchive#close()}. After this call no more Methods
  * should be called. TODO Remove this one.
  * 
  * @author Boris Brodski
@@ -19,7 +19,7 @@ public interface IOutArchive extends Closeable {
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
      * class, only new archive creation is possible. To update an existing archive open it first and then use
-     * {@link ISevenZipInArchive} to get a {@link IOutArchive} implementation.
+     * {@link IInArchive} to get a {@link IOutArchive} implementation.
      * 
      * @param outStream
      *            output stream to get the new archive

@@ -6,7 +6,7 @@ import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.PropertyInfo;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -14,13 +14,13 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.impl.SimpleInArchiveImpl;
 
 /**
- * Implementation of {@link ISevenZipInArchive}.
+ * Implementation of {@link IInArchive}.
  * 
  * @author Boris Brodski
  * @version 4.65-1
  * 
  */
-public final class InArchiveImpl implements ISevenZipInArchive {
+public final class InArchiveImpl implements IInArchive {
     private static class ExtractSlowCallback implements IArchiveExtractCallback {
         ISequentialOutStream sequentialOutStreamParam;
         private ExtractOperationResult extractOperationResult;

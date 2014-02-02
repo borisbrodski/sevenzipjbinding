@@ -1,6 +1,6 @@
 package net.sf.sevenzipjbinding.simple.impl;
 
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -12,16 +12,16 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
  * @version 4.65-1
  */
 public class SimpleInArchiveImpl implements ISimpleInArchive {
-    private final ISevenZipInArchive sevenZipInArchive;
+    private final IInArchive sevenZipInArchive;
     private boolean wasClosed = false;
 
     /**
-     * Constructing an instance of {@link SimpleInArchiveImpl} from a instance of {@link ISevenZipInArchive}.
+     * Constructing an instance of {@link SimpleInArchiveImpl} from a instance of {@link IInArchive}.
      * 
      * @param sevenZipInArchive
-     *            a base instance of {@link ISevenZipInArchive}
+     *            a base instance of {@link IInArchive}
      */
-    public SimpleInArchiveImpl(ISevenZipInArchive sevenZipInArchive) {
+    public SimpleInArchiveImpl(IInArchive sevenZipInArchive) {
         this.sevenZipInArchive = sevenZipInArchive;
     }
 
@@ -61,7 +61,7 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
      * @throws SevenZipException
      *             archive can't be accessed any more
      */
-    public ISevenZipInArchive testAndGetSafeSevenZipInArchive() throws SevenZipException {
+    public IInArchive testAndGetSafeSevenZipInArchive() throws SevenZipException {
         if (wasClosed) {
             throw new SevenZipException("Archive was closed");
         }

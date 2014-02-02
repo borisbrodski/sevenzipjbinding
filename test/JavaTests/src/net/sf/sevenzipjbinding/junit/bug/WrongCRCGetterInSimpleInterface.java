@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -18,7 +18,7 @@ public class WrongCRCGetterInSimpleInterface {
     @Test
     public void test() throws Throwable {
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
 
         Throwable throwable = null;
         try {

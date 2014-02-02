@@ -4,7 +4,7 @@ import java.util.Date;
 
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -43,7 +43,7 @@ public class SimpleInArchiveItemImpl implements ISimpleInArchiveItem {
      * @param index
      *            index of the item in archive
      */
-    public SimpleInArchiveItemImpl(ISevenZipInArchive sevenZipInArchive, int index) {
+    public SimpleInArchiveItemImpl(IInArchive sevenZipInArchive, int index) {
         this.simpleInArchiveImpl = new SimpleInArchiveImpl(sevenZipInArchive);
         this.index = index;
     }

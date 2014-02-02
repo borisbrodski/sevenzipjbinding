@@ -17,7 +17,7 @@ import java.util.Random;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
@@ -214,7 +214,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
-		ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
+		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
 				compressionIndex, autodetectFormat, "simple", "dat");
 
 		SingleFileSequentialOutStreamComparator outputStream = null;
@@ -283,7 +283,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		return false;
 	}
 
-	private int calcSampleFileIndexInChmArchive(ISevenZipInArchive inArchive) throws SevenZipException {
+	private int calcSampleFileIndexInChmArchive(IInArchive inArchive) throws SevenZipException {
 		int count = inArchive.getNumberOfItems();
 		for (int i = 0; i < count; i++) {
 			String name = (String) inArchive.getProperty(i, PropID.PATH);
@@ -300,7 +300,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		return SINGLE_FILE_TEST_DATA_PATH;
 	}
 
-	private void checkPropertyIsEncrypted(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
+	private void checkPropertyIsEncrypted(IInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		Boolean isEncrypted1 = (Boolean) inArchive.getProperty(index, PropID.ENCRYPTED);
 		Boolean isEncrypted2 = inArchive.getSimpleInterface().getArchiveItem(index).isEncrypted();
@@ -320,7 +320,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		assertEquals("Simple interface problem: ENCRYPTED", isEncrypted1, isEncrypted2);
 	}
 
-	private void checkPropertyIsFolder(ISevenZipInArchive inArchive, int index) throws SevenZipException {
+	private void checkPropertyIsFolder(IInArchive inArchive, int index) throws SevenZipException {
 		Boolean isFolder1 = (Boolean) inArchive.getProperty(index, PropID.IS_FOLDER);
 		Boolean isFolder2 = inArchive.getSimpleInterface().getArchiveItem(index).isFolder();
 
@@ -330,7 +330,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		assertEquals("Simple interface problem: IS_FOLDER", isFolder1, isFolder2);
 	}
 
-	private void checkPropertySize(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
+	private void checkPropertySize(IInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		if (archiveFormat == ArchiveFormat.BZIP2 || archiveFormat == ArchiveFormat.Z) {
 			// It looks that Bzip2 doesn't support SIZE property
@@ -348,7 +348,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		}
 	}
 
-	private void checkPropertyPackedSize(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
+	private void checkPropertyPackedSize(IInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		Long size1 = (Long) inArchive.getProperty(index, PropID.PACKED_SIZE);
 		Long size2 = inArchive.getSimpleInterface().getArchiveItem(index).getPackedSize();
@@ -368,7 +368,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		assertEquals("Simple interface problem: wrong size of the file", size1, size2);
 	}
 
-	private void checkPropertyPath(ISevenZipInArchive inArchive, int index, String uncommpressedFilename)
+	private void checkPropertyPath(IInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP
 				&& archiveFormat != ArchiveFormat.LZMA && archiveFormat != ArchiveFormat.RPM
@@ -393,10 +393,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		private long processed = 0;
 		private Random random = new Random();
 		private Throwable firstException;
-		private final ISevenZipInArchive inArchive;
+		private final IInArchive inArchive;
 		private final long[] sizes;
 
-		public SingleFileSequentialOutStreamComparator(ISevenZipInArchive inArchive, long[] sizes,
+		public SingleFileSequentialOutStreamComparator(IInArchive inArchive, long[] sizes,
 				String expectedFilename) throws FileNotFoundException {
 			this.inArchive = inArchive;
 			this.sizes = sizes;

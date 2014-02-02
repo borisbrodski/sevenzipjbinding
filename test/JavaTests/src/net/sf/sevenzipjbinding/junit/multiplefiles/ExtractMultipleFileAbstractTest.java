@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.zip.ZipFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
 import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
 
@@ -86,7 +86,7 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 		String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
-		ISevenZipInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
+		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
 				compressionIndex, autodetectFormat, "archive", "zip");
 
 		ZipFile zipFile = null;

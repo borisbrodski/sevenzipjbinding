@@ -19,7 +19,7 @@ import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -347,7 +347,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
         }
 
-        public ISevenZipInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
+        public IInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
                 boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
             String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
                     + volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt
@@ -363,10 +363,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
             return openArchiveFileWithSevenZip(archiveFilename, autodetectFormat);
         }
 
-        private ISevenZipInArchive openArchiveFileWithSevenZip(String archiveFilename, boolean autodetectFormat)
+        private IInArchive openArchiveFileWithSevenZip(String archiveFilename, boolean autodetectFormat)
                 throws SevenZipException {
             randomAccessFileInStream = null;
-            ISevenZipInArchive inArchive = null;
+            IInArchive inArchive = null;
             RandomAccessFile randomAccessFile = null;
             try {
                 if (usingZippedTestArchive()) {

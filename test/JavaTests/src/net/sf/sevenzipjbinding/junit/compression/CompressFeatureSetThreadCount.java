@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IFeatureSetMultithreading;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
@@ -133,7 +133,7 @@ public abstract class CompressFeatureSetThreadCount extends CompressAbstractTest
         //        long stop = System.currentTimeMillis();
 
         outputByteArrayStream.rewind();
-        ISevenZipInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), outputByteArrayStream);
+        IInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), outputByteArrayStream);
         verifyCompressedArchive(randomContext, outputByteArrayStream);
         inArchive.close();
 

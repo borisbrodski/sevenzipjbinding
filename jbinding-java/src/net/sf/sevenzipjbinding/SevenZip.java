@@ -17,7 +17,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 
 /**
  * 7-Zip-JBinding entry point class. Finds and initializes 7-Zip-JBinding native library. Opens archives and returns
- * implementation of {@link ISevenZipInArchive}
+ * implementation of {@link IInArchive}
  * 
  * <h3>Initialization of the native library</h3>
  * 
@@ -573,7 +573,7 @@ public class SevenZip {
      * @param archiveOpenCallback
      *            archive open call back listener to use. You can optionally implement {@link ICryptoGetTextPassword} to
      *            specify password to use.
-     * @return implementation of {@link ISevenZipInArchive} which represents opened archive.
+     * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
@@ -583,7 +583,7 @@ public class SevenZip {
      * @see #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)
      * @see #openInArchive(ArchiveFormat, IInStream, String)
      */
-    public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
+    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
         ensureLibraryIsInitialized();
         IArchiveOpenCallback openArchiveCallbackToUse = archiveOpenCallback;
@@ -609,7 +609,7 @@ public class SevenZip {
      * @param passwordForOpen
      *            password to use. Warning: this password will not be used to extract item from archive but only to open
      *            archive. (7-zip format supports encrypted filename)
-     * @return implementation of {@link ISevenZipInArchive} which represents opened archive.
+     * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
@@ -619,7 +619,7 @@ public class SevenZip {
      * @see #openInArchive(ArchiveFormat, IInStream)
      * @see #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)
      */
-    public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
+    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
             String passwordForOpen) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
@@ -636,7 +636,7 @@ public class SevenZip {
      *            (optional) format of archive. If <code>null</code> archive format will be auto-detected.
      * @param inStream
      *            input stream to open archive from
-     * @return implementation of {@link ISevenZipInArchive} which represents opened archive.
+     * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
@@ -646,7 +646,7 @@ public class SevenZip {
      * @see #openInArchive(ArchiveFormat, IInStream)
      * @see #openInArchive(ArchiveFormat, IInStream, String)
      */
-    public static ISevenZipInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream)
+    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream)
             throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
@@ -756,7 +756,7 @@ public class SevenZip {
         return null; // Will never happen
     }
 
-    private static ISevenZipInArchive callNativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
+    private static IInArchive callNativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
         if (inStream == null) {
             throw new NullPointerException("SevenZip.callNativeOpenArchive(...): inStream parameter is null");
@@ -764,7 +764,7 @@ public class SevenZip {
         return nativeOpenArchive(archiveFormat, inStream, archiveOpenCallback);
     }
 
-    private static native ISevenZipInArchive nativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
+    private static native IInArchive nativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
     private static native void nativeCreateArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat)

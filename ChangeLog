@@ -10,6 +10,7 @@ Release - 9.13-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 
 	* API changes
 	    - Extend SevenZipException from IOException
 	    - Extend Closeable interface in IInArchive and IOutArchive
+	    - ISevenZipInArchive renamed to IInArchive
 
 	* Bugfixes:
 	  - #17 WIM archive format contains Udf comment

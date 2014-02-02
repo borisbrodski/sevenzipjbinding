@@ -7,7 +7,7 @@ import java.io.UnsupportedEncodingException;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -42,7 +42,7 @@ public abstract class UnicodeFilenamesInArchive extends JUnitNativeTestBase {
     @Test
     public void testUpperLowerCaseUnicode() throws Throwable {
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         Throwable throwable = null;
 
         try {

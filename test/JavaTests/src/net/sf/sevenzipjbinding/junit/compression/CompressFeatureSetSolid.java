@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IFeatureSetSolid;
 import net.sf.sevenzipjbinding.IOutArchive;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.FilenameGenerator;
@@ -260,7 +260,7 @@ public abstract class CompressFeatureSetSolid extends CompressAbstractTest {
         virtualContent.updateOutArchive(outArchive, outputByteArrayStream);
 
         outputByteArrayStream.rewind();
-        ISevenZipInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), outputByteArrayStream);
+        IInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), outputByteArrayStream);
         virtualContent.verifyInArchive(inArchive);
         inArchive.close();
 

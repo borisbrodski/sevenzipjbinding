@@ -25,7 +25,7 @@ import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -202,9 +202,9 @@ public class VirtualContent {
     private class TextExtractCallback implements IArchiveExtractCallback {
         private TestSequentailOutStream testSequentailOutStream;
         private final boolean[] extracted;
-        private final ISevenZipInArchive inArchive;
+        private final IInArchive inArchive;
 
-        TextExtractCallback(ISevenZipInArchive inArchive) {
+        TextExtractCallback(IInArchive inArchive) {
             this.inArchive = inArchive;
             extracted = new boolean[itemList.size()];
         }
@@ -298,7 +298,7 @@ public class VirtualContent {
         outArchive.updateItems(outputStream, itemList.size(), new ArchiveUpdateCallback());
     }
 
-    public void verifyInArchive(ISevenZipInArchive inArchive) throws SevenZipException {
+    public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
         TextExtractCallback testExtractCallback = new TextExtractCallback(inArchive);
         inArchive.extract(null, false, testExtractCallback);
         testExtractCallback.finish();

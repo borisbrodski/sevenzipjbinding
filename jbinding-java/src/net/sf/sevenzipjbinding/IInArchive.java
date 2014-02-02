@@ -10,16 +10,14 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
  * <br>
  * Standard way to get implementation is to use {@link SevenZip}.<br>
  * <br>
- * The last call should be a call to the method {@link ISevenZipInArchive#close()}. After this call no more methods
- * should be called.
- * 
- * TODO Rename to <code>IInArchive</code> !!!!!
+ * The last call should be a call to the method {@link IInArchive#close()}. After this call no more methods should be
+ * called.
  * 
  * @author Boris Brodski
  * @version 4.65-1
  * 
  */
-public interface ISevenZipInArchive extends Closeable {
+public interface IInArchive extends Closeable {
     /**
      * Close archive. This method should be the last one called on the implementation of this interface. After this call
      * no more methods should be called.

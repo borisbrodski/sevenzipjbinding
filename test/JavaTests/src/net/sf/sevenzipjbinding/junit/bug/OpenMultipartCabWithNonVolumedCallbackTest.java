@@ -13,7 +13,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveOpenCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.IInStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -74,7 +74,7 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
 
     private void extractMultivolumneCabArchive(ArchiveFormat archiveType, IArchiveOpenCallback archiveOpenCallback,
             boolean expectToOpen) throws Throwable {
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         Throwable throwable = null;
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + DISK1_FILE, "r");

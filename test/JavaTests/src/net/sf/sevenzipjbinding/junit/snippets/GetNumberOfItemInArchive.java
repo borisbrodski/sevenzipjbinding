@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.RandomAccessFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
@@ -19,7 +19,7 @@ public class GetNumberOfItemInArchive {
 
     /* BEGIN_SNIPPET(GetNumberOfItemsInArchive) */
     private int getNumberOfItemsInArchive(String archiveFile) throws Exception {
-        ISevenZipInArchive archive;
+        IInArchive archive;
         RandomAccessFile randomAccessFile;
 
         randomAccessFile = new RandomAccessFile(archiveFile, "r");

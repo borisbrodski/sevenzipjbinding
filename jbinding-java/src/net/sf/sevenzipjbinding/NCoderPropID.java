@@ -3,6 +3,8 @@ package net.sf.sevenzipjbinding;
 /**
  * Enumeration for possible NCoder properties
  * 
+ * TODO Use it or remove it
+ * 
  * @author Boris Brodski
  * @version 9.13-2.00
  */
