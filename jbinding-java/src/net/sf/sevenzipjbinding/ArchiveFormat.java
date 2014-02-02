@@ -303,6 +303,13 @@ public enum ArchiveFormat {
     XAR("Xar");
 
     private String methodName;
+
+    /**
+     * Index of the corresponding 7-Zip codec. This field used by native code to store/cache the index.
+     */
+    @SuppressWarnings("unused")
+    private int codecIndex = -2;
+
     Class<? extends OutArchiveImpl> outArchiveImplementation;
 
     private ArchiveFormat(String methodName) {

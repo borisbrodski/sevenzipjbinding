@@ -15,7 +15,7 @@ public class ArchiveFormatTest extends JUnitNativeTestBase {
                 SevenZip.openOutArchive(archiveFormat).close();
                 assertTrue("Problem with archive format " + archiveFormat, archiveFormat.isOutArchiveSupported());
             } catch (Exception e) {
-                assertFalse("Problem with archive format " + archiveFormat,
+                assertFalse("Problem with archive format " + archiveFormat + ": " + e.getLocalizedMessage(),
                         archiveFormat.isOutArchiveSupported());
             }
         }

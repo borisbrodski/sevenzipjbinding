@@ -125,4 +125,9 @@ JT_BEGIN_CLASS("net/sf/sevenzipjbinding", ExtractOperationResult)
 /*    */JT_CLASS_STATIC_METHOD_OBJECT("Lnet/sf/sevenzipjbinding/ExtractOperationResult;", getOperationResult, JT_INT(index, _)) // TODO Extract signature
 JT_END_CLASS
 
+JT_BEGIN_CLASS("net/sf/sevenzipjbinding", ArchiveFormat)
+/*    */JT_FIELD(Int, codecIndex)
+/*    */JT_FIELD(String, methodName)
+JT_END_CLASS
+
 #endif /* JAVAPACKAGESEVENZIP_H_ */

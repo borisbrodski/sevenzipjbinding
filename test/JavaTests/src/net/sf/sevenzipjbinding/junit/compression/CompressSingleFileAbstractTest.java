@@ -10,7 +10,7 @@ import org.junit.Test;
 
 /**
  * Tests compression and extraction of a single file.
- * 
+ *
  * @author Boris Brodski
  * @version 9.13-2.0
  */
@@ -505,11 +505,14 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
         ByteArrayStream outputByteArrayStream = new ByteArrayStream(maxStreamSize);
 
         IOutArchive outArchive = SevenZip.openOutArchive(getArchiveFormat());
-        //        if (outArchiveInitialization != null) {
-        //            outArchiveInitialization.initializeOutArchive(outArchive);
-        //        }
-        outArchive.updateItems(outputByteArrayStream, 1, new SingleFileArchiveUpdateCallback(randomContext));
-
+        try {
+            //        if (outArchiveInitialization != null) {
+            //            outArchiveInitialization.initializeOutArchive(outArchive);
+            //        }
+            outArchive.updateItems(outputByteArrayStream, 1, new SingleFileArchiveUpdateCallback(randomContext));
+        } finally {
+            outArchive.close();
+        }
         System.out.println("Length: " + dataSize + ", entropy: " + entropy + ": compressed size: "
                 + outputByteArrayStream.getSize());
 

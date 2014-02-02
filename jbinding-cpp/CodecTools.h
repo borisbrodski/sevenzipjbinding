@@ -2,13 +2,26 @@
 #define __CODECTOOLS_H__INCLUDED__
 
 class CodecTools {
+	/**
+	 * Index of the CAB archive format.
+	 */
+	int cabIndex;
+
 public:
-	static CCodecs codecs;
+	CCodecs codecs;
 
-	static void init();
+	void init();
 
-	static int getIndexByName(JNIEnv * env, jstring format, UString & formatNameString);
+	/*
+	 * Retrieve 7-zip CCoders-index of the archive format.
+	 */
+	int getArchiveFormatIndex(JNIEnv * env, jobject archiveFormat);
+
+	bool isCabArchive(int index) {
+		return cabIndex == index;
+	}
 };
 
+extern CodecTools codecTools;
 
 #endif // __CODECTOOLS_H__INCLUDED__

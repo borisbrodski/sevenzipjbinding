@@ -133,7 +133,7 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
 
     /**
      * Core dump was caused ones by this test.
-     * 
+     *
      * @throws Exception
      *             not expected
      */
@@ -176,9 +176,14 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
                 deltaFileLength, null);
         ArchiveFormat archiveFormat = getArchiveFormat();
         IOutArchive outArchive = SevenZip.openOutArchive(archiveFormat);
-        ByteArrayStream byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
+        ByteArrayStream byteArrayStream;
+        try {
+            byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-        virtualContent.updateOutArchive(outArchive, byteArrayStream);
+            virtualContent.updateOutArchive(outArchive, byteArrayStream);
+        } finally {
+            outArchive.close();
+        }
         byteArrayStream.rewind();
         ISevenZipInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
         try {

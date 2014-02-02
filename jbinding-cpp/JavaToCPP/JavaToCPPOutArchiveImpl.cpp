@@ -60,7 +60,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	if (hresult) {
 		jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
-				(const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name,
+				(const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name,
 				(int) numberOfItems);
 	}
 }

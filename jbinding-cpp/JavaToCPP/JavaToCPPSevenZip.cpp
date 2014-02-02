@@ -54,7 +54,7 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
 
     TRACE("7-zip library initialized (TODO)")
 
-    CodecTools::init();
+	codecTools.init();
 
     //if (msg) {
     //	TRACE1("Error initializing 7-zip library: %s", msg)
@@ -64,15 +64,10 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
     return NULL;
 }
 
-/*
- * Class:     net_sf_sevenzip_SevenZip
- * Method:    nativeOpenArchive
- * Signature: (ILnet/sf/sevenzip/IInStream;Lnet/sf/sevenzip/IArchiveOpenCallback;)Lnet/sf/sevenzip/IInArchive;
- */
 JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeOpenArchive(
                                                                                            JNIEnv * env,
                                                                                            jclass thiz,
-                                                                                           jstring formatName,
+                                                                                           jobject archiveFormat,
                                                                                            jobject inStream,
                                                                                            jobject archiveOpenCallbackImpl) {
     TRACE("SevenZip.nativeOpenArchive()")
@@ -85,27 +80,17 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    // TODO Do it once in the initialization procedure
-    int cabIndex = -1;
-	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
-        const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
-        if (wcscmp(name, L"Cab") == 0)
-            cabIndex = i;
-#ifdef TRACE_ON
-		TRACE("Available codec: '" << name << "'")
-#endif // TRACE_ON
-	}
-
     int index = -1;
     UString formatNameString;
-    if (formatName) {
-        index = CodecTools::getIndexByName(env, formatName, formatNameString);
+    if (archiveFormat) {
+        index = codecTools.getArchiveFormatIndex(env, archiveFormat);
         if (index == -1) {
             jniNativeCallContext.reportError("Not registered archive format: '%S'",
                     (const wchar_t*) formatNameString);
             deleteInErrorCase.setErrorCase();
             return NULL;
         }
+        formatNameString = codecTools.codecs.Formats[index].Name;
     }
 
     CMyComPtr<IInArchive> archive;
@@ -118,14 +103,14 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     if (index != -1) {
         // Use one specified codec
-        CodecTools::codecs.CreateInArchive(index, archive);
+    	codecTools.codecs.CreateInArchive(index, archive);
         if (!archive) {
             fatal("Can't get InArchive class for codec %S", (const wchar_t *) formatNameString);
         }
 
         TRACE("Opening using codec " << CodecTools::codecs.Formats[index].Name);
 
-        universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(index == cabIndex);
+        universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(index));
 
         HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
 
@@ -140,24 +125,24 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         // Try all known codecs
         TRACE("Iterating through all available codecs...")
         bool success = false;
-        for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
+        for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
             TRACE("Trying codec " << CodecTools::codecs.Formats[i].Name);
 
             stream->Seek(0, STREAM_SEEK_SET, NULL);
 
-            CodecTools::codecs.CreateInArchive(i, archive);
+            codecTools.codecs.CreateInArchive(i, archive);
             if (!archive) {
                 continue;
             }
 
-            universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(i == cabIndex);
+            universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(i));
 
             HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
             if (result != S_OK) {
                 continue;
             }
 
-            formatNameString = CodecTools::codecs.Formats[i].Name;
+            formatNameString = codecTools.codecs.Formats[i].Name;
             success = true;
             break;
         }
@@ -238,25 +223,21 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     // SetLongAttribute(env, inArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
     //        (jlong) (size_t) (void*) (stream));
 
-    stream.Detach(); // TODO Join with previous statement
+    stream.Detach();
 
     return inArchiveImplObject;
-
-    // TODO Remove such comments
-    //CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, NULL);
 }
 
 /*
  * Class:     net_sf_sevenzipjbinding_SevenZip
  * Method:    nativeCreateArchive
- * Signature: (Lnet/sf/sevenzipjbinding/impl/OutArchiveImpl;Lnet/sf/sevenzipjbinding/ArchiveFormat;I)V
+ * Signature: (Lnet/sf/sevenzipjbinding/impl/OutArchiveImpl;Lnet/sf/sevenzipjbinding/ArchiveFormat;)V
  */
 JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive(
                                                                                  JNIEnv * env,
                                                                                  jclass thiz,
                                                                                  jobject outArchiveImpl,
-                                                                                 jobject archiveFormat,
-                                                                                 jint archiveFormatIndex) {
+                                                                                 jobject archiveFormat) {
     TRACE("SevenZip.nativeCreateArchive()")
 
     JBindingSession & jbindingSession = *(new JBindingSession(env));
@@ -265,11 +246,20 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
+    int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
+
+    if (archiveFormatIndex < 0 || codecTools.codecs.Formats[archiveFormatIndex].CreateOutArchive == NULL) {
+        jniEnvInstance.reportError("Internal error during creating OutArchive. Archive format index: %i",
+        		archiveFormatIndex);
+        deleteInErrorCase.setErrorCase();
+        return;
+    }
+
     CMyComPtr<IOutArchive> outArchive;
-    HRESULT hresult = CodecTools::codecs.CreateOutArchive(archiveFormatIndex, outArchive);
+    HRESULT hresult = codecTools.codecs.CreateOutArchive(archiveFormatIndex, outArchive);
     if (hresult) {
         jniEnvInstance.reportError(hresult, "Error creating OutArchive for archive format %S",
-                (const wchar_t*) CodecTools::codecs.Formats[archiveFormatIndex].Name);
+                (const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name);
         deleteInErrorCase.setErrorCase();
         return;
     }
@@ -284,28 +274,4 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
 
     jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
     jni::OutArchiveImpl::archiveFormatIndex_Set(env, outArchiveImpl, archiveFormatIndex);
-}
-
-// private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
-
-/*
- * Class:     net_sf_sevenzipjbinding_SevenZip
- * Method:    getSevenZipCCodersArchiveFormatIndex
- * Signature: (Ljava/lang/String;Z)I
- */
-JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_SevenZip_getSevenZipCCodersArchiveFormatIndex(
-                                                                                                  JNIEnv * env,
-                                                                                                  jclass thiz,
-                                                                                                  jstring formatName,
-                                                                                                  jboolean checkForOutArchive) {
-    TRACE("SevenZip.getSevenZipCCodersArchiveFormatIndex()")
-
-    UString formatNameString;
-    int index = CodecTools::getIndexByName(env, formatName, formatNameString);
-
-    if (checkForOutArchive && CodecTools::codecs.Formats[index].CreateOutArchive == NULL) {
-        return -1;
-    }
-
-    return (jint) index;
 }

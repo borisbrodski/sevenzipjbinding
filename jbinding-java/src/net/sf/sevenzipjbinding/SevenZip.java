@@ -124,7 +124,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  */
 public class SevenZip {
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
-	private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
+    private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
     private static final String PROPERTY_SEVENZIPJBINDING_LIBNAME = "sevenzipjbinding.libname.%s";
     private static final String PROPERTY_BUILD_REF = "build.ref";
     private static final String SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME = "sevenzipjbinding-lib.properties";
@@ -209,7 +209,7 @@ public class SevenZip {
         InputStream propertiesInputStream = SevenZip.class
                 .getResourceAsStream(SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME);
         if (propertiesInputStream == null) {
-			throw new SevenZipNativeInitializationException("Can not find 7-Zip-JBinding platform property file "
+            throw new SevenZipNativeInitializationException("Can not find 7-Zip-JBinding platform property file "
                     + SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME
                     + ". Make sure the 'sevenzipjbinding-<Platform>.jar' file is "
                     + "in the class path or consider initializing SevenZipJBinding manualy using one of "
@@ -246,7 +246,7 @@ public class SevenZip {
         return temporaryArtifacts;
     }
 
-	/**
+    /**
      * Initialize native SevenZipJBinding library assuming <code>sevenzipjbinding-<i>Platform</i>.jar</code> on the
      * class path. The platform depended library will be extracted from the jar file and copied to the temporary
      * directory. Then it will be loaded into JVM using {@link System#load(String)} method. Finally the library specific
@@ -382,64 +382,64 @@ public class SevenZip {
             File sevenZipJBindingTmpDir = getOrCreateSevenZipJBindingTmpDir(tmpDirFile, properties);
             List<File> nativeLibraries = copyOrSkipLibraries(properties, sevenZipJBindingTmpDir);
             loadNativeLibraries(nativeLibraries);
-			nativeInitialization();
-		} catch (SevenZipNativeInitializationException sevenZipNativeInitializationException) {
-			lastInitializationException = sevenZipNativeInitializationException;
-			throw sevenZipNativeInitializationException;
-		}
-	}
+            nativeInitialization();
+        } catch (SevenZipNativeInitializationException sevenZipNativeInitializationException) {
+            lastInitializationException = sevenZipNativeInitializationException;
+            throw sevenZipNativeInitializationException;
+        }
+    }
 
     private static void determineAndSetUsedPlatform(String platform) throws SevenZipNativeInitializationException {
         if (platform == null) {
             usedPlatform = getPlatformBestMatch();
         } else {
             usedPlatform = platform;
-            }
+        }
     }
 
     private static Properties loadSevenZipJBindingLibProperties() throws SevenZipNativeInitializationException {
         String pathInJAR = "/" + usedPlatform + "/";
 
-            // Load 'sevenzipjbinding-lib.properties'
-            InputStream sevenZipJBindingLibProperties = SevenZip.class.getResourceAsStream(pathInJAR
-                    + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME);
-            if (sevenZipJBindingLibProperties == null) {
-                throwInitException("error loading property file '"
-                        + pathInJAR
-                        + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-                        + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'. Is the platform jar-file not in the class path?");
-            }
+        // Load 'sevenzipjbinding-lib.properties'
+        InputStream sevenZipJBindingLibProperties = SevenZip.class.getResourceAsStream(pathInJAR
+                + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME);
+        if (sevenZipJBindingLibProperties == null) {
+            throwInitException("error loading property file '"
+                    + pathInJAR
+                    + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+                    + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'. Is the platform jar-file not in the class path?");
+        }
 
-            Properties properties = new Properties();
-            try {
-                properties.load(sevenZipJBindingLibProperties);
-            } catch (IOException e) {
-                throwInitException("error loading property file '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-                        + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'");
-            }
+        Properties properties = new Properties();
+        try {
+            properties.load(sevenZipJBindingLibProperties);
+        } catch (IOException e) {
+            throwInitException("error loading property file '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+                    + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'");
+        }
         return properties;
     }
 
     private static File createOrVerifyTmpDir(File tmpDirectory) throws SevenZipNativeInitializationException {
-            File tmpDirFile;
-            if (tmpDirectory != null) {
-                tmpDirFile = tmpDirectory;
-            } else {
-                String systemPropertyTmp = System.getProperty(SYSTEM_PROPERTY_TMP);
-                if (systemPropertyTmp == null) {
-                    throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
-                            + "=<path to tmp dir> parameter for jvm to fix this.");
-                }
-                tmpDirFile = new File(systemPropertyTmp);
+        File tmpDirFile;
+        if (tmpDirectory != null) {
+            tmpDirFile = tmpDirectory;
+        } else {
+            String systemPropertyTmp = System.getProperty(SYSTEM_PROPERTY_TMP);
+            if (systemPropertyTmp == null) {
+                throwInitException("can't determinte tmp directory. Use may use -D" + SYSTEM_PROPERTY_TMP
+                        + "=<path to tmp dir> parameter for jvm to fix this.");
             }
+            tmpDirFile = new File(systemPropertyTmp);
+        }
 
-            if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
-                throwInitException("invalid tmp directory '" + tmpDirectory + "'");
-            }
+        if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
+            throwInitException("invalid tmp directory '" + tmpDirectory + "'");
+        }
 
-            if (!tmpDirFile.canWrite()) {
-                throwInitException("can't create files in '" + tmpDirFile.getAbsolutePath() + "'");
-            }
+        if (!tmpDirFile.canWrite()) {
+            throwInitException("can't create files in '" + tmpDirFile.getAbsolutePath() + "'");
+        }
         return tmpDirFile;
     }
 
@@ -466,19 +466,18 @@ public class SevenZip {
     private static List<File> copyOrSkipLibraries(Properties properties, File sevenZipJBindingTmpDir)
             throws SevenZipNativeInitializationException {
         List<File> nativeLibraries = new ArrayList<File>(5);
-            for (int i = 1;; i++) {
-                String propertyName = String.format(PROPERTY_SEVENZIPJBINDING_LIBNAME, Integer.valueOf(i));
-                String libname = properties.getProperty(propertyName);
-                if (libname == null) {
+        for (int i = 1;; i++) {
+            String propertyName = String.format(PROPERTY_SEVENZIPJBINDING_LIBNAME, Integer.valueOf(i));
+            String libname = properties.getProperty(propertyName);
+            if (libname == null) {
                 if (nativeLibraries.size() == 0) {
-                        throwInitException("property file '"
-                                + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
-                                + "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
-                                + propertyName + "'");
-                    } else {
-                        break;
-                    }
+                    throwInitException("property file '" + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
+                            + "' from a jar-file 'sevenzipjbinding-<Platform>.jar' don't contain the property named '"
+                            + propertyName + "'");
+                } else {
+                    break;
                 }
+            }
             File libTmpFile = new File(sevenZipJBindingTmpDir.getAbsolutePath() + File.separatorChar + libname);
 
             if (!libTmpFile.exists()) {
@@ -500,10 +499,10 @@ public class SevenZip {
         temporaryArtifacts = new File[nativeLibraries.size() + 1];
         nativeLibraries.toArray(temporaryArtifacts);
         temporaryArtifacts[temporaryArtifacts.length - 1] = sevenZipJBindingTmpDir;
-            }
+    }
 
     private static void loadNativeLibraries(List<File> libraryList) throws SevenZipNativeInitializationException {
-            // Load native libraries in to reverse order
+        // Load native libraries in to reverse order
         for (int i = libraryList.size() - 1; i != -1; i--) {
             String libraryFileName = libraryList.get(i).getAbsolutePath();
             try {
@@ -533,31 +532,30 @@ public class SevenZip {
     }
 
     private static void nativeInitialization() throws SevenZipNativeInitializationException {
-		String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
-		final String errorMessage[] = new String[1];
-		final Throwable throwable[] = new Throwable[1];
-		if (doPrivileged == null || doPrivileged.trim().equals("0")) {
-			AccessController.doPrivileged(new PrivilegedAction<Void>() {
-				public Void run() {
-					try {
-						errorMessage[0] = nativeInitSevenZipLibrary();
-					}
-					catch (Throwable e) {
-						throwable[0] = e;
-					}
-					return null;
-				}
-			});
-		} else {
-			errorMessage[0] = nativeInitSevenZipLibrary();
-		}
-		if (errorMessage[0] != null || throwable[0] != null) {
-			String message = errorMessage[0];
-			if (message == null) {
-				message = "No message";
-			}
+        String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
+        final String errorMessage[] = new String[1];
+        final Throwable throwable[] = new Throwable[1];
+        if (doPrivileged == null || doPrivileged.trim().equals("0")) {
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                public Void run() {
+                    try {
+                        errorMessage[0] = nativeInitSevenZipLibrary();
+                    } catch (Throwable e) {
+                        throwable[0] = e;
+                    }
+                    return null;
+                }
+            });
+        } else {
+            errorMessage[0] = nativeInitSevenZipLibrary();
+        }
+        if (errorMessage[0] != null || throwable[0] != null) {
+            String message = errorMessage[0];
+            if (message == null) {
+                message = "No message";
+            }
             lastInitializationException = new SevenZipNativeInitializationException(
-					"Error initializing 7-Zip-JBinding: " + message, throwable[0]);
+                    "Error initializing 7-Zip-JBinding: " + message, throwable[0]);
             throw lastInitializationException;
         }
         initializationSuccessful = true;
@@ -594,7 +592,7 @@ public class SevenZip {
             openArchiveCallbackToUse = new DummyOpenArchiveCallback();
         }
         if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, openArchiveCallbackToUse);
+            return callNativeOpenArchive(archiveFormat, inStream, openArchiveCallbackToUse);
         }
         return callNativeOpenArchive(null, inStream, openArchiveCallbackToUse);
     }
@@ -625,8 +623,7 @@ public class SevenZip {
             String passwordForOpen) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, new ArchiveOpenCryptoCallback(
-                    passwordForOpen));
+            return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
         }
         return callNativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
     }
@@ -653,7 +650,7 @@ public class SevenZip {
             throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat.getMethodName(), inStream, new DummyOpenArchiveCallback());
+            return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
         }
         return callNativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
     }
@@ -759,19 +756,19 @@ public class SevenZip {
         return null; // Will never happen
     }
 
-    private static ISevenZipInArchive callNativeOpenArchive(String formatName, IInStream inStream,
+    private static ISevenZipInArchive callNativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException {
         if (inStream == null) {
             throw new NullPointerException("SevenZip.callNativeOpenArchive(...): inStream parameter is null");
         }
-        return nativeOpenArchive(formatName, inStream, archiveOpenCallback);
+        return nativeOpenArchive(archiveFormat, inStream, archiveOpenCallback);
     }
 
-    private static native ISevenZipInArchive nativeOpenArchive(String formatName, IInStream inStream,
+    private static native ISevenZipInArchive nativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
-    private static native void nativeCreateArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat,
-            int archiveFormatIndex) throws SevenZipException;
+    private static native void nativeCreateArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat)
+            throws SevenZipException;
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
@@ -786,11 +783,6 @@ public class SevenZip {
         if (!archiveFormat.isOutArchiveSupported()) {
             throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
         }
-        int archiveFormatIndex = getSevenZipCCodersArchiveFormatIndex(archiveFormat.getMethodName(), true);
-        if (archiveFormatIndex == -1) {
-            throw new IllegalStateException("Can't create OutArchive: archive format '" + archiveFormat
-                    + "' doesn't support archive creation.");
-        }
 
         OutArchiveImpl outArchiveImpl;
         try {
@@ -800,26 +792,9 @@ public class SevenZip {
                     + archiveFormat.getOutArchiveImplementation() + " using default constructor.");
         }
 
-        nativeCreateArchive(outArchiveImpl, archiveFormat, archiveFormatIndex);
+        nativeCreateArchive(outArchiveImpl, archiveFormat);
         return outArchiveImpl;
     }
-
-    /**
-     * Retrieve 7-zip CCoders-index of the archive format <code>archiveFormat</code>. Optionally, check this archive
-     * format for existence of "out codec".
-     * 
-     * @param archiveFormat
-     *            archive format to process
-     * @param checkForOutArchive
-     *            <code>true</code> - check archive format <code>archiveFormat</code> for capability of
-     *            creating/updating archives<br>
-     *            <code>false</code> - do no such checking.
-     * @return 7-zip CCoders-index of the archive format <code>archiveFormat</code>. <br>
-     *         <code>-1</code> - if <code>checkForOutArchive == true</code> and 7-Zip can't create/update archives of
-     *         archive format <code>archiveFormat</code>.
-     */
-    private static native int getSevenZipCCodersArchiveFormatIndex(String archiveFormat, boolean checkForOutArchive)
-            throws SevenZipException;
 
     private static class DummyOpenArchiveCallback implements IArchiveOpenCallback, ICryptoGetTextPassword {
         /**
