@@ -257,7 +257,7 @@ public abstract class CompressFeatureSetSolid extends CompressAbstractTest {
 
         tester.applyFeatures(featureOutArchive);
 
-        virtualContent.updateOutArchive(outArchive, outputByteArrayStream);
+        virtualContent.createOutArchive(outArchive, outputByteArrayStream);
 
         outputByteArrayStream.rewind();
         IInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), outputByteArrayStream);

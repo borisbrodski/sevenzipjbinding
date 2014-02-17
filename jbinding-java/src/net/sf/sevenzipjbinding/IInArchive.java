@@ -195,4 +195,13 @@ public interface IInArchive extends Closeable {
      */
     public ArchiveFormat getArchiveFormat();
 
+    /**
+     * Get a {@link IOutArchive}-instance attached to the currently opened archive. The new instance allows modification
+     * of the currently opened archive.
+     * 
+     * @return an instance of the {@link IOutArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutArchive getOutArchive() throws SevenZipException;
 }

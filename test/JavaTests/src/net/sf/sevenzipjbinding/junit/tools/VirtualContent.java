@@ -22,10 +22,10 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -294,7 +294,19 @@ public class VirtualContent {
         }
     }
 
-    public void updateOutArchive(IOutArchive outArchive, ISequentialOutStream outputStream) throws SevenZipException {
+    public void deleteItem(int index) {
+        itemList.remove(index);
+        reindexUsedNames();
+    }
+
+    private void reindexUsedNames() {
+        usedNames.clear();
+        for (int i = 0; i < itemList.size(); i++) {
+            usedNames.put(itemList.get(i).getPath().toUpperCase(), i);
+        }
+    }
+
+    public void createOutArchive(IOutArchive outArchive, ISequentialOutStream outputStream) throws SevenZipException {
         outArchive.updateItems(outputStream, itemList.size(), new ArchiveUpdateCallback());
     }
 

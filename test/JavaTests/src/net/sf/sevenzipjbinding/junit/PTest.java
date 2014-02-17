@@ -8,6 +8,7 @@ import net.sf.sevenzipjbinding.junit.junittools.Multithreaded;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
+// TODO Remove it
 public class PTest extends TestBase {
     private final String a;
     private final int b;

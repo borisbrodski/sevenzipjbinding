@@ -4,6 +4,7 @@
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "JNICallState.h"
+#include "CodecTools.h"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 //#include "JBindingTools.h"
@@ -513,3 +514,44 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
 }
 
+/*
+ * Class:     net_sf_sevenzipjbinding_impl_InArchiveImpl
+ * Method:    nativeConnectOutArchive
+ * Signature: (Lnet/sf/sevenzipjbinding/impl/OutArchiveImpl;Lnet/sf/sevenzipjbinding/ArchiveFormat;)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeConnectOutArchive
+  (JNIEnv * env, jobject thiz, jobject outArchiveImpl, jobject archiveFormat) {
+
+    TRACE("InArchiveImpl::nativeConnectOutArchive");
+
+    JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+
+    int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
+
+    if (archiveFormatIndex < 0 || codecTools.codecs.Formats[archiveFormatIndex].CreateOutArchive == NULL) {
+        jniEnvInstance.reportError("Internal error during creating OutArchive. Archive format index: %i",
+        		archiveFormatIndex);
+        return;
+    }
+
+    CMyComPtr<IOutArchive> outArchive;
+
+    HRESULT hresult = archive->QueryInterface(IID_IOutArchive, (void**)&outArchive);
+    if (hresult) {
+        jniEnvInstance.reportError(hresult, "Error connecting OutArchive to the InArchive for archive format %S",
+                (const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name);
+        return;
+    }
+
+    jni::expectExceptionCheck(env); // TODO Check this!
+
+    jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
+            (jlong) (size_t) (void*) (outArchive.Detach()));
+
+    jni::OutArchiveImpl::jbindingSession_Set(env, outArchiveImpl, //
+            (jlong) (size_t) (void*) (&jbindingSession));
+}

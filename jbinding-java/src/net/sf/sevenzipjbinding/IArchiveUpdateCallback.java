@@ -15,7 +15,7 @@ public interface IArchiveUpdateCallback extends IArchiveCreateCallback {
      * @return <code>true</code> - the archive item with index <code>index</code> has new data (always true for new
      *         archives). <code>false</code> - the archive item data from the old archive can be reused.
      */
-    public boolean isNewData(int index);
+    public boolean isNewData(int index) throws SevenZipException;
 
     /**
      * Determine, whether the archive item properties have changed.
@@ -25,7 +25,7 @@ public interface IArchiveUpdateCallback extends IArchiveCreateCallback {
      * @return <code>true</code> - the archive item with index <code>index</code> has new properties (always true for
      *         new archives). <code>false</code> - the archive item properties from the old archive can be reused.
      */
-    public boolean isNewProperties(int index);
+    public boolean isNewProperties(int index) throws SevenZipException;
 
     /**
      * Determine index of the archive item in the archive being updated.
@@ -35,5 +35,5 @@ public interface IArchiveUpdateCallback extends IArchiveCreateCallback {
      * @return corresponding index of the archive item in the old archive (starting from 0). <code>-1</code> if there is
      *         no corresponding archive item in the old archive or if doesn't matter.
      */
-    public int getOldArchiveItemIndex(int index);
+    public int getOldArchiveItemIndex(int index) throws SevenZipException;
 }

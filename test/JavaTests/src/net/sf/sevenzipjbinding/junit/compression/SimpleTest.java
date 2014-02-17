@@ -32,7 +32,7 @@ public class SimpleTest extends JUnitNativeTestBase {
 
             IOutArchive outArchive = SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP);
             try {
-                virtualContent.updateOutArchive(outArchive, byteArrayStream);
+                virtualContent.createOutArchive(outArchive, byteArrayStream);
             } finally {
                 outArchive.close();
             }

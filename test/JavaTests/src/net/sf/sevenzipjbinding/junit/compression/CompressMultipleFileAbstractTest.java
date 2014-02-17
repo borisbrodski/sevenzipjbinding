@@ -180,7 +180,7 @@ public abstract class CompressMultipleFileAbstractTest extends JUnitNativeTestBa
         try {
             byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-            virtualContent.updateOutArchive(outArchive, byteArrayStream);
+            virtualContent.createOutArchive(outArchive, byteArrayStream);
         } finally {
             outArchive.close();
         }

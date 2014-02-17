@@ -5,8 +5,9 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.PropertyInfo;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -83,6 +84,7 @@ public final class InArchiveImpl implements IInArchive {
     private long jbindingSession;
     private long sevenZipArchiveInstance;
     private long sevenZipInStreamInstance;
+    private OutArchiveImpl outArchiveImpl;
 
     private int numberOfItems = -1;
 
@@ -277,4 +279,40 @@ public final class InArchiveImpl implements IInArchive {
             }
         }
     }
+
+    /**
+     * Return instance of {@link IOutArchive} connected the current archive current archive. This method allows
+     * modifications of existing archives. Multiple call of this methods return the same instance. Closing the new
+     * instance of {@link IOutArchive} if not necessary, since it get closed automatically this the current instance of
+     * {@link IInArchive}. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * 
+     * @return instance of {@link IOutArchive} the current archive current archive
+     */
+    public IOutArchive getOutArchive() throws SevenZipException {
+        if (outArchiveImpl == null) {
+            createConnectedOutArchive();
+        }
+        return outArchiveImpl;
+    }
+
+    private void createConnectedOutArchive() throws SevenZipException {
+        if (!archiveFormat.isOutArchiveSupported()) {
+            throw new IllegalStateException("Archive format '" + archiveFormat
+                    + "' doesn't support archive manipulations.");
+        }
+
+        try {
+            outArchiveImpl = archiveFormat.getOutArchiveImplementation().newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException("Internal error: Can't create new instance of the class "
+                    + archiveFormat.getOutArchiveImplementation() + " using default constructor.");
+        }
+        outArchiveImpl.setInArchive(this);
+        outArchiveImpl.setArchiveFormat(archiveFormat);
+
+        nativeConnectOutArchive(outArchiveImpl, archiveFormat);
+    }
+
+    private native void nativeConnectOutArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat)
+            throws SevenZipException;
 }

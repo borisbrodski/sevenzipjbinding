@@ -647,7 +647,21 @@ protected:
 #endif
 #ifdef USE_MY_ASSERTS
     void checkObjectClass(JNIEnv * env, jobject object) {
-        MY_ASSERT(env->IsInstanceOf(object, _getJClass(env)))
+    	jclass expectedClass = _getJClass(env);
+        if (!env->IsInstanceOf(object, expectedClass)) {
+        	jclass objectClass = env->GetObjectClass(object);
+
+        	jmethodID getCanonicalNameMethod = env->GetMethodID(objectClass, "getCanonicalName", "()Ljava/lang/String;");
+
+        	jstring objectClassNameString = (jstring)env->CallObjectMethod(objectClass, getCanonicalNameMethod);
+        	const char* objectClassName = env->GetStringUTFChars(objectClassNameString, NULL);
+
+        	jstring expectedClassNameString = (jstring)env->CallObjectMethod(expectedClass, getCanonicalNameMethod);
+        	const char* expectedClassName = env->GetStringUTFChars(expectedClassNameString, NULL);
+
+        	fatal("Passed object (instance of %s) doesn't match expected class %s (%s)\n",
+        			objectClassName, expectedClassName, _fullname);
+        }
     }
 #endif // USE_MY_ASSERTS
 public:
@@ -699,7 +713,7 @@ class JInterface {
     jclass _jclass;
 protected:
     JInterface(char const * name) :
-        _name(name) {
+        _name(name), _jclass(NULL) {
     }
 #ifdef USE_MY_ASSERTS
     void checkObjectClass(JNIEnv * env, jobject object) {

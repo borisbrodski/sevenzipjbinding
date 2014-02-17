@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.io.Closeable;
 import java.util.Random;
 
 import net.sf.sevenzipjbinding.SevenZip;
@@ -12,14 +13,15 @@ import net.sf.sevenzipjbinding.junit.tools.SevenZipDebug;
 
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 
 /**
  * This is the base class for all JUnit test classes, that needs native library to be loaded. This class provides:<br>
  * - Initialization of the native library
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
- * 
+ *
  */
 public class JUnitNativeTestBase {
     protected interface RunnableThrowsException {
@@ -38,9 +40,15 @@ public class JUnitNativeTestBase {
     protected final Random random = new Random(this.getClass().getCanonicalName().hashCode());
     protected static final Random RANDOM = new Random(0);
 
+    @Rule
+    public CloseableRule closeableRule = new CloseableRule();
+
+    @Rule
+    public SevenZipExceptionStackTracePrinterRule stackTracePrinterRule = new SevenZipExceptionStackTracePrinterRule();
+
     /**
      * Initialize native SevenZipJBinding library for all JUnit tests
-     * 
+     *
      * @throws SevenZipNativeInitializationException
      *             in case initialization of SevenZipJBinding fails
      */
@@ -54,6 +62,7 @@ public class JUnitNativeTestBase {
 
     @After
     public void afterTest() {
+        closeableRule.closeAll();
         try {
             int objectCount = SevenZipDebug.getCPPObjectCount();
             int newDeadObjectCount = objectCount - deadCPPObjectCount;
@@ -157,5 +166,29 @@ public class JUnitNativeTestBase {
             }
             throw (Error) firstExpectedThrowable;
         }
+    }
+
+    /**
+     * Add closeable to be closed automatically at the end of the test.
+     *
+     * @param closeable
+     *            closeable
+     */
+    public void addCloseable(Closeable closeable) {
+        closeableRule.addCloseable(closeable);
+    }
+
+    /**
+     * Add closeable to be closed automatically at the end of the test.
+     *
+     * @param <T>
+     *            Concrete type of closeable
+     * @param closeable
+     *            closeable
+     * @return <code>closeable</code> parameter allowing call chains
+     */
+    public <T extends Closeable> T closeLater(T closeable) {
+        closeableRule.addCloseable(closeable);
+        return closeable;
     }
 }

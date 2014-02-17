@@ -31,7 +31,7 @@ static IOutArchive * GetArchive(JNIEnv * env, jobject thiz) {
 /*
  * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
  * Method:    updateItemsNative
- * Signature: (ILnet/sf/sevenzipjbinding/ISequentialOutStream;ILnet/sf/sevenzipjbinding/IArchiveUpdateCallback;)V
+ * Signature: (ILnet/sf/sevenzipjbinding/ISequentialOutStream;ILnet/sf/sevenzipjbinding/IArchiveUpdateCallback;Z)V
  */
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeUpdateItems(
                                                                                                    JNIEnv * env,
@@ -39,7 +39,8 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
                                                                                                    jint archiveFormatIndex,
                                                                                                    jobject outStream,
                                                                                                    jint numberOfItems,
-                                                                                                   jobject archiveUpdateCallback) {
+                                                                                                   jobject archiveUpdateCallback,
+                                                                                                   jboolean isInArchiveAttached) {
     TRACE("OutArchiveImpl.updateItemsNative()");
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
@@ -53,7 +54,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
 			new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
-					false);
+					isInArchiveAttached);
 
 	HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
 			cppToJavaArchiveUpdateCallback);

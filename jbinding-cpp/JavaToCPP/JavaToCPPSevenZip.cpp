@@ -264,7 +264,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
         return;
     }
 
-    jni::expectExceptionCheck(env);
+    jni::expectExceptionCheck(env); // TODO Check this!
 
     jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
             (jlong) (size_t) (void*) (outArchive.Detach()));
@@ -273,5 +273,4 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
             (jlong) (size_t) (void*) (&jbindingSession));
 
     jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
-    jni::OutArchiveImpl::archiveFormatIndex_Set(env, outArchiveImpl, archiveFormatIndex);
 }

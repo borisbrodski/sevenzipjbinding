@@ -307,7 +307,6 @@ public enum ArchiveFormat {
     /**
      * Index of the corresponding 7-Zip codec. This field used by native code to store/cache the index.
      */
-    @SuppressWarnings("unused")
     private int codecIndex = -2;
 
     Class<? extends OutArchiveImpl> outArchiveImplementation;
@@ -382,5 +381,10 @@ public enum ArchiveFormat {
         }
         throw new SevenZipException("Can't determine corresponding archive format to the interface "
                 + IOutArchive.class.getSimpleName() + ".");
+    }
+
+    // TODO Make it package visibility
+    public int getCodecIndex() {
+        return codecIndex;
     }
 }

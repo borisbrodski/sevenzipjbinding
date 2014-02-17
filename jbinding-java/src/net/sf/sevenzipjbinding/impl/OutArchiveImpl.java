@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -14,17 +15,21 @@ public class OutArchiveImpl implements IOutArchive {
     private long sevenZipArchiveInstance;
 
     /**
+     * Instance of {@link IInArchive} for connected OutArchives.
+     */
+    private IInArchive inArchive;
+
+    /**
      * Archive format enum value.
      */
     private ArchiveFormat archiveFormat;
 
-    /**
-     * 7-zip CCoders-index of the archive format {@link #archiveFormat}
-     */
-    private int archiveFormatIndex;
-
     private int compressionLevel = -1;
     private int threadCount = -1;
+
+    protected void setInArchive(IInArchive inArchive) {
+        this.inArchive = inArchive;
+    }
 
     /**
      * {@inheritDoc}
@@ -32,7 +37,8 @@ public class OutArchiveImpl implements IOutArchive {
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
             IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException {
         applyFeatures();
-        nativeUpdateItems(archiveFormatIndex, outStream, numberOfItems, archiveUpdateCallback);
+        nativeUpdateItems(archiveFormat.getCodecIndex(), outStream, numberOfItems, archiveUpdateCallback,
+                inArchive != null);
     }
 
     protected void featureSetLevel(int compressionLevel) {
@@ -61,6 +67,11 @@ public class OutArchiveImpl implements IOutArchive {
         return archiveFormat;
     }
 
+    // TODO reduce visibility
+    public void setArchiveFormat(ArchiveFormat archiveFormat) {
+        this.archiveFormat = archiveFormat;
+    }
+
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 
     /**
@@ -76,9 +87,12 @@ public class OutArchiveImpl implements IOutArchive {
     protected native void nativeSetMultithreading(int threadCount) throws SevenZipException;
 
     private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
-            IArchiveUpdateCallback archiveUpdateCallback) throws SevenZipException;
+            IArchiveUpdateCallback archiveUpdateCallback, boolean isInArchiveAttached) throws SevenZipException;
 
     public void close() throws IOException {
+        if (inArchive != null) {
+            return; // In case of connected OutArchive no explicit closing necessary. 
+        }
         nativeClose();
     }
 

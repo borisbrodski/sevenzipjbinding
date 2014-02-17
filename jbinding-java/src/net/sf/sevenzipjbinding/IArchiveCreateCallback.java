@@ -16,7 +16,7 @@ public interface IArchiveCreateCallback extends IProgress {
      *            the property to retrieve
      * @return retrieved value
      */
-    public Object getProperty(int index, PropID propID);
+    public Object getProperty(int index, PropID propID) throws SevenZipException;
 
     /**
      * Return sequential in-stream for the archive item with index <code>index</code> to read and compress the content
@@ -26,7 +26,7 @@ public interface IArchiveCreateCallback extends IProgress {
      *            index of the item to read content of (starting from 0)
      * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>
      */
-    public ISequentialInStream getStream(int index);
+    public ISequentialInStream getStream(int index) throws SevenZipException;
 
     /**
      * Notify about last archive update operation result.
@@ -35,5 +35,5 @@ public interface IArchiveCreateCallback extends IProgress {
      *            <code>true</code> - last archive update operation was a success, <code>false</code> - last archive
      *            update operation failed.
      */
-    public void setOperationResult(boolean operationResultOk);
+    public void setOperationResult(boolean operationResultOk) throws SevenZipException;
 }
