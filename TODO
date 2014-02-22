@@ -50,6 +50,7 @@ Major TODOs:
 - Support ICompressProgressInfo
 - Generate random build number on each build not on each CMake run
 - Add Xz compression/decompression
+- Start using TestConfiguration
 
 Info:
 - Quasijarus compression
