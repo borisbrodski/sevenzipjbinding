@@ -299,6 +299,14 @@ public class VirtualContent {
         reindexUsedNames();
     }
 
+    public void addItem(int index, String path, byte[] blob) {
+        Item item = new Item(blob);
+        item.setPath(path);
+        item.setCreationDate(new Date());
+        itemList.add(index, item);
+        reindexUsedNames();
+    }
+
     private void reindexUsedNames() {
         usedNames.clear();
         for (int i = 0; i < itemList.size(); i++) {

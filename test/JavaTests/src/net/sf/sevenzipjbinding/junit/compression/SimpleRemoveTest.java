@@ -14,7 +14,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Test;
 
-public class SimpleUpdateTest extends JUnitNativeTestBase {
+public class SimpleRemoveTest extends JUnitNativeTestBase {
     private static final boolean PRINT = !true;
 
     private static class DeleteItemArchiveUpdateCallback extends ArchiveUpdateCallbackAdapter {
@@ -66,8 +66,8 @@ public class SimpleUpdateTest extends JUnitNativeTestBase {
         byteArrayStream2.rewind();
 
         IInArchive inArchive2 = closeLater(SevenZip.openInArchive(null, byteArrayStream2));
-        int numberOfItems = inArchive2.getNumberOfItems();
         if (PRINT) {
+            int numberOfItems = inArchive2.getNumberOfItems();
             System.out.println("------------: " + numberOfItems);
             for (int i = 0; i < numberOfItems; i++) {
                 System.out.println(inArchive2.getProperty(i, PropID.PATH));

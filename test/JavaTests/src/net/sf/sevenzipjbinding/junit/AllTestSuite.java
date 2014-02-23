@@ -18,7 +18,8 @@ import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileBZip2Test;
 import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileTarTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileZipTest;
-import net.sf.sevenzipjbinding.junit.compression.FirstTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleAddTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleRemoveTest;
 import net.sf.sevenzipjbinding.junit.compression.SimpleTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
@@ -339,7 +340,8 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] compressionTests = { //
     /*    */SimpleTest.class, //
-            FirstTest.class, //
+            SimpleRemoveTest.class, //
+            SimpleAddTest.class, //
             CompressMultipleFile7zStdConfTest.class, //
             CompressMultipleFileTarStdConfTest.class, //
             CompressMultipleFileZipStdConfTest.class, //
