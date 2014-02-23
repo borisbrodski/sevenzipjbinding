@@ -18,7 +18,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SimpleTest extends JUnitNativeTestBase {
+public class SimpleCreateTest extends JUnitNativeTestBase {
     @Test
     public void testCompression() throws Exception {
         try {
