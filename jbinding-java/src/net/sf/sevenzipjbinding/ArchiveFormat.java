@@ -1,9 +1,9 @@
 package net.sf.sevenzipjbinding;
 
+import net.sf.sevenzipjbinding.impl.OutArchive7zImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveBZip2Impl;
 import net.sf.sevenzipjbinding.impl.OutArchiveGZipImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveImpl;
-import net.sf.sevenzipjbinding.impl.OutArchiveSevenZipImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveTarImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
 
@@ -245,7 +245,7 @@ public enum ArchiveFormat {
     /**
      * 7z format.
      */
-    SEVEN_ZIP("7z", OutArchiveSevenZipImpl.class),
+    SEVEN_ZIP("7z", OutArchive7zImpl.class),
 
     /**
      * Z format.
@@ -309,13 +309,13 @@ public enum ArchiveFormat {
      */
     private int codecIndex = -2;
 
-    Class<? extends OutArchiveImpl> outArchiveImplementation;
+    Class<? extends OutArchiveImpl<?>> outArchiveImplementation;
 
     private ArchiveFormat(String methodName) {
         this(methodName, null);
     }
 
-    private ArchiveFormat(String methodName, Class<? extends OutArchiveImpl> outArchiveImplementation) {
+    private ArchiveFormat(String methodName, Class<? extends OutArchiveImpl<?>> outArchiveImplementation) {
         this.methodName = methodName;
         this.outArchiveImplementation = outArchiveImplementation;
     }
@@ -344,7 +344,7 @@ public enum ArchiveFormat {
      * 
      * @return the {@link IOutArchive} implementation class
      */
-    public Class<? extends OutArchiveImpl> getOutArchiveImplementation() {
+    public Class<? extends OutArchiveImpl<?>> getOutArchiveImplementation() {
         return outArchiveImplementation;
     }
 
@@ -365,16 +365,17 @@ public enum ArchiveFormat {
      * @throws SevenZipException
      *             if no implementation class could be found.
      */
-    static ArchiveFormat findOutArchiveImplementationToInterface(Class<? extends IOutArchive> outArchiveInterface)
-            throws SevenZipException {
-        if (outArchiveInterface == IOutArchive.class) {
-            String ioutArchiveName = IOutArchive.class.getSimpleName();
-            throw new SevenZipException("Can't determine corresponding archive format to the interface "
-                    + ioutArchiveName + ". Please, provide a one of the concrete " + ioutArchiveName
-                    + "XXX interfaces.");
-        }
+    static ArchiveFormat findOutArchiveImplementationToInterface(
+            Class<? extends IOutCreateArchive<?>> outArchiveInterface) throws SevenZipException {
+        // TODO Test, that this check indeed isn't necessary
+        //        if (outArchiveInterface == IOutArchive.class) {
+        //            String iOutArchiveName = IOutArchive.class.getSimpleName();
+        //            throw new SevenZipException("Can't determine corresponding archive format to the interface "
+        //                    + iOutArchiveName + ". Please, provide a one of the concrete " + iOutArchiveName
+        //                    + "XXX interfaces.");
+        //        }
         for (ArchiveFormat archiveFormat : values()) {
-            Class<? extends OutArchiveImpl> implementation = archiveFormat.getOutArchiveImplementation();
+            Class<? extends OutArchiveImpl<?>> implementation = archiveFormat.getOutArchiveImplementation();
             if (implementation != null && outArchiveInterface.isAssignableFrom(implementation)) {
                 return archiveFormat;
             }
@@ -383,6 +384,11 @@ public enum ArchiveFormat {
                 + IOutArchive.class.getSimpleName() + ".");
     }
 
+    /**
+     * Return internal index of the archive format.
+     * 
+     * @return internal archive format index. <code>-2</code> if uninitialized.
+     */
     // TODO Make it package visibility
     public int getCodecIndex() {
         return codecIndex;

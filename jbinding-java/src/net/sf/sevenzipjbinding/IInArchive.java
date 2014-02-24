@@ -203,5 +203,5 @@ public interface IInArchive extends Closeable {
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public IOutArchive getOutArchive() throws SevenZipException;
+    public IOutUpdateArchive getConnectedOutArchive() throws SevenZipException;
 }

@@ -8,18 +8,29 @@ class CPPToJavaArchiveUpdateCallback : public virtual IArchiveUpdateCallback,
         public CPPToJavaProgress {
 
 private:
-    jni::IArchiveUpdateCallback _iArchiveUpdateCallback;
-    bool _isInArchiveAttached;
+    jni::IArchiveCreateCallback _iArchiveCreateCallback;
+    jni::IArchiveUpdateCallback * _iArchiveUpdateCallback = NULL;
+    jni::IOutItemCallback * _iOutItemCallback = NULL;
+    jobject _outItemCallbackImplementation;
 
 public:
     CPPToJavaArchiveUpdateCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
                                    jobject archiveUpdateCallback, bool isInArchiveAttached) :
         CPPToJavaProgress(jbindingSession, initEnv, archiveUpdateCallback),
-                _iArchiveUpdateCallback(jni::IArchiveUpdateCallback::_getInstanceFromObject(
+                _iArchiveCreateCallback(jni::IArchiveCreateCallback::_getInstanceFromObject(
                         initEnv, archiveUpdateCallback)) {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
 
-        _isInArchiveAttached = isInArchiveAttached;
+		JNIEnvInstance jniEnvInstance(_jbindingSession);
+
+        if (isInArchiveAttached) {
+        	_iArchiveUpdateCallback = &jni::IArchiveUpdateCallback::_getInstanceFromObject(initEnv, archiveUpdateCallback);
+        }
+        _outItemCallbackImplementation = _iArchiveCreateCallback.getOutItemCallback(jniEnvInstance, _javaImplementation);
+        if (jniEnvInstance.exceptionCheck()) {
+            return;
+        }
+        _iOutItemCallback = &jni::IOutItemCallback::_getInstanceFromObject(jniEnvInstance, _outItemCallbackImplementation);
     }
 
     STDMETHOD(GetUpdateItemInfo)(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */

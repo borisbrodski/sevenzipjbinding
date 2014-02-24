@@ -9,7 +9,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.13-2.00
  * 
  */
-public interface IFeatureSetLevel {
+public interface IOutFeatureSetLevel {
 
     /**
      * Set compression level:
@@ -27,5 +27,6 @@ public interface IFeatureSetLevel {
      *            compression level to set. <code>-1</code> - use default
      */
     public void setLevel(int compressionLevel);
+    // TODO Add SevenZipException
 
 }

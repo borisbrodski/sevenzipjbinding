@@ -21,9 +21,10 @@ import java.util.Random;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
-import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
@@ -103,39 +104,7 @@ public class VirtualContent {
         }
     }
 
-    private class ArchiveUpdateCallback implements IArchiveUpdateCallback {
-        // TODO Remove after introducing IArchiveCreateCallback
-        public int getOldArchiveItemIndex(int index) {
-            return -1;
-        }
-
-        // TODO Remove after introducing IArchiveCreateCallback
-        public boolean isNewData(int index) {
-            return true;
-        }
-
-        // TODO Remove after introducing IArchiveCreateCallback
-        public boolean isNewProperties(int index) {
-            return true;
-        }
-
-        // TODO Split in methods, like getPath(), isFolder(), ...
-        // Put the archive type specific methods in a separate interfaces, like IOutArchiveXXX.
-        public Object getProperty(int index, PropID propID) {
-            switch (propID) {
-            case PATH:
-                return itemList.get(index).getPath();
-
-            case IS_FOLDER:
-            case IS_ANTI:
-                return Boolean.FALSE;
-
-            case SIZE:
-                return Long.valueOf(itemList.get(index).getBlob().getSize());
-            }
-            return null;
-        }
-
+    private class ArchiveUpdateCallback implements IOutCreateCallback<IOutItemCallback> {
         public ISequentialInStream getStream(int index) {
             ByteArrayStream byteArrayStream = itemList.get(index).getBlob();
             byteArrayStream.rewind();
@@ -146,12 +115,58 @@ public class VirtualContent {
             assertTrue(operationResultOk);
         }
 
-        public void setCompleted(long completeValue) throws SevenZipException {
-            // TODO Check this value or remove todo
+        public void setTotal(long total) throws SevenZipException {
+
         }
 
-        public void setTotal(long total) throws SevenZipException {
-            // TODO Check this value or remove todo
+        public void setCompleted(long complete) throws SevenZipException {
+
+        }
+
+        public IOutItemCallback getOutItemCallback() throws SevenZipException {
+            return new IOutItemCallback() {
+
+                public boolean isAnti(int index) throws SevenZipException {
+                    return false;
+                }
+
+                public long getSize(int index) throws SevenZipException {
+                    return itemList.get(index).getBlob().getSize();
+                }
+
+                public String getPath(int index) throws SevenZipException {
+                    return itemList.get(index).getPath();
+                }
+
+                public Integer getPosixAttributes(int index) throws SevenZipException {
+                    return null;
+                }
+
+                public Integer getAttributes(int index) throws SevenZipException {
+                    return null;
+                }
+
+                public boolean isDir(int index) throws SevenZipException {
+                    return false;
+                }
+
+                public boolean isNtfsTime(int index) throws SevenZipException {
+                    return false;
+                }
+
+                public Date getModificationTime(int index) throws SevenZipException {
+                    return null;
+                }
+
+                public Date getLastAccessTime(int index) throws SevenZipException {
+                    return null;
+                }
+
+                public Date getCreationTime(int index) throws SevenZipException {
+                    return null;
+                }
+
+            };
         }
     }
 
@@ -314,8 +329,9 @@ public class VirtualContent {
         }
     }
 
-    public void createOutArchive(IOutArchive outArchive, ISequentialOutStream outputStream) throws SevenZipException {
-        outArchive.updateItems(outputStream, itemList.size(), new ArchiveUpdateCallback());
+    public void createOutArchive(IOutArchive<? super IOutItemCallback> outArchive, ISequentialOutStream outputStream)
+            throws SevenZipException {
+        outArchive.createArchive(outputStream, itemList.size(), new ArchiveUpdateCallback());
     }
 
     public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
@@ -470,5 +486,17 @@ public class VirtualContent {
             }
             return SYMBOLS[(i / 4) % SYMBOLS.length];
         }
+    }
+
+    public int getItemCount() {
+        return itemList.size();
+    }
+
+    public ByteArrayStream getItemStream(int index) {
+        return itemList.get(index).getBlob();
+    }
+
+    public String getItemPath(int index) {
+        return itemList.get(index).getPath();
     }
 }

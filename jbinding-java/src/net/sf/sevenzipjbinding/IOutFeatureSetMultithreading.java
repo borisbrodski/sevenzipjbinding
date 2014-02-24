@@ -9,7 +9,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.13-2.00
  * 
  */
-public interface IFeatureSetMultithreading {
+public interface IOutFeatureSetMultithreading {
 
     /**
      * Set number of threads to use.
@@ -20,4 +20,5 @@ public interface IFeatureSetMultithreading {
      *            <code>threadCount < 0</code> - use default value
      */
     public void setThreadCount(int threadCount);
+    // TODO Add SevenZipException
 }

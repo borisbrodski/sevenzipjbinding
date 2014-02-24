@@ -53,6 +53,11 @@ JT_BEGIN_CLASS("java/util", Date)
     JT_CLASS_VIRTUAL_METHOD(Long, getTime, _)
 JT_END_CLASS
 
+JT_BEGIN_CLASS("java/lang", Integer)
+    JT_CLASS_VIRTUAL_METHOD(Int, intValue, _)
+JT_END_CLASS
+
+
 
 #define FILETIME_TO_JAVATIME_SHIFT  (((LONGLONG) 0x19db1de) << 32 | 0xd53e8000)
 #define FILETIME_TO_JAVATIME_FACTOR 10000

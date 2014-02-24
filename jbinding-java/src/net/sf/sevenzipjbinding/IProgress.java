@@ -24,7 +24,7 @@ public interface IProgress {
     /**
      * Set current amount of completed work
      * 
-     * @param completeValue
+     * @param complete
      *            amount of completed work
      * 
      * @throws SevenZipException
@@ -33,5 +33,5 @@ public interface IProgress {
      *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
      *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
      */
-    public void setCompleted(long completeValue) throws SevenZipException;
+    public void setCompleted(long complete) throws SevenZipException;
 }

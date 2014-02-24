@@ -1,6 +1,8 @@
 package net.sf.sevenzipjbinding.impl;
 
-import net.sf.sevenzipjbinding.IOutArchiveBZip2;
+import net.sf.sevenzipjbinding.IOutCreateArchiveBZip2;
+import net.sf.sevenzipjbinding.IOutItemCallbackBZip2;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveBZip2;
 
 /**
  * TODO
@@ -9,7 +11,8 @@ import net.sf.sevenzipjbinding.IOutArchiveBZip2;
  * @version 9.13-2.0
  * 
  */
-public class OutArchiveBZip2Impl extends OutArchiveImpl implements IOutArchiveBZip2 {
+public class OutArchiveBZip2Impl extends OutArchiveImpl<IOutItemCallbackBZip2> implements IOutCreateArchiveBZip2,
+        IOutUpdateArchiveBZip2 {
 
     /**
      * {@inheritDoc}

@@ -3,10 +3,11 @@ package net.sf.sevenzipjbinding.junit.compression;
 import java.util.Date;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.IArchiveUpdateCallback;
+import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.ISeekableStream;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -18,10 +19,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Assert;
 
 public abstract class CompressAbstractTest extends JUnitNativeTestBase {
-    public class SingleFileArchiveUpdateCallback implements IArchiveUpdateCallback {
+    public class SingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemCallback> {
         private RandomContext randomContext;
 
-        protected SingleFileArchiveUpdateCallback(RandomContext randomContext) {
+        protected SingleFileCreateArchiveCallback(RandomContext randomContext) {
             this.randomContext = randomContext;
         }
 
@@ -57,16 +58,8 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
 
         }
 
-        public boolean isNewData(int index) {
-            return true;
-        }
-
-        public boolean isNewProperties(int index) {
-            return true;
-        }
-
-        public int getOldArchiveItemIndex(int index) {
-            return 0;
+        public IOutItemCallback getOutItemCallback() throws SevenZipException {
+            return null; // TODO
         }
 
     }

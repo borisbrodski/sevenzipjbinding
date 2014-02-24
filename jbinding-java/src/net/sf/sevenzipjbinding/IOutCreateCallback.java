@@ -3,21 +3,12 @@ package net.sf.sevenzipjbinding;
 /**
  * Interface to provide information needed to create a new archive
  * 
+ * @param <E>
+ *            one of the {@link IOutItemCallbackBase} call back types
  * @author Boris Brodski
  * @version 9.04-2.00
  */
-public interface IArchiveCreateCallback extends IProgress {
-    /**
-     * Retrieve value of property <code>propID</code> for the archive item with index <code>index</code>.
-     * 
-     * @param index
-     *            index of an archive item to retrieve value from (starting from 0)
-     * @param propID
-     *            the property to retrieve
-     * @return retrieved value
-     */
-    public Object getProperty(int index, PropID propID) throws SevenZipException;
-
+public interface IOutCreateCallback<E> extends IProgress { // TODO Restruct <E>
     /**
      * Return sequential in-stream for the archive item with index <code>index</code> to read and compress the content
      * of the item.
@@ -36,4 +27,12 @@ public interface IArchiveCreateCallback extends IProgress {
      *            update operation failed.
      */
     public void setOperationResult(boolean operationResultOk) throws SevenZipException;
+
+    /**
+     * Get the implementation of the item callback. This callback provides meta data for archive items being created or
+     * updated.
+     * 
+     * @return implementation of the item callback (extending one of the {@link IOutItemCallbackBase} interfaces)
+     */
+    public E getOutItemCallback() throws SevenZipException;
 }

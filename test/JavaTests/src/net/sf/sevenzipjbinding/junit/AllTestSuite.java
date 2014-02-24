@@ -10,17 +10,7 @@ import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
-import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zStdConfTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarStdConfTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipStdConfTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressSingleFile7zTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileBZip2Test;
-import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileGZipTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileTarTest;
-import net.sf.sevenzipjbinding.junit.compression.CompressSingleFileZipTest;
-import net.sf.sevenzipjbinding.junit.compression.SimpleAddTest;
-import net.sf.sevenzipjbinding.junit.compression.SimpleRemoveTest;
-import net.sf.sevenzipjbinding.junit.compression.SimpleCreateTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleCompressZipTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
@@ -339,17 +329,18 @@ public class AllTestSuite extends TestSuite {
             ParamSpecTest.class, //
     };
     static Class<?>[] compressionTests = { //
-    /*    */SimpleCreateTest.class, //
-            SimpleRemoveTest.class, //
-            SimpleAddTest.class, //
-            CompressMultipleFile7zStdConfTest.class, //
-            CompressMultipleFileTarStdConfTest.class, //
-            CompressMultipleFileZipStdConfTest.class, //
-            CompressSingleFile7zTest.class, //
-            CompressSingleFileBZip2Test.class, //
-            CompressSingleFileGZipTest.class, //
-            CompressSingleFileTarTest.class, //
-            CompressSingleFileZipTest.class, //
+    /*    */SimpleCompressZipTest.class, //
+    //SimpleCreateSevenZipTest.class, //
+    //SimpleRemoveTest.class, //
+    //SimpleAddTest.class, //
+            //            CompressMultipleFile7zStdConfTest.class, //
+            //            CompressMultipleFileTarStdConfTest.class, //
+            //            CompressMultipleFileZipStdConfTest.class, //
+            //            CompressSingleFile7zTest.class, //
+            //            CompressSingleFileBZip2Test.class, //
+            //            CompressSingleFileGZipTest.class, //
+            //            CompressSingleFileTarTest.class, //
+            //            CompressSingleFileZipTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //

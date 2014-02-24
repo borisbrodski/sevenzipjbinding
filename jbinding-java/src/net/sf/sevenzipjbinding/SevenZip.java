@@ -619,8 +619,8 @@ public class SevenZip {
      * @see #openInArchive(ArchiveFormat, IInStream)
      * @see #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)
      */
-    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream,
-            String passwordForOpen) throws SevenZipException {
+    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream, String passwordForOpen)
+            throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
             return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
@@ -646,8 +646,7 @@ public class SevenZip {
      * @see #openInArchive(ArchiveFormat, IInStream)
      * @see #openInArchive(ArchiveFormat, IInStream, String)
      */
-    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream)
-            throws SevenZipException {
+    public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (archiveFormat != null) {
             return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
@@ -767,24 +766,37 @@ public class SevenZip {
     private static native IInArchive nativeOpenArchive(ArchiveFormat archiveFormat, IInStream inStream,
             IArchiveOpenCallback archiveOpenCallback) throws SevenZipException;
 
-    private static native void nativeCreateArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat)
+    private static native void nativeCreateArchive(OutArchiveImpl<?> outArchiveImpl, ArchiveFormat archiveFormat)
             throws SevenZipException;
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
     @SuppressWarnings("unchecked")
-    public static <T extends IOutArchive> T openOutArchive(Class<T> outArchiveInterface) throws SevenZipException {
+    @Deprecated
+    // TODO Remove me
+    public static <T extends IOutCreateArchive<?>> T openOutArchive(Class<T> outArchiveInterface)
+            throws SevenZipException {
         ArchiveFormat archiveFormat = ArchiveFormat.findOutArchiveImplementationToInterface(outArchiveInterface);
         return (T) openOutArchive(archiveFormat);
     }
 
-    public static IOutArchive openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
+    public static IOutCreateArchiveZip openOutArchiveZip() throws SevenZipException {
+        return (IOutCreateArchiveZip) openOutArchiveIntern(ArchiveFormat.ZIP);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static IOutCreateArchive<IOutItemCallback> openOutArchive(ArchiveFormat archiveFormat)
+            throws SevenZipException {
+        return (IOutCreateArchive<IOutItemCallback>) openOutArchiveIntern(archiveFormat);
+    }
+
+    private static OutArchiveImpl<?> openOutArchiveIntern(ArchiveFormat archiveFormat) throws SevenZipException {
         ensureLibraryIsInitialized();
         if (!archiveFormat.isOutArchiveSupported()) {
             throw new IllegalStateException("Archive format '" + archiveFormat + "' doesn't support archive creation.");
         }
 
-        OutArchiveImpl outArchiveImpl;
+        OutArchiveImpl<?> outArchiveImpl;
         try {
             outArchiveImpl = archiveFormat.getOutArchiveImplementation().newInstance();
         } catch (Exception e) {

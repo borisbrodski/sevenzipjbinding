@@ -6,7 +6,7 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.04-2.00
  */
-public interface IArchiveUpdateCallback extends IArchiveCreateCallback {
+public interface IOutUpdateCallback<E> extends IOutCreateCallback<E> {
     /**
      * Determine, whether the archive item data has changed.
      * 
