@@ -11,7 +11,7 @@
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding", SevenZipException)
 /*    */JT_CLASS_VIRTUAL_METHOD_OBJECT("Ljava/lang/Throwable;", initCause, JT_THROWABLE(cause,_))
-/*    */JT_CLASS_CONSTRUCTOR(JT_STRING(message, _)) // TODO remove if not needed
+/*    */JT_CLASS_CONSTRUCTOR(JT_STRING(message, _))
 /*    */JT_CLASS_FINAL_METHOD(Void, setCauseLastThrown, JT_THROWABLE(causeLastThrown,_))
 /*    */JT_CLASS_FINAL_METHOD(Void, setCauseFirstPotentialThrown, JT_THROWABLE(causeFirstPotentialThrown,_))
 /*    */JT_CLASS_FINAL_METHOD(Void, setCauseLastPotentialThrown, JT_THROWABLE(causeLastPotentialThrown,_))
@@ -139,8 +139,8 @@ JNINativeCallContext::~JNINativeCallContext() {
                 message = _jniCallOriginalEnv->NewStringUTF(_errorMessage);
             } else {
                 message = _jniCallOriginalEnv->NewStringUTF(
-                        "Multiple exceptions without specific error message were thrown. "
-                            "See multiple 'caused by' exceptions for more information."); // TODO Spell check it
+                        "One or multiple exceptions without specific error message were thrown. "
+                            "See multiple 'caused by' exceptions for more information.");
             }
             sevenZipException = static_cast<jthrowable> (jni::SevenZipException::newInstance(
                     _jniCallOriginalEnv, message));

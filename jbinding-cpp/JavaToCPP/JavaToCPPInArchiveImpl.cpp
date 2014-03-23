@@ -3,47 +3,10 @@
 #include "net_sf_sevenzipjbinding_impl_InArchiveImpl.h"
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
-#include "JNICallState.h"
 #include "CodecTools.h"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
-//#include "JBindingTools.h"
 
-// TODO Remove this
-/*
- static bool initialized = 0;
- static jfieldID g_InStreamAttributeFieldID;
- static jclass g_PropIDClazz;
- static jmethodID g_PropID_getPropIDByIndex;
-
- static void localinit(JNIEnv * env, jobject thiz)
- {
- char classname[256];
-
- if (initialized)
- {
- return;
- }
-
- jclass clazz = env->GetObjectClass(thiz);
- FATALIF(clazz == NULL, "Can't get class from object");
-
- g_InStreamAttributeFieldID = env->GetFieldID(clazz, IN_STREAM_IMPL_OBJ_ATTRIBUTE, "J");
- FATALIF2(g_InStreamAttributeFieldID == NULL, "Field '%s' in the class '%s' was not found", IN_STREAM_IMPL_OBJ_ATTRIBUTE,
- GetJavaClassName(env, clazz, classname, sizeof(classname)));
-
- // Initialize PropID
- g_PropIDClazz = env->FindClass(PROPID_CLASS);
- FATALIF1(g_PropIDClazz == NULL, "Can't find class '%s'", PROPID_CLASS);
- g_PropIDClazz = (jclass)env->NewGlobalRef(g_PropIDClazz);
-
- g_PropID_getPropIDByIndex = env->GetStaticMethodID(g_PropIDClazz,
- "getPropIDByIndex", "(I)" PROPID_CLASS_T);
- FATALIF1(g_PropID_getPropIDByIndex == NULL, "Can't method 'getPropIDByIndex(int)' in class '%s'", PROPID_CLASS);
-
- initialized = 1;
- }
- */
 
 static IInArchive * GetArchive(JNIEnv * env, jobject thiz) {
     jlong pointer = jni::InArchiveImpl::sevenZipArchiveInstance_Get(env, thiz);
@@ -546,8 +509,6 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeCon
                 (const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name);
         return;
     }
-
-    jni::expectExceptionCheck(env); // TODO Check this!
 
     jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
             (jlong) (size_t) (void*) (outArchive.Detach()));

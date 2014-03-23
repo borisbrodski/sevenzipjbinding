@@ -16,7 +16,7 @@ public interface IOutItemCallbackZip extends IOutItemCallbackBase {
 
     public Integer getAttributes(int index) throws SevenZipException;
 
-    public String getPath(int index) throws SevenZipException;
+    public String getPath1(int index) throws SevenZipException;
 
     public boolean isDir(int index) throws SevenZipException;
 

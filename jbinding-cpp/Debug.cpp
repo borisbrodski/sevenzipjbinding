@@ -1,6 +1,5 @@
 #include <map>
 #include "SevenZipJBinding.h"
-#include "JNICallState.h" // TODO Fix this. We need this only for PlatformGetThreadId()
 
 #ifdef TRACE_ON
 int trace_printf(const char * fmt, ...) {

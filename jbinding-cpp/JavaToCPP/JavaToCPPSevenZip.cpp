@@ -10,8 +10,6 @@
 #include "UniversalArchiveOpenCallback.h"
 #include "CodecTools.h"
 
-#include "JNICallState.h"
-
 #include "iostream"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
@@ -108,7 +106,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             fatal("Can't get InArchive class for codec %S", (const wchar_t *) formatNameString);
         }
 
-        TRACE("Opening using codec " << CodecTools::codecs.Formats[index].Name);
+        TRACE("Opening using codec " << codecTools.codecs.Formats[index].Name);
 
         universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(index));
 
@@ -126,7 +124,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         TRACE("Iterating through all available codecs...")
         bool success = false;
         for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
-            TRACE("Trying codec " << CodecTools::codecs.Formats[i].Name);
+            TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
 
             stream->Seek(0, STREAM_SEEK_SET, NULL);
 
@@ -200,7 +198,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     TRACE("Archive opened")
 
     jobject inArchiveImplObject = jni::InArchiveImpl::_newInstance(env);
-    jni::expectExceptionCheck(env);
+    if (jniEnvInstance.exceptionCheck()) {
+        archive->Close();
+        deleteInErrorCase.setErrorCase();
+        return NULL;
+    }
 
     jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString),
             formatNameString.Length());
@@ -263,8 +265,6 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
         deleteInErrorCase.setErrorCase();
         return;
     }
-
-    jni::expectExceptionCheck(env); // TODO Check this!
 
     jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
             (jlong) (size_t) (void*) (outArchive.Detach()));

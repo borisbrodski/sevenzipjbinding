@@ -88,7 +88,7 @@ ELSE()
 ENDIF()
 
 add_definitions(
-#    -DTRACE_ON
+    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -D_REENTRANT
@@ -660,8 +660,6 @@ SET(JBINDING_CPP_FILES
     Debug.cpp
 #    idd_def.cpp
     JNITools.cpp
-    JNICallState.cpp
-    SevenZipException.cpp
     SevenZipJBinding.cpp
     UniversalArchiveOpenCallback.cpp
     CodecTools.cpp

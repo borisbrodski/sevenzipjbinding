@@ -8,7 +8,6 @@
 #include "CPPToJava/CPPToJavaOutStream.h"
 #include "CPPToJava/CPPToJavaArchiveUpdateCallback.h"
 
-#include "JNICallState.h"
 #include "UnicodeHelper.h"
 
 // void updateItemsNative(int archiveFormatIndex, IOutStream outStream, int numberOfItems,

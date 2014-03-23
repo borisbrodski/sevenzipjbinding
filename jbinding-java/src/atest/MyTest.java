@@ -60,6 +60,11 @@ public class MyTest {
             return 0;
         }
 
+        // TODO REMOVE ME
+        public String getPath1(int index) throws SevenZipException {
+            return null;
+        }
+
         public String getPath(int index) throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
@@ -132,6 +137,11 @@ public class MyTest {
 
         public Integer getAttributes(int index) throws SevenZipException {
             // TODO Auto-generated method stub
+            return null;
+        }
+
+        // TODO REMOVE ME
+        public String getPath1(int index) throws SevenZipException {
             return null;
         }
     };

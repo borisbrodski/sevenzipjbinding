@@ -113,6 +113,10 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOp
     jobject resultEOperationResultObject = jni::ExtractOperationResult::getOperationResult(
             jniEnvInstance, (jint) resultEOperationResult);
 
+    if (jniEnvInstance.exceptionCheck()) {
+    	return S_FALSE;
+    }
+
     // public void setOperationResult(ExtractOperationResult extractOperationResult);
     _iArchiveExtractCallback.setOperationResult(jniEnvInstance, _javaImplementation,
             resultEOperationResultObject);

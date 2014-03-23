@@ -97,6 +97,27 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
+    public void testInterface2Impl1() {
+        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
+            Interface2Impl1 interface2Impl = new Interface2Impl1();
+            nativeInterface1(interface2Impl, -1, false);
+            assertEquals(17, interface2Impl.getLongMethodParameterI());
+            assertEquals(18, interface2Impl.getStringMethodParameterI());
+            assertEquals(19, interface2Impl.getVoidMethodParameterI());
+            assertEquals(20, interface2Impl.getVoidMethodFromInterface2());
+        }
+    }
+
+    @Test
+    public void testInterface2Impl1Multithreaded() throws Exception {
+        runMultithreaded(new RunnableThrowsException() {
+            public void run() throws Exception {
+                testInterface2Impl1();
+            }
+        }, null, THREAD_COUNT, THREAD_TIMEOUT);
+    }
+
+    @Test
     public void testInterface1Impl1FromClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             Interface1Impl1 interface1Impl1 = new Interface1Impl1();

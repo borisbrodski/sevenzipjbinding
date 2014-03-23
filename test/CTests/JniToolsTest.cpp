@@ -13,142 +13,85 @@ using namespace jni;
 // TODO Test "ByteArray"
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestAbstractClass)
-/*    */JT_CLASS_FINAL_METHOD(Long, privateLongMethod, JT_INT(i,_))
-/*    */JT_CLASS_FINAL_METHOD(String, privateStringMethod, JT_INT(i,_))
-/*    */JT_CLASS_FINAL_METHOD(Void, privateVoidMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(Long, privateLongMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(String, privateStringMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(Void, privateVoidMethod, JT_INT(i,_))
 
-/*    */JT_CLASS_FINAL_METHOD(Long, privateFinalLongMethod, JT_INT(i,_))
-/*    */JT_CLASS_FINAL_METHOD(String, privateFinalStringMethod, JT_INT(i,_))
-/*    */JT_CLASS_FINAL_METHOD(Void, privateFinalVoidMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(Long, privateFinalLongMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(String, privateFinalStringMethod, JT_INT(i,_))
+	JT_CLASS_FINAL_METHOD(Void, privateFinalVoidMethod, JT_INT(i,_))
 
-/*    */JT_CLASS_FINAL_METHOD_OBJECT("Ljava/util/List;", privateFinalListMethod, JT_INT(i,_)) // TODO Test it!!
+	JT_CLASS_FINAL_METHOD_OBJECT("Ljava/util/List;", privateFinalListMethod, JT_INT(i,_)) // TODO Test it!!
 
-/*    */JT_CLASS_STATIC_METHOD(Long, privateStaticLongMethod, JT_INT(i,_))
-/*    */JT_CLASS_STATIC_METHOD(String, privateStaticStringMethod, JT_INT(i,_))
-/*    */JT_CLASS_STATIC_METHOD(Void, privateStaticVoidMethod, JT_INT(i,_))
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", privateStaticListMethod, JT_INT(i,_)) // TODO Test it!!
+	JT_CLASS_STATIC_METHOD(Long, privateStaticLongMethod, JT_INT(i,_))
+	JT_CLASS_STATIC_METHOD(String, privateStaticStringMethod, JT_INT(i,_))
+	JT_CLASS_STATIC_METHOD(Void, privateStaticVoidMethod, JT_INT(i,_))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", privateStaticListMethod, JT_INT(i,_)) // TODO Test it!!
 
-/*    */JT_CLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, JT_INT(i, _))
-/*    */JT_CLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, JT_INT(i, _))
-/*    */JT_CLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, JT_INT(i, _))
 
-/*    */JT_FIELD(Long, privateLongField)
-/*    */JT_FIELD(String, privateStringField)
+	JT_FIELD(Long, privateLongField)
+	JT_FIELD(String, privateStringField)
 
-/*    */JT_STATIC_FIELD(Long, privateStaticLongField)
-/*    */JT_STATIC_FIELD(String, privateStaticStringField)
+	JT_STATIC_FIELD(Long, privateStaticLongField)
+	JT_STATIC_FIELD(String, privateStaticStringField)
 JT_END_CLASS
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestFinalClass)
-/*    */JT_CLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, JT_INT(i, _))
-/*    */JT_CLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, JT_INT(i, _))
-/*    */JT_CLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(Long, protectedVirtualLongMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(String, protectedVirtualStringMethod, JT_INT(i, _))
+	JT_CLASS_VIRTUAL_METHOD(Void, protectedVirtualVoidMethod, JT_INT(i, _))
 
-/*    */JT_FIELD(Class, privateClassField)
-/*    */JT_FIELD(Long, id)
+	JT_FIELD(Class, privateClassField)
+	JT_FIELD(Long, id)
 
-/*    */JT_FIELD_OBJECT(privateJTestFinalClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestFinalClass;")
-/*    */JT_FIELD_OBJECT(privateJTestAbstractClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestAbstractClass;")
+	JT_FIELD_OBJECT(privateJTestFinalClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestFinalClass;")
+	JT_FIELD_OBJECT(privateJTestAbstractClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestAbstractClass;")
 JT_END_CLASS
 
 JT_BEGIN_INTERFACE(Interface1)
-/*    */JT_INTERFACE_METHOD(Long, longMethod, JT_INT(i, _))
-/*    */JT_INTERFACE_METHOD(String, stringMethod, JT_INT(i, _))
-/*    */JT_INTERFACE_METHOD(Void, voidMethod, JT_INT(i, _))
+	JT_INTERFACE_METHOD(Long, longMethod, JT_INT(i, _))
+	JT_INTERFACE_METHOD(String, stringMethod, JT_INT(i, _))
+	JT_INTERFACE_METHOD(Void, voidMethod, JT_INT(i, _))
+	JT_INTERFACE_METHOD(Void, voidMethodFromInterface2, JT_INT(i, _))
 JT_END_INTERFACE
 
 #define JT_MY_CLASS(name, param_spec)   \
     JT_PARAM(Object, "Lnet/sf/sevenzipjbinding/junit/jnitools/ParamSpecTest$MyClass;", name, param_spec)
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", ParamSpecTest)
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWithNoParameters,
-        /**/_)
+	JT_CLASS_STATIC_METHOD(String, stringMethodWithNoParameters, _)
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWithNoParameters, _)
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith1Parameter, JT_LONG(l1, _))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith1Parameter, JT_LONG(l1, _))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith2Parameters, JT_INT(l1, JT_STRING(s2, _)))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith2Parameters, JT_INT(l1, JT_STRING(s2, _)))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith3Parameters, JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith3Parameters, JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith4Parameters, JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith4Parameters, JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith5Parameters, JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith5Parameters, JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith6Parameters, JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith6Parameters, JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith7Parameters, JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith7Parameters, JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith8Parameters, JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith8Parameters, JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+	JT_CLASS_STATIC_METHOD(String, stringMethodWith9Parameters, JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
+	JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith9Parameters, JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
 
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;",
-        /**/listMethodWithNoParameters, _)
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith1Parameter,
-        /**/JT_LONG(l1, _))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith1Parameter,
-        /**/JT_LONG(l1, _))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith2Parameters,
-        /**/JT_INT(l1, JT_STRING(s2, _)))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith2Parameters,
-        /**/JT_INT(l1, JT_STRING(s2, _)))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith3Parameters,
-        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith3Parameters,
-        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith4Parameters,
-        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith4Parameters,
-        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith5Parameters,
-        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith5Parameters,
-        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith6Parameters,
-        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith6Parameters,
-        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith7Parameters,
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith7Parameters,
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith8Parameters,
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
-
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith8Parameters,
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
-
-/*    */JT_CLASS_STATIC_METHOD(String, stringMethodWith9Parameters,
-        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
-/*    */JT_CLASS_STATIC_METHOD_OBJECT("Ljava/util/List;", listMethodWith9Parameters,
-        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/_)
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_LONG(l1, _))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_INT(l1, JT_STRING(s2, _)))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
-
-/*    */JT_CLASS_CONSTRUCTOR(
-        /**/JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
-
+	JT_CLASS_CONSTRUCTOR(_)
+	JT_CLASS_CONSTRUCTOR(JT_LONG(l1, _))
+	JT_CLASS_CONSTRUCTOR(JT_INT(l1, JT_STRING(s2, _)))
+	JT_CLASS_CONSTRUCTOR(JT_BOOLEAN(b1, JT_MY_CLASS(m2, JT_INT(i3, _))))
+	JT_CLASS_CONSTRUCTOR(JT_MY_CLASS(m1, JT_INT(i2, JT_STRING(s3, JT_BOOLEAN(b4, _)))))
+	JT_CLASS_CONSTRUCTOR(JT_BOOLEAN(b1, JT_STRING(s2, JT_LONG(l3, JT_INT(i4, JT_MY_CLASS(m5, _))))))
+	JT_CLASS_CONSTRUCTOR(JT_INT(i1, JT_MY_CLASS(m2, JT_LONG(l3, JT_INT(i4, JT_BOOLEAN(b5, JT_MY_CLASS(m6, _)))))))
+	JT_CLASS_CONSTRUCTOR(JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_MY_CLASS(m4, JT_INT(i5, JT_BOOLEAN(b6, JT_LONG(l7, _))))))))
+	JT_CLASS_CONSTRUCTOR(JT_STRING(s1, JT_INT(i2, JT_LONG(l3, JT_LONG(l4, JT_INT(i5, JT_BOOLEAN(b6, JT_BOOLEAN(b7, JT_INT(i8, _)))))))))
+	JT_CLASS_CONSTRUCTOR(JT_MY_CLASS(m1, JT_STRING(s2, JT_INT(i3, JT_MY_CLASS(m4, JT_BOOLEAN(b5, JT_INT(i6, JT_STRING(s7, JT_LONG(l8, JT_BOOLEAN(b9, _))))))))))
 JT_END_CLASS
 
 void checkString(std::stringstream & errmsg, JNIEnv * env, char const * expectedValue,
@@ -223,6 +166,11 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterface1(JNIEnv
 
     interface1->voidMethod(env, interface1Impl, jint(19 + offset));
     checkException(errmsg, env);
+
+    if (interface1->_voidMethodFromInterface2_exists(env)) {
+        interface1->voidMethodFromInterface2(env, interface1Impl, jint(20 + offset));
+        checkException(errmsg, env);
+    }
 
     char const * errmsgstring = errmsg.str().c_str();
     if (*errmsgstring) {

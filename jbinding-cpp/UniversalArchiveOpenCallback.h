@@ -2,7 +2,6 @@
 #define UNIVERSALARCHIVEOPENCALLBACK_
 
 #include "SevenZipJBinding.h"
-#include "JNICallState.h"
 #include "CPPToJava/CPPToJavaArchiveOpenCallback.h"
 #include "CPPToJava/CPPToJavaArchiveOpenVolumeCallback.h"
 #include "CPPToJava/CPPToJavaCryptoGetTextPassword.h"

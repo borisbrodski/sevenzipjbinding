@@ -8,7 +8,6 @@
 #include "SevenZipJBinding.h"
 
 #include "CodecTools.h"
-#include "SevenZipException.h"
 #include "UnicodeHelper.h"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"

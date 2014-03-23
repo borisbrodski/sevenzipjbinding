@@ -166,6 +166,11 @@ public class VirtualContent {
                     return null;
                 }
 
+                // TODO REMOVE ME
+                public String getPath1(int index) throws SevenZipException {
+                    return null;
+                }
+
             };
         }
     }

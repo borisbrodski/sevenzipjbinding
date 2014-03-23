@@ -574,6 +574,9 @@
             TRACE_JNI_CALLED(this, name, sig)                                                   \
             expectExceptionCheck(__env);                                                        \
             _JT_RETURN_RESULT_##ret_type                                                        \
+        }                                                                                       \
+        bool _##name##_exists(JNIEnv * __env) {                                                 \
+        	return _JT_METHOD_OBJECT(name).exists(__env, _getJClass());                         \
         }
 
 
@@ -615,6 +618,7 @@ namespace jni {
 
 inline void expectExceptionCheck(JNIEnv * env) {
 #ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+	TRACE("Expect exception check")
     char * p = (char*)env;
     for (int i = 0; i < sizeof(*env); i++) {
         p[i]++;
@@ -624,6 +628,7 @@ inline void expectExceptionCheck(JNIEnv * env) {
 
 inline void prepareExceptionCheck(JNIEnv * env) {
 #ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+	TRACE("Prepare exception check")
     char * p = (char*)env;
     for (int i = 0; i < sizeof(*env); i++) {
         p[i]--;
@@ -763,23 +768,39 @@ class JMethod {
     char const * _signature;
     bool _isStatic;
     jmethodID _jmethodID;
+    bool  isInitialized;
 protected:
     JMethod(char const * name, char const * signature, bool isStatic = false) :
         _name(name), _signature(signature), _isStatic(isStatic), _jmethodID(NULL) {
+    	isInitialized = false;
     }
 public:
     jmethodID getMethodID(JNIEnv * env, jclass jclazz) {
-        if (!_jmethodID) {
-            TRACE("Getting method id for " << *this);
-            if (_isStatic) {
-                _jmethodID = env->GetStaticMethodID(jclazz, _name, _signature);
-            } else {
-                _jmethodID = env->GetMethodID(jclazz, _name, _signature);
-            }
-            FATALIF3(!_jmethodID, "Method not found: %s() signature %s%s", _name, _signature,
+    	initMethodID(env, jclazz);
+    	if (!_jmethodID) {
+    		FATALIF3(!_jmethodID, "Method not found: %s() signature %s%s", _name, _signature,
                     _isStatic ? " (static)" : "");
-        }
-        return _jmethodID;
+    	}
+		return _jmethodID;
+    }
+    bool exists(JNIEnv * env, jclass jclazz) {
+    	initMethodID(env, jclazz);
+    	return _jmethodID != NULL;
+    }
+private:
+    void initMethodID(JNIEnv * env, jclass jclazz) {
+    	if (isInitialized) {
+    		return;
+    	}
+		TRACE("Getting method id for " << *this);
+		if (_isStatic) {
+			_jmethodID = env->GetStaticMethodID(jclazz, _name, _signature);
+		} else {
+			_jmethodID = env->GetMethodID(jclazz, _name, _signature);
+		}
+		if (!_jmethodID) {
+			env->ExceptionClear();
+		}
     }
 };
 

@@ -1,6 +1,5 @@
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
-#include "JNICallState.h"
 #include "UnicodeHelper.h"
 
 // TODO Refactor to use java static info

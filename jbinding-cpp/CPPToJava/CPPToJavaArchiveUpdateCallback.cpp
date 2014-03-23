@@ -89,6 +89,10 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 		break;
     }
     case kpidPath: {
+    	if (!_iOutItemCallback->_getPath_exists(jniEnvInstance)) {
+            jniEnvInstance.reportError("IOutItemCallback implementation should implement getPath method.");
+    		return S_FALSE;
+    	}
 		jstring string = _iOutItemCallback->getPath(jniEnvInstance, _outItemCallbackImplementation, index);
 	    if (jniEnvInstance.exceptionCheck()) {
 	        return S_FALSE;
