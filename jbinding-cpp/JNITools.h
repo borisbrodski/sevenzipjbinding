@@ -86,7 +86,7 @@ jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime);
 /**
  * Fill FILETIME from java.util.Date object
  */
-void ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & filetime);
+bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & filetime);
 
 #define __JNITOOLS_H__INCLUDED__
 #endif // __JNITOOLS_H__INCLUDED__

@@ -54,6 +54,8 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
 
 	codecTools.init();
 
+    jni::OutOfMemoryError::_initialize(env);
+
     //if (msg) {
     //	TRACE1("Error initializing 7-zip library: %s", msg)
     //	return env->NewStringUTF(msg);

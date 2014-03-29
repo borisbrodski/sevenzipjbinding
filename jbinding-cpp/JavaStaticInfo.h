@@ -682,6 +682,10 @@ public:
         return _jclass;
     }
 
+    static void _initialize(JNIEnv * env) {
+    	_instance._getJClass(env);
+    }
+
     // TODO Remove it
     static jobject _newInstance(JNIEnv * env) {
         jclass clazz = _instance._getJClass(env);
@@ -788,20 +792,7 @@ public:
     	return _jmethodID != NULL;
     }
 private:
-    void initMethodID(JNIEnv * env, jclass jclazz) {
-    	if (isInitialized) {
-    		return;
-    	}
-		TRACE("Getting method id for " << *this);
-		if (_isStatic) {
-			_jmethodID = env->GetStaticMethodID(jclazz, _name, _signature);
-		} else {
-			_jmethodID = env->GetMethodID(jclazz, _name, _signature);
-		}
-		if (!_jmethodID) {
-			env->ExceptionClear();
-		}
-    }
+    void initMethodID(JNIEnv * env, jclass jclazz);
 };
 
 #ifdef TRACE_ON

@@ -57,6 +57,53 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
 
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID,
                                                          PROPVARIANT *value) {
+	#define JNI_TYPE_STRING                              jstring
+	#define JNI_TYPE_INTEGER                             jobject
+	#define JNI_TYPE_DATE                                jobject
+	#define JNI_TYPE_BOOLEAN                             jboolean
+	#define JNI_TYPE_LONG                                jlong
+
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_BOOLEAN       cPropVariant = (bool) value;
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_LONG          cPropVariant = (UInt64) value;
+
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_STRING                                                                       \
+		if (value) {                                                                                                    \
+			const jchar * jChars = jniEnvInstance->GetStringChars(value, NULL);                                         \
+			cPropVariant = UString(UnicodeHelper(jChars));                                                              \
+			jniEnvInstance->ReleaseStringChars(value, jChars);                                                          \
+		}
+
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                      \
+		if (value) {                                                                                                    \
+			cPropVariant = jni::Integer::intValue(jniEnvInstance, value);                                               \
+			if (jniEnvInstance.exceptionCheck()) {                                                                      \
+				return S_FALSE;                                                                                         \
+			}                                                                                                           \
+		}
+
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_DATE                                                                         \
+		if (value) {                                                                                                    \
+			FILETIME filetime;                                                                                          \
+			if (!ObjectToFILETIME(jniEnvInstance, value, filetime)) {                                                   \
+				return S_FALSE;                                                                                         \
+			}                                                                                                           \
+			cPropVariant = filetime;                                                                                    \
+		}
+
+	#define GET_ATTRIBUTE(TYPE, methodName)                                                                             \
+	{                                                                                                                   \
+		if (!_iOutItemCallback->_##methodName##_exists(jniEnvInstance)) {                                               \
+			jniEnvInstance.reportError("IOutItemCallback implementation should implement " #methodName " method.");     \
+			return S_FALSE;                                                                                             \
+		}                                                                                                               \
+		JNI_TYPE_##TYPE value = _iOutItemCallback->methodName(jniEnvInstance, _outItemCallbackImplementation, index);   \
+		if (jniEnvInstance.exceptionCheck()) {                                                                          \
+			return S_FALSE;                                                                                             \
+		}                                                                                                               \
+		ASSIGN_VALUE_TO_C_PROP_VARIANT_##TYPE                                                                           \
+		break;                                                                                                          \
+	}
+
     TRACE_OBJECT_CALL("GetProperty");
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
@@ -68,113 +115,17 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     NWindows::NCOM::CPropVariant cPropVariant;
 
     switch (propID) {
-    case kpidAttrib: {
-		jobject integer = _iOutItemCallback->getAttributes(jniEnvInstance, _outItemCallbackImplementation, index);
-		if (jniEnvInstance.exceptionCheck()) {
-			return S_FALSE;
-		}
-		if (integer) {
-			cPropVariant = jni::Integer::intValue(jniEnvInstance, integer);
-		}
-		break;
-    }
-    case kpidPosixAttrib: {
-		jobject integer = _iOutItemCallback->getPosixAttributes(jniEnvInstance, _outItemCallbackImplementation, index);
-		if (jniEnvInstance.exceptionCheck()) {
-			return S_FALSE;
-		}
-		if (integer) {
-			cPropVariant = jni::Integer::intValue(jniEnvInstance, integer);
-		}
-		break;
-    }
-    case kpidPath: {
-    	if (!_iOutItemCallback->_getPath_exists(jniEnvInstance)) {
-            jniEnvInstance.reportError("IOutItemCallback implementation should implement getPath method.");
-    		return S_FALSE;
-    	}
-		jstring string = _iOutItemCallback->getPath(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-	    if (string) {
-			const jchar * jChars = jniEnvInstance->GetStringChars(string, NULL);
-			cPropVariant = UString(UnicodeHelper(jChars));
-			jniEnvInstance->ReleaseStringChars(string, jChars);
-	    }
-        break;
-    }
-    case kpidIsDir: {
-		jboolean isDir = _iOutItemCallback->isDir(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-		cPropVariant = (bool) isDir;
-		break;
-    }
-    case kpidIsAnti: {
-		jboolean isAnti = _iOutItemCallback->isAnti(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-		cPropVariant = (bool) isAnti;
-		break;
-    }
-    case kpidTimeType: {
-		jboolean isNtfsTime = _iOutItemCallback->isNtfsTime(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-    	cPropVariant = (unsigned int)(isNtfsTime ? NFileTimeType::kWindows : NFileTimeType::kUnix);
-    	break;
-    }
-    case kpidMTime: {
-		jobject mtime = _iOutItemCallback->getModificationTime(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-	    if (mtime) {
-			FILETIME filetime;
-			ObjectToFILETIME(jniEnvInstance, mtime, filetime);
-			cPropVariant = filetime;
-	    }
-    	break;
-    }
-    case kpidATime: {
-		jobject atime = _iOutItemCallback->getLastAccessTime(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-		if (atime) {
-			FILETIME filetime;
-			ObjectToFILETIME(jniEnvInstance, atime, filetime);
-			cPropVariant = filetime;
-		}
-    	break;
-    }
-    case kpidCTime: {
-		jobject ctime = _iOutItemCallback->getCreationTime(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-		if (ctime) {
-			FILETIME filetime;
-			ObjectToFILETIME(jniEnvInstance, ctime, filetime);
-			cPropVariant = filetime;
-		}
-    	break;
-    }
-    case kpidSize: {
-		jlong size = _iOutItemCallback->getSize(jniEnvInstance, _outItemCallbackImplementation, index);
-	    if (jniEnvInstance.exceptionCheck()) {
-	        return S_FALSE;
-	    }
-    	cPropVariant = (UInt64)size;
-    	break;
-    }
-
+    case kpidAttrib:             GET_ATTRIBUTE(INTEGER, getAttributes)
+    case kpidPosixAttrib:        GET_ATTRIBUTE(INTEGER, getPosixAttributes)
+    case kpidPath:               GET_ATTRIBUTE(STRING,  getPath)
+    case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN, isDir)
+    case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN, isAnti)
+    case kpidTimeType:           GET_ATTRIBUTE(BOOLEAN, isNtfsTime)
+    case kpidMTime:              GET_ATTRIBUTE(DATE,    getModificationTime)
+    case kpidATime:              GET_ATTRIBUTE(DATE,    getLastAccessTime)
+    case kpidCTime:              GET_ATTRIBUTE(DATE,    getCreationTime)
+    case kpidSize:               GET_ATTRIBUTE(LONG,    getSize)
     default:
-
     	printf("kpidNoProperty: %i\n", (int) kpidNoProperty);
     	printf("kpidMainSubfile: %i\n", (int) kpidMainSubfile);
     	printf("kpidHandlerItemIndex: %i\n", (int) kpidHandlerItemIndex);

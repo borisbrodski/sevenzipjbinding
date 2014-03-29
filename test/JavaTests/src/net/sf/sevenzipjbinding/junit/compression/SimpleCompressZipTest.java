@@ -110,11 +110,7 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
                     return virtualContent.getItemStream(index).getSize();
                 }
 
-                public String getPath1(int index) throws SevenZipException {
-                    return virtualContent.getItemPath(index);
-                }
-
-                public String getPath2(int index) throws SevenZipException {
+                public String getPath(int index) throws SevenZipException {
                     return virtualContent.getItemPath(index);
                 }
 

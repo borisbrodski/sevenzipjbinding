@@ -209,15 +209,17 @@ jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime) {
     return dateObject;
 }
 
-void ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & filetime) {
+bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & filetime) {
     LONGLONG javaTime = (LONGLONG)(jni::Date::getTime(jniEnvInstance, obj));
     if (jniEnvInstance.exceptionCheck()) {
-        return;
+        return false;
     }
     LONGLONG time = javaTime * FILETIME_TO_JAVATIME_FACTOR + FILETIME_TO_JAVATIME_SHIFT;
 
     filetime.dwHighDateTime = (DWORD)(time >> 32);
     filetime.dwLowDateTime = (DWORD)(time);
+
+    return true;
 }
 
 /**

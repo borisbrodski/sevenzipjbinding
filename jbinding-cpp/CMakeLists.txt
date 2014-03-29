@@ -660,6 +660,7 @@ SET(JBINDING_CPP_FILES
     Debug.cpp
 #    idd_def.cpp
     JNITools.cpp
+    JavaStaticInfo.cpp
     SevenZipJBinding.cpp
     UniversalArchiveOpenCallback.cpp
     CodecTools.cpp

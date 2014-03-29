@@ -29,6 +29,9 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         }
     }
 
+    private static class ParamSpecTestInherited extends ParamSpecTest {
+    }
+
     private String initMessage;
 
     private static native String nativeStringMethodWithNoParameters();
@@ -88,6 +91,8 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     private static native ParamSpecTest nativeConstructWith9Parameters(MyClass m1, String s2, int i3, MyClass m4,
             boolean b5, int i6, String s7, long l8, boolean b9);
+
+    private static native boolean nativeIsAssignableFromParamSpecTest(Object object);
 
     private static String stringMethodWithNoParameters() {
         return "stringMethodWithNoParameters()";
