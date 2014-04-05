@@ -121,40 +121,46 @@ JT_BEGIN_INTERFACE(IArchiveCreateCallback)
 	// public void setOperationResult(boolean operationResultOk);
 	JT_INTERFACE_METHOD(Void, setOperationResult, JT_BOOLEAN(operationResultOk, _))
 
-	// public <E extends IOutItemBase> E getOutItemCallback();
-	JT_INTERFACE_METHOD_OBJECT(JAVA_OBJECT_T, getOutItemCallback, _)
+	// public <E extends IOutItemBase> E getOutItemCallback(int index);
+	JT_INTERFACE_METHOD_OBJECT(JAVA_OBJECT_T, getOutItemCallback, JT_INT(index, _))
 JT_END_INTERFACE
 
 JT_BEGIN_INTERFACE(IOutItemCallback)
-	// public Long getSize(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD(Long, getSize, JT_INT(index, _))
+	// public Long getSize() throws SevenZipException;
+	JT_INTERFACE_METHOD(Long, getSize, _)
 
-	// public Integer getAttributes(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getAttributes, JT_INT(index, _))
+	// public Integer getAttributes() throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getAttributes, _)
 
-	// public Integer getPosixAttributes(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getPosixAttributes, JT_INT(index, _))
+	// public Integer getPosixAttributes() throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getPosixAttributes, _)
 
-	// public String getPath(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD(String, getPath, JT_INT(index, _))
+	// public String getPath() throws SevenZipException;
+	JT_INTERFACE_METHOD(String, getPath, _)
 
-	// public boolean isDir(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isDir, JT_INT(index, _))
+	// public boolean isDir() throws SevenZipException;
+	JT_INTERFACE_METHOD(Boolean, isDir, _)
 
-	// public boolean isAnti(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isAnti, JT_INT(index, _))
+	// public boolean isAnti() throws SevenZipException;
+	JT_INTERFACE_METHOD(Boolean, isAnti, _)
 
-	// public boolean isNtfsTime(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isNtfsTime, JT_INT(index, _))
+	// public boolean isNtfsTime() throws SevenZipException;
+	JT_INTERFACE_METHOD(Boolean, isNtfsTime, _)
 
-	// public boolean getModificationTime(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getModificationTime, JT_INT(index, _))
+	// public Date getModificationTime() throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getModificationTime, _)
 
-	// public boolean getLastAccessTime(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getLastAccessTime, JT_INT(index, _))
+	// public Date getLastAccessTime() throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getLastAccessTime, _)
 
-	// public boolean getCreationTime(int index) throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getCreationTime, JT_INT(index, _))
+	// public Date getCreationTime() throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getCreationTime, _)
+
+	// public String getUser() throws SevenZipException;
+	JT_INTERFACE_METHOD(String, getUser, _)
+
+	// public String getGroup() throws SevenZipException;
+	JT_INTERFACE_METHOD(String, getGroup, _)
 JT_END_INTERFACE
 
 JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, InArchiveImpl)

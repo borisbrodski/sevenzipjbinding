@@ -15,57 +15,62 @@ import net.sf.sevenzipjbinding.SevenZipException;
 public class MyTest {
     static IOutItemCallback iOutItemCallback = new IOutItemCallback() {
 
-        public boolean isNtfsTime(int index) throws SevenZipException {
+        public boolean isNtfsTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return false;
         }
 
-        public boolean isDir(int index) throws SevenZipException {
+        public boolean isDir() throws SevenZipException {
             // TODO Auto-generated method stub
             return false;
         }
 
-        public Date getModificationTime(int index) throws SevenZipException {
+        public Date getModificationTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Date getLastAccessTime(int index) throws SevenZipException {
+        public Date getLastAccessTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Date getCreationTime(int index) throws SevenZipException {
+        public Date getCreationTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Integer getAttributes(int index) throws SevenZipException {
+        public Integer getAttributes() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Integer getPosixAttributes(int index) throws SevenZipException {
+        public Integer getPosixAttributes() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public boolean isAnti(int index) throws SevenZipException {
+        public boolean isAnti() throws SevenZipException {
             // TODO Auto-generated method stub
             return false;
         }
 
-        public long getSize(int index) throws SevenZipException {
+        public long getSize() throws SevenZipException {
             // TODO Auto-generated method stub
             return 0;
         }
 
-        // TODO REMOVE ME
-        public String getPath1(int index) throws SevenZipException {
+        public String getPath() throws SevenZipException {
+            // TODO Auto-generated method stub
             return null;
         }
 
-        public String getPath(int index) throws SevenZipException {
+        public String getUser() throws SevenZipException {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        public String getGroup() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
@@ -93,57 +98,53 @@ public class MyTest {
             return null;
         }
 
-        public IOutItemCallback getOutItemCallback() throws SevenZipException {
+        public IOutItemCallback getOutItemCallback(int i) throws SevenZipException {
             return iOutItemCallback;
         }
     };
 
     static IOutItemCallbackZip outItemCallbackZip = new IOutItemCallbackZip() {
 
-        public boolean isNtfsTime(int index) throws SevenZipException {
+        public boolean isNtfsTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return false;
         }
 
-        public boolean isDir(int index) throws SevenZipException {
+        public boolean isDir() throws SevenZipException {
             // TODO Auto-generated method stub
             return false;
         }
 
-        public long getSize(int index) throws SevenZipException {
+        public long getSize() throws SevenZipException {
             // TODO Auto-generated method stub
             return 0;
         }
 
-        public String getPath(int index) throws SevenZipException {
+        public String getPath() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Date getModificationTime(int index) throws SevenZipException {
+        public Date getModificationTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Date getLastAccessTime(int index) throws SevenZipException {
+        public Date getLastAccessTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Date getCreationTime(int index) throws SevenZipException {
+        public Date getCreationTime() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        public Integer getAttributes(int index) throws SevenZipException {
+        public Integer getAttributes() throws SevenZipException {
             // TODO Auto-generated method stub
             return null;
         }
 
-        // TODO REMOVE ME
-        public String getPath1(int index) throws SevenZipException {
-            return null;
-        }
     };
     static IOutCreateCallback<IOutItemCallbackZip> outCreateCallbackZip = new IOutCreateCallback<IOutItemCallbackZip>() {
 
@@ -163,7 +164,7 @@ public class MyTest {
             return null;
         }
 
-        public IOutItemCallbackZip getOutItemCallback() throws SevenZipException {
+        public IOutItemCallbackZip getOutItemCallback(int index) throws SevenZipException {
             return outItemCallbackZip;
         }
     };
@@ -185,7 +186,7 @@ public class MyTest {
             return null;
         }
 
-        public IOutItemCallbackZip getOutItemCallback() throws SevenZipException {
+        public IOutItemCallbackZip getOutItemCallback(int index) throws SevenZipException {
             return iOutItemCallback;
         }
     };
@@ -233,7 +234,7 @@ public class MyTest {
                 return null;
             }
 
-            public IOutItemCallbackZip getOutItemCallback() throws SevenZipException {
+            public IOutItemCallbackZip getOutItemCallback(int index) throws SevenZipException {
                 return iOutItemCallback;
             }
         };

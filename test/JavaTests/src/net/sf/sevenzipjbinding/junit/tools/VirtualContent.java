@@ -123,54 +123,58 @@ public class VirtualContent {
 
         }
 
-        public IOutItemCallback getOutItemCallback() throws SevenZipException {
+        public IOutItemCallback getOutItemCallback(final int index) throws SevenZipException {
             return new IOutItemCallback() {
 
-                public boolean isAnti(int index) throws SevenZipException {
+                public boolean isAnti() throws SevenZipException {
                     return false;
                 }
 
-                public long getSize(int index) throws SevenZipException {
+                public long getSize() throws SevenZipException {
                     return itemList.get(index).getBlob().getSize();
                 }
 
-                public String getPath(int index) throws SevenZipException {
+                public String getPath() throws SevenZipException {
                     return itemList.get(index).getPath();
                 }
 
-                public Integer getPosixAttributes(int index) throws SevenZipException {
+                public Integer getPosixAttributes() throws SevenZipException {
                     return null;
                 }
 
-                public Integer getAttributes(int index) throws SevenZipException {
+                public Integer getAttributes() throws SevenZipException {
                     return null;
                 }
 
-                public boolean isDir(int index) throws SevenZipException {
+                public boolean isDir() throws SevenZipException {
                     return false;
                 }
 
-                public boolean isNtfsTime(int index) throws SevenZipException {
+                public boolean isNtfsTime() throws SevenZipException {
                     return false;
                 }
 
-                public Date getModificationTime(int index) throws SevenZipException {
+                public Date getModificationTime() throws SevenZipException {
                     return null;
                 }
 
-                public Date getLastAccessTime(int index) throws SevenZipException {
+                public Date getLastAccessTime() throws SevenZipException {
                     return null;
                 }
 
-                public Date getCreationTime(int index) throws SevenZipException {
+                public Date getCreationTime() throws SevenZipException {
                     return null;
                 }
 
-                // TODO REMOVE ME
-                public String getPath1(int index) throws SevenZipException {
+                public String getUser() throws SevenZipException {
+                    // TODO Auto-generated method stub
                     return null;
                 }
 
+                public String getGroup() throws SevenZipException {
+                    // TODO Auto-generated method stub
+                    return null;
+                }
             };
         }
     }
@@ -232,9 +236,15 @@ public class VirtualContent {
         public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) throws SevenZipException {
             String path = (String) inArchive.getProperty(index, PropID.PATH);
 
-            Integer myIndexObjekt = usedNames.get(path.toUpperCase());
-            assertNotNull("Directory passed to extraction", myIndexObjekt);
-            int myIndex = myIndexObjekt.intValue();
+            int myIndex;
+            if (path != null) {
+                Integer myIndexObjekt = usedNames.get(path.toUpperCase());
+                assertNotNull("Directory passed to extraction", myIndexObjekt);
+                myIndex = myIndexObjekt.intValue();
+            } else {
+                // Gzip/BZip2
+                myIndex = 0;
+            }
             extracted[myIndex] = true;
             testSequentailOutStream = new TestSequentailOutStream(itemList.get(myIndex));
             return testSequentailOutStream;

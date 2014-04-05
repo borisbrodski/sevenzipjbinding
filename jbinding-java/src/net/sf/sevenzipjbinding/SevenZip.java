@@ -771,17 +771,24 @@ public class SevenZip {
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    // TODO Remove me
-    public static <T extends IOutCreateArchive<?>> T openOutArchive(Class<T> outArchiveInterface)
-            throws SevenZipException {
-        ArchiveFormat archiveFormat = ArchiveFormat.findOutArchiveImplementationToInterface(outArchiveInterface);
-        return (T) openOutArchive(archiveFormat);
-    }
-
     public static IOutCreateArchiveZip openOutArchiveZip() throws SevenZipException {
         return (IOutCreateArchiveZip) openOutArchiveIntern(ArchiveFormat.ZIP);
+    }
+
+    public static IOutCreateArchive7z openOutArchive7z() throws SevenZipException {
+        return (IOutCreateArchive7z) openOutArchiveIntern(ArchiveFormat.SEVEN_ZIP);
+    }
+
+    public static IOutCreateArchiveTar openOutArchiveTar() throws SevenZipException {
+        return (IOutCreateArchiveTar) openOutArchiveIntern(ArchiveFormat.TAR);
+    }
+
+    public static IOutCreateArchiveBZip2 openOutArchiveBZip2() throws SevenZipException {
+        return (IOutCreateArchiveBZip2) openOutArchiveIntern(ArchiveFormat.BZIP2);
+    }
+
+    public static IOutCreateArchiveGZip openOutArchiveGZip() throws SevenZipException {
+        return (IOutCreateArchiveGZip) openOutArchiveIntern(ArchiveFormat.GZIP);
     }
 
     @SuppressWarnings("unchecked")

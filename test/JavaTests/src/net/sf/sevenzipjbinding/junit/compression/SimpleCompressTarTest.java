@@ -9,9 +9,9 @@ import java.util.GregorianCalendar;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
+import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackZip;
+import net.sf.sevenzipjbinding.IOutItemCallbackTar;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -29,8 +29,8 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SimpleCompressZipTest extends JUnitNativeTestBase {
-    private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemCallbackZip> {
+public class SimpleCompressTarTest extends JUnitNativeTestBase {
+    private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemCallbackTar> {
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -48,38 +48,43 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackZip getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackZip() {
+        public IOutItemCallbackTar getOutItemCallback(final int index) throws SevenZipException {
+            return new IOutItemCallbackTar() {
+
+                public Integer getPosixAttributes() throws SevenZipException {
+                    return null;
+                }
+
+                //                public boolean isAnti() throws SevenZipException {
+                //                    return false;
+                //                }
+                //
                 public long getSize() throws SevenZipException {
                     return virtualContent.getItemStream(index).getSize();
                 }
-
+                //
                 public String getPath() throws SevenZipException {
                     return virtualContent.getItemPath(index);
                 }
-
-                public Integer getAttributes() throws SevenZipException {
-                    return null;
+                //
+                //                public Integer getAttributes() throws SevenZipException {
+                //                    return null;
+                //                }
+                //
+                public Date getModificationTime() throws SevenZipException {
+                    return new Date();
                 }
 
                 public boolean isDir() throws SevenZipException {
                     return false;
                 }
 
-                public boolean isNtfsTime() throws SevenZipException {
-                    return true;
+                public String getUser() throws SevenZipException {
+                    return "me";
                 }
 
-                public Date getModificationTime() throws SevenZipException {
-                    return substructDate(DATE, 1);
-                }
-
-                public Date getLastAccessTime() throws SevenZipException {
-                    return DATE;
-                }
-
-                public Date getCreationTime() throws SevenZipException {
-                    return substructDate(DATE, 2);
+                public String getGroup() throws SevenZipException {
+                    return "developers";
                 }
             };
         }
@@ -88,32 +93,30 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
     static final Date DATE = new Date();
 
     VirtualContent virtualContent;
-    CallbackTester<OutCreateArchiveZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveZip>(
-            new OutCreateArchiveZip());
+    CallbackTester<OutCreateArchiveTar> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveTar>(
+            new OutCreateArchiveTar());
 
     //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
-    public void testCompressionZip() throws Exception {
+    public void testCompressionTar() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
 
-        ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
+        ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 
-        IOutCreateArchiveZip outNewArchiveZip = closeLater(SevenZip.openOutArchiveZip());
+        IOutCreateArchiveTar outNewArchiveTar = closeLater(SevenZip.openOutArchiveTar());
 
-        outNewArchiveZip.setLevel(5);
+        assertEquals(ArchiveFormat.TAR, outNewArchiveTar.getArchiveFormat());
 
-        assertEquals(ArchiveFormat.ZIP, outNewArchiveZip.getArchiveFormat());
-
-        outNewArchiveZip.createArchive(byteArrayStream, virtualContent.getItemCount(),
+        outNewArchiveTar.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.ZIP, byteArrayStream));
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.TAR, byteArrayStream));
         virtualContent.verifyInArchive(inArchive);
     }
 

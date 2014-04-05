@@ -32,7 +32,9 @@ public interface IOutCreateCallback<E> extends IProgress { // TODO Restruct <E>
      * Get the implementation of the item callback. This callback provides meta data for archive items being created or
      * updated.
      * 
+     * @param index
+     *            index of the item get meta data
      * @return implementation of the item callback (extending one of the {@link IOutItemCallbackBase} interfaces)
      */
-    public E getOutItemCallback() throws SevenZipException;
+    public E getOutItemCallback(int i) throws SevenZipException;
 }

@@ -73,9 +73,13 @@ public class TestTestSuite {
                     continue;
                 }
                 if (item.getName().endsWith(".java")) {
-                    Class<?> clazz = Class.forName(classname + "."
-                            + item.getName().substring(0, item.getName().length() - 5));
-                    processClass(clazz, classNameSet);
+                    try {
+                        Class<?> clazz = Class.forName(classname + "."
+                                + item.getName().substring(0, item.getName().length() - 5));
+                        processClass(clazz, classNameSet);
+                    } catch (ClassNotFoundException exception) {
+                        System.out.println("WARNING: Class not found for " + item.getName());
+                    }
                 }
             }
         }
@@ -83,7 +87,7 @@ public class TestTestSuite {
 
     private void processClass(Class<?> clazz, Set<String> classNameSet) {
         boolean found = false;
-        if (!Modifier.isAbstract(clazz.getModifiers())) {
+        if (!Modifier.isAbstract(clazz.getModifiers()) && Modifier.isPublic(clazz.getModifiers())) {
             for (Method method : clazz.getMethods()) {
                 if (method.getAnnotation(org.junit.Test.class) != null) {
                     found = true;

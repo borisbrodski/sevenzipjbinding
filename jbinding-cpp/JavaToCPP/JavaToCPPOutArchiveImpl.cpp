@@ -53,7 +53,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
 			new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
-					isInArchiveAttached);
+					isInArchiveAttached, archiveFormatIndex);
 
 	HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
 			cppToJavaArchiveUpdateCallback);

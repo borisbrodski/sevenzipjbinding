@@ -9,9 +9,9 @@ import java.util.GregorianCalendar;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
+import net.sf.sevenzipjbinding.IOutCreateArchiveBZip2;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackZip;
+import net.sf.sevenzipjbinding.IOutItemCallbackBZip2;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -29,8 +29,8 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SimpleCompressZipTest extends JUnitNativeTestBase {
-    private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemCallbackZip> {
+public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
+    private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemCallbackBZip2> {
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -48,38 +48,33 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackZip getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackZip() {
+        public IOutItemCallbackBZip2 getOutItemCallback(final int index) throws SevenZipException {
+            return new IOutItemCallbackBZip2() {
+
+                public Integer getPosixAttributes() throws SevenZipException {
+                    return null;
+                }
+
                 public long getSize() throws SevenZipException {
                     return virtualContent.getItemStream(index).getSize();
                 }
-
                 public String getPath() throws SevenZipException {
                     return virtualContent.getItemPath(index);
                 }
-
-                public Integer getAttributes() throws SevenZipException {
-                    return null;
+                public Date getModificationTime() throws SevenZipException {
+                    return new Date();
                 }
 
                 public boolean isDir() throws SevenZipException {
                     return false;
                 }
 
-                public boolean isNtfsTime() throws SevenZipException {
-                    return true;
+                public String getUser() throws SevenZipException {
+                    return "me";
                 }
 
-                public Date getModificationTime() throws SevenZipException {
-                    return substructDate(DATE, 1);
-                }
-
-                public Date getLastAccessTime() throws SevenZipException {
-                    return DATE;
-                }
-
-                public Date getCreationTime() throws SevenZipException {
-                    return substructDate(DATE, 2);
+                public String getGroup() throws SevenZipException {
+                    return "developers";
                 }
             };
         }
@@ -88,32 +83,32 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
     static final Date DATE = new Date();
 
     VirtualContent virtualContent;
-    CallbackTester<OutCreateArchiveZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveZip>(
-            new OutCreateArchiveZip());
+    CallbackTester<OutCreateArchiveBZip2> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveBZip2>(
+            new OutCreateArchiveBZip2());
 
     //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
-    public void testCompressionZip() throws Exception {
+    public void testCompressionBZip2() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
+        virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
 
-        ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
+        ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 
-        IOutCreateArchiveZip outNewArchiveZip = closeLater(SevenZip.openOutArchiveZip());
+        IOutCreateArchiveBZip2 outNewArchiveBZip2 = closeLater(SevenZip.openOutArchiveBZip2());
 
-        outNewArchiveZip.setLevel(5);
+        outNewArchiveBZip2.setLevel(5);
 
-        assertEquals(ArchiveFormat.ZIP, outNewArchiveZip.getArchiveFormat());
+        assertEquals(ArchiveFormat.BZIP2, outNewArchiveBZip2.getArchiveFormat());
 
-        outNewArchiveZip.createArchive(byteArrayStream, virtualContent.getItemCount(),
+        outNewArchiveBZip2.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.ZIP, byteArrayStream));
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.BZIP2, byteArrayStream));
         virtualContent.verifyInArchive(inArchive);
     }
 

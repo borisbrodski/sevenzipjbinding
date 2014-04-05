@@ -31,6 +31,8 @@ void CodecTools::init() {
         const wchar_t * name = (const wchar_t*)CodecTools::codecs.Formats[i].Name;
         if (wcscmp(name, L"Cab") == 0) {
             cabIndex = i;
+        } else if (wcscmp(name, L"gzip") == 0) {
+            gzipIndex = i;
         }
 	}
 }

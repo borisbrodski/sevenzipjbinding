@@ -10,6 +10,10 @@ import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
+import net.sf.sevenzipjbinding.junit.compression.SimpleCompressBZip2Test;
+import net.sf.sevenzipjbinding.junit.compression.SimpleCompressGZipTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleCompressSevenZipTest;
+import net.sf.sevenzipjbinding.junit.compression.SimpleCompressTarTest;
 import net.sf.sevenzipjbinding.junit.compression.SimpleCompressZipTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
@@ -165,6 +169,7 @@ public class AllTestSuite extends TestSuite {
     /*    */JUnitInitializationTest.class, //
             ArchiveFormatTest.class, //
             DeclareThrowsSevenZipExceptionTest.class, //
+            PTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //
@@ -330,6 +335,11 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] compressionTests = { //
     /*    */SimpleCompressZipTest.class, //
+            SimpleCompressBZip2Test.class, //
+            SimpleCompressGZipTest.class, //
+            SimpleCompressSevenZipTest.class, //
+            SimpleCompressTarTest.class, //
+
     //SimpleCreateSevenZipTest.class, //
     //SimpleRemoveTest.class, //
     //SimpleAddTest.class, //

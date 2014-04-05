@@ -5,6 +5,7 @@
 #include "CPPToJavaSequentialInStream.h"
 #include "CPPToJavaInStream.h"
 #include "UnicodeHelper.h"
+#include "CodecTools.h"
 
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
 Int32 *newProperties, /* 1 - new properties, 0 - old properties */
@@ -57,6 +58,7 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
 
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID,
                                                          PROPVARIANT *value) {
+
 	#define JNI_TYPE_STRING                              jstring
 	#define JNI_TYPE_INTEGER                             jobject
 	#define JNI_TYPE_DATE                                jobject
@@ -96,7 +98,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 			jniEnvInstance.reportError("IOutItemCallback implementation should implement " #methodName " method.");     \
 			return S_FALSE;                                                                                             \
 		}                                                                                                               \
-		JNI_TYPE_##TYPE value = _iOutItemCallback->methodName(jniEnvInstance, _outItemCallbackImplementation, index);   \
+		JNI_TYPE_##TYPE value = _iOutItemCallback->methodName(jniEnvInstance, _outItemCallbackImplementation);          \
 		if (jniEnvInstance.exceptionCheck()) {                                                                          \
 			return S_FALSE;                                                                                             \
 		}                                                                                                               \
@@ -114,6 +116,23 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     value->vt = VT_NULL;
     NWindows::NCOM::CPropVariant cPropVariant;
 
+    if (codecTools.isGZipArchive(_archiveFormatIndex) && propID == kpidIsDir) {
+    	cPropVariant = false;
+    	cPropVariant.Detach(value);
+        return S_OK;
+    }
+
+    if (_outItemCallbackLastIndex != index || _outItemCallbackImplementation == NULL) {
+
+    	_outItemCallbackImplementation = _iArchiveCreateCallback.getOutItemCallback(jniEnvInstance, _javaImplementation, index);
+		if (jniEnvInstance.exceptionCheck()) {
+			return S_FALSE;
+		}
+		_iOutItemCallback = &jni::IOutItemCallback::_getInstanceFromObject(jniEnvInstance, _outItemCallbackImplementation);
+
+		_outItemCallbackLastIndex = index;
+    }
+
     switch (propID) {
     case kpidAttrib:             GET_ATTRIBUTE(INTEGER, getAttributes)
     case kpidPosixAttrib:        GET_ATTRIBUTE(INTEGER, getPosixAttributes)
@@ -125,6 +144,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     case kpidATime:              GET_ATTRIBUTE(DATE,    getLastAccessTime)
     case kpidCTime:              GET_ATTRIBUTE(DATE,    getCreationTime)
     case kpidSize:               GET_ATTRIBUTE(LONG,    getSize)
+    case kpidUser:               GET_ATTRIBUTE(STRING,  getUser)
+    case kpidGroup:              GET_ATTRIBUTE(STRING,  getGroup)
     default:
     	printf("kpidNoProperty: %i\n", (int) kpidNoProperty);
     	printf("kpidMainSubfile: %i\n", (int) kpidMainSubfile);
@@ -195,18 +216,6 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     }
 
     cPropVariant.Detach(value);
-
-//    // public Object getProperty(int index, PropID propID);
-//    jobject result = _iArchiveUpdateCallback.getProperty(jniEnvInstance, _javaImplementation,
-//            (jint) index, propIDObject);
-//    if (jniEnvInstance.exceptionCheck()) {
-//        return S_FALSE;
-//    }
-//
-    if (0) {
-    	// TODO remove this
-    	// ObjectToPropVariant(jniEnvInstance, result, value);
-    }
 
     return S_OK;
 }

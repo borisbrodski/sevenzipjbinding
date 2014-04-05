@@ -7,6 +7,11 @@ class CodecTools {
 	 */
 	int cabIndex;
 
+	/**
+	 * Index of the GZIP archive format.
+	 */
+	int gzipIndex;
+
 public:
 	CCodecs codecs;
 
@@ -19,6 +24,10 @@ public:
 
 	bool isCabArchive(int index) {
 		return cabIndex == index;
+	}
+
+	bool isGZipArchive(int index) {
+		return gzipIndex == index;
 	}
 };
 

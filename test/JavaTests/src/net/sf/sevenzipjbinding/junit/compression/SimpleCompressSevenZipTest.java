@@ -9,9 +9,9 @@ import java.util.GregorianCalendar;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
+import net.sf.sevenzipjbinding.IOutCreateArchive7z;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackZip;
+import net.sf.sevenzipjbinding.IOutItemCallback7z;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -29,8 +29,8 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 4.65-1
  */
-public class SimpleCompressZipTest extends JUnitNativeTestBase {
-    private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemCallbackZip> {
+public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
+    private class OutCreateArchive7z implements IOutCreateCallback<IOutItemCallback7z> {
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -48,8 +48,13 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackZip getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackZip() {
+        public IOutItemCallback7z getOutItemCallback(final int index) throws SevenZipException {
+            return new IOutItemCallback7z() {
+
+                public boolean isAnti() throws SevenZipException {
+                    return false;
+                }
+
                 public long getSize() throws SevenZipException {
                     return virtualContent.getItemStream(index).getSize();
                 }
@@ -62,24 +67,12 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
                     return null;
                 }
 
+                public Date getModificationTime() throws SevenZipException {
+                    return new Date();
+                }
+
                 public boolean isDir() throws SevenZipException {
                     return false;
-                }
-
-                public boolean isNtfsTime() throws SevenZipException {
-                    return true;
-                }
-
-                public Date getModificationTime() throws SevenZipException {
-                    return substructDate(DATE, 1);
-                }
-
-                public Date getLastAccessTime() throws SevenZipException {
-                    return DATE;
-                }
-
-                public Date getCreationTime() throws SevenZipException {
-                    return substructDate(DATE, 2);
                 }
             };
         }
@@ -88,32 +81,33 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
     static final Date DATE = new Date();
 
     VirtualContent virtualContent;
-    CallbackTester<OutCreateArchiveZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveZip>(
-            new OutCreateArchiveZip());
+    CallbackTester<OutCreateArchive7z> callbackTesterCreateArchive = new CallbackTester<OutCreateArchive7z>(
+            new OutCreateArchive7z());
 
     //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
-    public void testCompressionZip() throws Exception {
+    public void testCompression7z() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
 
-        IOutCreateArchiveZip outNewArchiveZip = closeLater(SevenZip.openOutArchiveZip());
+        IOutCreateArchive7z outNewArchive7z = closeLater(SevenZip.openOutArchive7z());
 
-        outNewArchiveZip.setLevel(5);
+        outNewArchive7z.setLevel(5);
 
-        assertEquals(ArchiveFormat.ZIP, outNewArchiveZip.getArchiveFormat());
+        assertEquals(ArchiveFormat.SEVEN_ZIP, outNewArchive7z.getArchiveFormat());
 
-        outNewArchiveZip.createArchive(byteArrayStream, virtualContent.getItemCount(),
+        outNewArchive7z.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getInstance());
 
-        assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
+        // No setCompleted call
+        assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.ZIP, byteArrayStream));
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream));
         virtualContent.verifyInArchive(inArchive);
     }
 

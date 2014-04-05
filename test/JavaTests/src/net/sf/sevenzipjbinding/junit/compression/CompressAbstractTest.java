@@ -26,6 +26,7 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
             this.randomContext = randomContext;
         }
 
+        // TODO Remove
         public Object getProperty(int index, PropID propID) {
             switch (propID) {
             case PATH:
@@ -58,7 +59,7 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
 
         }
 
-        public IOutItemCallback getOutItemCallback() throws SevenZipException {
+        public IOutItemCallback getOutItemCallback(int i) throws SevenZipException {
             return null; // TODO
         }
 
