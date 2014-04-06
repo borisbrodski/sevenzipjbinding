@@ -374,7 +374,7 @@
 #define JT_BEGIN_INTERFACE(name)                                                                \
     namespace jni {                                                                             \
     class name : public JInterface<name> {                                                      \
-        friend class JObjectMap<jclass, name>;                                                  \
+        friend class JObjectMap<name>;                                                          \
     public:                                                                                     \
         name() : JInterface<name>(#name) {}
 
@@ -640,6 +640,7 @@ template<class T>
 class JavaClass {
     char const * _fullname;
     jclass _jclass;
+    PlatformCriticalSection _initCriticalSection;
 protected:
     static T & _instance;
     JavaClass(char const * fullname) :
@@ -669,21 +670,32 @@ protected:
         }
     }
 #endif // USE_MY_ASSERTS
+private:
+    void initIfNecessary(JNIEnv * env) {
+    	if (_jclass) {
+    		return;
+    	}
+    	_initCriticalSection.Enter();
+    	if (!_jclass) {
+    		init(env);
+    	}
+    	_initCriticalSection.Leave();
+    }
+    void init(JNIEnv * env) {
+        TRACE ("env->FindClass() for " << _fullname)
+        jclass clazz = env->FindClass(_fullname);
+        FATALIF1(!clazz, "Error finding class '%s'", _fullname)
+        _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
+        MY_ASSERT(_jclass);
+    }
 public:
     jclass _getJClass(JNIEnv * env) {
-        if (!_jclass) {
-            // Lazy initialize jclass reference
-            TRACE ("env->FindClass() for " << _fullname)
-            jclass clazz = env->FindClass(_fullname);
-            FATALIF1(!clazz, "Error finding class '%s'", _fullname)
-            _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
-            MY_ASSERT(_jclass);
-        }
+    	initIfNecessary(env);
         return _jclass;
     }
 
     static void _initialize(JNIEnv * env) {
-    	_instance._getJClass(env);
+    	_instance.initIfNecessary(env);
     }
 
     // TODO Remove it
@@ -717,7 +729,8 @@ inline std::ostream & operator<<(std::ostream & stream, JavaClass<T> & javaClass
 
 template<typename T>
 class JInterface {
-    static JObjectMap<jclass, T> _jinterfaceMap;
+    static JObjectMap<T*> _jinterfaceMap;
+    static PlatformCriticalSection _criticalSection;
     char const * _name;
     jclass _jclass;
 protected:
@@ -738,25 +751,37 @@ public:
     char const * _getName() {
         return _name;
     }
-    static T & _getInstanceFromObject(JNIEnv * env, jobject jobject) {
+    static T * _getInstanceFromObject(JNIEnv * env, jobject jobject) {
         jclass jobjectClass = env->GetObjectClass(jobject);
         FATALIF(!jobjectClass, "Error determining object class");
         return _getInstance(env, jobjectClass);
     }
-    static T & _getInstance(JNIEnv * env, jclass objectClass) {
-        T * instance = _jinterfaceMap.get(env, objectClass);
+    static T * _getInstance(JNIEnv * env, jclass objectClass) {
+        _criticalSection.Enter();
+        T ** instance = _jinterfaceMap.get(env, objectClass);
         if (instance) {
+            _criticalSection.Leave();
             return *instance;
         }
+
         objectClass = (jclass) env->NewGlobalRef(objectClass);
-        T & newInstance = _jinterfaceMap.add(objectClass);
-        newInstance._jclass = objectClass;
+        T * newInstance = new T();
+        newInstance->_jclass = objectClass;
+        _jinterfaceMap.add(objectClass, newInstance);
+
+        _criticalSection.Leave();
+
         return newInstance;
     }
 };
 
 template<typename T>
-JObjectMap<jclass, T> JInterface<T>::_jinterfaceMap;
+JObjectMap<T*> JInterface<T>::_jinterfaceMap;
+
+template<typename T>
+PlatformCriticalSection JInterface<T>::_criticalSection;
+
+
 
 #ifdef TRACE_ON
 template<typename T>
@@ -773,6 +798,7 @@ class JMethod {
     bool _isStatic;
     jmethodID _jmethodID;
     bool  isInitialized;
+    PlatformCriticalSection _initCriticalSection;
 protected:
     JMethod(char const * name, char const * signature, bool isStatic = false) :
         _name(name), _signature(signature), _isStatic(isStatic), _jmethodID(NULL) {
@@ -792,6 +818,7 @@ public:
     	return _jmethodID != NULL;
     }
 private:
+    void initMethodIDIfNecessary(JNIEnv * env, jclass jclazz);
     void initMethodID(JNIEnv * env, jclass jclazz);
 };
 

@@ -20,7 +20,7 @@ STDMETHODIMP CPPToJavaSequentialInStream::Read(void *data, UInt32 size, UInt32 *
 	    jniEnvInstance.reportError("Out of local resources or out of memory");
 	}
 
-	jint wasRead = _iSequentialInStream.read(jniEnvInstance, _javaImplementation, byteArray);
+	jint wasRead = _iSequentialInStream->read(jniEnvInstance, _javaImplementation, byteArray);
 	if (jniEnvInstance.exceptionCheck())
 	{
 	    jniEnvInstance->DeleteLocalRef(byteArray);

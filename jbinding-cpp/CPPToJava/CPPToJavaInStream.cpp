@@ -14,7 +14,7 @@ STDMETHODIMP CPPToJavaInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *ne
         *newPosition = 0;
     }
 
-    jlong returnedNewPosition = _iSeekableStream.seek(jniEnvInstance, _javaImplementation,
+    jlong returnedNewPosition = _iSeekableStream->seek(jniEnvInstance, _javaImplementation,
             (jlong) offset, (jint) seekOrigin);
 
     if (jniEnvInstance.exceptionCheck()) {

@@ -13,7 +13,7 @@ class CPPToJavaSequentialInStream :
 	public virtual ISequentialInStream, //
 	public CMyUnknownImp {
 
-	jni::ISequentialInStream _iSequentialInStream;
+	jni::ISequentialInStream * _iSequentialInStream;
 public:
 	MY_UNKNOWN_IMP1(ISequentialInStream)
 

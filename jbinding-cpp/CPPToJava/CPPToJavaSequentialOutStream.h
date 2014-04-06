@@ -11,7 +11,7 @@ class CPPToJavaSequentialOutStream : public CPPToJavaAbstract,
 	public CMyUnknownImp
 {
 private:
-    jni::ISequentialOutStream _iSequentialOutStream;
+    jni::ISequentialOutStream * _iSequentialOutStream;
 public:
 	MY_UNKNOWN_IMP1(ISequentialOutStream)
 

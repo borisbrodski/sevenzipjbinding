@@ -4,12 +4,25 @@
 
 namespace jni {
 
-void JMethod::initMethodID(JNIEnv * env, jclass jclazz) {
+void JMethod::initMethodIDIfNecessary(JNIEnv * env, jclass jclazz) {
 	if (isInitialized) {
 		return;
 	}
+
+	_initCriticalSection.Enter();
+
+	if (isInitialized) {
+		return;
+	}
+
+	initMethodID(env, jclazz);
 	isInitialized = true;
 
+	_initCriticalSection.Leave();
+
+}
+
+void JMethod::initMethodID(JNIEnv * env, jclass jclazz) {
 	TRACE("Getting method id for " << *this);
 	if (_isStatic) {
 		_jmethodID = env->GetStaticMethodID(jclazz, _name, _signature);

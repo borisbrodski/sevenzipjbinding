@@ -15,7 +15,7 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
         *newPosition = 0;
     }
 
-    jlong returnedNewPosition = _iSeekableStream.seek(jniEnvInstance, _javaImplementation,
+    jlong returnedNewPosition = _iSeekableStream->seek(jniEnvInstance, _javaImplementation,
             (jlong) offset, (jint) seekOrigin);
 
     if (jniEnvInstance.exceptionCheck()) {
@@ -38,7 +38,7 @@ STDMETHODIMP CPPToJavaOutStream::SetSize(Int64 newSize) {
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
-	_iOutStream.setSize(jniEnvInstance, _javaImplementation, (jlong)newSize);
+	_iOutStream->setSize(jniEnvInstance, _javaImplementation, (jlong)newSize);
 
 	return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }

@@ -149,10 +149,10 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterface1(JNIEnv
         jclass interface1ImplClass = env->GetObjectClass(interface1Impl);
         MY_ASSERT(interface1ImplClass)
 
-        interface1 = &Interface1::_getInstance(env, interface1ImplClass);
+        interface1 = Interface1::_getInstance(env, interface1ImplClass);
 
     } else {
-        interface1 = &Interface1::_getInstanceFromObject(env, interface1Impl);
+        interface1 = Interface1::_getInstanceFromObject(env, interface1Impl);
     }
 
     jlong longResult = interface1->longMethod(env, interface1Impl, jint(17 + offset));

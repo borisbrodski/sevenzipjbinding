@@ -377,7 +377,7 @@ template<class T>
 class AbstractJavaCallback : public Object {
 protected:
     const jobject _implementation;
-    T & _javaClass;
+    T * _javaClass;
     JBindingSession & _jbindingSession;
 
     AbstractJavaCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,

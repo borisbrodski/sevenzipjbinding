@@ -7,7 +7,7 @@
 
 class CPPToJavaArchiveOpenCallback : public CPPToJavaAbstract, public virtual IArchiveOpenCallback, public CMyUnknownImp
 {
-    jni::IArchiveOpenCallback _iArchiveOpenCallback;
+    jni::IArchiveOpenCallback * _iArchiveOpenCallback;
 public:
     MY_UNKNOWN_IMP
 

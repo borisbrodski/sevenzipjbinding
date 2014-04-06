@@ -11,35 +11,32 @@
 #include <list>
 #include "jni.h"
 #include "BaseSystem.h"
+#include "Debug.h"
 
 
 /**
- * Synchronized object map
+ * Object map
  */
-template<typename JOBJ, typename VALUE>
+template<typename VALUE>
 class JObjectMap {
     struct Item {
-        JOBJ jobj;
+        jobject jobj;
         VALUE value;
     };
-    PlatformCriticalSection _criticalSection;
     std::list<Item> jobjectList;
     typedef typename std::list<Item>::iterator iterator;
 public:
-    VALUE & add(JOBJ const & jobj) {
-        _criticalSection.Enter();
+    void add(jobject const jobj, VALUE value) {
         jobjectList.push_front(Item());
         Item & item = *jobjectList.begin();
         item.jobj = jobj;
-        _criticalSection.Leave();
-        return item.value;
+        item.value = value;
     }
 
-    VALUE * get(JNIEnv * env, JOBJ const & jobj) {
-        _criticalSection.Enter();
+    VALUE * get(JNIEnv * env, jobject const jobj) {
         iterator iter = jobjectList.begin();
         for (; iter != jobjectList.end(); iter++) {
-            TRACE("MAP: Checking " << iter->jobj);
+            TRACE("MAP: Checking " << env << iter->jobj);
             if (env->IsSameObject(iter->jobj, jobj)) {
                 TRACE("MAP: Found!")
                 if (jobjectList.begin() != iter) {
@@ -49,13 +46,10 @@ public:
                 }
                 // Put element on top
                 VALUE * result = &(iter->value);
-                _criticalSection.Leave();
                 return result;
             }
         }
         TRACE("MAP: Not found");
-
-        _criticalSection.Leave();
         return NULL;
     }
 

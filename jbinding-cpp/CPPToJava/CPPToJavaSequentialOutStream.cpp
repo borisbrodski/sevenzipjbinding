@@ -21,7 +21,7 @@ STDMETHODIMP CPPToJavaSequentialOutStream::Write(const void *data, UInt32 size,
     jniEnvInstance->SetByteArrayRegion(dataArray, 0, (jsize) size, (const jbyte*) data);
 
     // public int write(byte[] data);
-    jint result = _iSequentialOutStream.write(jniEnvInstance, _javaImplementation, dataArray);
+    jint result = _iSequentialOutStream->write(jniEnvInstance, _javaImplementation, dataArray);
     if (jniEnvInstance.exceptionCheck()) {
         jniEnvInstance->DeleteLocalRef(dataArray);
         return S_FALSE;

@@ -108,6 +108,7 @@ public class JNIToolsTest extends JUnitNativeTestBase {
         }
     }
 
+    // TODO Fix it
     @Test
     public void testInterface2Impl1Multithreaded() throws Exception {
         runMultithreaded(new RunnableThrowsException() {

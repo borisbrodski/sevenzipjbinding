@@ -5,7 +5,7 @@
 class CPPToJavaInStream : public virtual IInStream, public CPPToJavaSequentialInStream
 {
 private:
-    jni::ISeekableStream _iSeekableStream;
+    jni::ISeekableStream * _iSeekableStream;
 public:
 	CPPToJavaInStream(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject inStream) :
 		CPPToJavaSequentialInStream(jbindingSession, initEnv, inStream),

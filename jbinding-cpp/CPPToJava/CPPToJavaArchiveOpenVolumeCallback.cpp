@@ -21,7 +21,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
         return S_FALSE;
     }
 
-    jobject result = _iArchiveOpenVolumeCallback.getProperty(jniEnvInstance, _javaImplementation,
+    jobject result = _iArchiveOpenVolumeCallback->getProperty(jniEnvInstance, _javaImplementation,
             propIDObject);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
@@ -44,7 +44,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
 
     jstring nameString = jniEnvInstance->NewString(UnicodeHelper(name), (jsize) wcslen(name));
 
-    jobject inStreamImpl = _iArchiveOpenVolumeCallback.getStream(jniEnvInstance,
+    jobject inStreamImpl = _iArchiveOpenVolumeCallback->getStream(jniEnvInstance,
             _javaImplementation, nameString);
     if (jniEnvInstance.exceptionCheck()) {
         jniEnvInstance->DeleteLocalRef(nameString);

@@ -4,8 +4,8 @@
 
 class CPPToJavaOutStream : public virtual IOutStream, public CPPToJavaSequentialOutStream {
 private:
-    jni::IOutStream _iOutStream;
-    jni::ISeekableStream _iSeekableStream;
+    jni::IOutStream * _iOutStream;
+    jni::ISeekableStream * _iSeekableStream;
 
 public:
     CPPToJavaOutStream(JBindingSession & jbindingSession, JNIEnv * initEnv, jobject inStream) :

@@ -13,7 +13,7 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
         *password = NULL;
     }
 
-    jstring passwordString = (jstring) _iCryptoGetTextPassword.cryptoGetTextPassword(
+    jstring passwordString = (jstring) _iCryptoGetTextPassword->cryptoGetTextPassword(
             jniEnvInstance, _javaImplementation);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;

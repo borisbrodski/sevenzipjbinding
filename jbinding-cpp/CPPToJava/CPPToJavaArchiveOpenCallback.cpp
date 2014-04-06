@@ -19,7 +19,7 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, con
         bytesLongObject = LongToObject(jniEnvInstance, *bytes);
     }
 
-    _iArchiveOpenCallback.setCompleted(jniEnvInstance, _javaImplementation, filesLongObject,
+    _iArchiveOpenCallback->setCompleted(jniEnvInstance, _javaImplementation, filesLongObject,
             bytesLongObject);
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
@@ -40,7 +40,7 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const U
         bytesLongObject = LongToObject(jniEnvInstance, *bytes);
     }
 
-    _iArchiveOpenCallback.setTotal(jniEnvInstance, _javaImplementation, filesLongObject, bytesLongObject);
+    _iArchiveOpenCallback->setTotal(jniEnvInstance, _javaImplementation, filesLongObject, bytesLongObject);
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
 

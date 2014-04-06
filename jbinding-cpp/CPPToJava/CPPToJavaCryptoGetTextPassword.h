@@ -9,7 +9,7 @@ class CPPToJavaCryptoGetTextPassword : public CPPToJavaAbstract, public virtual 
 {
 
 private:
-    jni::ICryptoGetTextPassword _iCryptoGetTextPassword;
+    jni::ICryptoGetTextPassword * _iCryptoGetTextPassword;
 public:
     MY_UNKNOWN_IMP
 

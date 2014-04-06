@@ -8,7 +8,7 @@ class CPPToJavaArchiveExtractCallback : public virtual IArchiveExtractCallback,
         public virtual ICryptoGetTextPassword, public virtual CPPToJavaProgress {
 private:
     ICryptoGetTextPassword * _cryptoGetTextPasswordImpl;
-    jni::IArchiveExtractCallback _iArchiveExtractCallback;
+    jni::IArchiveExtractCallback * _iArchiveExtractCallback;
 
 public:
     CPPToJavaArchiveExtractCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,

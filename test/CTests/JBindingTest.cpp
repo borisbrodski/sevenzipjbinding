@@ -282,7 +282,7 @@ public:
     char * callback1(long num) {
         JNIEnvInstance envInstance(_jbindingSession);
 
-        jstring result = _javaClass.test(envInstance, _implementation, jint(num));
+        jstring result = _javaClass->test(envInstance, _implementation, jint(num));
         if (envInstance.exceptionCheck()) {
             return strdup("EXCEPTION");
         }

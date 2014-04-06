@@ -69,7 +69,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
     }
 
     // public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
-    jobject result = _iArchiveExtractCallback.getStream(jniEnvInstance, _javaImplementation,
+    jobject result = _iArchiveExtractCallback->getStream(jniEnvInstance, _javaImplementation,
             (jint) index, askExtractModeObject);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
@@ -99,7 +99,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
     }
 
     // public void prepareOperation(ExtractAskMode extractAskMode);
-    _iArchiveExtractCallback.prepareOperation(jniEnvInstance, _javaImplementation,
+    _iArchiveExtractCallback->prepareOperation(jniEnvInstance, _javaImplementation,
             askExtractModeObject);
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
@@ -118,7 +118,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOp
     }
 
     // public void setOperationResult(ExtractOperationResult extractOperationResult);
-    _iArchiveExtractCallback.setOperationResult(jniEnvInstance, _javaImplementation,
+    _iArchiveExtractCallback->setOperationResult(jniEnvInstance, _javaImplementation,
             resultEOperationResultObject);
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;

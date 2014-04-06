@@ -9,7 +9,7 @@ class CPPToJavaProgress : public CPPToJavaAbstract, public virtual IProgress
 {
 
 private:
-    jni::IProgress _iProgress;
+    jni::IProgress * _iProgress;
 public:
 	MY_UNKNOWN_IMP
 

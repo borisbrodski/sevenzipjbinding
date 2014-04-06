@@ -19,7 +19,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import org.junit.Test;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
-    private static final String NO_CUSTOM_MESSSAGE_TEXT = "Multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
+    private static final String NO_CUSTOM_MESSSAGE_TEXT = "One or multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
 
     public static abstract class Width1 extends ExceptionHandlingTest {
         @Override
@@ -591,7 +591,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         } catch (Throwable throwable) {
             assertTrue(useException);
             checkException(throwable);
-            // throwable.printStackTrace(); 
+            // throwable.printStackTrace();
             if (getWidth() == 1 && getMtWidth() == 0 && !customErrorMessage) {
                 assertFalse(throwable instanceof SevenZipException);
                 assertNull(throwable.getCause());

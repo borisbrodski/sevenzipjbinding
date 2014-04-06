@@ -88,7 +88,7 @@ ELSE()
 ENDIF()
 
 add_definitions(
-    -DTRACE_ON
+#    -DTRACE_ON
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -D_REENTRANT

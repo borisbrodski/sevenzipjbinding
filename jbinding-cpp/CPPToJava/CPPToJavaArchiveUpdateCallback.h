@@ -8,7 +8,7 @@ class CPPToJavaArchiveUpdateCallback : public virtual IArchiveUpdateCallback,
         public CPPToJavaProgress {
 
 private:
-    jni::IArchiveCreateCallback _iArchiveCreateCallback;
+    jni::IArchiveCreateCallback * _iArchiveCreateCallback;
     jni::IArchiveUpdateCallback * _iArchiveUpdateCallback = NULL;
     jni::IOutItemCallback * _iOutItemCallback = NULL;
     jobject _outItemCallbackImplementation = NULL;
@@ -28,7 +28,7 @@ public:
 		JNIEnvInstance jniEnvInstance(_jbindingSession);
 
         if (isInArchiveAttached) {
-        	_iArchiveUpdateCallback = &jni::IArchiveUpdateCallback::_getInstanceFromObject(initEnv, archiveUpdateCallback);
+        	_iArchiveUpdateCallback = jni::IArchiveUpdateCallback::_getInstanceFromObject(initEnv, archiveUpdateCallback);
         }
     }
 
