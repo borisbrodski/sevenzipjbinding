@@ -37,7 +37,13 @@ public class JUnitNativeTestBase {
     private static boolean nonDebugLibraryWasReported = false;
     private static boolean nonUseMyAssertLibraryWasReported = false;
 
-    protected final Random random = new Random(this.getClass().getCanonicalName().hashCode());
+    protected final ThreadLocal<Random> random = new ThreadLocal<Random>() {
+        @Override
+        protected Random initialValue() {
+            return new Random(JUnitNativeTestBase.this.getClass().getCanonicalName().hashCode());
+        };
+    };
+
     protected static final Random RANDOM = new Random(0);
 
     @Rule

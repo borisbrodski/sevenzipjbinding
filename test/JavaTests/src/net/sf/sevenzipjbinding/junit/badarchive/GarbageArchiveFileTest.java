@@ -2,6 +2,7 @@ package net.sf.sevenzipjbinding.junit.badarchive;
 
 import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -11,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Tests behavior of SevenZipJBinding trying opening random stream of bytes as an archive.
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -235,8 +236,8 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
     }
 
     public void doOpenBadArchive(ArchiveFormat archiveFormat) throws Exception {
-        final byte[] archive = new byte[random.nextInt(1000) + 1000];
-        random.nextBytes(archive);
+        final byte[] archive = new byte[random.get().nextInt(1000) + 1000];
+        random.get().nextBytes(archive);
         IInStream inStream = new IInStream() {
             int offset = 0;
 
@@ -263,6 +264,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
                 return offset >= archive.length ? archive.length : offset;
             }
         };
-        SevenZip.openInArchive(archiveFormat, inStream);
+        IInArchive openInArchive = SevenZip.openInArchive(archiveFormat, inStream);
+        openInArchive.close();
     }
 }
