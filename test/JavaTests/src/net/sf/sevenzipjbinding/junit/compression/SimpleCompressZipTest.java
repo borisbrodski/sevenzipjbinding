@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @version 9.13-2.00
  */
 public class SimpleCompressZipTest extends JUnitNativeTestBase {
     private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemCallbackZip> {
@@ -90,8 +90,6 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveZip>(
             new OutCreateArchiveZip());
-
-    //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
     public void testCompressionZip() throws Exception {

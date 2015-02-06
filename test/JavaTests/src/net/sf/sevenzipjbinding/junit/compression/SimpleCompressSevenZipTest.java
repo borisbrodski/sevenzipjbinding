@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @version 9.13-2.00
  */
 public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
     private class OutCreateArchive7z implements IOutCreateCallback<IOutItemCallback7z> {
@@ -84,8 +84,6 @@ public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
     CallbackTester<OutCreateArchive7z> callbackTesterCreateArchive = new CallbackTester<OutCreateArchive7z>(
             new OutCreateArchive7z());
 
-    //    CallbackTester callbackTesterItem = new CallbackTester();
-
     @Test
     public void testCompression7z() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
@@ -96,6 +94,11 @@ public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
         IOutCreateArchive7z outNewArchive7z = closeLater(SevenZip.openOutArchive7z());
 
         outNewArchive7z.setLevel(5);
+        outNewArchive7z.setSolid(true);
+        outNewArchive7z.setSolidExtension(true);
+        outNewArchive7z.setSolidFiles(3);
+        outNewArchive7z.setSolidSize(1024);
+        outNewArchive7z.setThreadCount(4);
 
         assertEquals(ArchiveFormat.SEVEN_ZIP, outNewArchive7z.getArchiveFormat());
 

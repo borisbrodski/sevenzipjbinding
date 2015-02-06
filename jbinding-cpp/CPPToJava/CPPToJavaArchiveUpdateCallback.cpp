@@ -116,9 +116,11 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     value->vt = VT_NULL;
     NWindows::NCOM::CPropVariant cPropVariant;
 
-    if (codecTools.isGZipArchive(_archiveFormatIndex) && propID == kpidIsDir) {
-    	cPropVariant = false;
-    	cPropVariant.Detach(value);
+    if (propID == kpidIsDir
+            && (codecTools.isGZipArchive(_archiveFormatIndex)
+                    || codecTools.isBZip2Archive(_archiveFormatIndex))) {
+        cPropVariant = false;
+        cPropVariant.Detach(value);
         return S_OK;
     }
 

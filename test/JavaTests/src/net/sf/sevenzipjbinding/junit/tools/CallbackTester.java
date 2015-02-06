@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO Test more callbacks (extraction + compression)
 public class CallbackTester<E> implements InvocationHandler {
     private Set<String> methodNameSet = new HashSet<String>();
     private E proxyInstance;
@@ -48,7 +49,7 @@ public class CallbackTester<E> implements InvocationHandler {
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (methodNameSet.add(method.getName())) {
-            System.out.println(method);
+            // System.out.println(method);
         }
         try {
             return method.invoke(instance, args);

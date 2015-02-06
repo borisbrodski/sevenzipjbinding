@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @version 9.13-2.00
  */
 public class SimpleCompressTarTest extends JUnitNativeTestBase {
     private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemCallbackTar> {
@@ -50,27 +50,14 @@ public class SimpleCompressTarTest extends JUnitNativeTestBase {
 
         public IOutItemCallbackTar getOutItemCallback(final int index) throws SevenZipException {
             return new IOutItemCallbackTar() {
-
                 public Integer getPosixAttributes() throws SevenZipException {
                     return null;
                 }
 
-                //                public boolean isAnti() throws SevenZipException {
-                //                    return false;
-                //                }
-                //
-                public long getSize() throws SevenZipException {
-                    return virtualContent.getItemStream(index).getSize();
-                }
-                //
                 public String getPath() throws SevenZipException {
                     return virtualContent.getItemPath(index);
                 }
-                //
-                //                public Integer getAttributes() throws SevenZipException {
-                //                    return null;
-                //                }
-                //
+
                 public Date getModificationTime() throws SevenZipException {
                     return new Date();
                 }
@@ -95,8 +82,6 @@ public class SimpleCompressTarTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveTar> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveTar>(
             new OutCreateArchiveTar());
-
-    //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
     public void testCompressionTar() throws Exception {

@@ -35,6 +35,7 @@
   - Test, that the release and not the debug compilation of the binary was used to build each platform jar
 
 Minor TODOs:
+- CallbackTester: Test more callbacks (extraction + compression)
 - Write more tests, for example, extracting archive with two files encrypted with different password.
 - Write test to use OutArchive more then ones before closing it. Verify, that all feature settings remains unchanged.
 - Test some untested archive formats
@@ -58,7 +59,7 @@ Info:
   * ftp://ifctfvax.harhan.org/pub/UNIX/
 
   
-User AsciiDoc to write User Manual
+Use AsciiDoc to write User Manual
 
 Example:
 

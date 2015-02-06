@@ -18,6 +18,11 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Assert;
 
+/**
+ *
+ * @author Boris Brodski
+ * @version 9.13-2.00
+ */
 public abstract class CompressAbstractTest extends JUnitNativeTestBase {
     public class SingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemCallback> {
         private RandomContext randomContext;

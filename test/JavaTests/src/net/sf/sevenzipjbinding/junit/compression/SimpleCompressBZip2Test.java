@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @version 9.13-2.00
  */
 public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
     private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemCallbackBZip2> {
@@ -50,31 +50,8 @@ public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
 
         public IOutItemCallbackBZip2 getOutItemCallback(final int index) throws SevenZipException {
             return new IOutItemCallbackBZip2() {
-
-                public Integer getPosixAttributes() throws SevenZipException {
-                    return null;
-                }
-
                 public long getSize() throws SevenZipException {
                     return virtualContent.getItemStream(index).getSize();
-                }
-                public String getPath() throws SevenZipException {
-                    return virtualContent.getItemPath(index);
-                }
-                public Date getModificationTime() throws SevenZipException {
-                    return new Date();
-                }
-
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-
-                public String getUser() throws SevenZipException {
-                    return "me";
-                }
-
-                public String getGroup() throws SevenZipException {
-                    return "developers";
                 }
             };
         }
@@ -85,8 +62,6 @@ public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveBZip2> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveBZip2>(
             new OutCreateArchiveBZip2());
-
-    //    CallbackTester callbackTesterItem = new CallbackTester();
 
     @Test
     public void testCompressionBZip2() throws Exception {

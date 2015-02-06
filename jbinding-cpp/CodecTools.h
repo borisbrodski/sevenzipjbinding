@@ -12,6 +12,11 @@ class CodecTools {
 	 */
 	int gzipIndex;
 
+	/**
+	 * Index of the BZip2 archive format.
+	 */
+	int bzip2Index;
+
 public:
 	CCodecs codecs;
 
@@ -28,6 +33,9 @@ public:
 
 	bool isGZipArchive(int index) {
 		return gzipIndex == index;
+	}
+	bool isBZip2Archive(int index) {
+		return bzip2Index == index;
 	}
 };
 
