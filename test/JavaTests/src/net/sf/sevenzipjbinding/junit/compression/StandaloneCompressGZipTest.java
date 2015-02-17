@@ -9,9 +9,9 @@ import java.util.GregorianCalendar;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateArchiveBZip2;
+import net.sf.sevenzipjbinding.IOutCreateArchiveGZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackBZip2;
+import net.sf.sevenzipjbinding.IOutItemCallbackGZip;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -25,12 +25,33 @@ import org.junit.Test;
 
 
 /**
+ * Create GZip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackGZip}&gt; interface.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
-    private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemCallbackBZip2> {
+public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
+    private final class OutItemCallbackGZip implements IOutItemCallbackGZip {
+        private int index;
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public long getSize() throws SevenZipException {
+            return virtualContent.getItemStream(index).getSize();
+        }
+
+        public String getPath() throws SevenZipException {
+            return virtualContent.getItemPath(index);
+        }
+
+        public Date getModificationTime() throws SevenZipException {
+            return new Date();
+        }
+    }
+    private class OutCreateArchiveGZip implements IOutCreateCallback<IOutItemCallbackGZip> {
+
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -48,42 +69,45 @@ public class SimpleCompressBZip2Test extends JUnitNativeTestBase {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackBZip2 getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackBZip2() {
-                public long getSize() throws SevenZipException {
-                    return virtualContent.getItemStream(index).getSize();
-                }
-            };
+        public IOutItemCallbackGZip getOutItemCallback(final int index) throws SevenZipException {
+            outItemCallbackGZip.setIndex(index);
+            return callbackTesterItem.getInstance();
         }
     }
 
     static final Date DATE = new Date();
 
     VirtualContent virtualContent;
-    CallbackTester<OutCreateArchiveBZip2> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveBZip2>(
-            new OutCreateArchiveBZip2());
+    CallbackTester<OutCreateArchiveGZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveGZip>(
+            new OutCreateArchiveGZip());
+
+    OutItemCallbackGZip outItemCallbackGZip = new OutItemCallbackGZip();
+    CallbackTester<OutItemCallbackGZip> callbackTesterItem = new CallbackTester<OutItemCallbackGZip>(
+            outItemCallbackGZip);
 
     @Test
-    public void testCompressionBZip2() throws Exception {
+    public void testCompressionGZip() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 
-        IOutCreateArchiveBZip2 outNewArchiveBZip2 = closeLater(SevenZip.openOutArchiveBZip2());
+        IOutCreateArchiveGZip outNewArchiveGZip = closeLater(SevenZip.openOutArchiveGZip());
 
-        outNewArchiveBZip2.setLevel(5);
+        outNewArchiveGZip.setLevel(5);
 
-        assertEquals(ArchiveFormat.BZIP2, outNewArchiveBZip2.getArchiveFormat());
+        assertEquals(ArchiveFormat.GZIP, outNewArchiveGZip.getArchiveFormat());
 
-        outNewArchiveBZip2.createArchive(byteArrayStream, virtualContent.getItemCount(),
+        outNewArchiveGZip.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
+        assertEquals(IOutItemCallbackGZip.class.getDeclaredMethods().length,
+                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.BZIP2, byteArrayStream));
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.GZIP, byteArrayStream));
         virtualContent.verifyInArchive(inArchive);
     }
 

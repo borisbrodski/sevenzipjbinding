@@ -25,12 +25,45 @@ import org.junit.Test;
 
 
 /**
+ * Create 7-Zip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallback7z}&gt; interface.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
+public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
+    private final class OutItemCallback7z implements IOutItemCallback7z {
+        private int index;
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public boolean isAnti() throws SevenZipException {
+            return false;
+        }
+
+        public long getSize() throws SevenZipException {
+            return virtualContent.getItemStream(index).getSize();
+        }
+
+        public String getPath() throws SevenZipException {
+            return virtualContent.getItemPath(index);
+        }
+
+        public Integer getAttributes() throws SevenZipException {
+            return null;
+        }
+
+        public Date getModificationTime() throws SevenZipException {
+            return new Date();
+        }
+
+        public boolean isDir() throws SevenZipException {
+            return false;
+        }
+    }
     private class OutCreateArchive7z implements IOutCreateCallback<IOutItemCallback7z> {
+
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -49,32 +82,8 @@ public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
         }
 
         public IOutItemCallback7z getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallback7z() {
-
-                public boolean isAnti() throws SevenZipException {
-                    return false;
-                }
-
-                public long getSize() throws SevenZipException {
-                    return virtualContent.getItemStream(index).getSize();
-                }
-
-                public String getPath() throws SevenZipException {
-                    return virtualContent.getItemPath(index);
-                }
-
-                public Integer getAttributes() throws SevenZipException {
-                    return null;
-                }
-
-                public Date getModificationTime() throws SevenZipException {
-                    return new Date();
-                }
-
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-            };
+            outItemCallback7z.setIndex(index);
+            return callbackTesterItem.getInstance();
         }
     }
 
@@ -83,6 +92,9 @@ public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchive7z> callbackTesterCreateArchive = new CallbackTester<OutCreateArchive7z>(
             new OutCreateArchive7z());
+
+    OutItemCallback7z outItemCallback7z = new OutItemCallback7z();
+    CallbackTester<OutItemCallback7z> callbackTesterItem = new CallbackTester<OutItemCallback7z>(outItemCallback7z);
 
     @Test
     public void testCompression7z() throws Exception {
@@ -107,6 +119,9 @@ public class SimpleCompressSevenZipTest extends JUnitNativeTestBase {
 
         // No setCompleted call
         assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());
+
+        assertEquals(IOutItemCallback7z.class.getDeclaredMethods().length,
+                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

@@ -25,12 +25,53 @@ import org.junit.Test;
 
 
 /**
+ * Create Zip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackZip}&gt; interface.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class SimpleCompressZipTest extends JUnitNativeTestBase {
+public class StandaloneCompressZipTest extends JUnitNativeTestBase {
+    private final class OutItemCallbackZip implements IOutItemCallbackZip {
+        private int index;
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public long getSize() throws SevenZipException {
+            return virtualContent.getItemStream(index).getSize();
+        }
+
+        public String getPath() throws SevenZipException {
+            return virtualContent.getItemPath(index);
+        }
+
+        public Integer getAttributes() throws SevenZipException {
+            return null;
+        }
+
+        public boolean isDir() throws SevenZipException {
+            return false;
+        }
+
+        public boolean isNtfsTime() throws SevenZipException {
+            return true;
+        }
+
+        public Date getModificationTime() throws SevenZipException {
+            return substructDate(DATE, 1);
+        }
+
+        public Date getLastAccessTime() throws SevenZipException {
+            return DATE;
+        }
+
+        public Date getCreationTime() throws SevenZipException {
+            return substructDate(DATE, 2);
+        }
+    }
     private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemCallbackZip> {
+
 
         public void setTotal(long total) throws SevenZipException {
         }
@@ -49,39 +90,8 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
         }
 
         public IOutItemCallbackZip getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackZip() {
-                public long getSize() throws SevenZipException {
-                    return virtualContent.getItemStream(index).getSize();
-                }
-
-                public String getPath() throws SevenZipException {
-                    return virtualContent.getItemPath(index);
-                }
-
-                public Integer getAttributes() throws SevenZipException {
-                    return null;
-                }
-
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-
-                public boolean isNtfsTime() throws SevenZipException {
-                    return true;
-                }
-
-                public Date getModificationTime() throws SevenZipException {
-                    return substructDate(DATE, 1);
-                }
-
-                public Date getLastAccessTime() throws SevenZipException {
-                    return DATE;
-                }
-
-                public Date getCreationTime() throws SevenZipException {
-                    return substructDate(DATE, 2);
-                }
-            };
+            outItemCallbackTar.setIndex(index);
+            return callbackTesterItem.getInstance();
         }
     }
 
@@ -90,6 +100,9 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveZip>(
             new OutCreateArchiveZip());
+
+    OutItemCallbackZip outItemCallbackTar = new OutItemCallbackZip();
+    CallbackTester<OutItemCallbackZip> callbackTesterItem = new CallbackTester<OutItemCallbackZip>(outItemCallbackTar);
 
     @Test
     public void testCompressionZip() throws Exception {
@@ -108,6 +121,9 @@ public class SimpleCompressZipTest extends JUnitNativeTestBase {
                 callbackTesterCreateArchive.getInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
+
+        assertEquals(IOutItemCallbackZip.class.getDeclaredMethods().length,
+                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

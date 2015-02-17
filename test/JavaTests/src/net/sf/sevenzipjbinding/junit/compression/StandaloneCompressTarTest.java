@@ -25,13 +25,49 @@ import org.junit.Test;
 
 
 /**
+ * Create Tar archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackTar}&gt; interface.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class SimpleCompressTarTest extends JUnitNativeTestBase {
-    private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemCallbackTar> {
+public class StandaloneCompressTarTest extends JUnitNativeTestBase {
+    private final class OutItemCallbackTar implements IOutItemCallbackTar {
+        private int index;
 
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public Integer getPosixAttributes() throws SevenZipException {
+            return null;
+        }
+
+        public String getPath() throws SevenZipException {
+            return virtualContent.getItemPath(index);
+        }
+
+        public Date getModificationTime() throws SevenZipException {
+            return new Date();
+        }
+
+        public boolean isDir() throws SevenZipException {
+            return false;
+        }
+
+        public String getUser() throws SevenZipException {
+            return "me";
+        }
+
+        public String getGroup() throws SevenZipException {
+            return "developers";
+        }
+
+        public long getSize() {
+            return virtualContent.getItemStream(index).getSize();
+        }
+    }
+
+    private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemCallbackTar> {
         public void setTotal(long total) throws SevenZipException {
         }
 
@@ -49,39 +85,17 @@ public class SimpleCompressTarTest extends JUnitNativeTestBase {
         }
 
         public IOutItemCallbackTar getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallbackTar() {
-                public Integer getPosixAttributes() throws SevenZipException {
-                    return null;
-                }
-
-                public String getPath() throws SevenZipException {
-                    return virtualContent.getItemPath(index);
-                }
-
-                public Date getModificationTime() throws SevenZipException {
-                    return new Date();
-                }
-
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-
-                public String getUser() throws SevenZipException {
-                    return "me";
-                }
-
-                public String getGroup() throws SevenZipException {
-                    return "developers";
-                }
-            };
+            outItemCallbackTar.setIndex(index);
+            return callbackTesterItem.getInstance();
         }
     }
 
-    static final Date DATE = new Date();
-
     VirtualContent virtualContent;
-    CallbackTester<OutCreateArchiveTar> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveTar>(
+    CallbackTester<OutCreateArchiveTar> callbackTesterArchive = new CallbackTester<OutCreateArchiveTar>(
             new OutCreateArchiveTar());
+
+    OutItemCallbackTar outItemCallbackTar = new OutItemCallbackTar();
+    CallbackTester<OutItemCallbackTar> callbackTesterItem = new CallbackTester<OutItemCallbackTar>(outItemCallbackTar);
 
     @Test
     public void testCompressionTar() throws Exception {
@@ -94,10 +108,12 @@ public class SimpleCompressTarTest extends JUnitNativeTestBase {
 
         assertEquals(ArchiveFormat.TAR, outNewArchiveTar.getArchiveFormat());
 
-        outNewArchiveTar.createArchive(byteArrayStream, virtualContent.getItemCount(),
-                callbackTesterCreateArchive.getInstance());
+        outNewArchiveTar.createArchive(byteArrayStream, virtualContent.getItemCount(), //new OutCreateArchiveTar()
+                callbackTesterArchive.getInstance());
 
-        assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
+        assertEquals(5, callbackTesterArchive.getDifferentMethodsCalled());
+        assertEquals(IOutItemCallbackTar.class.getDeclaredMethods().length,
+                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

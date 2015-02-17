@@ -18,7 +18,11 @@ public interface IOutCreateArchive<E extends IOutItemCallbackBase> extends Close
 
     /**
      * Create new archive. To update an existing archive open it first and then use
-     * {@link IInArchive#getConnectedOutArchive()} to get an instance of {@link IOutUpdateArchive}.
+     * {@link IInArchive#getConnectedOutArchive()} to get an instance of {@link IOutUpdateArchive}.<br>
+     * <br>
+     * To provide item properties in a generic way using a single method
+     * {@link IOutCreateGenericCallback#getProperty(int, PropID)} use
+     * {@link #createArchive(ISequentialOutStream, int, IOutCreateGenericCallback)}.
      * 
      * @param outStream
      *            output stream to get the new archive
@@ -31,6 +35,25 @@ public interface IOutCreateArchive<E extends IOutItemCallbackBase> extends Close
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends E> outCreateCallback) throws SevenZipException;
+
+    /**
+     * Create new archive. To update an existing archive open it first and then use
+     * {@link IInArchive#getConnectedOutArchive()} to get an instance of {@link IOutUpdateArchive}.<br>
+     * <br>
+     * Implementing {@link IOutCreateGenericCallback#getProperty(int, PropID)} method the item properties can be passed
+     * in a generic way. The opposite is a set of <code>IOutItemCallback*</code> interfaces.
+     * 
+     * @param outStream
+     *            output stream to get the new archive
+     * @param numberOfItems
+     *            number of items in the new archive
+     * @param outCreateCallbackGeneric
+     *            create call back object to provide more information for archive create/update operation.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
+     */
+    public void createArchive(ISequentialOutStream outStream, int numberOfItems,
+            IOutCreateCallbackGeneric outCreateCallbackGeneric) throws SevenZipException;
 
     /**
      * Return archive format used with this instance of {@link IOutStream}

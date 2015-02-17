@@ -4,6 +4,7 @@ public interface IOutItemCallback extends //
         IOutItemCallback7z, //
         IOutItemCallbackGZip, //
         IOutItemCallbackTar, //
-        IOutItemCallbackZip {
+        IOutItemCallbackZip, //
+        IOutItemCallbackBZip2 {
 
 }

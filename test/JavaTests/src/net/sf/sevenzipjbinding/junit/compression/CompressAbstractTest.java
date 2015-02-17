@@ -19,6 +19,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Assert;
 
 /**
+ * Common class for all compress tests besides standalone tests like {@link StandaloneCompressSevenZipTest}.
  *
  * @author Boris Brodski
  * @version 9.13-2.00

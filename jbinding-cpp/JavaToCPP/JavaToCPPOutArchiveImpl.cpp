@@ -39,7 +39,8 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
                                                                                                    jobject outStream,
                                                                                                    jint numberOfItems,
                                                                                                    jobject archiveUpdateCallback,
-                                                                                                   jboolean isInArchiveAttached) {
+                                                                                                   jboolean isInArchiveAttached,
+                                                                                                   jboolean useGenericItemCallback) {
     TRACE("OutArchiveImpl.updateItemsNative()");
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);

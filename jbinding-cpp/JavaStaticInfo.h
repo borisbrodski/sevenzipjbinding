@@ -808,8 +808,23 @@ public:
     jmethodID getMethodID(JNIEnv * env, jclass jclazz) {
     	initMethodID(env, jclazz);
     	if (!_jmethodID) {
-    		FATALIF3(!_jmethodID, "Method not found: %s() signature %s%s", _name, _signature,
-                    _isStatic ? " (static)" : "");
+    	    char const * javaClassName = "(error getting ObjectClass)";
+            env->ExceptionClear();
+            jclass classClass = env->GetObjectClass(jclazz);
+            if (classClass) {
+                javaClassName = "(error getting Class.getName() method)";
+                jmethodID method_getName = env->GetMethodID(classClass, "getName", "()Ljava/lang/String;");
+                if (method_getName) {
+                    jstring name = (jstring)env->CallObjectMethod(jclazz, method_getName);
+                    if (env->ExceptionCheck()) {
+                        javaClassName = "(error calling Class.getName())";
+                    } else {
+                        javaClassName = env->GetStringUTFChars(name, NULL);
+                    }
+                }
+            }
+    		FATALIF4(!_jmethodID, "Method not found: %s() signature '%s'%s, java-class: %s", _name, _signature,
+                    _isStatic ? " (static)" : "", javaClassName);
     	}
 		return _jmethodID;
     }
@@ -825,6 +840,7 @@ private:
 #ifdef TRACE_ON
 inline std::ostream & operator<<(std::ostream & stream, JMethod & method) {
     stream << method._name << method._signature;
+    return stream;
 }
 #endif
 
@@ -860,6 +876,7 @@ public:
 #ifdef TRACE_ON
 inline std::ostream & operator<<(std::ostream & stream, JField & field) {
     stream << field._name << " (" << field._signature << ")";
+    return stream;
 }
 #endif
 

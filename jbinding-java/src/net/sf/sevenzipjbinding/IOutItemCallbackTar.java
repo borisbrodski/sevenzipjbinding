@@ -14,4 +14,6 @@ public interface IOutItemCallbackTar extends IOutItemCallbackBase {
     public String getUser() throws SevenZipException;
 
     public String getGroup() throws SevenZipException;
+
+    public long getSize() throws SevenZipException;
 }

@@ -42,7 +42,7 @@ Minor TODOs:
 - Support more archive formats
 - Write documentation / improve javadoc
 - Improve Web site
-
+- Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests")
 
 Major TODOs:
 - Implement archive creation
