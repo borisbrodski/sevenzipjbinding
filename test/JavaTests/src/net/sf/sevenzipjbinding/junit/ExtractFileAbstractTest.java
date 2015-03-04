@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,10 +18,11 @@ import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.PropertyInfo;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -32,7 +34,7 @@ import org.junit.Test;
 
 /**
  * Abstract class for all mass archive extraction tests.
- * 
+ *
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -664,6 +666,30 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
         public String cryptoGetTextPassword() throws SevenZipException {
             return "a";
+        }
+    }
+
+    protected final void checkArchiveGeneric(IInArchive inArchive) throws SevenZipException {
+        int numberOfArchiveProperties = inArchive.getNumberOfArchiveProperties();
+        for (int propertyIndex = 0; propertyIndex < numberOfArchiveProperties; propertyIndex++) {
+            PropertyInfo propertyInfo = inArchive.getArchivePropertyInfo(propertyIndex);
+            assertNotNull(propertyInfo);
+            assertNotNull(propertyInfo.propID);
+            inArchive.getArchiveProperty(propertyInfo.propID);
+
+            // System.out.println(propertyInfo + ",  Value: " + inArchive.getArchiveProperty(propertyInfo.propID));
+        }
+        int numberOfProperties = inArchive.getNumberOfProperties();
+        int numberOfItems = inArchive.getNumberOfItems();
+        for (int itemIndex = 0; itemIndex < numberOfItems; itemIndex++) {
+            for (int propertyIndex = 0; propertyIndex < numberOfProperties; propertyIndex++) {
+                PropertyInfo propertyInfo = inArchive.getPropertyInfo(propertyIndex);
+                assertNotNull(propertyInfo);
+                assertNotNull(propertyInfo.propID);
+                inArchive.getProperty(itemIndex, propertyInfo.propID);
+
+                // System.out.println(propertyInfo + ",  Value: " + inArchive.getProperty(index, propertyInfo.propID));
+            }
         }
     }
 

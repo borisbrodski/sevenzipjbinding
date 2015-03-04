@@ -25,17 +25,18 @@
 
 - Write tests to check, that all enumerations are mapped correctly
   - PropID
+    - Add test to ensure "kpidLink"(c++) == "LINK" (java)
   - NCoderID
   - ExtractAskMode
   - ExtractOperationResult
 
-- Add privileged initialization of the native part. See forum "Help"
+- Add privileged initialization of the native part. See forum "Help" (done?)
 
 - Add to integration tests
   - Test, that the release and not the debug compilation of the binary was used to build each platform jar
 
 Minor TODOs:
-- CallbackTester: Test more callbacks (extraction + compression)
+- CallbackTester: Test more callbacks (extraction(todo) + compression(done))
 - Write more tests, for example, extracting archive with two files encrypted with different password.
 - Write test to use OutArchive more then ones before closing it. Verify, that all feature settings remains unchanged.
 - Test some untested archive formats
@@ -43,6 +44,7 @@ Minor TODOs:
 - Write documentation / improve javadoc
 - Improve Web site
 - Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests")
+- Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
 
 Major TODOs:
 - Implement archive creation

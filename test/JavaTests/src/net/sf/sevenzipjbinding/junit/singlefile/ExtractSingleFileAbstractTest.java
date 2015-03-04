@@ -16,8 +16,8 @@ import java.util.Random;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
@@ -259,6 +259,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			if (ExtractOperationResult.OK != operationResult) {
 				throw new ExtractOperationResultException(operationResult);
 			}
+            checkArchiveGeneric(inArchive);
 			outputStream.checkAndCloseInputFile();
 			outputStream = null;
 
@@ -275,7 +276,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		}
 	}
 
-	protected String getUncompressedFilename(int fileIndex) {
+    protected String getUncompressedFilename(int fileIndex) {
 		return "simple" + fileIndex + ".dat";
 	}
 

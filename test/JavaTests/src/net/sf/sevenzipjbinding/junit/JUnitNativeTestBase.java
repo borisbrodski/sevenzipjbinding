@@ -44,6 +44,7 @@ public class JUnitNativeTestBase {
         };
     };
 
+    protected static final int WEEK = 1000 * 60 * 60 * 24 * 7; // Milliseconds in a week
     protected static final Random RANDOM = new Random(0);
 
     @Rule

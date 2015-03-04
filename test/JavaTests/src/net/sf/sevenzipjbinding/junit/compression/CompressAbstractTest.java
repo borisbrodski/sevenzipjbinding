@@ -1,14 +1,9 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
-import java.util.Date;
-
+import static org.junit.Assert.assertEquals;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.ISeekableStream;
-import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
@@ -25,55 +20,10 @@ import org.junit.Assert;
  * @version 9.13-2.00
  */
 public abstract class CompressAbstractTest extends JUnitNativeTestBase {
-    public class SingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemCallback> {
-        private RandomContext randomContext;
-
-        protected SingleFileCreateArchiveCallback(RandomContext randomContext) {
-            this.randomContext = randomContext;
-        }
-
-        // TODO Remove
-        public Object getProperty(int index, PropID propID) {
-            switch (propID) {
-            case PATH:
-                return "content";
-
-            case IS_FOLDER:
-            case IS_ANTI:
-                return Boolean.FALSE;
-
-            case SIZE:
-                return Long.valueOf(randomContext.getSize());
-            case LAST_MODIFICATION_TIME:
-                return new Date();
-            }
-            return null;
-        }
-
-        public ISequentialInStream getStream(int index) {
-            return randomContext;
-        }
-
-        public void setOperationResult(boolean operationResultOk) {
-
-        }
-
-        public void setTotal(long total) throws SevenZipException {
-        }
-
-        public void setCompleted(long completeValue) throws SevenZipException {
-
-        }
-
-        public IOutItemCallback getOutItemCallback(int i) throws SevenZipException {
-            return null; // TODO
-        }
-
-    }
 
     protected abstract ArchiveFormat getArchiveFormat();
 
-    protected void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream)
+    protected final void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream)
             throws SevenZipException {
         randomContext.seek(0, ISeekableStream.SEEK_SET);
         outputByteArrayStream.rewind();
@@ -84,6 +34,11 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
             inArchive = SevenZip.openInArchive(null, outputByteArrayStream);
             Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
             inArchive.extractSlow(0, new AssertOutputStream(randomContext));
+
+            assertEquals(1, inArchive.getNumberOfItems());
+
+            verifyCompressedArchiveDetails(inArchive);
+
             successfull = true;
         } finally {
             try {
@@ -96,5 +51,9 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
                 }
             }
         }
+    }
+
+    protected void verifyCompressedArchiveDetails(IInArchive inArchive) throws SevenZipException {
+
     }
 }

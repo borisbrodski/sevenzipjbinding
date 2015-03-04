@@ -18,8 +18,6 @@ public interface IOutItemCallbackZip extends IOutItemCallbackBase {
 
     public boolean isDir() throws SevenZipException;
 
-    public boolean isNtfsTime() throws SevenZipException;
-
     public Date getModificationTime() throws SevenZipException;
 
     public Date getLastAccessTime() throws SevenZipException;

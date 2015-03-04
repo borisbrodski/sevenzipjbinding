@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
+import net.sf.sevenzipjbinding.NFileTimeType;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.PropertyInfo;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -147,8 +148,8 @@ public final class InArchiveImpl implements IInArchive {
     /**
      * {@inheritDoc}
      */
-    public PropertyInfo getArchivePropertyInfo(PropID propID) throws SevenZipException {
-        return nativeGetArchivePropertyInfo(propID.getPropIDIndex());
+    public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException {
+        return nativeGetArchivePropertyInfo(index);
     }
 
     private native int nativeGetNumberOfArchiveProperties() throws SevenZipException;
@@ -174,8 +175,8 @@ public final class InArchiveImpl implements IInArchive {
     /**
      * {@inheritDoc}
      */
-    public PropertyInfo getPropertyInfo(PropID propID) throws SevenZipException {
-        return nativeGetPropertyInfo(propID.getPropIDIndex());
+    public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
+        return nativeGetPropertyInfo(index);
     }
 
     private native void nativeClose() throws SevenZipException;
@@ -214,9 +215,8 @@ public final class InArchiveImpl implements IInArchive {
         switch (propID) {
         case SIZE:
         case PACKED_SIZE:
-            // ARJ archive returns sized as Integer (32 bit).
-            // It isn't particular good idea, since every other archive returns Long (64 bit).
-            // So it will be corrected here.
+            // ARJ archive returns integer sizes (32 bit).
+            // Correcting it here, since every other archive returns Long (64 bit).
             if (returnValue instanceof Integer) {
                 return Long.valueOf(((Integer) returnValue).longValue());
             }
@@ -230,11 +230,18 @@ public final class InArchiveImpl implements IInArchive {
             if (returnValue == null) {
                 return Boolean.FALSE;
             }
+            break;
         case ENCRYPTED:
-            // Some stream archive formats doesn't set this property.
+            // Some stream archive formats doesn't set this property either.
             if (returnValue == null) {
                 return Boolean.FALSE;
             }
+            break;
+        case TIME_TYPE:
+            if (returnValue != null) {
+                return NFileTimeType.values()[((Integer) returnValue).intValue()];
+            }
+            break;
         }
         return returnValue;
     }

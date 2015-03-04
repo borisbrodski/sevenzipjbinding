@@ -61,6 +61,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 
 	#define JNI_TYPE_STRING                              jstring
 	#define JNI_TYPE_INTEGER                             jobject
+	#define JNI_TYPE_UINTEGER                            jobject
 	#define JNI_TYPE_DATE                                jobject
 	#define JNI_TYPE_BOOLEAN                             jboolean
 	#define JNI_TYPE_LONG                                jlong
@@ -78,6 +79,14 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                      \
 		if (value) {                                                                                                    \
 			cPropVariant = jni::Integer::intValue(jniEnvInstance, value);                                               \
+			if (jniEnvInstance.exceptionCheck()) {                                                                      \
+				return S_FALSE;                                                                                         \
+			}                                                                                                           \
+		}
+
+    #define ASSIGN_VALUE_TO_C_PROP_VARIANT_UINTEGER                                                                     \
+		if (value) {                                                                                                    \
+			cPropVariant = (unsigned int)jni::Integer::intValue(jniEnvInstance, value);                                 \
 			if (jniEnvInstance.exceptionCheck()) {                                                                      \
 				return S_FALSE;                                                                                         \
 			}                                                                                                           \
@@ -124,6 +133,12 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
         return S_OK;
     }
 
+    if (propID == kpidTimeType) {
+        cPropVariant = NFileTimeType::kWindows;
+        cPropVariant.Detach(value);
+        return S_OK;
+    }
+
     if (_outItemCallbackLastIndex != index || _outItemCallbackImplementation == NULL) {
 
     	_outItemCallbackImplementation = _iArchiveCreateCallback->getOutItemCallback(jniEnvInstance, _javaImplementation, index);
@@ -136,19 +151,20 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     }
 
     switch (propID) {
-    case kpidAttrib:             GET_ATTRIBUTE(INTEGER, getAttributes)
-    case kpidPosixAttrib:        GET_ATTRIBUTE(INTEGER, getPosixAttributes)
-    case kpidPath:               GET_ATTRIBUTE(STRING,  getPath)
-    case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN, isDir)
-    case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN, isAnti)
-    case kpidTimeType:           GET_ATTRIBUTE(BOOLEAN, isNtfsTime)
-    case kpidMTime:              GET_ATTRIBUTE(DATE,    getModificationTime)
-    case kpidATime:              GET_ATTRIBUTE(DATE,    getLastAccessTime)
-    case kpidCTime:              GET_ATTRIBUTE(DATE,    getCreationTime)
-    case kpidSize:               GET_ATTRIBUTE(LONG,    getSize)
-    case kpidUser:               GET_ATTRIBUTE(STRING,  getUser)
-    case kpidGroup:              GET_ATTRIBUTE(STRING,  getGroup)
+    case kpidAttrib:             GET_ATTRIBUTE(UINTEGER, getAttributes)
+    case kpidPosixAttrib:        GET_ATTRIBUTE(UINTEGER, getPosixAttributes)
+    case kpidPath:               GET_ATTRIBUTE(STRING,   getPath)
+    case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN,  isDir)
+    case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN,  isAnti)
+    case kpidTimeType:           GET_ATTRIBUTE(BOOLEAN,  isNtfsTime)
+    case kpidMTime:              GET_ATTRIBUTE(DATE,     getModificationTime)
+    case kpidATime:              GET_ATTRIBUTE(DATE,     getLastAccessTime)
+    case kpidCTime:              GET_ATTRIBUTE(DATE,     getCreationTime)
+    case kpidSize:               GET_ATTRIBUTE(LONG,     getSize)
+    case kpidUser:               GET_ATTRIBUTE(STRING,   getUser)
+    case kpidGroup:              GET_ATTRIBUTE(STRING,   getGroup)
     default:
+#ifdef _DEBUG
     	printf("kpidNoProperty: %i\n", (int) kpidNoProperty);
     	printf("kpidMainSubfile: %i\n", (int) kpidMainSubfile);
     	printf("kpidHandlerItemIndex: %i\n", (int) kpidHandlerItemIndex);
@@ -211,7 +227,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     	printf("kpidLocalName: %i\n", (int) kpidLocalName);
     	printf("kpidProvider: %i\n", (int) kpidProvider);
     	printf("kpidUserDefined: %i\n", (int) kpidUserDefined);
-
+#endif // _DEBUG
 
     	jniEnvInstance.reportError("CPPToJavaArchiveUpdateCallback::GetProperty() : unexpected propID=%u", propID);
     	return S_FALSE;

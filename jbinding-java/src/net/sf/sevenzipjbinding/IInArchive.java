@@ -149,15 +149,16 @@ public interface IInArchive extends Closeable {
     public int getNumberOfProperties() throws SevenZipException;
 
     /**
-     * Get information about archive item property <code>propID</code>
+     * Get information about archive item property with index <code>index</code>.
      * 
-     * @param propID
-     *            item property
+     * @see #getNumberOfProperties()
+     * @param index
+     *            property index
      * @return information about property of archive item
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public PropertyInfo getPropertyInfo(PropID propID) throws SevenZipException;
+    public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
 
     /**
      * Get count of properties of archive
@@ -169,17 +170,17 @@ public interface IInArchive extends Closeable {
     public int getNumberOfArchiveProperties() throws SevenZipException;
 
     /**
-     * Get information about archive property <code>propID</code>.<br>
-     * <br>
-     * Use {@link PropID#getPropIDByIndex(int)} to get <code>PropID</code> enumeration element with specified index.
+     * Get information about archive property with index <code>index</code>.<br>
      * 
-     * @param propID
-     *            archive property
+     * @see #getNumberOfArchiveProperties()
+     * 
+     * @param index
+     *            property index
      * @return information about archive property
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public PropertyInfo getArchivePropertyInfo(PropID propID) throws SevenZipException;
+    public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException;
 
     /**
      * Return simple 7-Zip interface for the archive

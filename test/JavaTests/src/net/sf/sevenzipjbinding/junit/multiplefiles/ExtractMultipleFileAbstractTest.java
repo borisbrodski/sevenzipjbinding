@@ -89,6 +89,8 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
 				compressionIndex, autodetectFormat, "archive", "zip");
 
+        checkArchiveGeneric(inArchive);
+
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(new File(sollFullFilename));

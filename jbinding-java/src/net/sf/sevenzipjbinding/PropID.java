@@ -23,9 +23,9 @@ public enum PropID {
     HANDLER_ITEM_INDEX, // = 2
 
     /**
-     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Please note, that stream archive
-     * formats such as gzip does not support this property, since it is always a single file (or stream) being
-     * compressed.<br>
+     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Please note,
+     * that stream archive formats such as gzip does not support this property, since it is always a single file (or
+     * stream) being compressed.<br>
      * <br>
      * Type: {@link String}. <code>null</code> will be returned, if current archive type doesn't support this property.
      */
@@ -40,7 +40,8 @@ public enum PropID {
 
     /**
      * Flag either a item represents a folder or not. Please note, that some archive formats doesn't define special
-     * items for folders. In this case you may get a item with a path <code>'dir/file'</code> without having an item for <code>'dir'</code> at all. <br>
+     * items for folders. In this case you may get a item with a path <code>'dir/file'</code> without having an item for
+     * <code>'dir'</code> at all. <br>
      * <br>
      * Type: {@link Boolean}. <code>true</code> if item is a folder, otherwise <code>false</code>.
      * <code>Boolean.FALSE</code> is returned, if archive format doesn't support this property. This property is never
@@ -108,6 +109,32 @@ public enum PropID {
     COMMENT, //
     POSITION, //
     PREFIX, //
+    NUM_SUB_DIRS, //
+    NUM_SUB_FILES, //
+    UNPACK_VER, //
+    VOLUME, //
+    IS_VOLUME, //
+    OFFSET, //
+    LINKS, //
+    NUM_BLOCKS, //
+    NUM_VOLUMES, //
+    TIME_TYPE, //
+    BIT64, //
+    BIG_ENDIAN, //
+    CPU, //
+    PHY_SIZE, //
+    HEADERS_SIZE, //
+    CHECKSUM, //
+    CHARACTS, //
+    VA, //
+    ID, //
+    SHORT_NAME, //
+    CREATOR_APP, //
+    SECTOR_SIZE, //
+    POSIX_ATTRIB, //
+    LINK, //
+
+    // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
 
     TOTAL_SIZE(0x1100), //
     FREE_SPACE(0x1101), //
