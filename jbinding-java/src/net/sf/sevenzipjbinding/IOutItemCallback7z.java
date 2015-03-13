@@ -3,6 +3,12 @@ package net.sf.sevenzipjbinding;
 import java.util.Date;
 
 public interface IOutItemCallback7z extends IOutItemCallbackBase {
+    /**
+     * @see PropID#IS_ANTI
+     * 
+     * @return
+     * @throws SevenZipException
+     */
     public boolean isAnti() throws SevenZipException;
 
     public long getSize() throws SevenZipException;

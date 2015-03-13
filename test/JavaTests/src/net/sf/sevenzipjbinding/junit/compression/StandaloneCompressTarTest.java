@@ -86,7 +86,7 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
 
         public IOutItemCallbackTar getOutItemCallback(final int index) throws SevenZipException {
             outItemCallbackTar.setIndex(index);
-            return callbackTesterItem.getInstance();
+            return callbackTesterItem.getProxyInstance();
         }
     }
 
@@ -109,7 +109,7 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
         assertEquals(ArchiveFormat.TAR, outNewArchiveTar.getArchiveFormat());
 
         outNewArchiveTar.createArchive(byteArrayStream, virtualContent.getItemCount(), //new OutCreateArchiveTar()
-                callbackTesterArchive.getInstance());
+                callbackTesterArchive.getProxyInstance());
 
         assertEquals(5, callbackTesterArchive.getDifferentMethodsCalled());
         assertEquals(IOutItemCallbackTar.class.getDeclaredMethods().length,

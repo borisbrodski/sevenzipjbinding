@@ -43,7 +43,7 @@ public class CallbackTester<E> implements InvocationHandler {
         return "Called methods: " + stringBuilder;
     }
 
-    public E getInstance() {
+    public E getProxyInstance() {
         return proxyInstance;
     }
 
@@ -56,5 +56,9 @@ public class CallbackTester<E> implements InvocationHandler {
         } catch (InvocationTargetException exception) {
             throw exception.getCause();
         }
+    }
+
+    public E getOriginalCallback() {
+        return instance;
     }
 }

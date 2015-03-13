@@ -80,8 +80,7 @@ public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchi
     protected native void nativeSetMultithreading(int threadCount) throws SevenZipException;
 
     private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
-            Object archiveUpdateCallback, boolean isInArchiveAttached, boolean useGenericItemCallback)
-            throws SevenZipException;
+            Object archiveUpdateCallback, boolean isInArchiveAttached) throws SevenZipException;
 
     public void close() throws IOException {
         if (inArchive != null) {
@@ -94,19 +93,19 @@ public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchi
 
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
             IOutUpdateCallback<E> archiveUpdateCallback) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, archiveUpdateCallback, false);
+        doUpdateItems(outStream, numberOfItems, archiveUpdateCallback);
     }
 
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
             IOutUpdateCallbackGeneric archiveUpdateCallbackGeneric) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, archiveUpdateCallbackGeneric, true);
+        doUpdateItems(outStream, numberOfItems, new OutUpdateGenericCallbackWrapper(archiveUpdateCallbackGeneric));
     }
 
-    private void doUpdateItems(ISequentialOutStream outStream, int numberOfItems, Object archiveCreateCallback,
-            boolean useGenericItemCallback) throws SevenZipException {
+    private void doUpdateItems(ISequentialOutStream outStream, int numberOfItems,
+            IOutCreateCallback<?> archiveCreateCallback) throws SevenZipException {
         applyFeatures();
         nativeUpdateItems(archiveFormat.getCodecIndex(), outStream, numberOfItems, archiveCreateCallback,
-                inArchive != null, useGenericItemCallback);
+                inArchive != null);
     }
 
     /**
@@ -114,7 +113,7 @@ public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchi
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends E> outCreateCallback) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, outCreateCallback, false);
+        doUpdateItems(outStream, numberOfItems, outCreateCallback);
     }
 
     /**
@@ -122,6 +121,6 @@ public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchi
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallbackGeneric outCreateCallbackGeneric) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, outCreateCallbackGeneric, true);
+        doUpdateItems(outStream, numberOfItems, new OutCreateGenericCallbackWrapper(outCreateCallbackGeneric));
     }
 }

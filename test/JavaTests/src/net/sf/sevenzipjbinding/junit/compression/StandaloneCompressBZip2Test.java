@@ -63,7 +63,7 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
 
         public IOutItemCallbackBZip2 getOutItemCallback(final int index) throws SevenZipException {
             outItemCallbackBZip2.setIndex(index);
-            return callbackTesterItem.getInstance();
+            return callbackTesterItem.getProxyInstance();
         }
     }
 
@@ -91,7 +91,7 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
         assertEquals(ArchiveFormat.BZIP2, outNewArchiveBZip2.getArchiveFormat());
 
         outNewArchiveBZip2.createArchive(byteArrayStream, virtualContent.getItemCount(),
-                callbackTesterCreateArchive.getInstance());
+                callbackTesterCreateArchive.getProxyInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
         assertEquals(IOutItemCallbackBZip2.class.getDeclaredMethods().length,

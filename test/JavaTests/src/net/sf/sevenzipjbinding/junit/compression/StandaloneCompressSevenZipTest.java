@@ -83,7 +83,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
 
         public IOutItemCallback7z getOutItemCallback(final int index) throws SevenZipException {
             outItemCallback7z.setIndex(index);
-            return callbackTesterItem.getInstance();
+            return callbackTesterItem.getProxyInstance();
         }
     }
 
@@ -115,7 +115,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
         assertEquals(ArchiveFormat.SEVEN_ZIP, outNewArchive7z.getArchiveFormat());
 
         outNewArchive7z.createArchive(byteArrayStream, virtualContent.getItemCount(),
-                callbackTesterCreateArchive.getInstance());
+                callbackTesterCreateArchive.getProxyInstance());
 
         // No setCompleted call
         assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());

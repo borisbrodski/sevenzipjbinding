@@ -141,7 +141,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 
     if (_outItemCallbackLastIndex != index || _outItemCallbackImplementation == NULL) {
 
-    	_outItemCallbackImplementation = _iArchiveCreateCallback->getOutItemCallback(jniEnvInstance, _javaImplementation, index);
+    	_outItemCallbackImplementation = _iOutCreateCallback->getOutItemCallback(jniEnvInstance, _javaImplementation, index);
 		if (jniEnvInstance.exceptionCheck()) {
 			return S_FALSE;
 		}
@@ -246,7 +246,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
         return S_OK;
     }
 
-    jobject inStreamImpl = _iArchiveCreateCallback->getStream(jniEnvInstance, _javaImplementation,
+    jobject inStreamImpl = _iOutCreateCallback->getStream(jniEnvInstance, _javaImplementation,
             (jint) index);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
@@ -280,7 +280,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationR
 
     jboolean operationResultBoolean = (operationResult == NArchive::NUpdate::NOperationResult::kOK);
 
-    _iArchiveCreateCallback->setOperationResult(jniEnvInstance, _javaImplementation,
+    _iOutCreateCallback->setOperationResult(jniEnvInstance, _javaImplementation,
             operationResultBoolean);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;

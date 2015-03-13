@@ -117,7 +117,7 @@ JT_BEGIN_INTERFACE(IArchiveUpdateCallback)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IArchiveCreateCallback)
+JT_BEGIN_INTERFACE(IOutCreateCallbackBase)
 	// public ISequentialInStream getStream(int index);
 	JT_INTERFACE_METHOD_OBJECT(JAVA_ISEQUENTIAL_IN_STREAM_T, getStream, JT_INT(index, _))
 
@@ -126,6 +126,9 @@ JT_BEGIN_INTERFACE(IArchiveCreateCallback)
 
 	// public <E extends IOutItemBase> E getOutItemCallback(int index);
 	JT_INTERFACE_METHOD_OBJECT(JAVA_IOUT_ITEM_CALLBACK_BASE_T, getOutItemCallback, JT_INT(index, _))
+
+    // public Object getProperty(int index, PropID propID);
+    JT_INTERFACE_METHOD_OBJECT(JAVA_OBJECT_T, getProperty, JT_INT(index, JT_PARAM(Object, JAVA_PROP_ID_T, propID, _)))
 JT_END_INTERFACE
 
 JT_BEGIN_INTERFACE(IOutItemCallback)

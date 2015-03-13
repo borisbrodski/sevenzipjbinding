@@ -99,7 +99,14 @@ public enum PropID {
     DICTIONARY_SIZE, // 
     CRC, //
     TYPE, //
+
+    /**
+     * If <code>true</code> delete corresponding file or directory during extraction.
+     * 
+     * Supported only by {@link ArchiveFormat#SEVEN_ZIP}.
+     */
     IS_ANTI, //
+
     METHOD, //
     HOST_OS, //
     FILE_SYSTEM, //
