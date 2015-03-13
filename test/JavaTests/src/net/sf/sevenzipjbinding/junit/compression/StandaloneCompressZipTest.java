@@ -54,10 +54,6 @@ public class StandaloneCompressZipTest extends JUnitNativeTestBase {
             return false;
         }
 
-        public boolean isNtfsTime() throws SevenZipException {
-            return true;
-        }
-
         public Date getModificationTime() throws SevenZipException {
             return substructDate(DATE, 1);
         }
