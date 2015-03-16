@@ -22,7 +22,7 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.ISequentialInStream;
@@ -71,9 +71,17 @@ public class VirtualContent {
     }
 
     class Item {
-        private String path;
-        private Date creationDate;
-        private ByteArrayStream blob;
+        ByteArrayStream blob;
+        String path;
+        Date creationDate;
+
+        String user;
+        boolean userSet;
+
+        String group;
+        boolean groupSet;
+
+        // TODO Add more parameters, that we can test
 
         Item(byte[] blobData) {
             blob = new ByteArrayStream(blobData, false);
@@ -82,31 +90,11 @@ public class VirtualContent {
         public VirtualContent getVirtualContent() {
             return VirtualContent.this;
         }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public Date getCreationDate() {
-            return creationDate;
-        }
-
-        public void setCreationDate(Date creationDate) {
-            this.creationDate = creationDate;
-        }
-
-        public ByteArrayStream getBlob() {
-            return blob;
-        }
     }
 
-    private class ArchiveUpdateCallback implements IOutCreateCallback<IOutItemCallback> {
+    private class ArchiveCreateCallback implements IOutCreateCallback<IOutItemCallback> {
         public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = itemList.get(index).getBlob();
+            ByteArrayStream byteArrayStream = itemList.get(index).blob;
             byteArrayStream.rewind();
             return byteArrayStream;
         }
@@ -131,11 +119,11 @@ public class VirtualContent {
                 }
 
                 public long getSize() throws SevenZipException {
-                    return itemList.get(index).getBlob().getSize();
+                    return itemList.get(index).blob.getSize();
                 }
 
                 public String getPath() throws SevenZipException {
-                    return itemList.get(index).getPath();
+                    return itemList.get(index).path;
                 }
 
                 public Integer getPosixAttributes() throws SevenZipException {
@@ -147,10 +135,6 @@ public class VirtualContent {
                 }
 
                 public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-
-                public boolean isNtfsTime() throws SevenZipException {
                     return false;
                 }
 
@@ -167,13 +151,13 @@ public class VirtualContent {
                 }
 
                 public String getUser() throws SevenZipException {
-                    // TODO Auto-generated method stub
-                    return null;
+                    itemList.get(index).userSet = true;
+                    return itemList.get(index).user;
                 }
 
                 public String getGroup() throws SevenZipException {
-                    // TODO Auto-generated method stub
-                    return null;
+                    itemList.get(index).groupSet = true;
+                    return itemList.get(index).group;
                 }
             };
         }
@@ -183,21 +167,13 @@ public class VirtualContent {
         private final ByteArrayStream byteArrayStream;
 
         public TestSequentailOutStream(Item item) {
-            byteArrayStream = item.getBlob();
+            byteArrayStream = item.blob;
             byteArrayStream.rewind();
         }
 
         public int write(byte[] data) throws SevenZipException {
             byte[] expectedData = new byte[data.length];
             assertEquals(Integer.valueOf(data.length), Integer.valueOf(byteArrayStream.read(expectedData)));
-
-            /*
-            for (int i=0;i<data.length;i++) {
-              if (expectedData[i] != data[i]) {
-                throw new RuntimeException("Different at pos " + i);
-              }
-            }
-            */
 
             try {
                 assertArrayEquals(expectedData, data);
@@ -245,8 +221,15 @@ public class VirtualContent {
                 // Gzip/BZip2
                 myIndex = 0;
             }
+            Item item = itemList.get(myIndex);
+            if (item.userSet) {
+                assertEquals(item.user, inArchive.getProperty(index, PropID.USER));
+            }
+            if (item.groupSet) {
+                assertEquals(item.group, inArchive.getProperty(index, PropID.GROUP));
+            }
             extracted[myIndex] = true;
-            testSequentailOutStream = new TestSequentailOutStream(itemList.get(myIndex));
+            testSequentailOutStream = new TestSequentailOutStream(item);
             return testSequentailOutStream;
         }
 
@@ -275,6 +258,7 @@ public class VirtualContent {
         }
     }
 
+    // TODO Use it or remove it
     public interface FilenameGenerator {
         String nextFilename();
     }
@@ -297,9 +281,9 @@ public class VirtualContent {
     public void writeToDirectory(File directory) throws Exception {
         directory.mkdirs();
         for (Item item : itemList) {
-            File itemFile = new File(directory.getName() + File.separator + item.getPath()).getAbsoluteFile();
+            File itemFile = new File(directory.getName() + File.separator + item.path).getAbsoluteFile();
             itemFile.getParentFile().mkdirs();
-            item.getBlob().writeToOutputStream(new FileOutputStream(itemFile), true);
+            item.blob.writeToOutputStream(new FileOutputStream(itemFile), true);
         }
     }
 
@@ -313,14 +297,14 @@ public class VirtualContent {
             values = new ArrayList<Item>(itemList);
             Collections.sort(values, new Comparator<Item>() {
                 public int compare(Item item1, Item item2) {
-                    return item1.getPath().compareTo(item2.getPath());
+                    return item1.path.compareTo(item2.path);
                 }
             });
         } else {
             values = itemList;
         }
         for (Item item : values) {
-            System.out.println(item.getPath() + "   (" + item.getBlob().getSize() + " bytes)");
+            System.out.println(item.path + "   (" + item.blob.getSize() + " bytes)");
         }
     }
 
@@ -331,8 +315,10 @@ public class VirtualContent {
 
     public void addItem(int index, String path, byte[] blob) {
         Item item = new Item(blob);
-        item.setPath(path);
-        item.setCreationDate(new Date());
+        item.path = path;
+        item.creationDate = new Date();
+        item.user = getRandomName();
+        item.group = getRandomName();
         itemList.add(index, item);
         reindexUsedNames();
     }
@@ -340,13 +326,13 @@ public class VirtualContent {
     private void reindexUsedNames() {
         usedNames.clear();
         for (int i = 0; i < itemList.size(); i++) {
-            usedNames.put(itemList.get(i).getPath().toUpperCase(), i);
+            usedNames.put(itemList.get(i).path.toUpperCase(), i);
         }
     }
 
-    public void createOutArchive(IOutArchive<? super IOutItemCallback> outArchive, ISequentialOutStream outputStream)
+    public void createOutArchive(IOutCreateArchive<IOutItemCallback> outArchive, ISequentialOutStream outputStream)
             throws SevenZipException {
-        outArchive.createArchive(outputStream, itemList.size(), new ArchiveUpdateCallback());
+        outArchive.createArchive(outputStream, itemList.size(), new ArchiveCreateCallback());
     }
 
     public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
@@ -373,15 +359,18 @@ public class VirtualContent {
             for (int j = 0; j < 50; j++) {
                 String filename = filenameGenerator == null ? getRandomFilename() : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
-                    item.setPath(directory + filename);
+                    item.path = directory + filename;
                     break;
                 }
             }
-            if (item.getPath() == null) {
+            if (item.path == null) {
                 throw new RuntimeException("It wasn't possible to generate a random file name after 50 iterations.");
             }
 
-            usedNames.put(item.getPath().toUpperCase(), Integer.valueOf(itemList.size()));
+            item.user = getRandomName();
+            item.group = getRandomName();
+
+            usedNames.put(item.path.toUpperCase(), Integer.valueOf(itemList.size()));
             itemList.add(item);
 
         }
@@ -479,28 +468,39 @@ public class VirtualContent {
         return new String(filenameArray);
     }
 
+    private static String getRandomName() {
+        int length = 3 + random.nextInt(9);
+        char[] filenameArray = new char[length];
+        for (int j = 0; j < length; j++) {
+            filenameArray[j] = getRandomLetter();
+        }
+        return new String(filenameArray);
+    }
+
     private static char getRandomFilenameChar(boolean firstChar) {
-        int i = Math.abs(random.nextInt());
-        switch (i % 4) {
+        switch (random.nextInt()) {
         case 0:
-            // Upper case letters
-            return (char) ('A' + (i / 4) % 26);
-
-        case 1:
-            // Lower case letters
-            return (char) ('a' + (i / 4) % 26);
-
-        case 2:
-            // Digits
-            return (char) ('0' + (i / 4) % 10);
-
-        default:
             // Symbols
             if (firstChar) {
-                return SYMBOLS_FIRST_CHAR[(i / 4) % SYMBOLS_FIRST_CHAR.length];
+                return SYMBOLS_FIRST_CHAR[random.nextInt(SYMBOLS_FIRST_CHAR.length)];
             }
-            return SYMBOLS[(i / 4) % SYMBOLS.length];
+            return SYMBOLS[random.nextInt(SYMBOLS.length)];
+        case 1:
+            // Digits
+            return (char) ('0' + random.nextInt(10));
+
+        default:
+            return getRandomLetter();
         }
+    }
+
+    private static char getRandomLetter() {
+        if (random.nextBoolean()) {
+            // Upper case letters
+            return (char) ('A' + random.nextInt(26));
+        }
+        // Lower case letters
+        return (char) ('a' + random.nextInt(26));
     }
 
     public int getItemCount() {
@@ -508,10 +508,10 @@ public class VirtualContent {
     }
 
     public ByteArrayStream getItemStream(int index) {
-        return itemList.get(index).getBlob();
+        return itemList.get(index).blob;
     }
 
     public String getItemPath(int index) {
-        return itemList.get(index).getPath();
+        return itemList.get(index).path;
     }
 }

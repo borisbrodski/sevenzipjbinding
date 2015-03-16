@@ -11,12 +11,17 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutCreateCallbackBase;
 import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.ISeekableStream;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.tools.AssertOutputStream;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -103,6 +108,36 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
             }
         }
         return result;
+    }
+
+    protected final void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream)
+            throws SevenZipException {
+        randomContext.seek(0, ISeekableStream.SEEK_SET);
+        outputByteArrayStream.rewind();
+
+        IInArchive inArchive = null;
+        boolean successfull = false;
+        try {
+            inArchive = SevenZip.openInArchive(null, outputByteArrayStream);
+            Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
+            inArchive.extractSlow(0, new AssertOutputStream(randomContext));
+
+            assertEquals(1, inArchive.getNumberOfItems());
+
+            verifyCompressedArchiveDetails(inArchive);
+
+            successfull = true;
+        } finally {
+            try {
+                if (inArchive != null) {
+                    inArchive.close();
+                }
+            } catch (Throwable throwable) {
+                if (successfull) {
+                    throw new RuntimeException("Error closing InArchive", throwable);
+                }
+            }
+        }
     }
 
     @Override
