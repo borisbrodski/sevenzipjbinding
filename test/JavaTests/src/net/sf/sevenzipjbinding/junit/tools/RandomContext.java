@@ -7,7 +7,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Generates random content with different entropy.
- * 
+ *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
@@ -88,5 +88,9 @@ public class RandomContext implements IInStream {
 
     public long getSize() {
         return size;
+    }
+
+    public void rewind() {
+        currentPosition = 0;
     }
 }

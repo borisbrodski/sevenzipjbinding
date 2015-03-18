@@ -11,7 +11,6 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutCreateCallbackBase;
 import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.ISeekableStream;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -112,7 +111,7 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
 
     protected final void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream)
             throws SevenZipException {
-        randomContext.seek(0, ISeekableStream.SEEK_SET);
+        randomContext.rewind();
         outputByteArrayStream.rewind();
 
         IInArchive inArchive = null;
@@ -140,7 +139,6 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
         }
     }
 
-    @Override
     protected void verifyCompressedArchiveDetails(IInArchive inArchive) throws SevenZipException {
         TestContext testContext = testContextThreadContext.get();
         if (testContext.pathSet) {

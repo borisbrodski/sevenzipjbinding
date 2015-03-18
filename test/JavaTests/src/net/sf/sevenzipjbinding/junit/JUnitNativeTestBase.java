@@ -186,6 +186,16 @@ public class JUnitNativeTestBase {
     }
 
     /**
+     * Remove closeable from the list.
+     * 
+     * @param closeable
+     *            closeable to remove
+     */
+    public void removeCloseable(Closeable closeable) {
+        closeableRule.removeCloseable(closeable);
+    }
+
+    /**
      * Add closeable to be closed automatically at the end of the test.
      *
      * @param <T>

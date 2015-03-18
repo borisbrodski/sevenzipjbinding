@@ -23,6 +23,10 @@ public class CloseableRule implements TestRule {
         closeableToClose.add(closeable);
     }
 
+    public void removeCloseable(Closeable closeable) {
+        closeableToClose.remove(closeable);
+    }
+
     public void closeAll() {
         for (int i = closeableToClose.size() - 1; i != -1; i--) {
             try {

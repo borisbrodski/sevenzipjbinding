@@ -1,8 +1,6 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 /**
@@ -15,8 +13,4 @@ public abstract class CompressAbstractTest extends JUnitNativeTestBase {
 
     protected abstract ArchiveFormat getArchiveFormat();
 
-
-    protected void verifyCompressedArchiveDetails(IInArchive inArchive) throws SevenZipException {
-
-    }
 }
