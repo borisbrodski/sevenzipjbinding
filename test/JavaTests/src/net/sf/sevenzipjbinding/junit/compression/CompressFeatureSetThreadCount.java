@@ -21,7 +21,7 @@ import org.junit.Test;
 
 /**
  * Tests compression feature: thread count.
- * 
+ *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
@@ -101,6 +101,9 @@ public abstract class CompressFeatureSetThreadCount extends CompressFeatureAbstr
 
         assertTrue(outArchive instanceof IOutFeatureSetLevel);
         IOutFeatureSetMultithreading featureOutArchive = (IOutFeatureSetMultithreading) outArchive;
+        featureOutArchive.setThreadCount(1);
+        featureOutArchive.setThreadCount(2);
+        featureOutArchive.setThreadCount(-1); // Set default
         featureOutArchive.setThreadCount(threadCount);
 
         RandomContext randomContext = new RandomContext(DATA_SIZE, ENTROPY);
