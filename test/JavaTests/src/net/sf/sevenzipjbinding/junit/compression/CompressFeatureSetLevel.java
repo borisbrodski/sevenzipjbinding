@@ -170,22 +170,7 @@ public abstract class CompressFeatureSetLevel extends CompressFeatureAbstractSin
         }
     }
 
-    private void testSingleOrMultithreaded(boolean multithreaded, final RunnableThrowsException test) throws Exception {
-        if (multithreaded) {
-            runMultithreaded(new RunnableThrowsException() {
-                public void run() throws Exception {
-                    testSingleOrMultithreaded(false, test);
-                }
-            }, null);
-        } else {
-
-            for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
-                test.run();
-            }
-        }
-    }
-
-    private void doTestCompressionFeatureSetLevel(int compressionLevel) throws Exception {
+    protected void doTestCompressionFeatureSetLevel(int compressionLevel) throws Exception {
         calcCompressionRation(compressionLevel);
     }
 
