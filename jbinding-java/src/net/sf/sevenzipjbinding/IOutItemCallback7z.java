@@ -6,7 +6,8 @@ public interface IOutItemCallback7z extends IOutItemCallbackBase {
     /**
      * @see PropID#IS_ANTI
      * 
-     * @return
+     * @return <code>false</code>, if not sure
+     * 
      * @throws SevenZipException
      */
     public boolean isAnti() throws SevenZipException;

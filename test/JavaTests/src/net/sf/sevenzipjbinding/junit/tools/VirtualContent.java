@@ -215,7 +215,8 @@ public class VirtualContent {
             int myIndex;
             if (path != null) {
                 Integer myIndexObjekt = usedNames.get(path.toUpperCase());
-                assertNotNull("Directory passed to extraction", myIndexObjekt);
+                assertNotNull("Directory passed to extraction (or index for path not found: '" + path + "')",
+                        myIndexObjekt);
                 myIndex = myIndexObjekt.intValue();
             } else {
                 // Gzip/BZip2
