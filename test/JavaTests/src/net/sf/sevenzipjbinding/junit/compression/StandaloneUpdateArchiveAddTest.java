@@ -22,7 +22,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Test;
 
-public class SimpleAddTest extends JUnitNativeTestBase {
+public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
     private static class AddItemArchiveUpdateCallback implements IOutUpdateCallback<IOutItemCallback7z> {
         private int itemToAdd;
         private String path;

@@ -252,9 +252,9 @@ public class VirtualContent {
             // TODO Check this value or remove todo
         }
 
-        void finish() {
+        void finish() throws SevenZipException {
             for (int i = 0; i < extracted.length; i++) {
-                assertTrue("Item with id " + i + " wasn't extracted", extracted[i]);
+                assertTrue("Item '" + itemList.get(i).path + "' wasn't extracted", extracted[i]);
             }
         }
     }
@@ -312,6 +312,20 @@ public class VirtualContent {
     public void deleteItem(int index) {
         itemList.remove(index);
         reindexUsedNames();
+    }
+
+    public void deleteItemByPath(String path) {
+        int index = -1;
+        for (int i = 0; i < itemList.size(); i++) {
+            if (itemList.get(i).path.equals(path)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            throw new RuntimeException("Can't delete item: item with path '" + path + "' not found");
+        }
+        deleteItem(index);
     }
 
     public void addItem(int index, String path, byte[] blob) {
@@ -515,4 +529,5 @@ public class VirtualContent {
     public String getItemPath(int index) {
         return itemList.get(index).path;
     }
+
 }
