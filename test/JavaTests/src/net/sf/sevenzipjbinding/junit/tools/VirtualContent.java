@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
+import static net.sf.sevenzipjbinding.junit.JUnitNativeTestBase.WEEK;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
@@ -29,6 +31,7 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
@@ -73,7 +76,15 @@ public class VirtualContent {
     class Item {
         ByteArrayStream blob;
         String path;
-        Date creationDate;
+
+        Date creationTime;
+        boolean creationTimeSet;
+
+        protected Date lastAccessTime;
+        protected boolean lastAccessTimeSet;
+
+        protected Date modificationTime;
+        protected boolean modificationTimeSet;
 
         String user;
         boolean userSet;
@@ -139,15 +150,18 @@ public class VirtualContent {
                 }
 
                 public Date getModificationTime() throws SevenZipException {
-                    return null;
+                    itemList.get(index).modificationTimeSet = true;
+                    return itemList.get(index).modificationTime;
                 }
 
                 public Date getLastAccessTime() throws SevenZipException {
-                    return null;
+                    itemList.get(index).lastAccessTimeSet = true;
+                    return itemList.get(index).lastAccessTime;
                 }
 
                 public Date getCreationTime() throws SevenZipException {
-                    return null;
+                    itemList.get(index).creationTimeSet = true;
+                    return itemList.get(index).creationTime;
                 }
 
                 public String getUser() throws SevenZipException {
@@ -210,6 +224,7 @@ public class VirtualContent {
         }
 
         public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode) throws SevenZipException {
+            ArchiveFormat archiveFormat = inArchive.getArchiveFormat();
             String path = (String) inArchive.getProperty(index, PropID.PATH);
 
             int myIndex;
@@ -228,6 +243,18 @@ public class VirtualContent {
             }
             if (item.groupSet) {
                 assertEquals(item.group, inArchive.getProperty(index, PropID.GROUP));
+            }
+            if (item.creationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
+                Date isDate = (Date) inArchive.getProperty(index, PropID.CREATION_TIME);
+                assertEquals(item.creationTime.getTime(), isDate.getTime(), 2000.0);
+            }
+            if (item.lastAccessTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
+                Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_ACCESS_TIME);
+                assertEquals(item.lastAccessTime.getTime(), isDate.getTime(), 2000.0);
+            }
+            if (item.modificationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
+                Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_MODIFICATION_TIME);
+                assertEquals(item.modificationTime.getTime(), isDate.getTime(), 2000.0);
             }
             extracted[myIndex] = true;
             testSequentailOutStream = new TestSequentailOutStream(item);
@@ -315,6 +342,11 @@ public class VirtualContent {
     }
 
     public void deleteItemByPath(String path) {
+        int index = getIndexByPath(path);
+        deleteItem(index);
+    }
+
+    private int getIndexByPath(String path) {
         int index = -1;
         for (int i = 0; i < itemList.size(); i++) {
             if (itemList.get(i).path.equals(path)) {
@@ -323,20 +355,27 @@ public class VirtualContent {
             }
         }
         if (index == -1) {
-            throw new RuntimeException("Can't delete item: item with path '" + path + "' not found");
+            throw new RuntimeException("Can't find item: item with path '" + path + "' not found");
         }
-        deleteItem(index);
+        return index;
     }
 
     public void addItem(int index, String path, byte[] blob) {
         Item item = new Item(blob);
         item.path = path;
-        item.creationDate = new Date();
-        item.user = getRandomName();
-        item.group = getRandomName();
+        fillWithRandomData(item);
         itemList.add(index, item);
         reindexUsedNames();
     }
+
+    private void fillWithRandomData(Item item) {
+        item.creationTime = JUnitNativeTestBase.getDate(3 * WEEK);
+        item.modificationTime = JUnitNativeTestBase.getDate(2 * WEEK);
+        item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
+        item.user = getRandomName();
+        item.group = getRandomName();
+    }
+
 
     private void reindexUsedNames() {
         usedNames.clear();
@@ -371,6 +410,7 @@ public class VirtualContent {
             String directory = directoryList.get(random.nextInt(directoryList.size()));
 
             Item item = new Item(fileContent);
+            fillWithRandomData(item);
             for (int j = 0; j < 50; j++) {
                 String filename = filenameGenerator == null ? getRandomFilename() : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
@@ -381,9 +421,6 @@ public class VirtualContent {
             if (item.path == null) {
                 throw new RuntimeException("It wasn't possible to generate a random file name after 50 iterations.");
             }
-
-            item.user = getRandomName();
-            item.group = getRandomName();
 
             usedNames.put(item.path.toUpperCase(), Integer.valueOf(itemList.size()));
             itemList.add(item);
@@ -528,6 +565,22 @@ public class VirtualContent {
 
     public String getItemPath(int index) {
         return itemList.get(index).path;
+    }
+
+    public void updateItemContentByPath(String itemToUpdatePath, byte[] newContent) {
+        int index = getIndexByPath(itemToUpdatePath);
+        itemList.get(index).blob = new ByteArrayStream(newContent, true);
+    }
+
+    public void updateItemPathByPath(String itemToUpdatePath, String newPath) {
+        int index = getIndexByPath(itemToUpdatePath);
+        itemList.get(index).path = newPath;
+        reindexUsedNames();
+    }
+
+    public void updateItemLastModificationTimeByPath(String itemToUpdatePath, Date time) {
+        int index = getIndexByPath(itemToUpdatePath);
+        itemList.get(index).modificationTime = time;
     }
 
 }

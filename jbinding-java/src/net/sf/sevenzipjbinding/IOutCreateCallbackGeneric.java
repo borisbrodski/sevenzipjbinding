@@ -8,6 +8,6 @@ package net.sf.sevenzipjbinding;
  * @version 9.04-2.00
  */
 public interface IOutCreateCallbackGeneric extends IOutCreateCallbackBase {
-    public Object getProperty(int index, PropID propID);
+    public Object getProperty(int index, PropID propID) throws SevenZipException;
 
 }

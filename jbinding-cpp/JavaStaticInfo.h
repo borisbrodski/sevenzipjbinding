@@ -752,6 +752,8 @@ public:
         return _name;
     }
     static T * _getInstanceFromObject(JNIEnv * env, jobject jobject) {
+        FATALIF(!jobject, "_getInstanceFromObject(): 'jobject' can't be null")
+        FATALIF(!env, "_getInstanceFromObject(): 'env' can't be null")
         jclass jobjectClass = env->GetObjectClass(jobject);
         FATALIF(!jobjectClass, "Error determining object class");
         return _getInstance(env, jobjectClass);

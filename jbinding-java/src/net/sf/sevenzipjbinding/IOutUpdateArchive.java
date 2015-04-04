@@ -21,13 +21,13 @@ public interface IOutUpdateArchive<E extends IOutItemCallbackBase> {
      *            output stream to get the new archive
      * @param numberOfItems
      *            number of items in the new archive
-     * @param archiveUpdateCallback
+     * @param outUpdateCallback
      *            update call back object to provide more information for archive create/update operation.
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IOutUpdateCallback<E> archiveUpdateCallback) throws SevenZipException;
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutUpdateCallback<E> outUpdateCallback)
+            throws SevenZipException;
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}

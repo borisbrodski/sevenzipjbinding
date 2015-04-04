@@ -23,6 +23,7 @@ import net.sf.sevenzipjbinding.simple.impl.SimpleInArchiveImpl;
  * @version 4.65-1
  * 
  */
+//TODO null check all parameters: If null slips through into native code there will be no NPE :( 
 public final class InArchiveImpl implements IInArchive {
     private static class ExtractSlowCallback implements IArchiveExtractCallback {
         ISequentialOutStream sequentialOutStreamParam;

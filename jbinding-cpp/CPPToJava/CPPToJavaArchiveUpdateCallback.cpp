@@ -145,6 +145,11 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 		if (jniEnvInstance.exceptionCheck()) {
 			return S_FALSE;
 		}
+		if (_outItemCallbackImplementation == NULL) {
+	        jniEnvInstance.reportError("IOutCreateCallback.getOutItemCallback() should return "
+	                "a non-null implementation of the create/update item callback interface");
+            return S_FALSE;
+		}
 		_iOutItemCallback = jni::IOutItemCallback::_getInstanceFromObject(jniEnvInstance, _outItemCallbackImplementation);
 
 		_outItemCallbackLastIndex = index;

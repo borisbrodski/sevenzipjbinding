@@ -191,10 +191,6 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
         assertFalse((Boolean) inArchive.getProperty(0, PropID.IS_FOLDER));
     }
 
-    private static Date getDate(int period) {
-        return new Date(new Date().getTime() - RANDOM.nextInt(period) - period);
-    }
-
     @Test
     public void test0Entropy0() throws Exception {
         doTest(0, 0, false);

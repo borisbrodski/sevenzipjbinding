@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.Closeable;
+import java.util.Date;
 import java.util.Random;
 
 import net.sf.sevenzipjbinding.SevenZip;
@@ -44,7 +45,7 @@ public class JUnitNativeTestBase {
         };
     };
 
-    protected static final int WEEK = 1000 * 60 * 60 * 24 * 7; // Milliseconds in a week
+    public static final int WEEK = 1000 * 60 * 60 * 24 * 7; // Milliseconds in a week
     protected static final Random RANDOM = new Random(0);
 
     @Rule
@@ -187,7 +188,7 @@ public class JUnitNativeTestBase {
 
     /**
      * Remove closeable from the list.
-     * 
+     *
      * @param closeable
      *            closeable to remove
      */
@@ -207,5 +208,23 @@ public class JUnitNativeTestBase {
     public <T extends Closeable> T closeLater(T closeable) {
         closeableRule.addCloseable(closeable);
         return closeable;
+    }
+
+    public static Date getDate(int period) {
+        return new Date(new Date().getTime() - RANDOM.nextInt(period) - period);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends Throwable> T getExceptionCauseByClass(Class<T> exceptionClass, Throwable e) {
+        Throwable cause = e;
+        while (cause != null) {
+            if (exceptionClass.isInstance(cause)) {
+                return (T) cause;
+            }
+            cause = cause.getCause();
+        }
+        e.printStackTrace();
+        throw new AssertionError("Exception " + exceptionClass.getName() + " is missing as a cause of the exception: "
+                + e.getMessage());
     }
 }

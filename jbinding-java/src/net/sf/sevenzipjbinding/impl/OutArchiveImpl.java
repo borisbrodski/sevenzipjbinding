@@ -13,6 +13,7 @@ import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
+// TODO null check all parameters: If null slips through into native code there will be no NPE :( 
 public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchive<E> {
 
     private long jbindingSession;
@@ -91,9 +92,9 @@ public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchi
 
     private native void nativeClose() throws SevenZipException;
 
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IOutUpdateCallback<E> archiveUpdateCallback) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, archiveUpdateCallback);
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutUpdateCallback<E> outUpdateCallback)
+            throws SevenZipException {
+        doUpdateItems(outStream, numberOfItems, outUpdateCallback);
     }
 
     public void updateItems(ISequentialOutStream outStream, int numberOfItems,
