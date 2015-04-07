@@ -10,8 +10,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.sevenzipjbinding.junit.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ParamSpecTest extends JUnitNativeTestBase {
@@ -31,6 +34,9 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     private static class ParamSpecTestInherited extends ParamSpecTest {
     }
+
+    @Rule
+    public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
 
     private String initMessage;
 
@@ -233,286 +239,343 @@ public class ParamSpecTest extends JUnitNativeTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWithNoParameters() throws Exception {
         testMethod("StringMethodWithNoParameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWithNoParameters() throws Exception {
         testMethod("ListMethodWithNoParameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWithNoParameters() throws Exception {
         testConstruct("nativeConstructWithNoParameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith1Parameter1() throws Exception {
         testMethod("StringMethodWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith1Parameter2() throws Exception {
         testMethod("StringMethodWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith1Parameter1() throws Exception {
         testMethod("ListMethodWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith1Parameter2() throws Exception {
         testMethod("ListMethodWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith1Parameter1() throws Exception {
         testConstruct("nativeConstructWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith1Parameter2() throws Exception {
         testConstruct("nativeConstructWith1Parameter");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith2Parameters1() throws Exception {
         testMethod("StringMethodWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith2Parameters2() throws Exception {
         testMethod("StringMethodWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith2Parameters1() throws Exception {
         testMethod("ListMethodWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith2Parameters2() throws Exception {
         testMethod("ListMethodWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith2Parameters1() throws Exception {
         testConstruct("nativeConstructWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith2Parameters2() throws Exception {
         testConstruct("nativeConstructWith2Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith3Parameters1() throws Exception {
         testMethod("StringMethodWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith3Parameters2() throws Exception {
         testMethod("StringMethodWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith3Parameters1() throws Exception {
         testMethod("ListMethodWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith3Parameters2() throws Exception {
         testMethod("ListMethodWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith3Parameters1() throws Exception {
         testConstruct("nativeConstructWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith3Parameters2() throws Exception {
         testConstruct("nativeConstructWith3Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith4Parameters1() throws Exception {
         testMethod("StringMethodWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith4Parameters2() throws Exception {
         testMethod("StringMethodWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith4Parameters1() throws Exception {
         testMethod("ListMethodWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith4Parameters2() throws Exception {
         testMethod("ListMethodWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith4Parameters1() throws Exception {
         testConstruct("nativeConstructWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith4Parameters2() throws Exception {
         testConstruct("nativeConstructWith4Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith5Parameters1() throws Exception {
         testMethod("StringMethodWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith5Parameters2() throws Exception {
         testMethod("StringMethodWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith5Parameters1() throws Exception {
         testMethod("ListMethodWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith5Parameters2() throws Exception {
         testMethod("ListMethodWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith5Parameters1() throws Exception {
         testConstruct("nativeConstructWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith5Parameters2() throws Exception {
         testConstruct("nativeConstructWith5Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith6Parameters1() throws Exception {
         testMethod("StringMethodWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith6Parameters2() throws Exception {
         testMethod("StringMethodWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith6Parameters1() throws Exception {
         testMethod("ListMethodWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith6Parameters2() throws Exception {
         testMethod("ListMethodWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith6Parameters1() throws Exception {
         testConstruct("nativeConstructWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith6Parameters2() throws Exception {
         testConstruct("nativeConstructWith6Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith7Parameters1() throws Exception {
         testMethod("StringMethodWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith7Parameters2() throws Exception {
         testMethod("StringMethodWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith7Parameters1() throws Exception {
         testMethod("ListMethodWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith7Parameters2() throws Exception {
         testMethod("ListMethodWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith7Parameters1() throws Exception {
         testConstruct("nativeConstructWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith7Parameters2() throws Exception {
         testConstruct("nativeConstructWith7Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith8Parameters1() throws Exception {
         testMethod("StringMethodWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith8Parameters2() throws Exception {
         testMethod("StringMethodWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith8Parameters1() throws Exception {
         testMethod("ListMethodWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith8Parameters2() throws Exception {
         testMethod("ListMethodWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith8Parameters1() throws Exception {
         testConstruct("nativeConstructWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith8Parameters2() throws Exception {
         testConstruct("nativeConstructWith8Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith9Parameters1() throws Exception {
         testMethod("StringMethodWith9Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testStringMethodWith9Parameters2() throws Exception {
         testMethod("StringMethodWith9Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith9Parameters1() throws Exception {
         testMethod("ListMethodWith9Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testListMethodWith9Parameters2() throws Exception {
         testMethod("ListMethodWith9Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith9Parameters1() throws Exception {
         testConstruct("nativeConstructWith9Parameters");
     }
 
     @Test
+    @DebugModeOnly
     public void testConstructWith9Parameters2() throws Exception {
         testConstruct("nativeConstructWith9Parameters");
     }

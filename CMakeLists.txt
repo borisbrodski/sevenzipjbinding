@@ -317,6 +317,10 @@ IF(BUILD_TESTING)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")
     ENDIF()
 
+    IF(NOT(CMAKE_BUILD_TYPE STREQUAL "Debug"))
+       FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Dskip-debug-mode-tests=true\" ")
+    ENDIF()
+
     FILE(APPEND ${JUNIT_TEST_RUNNER} "org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
                                             WORKING_DIRECTORY ${JAVA_TEST_SOURCE_DIR}/..
                                             RESULT_VARIABLE RESULT)

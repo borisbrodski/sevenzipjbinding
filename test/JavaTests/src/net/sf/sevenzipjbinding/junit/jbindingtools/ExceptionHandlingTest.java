@@ -15,7 +15,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
 
+import org.junit.Rule;
 import org.junit.Test;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
@@ -462,6 +465,9 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     //        }
     //    }
 
+    @Rule
+    public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
+
     private static native String callRecursiveCallbackMethod(String path, int depth, int width, int mtwidth,
             boolean useException, boolean customErrorMessage) throws SevenZipException;
 
@@ -517,6 +523,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursive() throws Exception {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), false, false);
@@ -525,6 +532,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursiveMultithreaded() throws Exception {
         int threadCount = THREAD_COUNT;
         // TODO verify/optimize
@@ -542,6 +550,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursiveWithException() throws Exception {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), true, false);
@@ -549,6 +558,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursiveWithExceptionMultithreaded() throws Exception {
         runMultithreaded(new RunnableThrowsException() {
             public void run() throws Exception {
@@ -558,6 +568,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursiveWithExceptionWithCustomMessage() throws Exception {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), true, true);
@@ -565,6 +576,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     }
 
     @Test
+    @DebugModeOnly
     public void testCallRecursiveWithExceptionWithCustomMessageMultithreaded() throws Exception {
         runMultithreaded(new RunnableThrowsException() {
             public void run() throws Exception {

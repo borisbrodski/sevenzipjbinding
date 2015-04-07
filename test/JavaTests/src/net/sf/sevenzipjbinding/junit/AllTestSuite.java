@@ -10,7 +10,10 @@ import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
+import net.sf.sevenzipjbinding.junit.compression.CompressExceptionTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileBZip2Test;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileGZipTest;
@@ -29,6 +32,10 @@ import net.sf.sevenzipjbinding.junit.compression.StandaloneCompressGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneCompressSevenZipTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneCompressTarTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneCompressZipTest;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveAddTest;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveRemoveTest;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdateContentTest;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdatePropertiesTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
@@ -353,11 +360,18 @@ public class AllTestSuite extends TestSuite {
             StandaloneCompressGZipTest.class, //
             StandaloneCompressSevenZipTest.class, //
             StandaloneCompressTarTest.class, //
+            StandaloneUpdateArchiveAddTest.class, //
+            StandaloneUpdateArchiveRemoveTest.class, //
+            StandaloneUpdateArchiveUpdateContentTest.class, //
+            StandaloneUpdateArchiveUpdatePropertiesTest.class, //
 
             CompressFeatureSetLevel.CompressionFeatureSetLevelBZip2.class, //
             CompressFeatureSetLevel.CompressionFeatureSetLevelGZip.class, //
             CompressFeatureSetLevel.CompressionFeatureSetLevelSevenZip.class, //
             CompressFeatureSetLevel.CompressionFeatureSetLevelZip.class, //
+            CompressFeatureSetSolid.CompressionFeatureSetSolidSevenZip.class, //
+            CompressFeatureSetThreadCount.CompressionFeatureSetLevelSevenZip.class, //
+
             CompressGenericSingleFile7zTest.class, //
             CompressGenericSingleFileBZip2Test.class, //
             CompressGenericSingleFileGZipTest.class, //
@@ -371,6 +385,13 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericSingleFileGZipTest.class, //
             CompressNonGenericSingleFileTarTest.class, //
             CompressNonGenericSingleFileZipTest.class, //
+
+            CompressExceptionTest.CompressException7zTest.class, //
+            CompressExceptionTest.CompressExceptionBZip2Test.class, //
+            CompressExceptionTest.CompressExceptionGZipTest.class, //
+            CompressExceptionTest.CompressExceptionTarTest.class, //
+            CompressExceptionTest.CompressExceptionZipTest.class, //
+
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
