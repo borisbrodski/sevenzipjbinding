@@ -176,6 +176,22 @@ public class JUnitNativeTestBase {
         }
     }
 
+    protected final void testSingleOrMultithreaded(boolean multithreaded, final RunnableThrowsException test)
+            throws Exception {
+        if (multithreaded) {
+            runMultithreaded(new RunnableThrowsException() {
+                public void run() throws Exception {
+                    testSingleOrMultithreaded(false, test);
+                }
+            }, null);
+        } else {
+
+            for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
+                test.run();
+            }
+        }
+    }
+
     /**
      * Add closeable to be closed automatically at the end of the test.
      *

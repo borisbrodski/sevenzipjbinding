@@ -14,8 +14,8 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 /**
- * Tests setting compression level.
- *
+ * Tests exceptions during archive compression.
+ * 
  * @author Boris Brodski
  * @version 9.13-2.00
  */

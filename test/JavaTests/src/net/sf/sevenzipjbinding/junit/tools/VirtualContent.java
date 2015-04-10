@@ -246,15 +246,15 @@ public class VirtualContent {
             }
             if (item.creationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
                 Date isDate = (Date) inArchive.getProperty(index, PropID.CREATION_TIME);
-                assertEquals(item.creationTime.getTime(), isDate.getTime(), 2000.0);
+                assertTrue(Math.abs(item.creationTime.getTime() - isDate.getTime()) <= 2000);
             }
             if (item.lastAccessTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
                 Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_ACCESS_TIME);
-                assertEquals(item.lastAccessTime.getTime(), isDate.getTime(), 2000.0);
+                assertTrue(Math.abs(item.lastAccessTime.getTime() - isDate.getTime()) <= 2000);
             }
             if (item.modificationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
                 Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_MODIFICATION_TIME);
-                assertEquals(item.modificationTime.getTime(), isDate.getTime(), 2000.0);
+                assertTrue(Math.abs(item.modificationTime.getTime() - isDate.getTime()) <= 2000);
             }
             extracted[myIndex] = true;
             testSequentailOutStream = new TestSequentailOutStream(item);
@@ -581,6 +581,16 @@ public class VirtualContent {
     public void updateItemLastModificationTimeByPath(String itemToUpdatePath, Date time) {
         int index = getIndexByPath(itemToUpdatePath);
         itemList.get(index).modificationTime = time;
+    }
+
+    public void updateUserByPath(String itemToUpdatePath, String newValue) {
+        int index = getIndexByPath(itemToUpdatePath);
+        itemList.get(index).user = newValue;
+    }
+
+    public void updateGroupByPath(String itemToUpdatePath, String newValue) {
+        int index = getIndexByPath(itemToUpdatePath);
+        itemList.get(index).group = newValue;
     }
 
 }
