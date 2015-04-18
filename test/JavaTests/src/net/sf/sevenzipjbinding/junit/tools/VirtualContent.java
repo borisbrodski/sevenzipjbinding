@@ -491,7 +491,7 @@ public class VirtualContent {
                         "It wasn't possible to generate a random directory name after 50 iterations.");
             }
             usedNames.put((root + name).toUpperCase(), null);
-            String fullDirectoryName = root + name + "/";
+            String fullDirectoryName = root + name + File.separator;
             result.add(fullDirectoryName);
             if (depth < maxDepth) {
                 createFullDirectoryStructure(result, fullDirectoryName, depth + 1, maxDepth, maxSubdirectories);
