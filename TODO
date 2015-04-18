@@ -55,6 +55,10 @@ Major TODOs:
 - Add Xz compression/decompression
 - Start using TestConfiguration
 
+Checklists
+ - Bind new version of 7-zip
+   - Copy from p7zip and verify PlatformMinGW/* content
+
 Info:
 - Quasijarus compression
   * http://ifctfvax.harhan.org/Quasijarus/compress.html
