@@ -13,6 +13,7 @@ SET(MINGW64     No CACHE BOOL "Use MinGW toolchain (64 bit)")
 SET(RUNTIME_LIB CACHE BOOL "Compiler runtime library to package and load before 7-Zip-JBinding")
 
 SET(JAVA_TMP       CACHE PATH "Path to tmp directory")
+SET(JAVA_PARAMS    CACHE STRING "Additional parameters for java executable")
 
 IF (MINGW32 OR MINGW64)
     SET(MINGW Yes)
@@ -315,6 +316,9 @@ IF(BUILD_TESTING)
                                             \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" \${JAVA_OPT_TO_USE} ")
     IF(JAVA_TMP)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")
+    ENDIF()
+    IF(JAVA_PARAMS)
+       FILE(APPEND ${JUNIT_TEST_RUNNER} "${JAVA_PARAMS} ")
     ENDIF()
 
     IF(NOT(CMAKE_BUILD_TYPE STREQUAL "Debug"))

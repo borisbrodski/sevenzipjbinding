@@ -336,7 +336,7 @@ NOTE: Java 1.5 or higher is required in order to compile 7-Zip-JBinding.
 Javac error message: ${javac_err}")
     ENDIF()
 
-    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} JavaSystemPropertyTest os.arch
+    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} ${JAVA_PARAMS} JavaSystemPropertyTest os.arch
                     WORKING_DIRECTORY ${JAVAC_TEST_DIR}
                     RESULT_VARIABLE java_result
                     OUTPUT_VARIABLE java_output 
@@ -350,7 +350,7 @@ Javac error message: ${java_err}")
     ENDIF()
     SET(JAVA_ARCH "${java_output}" CACHE INTERNAL "Java os.name")
 
-    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} JavaSystemPropertyTest os.name
+    EXECUTE_PROCESS(COMMAND ${JAVA_RUNTIME} ${JAVA_PARAMS} JavaSystemPropertyTest os.name
                     WORKING_DIRECTORY ${JAVAC_TEST_DIR}
                     RESULT_VARIABLE java_result
                     OUTPUT_VARIABLE java_output 
