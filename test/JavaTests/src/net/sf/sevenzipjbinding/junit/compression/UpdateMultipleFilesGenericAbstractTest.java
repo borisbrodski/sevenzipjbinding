@@ -5,12 +5,12 @@ import net.sf.sevenzipjbinding.IOutUpdateCallbackBase;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Base class for all update single file tests using non-generic update classback.
+ * Base class for all update multiple files tests using non-generic update classback.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public abstract class UpdateSingleFileGenericAbstractTest extends UpdateSingleFileAbstractTest {
+public abstract class UpdateMultipleFilesGenericAbstractTest extends UpdateMultipleFilesAbstractTest {
     @Override
     protected IOutUpdateCallbackBase getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
             throws SevenZipException {

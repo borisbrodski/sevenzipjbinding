@@ -36,6 +36,22 @@ import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveAddTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveRemoveTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdateContentTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdatePropertiesTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericTarTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericTarTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericBZip2Test;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericGZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericTarTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericBZip2Test;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
@@ -385,6 +401,23 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericSingleFileGZipTest.class, //
             CompressNonGenericSingleFileTarTest.class, //
             CompressNonGenericSingleFileZipTest.class, //
+
+            UpdateMultipleFilesGeneric7zTest.class, //
+            UpdateMultipleFilesGenericTarTest.class, //
+            UpdateMultipleFilesGenericZipTest.class, //
+            UpdateMultipleFilesNonGeneric7zTest.class, //
+            UpdateMultipleFilesNonGenericTarTest.class, //
+            UpdateMultipleFilesNonGenericZipTest.class, //
+            UpdateSingleFileGeneric7zTest.class, //
+            UpdateSingleFileGenericBZip2Test.class, //
+            UpdateSingleFileGenericGZipTest.class, //
+            UpdateSingleFileGenericTarTest.class, //
+            UpdateSingleFileGenericZipTest.class, //
+            UpdateSingleFileNonGeneric7zTest.class, //
+            UpdateSingleFileNonGenericBZip2Test.class, //
+            UpdateSingleFileNonGenericGZipTest.class, //
+            UpdateSingleFileNonGenericTarTest.class, //
+            UpdateSingleFileNonGenericZipTest.class, //
 
             CompressExceptionTest.CompressException7zTest.class, //
             CompressExceptionTest.CompressExceptionBZip2Test.class, //

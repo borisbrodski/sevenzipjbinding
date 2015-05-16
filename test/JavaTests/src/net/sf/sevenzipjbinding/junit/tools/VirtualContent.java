@@ -5,6 +5,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -295,8 +296,6 @@ public class VirtualContent {
      * Constant seed used here. Tests should be deterministic in order to ensure easy debugging.
      */
     private static final Random random = new Random(0);
-    private static final char[] SYMBOLS = new char[] { ' ', '_', '-', '+', '=' };
-    private static final char[] SYMBOLS_FIRST_CHAR = new char[] { '_', '-', '+', '=' };
 
     private List<Item> itemList = new ArrayList<Item>();
     private Map<String, Integer> usedNames = new HashMap<String, Integer>();
@@ -372,15 +371,17 @@ public class VirtualContent {
         item.creationTime = JUnitNativeTestBase.getDate(3 * WEEK);
         item.modificationTime = JUnitNativeTestBase.getDate(2 * WEEK);
         item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
-        item.user = getRandomName();
-        item.group = getRandomName();
+        item.user = JUnitNativeTestBase.getRandomName(random);
+        item.group = JUnitNativeTestBase.getRandomName(random);
     }
 
 
     private void reindexUsedNames() {
         usedNames.clear();
         for (int i = 0; i < itemList.size(); i++) {
-            usedNames.put(itemList.get(i).path.toUpperCase(), i);
+            if (usedNames.put(itemList.get(i).path.toUpperCase(), i) != null) {
+                fail("Name used twice: '" + itemList.get(i).path.toUpperCase() + "'");
+            }
         }
     }
 
@@ -412,7 +413,8 @@ public class VirtualContent {
             Item item = new Item(fileContent);
             fillWithRandomData(item);
             for (int j = 0; j < 50; j++) {
-                String filename = filenameGenerator == null ? getRandomFilename() : filenameGenerator.nextFilename();
+                String filename = filenameGenerator == null ? JUnitNativeTestBase.getRandomFilename(random)
+                        : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
                     item.path = directory + filename;
                     break;
@@ -479,7 +481,7 @@ public class VirtualContent {
         for (int i = 0; i < maxSubdirectories; i++) {
             String name = null;
             for (int j = 0; j < 50; j++) {
-                name = getRandomFilename();
+                name = JUnitNativeTestBase.getRandomFilename(random);
                 if (usedNames.containsKey(name)) {
                     name = null;
                 } else {
@@ -499,61 +501,6 @@ public class VirtualContent {
         }
     }
 
-    private static String getRandomFilename() {
-        int length;
-        switch (random.nextInt(3)) {
-        case 0:
-            length = 1;
-            break;
-        case 1:
-            // Length: 2-10
-            length = 2 + random.nextInt(9);
-            break;
-        default:
-            // Length: 20-30
-            length = 20 + random.nextInt(11);
-        }
-        char[] filenameArray = new char[length];
-        for (int j = 0; j < length; j++) {
-            filenameArray[j] = getRandomFilenameChar(j == 0);
-        }
-        return new String(filenameArray);
-    }
-
-    private static String getRandomName() {
-        int length = 3 + random.nextInt(9);
-        char[] filenameArray = new char[length];
-        for (int j = 0; j < length; j++) {
-            filenameArray[j] = getRandomLetter();
-        }
-        return new String(filenameArray);
-    }
-
-    private static char getRandomFilenameChar(boolean firstChar) {
-        switch (random.nextInt()) {
-        case 0:
-            // Symbols
-            if (firstChar) {
-                return SYMBOLS_FIRST_CHAR[random.nextInt(SYMBOLS_FIRST_CHAR.length)];
-            }
-            return SYMBOLS[random.nextInt(SYMBOLS.length)];
-        case 1:
-            // Digits
-            return (char) ('0' + random.nextInt(10));
-
-        default:
-            return getRandomLetter();
-        }
-    }
-
-    private static char getRandomLetter() {
-        if (random.nextBoolean()) {
-            // Upper case letters
-            return (char) ('A' + random.nextInt(26));
-        }
-        // Lower case letters
-        return (char) ('a' + random.nextInt(26));
-    }
 
     public int getItemCount() {
         return itemList.size();

@@ -11,12 +11,12 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Base class for all update single file tests using non-generic update classback.
+ * Base class for all multiple files tests using non-generic update classback.
  *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public abstract class UpdateSingleFileNonGenericAbstractTest extends UpdateSingleFileAbstractTest {
+public abstract class UpdateMultipleFilesNonGenericAbstractTest extends UpdateMultipleFilesAbstractTest {
     public class ArchiveUpdateCallback implements IOutUpdateCallback<IOutItemCallback> {
         ArchiveUpdateCallbackGeneric delegate;
 
@@ -64,7 +64,11 @@ public abstract class UpdateSingleFileNonGenericAbstractTest extends UpdateSingl
                 }
 
                 public boolean isAnti() throws SevenZipException {
-                    return (Boolean) delegate.getProperty(index, PropID.IS_ANTI);
+                    Boolean isAnti = (Boolean) delegate.getProperty(index, PropID.IS_ANTI);
+                    if (isAnti != null) {
+                        return isAnti;
+                    }
+                    return false;
                 }
 
                 public long getSize() throws SevenZipException {

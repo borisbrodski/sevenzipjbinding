@@ -1,43 +1,12 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
-import java.util.Date;
-
-import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.PropID;
-
 import org.junit.Test;
 
 public abstract class UpdateSingleFileAbstractTest extends UpdateAbstractTest {
-    private ArchiveUpdater updaterContent = new ArchiveUpdater() {
-        public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog) throws Exception {
-            Change change = changeLog.updateItem(0);
-            change.newContent = new byte[100];
-            random.get().nextBytes(change.newContent);
-        }
-    };
-
-    private ArchiveUpdater updaterLastModificationTime = new ArchiveUpdater() {
-        public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog) throws Exception {
-            Change change = changeLog.updateItem(0);
-            Date newLastModificationTime = getDate(10 * WEEK);
-            change.propertyChangeMap.put(PropID.LAST_MODIFICATION_TIME, newLastModificationTime);
-        }
-    };
-
-    private ArchiveUpdater updaterUserGroup = new ArchiveUpdater() {
-        public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog) throws Exception {
-            Change change = changeLog.updateItem(0);
-            change.propertyChangeMap.put(PropID.USER, inArchive.getStringProperty(0, PropID.USER) + "_new");
-            change.propertyChangeMap.put(PropID.GROUP, inArchive.getStringProperty(0, PropID.GROUP) + "_new");
-        }
-    };
-
-    private ArchiveUpdater updaterPath = new ArchiveUpdater() {
-        public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog) throws Exception {
-            Change change = changeLog.updateItem(0);
-            change.propertyChangeMap.put(PropID.PATH, change.oldPath + "_new");
-        }
-    };
+    @Override
+    protected int getDefaultIndex() {
+        return 0;
+    }
 
     @Test
     public void testEmptyUpdate() throws Exception {
