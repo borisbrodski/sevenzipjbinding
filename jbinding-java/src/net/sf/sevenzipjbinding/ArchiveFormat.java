@@ -13,8 +13,8 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <table border="1">
  * <tr>
  * <td><b>Format</b></td>
- * <td><b>Implementation</b></td>
- * <td><b>Test</b></td>
+ * <td><b>extraction</b></td>
+ * <td><b>compression</b></td>
  * <td><b>Enum value</b></td>
  * </tr>
  * <tr align="center">
@@ -26,7 +26,7 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Arj</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #ARJ}</td>
  * </tr>
  * <tr align="center">
@@ -38,13 +38,13 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Cab</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #CAB}</td>
  * </tr>
  * <tr align="center">
  * <td>Chm</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #CHM}</td>
  * </tr>
  * <tr align="center">
@@ -56,13 +56,13 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Cpio</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #CPIO}</td>
  * </tr>
  * <tr align="center">
  * <td>Deb</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #DEB}</td>
  * </tr>
  * <tr align="center">
@@ -92,19 +92,19 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Iso</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #ISO}</td>
  * </tr>
  * <tr align="center">
  * <td>Lzh</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #LZH}</td>
  * </tr>
  * <tr align="center">
  * <td>Lzma</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #LZMA}</td>
  * </tr>
  * <tr align="center">
@@ -122,7 +122,7 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Nsis</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #NSIS}</td>
  * </tr>
  * <tr align="center">
@@ -134,13 +134,13 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Rar</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #RAR}</td>
  * </tr>
  * <tr align="center">
  * <td>Rpm</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #RAR}</td>
  * </tr>
  * <tr align="center">
@@ -158,25 +158,25 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <tr align="center">
  * <td>Udf</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #UDF}</td>
  * </tr>
  * <tr align="center">
  * <td>Wim</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #WIM}</td>
  * </tr>
  * <tr align="center">
  * <td>Xar</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #XAR}</td>
  * </tr>
  * <tr align="center">
  * <td>Z</td>
  * <td>X</td>
- * <td>X</td>
+ * <td>-</td>
  * <td>{@link #Z}</td>
  * </tr>
  * <tr align="center">
@@ -189,7 +189,7 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <blockquote> <br>
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 1.0
  */
 public enum ArchiveFormat {
     /**

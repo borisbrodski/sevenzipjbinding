@@ -8,6 +8,7 @@ import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetSolid;
 import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.FilenameGenerator;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -36,7 +37,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
     }
 
     private interface FeatureSetSolidTester {
-        public void applyFeatures(IOutFeatureSetSolid outArchive);
+        public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException;
     }
 
     private static ThreadLocal<VirtualContent> virtualContentThreadLocal = new ThreadLocal<VirtualContent>();
@@ -79,26 +80,26 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
         initVirtualContentForThread();
 
         int solidFalseSize2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolid(false);
             }
         });
 
         int solidTrueSize1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolid(true);
             }
         });
 
         int solidFalseSize1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolid(true);
                 outArchive.setSolid(false);
             }
         });
 
         int solidTrueSize2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolid(false);
                 outArchive.setSolid(true);
             }
@@ -136,36 +137,36 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
         initVirtualContentForThread();
 
         int solidFilesSingle1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(1);
             }
         });
         int solidFilesSingle2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(COUNT_OF_FILES);
                 outArchive.setSolidFiles(1);
             }
         });
 
         int solidFilesQuartal1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(COUNT_OF_FILES / 4);
             }
         });
         int solidFilesQuartal2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(1);
                 outArchive.setSolidFiles(COUNT_OF_FILES / 4);
             }
         });
 
         int solidFilesFull1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(COUNT_OF_FILES);
             }
         });
         int solidFilesFull2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(1);
                 outArchive.setSolidFiles(COUNT_OF_FILES);
             }
@@ -176,7 +177,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
             }
         });
         int solidFilesDefault2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(COUNT_OF_FILES);
                 outArchive.setSolidFiles(-1);
             }
@@ -214,42 +215,42 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
         initVirtualContentForThread();
 
         final int averageSize = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(2 * COUNT_OF_FILES * AVERAGE_FILE_LENGTH * DELTA_FILE_LENGTH);
             }
         }) * 2;
 
         int solidSizeSingle1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(1);
             }
         });
         int solidSizeSingle2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(averageSize);
                 outArchive.setSolidSize(1);
             }
         });
 
         int solidSizeQuartal1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(averageSize / 8);
             }
         });
         int solidSizeQuartal2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(1);
                 outArchive.setSolidSize(averageSize / 8);
             }
         });
 
         int solidSizeFull1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(averageSize);
             }
         });
         int solidSizeFull2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(1);
                 outArchive.setSolidSize(averageSize);
             }
@@ -260,7 +261,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
             }
         });
         int solidSizeDefault2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidSize(averageSize);
                 outArchive.setSolidSize(-1);
             }
@@ -301,18 +302,18 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
             }
         });
         int solidExtensionTrue1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidExtension(true);
             }
         });
         int solidExtensionTrue2 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidExtension(false);
                 outArchive.setSolidExtension(true);
             }
         });
         int solidFile1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
-            public void applyFeatures(IOutFeatureSetSolid outArchive) {
+            public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException {
                 outArchive.setSolidFiles(1);
             }
         });

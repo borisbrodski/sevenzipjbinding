@@ -1,5 +1,8 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.File;
+import java.util.Date;
+
 /**
  * Enumeration for possible archive and archive item properties
  * 
@@ -23,9 +26,9 @@ public enum PropID {
     HANDLER_ITEM_INDEX, // = 2
 
     /**
-     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Please note,
-     * that stream archive formats such as gzip does not support this property, since it is always a single file (or
-     * stream) being compressed.<br>
+     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Use
+     * {@link File#separator} for better cross-platform compatibility. Please note, that stream archive formats such as
+     * gzip does not support this property, since it is always a single file (or stream) being compressed.<br>
      * <br>
      * Type: {@link String}. <code>null</code> will be returned, if current archive type doesn't support this property.
      */
@@ -58,29 +61,37 @@ public enum PropID {
 
     /**
      * Size of the packed item in archive. Sometimes <code>0</code> will be returned. It means either <i>unknown</i> or
-     * the item shares compressed data with other items and so take no additional space in archive.
-     * 
+     * the item shares compressed data with other items and so take no additional space in archive.<br>
+     * <br>
      * Type: {@link Long} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     PACKED_SIZE, //
 
     /**
-     * Archive item or file attributes. See {@link FileAttribute} enumeration for the supported bit masks.
+     * Archive item or file attributes. See {@link AttributesBitMask} for the supported bit masks. <br>
+     * <br>
+     * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     ATTRIBUTES, //
 
     /**
-     * Date and time of the file creation.
+     * Date and time of the file creation. <br>
+     * <br>
+     * Type: {@link Date} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     CREATION_TIME, //
 
     /**
-     * Date and time of last access of the file.
+     * Date and time of last access of the file. <br>
+     * <br>
+     * Type: {@link Date} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     LAST_ACCESS_TIME, //
 
     /**
-     * Date and time the file was last time modified.
+     * Date and time the file was last time modified.<br>
+     * <br>
+     * Type: {@link Date} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     LAST_MODIFICATION_TIME, //
 
@@ -89,6 +100,7 @@ public enum PropID {
 
     /**
      * Flag either a item encrypted or not. <br>
+     * <br>
      * Type: {@link Boolean}. <code>true</code> if item is encrypted, otherwise <code>false</code>.
      * <code>Boolean.FALSE</code> is returned, if archive format doesn't support this property. This property is never
      * <code>null</code>.
@@ -101,17 +113,31 @@ public enum PropID {
     TYPE, //
 
     /**
-     * If <code>true</code> delete corresponding file or directory during extraction.
-     * 
-     * Supported only by {@link ArchiveFormat#SEVEN_ZIP}.
+     * If <code>true</code> delete corresponding file or directory during extraction. Supported only by
+     * {@link ArchiveFormat#SEVEN_ZIP}. <br>
+     * <br>
+     * Type: {@link Boolean} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     IS_ANTI, //
 
     METHOD, //
     HOST_OS, //
     FILE_SYSTEM, //
+
+    /**
+     * User (owner) of the file.<br>
+     * <br>
+     * Type: {@link String} <code>null</code> will be returned, if current archive type doesn't support this property.
+     */
     USER, //
+
+    /**
+     * Group (owner) of the file.<br>
+     * <br>
+     * Type: {@link String} <code>null</code> will be returned, if current archive type doesn't support this property.
+     */
     GROUP, //
+
     BLOCK, //
     COMMENT, //
     POSITION, //
@@ -138,6 +164,12 @@ public enum PropID {
     SHORT_NAME, //
     CREATOR_APP, //
     SECTOR_SIZE, //
+
+    /**
+     * Posix attributes.<br>
+     * <br>
+     * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.
+     */
     POSIX_ATTRIB, //
     LINK, //
 
@@ -157,6 +189,104 @@ public enum PropID {
      * Unknown PropID. This PropID shouldn't be used.
      */
     UNKNOWN(-1);
+
+    /**
+     * Windows file attribute bit mask.
+     * 
+     * @see PropID#ATTRIBUTES
+     */
+    public static class AttributesBitMask {
+        /**
+         * Bit-mask for attribute: read only.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_READONLY = 1;
+
+        /**
+         * Bit-mask for attribute: hidden.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_HIDDEN = 2;
+
+        /**
+         * Bit-mask for attribute: system.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_SYSTEM = 4;
+
+        /**
+         * Bit-mask for attribute: directory.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_DIRECTORY = 16;
+
+        /**
+         * Bit-mask for attribute: archive.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_ARCHIVE = 32;
+
+        /**
+         * Bit-mask for attribute: device.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_DEVICE = 64;
+
+        /**
+         * Bit-mask for attribute: normal.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_NORMAL = 128;
+
+        /**
+         * Bit-mask for attribute: temporary.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_TEMPORARY = 256;
+
+        /**
+         * Bit-mask for attribute: sparse file.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_SPARSE_FILE = 512;
+
+        /**
+         * Bit-mask for attribute: reparse point.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_REPARSE_POINT = 1024;
+
+        /**
+         * Bit-mask for attribute: compressed.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_COMPRESSED = 2048;
+
+        /**
+         * Bit-mask for attribute: offline.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_OFFLINE = 0x1000;
+
+        /**
+         * Bit-mask for attribute: encrypted.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_ENCRYPTED = 0x4000;
+    }
 
     private final int propIDIndex;
 

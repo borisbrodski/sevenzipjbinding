@@ -124,6 +124,7 @@ public interface IInArchive extends Closeable {
      * @return value of archive property <code>propID</code>
      * 
      * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -200,6 +201,13 @@ public interface IInArchive extends Closeable {
      * Get a {@link IOutArchive}-instance attached to the currently opened archive. The new instance allows modification
      * of the currently opened archive.
      * 
+     * @param <T>
+     *            type of the item call back object. Should implements {@link IOutItemCallback} or one of the specified
+     *            <code>IOutItemCallback*</code> interfaces. Not relevant, if
+     *            {@link IOutUpdateArchive#updateItems(ISequentialOutStream, int, IOutUpdateCallbackGeneric)} method
+     *            will be used, since in this case the archive item properties will be provided by an implementation of
+     *            the single method {@link IOutCreateCallbackGeneric#getProperty(int, PropID)} of the
+     *            {@link IOutUpdateCallbackGeneric} interface.
      * @return an instance of the {@link IOutArchive} interface
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.

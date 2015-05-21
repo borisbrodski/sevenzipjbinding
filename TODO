@@ -1,3 +1,11 @@
+Release 2.0 TODOs:
+- Append short license info to all source files.
+- Rewrite all @throws SevenZipException JavaDoc tags (mention extended stacktrace)
+- Check @author, @since and @version in the JavaDoc of all files (source + test?)
+
+
+Other TODOs:
+
 - Post a issue for p7zip: core dump if referencing not existing archive item (index out of range).
   For example: GetProperty(10000000, 3). Extract function is also affected.
 
@@ -9,11 +17,7 @@
 
 - Repack XAR (bz2) tests with new version of xar
 
-- In JavaDoc of ArchiveFormat: add columns (single file tests and multiple files tests + archive creation)
 
-- Append short license info to all source files.
-
-- Check @author and @version in the JavaDoc of test java source files.
 
 - Provide 7-zip version information to java (see 7zVersion.h)
 
@@ -40,15 +44,12 @@ Minor TODOs:
 - Write more tests, for example, extracting archive with two files encrypted with different password.
 - Write test to use OutArchive more then ones before closing it. Verify, that all feature settings remains unchanged.
 - Test some untested archive formats
-- Support more archive formats
-- Write documentation / improve javadoc
 - Improve Web site
 - Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests")
 - Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
 
 Major TODOs:
-- Implement archive creation
-- Move to version 9.X of 7-zip/p7zip
+- Support more archive formats
 - Support 7-zip volumes (see INTERFACE_IArchiveUpdateCallback2)
 - Support ICompressProgressInfo
 - Generate random build number on each build not on each CMake run

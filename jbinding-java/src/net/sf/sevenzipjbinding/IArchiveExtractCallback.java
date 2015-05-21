@@ -5,7 +5,7 @@ package net.sf.sevenzipjbinding;
  * your IArchiveExtractCallback-implementation.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 1.0
  */
 public interface IArchiveExtractCallback extends IProgress {
     /**

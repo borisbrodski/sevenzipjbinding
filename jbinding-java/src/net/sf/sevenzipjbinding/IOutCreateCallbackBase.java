@@ -1,7 +1,10 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * Interface to provide information needed to create a new archive (base class).
+ * Base interface to provide information needed to create a new archive or to update existing archive.
+ * 
+ * @see IOutCreateCallback
+ * @see IOutUpdateCallback
  * 
  * @author Boris Brodski
  * @version 9.04-2.00
@@ -14,6 +17,8 @@ public interface IOutCreateCallbackBase extends IProgress {
      * @param index
      *            index of the item to read content of (starting from 0)
      * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public ISequentialInStream getStream(int index) throws SevenZipException;
 
@@ -23,6 +28,8 @@ public interface IOutCreateCallbackBase extends IProgress {
      * @param operationResultOk
      *            <code>true</code> - last archive update operation was a success, <code>false</code> - last archive
      *            update operation failed.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public void setOperationResult(boolean operationResultOk) throws SevenZipException;
 }
