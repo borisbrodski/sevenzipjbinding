@@ -2,6 +2,15 @@ package net.sf.sevenzipjbinding;
 
 import java.util.Date;
 
+/**
+ * 7z specific archive item callback interface. Gather archive item properties during compression or update operations.<br>
+ * <br>
+ * For the archive format independent (generic) archive item callback interface see {@link IOutItemCallback}.
+ * 
+ * @see IOutItemCallback
+ * @author Boris Brodski
+ * @since 2.0
+ */
 public interface IOutItemCallback7z extends IOutItemCallbackBase {
     /**
      * Get property {@link PropID#IS_ANTI} of the created or updated archive item. See {@link PropID#IS_ANTI} for

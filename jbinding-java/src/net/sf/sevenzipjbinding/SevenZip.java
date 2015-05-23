@@ -51,7 +51,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li>First, the list of available native libraries is read out of the
  * <code>/sevenzipjbinding-platforms.properties</code> file in the class path by calling {@link #getPlatformList()}
  * method. The list is cached in a static variable.</li>
- * <li>The platform is chosen by calling {@link #getPlatformBestMatch()} method. If the list of available platforms
+ * <li>The platform is chosen by calling <code>getPlatformBestMatch</code> method. If the list of available platforms
  * contains exact one platform the platform is always considered the best match. If more, that one platforms are
  * available to choose from, the system properties <code>os.arch</code> and <code>os.name</code> (first part) are used
  * to make the choice.</li>
@@ -84,7 +84,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * During initialization phase of the 7-Zip-JBinding the native libraries from the platform jar must be extracted to the
  * disk in order to be loaded into the JVM. Since the count of the native libraries (depending on the platform) can be
  * greater than one, a temporary sub-directory is created to hold those native libraries. The path to the directory for
- * the temporary artifacts will determined according to following rules (see {@link #createOrVerifyTmpDir(File)}:
+ * the temporary artifacts will determined according to following rules (see <code>createOrVerifyTmpDir</code> method):
  * <ul>
  * <li>If path specified directly using <code>tmpDirectory</code> parameter of
  * {@link #initSevenZipFromPlatformJAR(File)} or {@link #initSevenZipFromPlatformJAR(String, File)} it will be used

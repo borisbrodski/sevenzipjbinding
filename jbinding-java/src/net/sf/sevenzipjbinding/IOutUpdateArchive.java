@@ -1,10 +1,25 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * The interface provides functionality to update an existing archive.<br>
- * Standard way to get implementation is to use {@link IInArchive#getConnectedOutArchive()}.<br>
+ * The interface provides functionality to update an existing archive. The standard way to get the implementation is to
+ * use {@link IInArchive#getConnectedOutArchive()} method like this:<br>
+ * <br>
+ * 
+ * <pre>
+ *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive({@link ArchiveFormat#SEVEN_ZIP}, inStream);
+ *  {@link IOutUpdateArchive}{@code<}{@link IOutItemCallback7z}> outArchive = inArchive.openOutArchive();
+ *  
+ *  ...
+ *  
+ *  inArchive.close();
+ * </pre>
+ * 
+ * <br>
  * No explicit closing is necessary. Connected out-archive get closed automatically when corresponding in-archive get
  * closed.
+ * 
+ * @param <E>
+ *            the corresponding item callback interface
  * 
  * @author Boris Brodski
  * @version 9.04-2.0

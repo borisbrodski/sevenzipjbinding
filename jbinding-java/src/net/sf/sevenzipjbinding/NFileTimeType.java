@@ -7,7 +7,18 @@ package net.sf.sevenzipjbinding;
  * @version 9.13-2.00
  */
 public enum NFileTimeType {
+    /**
+     * Microsoft Windows file time format
+     */
     WINDOWS, //
+
+    /**
+     * Unix file time format
+     */
     UNIX, //
+
+    /**
+     * Old Microsoft DOS file time format
+     */
     DOS //
 }

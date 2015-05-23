@@ -14,6 +14,8 @@ public interface IOutUpdateCallbackBase {
      *            index of the archive item in archive (starting from 0)
      * @return <code>true</code> - the archive item with index <code>index</code> has new data (always true for new
      *         archives). <code>false</code> - the archive item data from the old archive can be reused.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public boolean isNewData(int index) throws SevenZipException;
 
@@ -24,6 +26,8 @@ public interface IOutUpdateCallbackBase {
      *            index of the archive item in archive (starting from 0)
      * @return <code>true</code> - the archive item with index <code>index</code> has new properties (always true for
      *         new archives). <code>false</code> - the archive item properties from the old archive can be reused.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public boolean isNewProperties(int index) throws SevenZipException;
 
@@ -34,6 +38,8 @@ public interface IOutUpdateCallbackBase {
      *            index of the archive item in the new archive (starting from 0)
      * @return corresponding index of the archive item in the old archive (starting from 0). <code>-1</code> if there is
      *         no corresponding archive item in the old archive or if doesn't matter.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
     public int getOldArchiveItemIndex(int index) throws SevenZipException;
 }

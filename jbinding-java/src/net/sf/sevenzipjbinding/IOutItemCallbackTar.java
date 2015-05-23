@@ -2,6 +2,15 @@ package net.sf.sevenzipjbinding;
 
 import java.util.Date;
 
+/**
+ * Tar specific archive item callback interface. Gather archive item properties during compression or update operations.<br>
+ * <br>
+ * For the archive format independent (generic) archive item callback interface see {@link IOutItemCallback}.
+ * 
+ * @see IOutItemCallback
+ * @author Boris Brodski
+ * @since 2.0
+ */
 public interface IOutItemCallbackTar extends IOutItemCallbackBase {
     /**
      * Get property {@link PropID#POSIX_ATTRIB} of the created or updated archive item. See {@link PropID#POSIX_ATTRIB}

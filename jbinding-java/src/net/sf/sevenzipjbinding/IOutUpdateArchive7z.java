@@ -1,16 +1,31 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * The interface provides functionality to update existing 7-zip archives.<br>
- * Standard way to get implementation is to use {@link SevenZip#openOutArchive(ArchiveFormat)} like this:<br>
+ * The interface provides functionality to update existing 7z archives.<br>
+ * The standard way of getting the implementation of this interface is to use
+ * {@link IInArchive#getConnectedOutArchive()} method like this:<br>
  * <br>
  * 
  * <pre>
- *  {@link IOutUpdateArchive7z} outArchive = {@link SevenZip}.openOutArchive({@link IOutUpdateArchive7z}.class);
+ *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(unknownArchiveFormat, inStream);
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemCallbackBase}> outArchive = inArchive.openOutArchive();
+ *  
+ *  if (outArchive instanceof {@link IOutUpdateArchive7z}) {
+ *    {@link IOutUpdateArchive7z} outUpdateArchive7z = ({@link IOutUpdateArchive7z})outArchive;
+ *    ...
+ *  }
+ *  
+ *  ...
+ *  
+ *  inArchive.close();
  * </pre>
  * 
- * <i>NOTE:</i> Each instance should be closed using {@link IOutArchive#close()} method.
+ * <i>Note</i>: if the archive format is known, then there is more simple way of updating. See {@link IOutUpdateArchive}
+ * for more details.
  * 
+ * @see IOutUpdateArchive
+ * @see IInArchive
+ * @see IOutItemCallbackBase
  * @author Boris Brodski
  * @version 9.13-2.0
  */

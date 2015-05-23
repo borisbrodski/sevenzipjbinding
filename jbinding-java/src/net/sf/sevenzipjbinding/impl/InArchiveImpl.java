@@ -7,6 +7,7 @@ import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.IOutItemCallbackBase;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.NFileTimeType;
@@ -297,7 +298,8 @@ public final class InArchiveImpl implements IInArchive {
      * 
      * @return instance of {@link IOutArchive} the current archive current archive
      */
-    public IOutUpdateArchive getConnectedOutArchive() throws SevenZipException {
+    @SuppressWarnings("unchecked")
+    public <T extends IOutItemCallbackBase> IOutUpdateArchive<T> getConnectedOutArchive() throws SevenZipException {
         if (outArchiveImpl == null) {
             createConnectedOutArchive();
         }
