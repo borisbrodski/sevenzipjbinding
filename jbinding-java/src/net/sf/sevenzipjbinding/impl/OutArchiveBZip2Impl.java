@@ -5,11 +5,10 @@ import net.sf.sevenzipjbinding.IOutItemCallbackBZip2;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveBZip2;
 
 /**
- * TODO
+ * BZip2 specific archive create and update class.
  * 
  * @author Boris Brodski
  * @version 9.13-2.0
- * 
  */
 public class OutArchiveBZip2Impl extends OutArchiveImpl<IOutItemCallbackBZip2> implements IOutCreateArchiveBZip2,
         IOutUpdateArchiveBZip2 {

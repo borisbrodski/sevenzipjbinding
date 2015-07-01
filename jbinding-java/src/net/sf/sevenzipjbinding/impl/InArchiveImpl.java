@@ -88,7 +88,7 @@ public final class InArchiveImpl implements IInArchive {
     private long jbindingSession;
     private long sevenZipArchiveInstance;
     private long sevenZipInStreamInstance;
-    private OutArchiveImpl outArchiveImpl;
+    private OutArchiveImpl<?> outArchiveImpl;
 
     private int numberOfItems = -1;
 
@@ -303,7 +303,7 @@ public final class InArchiveImpl implements IInArchive {
         if (outArchiveImpl == null) {
             createConnectedOutArchive();
         }
-        return outArchiveImpl;
+        return (IOutUpdateArchive<T>) outArchiveImpl;
     }
 
     private void createConnectedOutArchive() throws SevenZipException {
@@ -324,6 +324,6 @@ public final class InArchiveImpl implements IInArchive {
         nativeConnectOutArchive(outArchiveImpl, archiveFormat);
     }
 
-    private native void nativeConnectOutArchive(OutArchiveImpl outArchiveImpl, ArchiveFormat archiveFormat)
+    private native void nativeConnectOutArchive(OutArchiveImpl<?> outArchiveImpl, ArchiveFormat archiveFormat)
             throws SevenZipException;
 }

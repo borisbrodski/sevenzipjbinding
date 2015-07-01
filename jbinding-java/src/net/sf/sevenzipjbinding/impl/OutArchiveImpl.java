@@ -13,6 +13,21 @@ import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
+/**
+ * Common archive create and update class.
+ * 
+ * @param <E>
+ *            the type of the item callback implementation
+ * 
+ * @see OutArchive7zImpl
+ * @see OutArchiveZipImpl
+ * @see OutArchiveGZipImpl
+ * @see OutArchiveBZip2Impl
+ * @see OutArchiveTarImpl
+ * 
+ * @author Boris Brodski
+ * @version 9.13-2.0
+ */
 // TODO null check all parameters: If null slips through into native code there will be no NPE :( 
 public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchive<E> {
 

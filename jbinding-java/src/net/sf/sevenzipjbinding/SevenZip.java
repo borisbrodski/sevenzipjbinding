@@ -522,6 +522,7 @@ public class SevenZip {
      * load 7-Zip-JBinding native libraries manually.
      * 
      * @throws SevenZipNativeInitializationException
+     *             in case of an initialization error
      */
     public static void initLoadedLibraries() throws SevenZipNativeInitializationException {
         if (initializationSuccessful) {
@@ -721,13 +722,12 @@ public class SevenZip {
     /**
      * Return best match for the current platform out of available platforms <code>availablePlatform</code>
      * 
-     * @param availablePlatform
-     *            list of the platforms to choose from
+     * @see #getPlatformList()
      * @return platform
      * @throws SevenZipNativeInitializationException
      *             is no platform could be chosen
      */
-    private static String getPlatformBestMatch() throws SevenZipNativeInitializationException {
+    public static String getPlatformBestMatch() throws SevenZipNativeInitializationException {
         List<String> availablePlatform = getPlatformList();
         if (availablePlatform.size() == 1) {
             return availablePlatform.get(0);
@@ -771,26 +771,76 @@ public class SevenZip {
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
 
+    /**
+     * Create a new Zip archive.
+     * 
+     * @see IOutCreateArchiveZip
+     * @return an out-archive object initialized to create the new Zip archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     public static IOutCreateArchiveZip openOutArchiveZip() throws SevenZipException {
         return (IOutCreateArchiveZip) openOutArchiveIntern(ArchiveFormat.ZIP);
     }
 
+    /**
+     * Create a new 7z archive.
+     * 
+     * @see IOutCreateArchive7z
+     * @return an out-archive object initialized to create the new 7z archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     public static IOutCreateArchive7z openOutArchive7z() throws SevenZipException {
         return (IOutCreateArchive7z) openOutArchiveIntern(ArchiveFormat.SEVEN_ZIP);
     }
 
+    /**
+     * Create a new 7z archive.
+     * 
+     * @see IOutCreateArchiveTar
+     * @return an out-archive object initialized to create the new 7z archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     public static IOutCreateArchiveTar openOutArchiveTar() throws SevenZipException {
         return (IOutCreateArchiveTar) openOutArchiveIntern(ArchiveFormat.TAR);
     }
 
+    /**
+     * Create a new BZip2 archive.
+     * 
+     * @see IOutCreateArchiveBZip2
+     * @return an out-archive object initialized to create the new BZip2 archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     public static IOutCreateArchiveBZip2 openOutArchiveBZip2() throws SevenZipException {
         return (IOutCreateArchiveBZip2) openOutArchiveIntern(ArchiveFormat.BZIP2);
     }
 
+    /**
+     * Create a new GZip archive.
+     * 
+     * @see IOutCreateArchiveGZip
+     * @return an out-archive object initialized to create the new GZip archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     public static IOutCreateArchiveGZip openOutArchiveGZip() throws SevenZipException {
         return (IOutCreateArchiveGZip) openOutArchiveIntern(ArchiveFormat.GZIP);
     }
 
+    /**
+     * Create a new archive of type <code>archiveFormat</code>.
+     * 
+     * @see IOutCreateArchiveZip
+     * @param archiveFormat
+     *            archive format of the new archive
+     * @return an out-archive object initialized to create the new archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     */
     @SuppressWarnings("unchecked")
     public static IOutCreateArchive<IOutItemCallback> openOutArchive(ArchiveFormat archiveFormat)
             throws SevenZipException {

@@ -74,6 +74,7 @@ public class RandomAccessFileInStream implements IInStream {
      * Closes random access file. After this call no more methods should be called.
      * 
      * @throws IOException
+     *             see {@link RandomAccessFile#close()}
      */
     public void close() throws IOException {
         randomAccessFile.close();

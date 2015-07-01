@@ -5,11 +5,10 @@ import net.sf.sevenzipjbinding.IOutItemCallbackGZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveGZip;
 
 /**
- * TODO
+ * GZip specific archive create and update class.
  * 
  * @author Boris Brodski
  * @version 9.13-2.0
- * 
  */
 public class OutArchiveGZipImpl extends OutArchiveImpl<IOutItemCallbackGZip> implements IOutCreateArchiveGZip,
         IOutUpdateArchiveGZip {
