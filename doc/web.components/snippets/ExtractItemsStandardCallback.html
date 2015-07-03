@@ -5,8 +5,8 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ExtractAskMode;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ExtractOperationResult;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IArchiveExtractCallback;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialOutStream;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
@@ -18,15 +18,15 @@
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">size</span> = 0;
         <span class="java-keyword">private</span> <span class="java-keyword">int</span> <span class="java-field">index</span>;
         <span class="java-keyword">private</span> boolean <span class="java-field">skipExtraction</span>;
-        <span class="java-keyword">private</span> ISevenZipInArchive <span class="java-field">inArchive</span>;
+        <span class="java-keyword">private</span> IInArchive <span class="java-field">inArchive</span>;
 
-        <span class="java-keyword">public</span> MyExtractCallback(ISevenZipInArchive inArchive) {
-            this.<span class="java-field">inArchive</span> = inArchive;
+        <span class="java-keyword">public</span> MyExtractCallback(IInArchive inArchive) {
+            <span class="java-keyword">this</span>.<span class="java-field">inArchive</span> = inArchive;
         }
 
         <span class="java-keyword">public</span> ISequentialOutStream getStream(<span class="java-keyword">int</span> index, 
                 ExtractAskMode extractAskMode) <span class="java-keyword">throws</span> SevenZipException {
-            this.<span class="java-field">index</span> = index;
+            <span class="java-keyword">this</span>.<span class="java-field">index</span> = index;
             <span class="java-field">skipExtraction</span> = (Boolean) <span class="java-field">inArchive</span>
                     .getProperty(index, PropID.<span class="java-staticfield">IS_FOLDER</span>);
             <span class="java-keyword">if</span> (<span class="java-field">skipExtraction</span> || extractAskMode != ExtractAskMode.<span class="java-staticfield">EXTRACT</span>) {
@@ -52,7 +52,7 @@
             }
             <span class="java-keyword">if</span> (extractOperationResult != ExtractOperationResult.<span class="java-staticfield">OK</span>) {
                 System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Extraction error"</span>);
-            } else {
+            } <span class="java-keyword">else</span> {
                 System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-field">hash</span>, <span class="java-field">size</span>,<span class="java-comment">// </span>
                         <span class="java-field">inArchive</span>.getProperty(<span class="java-field">index</span>, PropID.<span class="java-staticfield">PATH</span>)));
                 <span class="java-field">hash</span> = 0;
@@ -73,7 +73,7 @@
             <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
-        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        IInArchive inArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
             randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(args[0], <span class="java-string">"r"</span>);
             inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
@@ -90,7 +90,6 @@
                     <span class="java-keyword">new</span> MyExtractCallback(inArchive));
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
-            System.<span class="java-staticmethod">exit</span>(1);
         } <span class="java-keyword">finally</span> {
             <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
                 <span class="java-keyword">try</span> {

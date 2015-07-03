@@ -1,11 +1,13 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 9.13-2.00alpha (Release candidate, cross-platform, based on zip/p7zip 9.13 beta)
+Release - 9.13-2.00 (Release candidate, cross-platform, based on zip/p7zip 9.13 beta)
 
 	* Bind 7-Zip 9.13 beta
-	* Archive creation
-		- Creating archives: 7z, BZip2, Tar, Zip
+
+	* Create/update archives
+		- Supported archives: 7z, BZip2, Tar, Zip, GZip
+		- Archive format specific or generic compression API
 		
 	* API changes
 	    - Extend SevenZipException from IOException

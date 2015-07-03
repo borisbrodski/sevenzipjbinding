@@ -9,8 +9,8 @@ import java.util.Map;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
-import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -127,7 +127,6 @@ public class OpenMultipartArchive7z {
             }
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {

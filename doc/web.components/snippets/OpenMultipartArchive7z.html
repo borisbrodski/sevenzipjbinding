@@ -6,8 +6,8 @@
 
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ArchiveFormat;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IInStream;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
@@ -105,7 +105,7 @@
             <span class="java-keyword">return</span>;
         }
         ArchiveOpenVolumeCallback archiveOpenVolumeCallback = <span class="java-keyword">null</span>;
-        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        IInArchive inArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
 
             archiveOpenVolumeCallback = <span class="java-keyword">new</span> ArchiveOpenVolumeCallback();
@@ -124,7 +124,6 @@
             }
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
-            System.<span class="java-staticmethod">exit</span>(1);
         } <span class="java-keyword">finally</span> {
             <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
                 <span class="java-keyword">try</span> {

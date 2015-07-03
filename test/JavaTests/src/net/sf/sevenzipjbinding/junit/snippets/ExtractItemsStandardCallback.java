@@ -8,8 +8,8 @@ import java.util.Arrays;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -93,7 +93,6 @@ public class ExtractItemsStandardCallback {
                     new MyExtractCallback(inArchive));
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {

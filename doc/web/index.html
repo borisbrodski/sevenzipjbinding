@@ -52,7 +52,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <p>7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
 many archive formats using a very fast native library directly from java through JNI. Features: </p>
 <ul class="Features">
-	<li> Extraction of 
+	<li> Extract 
 		<table border="0" class="ArchiveTypeEnum"><tr>
 		<td>7-Zip</td>
 		<td>Zip</td>
@@ -78,17 +78,26 @@ many archive formats using a very fast native library directly from java through
 		<td>Wim</td>
 		<td>Udf</td></tr>
 		</table></li>
+	<li> Create/update 
+		<table border="0" class="ArchiveTypeEnum"><tr>
+		<td>7-Zip</td>
+		<td>Zip</td>
+		<td>GZip</td>
+		<td>Tar</td>
+		<td>BZip2</td>
+		</table></li>
 	<li> It's cross-platform. Binaries are available for 
 		<table border="0" class="ArchiveTypeEnum">
 		<tr><td>&rsaquo; MS-Windows 32/64</td>
 		    <td>&rsaquo; Linux 32/64</td>
 		    <td>&rsaquo; Darwin Mac OS X</td></tr>
 		</table></li>
-	<li> Full support for password protected and volumed archives</li> 
+	<li> Full support for password protected and volumed archives</li>
+	<li> In-memory archive creation/update/extraction</li>
 	<li> 12 example code snippets</li>
-	<li> Over 3881 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
-	<li> Planned: Creation of 7-Zip/Zip archives</li>
-	<li> Planned: Extraction of more archive formats: Compound, Dmg, Elf, Hfs, Macho, Mub, Pa, Split, Wim</li>
+	<li> Over 6766 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Planned: Binaries for ARM (e.g. RaspberryPI)</li>
+	<li> Planned: Extraction of more archive formats supported by 7-Zip</li>
 </ul>
 <br/>
 <h2>How does it work?</h2>
@@ -109,7 +118,7 @@ Getting number of packed items in an archive:
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">private</span> <span class="java-keyword">int</span> getNumberOfItemsInArchive(String archiveFile) <span class="java-keyword">throws</span> Exception {
-    <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a> archive;
+    <a href="javadoc/net/sf/sevenzipjbinding/IInArchive.html">IInArchive</a> archive;
     RandomAccessFile randomAccessFile;
 
     randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(archiveFile, <span class="java-string">"r"</span>);
@@ -184,7 +193,7 @@ Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 	</li>
 	<li> Initialization reworked. See JavaDoc for <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a> for more information.</li>
 	<li> Integration test for all platforms for single and multiple platform distributions</li>
-	<li> Improved <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.extract(): Sort indices, if not already sorted, bug fixes.</li>
+	<li> Improved ISevenZipInArchive.extract(): Sort indices, if not already sorted, bug fixes.</li>
 	<li> DEB format support + tests</li>
 	<li> RPM format support + tests</li>
 	<li> UDF format support + tests</li>
@@ -198,7 +207,7 @@ Bugfix release (Release candidate, extraction only, cross-platform, based on 7zi
 <ul>
 	<li> Binary version for Windows 64 XP and above (amd64)</li>
 	<li> NSIS format support + tests</li>
-	<li> New method <a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.getArchiveFormat() returns format of the opened archive, 
+	<li> New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 
 	     even if archive format auto-detection was used.</li>
 	<li> Better performance for archive format auto-detection</li>
 </ul>
@@ -214,7 +223,7 @@ Bugfix release (Release candidate, extraction only, cross-platform, based on 7zi
 		<li> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>.getStream(int, <a href="javadoc/net/sf/sevenzipjbinding/ExtractAskMode.html">ExtractAskMode</a>) accepts null return values now.
 		  null return values can be used to skip on the fly extraction/testing of archive items.</li> 
 	</ul></li>
-	<li> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISevenZipInArchive.html">ISevenZipInArchive</a>.extract(int[], boolean, <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>):</li>
+	<li> net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a>):</li>
 	<li><ul>
 		<li> the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
 		  It if possible to exclude particular items later on using <a href="javadoc/net/sf/sevenzipjbinding/IArchiveExtractCallback.html">IArchiveExtractCallback</a> call back. Returning null

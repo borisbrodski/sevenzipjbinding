@@ -36,7 +36,7 @@ macro(PROCESS_SNIPPET_LINE_HTML LINE_VAR)
     PROCESS_SNIPPET_COMMON_LINE_HTML(${LINE_VAR})
 
     STRING(REGEX REPLACE "(\"[^\"]+\")" "##string##\\1##end##" TMP "${${LINE_VAR}}")
-    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default|final)($|[^a-zA-Z])" 
+    STRING(REGEX REPLACE "(^|[^a-zA-Z])(implements|null|import|if|for|int|byte|long|new|void|try|catch|finally|throws|throw|return|break|class|static|public|private|switch|case|default|final|extends|this|else)($|[^a-zA-Z])" 
                             "\\1##keyword##\\2##end##\\3" TMP "${TMP}")
     STRING(REGEX REPLACE "(SevenZip\\.)(openInArchive|initSevenZipFromPlatformJAR)"
                             "\\1##staticmethod##\\2##end##" TMP "${TMP}")
@@ -80,7 +80,8 @@ endmacro()
 
 macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
 
-    SET(JAVADOC_HTML_FILES
+    # find . -name "*.html" | sort
+    SET(JAVADOC_HTML_FILES      
         net/sf/sevenzipjbinding/ArchiveFormat.html
         net/sf/sevenzipjbinding/ExtractAskMode.html
         net/sf/sevenzipjbinding/ExtractOperationResult.html
@@ -88,28 +89,93 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/IArchiveOpenCallback.html
         net/sf/sevenzipjbinding/IArchiveOpenVolumeCallback.html
         net/sf/sevenzipjbinding/ICryptoGetTextPassword.html
+        net/sf/sevenzipjbinding/IInArchive.html
         net/sf/sevenzipjbinding/IInStream.html
         net/sf/sevenzipjbinding/impl/InArchiveImpl.html
+        net/sf/sevenzipjbinding/impl/InputStreamSequentialInStream.html
+        net/sf/sevenzipjbinding/impl/OutArchive7zImpl.html
+        net/sf/sevenzipjbinding/impl/OutArchiveBZip2Impl.html
+        net/sf/sevenzipjbinding/impl/OutArchiveGZipImpl.html
+        net/sf/sevenzipjbinding/impl/OutArchiveImpl.html
+        net/sf/sevenzipjbinding/impl/OutArchiveTarImpl.html
+        net/sf/sevenzipjbinding/impl/OutArchiveZipImpl.html
+        net/sf/sevenzipjbinding/impl/package-frame.html
+        net/sf/sevenzipjbinding/impl/package-summary.html
+        net/sf/sevenzipjbinding/impl/package-tree.html
+        net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html
+        net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html
+        net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
+        net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html
+        net/sf/sevenzipjbinding/IOutArchive.html
+        net/sf/sevenzipjbinding/IOutCreateArchive7z.html
+        net/sf/sevenzipjbinding/IOutCreateArchiveBZip2.html
+        net/sf/sevenzipjbinding/IOutCreateArchiveGZip.html
+        net/sf/sevenzipjbinding/IOutCreateArchive.html
+        net/sf/sevenzipjbinding/IOutCreateArchiveTar.html
+        net/sf/sevenzipjbinding/IOutCreateArchiveZip.html
+        net/sf/sevenzipjbinding/IOutCreateCallbackBase.html
+        net/sf/sevenzipjbinding/IOutCreateCallbackGeneric.html
+        net/sf/sevenzipjbinding/IOutCreateCallback.html
+        net/sf/sevenzipjbinding/IOutFeatureSetLevel.html
+        net/sf/sevenzipjbinding/IOutFeatureSetMultithreading.html
+        net/sf/sevenzipjbinding/IOutFeatureSetSolid.html
+        net/sf/sevenzipjbinding/IOutItemCallback7z.html
+        net/sf/sevenzipjbinding/IOutItemCallbackBase.html
+        net/sf/sevenzipjbinding/IOutItemCallbackBZip2.html
+        net/sf/sevenzipjbinding/IOutItemCallbackGZip.html
+        net/sf/sevenzipjbinding/IOutItemCallback.html
+        net/sf/sevenzipjbinding/IOutItemCallbackTar.html
+        net/sf/sevenzipjbinding/IOutItemCallbackZip.html
+        net/sf/sevenzipjbinding/IOutStream.html
+        net/sf/sevenzipjbinding/IOutUpdateArchive7z.html
+        net/sf/sevenzipjbinding/IOutUpdateArchiveBZip2.html
+        net/sf/sevenzipjbinding/IOutUpdateArchiveGZip.html
+        net/sf/sevenzipjbinding/IOutUpdateArchive.html
+        net/sf/sevenzipjbinding/IOutUpdateArchiveTar.html
+        net/sf/sevenzipjbinding/IOutUpdateArchiveZip.html
+        net/sf/sevenzipjbinding/IOutUpdateCallbackBase.html
+        net/sf/sevenzipjbinding/IOutUpdateCallbackGeneric.html
+        net/sf/sevenzipjbinding/IOutUpdateCallback.html
         net/sf/sevenzipjbinding/IProgress.html
+        net/sf/sevenzipjbinding/IPropertyProvider7z.html
+        net/sf/sevenzipjbinding/ISeekableStream.html
         net/sf/sevenzipjbinding/ISequentialInStream.html
         net/sf/sevenzipjbinding/ISequentialOutStream.html
-        net/sf/sevenzipjbinding/ISevenZipInArchive.html
-        net/sf/sevenzipjbinding/simple/ISimpleInArchive.html
-        net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html
+        net/sf/sevenzipjbinding/NCoderPropID.html
+        net/sf/sevenzipjbinding/NFileTimeType.html
+        net/sf/sevenzipjbinding/package-frame.html
+        net/sf/sevenzipjbinding/package-summary.html
+        net/sf/sevenzipjbinding/package-tree.html
         net/sf/sevenzipjbinding/PropertyInfo.html
+        net/sf/sevenzipjbinding/PropID.AttributesBitMask.html
         net/sf/sevenzipjbinding/PropID.html
-        net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html
-        net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
-        net/sf/sevenzipjbinding/SevenZip.html
         net/sf/sevenzipjbinding/SevenZipException.html
+        net/sf/sevenzipjbinding/SevenZip.html
         net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html
+        net/sf/sevenzipjbinding/simple/impl/package-frame.html
+        net/sf/sevenzipjbinding/simple/impl/package-summary.html
+        net/sf/sevenzipjbinding/simple/impl/package-tree.html
         net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveImpl.html
         net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveItemImpl.html
-        net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html)
+        net/sf/sevenzipjbinding/simple/ISimpleInArchive.html
+        net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html
+        net/sf/sevenzipjbinding/simple/package-frame.html
+        net/sf/sevenzipjbinding/simple/package-summary.html
+        net/sf/sevenzipjbinding/simple/package-tree.html
+        net/sf/sevenzipjbinding/util/ByteArrayStream.html
+        net/sf/sevenzipjbinding/util/package-frame.html
+        net/sf/sevenzipjbinding/util/package-summary.html
+        net/sf/sevenzipjbinding/util/package-tree.html
+    )
     SET(TMP "${${LINE_VAR}}")
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
+        IF(NOT EXISTS "javadoc/${JD_PATH}${HTML_FILE}")
+            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'")
+        ENDIF()
+    ENDFOREACH()
+    FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
         STRING(REGEX REPLACE ".*/([^/]+)\\.html" "\\1" CLASS_NAME "${HTML_FILE}")
-        STRING(REGEX REPLACE "([^a-zA-Z0-9])(${CLASS_NAME})([^a-zA-Z0-9])" 
+        STRING(REGEX REPLACE "([^a-zA-Z0-9]|^)(${CLASS_NAME})([^a-zA-Z0-9]|$)" 
                 "\\1<a href=\"javadoc/${JD_PATH}${HTML_FILE}\">\\2</a>\\3" TMP "${TMP}")
 #        STRING(REGEX REPLACE "${CLASS_NAME}" 
 #                "XXXXX" TMP "${TMP}")

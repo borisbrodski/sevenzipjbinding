@@ -29,7 +29,6 @@ public class PrintCountOfItems {
 
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {

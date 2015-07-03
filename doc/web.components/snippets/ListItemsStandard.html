@@ -1,7 +1,7 @@
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISevenZipInArchive;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IInArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
@@ -14,7 +14,7 @@
             <span class="java-keyword">return</span>;
         }
         RandomAccessFile randomAccessFile = <span class="java-keyword">null</span>;
-        ISevenZipInArchive inArchive = <span class="java-keyword">null</span>;
+        IInArchive inArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
             randomAccessFile = <span class="java-keyword">new</span> RandomAccessFile(args[0], <span class="java-string">"r"</span>);
             inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// autodetect archive type</span>
@@ -31,7 +31,6 @@
             }
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
-            System.<span class="java-staticmethod">exit</span>(1);
         } <span class="java-keyword">finally</span> {
             <span class="java-keyword">if</span> (inArchive != <span class="java-keyword">null</span>) {
                 <span class="java-keyword">try</span> {

@@ -3,10 +3,10 @@
 
 <p>
 The most simple way to get 7-Zip-JBinding to work is to download a pre-compiled binary package
-for your operating system (<a href="http://sourceforge.net/projects/sevenzipjbind/files/">download link</a>).
-All provided packages are Zip-compressed and you will need an extraction utility to expand them. For windows users is
+for your operating system <a href="http://sourceforge.net/projects/sevenzipjbind/files/">here</a>.
+All provided packages are Zip-compressed and you will need an extraction utility to expand them. For windows users
 securing a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a> is highly recommended. Linux and Mac OS X
-users may use the corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a>.
+users may use the corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a> or build-in Zip extractors.
 </p>
 
 <br/>
@@ -55,27 +55,25 @@ If the message
 ##INCLUDE_OUTPUT(SevenZipJBindingInitCheck)
 
 <p>
-shows up than 7-Zip-JBinding is working properly and is ready for use.
+shows up than 7-Zip-JBinding is working properly and is ready to use.
 </p>
 
 <br/>
-<h2>Opening an archive</h2>
+<h2>Working with existing archives</h2>
 
 <p>
-Before you can do any operation on an archive file, you have to open it. In order to do this
+Before you can do anything with an archive, you have to open it. In order to do this
 you will need to call one of the corresponding static methods
-SevenZip.openInArchive(...). The only
-mandatory parameter is "inStream" - an instance of the
+SevenZip.openInArchive(...). The single
+mandatory parameter is "inStream" - an implementation of the
 IInStream interface.
 </p>
 
 <p>
-In many cases
-the task is to open an archive file from the file system. 7-Zip-JBinding has a standard implementation
-of IInStream for this purpose:
+In case you want to open an archive file from the file system 7-Zip-JBinding provides a standard implementation
+of the IInStream interface:
 RandomAccessFileInStream.
-As the name says, this takes an instance of RandomAccessFile and turns it into an instance of
-IInStream.
+As the name says, this takes an instance of RandomAccessFile and uses it to provide an implementation of the IInStream.
 </p>
 
 <p>
@@ -85,14 +83,14 @@ Here is a simple example of how to open an archive from the file system:
 ##INCLUDE_SNIPPET(SimpleOpen)
 
 <p>
-The opened archive can now be used for exploring and extraction operations. The last method called on archive should always be  
-ISevenZipInArchive.close().
-This closes the archive and frees system resources. The last, but not least, step is to close the random access file 
-'<span class="java-field">randomAccessFile</span>' using close() method of the RandomAccessFile class.
+The opened archive can now be used for browsing or extraction operations. The last method called on archive should always be  
+IInArchive.close().
+It will close the archive and free system resources. The last, but not least, step is to close the random access file 
+'<span class="java-field">randomAccessFile</span>' using close() method.
 </p> 
 
 <p>
-Here is a complete program to print count of items in the archive:
+Here is a complete program to print count of items in an archive of any supported format:
 ##INCLUDE_SNIPPET(PrintCountOfItems)
 </p>
 
@@ -113,6 +111,52 @@ you should get something like this:
 ##INCLUDE_OUTPUT(PrintCountOfItems)
 
 <br/>
+
+<br/>
+<h2>Creating archives</h2>
+
+<p>
+In order to create a new archive you also need to call the corresponding open method of the SevenZip class first. Here
+you should choose one of the archive format specific methods, like SevenZip.openOutArchiveZip(...) for Zip,
+or use archive format independent method SevenZip.openOutArchive(...). Lets use Zip-specific open method and
+see how a very simple Zip archive with a single item (archived file) containing a text message can be created.
+</p>
+
+<p>
+There are 5 following steps involved:
+<ul>
+<li>Implement IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface defining the structure of the archive
+<li>Implement IOutItemCallbackZip interface specifying the properties of the single archive item
+<li>Open new out-archive
+<li>Optionally configure the new archive (e.g. setting compression level)
+<li>Call createArchive(...) method to create the new archive
+</ul>
+</p>
+
+Here is the complete class:
+
+##INCLUDE_SNIPPET(CompressMessage)
+
+<p>
+If you run this program with
+</p>
+
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+  CompressMessage my-archive.zip HelloWorld
+</pre></div>
+
+<p>
+and expected output is
+</p>
+
+##INCLUDE_OUTPUT(CompressMessage)
+
+<p>
+Also the archive my-archive.zip should be created. It contains single compressed file "message.txt" with the message "HelloWorld".
+</p>
+
 <p>
 Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.
 </p>

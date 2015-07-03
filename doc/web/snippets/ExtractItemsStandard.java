@@ -7,8 +7,8 @@ import java.util.List;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -19,9 +19,9 @@ public class ExtractItemsStandard {
         private int hash = 0;
         private int size = 0;
         private int index;
-        private ISevenZipInArchive inArchive;
+        private IInArchive inArchive;
 
-        public MyExtractCallback(ISevenZipInArchive inArchive) {
+        public MyExtractCallback(IInArchive inArchive) {
             this.inArchive = inArchive;
         }
 
@@ -50,7 +50,7 @@ public class ExtractItemsStandard {
             if (extractOperationResult != ExtractOperationResult.OK) {
                 System.err.println("Extraction error");
             } else {
-                System.out.println(String.format("%9X | %10s | %s", hash, size,// 
+                System.out.println(String.format("%9X | %10s | %s", hash, size,
                         inArchive.getProperty(index, PropID.PATH)));
                 hash = 0;
                 size = 0;
@@ -71,7 +71,7 @@ public class ExtractItemsStandard {
             return;
         }
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         try {
             randomAccessFile = new RandomAccessFile(args[0], "r");
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
@@ -97,7 +97,6 @@ public class ExtractItemsStandard {
                     new MyExtractCallback(inArchive));
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {

@@ -1,5 +1,5 @@
 private int getNumberOfItemsInArchive(String archiveFile) throws Exception {
-    ISevenZipInArchive archive;
+    IInArchive archive;
     RandomAccessFile randomAccessFile;
 
     randomAccessFile = new RandomAccessFile(archiveFile, "r");

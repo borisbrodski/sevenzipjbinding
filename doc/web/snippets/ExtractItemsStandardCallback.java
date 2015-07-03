@@ -5,8 +5,8 @@ import java.util.Arrays;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -18,9 +18,9 @@ public class ExtractItemsStandardCallback {
         private int size = 0;
         private int index;
         private boolean skipExtraction;
-        private ISevenZipInArchive inArchive;
+        private IInArchive inArchive;
 
-        public MyExtractCallback(ISevenZipInArchive inArchive) {
+        public MyExtractCallback(IInArchive inArchive) {
             this.inArchive = inArchive;
         }
 
@@ -73,7 +73,7 @@ public class ExtractItemsStandardCallback {
             return;
         }
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         try {
             randomAccessFile = new RandomAccessFile(args[0], "r");
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
@@ -90,7 +90,6 @@ public class ExtractItemsStandardCallback {
                     new MyExtractCallback(inArchive));
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {

@@ -8,6 +8,6 @@
 </listAttribute>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE" value="${none}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${system_path:cmake}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-P ${workspace_loc:/SevenZipJBinding-Debug@SevenZipJBinding/doc/build_html.cmake}"/>
-<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/SevenZipJBinding-Debug@SevenZipJBinding/doc}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-P ${workspace_loc:/SevenZipJBinding-Debug@SevenZipJBinding-eclipse/[Source directory]/doc/build_html.cmake}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:/SevenZipJBinding-Debug@SevenZipJBinding-eclipse/[Source directory]/doc}"/>
 </launchConfiguration>

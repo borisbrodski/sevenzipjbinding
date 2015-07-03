@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import net.sf.sevenzipjbinding.ISevenZipInArchive;
+import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -14,7 +14,7 @@ public class ListItemsStandard {
             return;
         }
         RandomAccessFile randomAccessFile = null;
-        ISevenZipInArchive inArchive = null;
+        IInArchive inArchive = null;
         try {
             randomAccessFile = new RandomAccessFile(args[0], "r");
             inArchive = SevenZip.openInArchive(null, // autodetect archive type
@@ -31,7 +31,6 @@ public class ListItemsStandard {
             }
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
-            System.exit(1);
         } finally {
             if (inArchive != null) {
                 try {
