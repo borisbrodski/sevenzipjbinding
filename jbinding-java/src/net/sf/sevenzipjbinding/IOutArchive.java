@@ -13,6 +13,6 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @since 2.0
  */
-public interface IOutArchive<E extends IOutItemCallbackBase> extends IOutCreateArchive<E>, IOutUpdateArchive<E> {
+public interface IOutArchive<E extends OutItem> extends IOutCreateArchive<E>, IOutUpdateArchive<E> {
 
 }

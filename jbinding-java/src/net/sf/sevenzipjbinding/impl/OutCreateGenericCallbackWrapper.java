@@ -6,10 +6,12 @@ import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutCreateCallbackGeneric;
 import net.sf.sevenzipjbinding.IOutItemCallback;
 import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.OutItem;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
+.sf.sevenzipjbinding.SevenZipException;
 
-class OutCreateGenericCallbackWrapper implements IOutCreateCallback<IOutItemCallback> {
+class OutCreateGenericCallbackWrapper implements IOutCreateCallback<OutItem> {
     class OutItemGenericCallbackWrapper implements IOutItemCallback {
         private int index;
 
@@ -110,6 +112,11 @@ class OutCreateGenericCallbackWrapper implements IOutCreateCallback<IOutItemCall
 
     public IOutItemCallback getOutItemCallback(int index) throws SevenZipException {
         return new OutItemGenericCallbackWrapper(index);
+    }
+
+    public OutItem getOutItem(int index) throws SevenZipException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

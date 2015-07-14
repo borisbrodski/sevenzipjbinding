@@ -10,7 +10,6 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.04-2.00
  */
-public interface IOutUpdateCallback<E extends IOutItemCallbackBase> extends IOutUpdateCallbackBase,
-        IOutCreateCallback<E> {
+public interface IOutUpdateCallback<E extends OutItem> extends IOutUpdateCallbackBase, IOutCreateCallback<E> {
 
 }

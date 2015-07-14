@@ -12,7 +12,7 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutCreateArchive7z extends IOutCreateArchive<IOutItemCallback7z>, //
+public interface IOutCreateArchive7z extends IOutCreateArchive<OutItem7z>, //
         IOutFeatureSetLevel, //
         IOutFeatureSetSolid, //
         IOutFeatureSetMultithreading {

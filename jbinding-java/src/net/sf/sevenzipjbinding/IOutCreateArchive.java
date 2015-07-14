@@ -56,7 +56,7 @@ import java.io.Closeable;
  * @since 2.0
  * 
  */
-public interface IOutCreateArchive<E extends IOutItemCallbackBase> extends Closeable {
+public interface IOutCreateArchive<E extends OutItem> extends Closeable {
 
     /**
      * Create new archive. To update an existing archive open it first and then use

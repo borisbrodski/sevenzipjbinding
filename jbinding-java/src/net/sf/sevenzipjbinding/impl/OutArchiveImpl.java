@@ -7,10 +7,10 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutCreateCallbackGeneric;
-import net.sf.sevenzipjbinding.IOutItemCallbackBase;
 import net.sf.sevenzipjbinding.IOutUpdateCallback;
 import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
+import net.sf.sevenzipjbinding.OutItem;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
@@ -29,7 +29,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 9.13-2.0
  */
 // TODO null check all parameters: If null slips through into native code there will be no NPE :( 
-public class OutArchiveImpl<E extends IOutItemCallbackBase> implements IOutArchive<E> {
+public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
 
     private long jbindingSession;
     private long sevenZipArchiveInstance;

@@ -29,7 +29,7 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutUpdateArchive7z extends IOutUpdateArchive<IOutItemCallback7z>, //
+public interface IOutUpdateArchive7z extends IOutUpdateArchive<OutItem7z>, //
         IOutFeatureSetLevel, //
         IOutFeatureSetSolid, //
         IOutFeatureSetMultithreading {

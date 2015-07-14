@@ -1,0 +1,39 @@
+package net.sf.sevenzipjbinding.junit.snippets;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+
+import org.junit.Test;
+
+/**
+ * Tests {@link Compress} snippet.
+ *
+ * @author Boris Brodski
+ * @version 9.13-2.00
+ */
+public class CompressTest extends SnippetTest {
+    private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
+
+    private String getExpectedOutput() {
+        /* BEGIN_OUTPUT(Compress) */
+        String expected = "Compression operation succeeded\n";
+        /* END_OUTPUT */
+
+        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace('/', File.separatorChar);
+        return expected;
+    }
+
+    @Test
+    public void testCompress() {
+
+        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        File archiveFile = new File(tmpDir, "compressed.zip");
+
+        beginSnippetTest();
+        Compress.main(new String[] { archiveFile.getAbsolutePath() });
+        String output = endSnippetTest();
+        assertEquals(getExpectedOutput(), output);
+    }
+}

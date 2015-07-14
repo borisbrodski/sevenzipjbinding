@@ -29,5 +29,5 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutUpdateArchiveTar extends IOutUpdateArchive<IOutItemCallbackTar> {
+public interface IOutUpdateArchiveTar extends IOutUpdateArchive<OutItemTar> {
 }

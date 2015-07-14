@@ -12,6 +12,6 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutCreateArchiveBZip2 extends IOutCreateArchive<IOutItemCallbackBZip2>, //
+public interface IOutCreateArchiveBZip2 extends IOutCreateArchive<OutItemBZip2>, //
         IOutFeatureSetLevel {
 }

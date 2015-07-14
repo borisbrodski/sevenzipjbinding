@@ -1,7 +1,7 @@
 package net.sf.sevenzipjbinding.impl;
 
 import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
-import net.sf.sevenzipjbinding.IOutItemCallbackTar;
+import net.sf.sevenzipjbinding.OutItemTar;
 
 /**
  * Tar specific archive create and update class.
@@ -9,6 +9,6 @@ import net.sf.sevenzipjbinding.IOutItemCallbackTar;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public class OutArchiveTarImpl extends OutArchiveImpl<IOutItemCallbackTar> implements IOutCreateArchiveTar {
+public class OutArchiveTarImpl extends OutArchiveImpl<OutItemTar> implements IOutCreateArchiveTar {
 
 }

@@ -29,6 +29,6 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutUpdateArchiveZip extends IOutCreateArchive<IOutItemCallbackZip>, //
+public interface IOutUpdateArchiveZip extends IOutCreateArchive<OutItemZip>, //
         IOutFeatureSetLevel {
 }

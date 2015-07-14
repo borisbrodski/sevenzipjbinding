@@ -14,18 +14,16 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.04-2.00
  */
-public interface IOutCreateCallback<E extends IOutItemCallbackBase> extends IOutCreateCallbackBase {
+public interface IOutCreateCallback<E extends OutItem> extends IOutCreateCallbackBase {
     /**
-     * Get the implementation of the item callback. This callback provides meta data for archive items being created or
-     * updated.
+     * Get information about archive items being created or updated.
      * 
      * @param index
-     *            index of the item get meta data
-     * @return create call back object to provide information for archive create/update operations. Should implements
-     *         {@link IOutItemCallback} or one of the specified <code>IOutItemCallback*</code> interfaces.
+     *            index of the item get data
+     * @return information about the archive items for archive create/update operation
      * 
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public E getOutItemCallback(int index) throws SevenZipException;
+    public E getOutItem(int index) throws SevenZipException;
 }

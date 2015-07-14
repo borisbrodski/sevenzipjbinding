@@ -25,7 +25,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.04-2.0
  * 
  */
-public interface IOutUpdateArchive<E extends IOutItemCallbackBase> {
+public interface IOutUpdateArchive<E extends OutItem> {
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
