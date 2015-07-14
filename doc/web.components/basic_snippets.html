@@ -41,10 +41,19 @@
     	</ul>
     	</li>
     </ul>
-    <li><a href="#creation">Creation of new archives</a></li>
+    <li><a href="#creation">Creation new archives</a></li>
+        <li><a href="#creation-specific-api">Creating archives with the generic API</a></li>
+    	<ul>
+    		<li><a href="#creation-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
+    		<li><a href="#creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
+    		<li><a href="#creation-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
+    		<li><a href="#creation-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+    		<li><a href="#creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    	</ul>
+        <li><a href="#creation-generic">Creating archives with the archive format specific API</a></li>
     <ul>
     </ul>
-    <li><a href="#modification">Modification of existing archives</a></li>
+    <li><a href="#modification">Modification existing archives</a></li>
     <ul>
     </ul>
 </ul>
@@ -338,13 +347,59 @@ Here is an example:
 
 <br/>
 
-<h1><a name="creation">Creation of new archives</h1>
+<h1><a name="creation">Creation new archives</h1>
+
+<p>
+The are two slightly different APIs for archive creation and modification. First API is designed to work
+with one particilar archive format, like Zip. Second allows archive format independent programming.
+</p>
+
+<h2><a name="creation-specific-api">Creating archives with the archive format specific API</h2>
+
+<p>
+The archive format specific API provides easy access to the archive configuration
+methods (like setting compression level). Also it has "method per property" callbacks (like IOutItemCallbackZip)
+allowing easy callback implementation. The amount of mandotory and optional properties are different for each
+archive format.
+</p>
+
+<p>
+Lets see how archive of different formats can be created using archive format specific API.
+</p>
+
+<h3><a name="creation-specific-api-zip">Creating Zip archive using archive format specific API</h3>
+
+<p>
+Creating Zip archive using archive format specific API was already presented in the "first steps".
+The key parts of the code are:
+</p>
+
+<ul>
+    <li>
+        Implementation of the IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface specifying the structure of
+        the new archive. Also the progress of the compression/update operation get reported here.
+    </li>
+    <li>
+    </li>
+</lu>
+
+<p>
+Here is the snippet again:
+</p>
+
+##INCLUDE_SNIPPET(CompressMessage)
 
 
 
+<h3><a name="creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
 
+
+<h2><a name="creation-generic">Creating archives with the generic API</h2>
 
 <br/>
 
-<h1><a name="modification">Modification of existing archives</h1>
+<h1><a name="modification">Modification existing archives</h1>
 
