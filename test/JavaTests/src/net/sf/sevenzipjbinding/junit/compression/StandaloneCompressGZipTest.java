@@ -11,10 +11,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveGZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackGZip;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -31,26 +31,7 @@ import org.junit.Test;
  * @version 9.13-2.00
  */
 public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
-    private final class OutItemCallbackGZip implements IOutItemCallbackGZip {
-        private int index;
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public long getSize() throws SevenZipException {
-            return virtualContent.getItemStream(index).getSize();
-        }
-
-        public String getPath() throws SevenZipException {
-            return virtualContent.getItemPath(index);
-        }
-
-        public Date getModificationTime() throws SevenZipException {
-            return new Date();
-        }
-    }
-    private class OutCreateArchiveGZip implements IOutCreateCallback<IOutItemCallbackGZip> {
+    private class OutCreateArchiveGZip implements IOutCreateCallback<IOutItemGZip> {
 
 
         public void setTotal(long total) throws SevenZipException {
@@ -59,19 +40,28 @@ public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
         public void setCompleted(long complete) throws SevenZipException {
         }
 
-        public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
-            byteArrayStream.rewind();
-            return byteArrayStream;
-        }
-
         public void setOperationResult(boolean operationResultOk) {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackGZip getOutItemCallback(final int index) throws SevenZipException {
-            outItemCallbackGZip.setIndex(index);
-            return callbackTesterItem.getProxyInstance();
+        public IOutItemGZip getItemInformation(int index, OutItemFactory<IOutItemGZip> outItemFactory)
+                throws SevenZipException {
+            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
+            byteArrayStream.rewind();
+
+            IOutItemGZip outItem = outItemFactory.createOutItem();
+
+            outItem.setDataStream(byteArrayStream);
+
+            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setPropertyPath(virtualContent.getItemPath(index));
+            outItem.setPropertyLastModificationTime(new Date());
+
+            return outItem;
+        }
+
+        public void freeResources(int index, IOutItemGZip outItem) throws SevenZipException {
+
         }
     }
 
@@ -80,10 +70,6 @@ public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveGZip> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveGZip>(
             new OutCreateArchiveGZip());
-
-    OutItemCallbackGZip outItemCallbackGZip = new OutItemCallbackGZip();
-    CallbackTester<OutItemCallbackGZip> callbackTesterItem = new CallbackTester<OutItemCallbackGZip>(
-            outItemCallbackGZip);
 
     @Test
     public void testCompressionGZip() throws Exception {
@@ -102,8 +88,6 @@ public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
                 callbackTesterCreateArchive.getProxyInstance());
 
         assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
-        assertEquals(IOutItemCallbackGZip.class.getDeclaredMethods().length,
-                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

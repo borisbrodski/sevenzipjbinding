@@ -2,6 +2,9 @@ package net.sf.sevenzipjbinding.junit.tools;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.PropID;
@@ -462,6 +465,9 @@ public abstract class VolumedArchiveInStreamTest {
             }
 
             return read;
+        }
+
+        public void close() throws IOException {
         }
     }
 }

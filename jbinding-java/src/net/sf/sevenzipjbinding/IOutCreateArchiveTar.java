@@ -12,5 +12,5 @@ package net.sf.sevenzipjbinding;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public interface IOutCreateArchiveTar extends IOutCreateArchive<OutItemTar> {
+public interface IOutCreateArchiveTar extends IOutCreateArchive<IOutItemTar> {
 }

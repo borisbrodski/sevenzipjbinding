@@ -3,7 +3,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 import java.io.Closeable;
 
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -15,8 +15,8 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  */
 public abstract class CompressFeatureAbstractMultpleFiles extends CompressAbstractTest {
 
-    protected IOutCreateArchive<IOutItemCallback> createArchive() throws Exception {
-        IOutCreateArchive<IOutItemCallback> outArchive = SevenZip.openOutArchive(getArchiveFormat());
+    protected IOutCreateArchive<IOutItemAllFormats> createArchive() throws Exception {
+        IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(getArchiveFormat());
         addCloseable(outArchive);
         return outArchive;
     }

@@ -9,9 +9,13 @@ import net.sf.sevenzipjbinding.SevenZipException;
 /**
  * Implementation of {@link ISequentialInStream} based on {@link InputStream}.
  * 
+ * @deprecated use {@link InputStreamSequentialInStream}
+ * 
  * @author Boris Brodski
  * @version 4.65-1
  */
+@Deprecated
+// TODO Remove in the next release
 public class SequentialInStreamImpl implements ISequentialInStream {
     private InputStream inputStream;
 
@@ -35,11 +39,10 @@ public class SequentialInStreamImpl implements ISequentialInStream {
 
         try {
             int read = inputStream.read(data);
-            if (read == -1) {
+            if (read < 0) {
                 return 0;
-            } else {
-                return read;
             }
+            return read;
         } catch (IOException e) {
             throw new SevenZipException("Error reading input stream", e);
         }
@@ -52,5 +55,10 @@ public class SequentialInStreamImpl implements ISequentialInStream {
      */
     public InputStream getInputStream() {
         return inputStream;
+    }
+
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
+
     }
 }

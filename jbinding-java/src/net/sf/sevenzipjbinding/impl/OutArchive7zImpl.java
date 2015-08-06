@@ -1,8 +1,8 @@
 package net.sf.sevenzipjbinding.impl;
 
 import net.sf.sevenzipjbinding.IOutCreateArchive7z;
+import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutUpdateArchive7z;
-import net.sf.sevenzipjbinding.OutItem7z;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @author Boris Brodski
  * @version 9.13-2.0
  */
-public class OutArchive7zImpl extends OutArchiveImpl<OutItem7z> implements IOutCreateArchive7z, IOutUpdateArchive7z {
+public class OutArchive7zImpl extends OutArchiveImpl<IOutItem7z> implements IOutCreateArchive7z, IOutUpdateArchive7z {
     private boolean solid = true;
     private int countOfFilesPerBlock = -1;
     private long countOfBytesPerBlock = -1;

@@ -1,6 +1,9 @@
 package net.sf.sevenzipjbinding.junit.badarchive;
 
 import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
@@ -262,6 +265,9 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
                     offset = (int) (archive.length + newOffset);
                 }
                 return offset >= archive.length ? archive.length : offset;
+            }
+
+            public void close() throws IOException {
             }
         };
         IInArchive openInArchive = SevenZip.openInArchive(archiveFormat, inStream);

@@ -2,45 +2,14 @@ package net.sf.sevenzipjbinding;
 
 import java.util.Date;
 
-public class OutItemTar extends OutItem {
-    private Long size;
-    private String path;
-    private Boolean dir;
-    private Integer posixAttributes;
-    private Date modificationTime;
-    private String user;
-    private String group;
-
-    /**
-     * Get property {@link PropID#SIZE}.
-     * 
-     * @see PropID#SIZE
-     * @return size.
-     */
-    public Long getSize() {
-        return size;
-    }
-
-    /**
-     * Set property {@link PropID#SIZE}.
-     * 
-     * @see PropID#SIZE
-     * @param size
-     *            see {@link PropID#SIZE}
-     */
-    public void setSize(Long size) {
-        this.size = size;
-    }
-
+public interface IOutItemTar extends IOutItemBase {
     /**
      * Get property {@link PropID#POSIX_ATTRIB}.
      * 
      * @see PropID#POSIX_ATTRIB
      * @return posix attributes
      */
-    public Integer getPosixAttributes() {
-        return posixAttributes;
-    }
+    public Integer getPropertyPosixAttributes();
 
     /**
      * Set property {@link PropID#POSIX_ATTRIB}.
@@ -49,9 +18,7 @@ public class OutItemTar extends OutItem {
      * @param posixAttributes
      *            see {@link PropID#POSIX_ATTRIB}
      */
-    public void setPosixAttributes(Integer posixAttributes) {
-        this.posixAttributes = posixAttributes;
-    }
+    public void setPropertyPosixAttributes(Integer posixAttributes);
 
     /**
      * Get property {@link PropID#PATH}.
@@ -59,9 +26,7 @@ public class OutItemTar extends OutItem {
      * @see PropID#PATH
      * @return path
      */
-    public String getPath() {
-        return path;
-    }
+    public String getPropertyPath();
 
     /**
      * Set property {@link PropID#PATH}.
@@ -70,9 +35,7 @@ public class OutItemTar extends OutItem {
      * @param path
      *            see {@link PropID#PATH}
      */
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public void setPropertyPath(String path);
 
     /**
      * Get property {@link PropID#IS_FOLDER}.
@@ -80,9 +43,7 @@ public class OutItemTar extends OutItem {
      * @see PropID#IS_FOLDER
      * @return dir
      */
-    public Boolean isDir() {
-        return dir;
-    }
+    public Boolean getPropertyIsDir();
 
     /**
      * Set property {@link PropID#IS_FOLDER}.
@@ -91,9 +52,7 @@ public class OutItemTar extends OutItem {
      * @param dir
      *            see {@link PropID#IS_FOLDER}
      */
-    public void setDir(Boolean dir) {
-        this.dir = dir;
-    }
+    public void setPropertyIsDir(Boolean dir);
 
     /**
      * Get property {@link PropID#LAST_MODIFICATION_TIME}.
@@ -101,9 +60,7 @@ public class OutItemTar extends OutItem {
      * @see PropID#LAST_MODIFICATION_TIME
      * @return last modification time
      */
-    public Date getModificationTime() {
-        return modificationTime;
-    }
+    public Date getPropertyLastModificationTime();
 
     /**
      * Set property {@link PropID#LAST_MODIFICATION_TIME}.
@@ -112,9 +69,7 @@ public class OutItemTar extends OutItem {
      * @param modificationTime
      *            see {@link PropID#LAST_MODIFICATION_TIME}
      */
-    public void setModificationTime(Date modificationTime) {
-        this.modificationTime = modificationTime;
-    }
+    public void setPropertyLastModificationTime(Date modificationTime);
 
     /**
      * Get property {@link PropID#USER}.
@@ -122,9 +77,7 @@ public class OutItemTar extends OutItem {
      * @see PropID#USER
      * @return user
      */
-    public String getUser() {
-        return user;
-    }
+    public String getPropertyUser();
 
     /**
      * Set property {@link PropID#USER}.
@@ -133,9 +86,7 @@ public class OutItemTar extends OutItem {
      * @param user
      *            see {@link PropID#USER}
      */
-    public void setUser(String user) {
-        this.user = user;
-    }
+    public void setPropertyUser(String user);
 
     /**
      * Get property {@link PropID#GROUP}.
@@ -143,9 +94,7 @@ public class OutItemTar extends OutItem {
      * @see PropID#GROUP
      * @return group
      */
-    public String getGroup() {
-        return group;
-    }
+    public String getPropertyGroup();
 
     /**
      * Set property {@link PropID#GROUP}.
@@ -154,7 +103,5 @@ public class OutItemTar extends OutItem {
      * @param group
      *            see {@link PropID#GROUP}
      */
-    public void setGroup(String group) {
-        this.group = group;
-    }
+    public void setPropertyGroup(String group);
 }

@@ -5,14 +5,14 @@ import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback7z;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
-import net.sf.sevenzipjbinding.IOutUpdateCallback;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -21,34 +21,11 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
-    private static class RemoveItemArchiveUpdateCallback implements IOutUpdateCallback<IOutItemCallback7z> {
+    private static class RemoveItemArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
         private int itemToRemove;
 
         public RemoveItemArchiveUpdateCallback(int itemToRemove) {
             this.itemToRemove = itemToRemove;
-        }
-
-        public ISequentialInStream getStream(int index) throws SevenZipException {
-            return null;
-        }
-
-        public int getOldArchiveItemIndex(int index) {
-            if (index < itemToRemove) {
-                return index;
-            }
-            return index + 1;
-        }
-
-        public boolean isNewData(int index) throws SevenZipException {
-            return false;
-        }
-
-        public boolean isNewProperties(int index) throws SevenZipException {
-            return false;
-        }
-
-        public IOutItemCallback7z getOutItemCallback(int index) throws SevenZipException {
-            return null;
         }
 
         public void setOperationResult(boolean operationResultOk) throws SevenZipException {
@@ -59,6 +36,17 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
 
         public void setCompleted(long complete) throws SevenZipException {
 
+        }
+
+        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+                throws SevenZipException {
+            if (index < itemToRemove) {
+                return outItemFactory.createOutItem(index);
+            }
+            return outItemFactory.createOutItem(index + 1);
+        }
+
+        public void freeResources(int index, IOutItem7z outItem) throws SevenZipException {
         }
     }
 
@@ -77,7 +65,7 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
         int itemToRemove = virtualContent.getItemCount() / 2;
         String itemToRemovePath = (String) inArchive.getProperty(itemToRemove, PropID.PATH);
 
-        IOutUpdateArchive<IOutItemCallback7z> outArchiveConnected = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItem7z> outArchiveConnected = inArchive.getConnectedOutArchive();
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems() - 1,
                 new RemoveItemArchiveUpdateCallback(itemToRemove));
@@ -98,7 +86,6 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
             virtualContent.verifyInArchive(modifiedInArchive);
             fail("Archive shouldn't contain item with id " + itemToRemove);
         } catch (AssertionError e) {
-            e.printStackTrace();
             assertEquals("Item '" + itemToRemovePath + "' wasn't extracted", e.getMessage());
             // continue
         }
@@ -109,7 +96,7 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
 
     private ByteArrayStream compressVirtualContext(VirtualContent virtualContent) throws SevenZipException {
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
-        IOutCreateArchive<IOutItemCallback> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
+        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
         virtualContent.createOutArchive(outArchive, byteArrayStream);
         return byteArrayStream;
     }

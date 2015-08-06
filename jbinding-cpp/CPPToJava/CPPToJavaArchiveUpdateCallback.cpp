@@ -7,6 +7,51 @@
 #include "UnicodeHelper.h"
 #include "CodecTools.h"
 
+
+LONG CPPToJavaArchiveUpdateCallback::freeResourcesForOutItem(JNIEnvInstance & jniEnvInstance) {
+    if (_outItem) {
+        _iOutCreateCallback->freeResources(jniEnvInstance, _javaImplementation, _outItemLastIndex, _outItem);
+        if (jniEnvInstance.exceptionCheck()) {
+            return S_FALSE;
+        }
+        jniEnvInstance->DeleteGlobalRef(_outItem);
+        _outItem = NULL;
+    }
+
+    return S_OK;
+}
+
+LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvInstance, int index) {
+    if (_outItemLastIndex == index && _outItem) {
+        return S_OK;
+    }
+
+    freeResourcesForOutItem(jniEnvInstance);
+
+    jobject outItemFactory = jni::OutItemFactory::newInstance(jniEnvInstance, _outArchive, index);
+    if (jniEnvInstance.exceptionCheck()) {
+        return S_FALSE;
+    }
+
+    jobject outItem = _iOutCreateCallback->getItemInformation(jniEnvInstance, _javaImplementation, index, outItemFactory);
+    if (jniEnvInstance.exceptionCheck()) {
+        return S_FALSE;
+    }
+    if (outItem == NULL) {
+        jniEnvInstance.reportError("IOutCreateCallback.getItemInformation() should return "
+                "a non-null reference to an item information object. Use outItemFactory to create an instance. "
+                "Fill the new object with all necessary information about the archive item being processed.");
+        return S_FALSE;
+    }
+
+    _outItem = jniEnvInstance->NewGlobalRef(outItem);
+    jniEnvInstance->DeleteLocalRef(outItem);
+    _outItemLastIndex = index;
+
+    return S_OK;
+}
+
+
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetUpdateItemInfo(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
 Int32 *newProperties, /* 1 - new properties, 0 - old properties */
 UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
@@ -15,38 +60,55 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
 
     JNIEnvInstance jniEnvInstance(_jbindingSession);
 
+    LONG result = getOrUpdateOutItem(jniEnvInstance, index);
+    if (result) {
+        return result;
+    }
+
     if (newData) {
-        if (_iArchiveUpdateCallback) {
-            jboolean isNewData = _iArchiveUpdateCallback->isNewData(jniEnvInstance,
-                    _javaImplementation, (jint) index);
-            if (jniEnvInstance.exceptionCheck()) {
+        if (_isInArchiveAttached) {
+            jobject newDataObject = jni::OutItem::updateIsNewData_Get(jniEnvInstance, _outItem);
+            if (newDataObject) {
+                *newData = jni::Boolean::booleanValue(jniEnvInstance, newDataObject);
+                if (jniEnvInstance.exceptionCheck()) {
+                    return S_FALSE;
+                }
+            } else {
+                jniEnvInstance.reportError("The attribute 'updateNewData' of the corresponding IOutItem* class shouldn't be null (index=%i)", index);
                 return S_FALSE;
             }
-            *newData = isNewData ? 1 : 0; // TODO Check, if this really helps
         } else {
             *newData = 1;
         }
     }
 
     if (newProperties) {
-        if (_iArchiveUpdateCallback) {
-            jboolean isNewProperties = _iArchiveUpdateCallback->isNewProperties(jniEnvInstance,
-                    _javaImplementation, (jint) index);
-            if (jniEnvInstance.exceptionCheck()) {
+        if (_isInArchiveAttached) {
+            jobject newPropertiesObject = jni::OutItem::updateIsNewProperties_Get(jniEnvInstance, _outItem);
+            if (newPropertiesObject) {
+                *newProperties = jni::Boolean::booleanValue(jniEnvInstance, newPropertiesObject);
+                if (jniEnvInstance.exceptionCheck()) {
+                    return S_FALSE;
+                }
+            } else {
+                jniEnvInstance.reportError("The attribute 'updateNewProperties' of the corresponding IOutItem* class shouldn't be null (index=%i)", index);
                 return S_FALSE;
             }
-            *newProperties = isNewProperties ? 1 : 0; // TODO Check, if this really helps
         } else {
             *newProperties = 1;
         }
     }
 
     if (indexInArchive) {
-        if (_iArchiveUpdateCallback) {
-            *indexInArchive = (UInt32) _iArchiveUpdateCallback->getOldArchiveItemIndex(
-                    jniEnvInstance, _javaImplementation, (jint) index);
-            if (jniEnvInstance.exceptionCheck()) {
-                return S_FALSE;
+        if (_isInArchiveAttached) {
+            jobject oldArchiveItemIndexObject = jni::OutItem::updateOldArchiveItemIndex_Get(jniEnvInstance, _outItem);
+            if (oldArchiveItemIndexObject) {
+                *indexInArchive = (UInt32) jni::Integer::intValue(jniEnvInstance, oldArchiveItemIndexObject);
+                if (jniEnvInstance.exceptionCheck()) {
+                    return S_FALSE;
+                }
+            } else {
+                *indexInArchive = (UInt32) -1;
             }
         } else {
             *indexInArchive = (UInt32) -1;
@@ -59,60 +121,56 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
 STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID,
                                                          PROPVARIANT *value) {
 
-	#define JNI_TYPE_STRING                              jstring
-	#define JNI_TYPE_INTEGER                             jobject
-	#define JNI_TYPE_UINTEGER                            jobject
-	#define JNI_TYPE_DATE                                jobject
-	#define JNI_TYPE_BOOLEAN                             jboolean
-	#define JNI_TYPE_LONG                                jlong
+//	#define JNI_TYPE_STRING                              jstring
+//	#define JNI_TYPE_INTEGER                             jobject
+//	#define JNI_TYPE_UINTEGER                            jobject
+//	#define JNI_TYPE_DATE                                jobject
+//	#define JNI_TYPE_BOOLEAN                             jboolean
+//	#define JNI_TYPE_LONG                                jlong
 
-	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_BOOLEAN       cPropVariant = (bool) value;
-	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_LONG          cPropVariant = (UInt64) value;
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_STRING                                                                   \
+        const jchar * jChars = jniEnvInstance->GetStringChars((jstring)value, NULL);                                \
+        cPropVariant = UString(UnicodeHelper(jChars));                                                              \
+        jniEnvInstance->ReleaseStringChars((jstring)value, jChars);                                                 \
 
-	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_STRING                                                                       \
-		if (value) {                                                                                                    \
-			const jchar * jChars = jniEnvInstance->GetStringChars(value, NULL);                                         \
-			cPropVariant = UString(UnicodeHelper(jChars));                                                              \
-			jniEnvInstance->ReleaseStringChars(value, jChars);                                                          \
-		}
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                  \
+        cPropVariant = jni::Integer::intValue(jniEnvInstance, value);                                               \
+        if (jniEnvInstance.exceptionCheck()) {                                                                      \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
 
-	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                      \
-		if (value) {                                                                                                    \
-			cPropVariant = jni::Integer::intValue(jniEnvInstance, value);                                               \
-			if (jniEnvInstance.exceptionCheck()) {                                                                      \
-				return S_FALSE;                                                                                         \
-			}                                                                                                           \
-		}
+    #define ASSIGN_VALUE_TO_C_PROP_VARIANT_BOOLEAN                                                                  \
+        cPropVariant = (bool)jni::Boolean::booleanValue(jniEnvInstance, value);                                     \
+        if (jniEnvInstance.exceptionCheck()) {                                                                      \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
 
-    #define ASSIGN_VALUE_TO_C_PROP_VARIANT_UINTEGER                                                                     \
-		if (value) {                                                                                                    \
-			cPropVariant = (unsigned int)jni::Integer::intValue(jniEnvInstance, value);                                 \
-			if (jniEnvInstance.exceptionCheck()) {                                                                      \
-				return S_FALSE;                                                                                         \
-			}                                                                                                           \
-		}
+    #define ASSIGN_VALUE_TO_C_PROP_VARIANT_LONG                                                                     \
+        cPropVariant = (UInt64)jni::Long::longValue(jniEnvInstance, value);                                           \
+        if (jniEnvInstance.exceptionCheck()) {                                                                      \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
 
-	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_DATE                                                                         \
-		if (value) {                                                                                                    \
-			FILETIME filetime;                                                                                          \
-			if (!ObjectToFILETIME(jniEnvInstance, value, filetime)) {                                                   \
-				return S_FALSE;                                                                                         \
-			}                                                                                                           \
-			cPropVariant = filetime;                                                                                    \
-		}
+    #define ASSIGN_VALUE_TO_C_PROP_VARIANT_UINTEGER                                                                 \
+        cPropVariant = (unsigned int)jni::Integer::intValue(jniEnvInstance, value);                                 \
+        if (jniEnvInstance.exceptionCheck()) {                                                                      \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
 
-	#define GET_ATTRIBUTE(TYPE, methodName)                                                                             \
-	{                                                                                                                   \
-		if (!_iOutItemCallback->_##methodName##_exists(jniEnvInstance)) {                                               \
-			jniEnvInstance.reportError("IOutItemCallback implementation should implement " #methodName " method.");     \
-			return S_FALSE;                                                                                             \
-		}                                                                                                               \
-		JNI_TYPE_##TYPE value = _iOutItemCallback->methodName(jniEnvInstance, _outItemCallbackImplementation);          \
-		if (jniEnvInstance.exceptionCheck()) {                                                                          \
-			return S_FALSE;                                                                                             \
-		}                                                                                                               \
-		ASSIGN_VALUE_TO_C_PROP_VARIANT_##TYPE                                                                           \
-		break;                                                                                                          \
+	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_DATE                                                                     \
+        FILETIME filetime;                                                                                          \
+        if (!ObjectToFILETIME(jniEnvInstance, value, filetime)) {                                                   \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
+        cPropVariant = filetime;                                                                                    \
+
+	#define GET_ATTRIBUTE(TYPE, fieldName)                                                                          \
+	{                                                                                                               \
+	    jobject value = jni::OutItem::fieldName##_Get(jniEnvInstance, _outItem);                                    \
+	    if (value) {                                                                                                \
+            ASSIGN_VALUE_TO_C_PROP_VARIANT_##TYPE                                                                   \
+        }                                                                                                           \
+		break;                                                                                                      \
 	}
 
     TRACE_OBJECT_CALL("GetProperty");
@@ -139,35 +197,25 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
         return S_OK;
     }
 
-    if (_outItemCallbackLastIndex != index || _outItemCallbackImplementation == NULL) {
-
-    	_outItemCallbackImplementation = _iOutCreateCallback->getOutItemCallback(jniEnvInstance, _javaImplementation, index);
-		if (jniEnvInstance.exceptionCheck()) {
-			return S_FALSE;
-		}
-		if (_outItemCallbackImplementation == NULL) {
-	        jniEnvInstance.reportError("IOutCreateCallback.getOutItemCallback() should return "
-	                "a non-null implementation of the create/update item callback interface");
-            return S_FALSE;
-		}
-		_iOutItemCallback = jni::IOutItemCallback::_getInstanceFromObject(jniEnvInstance, _outItemCallbackImplementation);
-
-		_outItemCallbackLastIndex = index;
+    LONG result = getOrUpdateOutItem(jniEnvInstance, index);
+    if (result) {
+        return result;
     }
 
     switch (propID) {
-    case kpidAttrib:             GET_ATTRIBUTE(UINTEGER, getAttributes)
-    case kpidPosixAttrib:        GET_ATTRIBUTE(UINTEGER, getPosixAttributes)
-    case kpidPath:               GET_ATTRIBUTE(STRING,   getPath)
-    case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN,  isDir)
-    case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN,  isAnti)
-    case kpidTimeType:           GET_ATTRIBUTE(BOOLEAN,  isNtfsTime)
-    case kpidMTime:              GET_ATTRIBUTE(DATE,     getModificationTime)
-    case kpidATime:              GET_ATTRIBUTE(DATE,     getLastAccessTime)
-    case kpidCTime:              GET_ATTRIBUTE(DATE,     getCreationTime)
-    case kpidSize:               GET_ATTRIBUTE(LONG,     getSize)
-    case kpidUser:               GET_ATTRIBUTE(STRING,   getUser)
-    case kpidGroup:              GET_ATTRIBUTE(STRING,   getGroup)
+    case kpidAttrib:             GET_ATTRIBUTE(UINTEGER, propertyAttributes)
+    case kpidPosixAttrib:        GET_ATTRIBUTE(UINTEGER, propertyPosixAttributes)
+    case kpidPath:               GET_ATTRIBUTE(STRING,   propertyPath)
+    case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN,  propertyIsDir)
+    case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN,  propertyIsAnti)
+    case kpidMTime:              GET_ATTRIBUTE(DATE,     propertyLastModificationTime)
+    case kpidATime:              GET_ATTRIBUTE(DATE,     propertyLastAccessTime)
+    case kpidCTime:              GET_ATTRIBUTE(DATE,     propertyCreationTime)
+    case kpidSize:               GET_ATTRIBUTE(LONG,     propertySize)
+    case kpidUser:               GET_ATTRIBUTE(STRING,   propertyUser)
+    case kpidGroup:              GET_ATTRIBUTE(STRING,   propertyGroup)
+
+    case kpidTimeType: // Should be processed by now
     default:
 #ifdef _DEBUG
     	printf("kpidNoProperty: %i\n", (int) kpidNoProperty);
@@ -251,9 +299,14 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
         return S_OK;
     }
 
-    jobject inStreamImpl = _iOutCreateCallback->getStream(jniEnvInstance, _javaImplementation,
-            (jint) index);
-    if (jniEnvInstance.exceptionCheck()) {
+    LONG result = getOrUpdateOutItem(jniEnvInstance, index);
+    if (result) {
+        return result;
+    }
+
+    jobject inStreamImpl = jni::OutItem::dataStream_Get(jniEnvInstance, _outItem);
+    if (!inStreamImpl) {
+        jniEnvInstance.reportError("The attribute 'dataStream' of the corresponding IOutItem* class shouldn't be null (index=%i)", index);
         return S_FALSE;
     }
 

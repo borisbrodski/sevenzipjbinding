@@ -27,11 +27,15 @@ import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemGZip;
+import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -78,6 +82,9 @@ public class VirtualContent {
         ByteArrayStream blob;
         String path;
 
+        Integer attributes;
+        boolean attributesSet;
+
         Date creationTime;
         boolean creationTimeSet;
 
@@ -104,13 +111,7 @@ public class VirtualContent {
         }
     }
 
-    private class ArchiveCreateCallback implements IOutCreateCallback<IOutItemCallback> {
-        public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = itemList.get(index).blob;
-            byteArrayStream.rewind();
-            return byteArrayStream;
-        }
-
+    private class ArchiveCreateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         public void setOperationResult(boolean operationResultOk) {
             assertTrue(operationResultOk);
         }
@@ -123,58 +124,77 @@ public class VirtualContent {
 
         }
 
-        public IOutItemCallback getOutItemCallback(final int index) throws SevenZipException {
-            return new IOutItemCallback() {
+        public void freeResources(int index, IOutItemAllFormats outItem) throws SevenZipException {
 
-                public boolean isAnti() throws SevenZipException {
-                    return false;
-                }
+        }
 
-                public long getSize() throws SevenZipException {
-                    return itemList.get(index).blob.getSize();
-                }
+        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
+                throws SevenZipException {
 
-                public String getPath() throws SevenZipException {
-                    return itemList.get(index).path;
-                }
+            IOutItemAllFormats outItem = outItemFactory.createOutItem();
 
-                public Integer getPosixAttributes() throws SevenZipException {
-                    return null;
-                }
+            Item item = itemList.get(index);
+            ByteArrayStream byteArrayStream = item.blob;
+            byteArrayStream.rewind();
 
-                public Integer getAttributes() throws SevenZipException {
-                    return null;
-                }
+            switch (outItem.getArchiveFormat()) {
+            case SEVEN_ZIP:
+                IOutItem7z outItem7z = outItem;
 
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
+                outItem7z.setPropertyLastModificationTime(item.modificationTime);
+                item.modificationTimeSet = (item.modificationTime != null);
 
-                public Date getModificationTime() throws SevenZipException {
-                    itemList.get(index).modificationTimeSet = true;
-                    return itemList.get(index).modificationTime;
-                }
+                outItem7z.setPropertyAttributes(item.attributes);
+                item.attributesSet = (item.attributes != null);
+                break;
 
-                public Date getLastAccessTime() throws SevenZipException {
-                    itemList.get(index).lastAccessTimeSet = true;
-                    return itemList.get(index).lastAccessTime;
-                }
+            case ZIP:
+                IOutItemZip outItemZip = outItem;
 
-                public Date getCreationTime() throws SevenZipException {
-                    itemList.get(index).creationTimeSet = true;
-                    return itemList.get(index).creationTime;
-                }
+                outItemZip.setPropertyAttributes(item.attributes);
+                item.attributesSet = (item.attributes != null);
 
-                public String getUser() throws SevenZipException {
-                    itemList.get(index).userSet = true;
-                    return itemList.get(index).user;
-                }
+                outItemZip.setPropertyLastAccessTime(item.lastAccessTime);
+                item.lastAccessTimeSet = (item.lastAccessTime != null);
 
-                public String getGroup() throws SevenZipException {
-                    itemList.get(index).groupSet = true;
-                    return itemList.get(index).group;
-                }
-            };
+                outItemZip.setPropertyLastModificationTime(item.modificationTime);
+                item.modificationTimeSet = (item.modificationTime != null);
+
+                outItemZip.setPropertyCreationTime(item.creationTime);
+                item.creationTimeSet = (item.creationTime != null);
+                break;
+
+            case GZIP:
+                IOutItemGZip outItemGZip = outItem;
+
+                outItemGZip.setPropertyLastModificationTime(item.modificationTime);
+                item.modificationTimeSet = (item.modificationTime != null);
+                break;
+
+            case BZIP2:
+                break;
+
+            case TAR:
+                IOutItemTar outItemTar = outItem;
+
+                outItemTar.setPropertyLastModificationTime(item.modificationTime);
+                item.modificationTimeSet = (item.modificationTime != null);
+
+                outItemTar.setPropertyUser(item.user);
+                item.userSet = (item.user != null);
+
+                outItemTar.setPropertyGroup(item.group);
+                item.groupSet = (item.group != null);
+                break;
+            default:
+                throw new RuntimeException("Unknown ArchiveFormat: " + outItem.getArchiveFormat());
+            }
+
+            outItem.setDataStream(byteArrayStream);
+            outItem.setPropertySize((long) item.blob.getSize());
+            outItem.setPropertyPath(item.path);
+
+            return outItem;
         }
     }
 
@@ -214,12 +234,12 @@ public class VirtualContent {
         }
     }
 
-    private class TextExtractCallback implements IArchiveExtractCallback {
+    private class VerifyExtractCallback implements IArchiveExtractCallback {
         private TestSequentailOutStream testSequentailOutStream;
         private final boolean[] extracted;
         private final IInArchive inArchive;
 
-        TextExtractCallback(IInArchive inArchive) {
+        VerifyExtractCallback(IInArchive inArchive) {
             this.inArchive = inArchive;
             extracted = new boolean[itemList.size()];
         }
@@ -235,32 +255,50 @@ public class VirtualContent {
                         myIndexObjekt);
                 myIndex = myIndexObjekt.intValue();
             } else {
-                // Gzip/BZip2
+                // GZip/BZip2
                 myIndex = 0;
             }
             Item item = itemList.get(myIndex);
             if (item.userSet) {
-                assertEquals(item.user, inArchive.getProperty(index, PropID.USER));
+                Object expectedUser = inArchive.getProperty(index, PropID.USER);
+                assertEquals(item.user, expectedUser);
             }
             if (item.groupSet) {
                 assertEquals(item.group, inArchive.getProperty(index, PropID.GROUP));
             }
-            if (item.creationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
-                Date isDate = (Date) inArchive.getProperty(index, PropID.CREATION_TIME);
-                assertTrue(Math.abs(item.creationTime.getTime() - isDate.getTime()) <= 2000);
+            if (item.attributesSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
+                assertEquals(item.attributes, inArchive.getProperty(index, PropID.ATTRIBUTES));
             }
             if (item.lastAccessTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
                 Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_ACCESS_TIME);
+                assertNotNull(isDate);
                 assertTrue(Math.abs(item.lastAccessTime.getTime() - isDate.getTime()) <= 2000);
             }
             if (item.modificationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
                 Date isDate = (Date) inArchive.getProperty(index, PropID.LAST_MODIFICATION_TIME);
+                assertNotNull(isDate);
                 assertTrue(Math.abs(item.modificationTime.getTime() - isDate.getTime()) <= 2000);
+            }
+            if (item.creationTimeSet && archiveFormat != ArchiveFormat.ZIP) { // TODO Fix this for ZIP
+                Date isDate = (Date) inArchive.getProperty(index, PropID.CREATION_TIME);
+                assertNotNull(isDate);
+                assertTrue(Math.abs(item.creationTime.getTime() - isDate.getTime()) <= 2000);
             }
             extracted[myIndex] = true;
             testSequentailOutStream = new TestSequentailOutStream(item);
             return testSequentailOutStream;
         }
+
+        //        private void assertEqualsArchiveDates(Date actual, Date expected) {
+        //            if (actual == null && expected == null) {
+        //                return;
+        //            }
+        //            assertNotNull("Actual date/time is null. Expected: " + expected, actual);
+        //            assertNotNull("Actual date/time is " + actual + ". Expected null", expected);
+        //
+        //            assertTrue("Dates differ. Actual: " + actual + ", expcted: " + expected,
+        //                    Math.abs(actual.getTime() - expected.getTime()) <= 2000);
+        //        }
 
         public void prepareOperation(ExtractAskMode extractAskMode) throws SevenZipException {
             assertEquals(ExtractAskMode.EXTRACT, extractAskMode);
@@ -295,7 +333,7 @@ public class VirtualContent {
     /**
      * Constant seed used here. Tests should be deterministic in order to ensure easy debugging.
      */
-    private static final Random random = new Random(0);
+    private final Random random = new Random(0);
 
     private List<Item> itemList = new ArrayList<Item>();
     private Map<String, Integer> usedNames = new HashMap<String, Integer>();
@@ -373,6 +411,7 @@ public class VirtualContent {
         item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
         item.user = JUnitNativeTestBase.getRandomName(random);
         item.group = JUnitNativeTestBase.getRandomName(random);
+        item.attributes = random.nextInt(17);
     }
 
 
@@ -385,15 +424,15 @@ public class VirtualContent {
         }
     }
 
-    public void createOutArchive(IOutCreateArchive<IOutItemCallback> outArchive, ISequentialOutStream outputStream)
+    public void createOutArchive(IOutCreateArchive<IOutItemAllFormats> outArchive, ISequentialOutStream outputStream)
             throws SevenZipException {
         outArchive.createArchive(outputStream, itemList.size(), new ArchiveCreateCallback());
     }
 
     public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
-        TextExtractCallback testExtractCallback = new TextExtractCallback(inArchive);
-        inArchive.extract(null, false, testExtractCallback);
-        testExtractCallback.finish();
+        VerifyExtractCallback verifyExtractCallback = new VerifyExtractCallback(inArchive);
+        inArchive.extract(null, false, verifyExtractCallback);
+        verifyExtractCallback.finish();
 
     }
 

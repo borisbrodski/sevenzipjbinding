@@ -1,8 +1,10 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
+import net.sf.sevenzipjbinding.IOutItemBase;
+
 import org.junit.Test;
 
-public abstract class UpdateSingleFileAbstractTest extends UpdateAbstractTest {
+public abstract class UpdateSingleFileAbstractTest<T extends IOutItemBase> extends UpdateAbstractTest<T> {
     @Override
     protected int getDefaultIndex() {
         return 0;

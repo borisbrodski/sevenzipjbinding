@@ -3,7 +3,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -176,7 +176,7 @@ public abstract class CompressMultipleFileAbstractTest extends CompressAbstractT
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength, null);
         ArchiveFormat archiveFormat = getArchiveFormat();
-        IOutCreateArchive<IOutItemCallback> outArchive = SevenZip.openOutArchive(archiveFormat);
+        IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream;
         boolean ok = false;
         try {

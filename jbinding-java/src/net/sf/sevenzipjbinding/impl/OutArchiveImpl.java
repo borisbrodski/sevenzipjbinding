@@ -6,11 +6,8 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutCreateCallbackGeneric;
-import net.sf.sevenzipjbinding.IOutUpdateCallback;
-import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
+import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
-import net.sf.sevenzipjbinding.OutItem;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
@@ -29,7 +26,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 9.13-2.0
  */
 // TODO null check all parameters: If null slips through into native code there will be no NPE :( 
-public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
+public class OutArchiveImpl<E extends IOutItemBase> implements IOutArchive<E> {
 
     private long jbindingSession;
     private long sevenZipArchiveInstance;
@@ -76,8 +73,7 @@ public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
         return archiveFormat;
     }
 
-    // TODO reduce visibility
-    public void setArchiveFormat(ArchiveFormat archiveFormat) {
+    protected void setArchiveFormat(ArchiveFormat archiveFormat) {
         this.archiveFormat = archiveFormat;
     }
 
@@ -95,9 +91,12 @@ public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
 
     protected native void nativeSetMultithreading(int threadCount) throws SevenZipException;
 
-    private native void nativeUpdateItems(int archiveFormatIndex, ISequentialOutStream outStream, int numberOfItems,
-            Object archiveUpdateCallback, boolean isInArchiveAttached) throws SevenZipException;
+    private native void nativeUpdateItems(ISequentialOutStream outStream, int numberOfItems,
+            Object archiveUpdateCallback) throws SevenZipException;
 
+    /**
+     * {@inheritDoc}
+     */
     public void close() throws IOException {
         if (inArchive != null) {
             return; // In case of connected OutArchive no explicit closing necessary. 
@@ -107,21 +106,18 @@ public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
 
     private native void nativeClose() throws SevenZipException;
 
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutUpdateCallback<E> outUpdateCallback)
+    /**
+     * {@inheritDoc}
+     */
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<E> outUpdateCallback)
             throws SevenZipException {
         doUpdateItems(outStream, numberOfItems, outUpdateCallback);
-    }
-
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IOutUpdateCallbackGeneric archiveUpdateCallbackGeneric) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, new OutUpdateGenericCallbackWrapper(archiveUpdateCallbackGeneric));
     }
 
     private void doUpdateItems(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<?> archiveCreateCallback) throws SevenZipException {
         applyFeatures();
-        nativeUpdateItems(archiveFormat.getCodecIndex(), outStream, numberOfItems, archiveCreateCallback,
-                inArchive != null);
+        nativeUpdateItems(outStream, numberOfItems, archiveCreateCallback);
     }
 
     /**
@@ -135,8 +131,7 @@ public class OutArchiveImpl<E extends OutItem> implements IOutArchive<E> {
     /**
      * {@inheritDoc}
      */
-    public void createArchive(ISequentialOutStream outStream, int numberOfItems,
-            IOutCreateCallbackGeneric outCreateCallbackGeneric) throws SevenZipException {
-        doUpdateItems(outStream, numberOfItems, new OutCreateGenericCallbackWrapper(outCreateCallbackGeneric));
+    public IInArchive getConnectedInArchive() {
+        return inArchive;
     }
 }

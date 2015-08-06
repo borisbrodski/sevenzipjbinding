@@ -55,6 +55,16 @@ JT_END_CLASS
 
 JT_BEGIN_CLASS("java/lang", Integer)
     JT_CLASS_VIRTUAL_METHOD(Int, intValue, _)
+    JT_CLASS_STATIC_METHOD_OBJECT(JAVA_INTEGER_T, valueOf, JT_INT(value, _))
+JT_END_CLASS
+
+JT_BEGIN_CLASS("java/lang", Long)
+    JT_CLASS_VIRTUAL_METHOD(Long, longValue, _)
+    JT_CLASS_STATIC_METHOD_OBJECT(JAVA_LONG_T, valueOf, JT_LONG(value, _))
+JT_END_CLASS
+
+JT_BEGIN_CLASS("java/lang", Boolean)
+    JT_CLASS_VIRTUAL_METHOD(Boolean, booleanValue, _)
 JT_END_CLASS
 
 JT_BEGIN_CLASS("java/lang", NoSuchMethodError)

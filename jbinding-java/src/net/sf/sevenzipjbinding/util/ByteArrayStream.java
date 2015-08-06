@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.util;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -666,5 +667,17 @@ public class ByteArrayStream implements IInStream, IOutStream {
         }
         byte[] chunk = new byte[nextChunkSize];
         chunkList.add(chunk);
+    }
+
+    /**
+     * Empty method. No closing required.
+     * 
+     * @see Closeable
+     * @throws IOException
+     *             never
+     */
+    public void close() throws IOException {
+        // no operation
+        // TODO Set all references to null, prevent further calls to all methods
     }
 }

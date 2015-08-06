@@ -842,8 +842,9 @@ public class SevenZip {
      *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
      */
     @SuppressWarnings("unchecked")
-    public static IOutCreateArchive<OutItem> openOutArchive(ArchiveFormat archiveFormat) throws SevenZipException {
-        return (IOutCreateArchive<OutItem>) openOutArchiveIntern(archiveFormat);
+    public static IOutCreateArchive<IOutItemAllFormats> openOutArchive(ArchiveFormat archiveFormat)
+            throws SevenZipException {
+        return (IOutCreateArchive<IOutItemAllFormats>) openOutArchiveIntern(archiveFormat);
     }
 
     private static OutArchiveImpl<?> openOutArchiveIntern(ArchiveFormat archiveFormat) throws SevenZipException {

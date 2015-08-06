@@ -295,7 +295,7 @@ INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
 
 SET(DART_TESTING_TIMEOUT "36000" CACHE STRING "")	# Increase time out up to 10 hours
 INCLUDE(CTest)
-IF(BUILD_TESTING)
+IF(NOT BUILD_TESTING)
     MESSAGE("-- Prepare for testing")
     SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
     SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar)

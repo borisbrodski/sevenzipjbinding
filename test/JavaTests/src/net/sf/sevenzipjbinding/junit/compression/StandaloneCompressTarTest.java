@@ -11,10 +11,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackTar;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItemTar;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -31,62 +31,37 @@ import org.junit.Test;
  * @version 9.13-2.00
  */
 public class StandaloneCompressTarTest extends JUnitNativeTestBase {
-    private final class OutItemCallbackTar implements IOutItemCallbackTar {
-        private int index;
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public Integer getPosixAttributes() throws SevenZipException {
-            return null;
-        }
-
-        public String getPath() throws SevenZipException {
-            return virtualContent.getItemPath(index);
-        }
-
-        public Date getModificationTime() throws SevenZipException {
-            return new Date();
-        }
-
-        public boolean isDir() throws SevenZipException {
-            return false;
-        }
-
-        public String getUser() throws SevenZipException {
-            return "me";
-        }
-
-        public String getGroup() throws SevenZipException {
-            return "developers";
-        }
-
-        public long getSize() {
-            return virtualContent.getItemStream(index).getSize();
-        }
-    }
-
-    private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemCallbackTar> {
+    private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemTar> {
         public void setTotal(long total) throws SevenZipException {
         }
 
         public void setCompleted(long complete) throws SevenZipException {
         }
 
-        public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
-            byteArrayStream.rewind();
-            return byteArrayStream;
-        }
-
         public void setOperationResult(boolean operationResultOk) {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackTar getOutItemCallback(final int index) throws SevenZipException {
-            outItemCallbackTar.setIndex(index);
-            return callbackTesterItem.getProxyInstance();
+        public IOutItemTar getItemInformation(int index, OutItemFactory<IOutItemTar> outItemFactory)
+                throws SevenZipException {
+            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
+            byteArrayStream.rewind();
+
+            IOutItemTar outItem = outItemFactory.createOutItem();
+
+            outItem.setDataStream(byteArrayStream);
+
+            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setPropertyUser("me");
+            outItem.setPropertyGroup("developers");
+            outItem.setPropertyLastModificationTime(new Date());
+            outItem.setPropertyPath(virtualContent.getItemPath(index));
+
+            return outItem;
+        }
+
+        public void freeResources(int index, IOutItemTar outItem) throws SevenZipException {
+
         }
     }
 
@@ -94,8 +69,6 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
     CallbackTester<OutCreateArchiveTar> callbackTesterArchive = new CallbackTester<OutCreateArchiveTar>(
             new OutCreateArchiveTar());
 
-    OutItemCallbackTar outItemCallbackTar = new OutItemCallbackTar();
-    CallbackTester<OutItemCallbackTar> callbackTesterItem = new CallbackTester<OutItemCallbackTar>(outItemCallbackTar);
 
     @Test
     public void testCompressionTar() throws Exception {
@@ -112,8 +85,6 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
                 callbackTesterArchive.getProxyInstance());
 
         assertEquals(5, callbackTesterArchive.getDifferentMethodsCalled());
-        assertEquals(IOutItemCallbackTar.class.getDeclaredMethods().length,
-                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

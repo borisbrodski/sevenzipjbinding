@@ -1,12 +1,14 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.Closeable;
+
 /**
  * Interface used to operate with sequential input stream.
  * 
  * @author Boris Brodski
  * @version 4.65-1
  */
-public interface ISequentialInStream {
+public interface ISequentialInStream extends Closeable {
     /**
      * Reads at least 1 and maximum <code>data.length</code> bytes from the in-stream. If <code>data.length == 0</code>
      * 0 should be returned. If <code>data.length != 0</code>, then return value 0 indicates end-of-stream (EOF). This

@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
+import java.io.IOException;
 import java.util.Random;
 
 import net.sf.sevenzipjbinding.IInStream;
@@ -92,5 +93,8 @@ public class RandomContext implements IInStream {
 
     public void rewind() {
         currentPosition = 0;
+    }
+
+    public void close() throws IOException {
     }
 }

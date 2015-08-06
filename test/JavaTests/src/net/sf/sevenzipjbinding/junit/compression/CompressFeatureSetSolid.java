@@ -6,7 +6,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetSolid;
-import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -326,7 +326,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
         ByteArrayStream outputByteArrayStream = new ByteArrayStream(2 * COUNT_OF_FILES * AVERAGE_FILE_LENGTH
                 * DELTA_FILE_LENGTH);
 
-        IOutCreateArchive<IOutItemCallback> outArchive = createArchive();
+        IOutCreateArchive<IOutItemAllFormats> outArchive = createArchive();
 
         assertTrue(outArchive instanceof IOutFeatureSetSolid);
         IOutFeatureSetSolid featureOutArchive = (IOutFeatureSetSolid) outArchive;

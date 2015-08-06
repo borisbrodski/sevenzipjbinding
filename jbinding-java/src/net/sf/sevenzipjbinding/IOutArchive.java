@@ -7,12 +7,10 @@ package net.sf.sevenzipjbinding;
  * @see IOutCreateArchive
  * @see IOutUpdateArchive
  * 
- * @param <E>
- *            Type of the call back class
  * 
  * @author Boris Brodski
  * @since 2.0
  */
-public interface IOutArchive<E extends OutItem> extends IOutCreateArchive<E>, IOutUpdateArchive<E> {
+public interface IOutArchive<E extends IOutItemBase> extends IOutCreateArchive<E>, IOutUpdateArchive<E> {
 
 }

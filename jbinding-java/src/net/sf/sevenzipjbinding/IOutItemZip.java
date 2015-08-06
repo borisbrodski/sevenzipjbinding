@@ -2,35 +2,7 @@ package net.sf.sevenzipjbinding;
 
 import java.util.Date;
 
-public class OutItemZip extends OutItem {
-    private Long size;
-    private Integer attributes;
-    private String path;
-    private Boolean dir;
-    private Date modificationTime;
-    private Date lastAccessTime;
-    private Date creationTime;
-
-    /**
-     * Get property {@link PropID#SIZE}.
-     * 
-     * @see PropID#SIZE
-     * @return size.
-     */
-    public Long getSize() {
-        return size;
-    }
-
-    /**
-     * Set property {@link PropID#SIZE}.
-     * 
-     * @see PropID#SIZE
-     * @param size
-     *            see {@link PropID#SIZE}
-     */
-    public void setSize(Long size) {
-        this.size = size;
-    }
+public interface IOutItemZip extends IOutItemBase {
 
     /**
      * Get property {@link PropID#ATTRIBUTES}.
@@ -38,9 +10,7 @@ public class OutItemZip extends OutItem {
      * @see PropID#ATTRIBUTES
      * @return attributes
      */
-    public Integer getAttributes() {
-        return attributes;
-    }
+    public Integer getPropertyAttributes();
 
     /**
      * Set property {@link PropID#ATTRIBUTES}.
@@ -49,9 +19,7 @@ public class OutItemZip extends OutItem {
      * @param attributes
      *            see {@link PropID#ATTRIBUTES}
      */
-    public void setAttributes(Integer attributes) {
-        this.attributes = attributes;
-    }
+    public void setPropertyAttributes(Integer attributes);
 
     /**
      * Get property {@link PropID#PATH}.
@@ -59,9 +27,7 @@ public class OutItemZip extends OutItem {
      * @see PropID#PATH
      * @return path
      */
-    public String getPath() {
-        return path;
-    }
+    public String getPropertyPath();
 
     /**
      * Set property {@link PropID#PATH}.
@@ -70,9 +36,7 @@ public class OutItemZip extends OutItem {
      * @param path
      *            see {@link PropID#PATH}
      */
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public void setPropertyPath(String path);
 
     /**
      * Get property {@link PropID#IS_FOLDER}.
@@ -80,9 +44,7 @@ public class OutItemZip extends OutItem {
      * @see PropID#IS_FOLDER
      * @return dir
      */
-    public Boolean isDir() {
-        return dir;
-    }
+    public Boolean getPropertyIsDir();
 
     /**
      * Set property {@link PropID#IS_FOLDER}.
@@ -91,9 +53,7 @@ public class OutItemZip extends OutItem {
      * @param dir
      *            see {@link PropID#IS_FOLDER}
      */
-    public void setDir(Boolean dir) {
-        this.dir = dir;
-    }
+    public void setPropertyIsDir(Boolean dir);
 
     /**
      * Get property {@link PropID#LAST_MODIFICATION_TIME}.
@@ -101,9 +61,7 @@ public class OutItemZip extends OutItem {
      * @see PropID#LAST_MODIFICATION_TIME
      * @return last modification time
      */
-    public Date getModificationTime() {
-        return modificationTime;
-    }
+    public Date getPropertyLastModificationTime();
 
     /**
      * Set property {@link PropID#LAST_MODIFICATION_TIME}.
@@ -112,9 +70,7 @@ public class OutItemZip extends OutItem {
      * @param modificationTime
      *            see {@link PropID#LAST_MODIFICATION_TIME}
      */
-    public void setModificationTime(Date modificationTime) {
-        this.modificationTime = modificationTime;
-    }
+    public void setPropertyLastModificationTime(Date modificationTime);
 
     /**
      * Get property {@link PropID#LAST_ACCESS_TIME}.
@@ -122,9 +78,8 @@ public class OutItemZip extends OutItem {
      * @see PropID#LAST_ACCESS_TIME
      * @return last access time
      */
-    public Date getLastAccessTime() {
-        return lastAccessTime;
-    }
+
+    public Date getPropertyLastAccessTime();
 
     /**
      * Set property {@link PropID#LAST_ACCESS_TIME}.
@@ -133,9 +88,7 @@ public class OutItemZip extends OutItem {
      * @param lastAccessTime
      *            see {@link PropID#LAST_ACCESS_TIME}
      */
-    public void setLastAccessTime(Date lastAccessTime) {
-        this.lastAccessTime = lastAccessTime;
-    }
+    public void setPropertyLastAccessTime(Date lastAccessTime);
 
     /**
      * Get property {@link PropID#CREATION_TIME}.
@@ -143,9 +96,7 @@ public class OutItemZip extends OutItem {
      * @see PropID#CREATION_TIME
      * @return creation time
      */
-    public Date getCreationTime() {
-        return creationTime;
-    }
+    public Date getPropertyCreationTime();
 
     /**
      * Set property {@link PropID#CREATION_TIME}.
@@ -154,8 +105,5 @@ public class OutItemZip extends OutItem {
      * @param creationTime
      *            see {@link PropID#CREATION_TIME}
      */
-    public void setCreationTime(Date creationTime) {
-        this.creationTime = creationTime;
-    }
-
+    public void setPropertyCreationTime(Date creationTime);
 }

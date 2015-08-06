@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,10 +12,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive7z;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback7z;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -31,59 +32,37 @@ import org.junit.Test;
  * @version 9.13-2.00
  */
 public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
-    private final class OutItemCallback7z implements IOutItemCallback7z {
-        private int index;
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public boolean isAnti() throws SevenZipException {
-            return false;
-        }
-
-        public long getSize() throws SevenZipException {
-            return virtualContent.getItemStream(index).getSize();
-        }
-
-        public String getPath() throws SevenZipException {
-            return virtualContent.getItemPath(index);
-        }
-
-        public Integer getAttributes() throws SevenZipException {
-            return null;
-        }
-
-        public Date getModificationTime() throws SevenZipException {
-            return new Date();
-        }
-
-        public boolean isDir() throws SevenZipException {
-            return false;
-        }
-    }
-    private class OutCreateArchive7z implements IOutCreateCallback<IOutItemCallback7z> {
-
-
+    private class OutCreateArchive7z implements IOutCreateCallback<IOutItem7z> {
         public void setTotal(long total) throws SevenZipException {
         }
 
         public void setCompleted(long complete) throws SevenZipException {
         }
 
-        public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
-            byteArrayStream.rewind();
-            return byteArrayStream;
-        }
-
         public void setOperationResult(boolean operationResultOk) {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallback7z getOutItemCallback(final int index) throws SevenZipException {
-            outItemCallback7z.setIndex(index);
-            return callbackTesterItem.getProxyInstance();
+        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+                throws SevenZipException {
+            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
+            byteArrayStream.rewind();
+
+            IOutItem7z outItem = outItemFactory.createOutItem();
+
+            outItem.setDataStream(byteArrayStream);
+            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setPropertyPath(virtualContent.getItemPath(index));
+
+            return outItem;
+        }
+
+        public void freeResources(int index, IOutItem7z outItem) throws SevenZipException {
+            try {
+                outItem.getDataStream().close();
+            } catch (IOException e) {
+                throw new SevenZipException("Error closing data stream for item (index: " + index + ")");
+            }
         }
     }
 
@@ -92,9 +71,6 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchive7z> callbackTesterCreateArchive = new CallbackTester<OutCreateArchive7z>(
             new OutCreateArchive7z());
-
-    OutItemCallback7z outItemCallback7z = new OutItemCallback7z();
-    CallbackTester<OutItemCallback7z> callbackTesterItem = new CallbackTester<OutItemCallback7z>(outItemCallback7z);
 
     @Test
     public void testCompression7z() throws Exception {
@@ -119,9 +95,6 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
 
         // No setCompleted call
         assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());
-
-        assertEquals(IOutItemCallback7z.class.getDeclaredMethods().length,
-                callbackTesterItem.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

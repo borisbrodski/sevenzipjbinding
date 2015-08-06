@@ -35,11 +35,9 @@ static IOutArchive * GetArchive(JNIEnv * env, jobject thiz) {
 JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeUpdateItems(
                                                                                                    JNIEnv * env,
                                                                                                    jobject thiz,
-                                                                                                   jint archiveFormatIndex,
                                                                                                    jobject outStream,
                                                                                                    jint numberOfItems,
-                                                                                                   jobject archiveUpdateCallback,
-                                                                                                   jboolean isInArchiveAttached) {
+                                                                                                   jobject archiveUpdateCallback) {
     TRACE("OutArchiveImpl.updateItemsNative()");
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
@@ -48,21 +46,33 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
 
+    jobject archiveFormat = jni::OutArchiveImpl::archiveFormat_Get(env, thiz);
+    int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
+    jboolean isInArchiveAttached = jni::OutArchiveImpl::inArchive_Get(env, thiz) != NULL;
+
 	CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
 			outStream);
 
-	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallback =
-			new CPPToJavaArchiveUpdateCallback(jbindingSession, env, archiveUpdateCallback,
-					isInArchiveAttached, archiveFormatIndex);
+	CPPToJavaArchiveUpdateCallback * cppToJavaArchiveUpdateCallback = new CPPToJavaArchiveUpdateCallback(
+	        jbindingSession, env,
+	        archiveUpdateCallback,
+	        isInArchiveAttached,
+	        archiveFormatIndex,
+	        thiz);
+
+	CMyComPtr<IArchiveUpdateCallback> cppToJavaArchiveUpdateCallbackPtr = cppToJavaArchiveUpdateCallback;
 
 	HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
 			cppToJavaArchiveUpdateCallback);
-
 	if (hresult) {
 		jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
 				(const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name,
 				(int) numberOfItems);
 	}
+
+	// No need to check HRESULT. If there was an error, the corresponding exception was already thrown.
+	cppToJavaArchiveUpdateCallback->freeResourcesForOutItem(jniEnvInstance);
+
 }
 
 /*

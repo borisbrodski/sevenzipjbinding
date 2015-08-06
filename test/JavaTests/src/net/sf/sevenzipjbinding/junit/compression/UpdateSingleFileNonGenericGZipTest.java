@@ -1,6 +1,8 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemGZip;
 
 /**
  * Tests compression, update and extraction of a single file using non-generic callback with GZip.
@@ -8,11 +10,17 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class UpdateSingleFileNonGenericGZipTest extends UpdateSingleFileNonGenericAbstractTest {
+public class UpdateSingleFileNonGenericGZipTest extends UpdateSingleFileNonGenericAbstractTest<IOutItemGZip> {
 
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.GZIP;
+    }
+
+    @Override
+    protected void copyFromDelegate(IOutItemGZip outItem, IOutItemAllFormats delegateOutItem) {
+        outItem.setPropertyLastModificationTime(delegateOutItem.getPropertyLastModificationTime());
+        outItem.setPropertyPath(delegateOutItem.getPropertyPath());
     }
 
 }

@@ -5,11 +5,12 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.PropID;
 
 import org.junit.Test;
 
-public abstract class UpdateMultipleFilesAbstractTest extends UpdateAbstractTest {
+public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> extends UpdateAbstractTest<T> {
     private static class DirectoryTreeConfiguration {
         final int countOfFiles;
         final int directoriesDepth;

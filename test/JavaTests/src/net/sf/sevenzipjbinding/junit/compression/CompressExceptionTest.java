@@ -5,17 +5,17 @@ import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Test;
 
 /**
  * Tests exceptions during archive compression.
- * 
+ *
  * @author Boris Brodski
  * @version 9.13-2.00
  */
@@ -80,15 +80,10 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
 
     private void doTestNullAs() throws Exception {
         try {
-            IOutCreateArchive<IOutItemCallback> outArchive = SevenZip.openOutArchive(getArchiveFormat());
+            IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(getArchiveFormat());
             addCloseable(outArchive);
             ByteArrayStream byteArrayStream = new ByteArrayStream(10000);
-            outArchive.createArchive(byteArrayStream, 1, new IOutCreateCallback<IOutItemCallback>() {
-
-                public ISequentialInStream getStream(int index) throws SevenZipException {
-                    return new ByteArrayStream(100);
-                }
-
+            outArchive.createArchive(byteArrayStream, 1, new IOutCreateCallback<IOutItemAllFormats>() {
                 public void setOperationResult(boolean operationResultOk) throws SevenZipException {
 
                 }
@@ -101,15 +96,22 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
 
                 }
 
-                public IOutItemCallback getOutItemCallback(int index) throws SevenZipException {
+                public IOutItemAllFormats getItemInformation(int index,
+                        OutItemFactory<IOutItemAllFormats> outItemFactory) throws SevenZipException {
                     return null; // Return null here!
+                }
+
+                public void freeResources(int index, IOutItemAllFormats outItem) throws SevenZipException {
                 }
             });
             fail("Exception expected");
         } catch (SevenZipException sevenZipException) {
-            assertEquals(IOutCreateCallback.class.getSimpleName() + ".getOutItemCallback() should return "
-                    + "a non-null implementation of the create/update item callback interface",
+            assertEquals(IOutCreateCallback.class.getSimpleName() + ".getItemInformation() should return "
+                    + "a non-null reference to an item information object. Use outItemFactory "
+                    + "to create an instance. Fill the new object with all necessary information about "
+                    + "the archive item being processed.",
                     sevenZipException.getMessage());
         }
     }
 }
+

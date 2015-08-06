@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -11,10 +12,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveBZip2;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackBZip2;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItemBZip2;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -31,18 +32,7 @@ import org.junit.Test;
  * @version 9.13-2.00
  */
 public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
-    private final class OutItemCallbackBZip2 implements IOutItemCallbackBZip2 {
-        private int index;
-
-        public void setIndex(int index) {
-            this.index = index;
-        }
-
-        public long getSize() throws SevenZipException {
-            return virtualContent.getItemStream(index).getSize();
-        }
-    }
-    private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemCallbackBZip2> {
+    private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemBZip2> {
 
 
         public void setTotal(long total) throws SevenZipException {
@@ -51,19 +41,30 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
         public void setCompleted(long complete) throws SevenZipException {
         }
 
-        public ISequentialInStream getStream(int index) {
-            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
-            byteArrayStream.rewind();
-            return byteArrayStream;
-        }
-
         public void setOperationResult(boolean operationResultOk) {
             assertTrue(operationResultOk);
         }
 
-        public IOutItemCallbackBZip2 getOutItemCallback(final int index) throws SevenZipException {
-            outItemCallbackBZip2.setIndex(index);
-            return callbackTesterItem.getProxyInstance();
+
+        public IOutItemBZip2 getItemInformation(int index, OutItemFactory<IOutItemBZip2> outItemFactory)
+                throws SevenZipException {
+            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
+            byteArrayStream.rewind();
+
+            IOutItemBZip2 outItem = outItemFactory.createOutItem();
+
+            outItem.setDataStream(byteArrayStream);
+            outItem.setPropertySize((long) byteArrayStream.getSize());
+
+            return outItem;
+        }
+
+        public void freeResources(int index, IOutItemBZip2 outItem) throws SevenZipException {
+            try {
+                outItem.getDataStream().close();
+            } catch (IOException e) {
+                throw new SevenZipException("Error closing data stream for item (index: " + index + ")");
+            }
         }
     }
 
@@ -72,10 +73,6 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
     VirtualContent virtualContent;
     CallbackTester<OutCreateArchiveBZip2> callbackTesterCreateArchive = new CallbackTester<OutCreateArchiveBZip2>(
             new OutCreateArchiveBZip2());
-
-    OutItemCallbackBZip2 outItemCallbackBZip2 = new OutItemCallbackBZip2();
-    CallbackTester<OutItemCallbackBZip2> callbackTesterItem = new CallbackTester<OutItemCallbackBZip2>(
-            outItemCallbackBZip2);
 
     @Test
     public void testCompressionBZip2() throws Exception {
@@ -93,9 +90,8 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
         outNewArchiveBZip2.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getProxyInstance());
 
-        assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
-        assertEquals(IOutItemCallbackBZip2.class.getDeclaredMethods().length,
-                callbackTesterItem.getDifferentMethodsCalled());
+        assertEquals("Methods called: " + callbackTesterCreateArchive, 5,
+                callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

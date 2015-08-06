@@ -9,8 +9,13 @@ import java.util.Date;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutCreateCallbackBase;
-import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemBZip2;
+import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.IOutItemGZip;
+import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -24,13 +29,15 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public abstract class CompressSingleFileAbstractTest extends CompressAbstractTest {
-    protected class SingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemCallback> {
-        private IOutItemCallback outItemCallback;
-
-        public ISequentialInStream getStream(int index) {
+public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
+    protected abstract class SingleFileCreateArchiveCallback implements IOutCreateCallback<T> {
+        protected ISequentialInStream getStream(int index) {
             assertEquals(0, index);
-            return testContextThreadContext.get().randomContext;
+            return getTestContext().randomContext;
+        }
+
+        public TestContext getTestContext() {
+            return testContextThreadContext.get();
         }
 
         public void setOperationResult(boolean operationResultOk) {
@@ -43,19 +50,196 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
 
         }
 
-        public IOutItemCallback getOutItemCallback(int index) throws SevenZipException {
-            assertEquals(0, index);
-            return outItemCallback;
+        public void freeResources(int index, T outItem) throws SevenZipException {
         }
 
-        public void setOutItemCallback(IOutItemCallback outItemCallback) {
-            this.outItemCallback = outItemCallback;
+        protected void setAllProperties(IOutItemAllFormats outItem, TestContext testContext) {
+            setBaseProperties(outItem);
+            setPropertiesFor7z(outItem, testContext);
+            setPropertiesForZip(outItem, testContext);
+            setPropertiesForGZip(outItem, testContext);
+            setPropertiesForBZip2(outItem, testContext);
+            setPropertiesForTar(outItem, testContext);
         }
+
+        protected void setPropertiesForArchiveFormat(IOutItemAllFormats outItem, TestContext testContext) {
+            switch (outItem.getArchiveFormat()) {
+            case SEVEN_ZIP:
+                setPropertiesFor7z(outItem, testContext);
+                break;
+
+            case ZIP:
+                setPropertiesForZip(outItem, testContext);
+                break;
+
+            case GZIP:
+                setPropertiesForGZip(outItem, testContext);
+                break;
+
+            case BZIP2:
+                setPropertiesForBZip2(outItem, testContext);
+                break;
+
+            case TAR:
+                setPropertiesForTar(outItem, testContext);
+                break;
+            default:
+                throw new RuntimeException("Unknown ArchiveFormat: " + outItem.getArchiveFormat());
+            }
+        }
+
+        protected void setBaseProperties(IOutItemBase outItem) {
+            TestContext testContext = getTestContext();
+
+            outItem.setPropertySize(Long.valueOf(testContext.randomContext.getSize()));
+            outItem.setDataStream(getStream(outItem.getIndex()));
+        }
+
+        protected void setPropertiesFor7z(IOutItem7z outItem, TestContext testContext) {
+            outItem.setPropertyAttributes(ATTRIBUTES);
+            testContext.attributesSet = true;
+
+            outItem.setPropertyIsAnti(IS_ANTI);
+            testContext.isAntiSet = true;
+
+            outItem.setPropertyLastModificationTime(MODIFICATION_TIME);
+            testContext.modificationSet = true;
+
+            outItem.setPropertyPath(SINGLE_FILE_PATH);
+            testContext.pathSet = true;
+        }
+
+        protected void setPropertiesForZip(IOutItemZip outItem, TestContext testContext) {
+            outItem.setPropertyAttributes(ATTRIBUTES);
+            testContext.attributesSet = true;
+
+            outItem.setPropertyCreationTime(CREATION_TIME);
+            testContext.creationSet = true;
+
+            outItem.setPropertyLastModificationTime(MODIFICATION_TIME);
+            testContext.modificationSet = true;
+
+            outItem.setPropertyLastAccessTime(ACCESS_TIME);
+            testContext.accessSet = true;
+
+            outItem.setPropertyPath(SINGLE_FILE_PATH);
+            testContext.pathSet = true;
+        }
+
+        protected void setPropertiesForGZip(IOutItemGZip outItem, TestContext testContext) {
+            outItem.setPropertyLastModificationTime(MODIFICATION_TIME);
+            testContext.modificationSet = true;
+
+            outItem.setPropertyPath(SINGLE_FILE_PATH);
+            testContext.pathSet = true;
+        }
+
+        protected void setPropertiesForBZip2(IOutItemBZip2 outItem, TestContext testContext) {
+        }
+
+        protected void setPropertiesForTar(IOutItemTar outItem, TestContext testContext) {
+            outItem.setPropertyPosixAttributes(POSIX_ATTRIBUTES);
+            testContext.posixAttributesSet = true;
+
+            outItem.setPropertyLastModificationTime(MODIFICATION_TIME);
+            testContext.modificationSet = true;
+
+            outItem.setPropertyPath(SINGLE_FILE_PATH);
+            testContext.pathSet = true;
+
+            outItem.setPropertyGroup(GROUP);
+            testContext.groupSet = true;
+
+            outItem.setPropertyUser(USER);
+            testContext.userSet = true;
+        }
+        // TODO Remove me
+        //        protected void setAttributesForArchiveFormat(ArchiveFormat archiveFormat) {
+        //            switch (archiveFormat) {
+        //            case SEVEN_ZIP:
+        //                setAttributesFor7z();
+        //                break;
+        //
+        //            case ZIP:
+        //                setAttributesForZip();
+        //                break;
+        //
+        //            case GZIP:
+        //                setAttributesForGZip();
+        //                break;
+        //
+        //            case BZIP2:
+        //                setAttributesForBZip2();
+        //                break;
+        //
+        //            case TAR:
+        //                setAttributesForTar();
+        //                break;
+        //            default:
+        //                throw new RuntimeException("Unknown ArchiveFormat: " + archiveFormat);
+        //            }
+        //        }
+        //
+        //        /**
+        //         * @see IOutItem7z
+        //         */
+        //        private void setAttributesFor7z() {
+        //            TestContext testContext = getTestContext();
+        //
+        //            testContext.attributesSet = true;
+        //            testContext.pathSet = true;
+        //            testContext.modificationSet = true;
+        //            testContext.isAntiSet = true;
+        //        }
+        //
+        //        /**
+        //         * @see IOutItemZip
+        //         */
+        //        private void setAttributesForZip() {
+        //            TestContext testContext = getTestContext();
+        //
+        //            testContext.attributesSet = true;
+        //            testContext.pathSet = true;
+        //            testContext.modificationSet = true;
+        //            testContext.creationSet = true;
+        //            testContext.accessSet = true;
+        //        }
+        //
+        //        /**
+        //         * @see IOutItemGZip
+        //         */
+        //        private void setAttributesForGZip() {
+        //            TestContext testContext = getTestContext();
+        //
+        //            testContext.pathSet = true;
+        //            testContext.modificationSet = true;
+        //        }
+        //
+        //        /**
+        //         * @see IOutItemBZip2
+        //         */
+        //        private void setAttributesForBZip2() {
+        //        }
+        //
+        //        /**
+        //         * @see IOutItemTar
+        //         */
+        //        private void setAttributesForTar() {
+        //            TestContext testContext = getTestContext();
+        //
+        //            testContext.posixAttributesSet = true;
+        //            testContext.pathSet = true;
+        //            testContext.modificationSet = true;
+        //            testContext.userSet = true;
+        //            testContext.groupSet = true;
+        //        }
+
     }
 
     protected class TestContext {
         RandomContext randomContext;
-        CallbackTester<IOutCreateCallbackBase> callbackTester;
+        CallbackTester<? extends IOutCreateCallback<?>> callbackTester;
+
         boolean groupSet;
         boolean userSet;
         boolean posixAttributesSet;
@@ -66,6 +250,7 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
         boolean pathSet;
         boolean isAntiSet;
     }
+
 
     protected static final int MINIMUM_STREAM_LENGTH = 32769;
 
@@ -141,6 +326,7 @@ public abstract class CompressSingleFileAbstractTest extends CompressAbstractTes
 
     protected void verifyCompressedArchiveDetails(IInArchive inArchive) throws SevenZipException {
         TestContext testContext = testContextThreadContext.get();
+
         if (testContext.pathSet) {
             assertEquals(SINGLE_FILE_PATH, inArchive.getProperty(0, PropID.PATH));
         }

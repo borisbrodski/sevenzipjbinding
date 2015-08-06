@@ -15,6 +15,9 @@
 #define JAVA_EXTRACT_OPERATION_RESULT 					SEVEN_ZIP_PACKAGE "/ExtractOperationResult"
 #define JAVA_EXTRACT_OPERATION_RESULT_T 				JAVA_MAKE_SIGNATURE_TYPE(JAVA_EXTRACT_OPERATION_RESULT)
 
+#define JAVA_IIN_ARCHIVE 								SEVEN_ZIP_PACKAGE "/IInArchive"
+#define JAVA_IIN_ARCHIVE_T 								JAVA_MAKE_SIGNATURE_TYPE(JAVA_IIN_ARCHIVE)
+
 #define JAVA_IIN_STREAM 								SEVEN_ZIP_PACKAGE "/IInStream"
 #define JAVA_IIN_STREAM_T 								JAVA_MAKE_SIGNATURE_TYPE(JAVA_IIN_STREAM)
 
@@ -24,11 +27,23 @@
 #define JAVA_ISEQUENTIAL_OUT_STREAM 					SEVEN_ZIP_PACKAGE "/ISequentialOutStream"
 #define JAVA_ISEQUENTIAL_OUT_STREAM_T 					JAVA_MAKE_SIGNATURE_TYPE(JAVA_ISEQUENTIAL_OUT_STREAM)
 
+#define JAVA_IOUT_ARCHIVE                               SEVEN_ZIP_PACKAGE "/IOutArchive"
+#define JAVA_IOUT_ARCHIVE_T                             JAVA_MAKE_SIGNATURE_TYPE(JAVA_IOUT_ARCHIVE)
+
 #define JAVA_IOUT_ITEM_CALLBACK_BASE 		            SEVEN_ZIP_PACKAGE "/IOutItemCallbackBase"
 #define JAVA_IOUT_ITEM_CALLBACK_BASE_T	                JAVA_MAKE_SIGNATURE_TYPE(JAVA_IOUT_ITEM_CALLBACK_BASE)
 
 #define JAVA_ARCHIVE_FORMAT								SEVEN_ZIP_PACKAGE "/ArchiveFormat"
 #define JAVA_ARCHIVE_FORMAT_T 							JAVA_MAKE_SIGNATURE_TYPE(JAVA_ARCHIVE_FORMAT)
+
+#define JAVA_OUT_ITEM_FACTORY                           SEVEN_ZIP_PACKAGE_IMPL "/OutItemFactory"
+#define JAVA_OUT_ITEM_FACTORY_T                         JAVA_MAKE_SIGNATURE_TYPE(JAVA_OUT_ITEM_FACTORY)
+
+#define JAVA_OUT_ITEM                                   SEVEN_ZIP_PACKAGE_IMPL "/OutItem"
+#define JAVA_OUT_ITEM_T                                 JAVA_MAKE_SIGNATURE_TYPE(JAVA_OUT_ITEM)
+
+#define JAVA_IOUT_ITEM_BASE                             SEVEN_ZIP_PACKAGE "/IOutItemBase"
+#define JAVA_IOUT_ITEM_BASE_T                           JAVA_MAKE_SIGNATURE_TYPE(JAVA_IOUT_ITEM_BASE)
 
 #define JT_PROP_ID(name, param_spec)    				JT_PARAM(Object, JAVA_PROP_ID_T, name, param_spec)
 #define JT_EXTRACT_ASK_MODE(name, param_spec)   		JT_PARAM(Object, JAVA_EXTRACT_ASK_MODE_T, name, param_spec)
@@ -105,69 +120,47 @@ JT_BEGIN_INTERFACE(ISeekableStream)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IArchiveUpdateCallback)
-	// public boolean isNewData(int index);
-	JT_INTERFACE_METHOD(Boolean, isNewData, JT_INT(index, _))
-
-	// public boolean isNewProperties(int index);
-	JT_INTERFACE_METHOD(Boolean, isNewProperties, JT_INT(index, _))
-
-	// public int getOldArchiveItemIndex(int index);
-	JT_INTERFACE_METHOD(Int, getOldArchiveItemIndex, JT_INT(index, _))
-JT_END_INTERFACE
-
-
-JT_BEGIN_INTERFACE(IOutCreateCallbackBase)
-	// public ISequentialInStream getStream(int index);
-	JT_INTERFACE_METHOD_OBJECT(JAVA_ISEQUENTIAL_IN_STREAM_T, getStream, JT_INT(index, _))
-
-	// public void setOperationResult(boolean operationResultOk);
+JT_BEGIN_INTERFACE(IOutCreateCallback)
+	// public void setOperationResult(boolean operationResultOk)
 	JT_INTERFACE_METHOD(Void, setOperationResult, JT_BOOLEAN(operationResultOk, _))
 
-	// public <E extends IOutItemBase> E getOutItemCallback(int index);
-	JT_INTERFACE_METHOD_OBJECT(JAVA_IOUT_ITEM_CALLBACK_BASE_T, getOutItemCallback, JT_INT(index, _))
+	// public E getItemInformation(int index, OutItemFactory<E> outItemFactory) throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_IOUT_ITEM_BASE_T, getItemInformation, JT_INT(index, JT_PARAM(Object, JAVA_OUT_ITEM_FACTORY_T, outItemFactory, _)))
 
-    // public Object getProperty(int index, PropID propID);
-    JT_INTERFACE_METHOD_OBJECT(JAVA_OBJECT_T, getProperty, JT_INT(index, JT_PARAM(Object, JAVA_PROP_ID_T, propID, _)))
+	// public void freeResources(int index, E outItem)
+	JT_INTERFACE_METHOD(Void, freeResources, JT_INT(index, JT_PARAM(Object, JAVA_IOUT_ITEM_BASE_T, outItem, _)))
 JT_END_INTERFACE
 
-JT_BEGIN_INTERFACE(IOutItemCallback)
-	// public Long getSize() throws SevenZipException;
-	JT_INTERFACE_METHOD(Long, getSize, _)
+JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItemFactory)
+    // public OutItemFactory(ArchiveFormat archiveFormat, int index) {
+    JT_CLASS_CONSTRUCTOR(JT_PARAM(Object, JAVA_IOUT_ARCHIVE_T, outArchive, JT_INT(index, _)))
+JT_END_CLASS
 
-	// public Integer getAttributes() throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getAttributes, _)
+JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItem)
+    JT_CLASS_CONSTRUCTOR(_)
 
-	// public Integer getPosixAttributes() throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_INTEGER_T, getPosixAttributes, _)
+    JT_FIELD_OBJECT(index, JAVA_INTEGER_T)
 
-	// public String getPath() throws SevenZipException;
-	JT_INTERFACE_METHOD(String, getPath, _)
+    JT_FIELD_OBJECT(dataStream, JAVA_ISEQUENTIAL_IN_STREAM_T)
 
-	// public boolean isDir() throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isDir, _)
+    JT_FIELD_OBJECT(propertySize, JAVA_LONG_T)
+    JT_FIELD_OBJECT(propertyAttributes, JAVA_INTEGER_T)
+    JT_FIELD_OBJECT(propertyPosixAttributes, JAVA_INTEGER_T)
+    JT_FIELD_OBJECT(propertyPath, JAVA_STRING_T)
+    JT_FIELD_OBJECT(propertyIsDir, JAVA_BOOLEAN_T)
+    JT_FIELD_OBJECT(propertyLastModificationTime, JAVA_DATE_T)
+    JT_FIELD_OBJECT(propertyLastAccessTime, JAVA_DATE_T)
+    JT_FIELD_OBJECT(propertyCreationTime, JAVA_DATE_T)
+    JT_FIELD_OBJECT(propertyUser, JAVA_STRING_T)
+    JT_FIELD_OBJECT(propertyGroup, JAVA_STRING_T)
+    JT_FIELD_OBJECT(propertyIsAnti, JAVA_BOOLEAN_T)
 
-	// public boolean isAnti() throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isAnti, _)
+    JT_FIELD_OBJECT(updateIsNewData, JAVA_BOOLEAN_T)
+    JT_FIELD_OBJECT(updateIsNewProperties, JAVA_BOOLEAN_T)
+    JT_FIELD_OBJECT(updateOldArchiveItemIndex, JAVA_INTEGER_T)
 
-	// public boolean isNtfsTime() throws SevenZipException;
-	JT_INTERFACE_METHOD(Boolean, isNtfsTime, _)
+JT_END_CLASS
 
-	// public Date getModificationTime() throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getModificationTime, _)
-
-	// public Date getLastAccessTime() throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getLastAccessTime, _)
-
-	// public Date getCreationTime() throws SevenZipException;
-	JT_INTERFACE_METHOD_OBJECT(JAVA_DATE_T, getCreationTime, _)
-
-	// public String getUser() throws SevenZipException;
-	JT_INTERFACE_METHOD(String, getUser, _)
-
-	// public String getGroup() throws SevenZipException;
-	JT_INTERFACE_METHOD(String, getGroup, _)
-JT_END_INTERFACE
 
 JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, InArchiveImpl)
 	JT_FIELD(Long, jbindingSession)
@@ -181,6 +174,7 @@ JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutArchiveImpl)
 	JT_FIELD(Long, jbindingSession)
 	JT_FIELD(Long, sevenZipArchiveInstance)
 	JT_FIELD_OBJECT(archiveFormat, JAVA_ARCHIVE_FORMAT_T)
+	JT_FIELD_OBJECT(inArchive, JAVA_IIN_ARCHIVE_T)
 JT_END_CLASS
 
 

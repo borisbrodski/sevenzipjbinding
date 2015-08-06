@@ -9,9 +9,10 @@ import java.util.Random;
 
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.OutItemZip;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -20,39 +21,38 @@ public class Compress {
      * The callback defines structure of the archive being created
      */
     private final class MyCreateCallback //
-            implements IOutCreateCallback<OutItemZip> {
+            implements IOutCreateCallback<IOutItemZip> {
 
         public void setOperationResult(boolean operationResultOk)//
                 throws SevenZipException {
-            if (operationResultOk) {
-                System.out.println("Compression operation succeeded");
-            } else {
-                System.out.println("Compression operation failed");
-            }
+            // Track each operation result here
         }
 
         public void setTotal(long total) throws SevenZipException {
             // Track operation progress here
-            System.out.println("Total: " + total);
         }
 
         public void setCompleted(long complete) throws SevenZipException {
             // Track operation progress here
-            System.out.println("Complete: " + complete);
         }
 
-        public OutItemZip getOutItem(int index) throws SevenZipException {
-            OutItemZip item = new OutItemZip();
+        public IOutItemZip getItemInformation(int index, OutItemFactory<IOutItemZip> outItemFactory)
+                throws SevenZipException {
+            IOutItemZip item = outItemFactory.createOutItem();
 
-            item.setStream(new ByteArrayStream(/*f*/contents/**/[index], true));
-            item.setSize((long) /*f*/contents/**/[index].length);
-            item.setPath(/*f*/filenames/**/[/*f*/index/**/]);
-            item.setCreationTime(new Date());
+            item.setDataStream(new ByteArrayStream(/*f*/contents/**/[index], true));
+            item.setPropertySize((long) /*f*/contents/**/[index].length);
+            item.setPropertyPath(/*f*/filenames/**/[/*f*/index/**/]);
+            item.setPropertyCreationTime(new Date());
 
             // Use to get u+rw permissions on linux with 'unzip'
-            // item.setAttributes(0x81808000);
+            // item.setPropertyAttributes(0x81808000);
 
             return item;
+        }
+
+        // Nothing to close
+        public void freeResources(int index, IOutItemZip outItem) throws SevenZipException {
         }
     }
 
@@ -97,6 +97,7 @@ public class Compress {
             outArchive.createArchive(new RandomAccessFileOutStream(raf), /*f*/contents/**/./*f*/length/**/, //
                     new MyCreateCallback());
 
+            System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {
             System.err.println("7z-Error occurs:");
             e.printStackTraceExtended();

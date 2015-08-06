@@ -5,8 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 // TODO Test more callbacks (extraction + compression)
@@ -19,8 +22,16 @@ public class CallbackTester<E> implements InvocationHandler {
     public CallbackTester(E instance) {
         this.instance = instance;
 
-        this.proxyInstance = (E) Proxy.newProxyInstance(instance.getClass().getClassLoader(), instance.getClass()
-                .getInterfaces(), this);
+        List<Class<?>> interfaceList = new ArrayList<Class<?>>();
+        Class<?> clazz = instance.getClass();
+        while (clazz != Object.class) {
+            interfaceList.addAll((Collection<? extends Class<?>>) Arrays.asList(clazz.getInterfaces()));
+            clazz = clazz.getSuperclass();
+        }
+
+        this.proxyInstance = (E) Proxy.newProxyInstance(instance.getClass().getClassLoader(),
+                interfaceList.toArray(new Class<?>[0]),
+                this);
     }
 
     public int getDifferentMethodsCalled() {

@@ -3,34 +3,33 @@
 
 #include "CPPToJavaAbstract.h"
 #include "CPPToJavaProgress.h"
+#include "CodecTools.h"
 
 class CPPToJavaArchiveUpdateCallback : public virtual IArchiveUpdateCallback,
         public CPPToJavaProgress {
 
 private:
-    jni::IOutCreateCallbackBase * _iOutCreateCallback;
-    jni::IArchiveUpdateCallback * _iArchiveUpdateCallback = NULL;
-    jni::IOutItemCallback * _iOutItemCallback = NULL;
-    jobject _outItemCallbackImplementation = NULL;
-    int _outItemCallbackLastIndex;
+    jni::IOutCreateCallback * _iOutCreateCallback;
+    jobject _outItem = NULL;
+    int _outItemLastIndex;
     int _archiveFormatIndex;
+    jobject _outArchive;
+    bool _isInArchiveAttached;
 
 public:
     CPPToJavaArchiveUpdateCallback(JBindingSession & jbindingSession, JNIEnv * initEnv,
                                    jobject archiveUpdateCallback, bool isInArchiveAttached,
-                                   int archiveFormatIndex) :
+                                   int archiveFormatIndex, jobject outArchive) :
         CPPToJavaProgress(jbindingSession, initEnv, archiveUpdateCallback),
-            _iOutCreateCallback(jni::IOutCreateCallbackBase::_getInstanceFromObject(
+            _iOutCreateCallback(jni::IOutCreateCallback::_getInstanceFromObject(
                         initEnv, archiveUpdateCallback)),
-				_outItemCallbackLastIndex(-1),
-				_archiveFormatIndex(archiveFormatIndex) {
+				_outItemLastIndex(-1),
+				_archiveFormatIndex(archiveFormatIndex),
+				_outArchive(outArchive),
+				_isInArchiveAttached(isInArchiveAttached) {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
 
 		JNIEnvInstance jniEnvInstance(_jbindingSession);
-
-        if (isInArchiveAttached) {
-        	_iArchiveUpdateCallback = jni::IArchiveUpdateCallback::_getInstanceFromObject(initEnv, archiveUpdateCallback);
-        }
     }
 
     STDMETHOD(GetUpdateItemInfo)(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
@@ -68,6 +67,11 @@ public:
         return CPPToJavaProgress::Release();
     }
 
+    LONG freeResourcesForOutItem(JNIEnvInstance & jniEnvInstance);
+
+
+private:
+    LONG getOrUpdateOutItem(JNIEnvInstance & jniEnvInstance, int index);
 };
 
 #endif /*CPPTOJAVAARCHIVEUPDATECALLBACK_H_*/

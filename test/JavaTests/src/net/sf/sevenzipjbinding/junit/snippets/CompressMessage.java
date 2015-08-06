@@ -7,10 +7,10 @@ import java.util.Date;
 
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackZip;
-import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -19,17 +19,11 @@ public class CompressMessage {
      * The callback defines structure of the archive being created
      */
     private static final class MyCreateCallback //
-            implements IOutCreateCallback<IOutItemCallbackZip> {
+            implements IOutCreateCallback<IOutItemZip> {
         private final byte[] /*f*/bytesToCompress/**/;
 
         private MyCreateCallback(byte[] bytesToCompress) {
             this./*f*/bytesToCompress/* */= bytesToCompress;
-        }
-
-        public ISequentialInStream getStream(int index)//
-                throws SevenZipException {
-            // Convert to message to compress into sequential byte stream
-            return new ByteArrayStream(/*f*/bytesToCompress/**/, true);
         }
 
         public void setOperationResult(boolean operationResultOk)//
@@ -49,51 +43,25 @@ public class CompressMessage {
             // Track operation progress here
         }
 
-        public IOutItemCallbackZip getOutItemCallback(int index) //
+        public IOutItemZip getItemInformation(int index, OutItemFactory<IOutItemZip> outItemFactory)
                 throws SevenZipException {
-            // Creating a archive with a single item.
-            // The 'index' will always be 0 here.
-            return new MyItemCallbackZip(bytesToCompress);
-        }
-    }
+            IOutItemZip outItem = outItemFactory.createOutItem();
 
-    /**
-     * The callback provides information about archive items.<br>
-     * In this example it's a file named "message.txt" with the message.
-     */
-    private static final class MyItemCallbackZip implements IOutItemCallbackZip {
-        private final byte[] /*f*/bytesToCompress/**/;
+            // Convert to message to compress into sequential byte stream
+            outItem.setDataStream(new ByteArrayStream(/*f*/bytesToCompress/**/, true));
 
-        private MyItemCallbackZip(byte[] bytesToCompress) {
-            this./*f*/bytesToCompress/* */= bytesToCompress;
+            outItem.setPropertySize((long) /*f*/bytesToCompress/**/./*f*/length/**/);
+            outItem.setPropertyPath("message.txt"); // Set name of the file in the archive
+            outItem.setPropertyCreationTime(new Date());
+
+            // Use this to get u+rw permissions on linux, if extracting with unzip
+            // outItem.setPropertyAttributes(Integer.valueOf(0x81808000));
+
+            return outItem;
         }
 
-        public boolean isDir() throws SevenZipException {
-            return false; // Regular file
-        }
-
-        public long getSize() throws SevenZipException {
-            return /*f*/bytesToCompress/**/./*f*/length/**/;
-        }
-
-        public String getPath() throws SevenZipException {
-            return "message.txt"; // Set name of the file in the archive
-        }
-
-        public Date getModificationTime() throws SevenZipException {
-            return null;
-        }
-
-        public Integer getAttributes() throws SevenZipException {
-            return null; // Use 0x81808000 to get u+rw permissions on linux
-        }
-
-        public Date getLastAccessTime() throws SevenZipException {
-            return null;
-        }
-
-        public Date getCreationTime() throws SevenZipException {
-            return new Date();
+        public void freeResources(int index, IOutItemZip outItem) {
+            // no need to close ByteArrayStream
         }
     }
 

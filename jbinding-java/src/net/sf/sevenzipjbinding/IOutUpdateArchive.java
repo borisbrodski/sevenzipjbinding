@@ -25,7 +25,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.04-2.0
  * 
  */
-public interface IOutUpdateArchive<E extends OutItem> {
+public interface IOutUpdateArchive<E extends IOutItemBase> {
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
@@ -36,32 +36,13 @@ public interface IOutUpdateArchive<E extends OutItem> {
      *            output stream to get the new archive
      * @param numberOfItems
      *            number of items in the new archive
-     * @param outUpdateCallback
-     *            update call back object to provide more information for archive create/update operation.
+     * @param outCreateCallback
+     *            create call back object to provide more information for archive create/update operation.
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutUpdateCallback<E> outUpdateCallback)
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<E> outCreateCallback)
             throws SevenZipException;
-
-    /**
-     * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
-     * class, only new archive creation is possible. To update an existing archive open it first and then use
-     * {@link IInArchive} to get a {@link IOutUpdateArchive} implementation. This method uses generic variant of the
-     * {@link IOutUpdateCallback} querying item properties using
-     * {@link IOutUpdateCallbackGeneric#getProperty(int, PropID)} method.
-     * 
-     * @param outStream
-     *            output stream to get the new archive
-     * @param numberOfItems
-     *            number of items in the new archive
-     * @param archiveUpdateCallbackGeneric
-     *            update call back object to provide more information for archive create/update operation.
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
-     */
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems,
-            IOutUpdateCallbackGeneric archiveUpdateCallbackGeneric) throws SevenZipException;
 
     /**
      * Return archive format used with this instance of {@link IOutStream}

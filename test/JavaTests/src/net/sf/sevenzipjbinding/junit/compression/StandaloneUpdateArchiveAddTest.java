@@ -8,13 +8,13 @@ import java.util.Date;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback7z;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
-import net.sf.sevenzipjbinding.IOutUpdateCallback;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -23,7 +23,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
-    private static class AddItemArchiveUpdateCallback implements IOutUpdateCallback<IOutItemCallback7z> {
+    private static class AddItemArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
         private int itemToAdd;
         private String path;
         private byte[] blob;
@@ -34,58 +34,6 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
             this.blob = blob;
         }
 
-        public ISequentialInStream getStream(int index) throws SevenZipException {
-            if (index == itemToAdd) {
-                return new ByteArrayStream(blob, false);
-            }
-            return null;
-        }
-
-        public int getOldArchiveItemIndex(int index) {
-            if (index == itemToAdd) {
-                return -1; // New item
-            }
-            return index;
-        }
-
-        public boolean isNewData(int index) throws SevenZipException {
-            return index == itemToAdd;
-        }
-
-        public boolean isNewProperties(int index) throws SevenZipException {
-            return index == itemToAdd;
-        }
-
-        public IOutItemCallback7z getOutItemCallback(int index) throws SevenZipException {
-            assertEquals(itemToAdd, index);
-            return new IOutItemCallback7z() {
-
-                public boolean isDir() throws SevenZipException {
-                    return false;
-                }
-
-                public long getSize() throws SevenZipException {
-                    return blob.length;
-                }
-
-                public String getPath() throws SevenZipException {
-                    return path;
-                }
-
-                public Date getModificationTime() throws SevenZipException {
-                    return new Date();
-                }
-
-                public Integer getAttributes() throws SevenZipException {
-                    return 0;
-                }
-
-                public boolean isAnti() throws SevenZipException {
-                    return false;
-                }
-            };
-        }
-
         public void setOperationResult(boolean operationResultOk) throws SevenZipException {
         }
 
@@ -93,6 +41,26 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
         }
 
         public void setCompleted(long complete) throws SevenZipException {
+
+        }
+
+        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+                throws SevenZipException {
+            if (index == itemToAdd) {
+                IOutItem7z outItem = outItemFactory.createOutItem();
+                outItem.setPropertyAttributes(Integer.valueOf(0));
+                outItem.setPropertyPath(path);
+                outItem.setPropertyLastModificationTime(new Date());
+
+                outItem.setPropertySize((long) blob.length);
+                outItem.setDataStream(new ByteArrayStream(blob, false));
+
+                return outItem;
+            }
+            return outItemFactory.createOutItem(index);
+        }
+
+        public void freeResources(int index, IOutItem7z outItem) throws SevenZipException {
 
         }
     }
@@ -112,7 +80,7 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
 
         IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream));
 
-        IOutUpdateArchive<IOutItemCallback7z> outArchiveConnected = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItem7z> outArchiveConnected = inArchive.getConnectedOutArchive();
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems() + 1,
                 new AddItemArchiveUpdateCallback(inArchive.getNumberOfItems(), NEW_FILE_PATH, NEW_FILE_BLOB));
@@ -144,7 +112,7 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
 
     private ByteArrayStream compressVirtualContext(VirtualContent virtualContent) throws SevenZipException {
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
-        IOutCreateArchive<IOutItemCallback> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
+        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
         virtualContent.createOutArchive(outArchive, byteArrayStream);
         return byteArrayStream;
     }

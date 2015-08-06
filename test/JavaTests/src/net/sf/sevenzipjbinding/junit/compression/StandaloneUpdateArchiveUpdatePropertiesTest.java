@@ -4,20 +4,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.IOutItemCallback7z;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
-import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -26,46 +24,14 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTestBase {
-    private static class UpdateItemContentArchiveUpdateCallback implements IOutUpdateCallbackGeneric {
+    private String newPath;
+    private Date newModificationTime;
+
+    private class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
         private int itemToUpdate;
-        private Map<PropID, Object> newProperties;
-        private IInArchive inArchive;
 
-        public UpdateItemContentArchiveUpdateCallback(IInArchive inArchive, int itemToUpdate,
-                Map<PropID, Object> newProperties) {
-            this.inArchive = inArchive;
+        public UpdateItemContentArchiveUpdateCallback(int itemToUpdate) {
             this.itemToUpdate = itemToUpdate;
-            this.newProperties = newProperties;
-        }
-
-        public ISequentialInStream getStream(int index) throws SevenZipException {
-            fail("Unexpected call of the method");
-            return null;
-        }
-
-        public int getOldArchiveItemIndex(int index) {
-            return index;
-        }
-
-        public boolean isNewData(int index) throws SevenZipException {
-            return false;
-        }
-
-        public boolean isNewProperties(int index) throws SevenZipException {
-            return index == itemToUpdate;
-        }
-
-        public Object getProperty(int index, PropID propID) throws SevenZipException {
-            assertEquals(itemToUpdate, index);
-            if (propID == PropID.SIZE) {
-                fail("Unexpected getProperty(index, PropID.SIZE) call");
-            }
-
-            if (newProperties.containsKey(propID)) {
-                return newProperties.get(propID);
-            }
-
-            return inArchive.getProperty(index, propID);
         }
 
         public void setOperationResult(boolean operationResultOk) throws SevenZipException {
@@ -77,10 +43,31 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
         public void setCompleted(long complete) throws SevenZipException {
 
         }
+
+        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+                throws SevenZipException {
+
+            if (index == itemToUpdate) {
+                IOutItem7z outItem = outItemFactory.createOutItemAndCloneProperties(index);
+
+                outItem.setUpdateIsNewProperties(Boolean.TRUE);
+
+                outItem.setPropertyPath(newPath);
+                outItem.setPropertyLastModificationTime(newModificationTime);
+
+                return outItem;
+            }
+
+            return outItemFactory.createOutItem(index);
+        }
+
+        public void freeResources(int index, IOutItem7z outItem) throws SevenZipException {
+
+        }
     }
 
     @Test
-    public void removeFileFromArchive() throws Exception {
+    public void updatePropreties() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
 
@@ -95,16 +82,13 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
 
         String itemToUpdatePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
 
-        IOutUpdateArchive<IOutItemCallback7z> outArchiveConnected = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItem7z> outArchiveConnected = inArchive.getConnectedOutArchive();
 
-        Map<PropID, Object> newProperties = new HashMap<PropID, Object>();
-        String newPath = inArchive.getProperty(itemToUpdate, PropID.PATH) + "_changed";
-        Date newLastModificationTime = new Date(System.currentTimeMillis() + random.get().nextInt(100000) + 100000);
-        newProperties.put(PropID.PATH, newPath);
-        newProperties.put(PropID.LAST_MODIFICATION_TIME, newLastModificationTime);
+        newPath = inArchive.getProperty(itemToUpdate, PropID.PATH) + "_changed";
+        newModificationTime = new Date(System.currentTimeMillis() + random.get().nextInt(100000) + 100000);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
-                new UpdateItemContentArchiveUpdateCallback(inArchive, itemToUpdate, newProperties));
+                new UpdateItemContentArchiveUpdateCallback(itemToUpdate));
 
         byteArrayStream2.rewind();
 
@@ -120,7 +104,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
             // continue
         }
 
-        virtualContent.updateItemLastModificationTimeByPath(itemToUpdatePath, newLastModificationTime);
+        virtualContent.updateItemLastModificationTimeByPath(itemToUpdatePath, newModificationTime);
         virtualContent.updateItemPathByPath(itemToUpdatePath, newPath);
         virtualContent.verifyInArchive(modifiedInArchive);
     }
@@ -128,7 +112,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
 
     private ByteArrayStream compressVirtualContext(VirtualContent virtualContent) throws SevenZipException {
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
-        IOutCreateArchive<IOutItemCallback> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
+        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
         virtualContent.createOutArchive(outArchive, byteArrayStream);
         return byteArrayStream;
     }

@@ -56,7 +56,7 @@ import java.io.Closeable;
  * @since 2.0
  * 
  */
-public interface IOutCreateArchive<E extends OutItem> extends Closeable {
+public interface IOutCreateArchive<E extends IOutItemBase> extends Closeable {
 
     /**
      * Create new archive. To update an existing archive open it first and then use
@@ -81,32 +81,16 @@ public interface IOutCreateArchive<E extends OutItem> extends Closeable {
             IOutCreateCallback<? extends E> outCreateCallback) throws SevenZipException;
 
     /**
-     * Create new archive. To update an existing archive open it first and then use
-     * {@link IInArchive#getConnectedOutArchive()} to get an instance of {@link IOutUpdateArchive}.<br>
-     * <br>
-     * Provide an implementation of the {@link IOutCreateCallbackGeneric#getProperty(int, PropID)} method to passed
-     * archive item properties in a generic way. Alternatively the method
-     * {@link #createArchive(ISequentialOutStream, int, IOutCreateCallback)} can to used to pass archive item properties
-     * implementing one getter-like method per property. See {@link IOutItemCallback} for more information.
-     * 
-     * @see IOutItemCallback
-     * 
-     * @param outStream
-     *            output stream to get the new archive
-     * @param numberOfItems
-     *            number of items in the new archive
-     * @param outCreateCallbackGeneric
-     *            create call back object to provide more information for archive create/update operations.
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
-     */
-    public void createArchive(ISequentialOutStream outStream, int numberOfItems,
-            IOutCreateCallbackGeneric outCreateCallbackGeneric) throws SevenZipException;
-
-    /**
      * Return archive format used with this instance of {@link IOutStream}
      * 
      * @return archive format used with this instance of {@link IOutStream}
      */
     public ArchiveFormat getArchiveFormat();
+
+    /**
+     * Get connected {@link IInArchive} for update operations.
+     * 
+     * @return connected {@link IInArchive} for update operations or <code>null</code> if not exists.
+     */
+    public IInArchive getConnectedInArchive();
 }

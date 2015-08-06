@@ -1,7 +1,8 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutUpdateCallbackBase;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
@@ -10,9 +11,10 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public abstract class UpdateSingleFileGenericAbstractTest extends UpdateSingleFileAbstractTest {
+public abstract class UpdateSingleFileGenericAbstractTest extends UpdateSingleFileAbstractTest<IOutItemAllFormats> {
+
     @Override
-    protected IOutUpdateCallbackBase getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
+    protected IOutCreateCallback<IOutItemAllFormats> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
             throws SevenZipException {
         return new ArchiveUpdateCallbackGeneric(inArchive, changeLog);
     }

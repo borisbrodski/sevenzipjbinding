@@ -15,16 +15,17 @@ import java.util.Set;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
-import net.sf.sevenzipjbinding.IOutItemCallback;
-import net.sf.sevenzipjbinding.IOutItemCallbackBase;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
-import net.sf.sevenzipjbinding.IOutUpdateCallback;
-import net.sf.sevenzipjbinding.IOutUpdateCallbackBase;
-import net.sf.sevenzipjbinding.IOutUpdateCallbackGeneric;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -36,7 +37,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public abstract class UpdateAbstractTest extends CompressAbstractTest {
+public abstract class UpdateAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
     protected static abstract class ArchiveUpdater {
         abstract void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception;
     }
@@ -118,45 +119,14 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
         Map<PropID, Object> propertyChangeMap = new HashMap<PropID, Object>();
     }
 
-    public class ArchiveUpdateCallbackGeneric implements IOutUpdateCallbackGeneric {
+    public class ArchiveUpdateCallbackGeneric implements IOutCreateCallback<IOutItemAllFormats> {
 
-        private IInArchive inArchive;
         private ChangeLog changeLog;
         private int numberOfItems;
 
         public ArchiveUpdateCallbackGeneric(IInArchive inArchive, ChangeLog changeLog) throws SevenZipException {
-            this.inArchive = inArchive;
             this.changeLog = changeLog;
             numberOfItems = inArchive.getNumberOfItems();
-        }
-
-        public boolean isNewData(int index) throws SevenZipException {
-            Change change = changeLog.changes[index];
-            return change != null && change.newContent != null;
-        }
-
-        public boolean isNewProperties(int index) throws SevenZipException {
-            Change change = changeLog.changes[index];
-            return change != null && !change.propertyChangeMap.isEmpty();
-        }
-
-        public int getOldArchiveItemIndex(int index) throws SevenZipException {
-            Change change = changeLog.changes[index];
-            if (change != null && change.oldIndex != null) {
-                return change.oldIndex;
-            }
-            if (index >= numberOfItems) {
-                return -1;
-            }
-            return index;
-        }
-
-        public ISequentialInStream getStream(int index) throws SevenZipException {
-            Change change = changeLog.changes[index];
-            if (change != null && change.newContent != null) {
-                return new ByteArrayStream(change.newContent, false);
-            }
-            return null;
         }
 
         public void setOperationResult(boolean operationResultOk) throws SevenZipException {
@@ -171,26 +141,84 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
 
         }
 
-        public Object getProperty(int index, PropID propID) throws SevenZipException {
+        protected <E extends IOutItemBase> E createOutItem(int index, OutItemFactory<E> outItemFactory)
+                throws SevenZipException {
             Change change = changeLog.changes[index];
+            if (change != null && change.oldIndex != null) {
+                return outItemFactory.createOutItemAndCloneProperties(change.oldIndex);
+            }
+
+            if (index >= numberOfItems) {
+                return outItemFactory.createOutItem();
+            }
+            return outItemFactory.createOutItemAndCloneProperties(index);
+        }
+
+        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
+                throws SevenZipException {
+            IOutItemAllFormats outItem = createOutItem(index, outItemFactory);
+
+            fillOutItem(index, outItem);
+            return outItem;
+        }
+
+        protected void fillOutItem(int index, IOutItemAllFormats outItem) {
+            Change change = changeLog.changes[index];
+
+            outItem.setUpdateIsNewProperties(change != null && !change.propertyChangeMap.isEmpty());
+            outItem.setUpdateIsNewData(change != null && change.newContent != null);
+
+            if (change != null && change.newContent != null) {
+                outItem.setDataStream(new ByteArrayStream(change.newContent, false));
+                outItem.setPropertySize((long) change.newContent.length);
+            }
+
             if (change != null) {
-                if (propID == PropID.SIZE && change.newContent != null) {
-                    return (long) change.newContent.length;
+                String path = (String) change.propertyChangeMap.get(PropID.PATH);
+                if (path != null) {
+                    outItem.setPropertyPath(path);
                 }
-                if (change.propertyChangeMap.containsKey(propID)) {
-                    return change.propertyChangeMap.get(propID);
+                Integer attributes = (Integer) change.propertyChangeMap.get(PropID.ATTRIBUTES);
+                if (attributes != null) {
+                    outItem.setPropertyAttributes(attributes);
+                }
+                Integer posixAttributes = (Integer) change.propertyChangeMap.get(PropID.POSIX_ATTRIB);
+                if (posixAttributes != null) {
+                    outItem.setPropertyPosixAttributes(posixAttributes);
+                }
+                String user = (String) change.propertyChangeMap.get(PropID.USER);
+                if (user != null) {
+                    outItem.setPropertyUser(user);
+                }
+                String group = (String) change.propertyChangeMap.get(PropID.GROUP);
+                if (group != null) {
+                    outItem.setPropertyGroup(group);
+                }
+                Date creationTime = (Date) change.propertyChangeMap.get(PropID.CREATION_TIME);
+                if (creationTime != null) {
+                    outItem.setPropertyCreationTime(creationTime);
+                }
+                Date modificationTime = (Date) change.propertyChangeMap.get(PropID.LAST_MODIFICATION_TIME);
+                if (modificationTime != null) {
+                    outItem.setPropertyLastModificationTime(modificationTime);
+                }
+                Date accessTime = (Date) change.propertyChangeMap.get(PropID.LAST_ACCESS_TIME);
+                if (accessTime != null) {
+                    outItem.setPropertyLastAccessTime(accessTime);
+                }
+                Boolean isAnti = (Boolean) change.propertyChangeMap.get(PropID.IS_ANTI);
+                if (accessTime != null) {
+                    outItem.setPropertyIsAnti(isAnti);
                 }
             }
-            int oldArchiveItemIndex = getOldArchiveItemIndex(index);
-            if (oldArchiveItemIndex == -1) {
-                return null;
-            }
-            return inArchive.getProperty(oldArchiveItemIndex, propID);
+        }
+
+        public void freeResources(int index, IOutItemAllFormats outItem) throws SevenZipException {
         }
 
     }
 
-    protected abstract IOutUpdateCallbackBase getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
+    protected abstract IOutCreateCallback<T> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
             throws SevenZipException;
 
     private static final int OUTARCHIVE_MAX_SIZE = 10000000;
@@ -231,7 +259,6 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
         }
     };
 
-    @SuppressWarnings("unchecked")
     protected void testUpdate(final int countOfFiles, final int directoriesDepth, final int maxSubdirectories,
             final int averageFileLength, final int deltaFileLength, ArchiveUpdater... archiveUpdaters) throws Exception {
         VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
@@ -241,7 +268,7 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
         if (archiveFormat == ArchiveFormat.BZIP2) {
             virtualContent.updateItemPathByPath(virtualContent.getItemPath(0), "");
         }
-        IOutCreateArchive<IOutItemCallback> outArchive = SevenZip.openOutArchive(archiveFormat);
+        IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream;
         boolean ok = false;
         try {
@@ -260,7 +287,7 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
         }
         byteArrayStream.rewind();
         IInArchive inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream));
-        IOutUpdateArchive<IOutItemCallbackBase> connectedOutArchive = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<T> connectedOutArchive = inArchive.getConnectedOutArchive();
 
         ByteArrayStream byteArrayStreamUpdated = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
         ChangeLog changeLog = new ChangeLog(inArchive);
@@ -268,15 +295,9 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
             archiveUpdater.prepareArchiveUpdate(inArchive, changeLog, getDefaultIndex());
         }
         int newCount = changeLog.reindex(inArchive);
-        IOutUpdateCallbackBase updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
+        IOutCreateCallback<T> updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
 
-        if (updateCallbackBase instanceof IOutUpdateCallbackGeneric) {
-            connectedOutArchive.updateItems(byteArrayStreamUpdated, newCount,
-                    (IOutUpdateCallbackGeneric) updateCallbackBase);
-        } else {
-            connectedOutArchive.updateItems(byteArrayStreamUpdated, newCount,
-                    (IOutUpdateCallback<IOutItemCallbackBase>) updateCallbackBase);
-        }
+        connectedOutArchive.updateItems(byteArrayStreamUpdated, newCount, updateCallbackBase);
 
         byteArrayStreamUpdated.rewind();
         IInArchive updatedInArchive = closeLater(SevenZip.openInArchive(getArchiveFormat(), byteArrayStreamUpdated));
@@ -335,5 +356,31 @@ public abstract class UpdateAbstractTest extends CompressAbstractTest {
                 virtualContent.updateItemPathByPath(pathToSearch, newPath);
             }
         }
+    }
+
+    protected void copyFromDelegate7z(IOutItem7z outItem, IOutItemAllFormats delegateOutItem) {
+        outItem.setPropertyAttributes(delegateOutItem.getPropertyAttributes());
+        outItem.setPropertyIsAnti(delegateOutItem.getPropertyIsAnti());
+        outItem.setPropertyIsDir(delegateOutItem.getPropertyIsDir());
+        outItem.setPropertyLastModificationTime(delegateOutItem.getPropertyLastModificationTime());
+        outItem.setPropertyPath(delegateOutItem.getPropertyPath());
+    }
+
+    protected void copyFromDelegateTar(IOutItemTar outItem, IOutItemAllFormats delegateOutItem) {
+        outItem.setPropertyPosixAttributes(delegateOutItem.getPropertyPosixAttributes());
+        outItem.setPropertyIsDir(delegateOutItem.getPropertyIsDir());
+        outItem.setPropertyLastModificationTime(delegateOutItem.getPropertyLastModificationTime());
+        outItem.setPropertyPath(delegateOutItem.getPropertyPath());
+        outItem.setPropertyUser(delegateOutItem.getPropertyUser());
+        outItem.setPropertyGroup(delegateOutItem.getPropertyGroup());
+    }
+
+    protected void copyFromDelegateZip(IOutItemZip outItem, IOutItemAllFormats delegateOutItem) {
+        outItem.setPropertyAttributes(delegateOutItem.getPropertyAttributes());
+        outItem.setPropertyIsDir(delegateOutItem.getPropertyIsDir());
+        outItem.setPropertyLastAccessTime(delegateOutItem.getPropertyLastAccessTime());
+        outItem.setPropertyLastModificationTime(delegateOutItem.getPropertyLastModificationTime());
+        outItem.setPropertyCreationTime(delegateOutItem.getPropertyCreationTime());
+        outItem.setPropertyPath(delegateOutItem.getPropertyPath());
     }
 }

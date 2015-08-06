@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
-import net.sf.sevenzipjbinding.IOutItemCallback;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -175,7 +175,7 @@ public abstract class CompressFeatureSetLevel extends CompressFeatureAbstractSin
     }
 
     private double calcCompressionRation(int compressionLevel) throws Exception {
-        IOutCreateArchive<IOutItemCallback> outArchive = createArchive();
+        IOutCreateArchive<IOutItemAllFormats> outArchive = createArchive();
 
         assertTrue(outArchive instanceof IOutFeatureSetLevel);
         IOutFeatureSetLevel featureOutArchive = (IOutFeatureSetLevel) outArchive;
