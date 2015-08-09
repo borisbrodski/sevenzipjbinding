@@ -10,16 +10,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Random;
 
 import net.sf.sevenzipjbinding.ISeekableStream;
+import net.sf.sevenzipjbinding.junit.JUnitTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public abstract class ByteArrayStreamTest {
+public abstract class ByteArrayStreamTest extends JUnitTestBase {
     public static class ByteArrayStreamTestWithEmptyBuffer extends ByteArrayStreamTest {
         @Override
         protected byte[] getTestBuffer() {
@@ -93,7 +93,7 @@ public abstract class ByteArrayStreamTest {
     public static class ByteArrayStreamTestWithBufferLength100 extends ByteArrayStreamTest {
         private byte[] buffers = new byte[100];
         {
-            random.nextBytes(buffers);
+            random.get().nextBytes(buffers);
         }
 
         @Override
@@ -103,7 +103,6 @@ public abstract class ByteArrayStreamTest {
     }
 
     private static final int MAX_SIZE = 8 * 1024 * 1024;
-    private static Random random = new Random(0);
 
     private static Field chunkListField;
     private static Field currentPositionField;
@@ -208,7 +207,7 @@ public abstract class ByteArrayStreamTest {
     @Test
     public void testWrite50ByteFirst() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.nextBytes(firstBytes);
+        random.get().nextBytes(firstBytes);
         write(firstBytes);
         write(testBuffer);
         compareWithExpectedBuffer(firstBytes, testBuffer);
@@ -290,7 +289,7 @@ public abstract class ByteArrayStreamTest {
     @Test
     public void testWrite50SetBytes() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.nextBytes(firstBytes);
+        random.get().nextBytes(firstBytes);
         setBytes(firstBytes);
         write(testBuffer);
         truncateToCurrentPosition();
@@ -386,7 +385,7 @@ public abstract class ByteArrayStreamTest {
     @Test
     public void testWriteFromInputStream50ByteFirst() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.nextBytes(firstBytes);
+        random.get().nextBytes(firstBytes);
         writeFromInputStream(firstBytes);
         writeFromInputStream(testBuffer);
         compareWithExpectedBuffer(firstBytes, testBuffer);
@@ -526,7 +525,7 @@ public abstract class ByteArrayStreamTest {
 
     /**
      * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
-     * 
+     *
      * @throws Exception
      *             not expected
      */
@@ -537,7 +536,7 @@ public abstract class ByteArrayStreamTest {
 
     /**
      * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
-     * 
+     *
      * @throws Exception
      *             not expected
      */
@@ -548,7 +547,7 @@ public abstract class ByteArrayStreamTest {
 
     /**
      * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
-     * 
+     *
      * @throws Exception
      *             not expected
      */
@@ -559,7 +558,7 @@ public abstract class ByteArrayStreamTest {
 
     /**
      * The test checks, that the virtual content doesn't get expanded after a seek and a read over the file boundary.
-     * 
+     *
      * @throws Exception
      *             not expected
      */

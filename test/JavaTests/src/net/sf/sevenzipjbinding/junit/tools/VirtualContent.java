@@ -1,6 +1,6 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
-import static net.sf.sevenzipjbinding.junit.JUnitNativeTestBase.WEEK;
+import static net.sf.sevenzipjbinding.junit.JUnitTestBase.WEEK;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +37,7 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
@@ -213,15 +214,15 @@ public class VirtualContent {
             try {
                 assertArrayEquals(expectedData, data);
             } catch (org.junit.internal.ArrayComparisonFailure e) {
+                System.out.println("Length: " + data.length);
                 for (int i = 0; i < data.length; i++) {
                     if (expectedData[i] != data[i]) {
                         System.out.println("Different at pos " + i);
+                        System.out.println("Expect byte: " + expectedData[i]);
+                        System.out.println("Actual byte: " + data[i]);
                         break;
                     }
                 }
-                System.out.println("Length: " + data.length);
-                System.out.println("exp: " + expectedData[128]);
-                System.out.println("data: " + data[128]);
                 e.printStackTrace();
                 throw e;
             }
@@ -333,7 +334,7 @@ public class VirtualContent {
     /**
      * Constant seed used here. Tests should be deterministic in order to ensure easy debugging.
      */
-    private final Random random = new Random(0);
+    private final Random random = new Random(JUnitTestBase.RANDOM_GLOBAL_SEED);
 
     private List<Item> itemList = new ArrayList<Item>();
     private Map<String, Integer> usedNames = new HashMap<String, Integer>();

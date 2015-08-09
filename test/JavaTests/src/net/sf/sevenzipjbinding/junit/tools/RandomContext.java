@@ -5,6 +5,7 @@ import java.util.Random;
 
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.JUnitTestBase;
 
 /**
  * Generates random content with different entropy.
@@ -13,6 +14,8 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 9.13-2.00
  */
 public class RandomContext implements IInStream {
+
+    private Random random = new Random(JUnitTestBase.RANDOM_GLOBAL_SEED);
 
     private long currentPosition;
     private final long size;
@@ -39,7 +42,7 @@ public class RandomContext implements IInStream {
             }
             long section = step == 0 ? 1 : currentPosition / step;
             if (section % 2 == 0) {
-                new Random(currentPosition).nextBytes(buffer);
+                random.nextBytes(buffer);
             } else {
                 Random sectionRandom = new Random(section * 1000 + size);
                 switch (sectionRandom.nextInt(3)) {
