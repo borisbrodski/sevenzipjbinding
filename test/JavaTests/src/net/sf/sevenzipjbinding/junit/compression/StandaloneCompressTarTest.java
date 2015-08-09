@@ -51,7 +51,7 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
 
             outItem.setDataStream(byteArrayStream);
 
-            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setDataSize((long) byteArrayStream.getSize());
             outItem.setPropertyUser("me");
             outItem.setPropertyGroup("developers");
             outItem.setPropertyLastModificationTime(new Date());

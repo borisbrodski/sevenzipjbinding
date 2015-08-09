@@ -203,6 +203,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     }
 
     switch (propID) {
+    case kpidSize:               GET_ATTRIBUTE(LONG,     dataSize)
+
     case kpidAttrib:             GET_ATTRIBUTE(UINTEGER, propertyAttributes)
     case kpidPosixAttrib:        GET_ATTRIBUTE(UINTEGER, propertyPosixAttributes)
     case kpidPath:               GET_ATTRIBUTE(STRING,   propertyPath)
@@ -211,7 +213,6 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     case kpidMTime:              GET_ATTRIBUTE(DATE,     propertyLastModificationTime)
     case kpidATime:              GET_ATTRIBUTE(DATE,     propertyLastAccessTime)
     case kpidCTime:              GET_ATTRIBUTE(DATE,     propertyCreationTime)
-    case kpidSize:               GET_ATTRIBUTE(LONG,     propertySize)
     case kpidUser:               GET_ATTRIBUTE(STRING,   propertyUser)
     case kpidGroup:              GET_ATTRIBUTE(STRING,   propertyGroup)
 

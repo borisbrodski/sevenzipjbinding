@@ -170,7 +170,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
             if (change != null && change.newContent != null) {
                 outItem.setDataStream(new ByteArrayStream(change.newContent, false));
-                outItem.setPropertySize((long) change.newContent.length);
+                outItem.setDataSize((long) change.newContent.length);
             }
 
             if (change != null) {

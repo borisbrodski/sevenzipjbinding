@@ -191,7 +191,7 @@ public class VirtualContent {
             }
 
             outItem.setDataStream(byteArrayStream);
-            outItem.setPropertySize((long) item.blob.getSize());
+            outItem.setDataSize((long) item.blob.getSize());
             outItem.setPropertyPath(item.path);
 
             return outItem;

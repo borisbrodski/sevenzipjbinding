@@ -45,7 +45,7 @@ public abstract class UpdateMultipleFilesNonGenericAbstractTest<T extends IOutIt
             delegate.fillOutItem(index, (IOutItemAllFormats) delegateOutItem);
 
             outItem.setDataStream(delegateOutItem.getDataStream());
-            outItem.setPropertySize(delegateOutItem.getPropertySize());
+            outItem.setDataSize(delegateOutItem.getDataSize());
             outItem.setUpdateIsNewData(delegateOutItem.getUpdateIsNewData());
             outItem.setUpdateIsNewProperties(delegateOutItem.getUpdateIsNewProperties());
 

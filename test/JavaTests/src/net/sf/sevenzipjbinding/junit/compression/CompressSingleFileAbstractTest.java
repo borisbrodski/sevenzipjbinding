@@ -91,7 +91,7 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         protected void setBaseProperties(IOutItemBase outItem) {
             TestContext testContext = getTestContext();
 
-            outItem.setPropertySize(Long.valueOf(testContext.randomContext.getSize()));
+            outItem.setDataSize(Long.valueOf(testContext.randomContext.getSize()));
             outItem.setDataStream(getStream(outItem.getIndex()));
         }
 

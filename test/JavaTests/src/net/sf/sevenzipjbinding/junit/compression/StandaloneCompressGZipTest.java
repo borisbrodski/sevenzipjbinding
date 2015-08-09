@@ -53,7 +53,7 @@ public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
 
             outItem.setDataStream(byteArrayStream);
 
-            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setDataSize((long) byteArrayStream.getSize());
             outItem.setPropertyPath(virtualContent.getItemPath(index));
             outItem.setPropertyLastModificationTime(new Date());
 

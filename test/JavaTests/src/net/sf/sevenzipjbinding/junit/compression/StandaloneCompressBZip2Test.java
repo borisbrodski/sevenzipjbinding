@@ -54,7 +54,7 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
             IOutItemBZip2 outItem = outItemFactory.createOutItem();
 
             outItem.setDataStream(byteArrayStream);
-            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setDataSize((long) byteArrayStream.getSize());
 
             return outItem;
         }

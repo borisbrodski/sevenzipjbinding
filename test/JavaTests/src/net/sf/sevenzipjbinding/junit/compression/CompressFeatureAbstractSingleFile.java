@@ -49,7 +49,7 @@ public abstract class CompressFeatureAbstractSingleFile extends CompressAbstract
             IOutItemAllFormats outItem = outItemFactory.createOutItem();
 
             outItem.setDataStream(randomContext);
-            outItem.setPropertySize(randomContext.getSize());
+            outItem.setDataSize(randomContext.getSize());
             outItem.setPropertyLastModificationTime(new Date());
             outItem.setPropertyPath("content");
             return outItem;

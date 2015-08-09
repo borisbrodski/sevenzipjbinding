@@ -238,7 +238,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 
 			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncompressedFilename);
-			checkPropertySize(inArchive, index, expectedFilename);
+			checkDataSize(inArchive, index, expectedFilename);
 			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
 					&& archiveFormat != ArchiveFormat.UDF) {
 				checkPropertyPackedSize(inArchive, index, expectedFilename);
@@ -331,7 +331,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		assertEquals("Simple interface problem: IS_FOLDER", isFolder1, isFolder2);
 	}
 
-	private void checkPropertySize(IInArchive inArchive, int index, String uncommpressedFilename)
+	private void checkDataSize(IInArchive inArchive, int index, String uncommpressedFilename)
 			throws SevenZipException {
 		if (archiveFormat == ArchiveFormat.BZIP2 || archiveFormat == ArchiveFormat.Z) {
 			// It looks that Bzip2 doesn't support SIZE property

@@ -41,7 +41,7 @@ public class Compress {
             IOutItemZip item = outItemFactory.createOutItem();
 
             item.setDataStream(new ByteArrayStream(/*f*/contents/**/[index], true));
-            item.setPropertySize((long) /*f*/contents/**/[index].length);
+            item.setDataSize((long) /*f*/contents/**/[index].length);
             item.setPropertyPath(/*f*/filenames/**/[/*f*/index/**/]);
             item.setPropertyCreationTime(new Date());
 

@@ -43,7 +43,7 @@ public abstract class UpdateSingleFileNonGenericAbstractTest<T extends IOutItemB
             delegate.fillOutItem(index, (IOutItemAllFormats) delegateOutItem);
 
             outItem.setDataStream(delegateOutItem.getDataStream());
-            outItem.setPropertySize(delegateOutItem.getPropertySize());
+            outItem.setDataSize(delegateOutItem.getDataSize());
             outItem.setUpdateIsNewData(delegateOutItem.getUpdateIsNewData());
             outItem.setUpdateIsNewProperties(delegateOutItem.getUpdateIsNewProperties());
 

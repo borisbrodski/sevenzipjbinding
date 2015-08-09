@@ -48,7 +48,7 @@ public class StandaloneUpdateArchiveUpdateContentTest extends JUnitNativeTestBas
                 outItem.setUpdateIsNewData(true);
 
                 outItem.setDataStream(new ByteArrayStream(newContent, false));
-                outItem.setPropertySize((long) newContent.length);
+                outItem.setDataSize((long) newContent.length);
             }
 
             return outItem;

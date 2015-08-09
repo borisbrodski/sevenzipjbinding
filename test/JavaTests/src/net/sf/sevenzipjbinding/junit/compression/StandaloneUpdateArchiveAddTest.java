@@ -52,7 +52,7 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
                 outItem.setPropertyPath(path);
                 outItem.setPropertyLastModificationTime(new Date());
 
-                outItem.setPropertySize((long) blob.length);
+                outItem.setDataSize((long) blob.length);
                 outItem.setDataStream(new ByteArrayStream(blob, false));
 
                 return outItem;

@@ -50,7 +50,7 @@ public class CompressMessage {
             // Convert to message to compress into sequential byte stream
             outItem.setDataStream(new ByteArrayStream(/*f*/bytesToCompress/**/, true));
 
-            outItem.setPropertySize((long) /*f*/bytesToCompress/**/./*f*/length/**/);
+            outItem.setDataSize((long) /*f*/bytesToCompress/**/./*f*/length/**/);
             outItem.setPropertyPath("message.txt"); // Set name of the file in the archive
             outItem.setPropertyCreationTime(new Date());
 

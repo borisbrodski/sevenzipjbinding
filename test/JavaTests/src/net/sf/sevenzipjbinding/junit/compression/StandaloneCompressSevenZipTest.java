@@ -51,7 +51,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
             IOutItem7z outItem = outItemFactory.createOutItem();
 
             outItem.setDataStream(byteArrayStream);
-            outItem.setPropertySize((long) byteArrayStream.getSize());
+            outItem.setDataSize((long) byteArrayStream.getSize());
             outItem.setPropertyPath(virtualContent.getItemPath(index));
 
             return outItem;

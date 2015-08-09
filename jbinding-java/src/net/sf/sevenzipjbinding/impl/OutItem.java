@@ -38,7 +38,7 @@ public class OutItem implements IOutItemAllFormats {
 
     private ISequentialInStream dataStream;
 
-    private Long propertySize;
+    private Long dataSize;
     private Integer propertyAttributes;
     private Integer propertyPosixAttributes;
     private String propertyPath;
@@ -96,15 +96,15 @@ public class OutItem implements IOutItemAllFormats {
     /**
      * {@inheritDoc}
      */
-    public Long getPropertySize() {
-        return propertySize;
+    public Long getDataSize() {
+        return dataSize;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setPropertySize(Long size) {
-        this.propertySize = size;
+    public void setDataSize(Long size) {
+        this.dataSize = size;
     }
 
     /**

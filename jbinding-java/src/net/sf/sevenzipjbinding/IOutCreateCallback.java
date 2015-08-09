@@ -37,7 +37,7 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
      * <pre>
      * IOutItemZip outItem = outItemFactory.createOutItem()
      * 
-     * outItem.setPropertySize(size);
+     * outItem.setDataSize(size);
      * outItem.setPropertyPath("readme.txt");
      * // ...
      * 

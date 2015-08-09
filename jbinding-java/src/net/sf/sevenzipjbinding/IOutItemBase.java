@@ -89,7 +89,7 @@ public interface IOutItemBase {
      * @see PropID#SIZE
      * @return size.
      */
-    public Long getPropertySize();
+    public Long getDataSize();
 
     /**
      * Set property {@link PropID#SIZE}.
@@ -98,7 +98,7 @@ public interface IOutItemBase {
      * @param size
      *            see {@link PropID#SIZE}
      */
-    public void setPropertySize(Long size);
+    public void setDataSize(Long size);
 
     /**
      * Get whether the archive item data has changed. <br>
