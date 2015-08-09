@@ -18,7 +18,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 public class Compress {
     /**
-     * The callback defines structure of the archive being created
+     * The callback provides information about archive items
      */
     private final class MyCreateCallback //
             implements IOutCreateCallback<IOutItemZip> {
@@ -36,12 +36,13 @@ public class Compress {
             // Track operation progress here
         }
 
-        public IOutItemZip getItemInformation(int index, OutItemFactory<IOutItemZip> outItemFactory)
-                throws SevenZipException {
+        public IOutItemZip getItemInformation(int index,//
+                OutItemFactory<IOutItemZip> outItemFactory) {
             IOutItemZip item = outItemFactory.createOutItem();
 
             item.setDataStream(new ByteArrayStream(/*f*/contents/**/[index], true));
             item.setDataSize((long) /*f*/contents/**/[index].length);
+
             item.setPropertyPath(/*f*/filenames/**/[/*f*/index/**/]);
             item.setPropertyCreationTime(new Date());
 
@@ -94,12 +95,13 @@ public class Compress {
 
             outArchive = SevenZip.openOutArchiveZip();
             outArchive.setLevel(5);
-            outArchive.createArchive(new RandomAccessFileOutStream(raf), /*f*/contents/**/./*f*/length/**/, //
-                    new MyCreateCallback());
+            outArchive.createArchive(new RandomAccessFileOutStream(raf),//
+                    /*f*/contents/**/./*f*/length/**/, new MyCreateCallback());
 
             System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {
             System.err.println("7z-Error occurs:");
+            // Get more information using extended method
             e.printStackTraceExtended();
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);

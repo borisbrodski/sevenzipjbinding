@@ -86,7 +86,7 @@
             <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; in.length; i++) {
                 in[i] = i;
             }
-            inArchive.extract(in, false, <span class="java-comment">// Non-test mode</span>
+            inArchive.extract(in, <span class="java-keyword">false</span>, <span class="java-comment">// Non-test mode</span>
                     <span class="java-keyword">new</span> MyExtractCallback(inArchive));
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);

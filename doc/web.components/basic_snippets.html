@@ -3,7 +3,7 @@
 <h2>Index</h2>
 
 <ul>
-	<li><a href="#extraction">Extraction &amp; browsing existing archives</a></li>
+	<li><a href="#extracting">Extracting &amp; browsing existing archives</a></li>
     <ul>
     	<li><a href="#overview">Overview</a></li>
     	<li><a href="#std-vs-simple">Standard vs Simple interface</a></li>
@@ -13,12 +13,12 @@
     		<li><a href="#quering-archive-std-int">Standard interface</a></li>
     	</ul>
     	</li>
-    	<li><a href="#extraction-single-file"> Extraction of a single
+    	<li><a href="#extracting-single-file"> Extracting of a single
     	file</a>
     	<ul>
-    		<li><a href="#extraction-single-file-simple-int">Simple
+    		<li><a href="#extracting-single-file-simple-int">Simple
     		interface</a></li>
-    		<li><a href="#extraction-single-file-std-int">Standard
+    		<li><a href="#extracting-single-file-std-int">Standard
     		interface</a>
     		<ul>
     			<li><a href="#extracting-archive-std-int-callback">
@@ -41,16 +41,16 @@
     	</ul>
     	</li>
     </ul>
-    <li><a href="#creation">Creation new archives</a></li>
-        <li><a href="#creation-specific-api">Creating archives with the generic API</a></li>
+    <li><a href="#creating">Creating new archives</a></li>
+        <li><a href="#creating-specific-api">Creating archives with the generic API</a></li>
     	<ul>
-    		<li><a href="#creation-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
-    		<li><a href="#creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
-    		<li><a href="#creation-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
-    		<li><a href="#creation-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
-    		<li><a href="#creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
     	</ul>
-        <li><a href="#creation-generic">Creating archives with the archive format specific API</a></li>
+        <li><a href="#creating-generic">Creating archives with the archive format specific API</a></li>
     <ul>
     </ul>
     <li><a href="#modification">Modification existing archives</a></li>
@@ -58,7 +58,7 @@
     </ul>
 </ul>
 
-<h1><a name="extraction">Extraction &amp; browsing existing archives</h1>
+<h1><a name="extracting">Extracting &amp; browsing existing archives</h1>
 
 <h2><a name="overview">Overview</a></h2>
 
@@ -196,14 +196,14 @@ standard interface.</p>
 ##INCLUDE_OUTPUT(ListItemsOutput)
 
 
-<h2><a name="extraction-single-file">Extraction of a single
+<h2><a name="extracting-single-file">Extracting of a single
 file</a></h2>
 
 <p>This section will show how to access the compressed data of the
 archive items. The following examples will calculate a simple checksum
 of each archive item.</p>
 
-<h3><a name="extraction-single-file-simple-int">Simple
+<h3><a name="extracting-single-file-simple-int">Simple
 interface</a></h3>
 
 <p>This example shows how to get content of the items of the archive
@@ -217,7 +217,7 @@ checksum will be calculated.</p>
 ##INCLUDE_OUTPUT(ExtractItems)
 
 
-<h3><a name="extraction-single-file-std-int">Standard interface</a></h3>
+<h3><a name="extracting-single-file-std-int">Standard interface</a></h3>
 
 
 <p>The following two examples show how to perform the same
@@ -226,8 +226,8 @@ the simple checksum will be calculated in order to consume the extracted
 data.</p>
 
 <p>First example traverse the entire archive and uses call back
-method to choose on the fly whether proceed with the extraction of an
-item or not. The second example prepare a list of items for extraction.
+method to choose on the fly whether proceed with the extracting of an
+item or not. The second example prepare a list of items for extracting.
 </p>
 
 <h4><a name="extracting-archive-std-int-callback"> Extracting
@@ -347,7 +347,7 @@ Here is an example:
 
 <br/>
 
-<h1><a name="creation">Creation new archives</h1>
+<h1><a name="creating">Creating new archives</h1>
 
 <p>
 The are two slightly different APIs for archive creation and modification. First API is designed to work

@@ -1,6 +1,8 @@
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Date;
+import java.util.Random;
 
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
@@ -11,21 +13,16 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class CompressMessage {
+public class Compress {
     /**
      * The callback provides information about archive items
      */
-    private static final class MyCreateCallback 
+    private final class MyCreateCallback 
             implements IOutCreateCallback<IOutItemZip> {
-        private final byte[] bytesToCompress;
-
-        private MyCreateCallback(byte[] bytesToCompress) {
-            this.bytesToCompress = bytesToCompress;
-        }
 
         public void setOperationResult(boolean operationResultOk)
                 throws SevenZipException {
-            // Handle result here
+            // Track each operation result here
         }
 
         public void setTotal(long total) throws SevenZipException {
@@ -38,44 +35,65 @@ public class CompressMessage {
 
         public IOutItemZip getItemInformation(int index,
                 OutItemFactory<IOutItemZip> outItemFactory) {
-            IOutItemZip outItem = outItemFactory.createOutItem();
+            IOutItemZip item = outItemFactory.createOutItem();
 
-            // Convert the message into the sequential byte stream
-            outItem.setDataStream(new ByteArrayStream(bytesToCompress, true));
-            outItem.setDataSize((long) bytesToCompress.length);
+            item.setDataStream(new ByteArrayStream(contents[index], true));
+            item.setDataSize((long) contents[index].length);
 
-            // Set name of the file in the archive
-            outItem.setPropertyPath("message.txt");
-            outItem.setPropertyCreationTime(new Date());
+            item.setPropertyPath(filenames[index]);
+            item.setPropertyCreationTime(new Date());
 
-            // To get u+rw permissions on linux, if extracting with unzip
-            // outItem.setPropertyAttributes(Integer.valueOf(0x81808000));
+            // Use to get u+rw permissions on linux with 'unzip'
+            // item.setPropertyAttributes(0x81808000);
 
-            return outItem;
+            return item;
         }
 
-        public void freeResources(int index, IOutItemZip outItem) {
-            // no need to close ByteArrayStream
+        // Nothing to close
+        public void freeResources(int index, IOutItemZip outItem) throws SevenZipException {
         }
     }
 
+    private byte[][] contents;
+    private String[] filenames;
+
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: java CompressMessage <archive> <msg>");
+        if (args.length != 1) {
+            System.out.println("Usage: java Compress <archive>");
             return;
         }
 
-        final byte[] bytesToCompress = args[1].getBytes();
+        new Compress().compress(args[0]);
+    }
+
+
+    private void initArchiveStructure() {
+        contents = new byte[3][];
+        filenames = new String[3];
+
+        filenames[0] = "info.txt";
+        contents[0] = "This is the info".getBytes();
+
+        filenames[1] = "random-100-bytes.bin";
+        contents[1] = new byte[100];
+        new Random().nextBytes(contents[1]);
+
+        filenames[2] = "dir" + File.separator + "file-in-a-directory.txt";
+        contents[2] = "This file located in a directory 'dir'".getBytes();
+    }
+
+    private void compress(String filename) {
+        initArchiveStructure();
 
         RandomAccessFile raf = null;
         IOutCreateArchiveZip outArchive = null;
         try {
-            raf = new RandomAccessFile(args[0], "rw");
+            raf = new RandomAccessFile(filename, "rw");
 
             outArchive = SevenZip.openOutArchiveZip();
             outArchive.setLevel(5);
-            outArchive.createArchive(new RandomAccessFileOutStream(raf), 1, 
-                    new MyCreateCallback(bytesToCompress));
+            outArchive.createArchive(new RandomAccessFileOutStream(raf),
+                    contents.length, new MyCreateCallback());
 
             System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {

@@ -123,10 +123,10 @@ see how a very simple Zip archive with a single item (archived file) containing 
 </p>
 
 <p>
-There are 5 following steps involved:
+There are 4 following steps involved:
 <ul>
-<li>Implement IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface defining the structure of the archive
-<li>Implement IOutItemCallbackZip interface specifying the properties of the single archive item
+<li>Implement IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface providing information about the archive items
+(a single archive item in this example) 
 <li>Open new out-archive
 <li>Optionally configure the new archive (e.g. setting compression level)
 <li>Call createArchive(...) method to create the new archive

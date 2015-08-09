@@ -16,7 +16,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 public class CompressMessage {
     /**
-     * The callback defines structure of the archive being created
+     * The callback provides information about archive items
      */
     private static final class MyCreateCallback //
             implements IOutCreateCallback<IOutItemZip> {
@@ -28,11 +28,7 @@ public class CompressMessage {
 
         public void setOperationResult(boolean operationResultOk)//
                 throws SevenZipException {
-            if (operationResultOk) {
-                System.out.println("Compression operation succeeded");
-            } else {
-                System.out.println("Compression operation failed");
-            }
+            // Handle result here
         }
 
         public void setTotal(long total) throws SevenZipException {
@@ -43,18 +39,19 @@ public class CompressMessage {
             // Track operation progress here
         }
 
-        public IOutItemZip getItemInformation(int index, OutItemFactory<IOutItemZip> outItemFactory)
-                throws SevenZipException {
+        public IOutItemZip getItemInformation(int index,//
+                OutItemFactory<IOutItemZip> outItemFactory) {
             IOutItemZip outItem = outItemFactory.createOutItem();
 
-            // Convert to message to compress into sequential byte stream
+            // Convert the message into the sequential byte stream
             outItem.setDataStream(new ByteArrayStream(/*f*/bytesToCompress/**/, true));
-
             outItem.setDataSize((long) /*f*/bytesToCompress/**/./*f*/length/**/);
-            outItem.setPropertyPath("message.txt"); // Set name of the file in the archive
+
+            // Set name of the file in the archive
+            outItem.setPropertyPath("message.txt");
             outItem.setPropertyCreationTime(new Date());
 
-            // Use this to get u+rw permissions on linux, if extracting with unzip
+            // To get u+rw permissions on linux, if extracting with unzip
             // outItem.setPropertyAttributes(Integer.valueOf(0x81808000));
 
             return outItem;
@@ -83,8 +80,10 @@ public class CompressMessage {
             outArchive.createArchive(new RandomAccessFileOutStream(raf), 1, //
                     new MyCreateCallback(bytesToCompress));
 
+            System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {
             System.err.println("7z-Error occurs:");
+            // Get more information using extended method
             e.printStackTraceExtended();
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);

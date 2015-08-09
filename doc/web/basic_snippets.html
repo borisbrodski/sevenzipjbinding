@@ -51,7 +51,7 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <h1>Code snippets</h1>
 <h2>Index</h2>
 <ul>
-	<li><a href="#extraction">Extraction &amp; browsing existing archives</a></li>
+	<li><a href="#extracting">Extracting &amp; browsing existing archives</a></li>
     <ul>
     	<li><a href="#overview">Overview</a></li>
     	<li><a href="#std-vs-simple">Standard vs Simple interface</a></li>
@@ -61,12 +61,12 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
     		<li><a href="#quering-archive-std-int">Standard interface</a></li>
     	</ul>
     	</li>
-    	<li><a href="#extraction-single-file"> Extraction of a single
+    	<li><a href="#extracting-single-file"> Extracting of a single
     	file</a>
     	<ul>
-    		<li><a href="#extraction-single-file-simple-int">Simple
+    		<li><a href="#extracting-single-file-simple-int">Simple
     		interface</a></li>
-    		<li><a href="#extraction-single-file-std-int">Standard
+    		<li><a href="#extracting-single-file-std-int">Standard
     		interface</a>
     		<ul>
     			<li><a href="#extracting-archive-std-int-callback">
@@ -89,14 +89,23 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
     	</ul>
     	</li>
     </ul>
-    <li><a href="#creation">Creation of new archives</a></li>
+    <li><a href="#creating">Creating new archives</a></li>
+        <li><a href="#creating-specific-api">Creating archives with the generic API</a></li>
+    	<ul>
+    		<li><a href="#creating-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+    		<li><a href="#creating-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    	</ul>
+        <li><a href="#creating-generic">Creating archives with the archive format specific API</a></li>
     <ul>
     </ul>
-    <li><a href="#modification">Modification of existing archives</a></li>
+    <li><a href="#modification">Modification existing archives</a></li>
     <ul>
     </ul>
 </ul>
-<h1><a name="extraction">Extraction &amp; browsing existing archives</h1>
+<h1><a name="extracting">Extracting &amp; browsing existing archives</h1>
 <h2><a name="overview">Overview</a></h2>
 <p>Here you can find many code snippets, example of how to
 perform basic operations with 7-Zip-JBinding. All examples are part of the JUnit tests.
@@ -327,12 +336,12 @@ standard interface.</p>
         0 |         0 | folder
         6 |         6 | folder/file in folder.txt
 </pre></div>
-<h2><a name="extraction-single-file">Extraction of a single
+<h2><a name="extracting-single-file">Extracting of a single
 file</a></h2>
 <p>This section will show how to access the compressed data of the
 archive items. The following examples will calculate a simple checksum
 of each archive item.</p>
-<h3><a name="extraction-single-file-simple-int">Simple
+<h3><a name="extracting-single-file-simple-int">Simple
 interface</a></h3>
 <p>This example shows how to get content of the items of the archive
 using simple interface. In order to consume extracted content the simple
@@ -421,14 +430,14 @@ checksum will be calculated.</p>
  8CB12E6A |         75 | file2.txt
  E8EEC7F4 |          6 | folder/file in folder.txt
 </pre></div>
-<h3><a name="extraction-single-file-std-int">Standard interface</a></h3>
+<h3><a name="extracting-single-file-std-int">Standard interface</a></h3>
 <p>The following two examples show how to perform the same
 extracting task using standard interface. As in the previous example,
 the simple checksum will be calculated in order to consume the extracted
 data.</p>
 <p>First example traverse the entire archive and uses call back
-method to choose on the fly whether proceed with the extraction of an
-item or not. The second example prepare a list of items for extraction.
+method to choose on the fly whether proceed with the extracting of an
+item or not. The second example prepare a list of items for extracting.
 </p>
 <h4><a name="extracting-archive-std-int-callback"> Extracting
 archive using standard interface and call back method as a filter</a></h4>
@@ -521,7 +530,7 @@ archive using standard interface and call back method as a filter</a></h4>
             <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; in.length; i++) {
                 in[i] = i;
             }
-            inArchive.extract(in, false, <span class="java-comment">// Non-test mode</span>
+            inArchive.extract(in, <span class="java-keyword">false</span>, <span class="java-comment">// Non-test mode</span>
                     <span class="java-keyword">new</span> MyExtractCallback(inArchive));
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
@@ -644,7 +653,7 @@ to extract</a></h4>
             <span class="java-keyword">for</span> (Integer integer : itemsToExtract) {
                 items[i++] = integer.intValue();
             }
-            inArchive.extract(items, false, <span class="java-comment">// Non-test mode</span>
+            inArchive.extract(items, <span class="java-keyword">false</span>, <span class="java-comment">// Non-test mode</span>
                     <span class="java-keyword">new</span> MyExtractCallback(inArchive));
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
@@ -1082,8 +1091,152 @@ Here is an example:
        75 |        75 | file2.txt
         0 |         0 | folder
 </pre></div>
-<h1><a name="creation">Creation of new archives</h1>
-<h1><a name="modification">Modification of existing archives</h1>
+<br/>
+<h1><a name="creating">Creating new archives</h1>
+<p>
+The are two slightly different APIs for archive creation and modification. First API is designed to work
+with one particilar archive format, like Zip. Second allows archive format independent programming.
+</p>
+<h2><a name="creation-specific-api">Creating archives with the archive format specific API</h2>
+<p>
+The archive format specific API provides easy access to the archive configuration
+methods (like setting compression level). Also it has "method per property" callbacks (like <a href="javadoc/net/sf/sevenzipjbinding/IOutItemCallbackZip.html">IOutItemCallbackZip</a>)
+allowing easy callback implementation. The amount of mandotory and optional properties are different for each
+archive format.
+</p>
+<p>
+Lets see how archive of different formats can be created using archive format specific API.
+</p>
+<h3><a name="creation-specific-api-zip">Creating Zip archive using archive format specific API</h3>
+<p>
+Creating Zip archive using archive format specific API was already presented in the "first steps".
+The key parts of the code are:
+</p>
+<ul>
+    <li>
+        Implementation of the <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&lt;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemCallbackZip.html">IOutItemCallbackZip</a>&gt; interface specifying the structure of
+        the new archive. Also the progress of the compression/update operation get reported here.
+    </li>
+    <li>
+    </li>
+</lu>
+<p>
+Here is the snippet again:
+</p>
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+<span class="java-keyword">import</span> java.util.Date;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveZip.html">IOutCreateArchiveZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.<a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressMessage {
+<span class="java-javadoc">    /**
+     * The callback provides information about archive items
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">static</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+            <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;IOutItemZip&#62; {
+        <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] <span class="java-field">bytesToCompress</span>;
+
+        <span class="java-keyword">private</span> MyCreateCallback(<span class="java-keyword">byte</span>[] bytesToCompress) {
+            <span class="java-keyword">this</span>.<span class="java-field">bytesToCompress</span> = bytesToCompress;
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
+                <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Handle result here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setCompleted(<span class="java-keyword">long</span> complete) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> IOutItemZip getItemInformation(<span class="java-keyword">int</span> index,
+                OutItemFactory&#60;IOutItemZip&#62; outItemFactory) {
+            IOutItemZip outItem = outItemFactory.createOutItem();
+
+            <span class="java-comment">// Convert the message into the sequential byte stream</span>
+            outItem.setDataStream(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-field">bytesToCompress</span>, <span class="java-keyword">true</span>));
+            outItem.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">bytesToCompress</span>.<span class="java-field">length</span>);
+
+            <span class="java-comment">// Set name of the file in the archive</span>
+            outItem.setPropertyPath(<span class="java-string">"message.txt"</span>);
+            outItem.setPropertyCreationTime(<span class="java-keyword">new</span> Date());
+
+            <span class="java-comment">// To get u+rw permissions on linux, if extracting with unzip</span>
+            <span class="java-comment">// outItem.setPropertyAttributes(Integer.valueOf(0x81808000));</span>
+
+            <span class="java-keyword">return</span> outItem;
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> freeResources(<span class="java-keyword">int</span> index, IOutItemZip outItem) {
+            <span class="java-comment">// no need to close <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a></span>
+        }
+    }
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 2) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java CompressMessage &#60;archive&#62; &#60;msg&#62;"</span>);
+            <span class="java-keyword">return</span>;
+        }
+
+        <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] bytesToCompress = args[1].getBytes();
+
+        RandomAccessFile raf = <span class="java-keyword">null</span>;
+        <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveZip.html">IOutCreateArchiveZip</a> outArchive = <span class="java-keyword">null</span>;
+        <span class="java-keyword">try</span> {
+            raf = <span class="java-keyword">new</span> RandomAccessFile(args[0], <span class="java-string">"rw"</span>);
+
+            outArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openOutArchiveZip();
+            outArchive.setLevel(5);
+            outArchive.createArchive(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>(raf), 1, 
+                    <span class="java-keyword">new</span> MyCreateCallback(bytesToCompress));
+
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
+        } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"7z-Error occurs:"</span>);
+            <span class="java-comment">// Get more information using extended method</span>
+            e.printStackTraceExtended();
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (outArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    outArchive.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                }
+            }
+            <span class="java-keyword">if</span> (raf != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    raf.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                }
+            }
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/CompressMessage.java">download java code</a></div>
+<h3><a name="creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
+<h3><a name="creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
+<h2><a name="creation-generic">Creating archives with the generic API</h2>
+<br/>
+<h1><a name="modification">Modification existing archives</h1>
 </td></tr>
 </table></td></tr>
 </table>

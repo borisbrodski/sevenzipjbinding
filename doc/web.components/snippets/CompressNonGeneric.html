@@ -1,6 +1,8 @@
+<span class="java-keyword">import</span> java.io.File;
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 <span class="java-keyword">import</span> java.util.Date;
+<span class="java-keyword">import</span> java.util.Random;
 
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateCallback;
@@ -11,21 +13,16 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressMessage {
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> Compress {
 <span class="java-javadoc">    /**
      * The callback provides information about archive items
      */</span>
-    <span class="java-keyword">private</span> <span class="java-keyword">static</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+    <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
             <span class="java-keyword">implements</span> IOutCreateCallback&#60;IOutItemZip&#62; {
-        <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] <span class="java-field">bytesToCompress</span>;
-
-        <span class="java-keyword">private</span> MyCreateCallback(<span class="java-keyword">byte</span>[] bytesToCompress) {
-            <span class="java-keyword">this</span>.<span class="java-field">bytesToCompress</span> = bytesToCompress;
-        }
 
         <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
                 <span class="java-keyword">throws</span> SevenZipException {
-            <span class="java-comment">// Handle result here</span>
+            <span class="java-comment">// Track each operation result here</span>
         }
 
         <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> SevenZipException {
@@ -38,44 +35,65 @@
 
         <span class="java-keyword">public</span> IOutItemZip getItemInformation(<span class="java-keyword">int</span> index,
                 OutItemFactory&#60;IOutItemZip&#62; outItemFactory) {
-            IOutItemZip outItem = outItemFactory.createOutItem();
+            IOutItemZip item = outItemFactory.createOutItem();
 
-            <span class="java-comment">// Convert the message into the sequential byte stream</span>
-            outItem.setDataStream(<span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">bytesToCompress</span>, <span class="java-keyword">true</span>));
-            outItem.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">bytesToCompress</span>.<span class="java-field">length</span>);
+            item.setDataStream(<span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">contents</span>[index], <span class="java-keyword">true</span>));
+            item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">contents</span>[index].length);
 
-            <span class="java-comment">// Set name of the file in the archive</span>
-            outItem.setPropertyPath(<span class="java-string">"message.txt"</span>);
-            outItem.setPropertyCreationTime(<span class="java-keyword">new</span> Date());
+            item.setPropertyPath(<span class="java-field">filenames</span>[<span class="java-field">index</span>]);
+            item.setPropertyCreationTime(<span class="java-keyword">new</span> Date());
 
-            <span class="java-comment">// To get u+rw permissions on linux, if extracting with unzip</span>
-            <span class="java-comment">// outItem.setPropertyAttributes(Integer.valueOf(0x81808000));</span>
+            <span class="java-comment">// Use to get u+rw permissions on linux with 'unzip'</span>
+            <span class="java-comment">// item.setPropertyAttributes(0x81808000);</span>
 
-            <span class="java-keyword">return</span> outItem;
+            <span class="java-keyword">return</span> item;
         }
 
-        <span class="java-keyword">public</span> <span class="java-keyword">void</span> freeResources(<span class="java-keyword">int</span> index, IOutItemZip outItem) {
-            <span class="java-comment">// no need to close ByteArrayStream</span>
+        <span class="java-comment">// Nothing to close</span>
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> freeResources(<span class="java-keyword">int</span> index, IOutItemZip outItem) <span class="java-keyword">throws</span> SevenZipException {
         }
     }
 
+    <span class="java-keyword">private</span> <span class="java-keyword">byte</span>[][] contents;
+    <span class="java-keyword">private</span> String[] filenames;
+
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
-        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 2) {
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java CompressMessage &#60;archive&#62; &#60;msg&#62;"</span>);
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 1) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java Compress &#60;archive&#62;"</span>);
             <span class="java-keyword">return</span>;
         }
 
-        <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] bytesToCompress = args[1].getBytes();
+        <span class="java-keyword">new</span> Compress().compress(args[0]);
+    }
+
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> initArchiveStructure() {
+        contents = <span class="java-keyword">new</span> <span class="java-keyword">byte</span>[3][];
+        filenames = <span class="java-keyword">new</span> String[3];
+
+        filenames[0] = <span class="java-string">"info.txt"</span>;
+        contents[0] = <span class="java-string">"This is the info"</span>.getBytes();
+
+        filenames[1] = <span class="java-string">"random-100-bytes.bin"</span>;
+        contents[1] = <span class="java-keyword">new</span> <span class="java-keyword">byte</span>[100];
+        <span class="java-keyword">new</span> Random().nextBytes(contents[1]);
+
+        filenames[2] = <span class="java-string">"dir"</span> + File.separator + <span class="java-string">"file-in-a-directory.txt"</span>;
+        contents[2] = <span class="java-string">"This file located in a directory 'dir'"</span>.getBytes();
+    }
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename) {
+        initArchiveStructure();
 
         RandomAccessFile raf = <span class="java-keyword">null</span>;
         IOutCreateArchiveZip outArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
-            raf = <span class="java-keyword">new</span> RandomAccessFile(args[0], <span class="java-string">"rw"</span>);
+            raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
 
             outArchive = SevenZip.openOutArchiveZip();
             outArchive.setLevel(5);
-            outArchive.createArchive(<span class="java-keyword">new</span> RandomAccessFileOutStream(raf), 1, 
-                    <span class="java-keyword">new</span> MyCreateCallback(bytesToCompress));
+            outArchive.createArchive(<span class="java-keyword">new</span> RandomAccessFileOutStream(raf),
+                    <span class="java-field">contents</span>.<span class="java-field">length</span>, <span class="java-keyword">new</span> MyCreateCallback());
 
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
         } <span class="java-keyword">catch</span> (SevenZipException e) {
