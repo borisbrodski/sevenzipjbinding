@@ -7,10 +7,13 @@ package net.sf.sevenzipjbinding;
  * @see IOutCreateArchive
  * @see IOutUpdateArchive
  * 
+ * @param <T>
+ *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
+ *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
  * 
  * @author Boris Brodski
  * @since 2.0
  */
-public interface IOutArchive<E extends IOutItemBase> extends IOutCreateArchive<E>, IOutUpdateArchive<E> {
+public interface IOutArchive<T extends IOutItemBase> extends IOutCreateArchive<T>, IOutUpdateArchive<T> {
 
 }

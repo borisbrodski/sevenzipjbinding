@@ -4,9 +4,34 @@ import java.util.Date;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.IOutItemGZip;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 
+/**
+ * Implementation of all <code>IOutItemXxx</code> interfaces. Contains information about a single archive item required
+ * for a create or update operation. Instances should be created by {@link OutItemFactory}. See
+ * {@link IOutCreateCallback#getItemInformation(int, OutItemFactory)} for details.<br>
+ * <br>
+ * The purpose of the archive format specific interfaces <code>IOutItemXxx</code> is to hide methods unrelated to the
+ * corresponding archive format. For example, GZip format doesn't support the <code>attributes</code> property and so
+ * the {@link IOutItemGZip} interface doesn't contain corresponding getters and setter. The Zip archive format on the
+ * other hand does support the <code>attributes</code> property defining the methods:
+ * <ul>
+ * <li> {@link IOutItemZip#getPropertyAttributes()}
+ * <li> {@link IOutItemZip#setPropertyAttributes(Integer)}
+ * </ul>
+ * 
+ * @see IOutCreateCallback#getItemInformation(int, OutItemFactory)
+ * @see OutItemFactory
+ * @see IOutItemBase
+ * 
+ * @author Boris Brodski
+ * @version 9.13-2.00
+ */
 public class OutItem implements IOutItemAllFormats {
     private int index;
     private Object userData;

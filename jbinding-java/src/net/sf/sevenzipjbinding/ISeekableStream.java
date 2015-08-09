@@ -41,9 +41,11 @@ public interface ISeekableStream {
      * 
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
-     *             as failed. There are no guarantee, that there are no further call back methods will be called. The
-     *             first thrown exception will be saved and thrown late on from the first called 7-Zip-JBinding main
-     *             method, such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>.
+     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
+     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             four exceptions depending on the situation can be saved for further analysis. See
+     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
     public long seek(long offset, int seekOrigin) throws SevenZipException;
 }

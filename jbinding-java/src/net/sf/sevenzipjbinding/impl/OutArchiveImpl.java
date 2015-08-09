@@ -13,7 +13,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 /**
  * Common archive create and update class.
  * 
- * @param <E>
+ * @param <T>
  *            the type of the item callback implementation
  * 
  * @see OutArchive7zImpl
@@ -26,7 +26,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 9.13-2.0
  */
 // TODO null check all parameters: If null slips through into native code there will be no NPE :( 
-public class OutArchiveImpl<E extends IOutItemBase> implements IOutArchive<E> {
+public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
 
     private long jbindingSession;
     private long sevenZipArchiveInstance;
@@ -109,7 +109,7 @@ public class OutArchiveImpl<E extends IOutItemBase> implements IOutArchive<E> {
     /**
      * {@inheritDoc}
      */
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<E> outUpdateCallback)
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outUpdateCallback)
             throws SevenZipException {
         doUpdateItems(outStream, numberOfItems, outUpdateCallback);
     }
@@ -124,7 +124,7 @@ public class OutArchiveImpl<E extends IOutItemBase> implements IOutArchive<E> {
      * {@inheritDoc}
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
-            IOutCreateCallback<? extends E> outCreateCallback) throws SevenZipException {
+            IOutCreateCallback<? extends T> outCreateCallback) throws SevenZipException {
         doUpdateItems(outStream, numberOfItems, outCreateCallback);
     }
 

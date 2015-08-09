@@ -7,11 +7,11 @@ package net.sf.sevenzipjbinding;
  * <br>
  * 
  * <pre>
- *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(unknownArchiveFormat, inStream);
- *  {@link IOutUpdateArchive}{@code <}{@link IOutItemCallbackBase}> outArchive = inArchive.openOutArchive();
+ *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(null, inStream);
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemBase}> outArchive = inArchive.openOutArchive();
  *  
  *  if (outArchive instanceof {@link IOutUpdateArchiveTar}) {
- *    {@link IOutUpdateArchiveTar} outUpdateArchiveTar = ({@link IOutUpdateArchiveTar})outArchive;
+ *    {@link IOutUpdateArchiveTar} outUpdateArchiveTarz = ({@link IOutUpdateArchiveTar})outArchive;
  *    ...
  *  }
  *  
@@ -20,12 +20,11 @@ package net.sf.sevenzipjbinding;
  *  inArchive.close();
  * </pre>
  * 
- * <i>Note</i>: if the archive format is known, then there is more simple way of updating. See {@link IOutUpdateArchive}
- * for more details.
- * 
  * @see IOutUpdateArchive
  * @see IInArchive
- * @see IOutItemCallbackBase
+ * @see IOutItemBase
+ * @see IOutItemAllFormats
+ * 
  * @author Boris Brodski
  * @version 9.13-2.0
  */

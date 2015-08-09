@@ -1,5 +1,28 @@
 package net.sf.sevenzipjbinding;
 
+import net.sf.sevenzipjbinding.impl.OutItem;
+
+/**
+ * Base interface of the archive item data interfaces:
+ * <ul>
+ * <li>archive format specific interfaces <code>IOutItemXxx</code>, like {@link IOutItem7z}
+ * <li>archive format independent interface {@link IOutItemAllFormats}
+ * </ul>
+ * The single known implementation is {@link OutItem}. This base interface provides access to the getters and setters
+ * methods, that are shared by all archive formats.<br>
+ * <br>
+ * The purpose of the archive format specific interfaces <code>IOutItemXxx</code> is to hide methods unrelated to the
+ * corresponding archive format. For example, GZip format doesn't support the <code>attributes</code> property and so
+ * the {@link IOutItemGZip} interface doesn't contain corresponding getters and setter. The Zip archive format on the
+ * other hand does support the <code>attributes</code> property defining the methods:
+ * <ul>
+ * <li> {@link IOutItemZip#getPropertyAttributes()}
+ * <li> {@link IOutItemZip#setPropertyAttributes(Integer)}
+ * </ul>
+ * 
+ * @author Boris Brodski
+ * @version 9.13-2.00
+ */
 public interface IOutItemBase {
     /**
      * Return corresponding IOutArchive object.

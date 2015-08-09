@@ -198,17 +198,14 @@ public interface IInArchive extends Closeable {
     public ArchiveFormat getArchiveFormat();
 
     /**
-     * Get a {@link IOutArchive}-instance attached to the currently opened archive. The new instance allows modification
-     * of the currently opened archive.
+     * Get a {@link IOutUpdateArchive}-instance attached to the currently opened archive. The new instance allows
+     * modification of the currently opened archive.
      * 
      * @param <T>
-     *            type of the item call back object. Should implements {@link IOutItemCallback} or one of the specified
-     *            <code>IOutItemCallback*</code> interfaces. Not relevant, if
-     *            {@link IOutUpdateArchive#updateItems(ISequentialOutStream, int, IOutUpdateCallbackGeneric)} method
-     *            will be used, since in this case the archive item properties will be provided by an implementation of
-     *            the single method {@link IOutCreateCallbackGeneric#getProperty(int, PropID)} of the
-     *            {@link IOutUpdateCallbackGeneric} interface.
-     * @return an instance of the {@link IOutArchive} interface
+     *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
+     *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive
+     *            formats.
+     * @return an instance of the {@link IOutUpdateArchive} interface
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */

@@ -7,7 +7,11 @@ package net.sf.sevenzipjbinding;
  * 
  * <pre>
  *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive({@link ArchiveFormat#SEVEN_ZIP}, inStream);
- *  {@link IOutUpdateArchive}{@code<}{@link IOutItemCallback7z}> outArchive = inArchive.openOutArchive();
+ *  {@link IOutUpdateArchive}{@code<}{@link IOutItem7z}> outArchive = inArchive.openOutArchive();
+ *  
+ *  if (outArchive instanceof {@link IOutFeatureSetLevel}) {
+ *      (({@link IOutFeatureSetLevel})outArchive).setLevel(myLevel);
+ *  }
  *  
  *  ...
  *  
@@ -18,14 +22,19 @@ package net.sf.sevenzipjbinding;
  * No explicit closing is necessary. Connected out-archive get closed automatically when corresponding in-archive get
  * closed.
  * 
- * @param <E>
- *            the corresponding item callback interface
+ * @param <T>
+ *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
+ *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
+ * 
+ * @see IInArchive
+ * @see IOutItemBase
+ * @see IOutItemAllFormats
  * 
  * @author Boris Brodski
  * @version 9.04-2.0
  * 
  */
-public interface IOutUpdateArchive<E extends IOutItemBase> {
+public interface IOutUpdateArchive<T extends IOutItemBase> {
 
     /**
      * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
@@ -41,7 +50,7 @@ public interface IOutUpdateArchive<E extends IOutItemBase> {
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
-    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<E> outCreateCallback)
+    public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outCreateCallback)
             throws SevenZipException;
 
     /**

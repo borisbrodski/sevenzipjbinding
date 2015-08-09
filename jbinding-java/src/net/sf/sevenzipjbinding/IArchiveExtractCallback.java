@@ -1,6 +1,8 @@
 package net.sf.sevenzipjbinding;
 
 /**
+ * Main callback interface for extraction operations.
+ * 
  * If you want to provide a password to extract files, you should also implement {@link ICryptoGetTextPassword} within
  * your IArchiveExtractCallback-implementation.
  * 

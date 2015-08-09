@@ -141,7 +141,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
         }
 
-        protected <E extends IOutItemBase> E createOutItem(int index, OutItemFactory<E> outItemFactory)
+        protected <T extends IOutItemBase> T createOutItem(int index, OutItemFactory<T> outItemFactory)
                 throws SevenZipException {
             Change change = changeLog.changes[index];
             if (change != null && change.oldIndex != null) {

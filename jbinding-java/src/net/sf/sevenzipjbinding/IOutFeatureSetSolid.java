@@ -17,7 +17,12 @@ public interface IOutFeatureSetSolid {
      * @param solid
      *            <code>true</code> - use default configuration, <code>false</code> - deactivate solid block mode
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
+     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             four exceptions depending on the situation can be saved for further analysis. See
+     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
     public void setSolid(boolean solid) throws SevenZipException;
 
@@ -28,7 +33,12 @@ public interface IOutFeatureSetSolid {
      * @param countOfFilesPerBlock
      *            count of files per solid block. <code>-1</code> - use default configuration
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
+     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             four exceptions depending on the situation can be saved for further analysis. See
+     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
     public void setSolidFiles(int countOfFilesPerBlock) throws SevenZipException;
 
@@ -39,7 +49,12 @@ public interface IOutFeatureSetSolid {
      * @param countOfBytesPerBlock
      *            count of bytes per solid block. <code>-1</code> - use default configuration.
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
+     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             four exceptions depending on the situation can be saved for further analysis. See
+     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
     public void setSolidSize(long countOfBytesPerBlock) throws SevenZipException;
 
@@ -51,7 +66,12 @@ public interface IOutFeatureSetSolid {
      * @param solidExtension
      *            <code>true</code> - activate this feature, <code>false</code> - use default configuration
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
+     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
+     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             four exceptions depending on the situation can be saved for further analysis. See
+     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
     public void setSolidExtension(boolean solidExtension) throws SevenZipException;
 }

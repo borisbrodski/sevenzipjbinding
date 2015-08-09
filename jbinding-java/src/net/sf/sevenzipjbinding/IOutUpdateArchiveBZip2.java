@@ -1,14 +1,29 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * The interface provides functionality to update existing Bzip2 archives.<br>
- * The standard way to get implementation is to use {@link SevenZip#openOutArchive(ArchiveFormat)} like this:<br>
+ * The interface provides functionality to update existing BZip2 archives.<br>
+ * The standard way of getting the implementation of this interface is to use
+ * {@link IInArchive#getConnectedOutArchive()} method like this:<br>
  * <br>
  * 
  * <pre>
- *  {@link IOutUpdateArchive7z} outArchive = {@link SevenZip}.openOutArchive({@link IOutUpdateArchive7z}.class);
+ *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(null, inStream);
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemBase}> outArchive = inArchive.openOutArchive();
+ *  
+ *  if (outArchive instanceof {@link IOutUpdateArchiveBZip2}) {
+ *    {@link IOutUpdateArchiveBZip2} outUpdateArchiveBZip2 = ({@link IOutUpdateArchiveBZip2})outArchive;
+ *    ...
+ *  }
+ *  
+ *  ...
+ *  
+ *  inArchive.close();
  * </pre>
  * 
+ * @see IOutUpdateArchive
+ * @see IInArchive
+ * @see IOutItemBase
+ * @see IOutItemAllFormats
  * 
  * @author Boris Brodski
  * @version 9.13-2.0
