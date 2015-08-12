@@ -294,7 +294,7 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeJTestFinalClassNe
                                                                                           JNIEnv * env,
                                                                                           jobject thiz) {
     jobject object = JTestFinalClass::_newInstance(env);
-    jni::prepareExceptionCheck(env); // No exception check actually needed. The pending exception will be thrown after in java.
+    jni::prepareExceptionCheck(env); // No exception check actually needed. The pending exception will be thrown later in java.
     return object;
 }
 

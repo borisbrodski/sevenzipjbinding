@@ -152,7 +152,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
         }                                                                                                           \
 
     #define ASSIGN_VALUE_TO_C_PROP_VARIANT_UINTEGER                                                                 \
-        cPropVariant = (unsigned int)jni::Integer::intValue(jniEnvInstance, value);                                 \
+        cPropVariant = (UInt32)jni::Integer::intValue(jniEnvInstance, value);                                 \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
         }                                                                                                           \

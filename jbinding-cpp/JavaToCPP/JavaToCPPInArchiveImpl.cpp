@@ -77,7 +77,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
         jint lastIndex = -1;
         int sortNeeded = false;
-        for (int i = 0; i < indicesCount; i++) {
+        for (UInt32 i = 0; i < indicesCount; i++) {
             if (indices[i] < 0 || indices[i] >= numberOfItems) {
                 TRACE("Passed index for the extraction is incorrect: " << indices[i] << " (Count of items in archive: " << numberOfItems << ")")
                 jniNativeCallContext.reportError(
@@ -252,6 +252,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     CHECK_HRESULT1(jniNativeCallContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
 
     jobject propertInfo = jni::PropertyInfo::_newInstance(env);
+    if (jniEnvInstance.exceptionCheck()) {
+        return NULL;
+    }
 
     jstring javaName;
     if (&name == NULL) {
@@ -262,6 +265,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
     jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
+    if (jniEnvInstance.exceptionCheck()) {
+        return NULL;
+    }
 
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
@@ -458,6 +464,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     CHECK_HRESULT1(jniNativeCallContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
     jobject propertInfo = jni::PropertyInfo::_newInstance(env);
+    if (jniEnvInstance.exceptionCheck()) {
+        return NULL;
+    }
 
     jstring javaName;
     if (&name == NULL) {
@@ -468,13 +477,15 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
     jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
+    if (jniEnvInstance.exceptionCheck()) {
+        return NULL;
+    }
 
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
     return propertInfo;
-
 }
 
 /*

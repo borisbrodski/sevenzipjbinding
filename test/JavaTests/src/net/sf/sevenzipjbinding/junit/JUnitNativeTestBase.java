@@ -175,7 +175,6 @@ public class JUnitNativeTestBase extends JUnitTestBase {
                 }
             }, null);
         } else {
-
             for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
                 test.run();
             }
