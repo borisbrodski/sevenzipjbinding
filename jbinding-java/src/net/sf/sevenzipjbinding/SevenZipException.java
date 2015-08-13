@@ -354,7 +354,7 @@ public class SevenZipException extends IOException {
         StackTraceElement[] stackTraceElements = throwable.getStackTrace();
         int skipElements = 0;
         if (successor != null) {
-            StackTraceElement[] successorStackTraceElements = throwable.getStackTrace();
+            StackTraceElement[] successorStackTraceElements = successor.getStackTrace();
             int i = successorStackTraceElements.length - 1;
             int j = stackTraceElements.length - 1;
             while (i >= 3 && j >= 3 && successorStackTraceElements[i].equals(stackTraceElements[j])) {
