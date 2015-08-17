@@ -60,10 +60,14 @@ public interface IOutCreateArchive<T extends IOutItemBase> extends Closeable {
      * {@link IInArchive#getConnectedOutArchive()} to get an instance of the {@link IOutUpdateArchive} interface.<br>
      * <br>
      * The <code>outCreateCallback</code> is designed to get necessary information about archive items and provide
-     * information about progress of the operation.
+     * information about progress of the operation.<br>
+     * <br>
+     * <i>Note:</i> some archive formats (like Zip) require an implementation of {@link IOutStream} instead of the
+     * {@link ISequentialOutStream}.
      * 
      * @param outStream
-     *            output stream to get the new archive
+     *            output stream to get the new archive (implements {@link IOutStream} or {@link ISequentialOutStream}
+     *            depending on the archive format)
      * @param numberOfItems
      *            number of items in the new archive
      * @param outCreateCallback

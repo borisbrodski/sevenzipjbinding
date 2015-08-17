@@ -1,5 +1,4 @@
 Release 2.0 TODOs:
-- Append short license info to all source files.
 - Rewrite all @throws SevenZipException JavaDoc tags (mention extended stacktrace)
 - Check @author, @since and @version in the JavaDoc of all files (source + test?)
 
@@ -27,6 +26,8 @@ Other TODOs:
 
 - Bind SetProperty("CRC", ...) for extraction of 7z archives and compression of XZ-archives
 
+- Test creation of password protected archives (7z, zip, ??)
+
 - Write tests to check, that all enumerations are mapped correctly
   - PropID
     - Add test to ensure "kpidLink"(c++) == "LINK" (java)
@@ -38,6 +39,8 @@ Other TODOs:
 
 - Add to integration tests
   - Test, that the release and not the debug compilation of the binary was used to build each platform jar
+
+- In callbacks: Delete all local refs (jniEnvInstance->DeleteLocalRef(...)) in error cases (return S_FALSE)
 
 Minor TODOs:
 - CallbackTester: Test more callbacks (extraction(todo) + compression(done))

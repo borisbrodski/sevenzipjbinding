@@ -8,7 +8,11 @@ package net.sf.sevenzipjbinding;
  */
 public interface IOutStream extends ISequentialOutStream, ISeekableStream {
     /**
-     * Set new size for the out stream
+     * Set new size for the out stream.<br>
+     * <br>
+     * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
+     * Synchronized implementation is recommended.
+     * 
      * 
      * @param newSize
      *            new size

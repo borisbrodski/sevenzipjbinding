@@ -163,7 +163,7 @@ public class VolumedArchiveInStream implements IInStream {
      * ${@inheritDoc}
      */
 
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         long newOffset;
         boolean proceedWithSeek = false;
         switch (seekOrigin) {
@@ -209,7 +209,7 @@ public class VolumedArchiveInStream implements IInStream {
      * ${@inheritDoc}
      */
 
-    public int read(byte[] data) throws SevenZipException {
+    public synchronized int read(byte[] data) throws SevenZipException {
         if (absoluteLength != -1 && absoluteOffset >= absoluteLength) {
             return 0;
         }

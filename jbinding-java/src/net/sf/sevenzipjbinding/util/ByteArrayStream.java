@@ -157,7 +157,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *             will be thrown, if <code>startPosition</code> is an invalid index for the array <code>data</code> or
      *             if <code>startPosition + length > data.length</code>.
      */
-    public int read(byte[] data, int startPosition, int length) {
+    public synchronized int read(byte[] data, int startPosition, int length) {
         if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
             throw new IllegalStateException("Invalid start position (" + startPosition + ") and length (" + length
                     + ")");
@@ -200,14 +200,14 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *         write operation will expand the byte array stream.<br>
      *         <code>false</code> -the current position is not at the end of the stream.
      */
-    public boolean isEOF() {
+    public synchronized boolean isEOF() {
         return getCurrentPosition() >= size;
     }
 
     /**
      * {@inheritDoc}
      */
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         long newOffset;
         switch (seekOrigin) {
         case SEEK_SET:
@@ -240,18 +240,18 @@ public class ByteArrayStream implements IInStream, IOutStream {
     /**
      * Set current pointer back to zero.
      */
-    public void rewind() {
+    public synchronized void rewind() {
         seekToPosition = 0;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setSize(long newSize) {
+    public synchronized void setSize(long newSize) {
         setSize(newSize, false);
     }
 
-    private void setSize(long newSize, boolean setCurrentPointerToTheEndIfExpanding) {
+    private synchronized void setSize(long newSize, boolean setCurrentPointerToTheEndIfExpanding) {
         if (newSize == 0) {
             truncate();
             return;
@@ -336,7 +336,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *             will be thrown, if <code>startPosition</code> is an invalid index for the array <code>data</code> or
      *             if <code>startPosition + length > data.length</code>.
      */
-    public int write(byte[] data, int startPosition, int length) {
+    public synchronized int write(byte[] data, int startPosition, int length) {
         if (startPosition < 0 || length < 0 || data.length < (startPosition + length)) {
             throw new IllegalStateException("Invalid start position (" + startPosition + ") and length (" + length
                     + ")");
@@ -419,7 +419,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * @throws IOException
      *             if I/O exception occurs
      */
-    public void writeToOutputStream(OutputStream outputStream, boolean closeStreamAfterWriting) throws IOException {
+    public synchronized void writeToOutputStream(OutputStream outputStream, boolean closeStreamAfterWriting)
+            throws IOException {
         try {
             int pos = 0;
             for (byte[] chunk : chunkList) {
@@ -448,7 +449,8 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * @throws IOException
      *             exceptions during reading and optional closing of input stream.
      */
-    public void writeFromInputStream(InputStream inputStream, boolean closeStreamAfterReading) throws IOException {
+    public synchronized void writeFromInputStream(InputStream inputStream, boolean closeStreamAfterReading)
+            throws IOException {
         performDelayedSeek();
 
         // A call to this method on empty stream (for example after truncate()) will be handled separately
@@ -513,7 +515,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
     /**
      * Clear all content of the stream
      */
-    public void truncate() {
+    public synchronized void truncate() {
         init();
     }
 
@@ -522,7 +524,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * 
      * @return the size of the byte array stream content in bytes.
      */
-    public int getSize() {
+    public synchronized int getSize() {
         return size;
     }
 
@@ -536,7 +538,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *         return EOF. All subsequent write operation will expand the stream until maximal size of stream will be
      *         reached. (See {@link #ByteArrayStream(int)}).
      */
-    public int getCurrentPosition() {
+    public synchronized int getCurrentPosition() {
         if (seekToPosition != -1) {
             return seekToPosition;
         }
@@ -549,7 +551,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      * 
      * @return new array with the entire content of the byte array stream
      */
-    public byte[] getBytes() {
+    public synchronized byte[] getBytes() {
         byte[] result = new byte[size];
         int pos = 0;
         for (byte[] chunk : chunkList) {
@@ -572,7 +574,7 @@ public class ByteArrayStream implements IInStream, IOutStream {
      *            <code>false</code> - don't copy byte array <code>newContent</code>. Any change to the byte array
      *            <code>newContent</code> will be reflected by the byte array stream.
      */
-    public void setBytes(byte[] newContent, boolean copyNewContentArray) {
+    public synchronized void setBytes(byte[] newContent, boolean copyNewContentArray) {
         init();
         byte[] content = newContent;
         int newContentLength = newContent.length;

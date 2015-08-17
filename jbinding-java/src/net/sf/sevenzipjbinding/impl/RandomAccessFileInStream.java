@@ -28,7 +28,7 @@ public class RandomAccessFileInStream implements IInStream {
     /**
      * {@inheritDoc}
      */
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         try {
             switch (seekOrigin) {
             case SEEK_SET:
@@ -56,7 +56,7 @@ public class RandomAccessFileInStream implements IInStream {
     /**
      * {@inheritDoc}
      */
-    public int read(byte[] data) throws SevenZipException {
+    public synchronized int read(byte[] data) throws SevenZipException {
         try {
             int read = randomAccessFile.read(data);
             if (read == -1) {
@@ -76,7 +76,7 @@ public class RandomAccessFileInStream implements IInStream {
      * @throws IOException
      *             see {@link RandomAccessFile#close()}
      */
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         randomAccessFile.close();
     }
 }

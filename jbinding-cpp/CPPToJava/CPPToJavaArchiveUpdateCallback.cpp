@@ -9,16 +9,18 @@
 
 
 LONG CPPToJavaArchiveUpdateCallback::freeResourcesForOutItem(JNIEnvInstance & jniEnvInstance) {
+    LONG result = S_OK;
+
     if (_outItem) {
         _iOutCreateCallback->freeResources(jniEnvInstance, _javaImplementation, _outItemLastIndex, _outItem);
         if (jniEnvInstance.exceptionCheck()) {
-            return S_FALSE;
+            result = S_FALSE;
         }
         jniEnvInstance->DeleteGlobalRef(_outItem);
         _outItem = NULL;
     }
 
-    return S_OK;
+    return result;
 }
 
 LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvInstance, int index) {
@@ -35,8 +37,11 @@ LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvI
 
     jobject outItem = _iOutCreateCallback->getItemInformation(jniEnvInstance, _javaImplementation, index, outItemFactory);
     if (jniEnvInstance.exceptionCheck()) {
+        jniEnvInstance->DeleteLocalRef(outItemFactory);
         return S_FALSE;
     }
+    jniEnvInstance->DeleteLocalRef(outItemFactory);
+
     if (outItem == NULL) {
         jniEnvInstance.reportError("IOutCreateCallback.getItemInformation() should return "
                 "a non-null reference to an item information object. Use outItemFactory to create an instance. "
@@ -134,7 +139,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
         jniEnvInstance->ReleaseStringChars((jstring)value, jChars);                                                 \
 
 	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                  \
-        cPropVariant = jni::Integer::intValue(jniEnvInstance, value);                                               \
+        cPropVariant = (Int32)jni::Integer::intValue(jniEnvInstance, value);                                               \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
         }                                                                                                           \
@@ -326,6 +331,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
         }
+        jniEnvInstance->DeleteLocalRef(inStreamImpl);
     } else {
         return S_FALSE;
     }

@@ -28,7 +28,7 @@ public class RandomAccessFileOutStream implements IOutStream {
     /**
      * {@inheritDoc}
      */
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         try {
             switch (seekOrigin) {
             case SEEK_SET:
@@ -56,7 +56,7 @@ public class RandomAccessFileOutStream implements IOutStream {
     /**
      * {@inheritDoc}
      */
-    public void setSize(long newSize) throws SevenZipException {
+    public synchronized void setSize(long newSize) throws SevenZipException {
         try {
             randomAccessFile.setLength(newSize);
         } catch (IOException exception) {
@@ -68,7 +68,7 @@ public class RandomAccessFileOutStream implements IOutStream {
     /**
      * {@inheritDoc}
      */
-    public int write(byte[] data) throws SevenZipException {
+    public synchronized int write(byte[] data) throws SevenZipException {
         try {
             randomAccessFile.write(data);
             return data.length;

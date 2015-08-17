@@ -110,8 +110,11 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
     if (result) {
         TRACE("Extraction error. Result: 0x" << std::hex << result);
-        jniNativeCallContext.reportError(result, "Error extracting %i element(s). Result: %X",
-                indicesCount, result);
+        if (indicesCount == -1) {
+            jniNativeCallContext.reportError(result, "Error extracting all items");
+        } else {
+            jniNativeCallContext.reportError(result, "Error extracting %i item(s)", indicesCount);
+        }
     } else {
         TRACE("Extraction succeeded")
     }

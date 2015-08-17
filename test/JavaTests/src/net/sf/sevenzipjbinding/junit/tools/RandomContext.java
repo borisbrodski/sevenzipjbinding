@@ -31,7 +31,7 @@ public class RandomContext implements IInStream {
     /**
      * ${@inheritDoc}
      */
-    public int read(byte[] data) throws SevenZipException {
+    public synchronized int read(byte[] data) throws SevenZipException {
         byte[] buffer = new byte[1];
         for (int i = 0; i < data.length; i++, currentPosition++) {
             if (currentPosition >= size) {
@@ -67,7 +67,7 @@ public class RandomContext implements IInStream {
     /**
      * ${@inheritDoc}
      */
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         switch (seekOrigin) {
         case SEEK_SET:
             currentPosition = offset;

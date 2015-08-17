@@ -26,7 +26,7 @@ public class ZipInStream implements IInStream {
         inputStream = zip.getInputStream(zipEntry);
     }
 
-    public long seek(long offset, int seekOrigin) throws SevenZipException {
+    public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
         switch (seekOrigin) {
         case SEEK_SET:
             absoluteShouldOffset = offset;
@@ -43,7 +43,7 @@ public class ZipInStream implements IInStream {
         return absoluteShouldOffset;
     }
 
-    public int read(byte[] data) throws SevenZipException {
+    public synchronized int read(byte[] data) throws SevenZipException {
         if (absoluteShouldOffset >= size) {
             return 0;
         }
@@ -91,7 +91,7 @@ public class ZipInStream implements IInStream {
         return true;
     }
 
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         inputStream.close();
         zip.close();
     }

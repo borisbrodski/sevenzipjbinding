@@ -26,7 +26,11 @@ public interface ISeekableStream {
     public static final int SEEK_END = 2;
 
     /**
-     * Move current location pointer to the new offset depending on <code>seekOrigin</code>
+     * Move current location pointer to the new offset depending on <code>seekOrigin</code>.<br>
+     * <br>
+     * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
+     * Synchronized implementation is recommended.
+     * 
      * 
      * @param offset
      *            absolute or relative offset in the stream to move to

@@ -14,7 +14,11 @@ public interface ISequentialInStream extends Closeable {
      * 0 should be returned. If <code>data.length != 0</code>, then return value 0 indicates end-of-stream (EOF). This
      * means no more bytes can be read from the stream. <br>
      * This function is allowed to read less than number of remaining bytes in stream and less then
-     * <code>data.length</code>. You must call <code>read()</code> function in loop, if you need exact amount of data.
+     * <code>data.length</code>. You must call <code>read()</code> function in loop, if you need exact amount of data.<br>
+     * <br>
+     * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
+     * Synchronized implementation is recommended.
+     * 
      * 
      * @param data
      *            buffer to get read data
