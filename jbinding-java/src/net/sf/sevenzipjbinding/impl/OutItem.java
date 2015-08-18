@@ -9,7 +9,6 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.IOutItemZip;
-import net.sf.sevenzipjbinding.ISequentialInStream;
 
 /**
  * Implementation of all <code>IOutItemXxx</code> interfaces. Contains information about a single archive item required
@@ -34,9 +33,6 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
  */
 public class OutItem implements IOutItemAllFormats {
     private int index;
-    private Object userData;
-
-    private ISequentialInStream dataStream;
 
     private Long dataSize;
     private Integer propertyAttributes;
@@ -75,22 +71,8 @@ public class OutItem implements IOutItemAllFormats {
     /**
      * {@inheritDoc}
      */
-    public Object getUserData() {
-        return userData;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public ArchiveFormat getArchiveFormat() {
         return outArchive.getArchiveFormat();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setUserData(Object userData) {
-        this.userData = userData;
     }
 
     /**
@@ -205,20 +187,6 @@ public class OutItem implements IOutItemAllFormats {
      */
     public void setPropertyCreationTime(Date creationTime) {
         this.propertyCreationTime = creationTime;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public ISequentialInStream getDataStream() {
-        return dataStream;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setDataStream(ISequentialInStream stream) {
-        this.dataStream = stream;
     }
 
     /**

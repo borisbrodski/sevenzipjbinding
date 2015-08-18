@@ -48,10 +48,6 @@ public class Compress {
 
             return item;
         }
-
-        // Nothing to close
-        public void freeResources(int index, IOutItemZip outItem) throws SevenZipException {
-        }
     }
 
     private byte[][] contents;

@@ -8,6 +8,7 @@ import java.util.Date;
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -43,8 +44,6 @@ public class CompressMessage {
                 OutItemFactory<IOutItemZip> outItemFactory) {
             IOutItemZip outItem = outItemFactory.createOutItem();
 
-            // Convert the message into the sequential byte stream
-            outItem.setDataStream(new ByteArrayStream(/*f*/bytesToCompress/**/, true));
             outItem.setDataSize((long) /*f*/bytesToCompress/**/./*f*/length/**/);
 
             // Set name of the file in the archive
@@ -57,8 +56,8 @@ public class CompressMessage {
             return outItem;
         }
 
-        public void freeResources(int index, IOutItemZip outItem) {
-            // no need to close ByteArrayStream
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return new ByteArrayStream(/*f*/bytesToCompress/**/, true);
         }
     }
 

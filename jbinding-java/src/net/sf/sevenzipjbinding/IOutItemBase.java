@@ -46,44 +46,6 @@ public interface IOutItemBase {
     public int getIndex();
 
     /**
-     * Return some custom user data associates with this object.
-     * 
-     * @return custom data previously saved by the user
-     * @see #getUserData()
-     */
-    public Object getUserData();
-
-    /**
-     * Set some custom user data associates with this object.
-     * 
-     * @param userData
-     *            custom data
-     * @see #getUserData()
-     */
-    public void setUserData(Object userData);
-
-    /**
-     * Return sequential in-stream for the archive item to read and compress the content.<br>
-     * <br>
-     * <i>Note:</i> {@link ISequentialInStream} interface doesn't require closing, but in most real world applications a
-     * special care should be taken to properly close corresponding implementation objects.
-     * 
-     * @return sequential in-stream
-     */
-    public ISequentialInStream getDataStream();
-
-    /**
-     * Set sequential in-stream for the archive item to read and compress the content.<br>
-     * <br>
-     * <i>Note:</i> {@link ISequentialInStream} interface doesn't require closing, but in most real world applications a
-     * special care should be taken to properly close corresponding implementation objects.
-     * 
-     * @param stream
-     *            sequential in-stream
-     */
-    public void setDataStream(ISequentialInStream stream);
-
-    /**
      * Get property {@link PropID#SIZE}.
      * 
      * @see PropID#SIZE

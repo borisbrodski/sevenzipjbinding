@@ -63,27 +63,14 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
     public T getItemInformation(int index, OutItemFactory<T> outItemFactory) throws SevenZipException;
 
     /**
-     * Callback method to free or close user specific resources associated with the archive item with index
-     * <code>index</code>. <br>
-     * <br>
-     * <i>Note:</i> Use {@link IOutItemBase#setUserData(Object)} method to pass additional parameters to this method.
+     * Return sequential in-stream for the archive item with index <code>index</code> to read and compress the content
+     * of the item.
      * 
      * @param index
-     *            0-based index of the item get data. Same index returned by {@link IOutItemBase#getIndex()} of the
-     *            <code>outItem</code> object.
-     * @param outItem
-     *            instance of the {@link IOutItemBase} (actually type E) returned by the corresponding
-     *            {@link #getItemInformation(int, OutItemFactory)} method call
+     *            index of the item to read content of (starting from 0)
+     * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>
      * @throws SevenZipException
-     *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
-     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
-     *             first and last thrown exceptions will be saved and thrown later on from the originally called method
-     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
-     *             four exceptions depending on the situation can be saved for further analysis. See
-     *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
-     * 
-     * @see IOutCreateCallback#getItemInformation(int, OutItemFactory)
-     * @see IOutItemBase#setUserData(Object)
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public void freeResources(int index, T outItem) throws SevenZipException;
+    public ISequentialInStream getStream(int index) throws SevenZipException;
 }

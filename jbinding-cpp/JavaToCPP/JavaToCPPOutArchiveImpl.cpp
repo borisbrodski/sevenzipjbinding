@@ -70,9 +70,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 				(int) numberOfItems);
 	}
 
-	// No need to check HRESULT. If there was an error, the corresponding exception was already thrown.
-	cppToJavaArchiveUpdateCallback->freeResourcesForOutItem(jniEnvInstance);
-
+	cppToJavaArchiveUpdateCallback->freeOutItem(jniEnvInstance);
 }
 
 /*

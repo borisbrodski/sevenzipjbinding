@@ -67,7 +67,7 @@ public:
         return CPPToJavaProgress::Release();
     }
 
-    LONG freeResourcesForOutItem(JNIEnvInstance & jniEnvInstance);
+    void freeOutItem(JNIEnvInstance & jniEnvInstance);
 
 
 private:

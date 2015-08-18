@@ -3,7 +3,6 @@ package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -13,6 +12,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveBZip2;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemBZip2;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -53,18 +53,13 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
 
             IOutItemBZip2 outItem = outItemFactory.createOutItem();
 
-            outItem.setDataStream(byteArrayStream);
             outItem.setDataSize((long) byteArrayStream.getSize());
 
             return outItem;
         }
 
-        public void freeResources(int index, IOutItemBZip2 outItem) throws SevenZipException {
-            try {
-                outItem.getDataStream().close();
-            } catch (IOException e) {
-                throw new SevenZipException("Error closing data stream for item (index: " + index + ")");
-            }
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return virtualContent.getItemStream(index);
         }
     }
 

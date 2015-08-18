@@ -12,6 +12,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -49,8 +50,6 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
 
             IOutItemTar outItem = outItemFactory.createOutItem();
 
-            outItem.setDataStream(byteArrayStream);
-
             outItem.setDataSize((long) byteArrayStream.getSize());
             outItem.setPropertyUser("me");
             outItem.setPropertyGroup("developers");
@@ -60,9 +59,10 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
             return outItem;
         }
 
-        public void freeResources(int index, IOutItemTar outItem) throws SevenZipException {
-
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return virtualContent.getItemStream(index);
         }
+
     }
 
     VirtualContent virtualContent;

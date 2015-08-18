@@ -22,6 +22,7 @@ import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemTar;
 import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -33,6 +34,9 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
  * Abstract class for testing single file archive updates.
+ *
+ * @param <T>
+ *            type of the out item class
  *
  * @author Boris Brodski
  * @version 9.13-2.00
@@ -141,7 +145,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
         }
 
-        protected <T extends IOutItemBase> T createOutItem(int index, OutItemFactory<T> outItemFactory)
+        protected <T1 extends IOutItemBase> T1 createOutItem(int index, OutItemFactory<T1> outItemFactory)
                 throws SevenZipException {
             Change change = changeLog.changes[index];
             if (change != null && change.oldIndex != null) {
@@ -169,7 +173,6 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
             outItem.setUpdateIsNewData(change != null && change.newContent != null);
 
             if (change != null && change.newContent != null) {
-                outItem.setDataStream(new ByteArrayStream(change.newContent, false));
                 outItem.setDataSize((long) change.newContent.length);
             }
 
@@ -213,9 +216,11 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
             }
         }
 
-        public void freeResources(int index, IOutItemAllFormats outItem) throws SevenZipException {
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            Change change = changeLog.changes[index];
+            assertTrue(change != null && change.newContent != null);
+            return new ByteArrayStream(change.newContent, false);
         }
-
     }
 
     protected abstract IOutCreateCallback<T> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)

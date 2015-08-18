@@ -10,6 +10,7 @@ import java.util.Random;
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -40,7 +41,6 @@ public class Compress {
                 OutItemFactory<IOutItemZip> outItemFactory) {
             IOutItemZip item = outItemFactory.createOutItem();
 
-            item.setDataStream(new ByteArrayStream(/*f*/contents/**/[index], true));
             item.setDataSize((long) /*f*/contents/**/[index].length);
 
             item.setPropertyPath(/*f*/filenames/**/[/*f*/index/**/]);
@@ -52,8 +52,8 @@ public class Compress {
             return item;
         }
 
-        // Nothing to close
-        public void freeResources(int index, IOutItemZip outItem) throws SevenZipException {
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return new ByteArrayStream(/*f*/contents/**/[index], true);
         }
     }
 

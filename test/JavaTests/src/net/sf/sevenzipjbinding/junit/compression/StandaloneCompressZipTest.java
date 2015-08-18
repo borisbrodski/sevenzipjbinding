@@ -12,6 +12,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -51,7 +52,6 @@ public class StandaloneCompressZipTest extends JUnitNativeTestBase {
 
             IOutItemZip outItem = outItemFactory.createOutItem();
 
-            outItem.setDataStream(byteArrayStream);
             outItem.setDataSize((long) byteArrayStream.getSize());
             outItem.setPropertyPath(virtualContent.getItemPath(index));
             outItem.setPropertyLastModificationTime(substructDate(DATE, 1));
@@ -61,9 +61,10 @@ public class StandaloneCompressZipTest extends JUnitNativeTestBase {
             return outItem;
         }
 
-        public void freeResources(int index, IOutItemZip outItem) throws SevenZipException {
-
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return virtualContent.getItemStream(index);
         }
+
     }
 
     static final Date DATE = new Date();

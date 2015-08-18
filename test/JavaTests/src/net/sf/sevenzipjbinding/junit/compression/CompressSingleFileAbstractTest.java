@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
     protected abstract class SingleFileCreateArchiveCallback implements IOutCreateCallback<T> {
-        protected ISequentialInStream getStream(int index) {
+        public ISequentialInStream getStream(int index) throws SevenZipException {
             assertEquals(0, index);
             return getTestContext().randomContext;
         }
@@ -48,9 +48,6 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
 
         public void setCompleted(long completeValue) throws SevenZipException {
 
-        }
-
-        public void freeResources(int index, T outItem) throws SevenZipException {
         }
 
         protected void setAllProperties(IOutItemAllFormats outItem, TestContext testContext) {
@@ -92,7 +89,6 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
             TestContext testContext = getTestContext();
 
             outItem.setDataSize(Long.valueOf(testContext.randomContext.getSize()));
-            outItem.setDataStream(getStream(outItem.getIndex()));
         }
 
         protected void setPropertiesFor7z(IOutItem7z outItem, TestContext testContext) {

@@ -127,8 +127,8 @@ JT_BEGIN_INTERFACE(IOutCreateCallback)
 	// public E getItemInformation(int index, OutItemFactory<E> outItemFactory) throws SevenZipException;
 	JT_INTERFACE_METHOD_OBJECT(JAVA_IOUT_ITEM_BASE_T, getItemInformation, JT_INT(index, JT_PARAM(Object, JAVA_OUT_ITEM_FACTORY_T, outItemFactory, _)))
 
-	// public void freeResources(int index, E outItem)
-	JT_INTERFACE_METHOD(Void, freeResources, JT_INT(index, JT_PARAM(Object, JAVA_IOUT_ITEM_BASE_T, outItem, _)))
+	// public ISequentialInStream getStream(int index) throws SevenZipException;
+	JT_INTERFACE_METHOD_OBJECT(JAVA_ISEQUENTIAL_IN_STREAM_T, getStream, JT_INT(index, _))
 JT_END_INTERFACE
 
 JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItemFactory)
@@ -141,7 +141,6 @@ JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItem)
 
     JT_FIELD_OBJECT(index, JAVA_INTEGER_T)
 
-    JT_FIELD_OBJECT(dataStream, JAVA_ISEQUENTIAL_IN_STREAM_T)
     JT_FIELD_OBJECT(dataSize, JAVA_LONG_T)
 
     JT_FIELD_OBJECT(propertyAttributes, JAVA_INTEGER_T)

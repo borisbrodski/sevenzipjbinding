@@ -32,6 +32,7 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.IOutItemTar;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -125,10 +126,6 @@ public class VirtualContent {
 
         }
 
-        public void freeResources(int index, IOutItemAllFormats outItem) throws SevenZipException {
-
-        }
-
         public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
                 throws SevenZipException {
 
@@ -191,11 +188,14 @@ public class VirtualContent {
                 throw new RuntimeException("Unknown ArchiveFormat: " + outItem.getArchiveFormat());
             }
 
-            outItem.setDataStream(byteArrayStream);
             outItem.setDataSize((long) item.blob.getSize());
             outItem.setPropertyPath(item.path);
 
             return outItem;
+        }
+
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return itemList.get(index).blob;
         }
     }
 

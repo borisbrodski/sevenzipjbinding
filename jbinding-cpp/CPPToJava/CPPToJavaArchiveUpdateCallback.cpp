@@ -8,19 +8,11 @@
 #include "CodecTools.h"
 
 
-LONG CPPToJavaArchiveUpdateCallback::freeResourcesForOutItem(JNIEnvInstance & jniEnvInstance) {
-    LONG result = S_OK;
-
+void CPPToJavaArchiveUpdateCallback::freeOutItem(JNIEnvInstance & jniEnvInstance) {
     if (_outItem) {
-        _iOutCreateCallback->freeResources(jniEnvInstance, _javaImplementation, _outItemLastIndex, _outItem);
-        if (jniEnvInstance.exceptionCheck()) {
-            result = S_FALSE;
-        }
         jniEnvInstance->DeleteGlobalRef(_outItem);
         _outItem = NULL;
     }
-
-    return result;
 }
 
 LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvInstance, int index) {
@@ -28,7 +20,7 @@ LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvI
         return S_OK;
     }
 
-    freeResourcesForOutItem(jniEnvInstance);
+    freeOutItem(jniEnvInstance);
 
     jobject outItemFactory = jni::OutItemFactory::newInstance(jniEnvInstance, _outArchive, index);
     if (jniEnvInstance.exceptionCheck()) {
@@ -305,14 +297,9 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
         return S_OK;
     }
 
-    LONG result = getOrUpdateOutItem(jniEnvInstance, index);
-    if (result) {
-        return result;
-    }
-
-    jobject inStreamImpl = jni::OutItem::dataStream_Get(jniEnvInstance, _outItem);
-    if (!inStreamImpl) {
-        jniEnvInstance.reportError("The attribute 'dataStream' of the corresponding IOutItem* class shouldn't be null (index=%i)", index);
+    jobject inStreamImpl = _iOutCreateCallback->getStream(jniEnvInstance, _javaImplementation,
+            (jint) index);
+    if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
 

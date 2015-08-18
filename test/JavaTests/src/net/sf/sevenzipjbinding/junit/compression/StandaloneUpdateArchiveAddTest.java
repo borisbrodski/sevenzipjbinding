@@ -12,6 +12,7 @@ import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -53,15 +54,14 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
                 outItem.setPropertyLastModificationTime(new Date());
 
                 outItem.setDataSize((long) blob.length);
-                outItem.setDataStream(new ByteArrayStream(blob, false));
 
                 return outItem;
             }
             return outItemFactory.createOutItem(index);
         }
 
-        public void freeResources(int index, IOutItem7z outItem) throws SevenZipException {
-
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return new ByteArrayStream(blob, false);
         }
     }
 
