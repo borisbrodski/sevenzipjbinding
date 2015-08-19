@@ -28,6 +28,8 @@ Other TODOs:
 
 - Test creation of password protected archives (7z, zip, ??)
 
+- Test: Create archives with unicode symbols in PATH 
+
 - Write tests to check, that all enumerations are mapped correctly
   - PropID
     - Add test to ensure "kpidLink"(c++) == "LINK" (java)
