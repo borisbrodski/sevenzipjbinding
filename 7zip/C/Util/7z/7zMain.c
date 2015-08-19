@@ -1,15 +1,14 @@
 /* 7zMain.c - Test application for 7z Decoder
-2010-03-12 : Igor Pavlov : Public domain */
+2010-10-28 : Igor Pavlov : Public domain */
 
 #include <stdio.h>
 #include <string.h>
 
 #include "../../7z.h"
+#include "../../7zAlloc.h"
 #include "../../7zCrc.h"
 #include "../../7zFile.h"
 #include "../../7zVersion.h"
-
-#include "7zAlloc.h"
 
 #ifndef USE_WINDOWS_FILE
 /* for mkdir */
@@ -19,12 +18,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 #endif
-#endif
-
-#ifdef _WIN32
-#define CHAR_PATH_SEPARATOR '\\'
-#else
-#define CHAR_PATH_SEPARATOR '/'
 #endif
 
 static ISzAlloc g_Alloc = { SzAlloc, SzFree };
@@ -104,7 +97,7 @@ static SRes Utf16_To_Utf8Buf(CBuf *dest, const UInt16 *src, size_t srcLen)
 }
 #endif
 
-static WRes Utf16_To_Char(CBuf *buf, const UInt16 *s, int fileMode)
+static SRes Utf16_To_Char(CBuf *buf, const UInt16 *s, int fileMode)
 {
   int len = 0;
   for (len = 0; s[len] != '\0'; len++);
@@ -117,7 +110,14 @@ static WRes Utf16_To_Char(CBuf *buf, const UInt16 *s, int fileMode)
     {
       char defaultChar = '_';
       BOOL defUsed;
-      int numChars = WideCharToMultiByte(fileMode ? (AreFileApisANSI() ? CP_ACP : CP_OEMCP) : CP_OEMCP,
+      int numChars = WideCharToMultiByte(fileMode ?
+          (
+          #ifdef UNDER_CE
+          CP_ACP
+          #else
+          AreFileApisANSI() ? CP_ACP : CP_OEMCP
+          #endif
+          ) : CP_OEMCP,
           0, s, len, (char *)buf->data, size, &defaultChar, &defUsed);
       if (numChars == 0 || numChars >= size)
         return SZ_ERROR_FAIL;
@@ -172,15 +172,16 @@ static WRes OutFile_OpenUtf16(CSzFile *p, const UInt16 *name)
   #endif
 }
 
-static void PrintString(const UInt16 *s)
+static SRes PrintString(const UInt16 *s)
 {
   CBuf buf;
+  SRes res;
   Buf_Init(&buf);
-  if (Utf16_To_Char(&buf, s, 0) == 0)
-  {
-    printf("%s", buf.data);
-    Buf_Free(&buf, &g_Alloc);
-  }
+  res = Utf16_To_Char(&buf, s, 0);
+  if (res == SZ_OK)
+    fputs((const char *)buf.data, stdout);
+  Buf_Free(&buf, &g_Alloc);
+  return res;
 }
 
 static void UInt64ToStr(UInt64 value, char *s)
@@ -398,16 +399,21 @@ int MY_CDECL main(int numargs, char *args[])
           }
           
           printf("%s %s %10s  ", t, attr, s);
-          PrintString(temp);
+          res = PrintString(temp);
+          if (res != SZ_OK)
+            break;
           if (f->IsDir)
             printf("/");
           printf("\n");
           continue;
         }
-        printf(testCommand ?
+        fputs(testCommand ?
             "Testing    ":
-            "Extracting ");
-        PrintString(temp);
+            "Extracting ",
+            stdout);
+        res = PrintString(temp);
+        if (res != SZ_OK)
+          break;
         if (f->IsDir)
           printf("/");
         else

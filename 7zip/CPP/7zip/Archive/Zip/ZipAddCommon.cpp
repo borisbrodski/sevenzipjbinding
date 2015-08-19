@@ -53,18 +53,17 @@ HRESULT CLzmaEncoder::SetCoderProperties(const PROPID *propIDs, const PROPVARIAN
     EncoderSpec = new NCompress::NLzma::CEncoder;
     Encoder = EncoderSpec;
   }
-  CSequentialOutStreamImp *outStreamSpec = new CSequentialOutStreamImp;
+  CBufPtrSeqOutStream *outStreamSpec = new CBufPtrSeqOutStream;
   CMyComPtr<ISequentialOutStream> outStream(outStreamSpec);
-  outStreamSpec->Init();
+  outStreamSpec->Init(Header + 4, kLzmaPropsSize);
   RINOK(EncoderSpec->SetCoderProperties(propIDs, props, numProps));
   RINOK(EncoderSpec->WriteCoderProperties(outStream));
-  if (outStreamSpec->GetSize() != kLzmaPropsSize)
+  if (outStreamSpec->GetPos() != kLzmaPropsSize)
     return E_FAIL;
   Header[0] = MY_VER_MAJOR;
   Header[1] = MY_VER_MINOR;
   Header[2] = kLzmaPropsSize;
   Header[3] = 0;
-  memcpy(Header + 4, outStreamSpec->GetBuffer(), kLzmaPropsSize);
   return S_OK;
 }
 
@@ -146,6 +145,7 @@ HRESULT CAddCommon::Compress(
     opRes.ExtractVersion = NFileHeader::NCompressionMethod::kExtractVersion_Default;
     if (inCrcStreamSpec != 0)
       RINOK(inCrcStreamSpec->Seek(0, STREAM_SEEK_SET, NULL));
+    RINOK(outStream->SetSize(0));
     RINOK(outStream->Seek(0, STREAM_SEEK_SET, NULL));
     if (_options.PasswordIsDefined)
     {
@@ -218,7 +218,7 @@ HRESULT CAddCommon::Compress(
               _options.Algo,
               _options.DicSize,
               _options.NumFastBytes,
-              (BSTR)(const wchar_t *)_options.MatchFinder,
+              const_cast<BSTR>((const wchar_t *)_options.MatchFinder),
               _options.NumMatchFinderCycles
             };
             PROPID propIDs[] =
@@ -373,7 +373,7 @@ HRESULT CAddCommon::Compress(
     RINOK(outStream->Seek(0, STREAM_SEEK_CUR, &opRes.PackSize));
   }
   opRes.Method = method;
-  return outStream->SetSize(opRes.PackSize);
+  return S_OK;
 }
 
 }}

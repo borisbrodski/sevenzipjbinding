@@ -78,6 +78,22 @@ public:
     operator[](j) = temp;
   }
 
+  int FindInSorted(const T& item, int left, int right) const
+  {
+    while (left != right)
+    {
+      int mid = (left + right) / 2;
+      const T& midValue = (*this)[mid];
+      if (item == midValue)
+        return mid;
+      if (item < midValue)
+        right = mid;
+      else
+        left = mid + 1;
+    }
+    return -1;
+  }
+
   int FindInSorted(const T& item) const
   {
     int left = 0, right = Size();
@@ -166,7 +182,7 @@ class CObjectVector: public CPointerVector
 public:
   CObjectVector() {};
   ~CObjectVector() { Clear(); };
-  CObjectVector(const CObjectVector &v) { *this = v; }
+  CObjectVector(const CObjectVector &v): CPointerVector() { *this = v; }
   CObjectVector& operator=(const CObjectVector &v)
   {
     Clear();

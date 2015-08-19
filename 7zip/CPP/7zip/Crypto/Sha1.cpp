@@ -112,11 +112,10 @@ void CContextBase::PrepareBlock(UInt32 *block, unsigned size) const
   block[curBufferPos++] = (UInt32)(lenInBits);
 }
 
-void CContext::Update(Byte *data, size_t size, bool rar350Mode)
+void CContext::Update(const Byte *data, size_t size)
 {
-  bool returnRes = false;
   unsigned curBufferPos = _count2;
-  while (size-- > 0)
+  while (size--)
   {
     int pos = (int)(curBufferPos & 3);
     if (pos == 0)
@@ -124,9 +123,25 @@ void CContext::Update(Byte *data, size_t size, bool rar350Mode)
     _buffer[curBufferPos >> 2] |= ((UInt32)*data++) << (8 * (3 - pos));
     if (++curBufferPos == kBlockSize)
     {
-/*
-      Applied bug fix from https://sourceforge.net/tracker/?func=detail&aid=3314311&group_id=111810&atid=660493
+      curBufferPos = 0;
+      CContextBase::UpdateBlock(_buffer, false);
+    }
+  }
+  _count2 = curBufferPos;
+}
 
+void CContext::UpdateRar(Byte *data, size_t size, bool rar350Mode)
+{
+  bool returnRes = false;
+  unsigned curBufferPos = _count2;
+  while (size--)
+  {
+    int pos = (int)(curBufferPos & 3);
+    if (pos == 0)
+      _buffer[curBufferPos >> 2] = 0;
+    _buffer[curBufferPos >> 2] |= ((UInt32)*data++) << (8 * (3 - pos));
+    if (++curBufferPos == kBlockSize)
+    {
       curBufferPos = 0;
       CContextBase::UpdateBlock(_buffer, returnRes);
       if (returnRes)
@@ -137,18 +152,6 @@ void CContext::Update(Byte *data, size_t size, bool rar350Mode)
           data[i * 4 + 1 - kBlockSize] = (Byte)(d >>  8);
           data[i * 4 + 2 - kBlockSize] = (Byte)(d >> 16);
           data[i * 4 + 3 - kBlockSize] = (Byte)(d >> 24);
-        }
-*/
-      curBufferPos = 0;
-      CContextBase::UpdateBlock(_buffer, returnRes);
-      if (returnRes)
-        for (unsigned i = 0; i < kBlockSizeInWords; i++)
-        {
-        UInt32 d = _buffer[i];
-        data[(int)i * 4 + 0 - (int)kBlockSize] = (Byte)(d);
-          data[(int)i * 4 + 1 - (int)kBlockSize] = (Byte)(d >> 8);
-          data[(int)i * 4 + 2 - (int)kBlockSize] = (Byte)(d >> 16);
-          data[(int)i * 4 + 3 - (int)kBlockSize] = (Byte)(d >> 24);
         }
       returnRes = rar350Mode;
     }
@@ -194,7 +197,7 @@ void CContext::Final(Byte *digest)
 
 void CContext32::Update(const UInt32 *data, size_t size)
 {
-  while (size-- > 0)
+  while (size--)
   {
     _buffer[_count2++] = *data++;
     if (_count2 == kBlockSizeInWords)

@@ -9,6 +9,7 @@
 #include "Windows/FileDir.h"
 #include "Windows/FileFind.h"
 #include "Windows/Process.h"
+#include "Windows/PropVariant.h"
 #include "Windows/Thread.h"
 
 #include "../Common/ExtractingFilePath.h"
@@ -113,6 +114,46 @@ HRESULT CPanel::OpenItemAsArchive(IInStream *inStream,
 
   _flatMode = _flatModeForArc;
 
+  CMyComPtr<IGetFolderArcProps> getFolderArcProps;
+  _folder.QueryInterface(IID_IGetFolderArcProps, &getFolderArcProps);
+  if (getFolderArcProps)
+  {
+    CMyComPtr<IFolderArcProps> arcProps;
+    getFolderArcProps->GetFolderArcProps(&arcProps);
+    if (arcProps)
+    {
+      UString s;
+      UInt32 numLevels;
+      if (arcProps->GetArcNumLevels(&numLevels) != S_OK)
+        numLevels = 0;
+      for (UInt32 level2 = 0; level2 < numLevels; level2++)
+      {
+        UInt32 level = numLevels - 1 - level2;
+        PROPID propIDs[] = { kpidError, kpidPath, kpidType } ;
+        UString values[3];
+        for (Int32 i = 0; i < 3; i++)
+        {
+          CMyComBSTR name;
+          NCOM::CPropVariant prop;
+          if (arcProps->GetArcProp(level, propIDs[i], &prop) != S_OK)
+            continue;
+          if (prop.vt != VT_EMPTY)
+            values[i] = (prop.vt == VT_BSTR) ? prop.bstrVal : L"?";
+        }
+        if (!values[0].IsEmpty())
+        {
+          if (!s.IsEmpty())
+            s += L"--------------------\n";
+          s += values[0]; s += L"\n\n[";
+          s += values[2]; s += L"] ";
+          s += values[1]; s += L"\n";
+        }
+      }
+      if (!s.IsEmpty())
+        MessageBox(s);
+    }
+  }
+
   return S_OK;
 }
 
@@ -163,38 +204,49 @@ HRESULT CPanel::OpenParentArchiveFolder()
   return S_OK;
 }
 
-static const wchar_t *kStartExtensions[] =
-{
+static const char *kStartExtensions =
   #ifdef UNDER_CE
-  L"cab",
+  " cab"
   #endif
-  L"exe", L"bat", L"com",
-  L"chm",
-  L"msi", L"doc", L"xls", L"ppt", L"pps", L"wps", L"wpt", L"wks", L"xlr", L"wdb",
+  " exe bat com"
+  " chm"
+  " msi doc xls ppt pps wps wpt wks xlr wdb vsd pub"
 
-  L"docx", L"docm", L"dotx", L"dotm", L"xlsx", L"xlsm", L"xltx", L"xltm", L"xlsb",
-  L"xlam", L"pptx", L"pptm", L"potx", L"potm", L"ppam", L"ppsx", L"ppsm", L"xsn",
-  L"msg",
-  L"dwf",
+  " docx docm dotx dotm xlsx xlsm xltx xltm xlsb xps"
+  " xlam pptx pptm potx potm ppam ppsx ppsm xsn"
+  " mpp"
+  " msg"
+  " dwf"
 
-  L"flv", L"swf",
+  " flv swf"
   
-  L"odt", L"ods",
-  L"wb3",
-  L"pdf"
-};
+  " odt ods"
+  " wb3"
+  " pdf"
+  " ";
 
-static bool DoItemAlwaysStart(const UString &name)
+static bool FindExt(const char *p, const UString &name)
 {
   int extPos = name.ReverseFind('.');
   if (extPos < 0)
     return false;
   UString ext = name.Mid(extPos + 1);
   ext.MakeLower();
-  for (int i = 0; i < sizeof(kStartExtensions) / sizeof(kStartExtensions[0]); i++)
-    if (ext.Compare(kStartExtensions[i]) == 0)
+  AString ext2 = UnicodeStringToMultiByte(ext);
+  for (int i = 0; p[i] != 0;)
+  {
+    int j;
+    for (j = i; p[j] != ' '; j++);
+    if (ext2.Length() == j - i && memcmp(p + i, (const char *)ext2, ext2.Length()) == 0)
       return true;
+    i = j + 1;
+  }
   return false;
+}
+
+static bool DoItemAlwaysStart(const UString &name)
+{
+  return FindExt(kStartExtensions, name);
 }
 
 static UString GetQuotedString(const UString &s)
@@ -429,7 +481,7 @@ HRESULT CThreadCopyFrom::ProcessVirt()
   fileNames.Add(Name);
   fileNamePointers.Add(fileNames[0]);
   return FolderOperations->CopyFrom(PathPrefix, &fileNamePointers.Front(), fileNamePointers.Size(), UpdateCallback);
-};
+}
       
 HRESULT CPanel::OnOpenItemChanged(const UString &folderPath, const UString &itemName,
     bool usePassword, const UString &password)

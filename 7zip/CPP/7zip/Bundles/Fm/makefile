@@ -160,6 +160,7 @@ AR_OBJS = \
   $O\ArjHandler.obj \
   $O\Bz2Handler.obj \
   $O\CpioHandler.obj \
+  $O\CramfsHandler.obj \
   $O\DebHandler.obj \
   $O\DeflateProps.obj \
   $O\DmgHandler.obj \
@@ -178,6 +179,7 @@ AR_OBJS = \
   $O\PpmdHandler.obj \
   $O\RpmHandler.obj \
   $O\SplitHandler.obj \
+  $O\SquashfsHandler.obj \
   $O\SwfHandler.obj \
   $O\VhdHandler.obj \
   $O\XarHandler.obj \
@@ -322,6 +324,7 @@ UDF_OBJS = \
 
 WIM_OBJS = \
   $O\WimHandler.obj \
+  $O\WimHandlerOut.obj \
   $O\WimIn.obj \
   $O\WimRegister.obj \
 
@@ -357,7 +360,6 @@ COMPRESS_OBJS = \
   $O\Deflate64Register.obj \
   $O\DeflateDecoder.obj \
   $O\DeflateEncoder.obj \
-  $O\DeflateNsisRegister.obj \
   $O\DeflateRegister.obj \
   $O\DeltaFilter.obj \
   $O\ImplodeDecoder.obj \

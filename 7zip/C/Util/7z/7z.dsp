@@ -92,6 +92,14 @@ SOURCE=..\..\7z.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\7zAlloc.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\7zAlloc.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\7zBuf.c
 # End Source File
 # Begin Source File
@@ -138,6 +146,10 @@ SOURCE=..\..\Bcj2.c
 # Begin Source File
 
 SOURCE=..\..\Bcj2.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Bra.c
 # End Source File
 # Begin Source File
 
@@ -194,14 +206,6 @@ SOURCE=..\..\Ppmd7Dec.c
 SOURCE=..\..\Types.h
 # End Source File
 # End Group
-# Begin Source File
-
-SOURCE=.\7zAlloc.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\7zAlloc.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\7zMain.c

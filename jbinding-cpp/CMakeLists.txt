@@ -321,7 +321,6 @@ IF(MINGW)
         ${_7ZIP_SRC}/CPP/7zip/Compress/CopyCoder.cpp
         ${_7ZIP_SRC}/CPP/7zip/Compress/CopyRegister.cpp
         ${_7ZIP_SRC}/CPP/7zip/Compress/Deflate64Register.cpp
-        ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateNsisRegister.cpp
         ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
         ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
         ${_7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp

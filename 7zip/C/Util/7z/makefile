@@ -4,6 +4,7 @@ CFLAGS = $(CFLAGS) -D_7ZIP_PPMD_SUPPPORT
 PROG = 7zDec.exe
 
 C_OBJS = \
+  $O\7zAlloc.obj \
   $O\7zBuf.obj \
   $O\7zBuf2.obj \
   $O\7zCrc.obj \
@@ -13,6 +14,7 @@ C_OBJS = \
   $O\7zIn.obj \
   $O\7zStream.obj \
   $O\Bcj2.obj \
+  $O\Bra.obj \
   $O\Bra86.obj \
   $O\CpuArch.obj \
   $O\Lzma2Dec.obj \
@@ -21,7 +23,6 @@ C_OBJS = \
   $O\Ppmd7Dec.obj \
 
 7Z_OBJS = \
-  $O\7zAlloc.obj \
   $O\7zMain.obj \
 
 OBJS = \

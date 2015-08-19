@@ -82,8 +82,8 @@ int CPlugin::DeleteFiles(PluginPanelItem *panelItems, int numItems, int opMode)
   CRecordVector<UINT32> indices;
   indices.Reserve(numItems);
   int i;
-  for(i = 0; i < numItems; i++)
-    indices.Add(panelItems[i].UserData);
+  for (i = 0; i < numItems; i++)
+    indices.Add((UINT32)panelItems[i].UserData);
 
   ////////////////////////////
   // Save _folder;
@@ -93,7 +93,7 @@ int CPlugin::DeleteFiles(PluginPanelItem *panelItems, int numItems, int opMode)
   
   CMyComPtr<IOutFolderArchive> outArchive;
   HRESULT result = m_ArchiveHandler.QueryInterface(IID_IOutFolderArchive, &outArchive);
-  if(result != S_OK)
+  if (result != S_OK)
   {
     g_StartupInfo.ShowMessage(NMessageID::kUpdateNotSupportedForThisArchive);
     return FALSE;
@@ -103,7 +103,7 @@ int CPlugin::DeleteFiles(PluginPanelItem *panelItems, int numItems, int opMode)
   CUpdateCallback100Imp *updateCallbackSpec = new CUpdateCallback100Imp;
   CMyComPtr<IFolderArchiveUpdateCallback> updateCallback(updateCallbackSpec );
   
-  updateCallbackSpec->Init(/* m_ArchiveHandler, */ &progressBox);
+  updateCallbackSpec->Init(/* m_ArchiveHandler, */ progressBoxPointer);
 
 
   result = outArchive->DeleteItems(
@@ -151,11 +151,11 @@ int CPlugin::DeleteFiles(PluginPanelItem *panelItems, int numItems, int opMode)
   {
     CMyComPtr<IFolderFolder> newFolder;
     _folder->BindToFolder(pathVector[i], &newFolder);
-    if(!newFolder  )
+    if (!newFolder)
       break;
     _folder = newFolder;
   }
   GetCurrentDir();
 
-  return(TRUE);
+  return TRUE;
 }

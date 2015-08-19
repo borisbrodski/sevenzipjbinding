@@ -93,10 +93,6 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\CLSIDConst.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Far.def
 # End Source File
 # Begin Source File

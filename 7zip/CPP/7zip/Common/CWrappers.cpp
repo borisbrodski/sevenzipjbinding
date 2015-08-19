@@ -164,13 +164,12 @@ Byte CByteInBufWrap::ReadByteFromNewBlock()
   return 0;
 }
 
-extern "C" { static Byte Wrap_ReadByte(void *pp)
+static Byte Wrap_ReadByte(void *pp)
 {
   CByteInBufWrap *p = (CByteInBufWrap *)pp;
   if (p->Cur != p->Lim)
     return *p->Cur++;
   return p->ReadByteFromNewBlock();
-}
 }
 
 CByteInBufWrap::CByteInBufWrap(): Buf(0)
@@ -211,7 +210,7 @@ HRESULT CByteOutBufWrap::Flush()
   return Res;
 }
 
-extern "C" { static void Wrap_WriteByte(void *pp, Byte b)
+static void Wrap_WriteByte(void *pp, Byte b)
 {
   CByteOutBufWrap *p = (CByteOutBufWrap *)pp;
   Byte *dest = p->Cur;
@@ -219,7 +218,6 @@ extern "C" { static void Wrap_WriteByte(void *pp, Byte b)
   p->Cur = ++dest;
   if (dest == p->Lim)
     p->Flush();
-}
 }
 
 CByteOutBufWrap::CByteOutBufWrap(): Buf(0)
