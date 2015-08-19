@@ -127,6 +127,9 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 
 	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_STRING                                                                   \
         const jchar * jChars = jniEnvInstance->GetStringChars((jstring)value, NULL);                                \
+        if (!jChars) {                                                                                              \
+            return S_FALSE;                                                                                         \
+        }                                                                                                           \
         cPropVariant = UString(UnicodeHelper(jChars));                                                              \
         jniEnvInstance->ReleaseStringChars((jstring)value, jChars);                                                 \
 
@@ -143,13 +146,13 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
         }                                                                                                           \
 
     #define ASSIGN_VALUE_TO_C_PROP_VARIANT_LONG                                                                     \
-        cPropVariant = (UInt64)jni::Long::longValue(jniEnvInstance, value);                                           \
+        cPropVariant = (UInt64)jni::Long::longValue(jniEnvInstance, value);                                         \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
         }                                                                                                           \
 
     #define ASSIGN_VALUE_TO_C_PROP_VARIANT_UINTEGER                                                                 \
-        cPropVariant = (UInt32)jni::Integer::intValue(jniEnvInstance, value);                                 \
+        cPropVariant = (UInt32)jni::Integer::intValue(jniEnvInstance, value);                                       \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
         }                                                                                                           \
@@ -166,6 +169,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 	    jobject value = jni::OutItem::fieldName##_Get(jniEnvInstance, _outItem);                                    \
 	    if (value) {                                                                                                \
             ASSIGN_VALUE_TO_C_PROP_VARIANT_##TYPE                                                                   \
+            jniEnvInstance->DeleteLocalRef(value);                                                                  \
         }                                                                                                           \
 		break;                                                                                                      \
 	}
