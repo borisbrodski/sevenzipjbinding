@@ -494,17 +494,15 @@ namespace NControl {
 
 	bool CListView::GetColumn(int columnIndex, LVCOLUMN* columnInfo)
 	{
-		wxListItem item;
-		bool ret = _list->GetColumn(columnIndex, item);
-
-		if (ret)
-		{
-			columnInfo->iOrder = 0; // FIXME
-			columnInfo->cx = item.GetWidth();
-		}
+		columnInfo->cx = _list->GetColumnWidth(columnIndex);// FIXME
+			
+		bool ret = false;
+		
+		if (columnInfo->cx >= 1) ret = true;
+			
+		// printf("CListView::GetColumn(%d) cx=%d\n",columnIndex,(int)columnInfo->cx);
 
 		return ret;
-
 	}
 
 	// HWND EditLabel(int itemIndex)

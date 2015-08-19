@@ -4,7 +4,7 @@
 
 #include "myPrivate.h"
 
-#ifdef HAVE_LOCALE
+#ifdef ENV_HAVE_LOCALE
 #include <locale.h>
 #endif
 
@@ -21,7 +21,7 @@ void mySplitCommandLine(int numArguments,const char *arguments[],UStringVector &
     putenv(p7zip_home_dir);
   }
 
-#ifdef HAVE_LOCALE
+#ifdef ENV_HAVE_LOCALE
   // set the program's current locale from the user's environment variables
   setlocale(LC_ALL,"");
 
@@ -68,7 +68,7 @@ void mySplitCommandLine(int numArguments,const char *arguments[],UStringVector &
 }
 
 const char *my_getlocale(void) {
-#ifdef HAVE_LOCALE
+#ifdef ENV_HAVE_LOCALE
   const char* ret = setlocale(LC_CTYPE,0);
   if (ret == 0)
     ret ="C";

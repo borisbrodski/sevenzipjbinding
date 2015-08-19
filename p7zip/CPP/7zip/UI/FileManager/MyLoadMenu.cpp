@@ -21,7 +21,7 @@ typedef wxMenuBar * HMENU;
 
 #include "Common/StringConvert.h"
 
-// FIXME #include "Windows/Menu.h"
+#include "Windows/Menu.h"
 #include "Windows/Error.h"
 // FIXME #include "Windows/Clipboard.h"
 
@@ -250,8 +250,8 @@ static void MyChangeMenu(HMENU menuLoc, int level, int menuIndex)
 	{
 		MyChangeItem(mi,kIDLangPairs[i].LangID);
 	}
-	else
-	  printf("Change Menu : id=%d index=%d<>\n",kIDLangPairs[i].ControlID,i);
+//	else
+//	  printf("Change Menu : id=%d index=%d<>\n",kIDLangPairs[i].ControlID,i);
   }
 }
 

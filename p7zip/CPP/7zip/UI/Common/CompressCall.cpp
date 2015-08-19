@@ -29,6 +29,9 @@
 #include "../FileManager/ProgramLocation.h"
 #include "../FileManager/RegistryUtils.h"
 
+#define NEED_NAME_WINDOWS_TO_UNIX
+#include "myPrivate.h"
+
 #ifndef _UNICODE
 extern bool g_IsNT;
 #endif // _UNICODE
@@ -65,16 +68,36 @@ HRESULT MyCreateProcess(const UString &params,
 
 	if (curDir) {  // FIXME
 		wxSetWorkingDirectory(wxString(curDir));
-	}
+		
+		
+		// under MacOSX, a bundle does not keep the current directory
+		// between 7zFM and 7zG ...
+		// So, try to use the environment variable P7ZIP_CURRENT_DIR	
+	
+		char p7zip_current_dir[MAX_PATH];
+			
+		AString aCurPath = GetAnsiString(curDir);
+			
+		const char *dir2 = nameWindowToUnix((const char *)aCurPath);
+			
+		snprintf(p7zip_current_dir,sizeof(p7zip_current_dir),"P7ZIP_CURRENT_DIR=%s/",dir2);
+			
+		p7zip_current_dir[sizeof(p7zip_current_dir)-1] = 0;
+			
+		putenv(p7zip_current_dir);
+			
+		printf("putenv(%s)\n",p7zip_current_dir);
+		
+	}	
+	
 
 	printf("MyCreateProcess: cmd='%ls'\n",(const wchar_t *)cmd);
 	long pid = 0;
 	if (waitFinish) pid = wxExecute(cmd, wxEXEC_SYNC); // FIXME process never ends and stays zombie ...
 	else            pid = wxExecute(cmd, wxEXEC_ASYNC);
 
-	if (curDir) {
-		wxSetWorkingDirectory(memoCurDir);
-	}
+	if (curDir) wxSetWorkingDirectory(memoCurDir);
+
 
 	// FIXME if (pid == 0) return E_FAIL;
 

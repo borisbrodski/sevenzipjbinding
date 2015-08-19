@@ -4,13 +4,13 @@
 
 #include "Windows/COM.h"
 #include "Windows/Clipboard.h"
-// FIXME #include "Windows/Menu.h"
+#include "Windows/Menu.h"
 #include "Windows/PropVariant.h"
 #include "Windows/PropVariantConversions.h"
 
 #include "../../PropID.h"
 #include "../Common/PropIDUtils.h"
-// FIXME #include "../Explorer/ContextMenu.h"
+#include "../Explorer/ContextMenu.h"
 
 #include "App.h"
 #include "LangUtils.h"
@@ -190,17 +190,20 @@ void CPanel::Properties()
             if (getProps->GetArcNumProps(level, &numProps) == S_OK)
             {
               message += kSeparator;
-              for (Int32 i = -2; i < (Int32)numProps; i++)
+              for (Int32 i = -3; i < (Int32)numProps; i++)
               {
                 CMyComBSTR name;
                 PROPID propID;
                 VARTYPE vt;
-                if (i == -2)
-                  propID = kpidPath;
-                else if (i == -1)
-                  propID = kpidType;
-                else if (getProps->GetArcPropInfo(level, i, &name, &propID, &vt) != S_OK)
-                  continue;
+                switch (i)
+                {
+                  case -3: propID = kpidPath; break;
+                  case -2: propID = kpidType; break;
+                  case -1: propID = kpidError; break;
+                  default:
+                    if (getProps->GetArcPropInfo(level, i, &name, &propID, &vt) != S_OK)
+                      continue;
+                }
                 NCOM::CPropVariant prop;
                 if (getProps->GetArcProp(level, propID, &prop) != S_OK)
                   continue;

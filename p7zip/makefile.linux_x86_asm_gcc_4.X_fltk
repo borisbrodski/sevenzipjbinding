@@ -10,7 +10,7 @@ ALLFLAGS=${OPTFLAGS} -m32 -pipe -s \
 	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
-CXX=g++ $(ALLFLAGS) -DHAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden `fltk-config --cxxflags`
+CXX=g++ $(ALLFLAGS) -DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden `fltk-config --cxxflags`
 CC=gcc $(ALLFLAGS)
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared

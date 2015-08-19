@@ -501,7 +501,7 @@ bool MySetFileAttributes(LPCTSTR fileName, DWORD fileAttributes)
   const char * name = nameWindowToUnix(fileName);
 #endif
   struct stat stat_info;
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
   if (global_use_lstat) {
     if(lstat(name,&stat_info)!=0) {
       TRACEN((printf("MySetFileAttributes(%s,%d) : false-2-1\n",name,fileAttributes)))
@@ -518,7 +518,7 @@ bool MySetFileAttributes(LPCTSTR fileName, DWORD fileAttributes)
 
   if (fileAttributes & FILE_ATTRIBUTE_UNIX_EXTENSION) {
      stat_info.st_mode = fileAttributes >> 16;
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
      if (S_ISLNK(stat_info.st_mode)) {
         if ( convert_to_symlink(name) != 0) {
           TRACEN((printf("MySetFileAttributes(%s,%d) : false-3\n",name,fileAttributes)))
@@ -535,7 +535,7 @@ bool MySetFileAttributes(LPCTSTR fileName, DWORD fileAttributes)
        TRACEN((printf("##DBG chmod-3(%s,%o)\n",name,(unsigned)stat_info.st_mode & gbl_umask.mask)))
        chmod(name,stat_info.st_mode & gbl_umask.mask);
      }
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
   } else if (!S_ISLNK(stat_info.st_mode)) {
     // do not use chmod on a link
 #else

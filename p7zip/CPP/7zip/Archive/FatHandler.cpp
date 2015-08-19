@@ -526,7 +526,14 @@ HRESULT CDatabase::ReadDir(Int32 parent, UInt32 cluster, int level)
       item.Attrib = attrib;
       item.Flags = p[12];
       item.Size = Get32(p + 28);
-      item.Cluster = Get16(p + 26) | ((UInt32)Get16(p + 20) << 16);
+      item.Cluster = Get16(p + 26);
+      if (Header.NumFatBits > 16)
+        item.Cluster |= ((UInt32)Get16(p + 20) << 16);
+      else
+      {
+        // OS/2 and WinNT probably can store EA (extended atributes) in that field.
+      }
+
       item.CTime = Get32(p + 14);
       item.CTime2 = p[13];
       item.ADate = Get16(p + 18);
@@ -578,8 +585,12 @@ HRESULT CDatabase::Open()
       return S_FALSE;
     UInt64 fileSize;
     RINOK(InStream->Seek(0, STREAM_SEEK_END, &fileSize));
+
+    /* we comment that check to support truncated images */
+    /*
     if (fileSize < Header.GetPhySize())
       return S_FALSE;
+    */
 
     if (Header.IsFat32())
     {

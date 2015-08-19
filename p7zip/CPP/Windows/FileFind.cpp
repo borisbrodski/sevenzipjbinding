@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
 extern "C"
 {
 
@@ -157,7 +157,6 @@ static bool originalFilename(const UString & src, AString & res)
 {
   // Try to recover the original filename
   res = "";
-  int is_good = 1;
   int i=0;
   while (src[i])
   {
@@ -178,7 +177,7 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename) {
   struct stat stat_info;
 
   int ret;
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
   if (global_use_lstat) {
     ret = lstat(filename,&stat_info);
   } else
@@ -216,9 +215,7 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename) {
 }
 
 static int fillin_CFileInfo(CFileInfo &fileInfo,const char *dir,const char *name) {
-  struct stat stat_info;
   char filename[MAX_PATHNAME_LEN];
-
   size_t dir_len = strlen(dir);
   size_t name_len = strlen(name);
   size_t total = dir_len + 1 + name_len + 1; // 1 = strlen("/"); + le zero character

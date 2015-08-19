@@ -12,7 +12,7 @@
 #define  UInt32 mac_UInt32
 #include <CoreFoundation/CoreFoundation.h>
 #undef  UInt32
-#endif __APPLE__
+#endif // __APPLE__
 
 
 // #define TRACE printf

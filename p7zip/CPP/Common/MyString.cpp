@@ -3,7 +3,7 @@
 #include "StdAfx.h"
 
 #include <ctype.h>
-#ifdef HAVE_WCTYPE_H
+#ifdef ENV_HAVE_WCTYPE_H
 #include <wctype.h>
 #endif
 #include "StringConvert.h" // FIXED
@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef HAVE_WCHAR__H
+#ifdef ENV_HAVE_WCHAR__H
 #include <wchar.h>
 #endif
 
@@ -37,7 +37,7 @@ LPSTR WINAPI CharPrevA( LPCSTR start, LPCSTR ptr ) { // OK for MBS
 LPSTR WINAPI CharNextA( LPCSTR ptr ) {
   if (!*ptr)
     return (LPSTR)ptr;
-// #ifdef HAVE_MBRTOWC
+// #ifdef ENV_HAVE_MBRTOWC
 //  if (global_use_utf16_conversion)
 //  {
 //    wchar_t wc;
@@ -62,7 +62,7 @@ char MyCharLower(char c)
 
 wchar_t MyCharLower(wchar_t c)
 {
-#ifdef HAVE_TOWUPPER
+#ifdef ENV_HAVE_TOWUPPER
    return towlower(c);
 #else
    int ret = c;
@@ -99,7 +99,7 @@ wchar_t * MyStringLower(wchar_t *s)
 
 wchar_t MyCharUpper(wchar_t c)
 {
-#ifdef HAVE_TOWUPPER
+#ifdef ENV_HAVE_TOWUPPER
    return towupper(c);
 #else
    int ret = c;
@@ -167,3 +167,40 @@ int MyStringCompareNoCase(const char *s1, const char *s2)
   return MyStringCompareNoCase(MultiByteToUnicodeString(s1), MultiByteToUnicodeString(s2));
 }
 
+
+#ifndef ENV_HAVE_WCHAR__H
+
+EXTERN_C_BEGIN
+
+size_t	wcslen(const wchar_t *s)
+{
+	register const wchar_t *p;
+	
+	for (p=s ; *p ; p++);
+	
+	return p - s;
+}
+
+wchar_t *wcscpy(wchar_t * s1, const wchar_t * s2)
+{
+	register wchar_t *s = s1;
+	
+	while ( (*s++ = *s2++) != 0 );
+	
+	return s1;
+}
+
+wchar_t *wcscat(wchar_t * s1, const wchar_t * s2)
+{
+	register wchar_t *s = s1;
+	
+	while (*s++);
+	--s;
+	while ((*s++ = *s2++) != 0);
+	
+	return s1;
+}
+
+EXTERN_C_END
+
+#endif

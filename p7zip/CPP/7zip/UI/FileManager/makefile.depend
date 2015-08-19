@@ -10,7 +10,8 @@ ClassDefs.o: ClassDefs.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyString.h ../../../Common/MyVector.h \
  ../../../Common/Defs.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../Agent/../Common/../../Archive/IArchive.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
  ../Agent/../Common/../../Archive/../../Common/MyWindows.h \
@@ -79,8 +80,8 @@ Agent.o: ../Agent/Agent.cpp ../../../myWindows/StdAfx.h \
  ../Agent/../Common/IFileExtractCallback.h \
  ../Agent/../Common/../../IDecl.h ../Agent/../Common/OpenArchive.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../Agent/../Common/ArchiveOpenCallback.h ../Agent/../Common/LoadCodecs.h \
  ../Agent/../Common/../../../Common/Types.h \
  ../Agent/../Common/../../../Common/MyCom.h \
@@ -123,8 +124,8 @@ AgentOut.o: ../Agent/AgentOut.cpp ../../../myWindows/StdAfx.h \
  ../Agent/../../Common/../../Common/MyCom.h \
  ../Agent/../../Common/../IStream.h ../Agent/../Common/EnumDirItems.h \
  ../../../Common/Wildcard.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../Agent/../Common/DirItem.h \
- ../Agent/../Common/../../Archive/IArchive.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../Agent/../Common/DirItem.h ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
  ../Agent/../Common/../../Archive/../../Common/Types.h \
@@ -174,7 +175,8 @@ AgentProxy.o: ../Agent/AgentProxy.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
  ../Agent/../Common/OpenArchive.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../Agent/../Common/../../Archive/IArchive.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
  ../Agent/../Common/../../Archive/../../Common/MyWindows.h \
@@ -235,8 +237,8 @@ ArchiveFolder.o: ../Agent/ArchiveFolder.cpp ../../../myWindows/StdAfx.h \
  ../Agent/../Common/IFileExtractCallback.h \
  ../Agent/../Common/../../IDecl.h ../Agent/../Common/OpenArchive.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../Agent/../Common/ArchiveOpenCallback.h ../Agent/../Common/LoadCodecs.h \
  ../Agent/../Common/../../../Common/Types.h \
  ../Agent/../Common/../../../Common/MyCom.h \
@@ -267,7 +269,8 @@ ArchiveFolderOpen.o: ../Agent/ArchiveFolderOpen.cpp \
  ../../../Common/MyString.h ../../../Common/MyVector.h \
  ../../../Common/Defs.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../Agent/../Common/../../Archive/IArchive.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
  ../Agent/../Common/../../Archive/../../Common/MyWindows.h \
@@ -312,6 +315,7 @@ ArchiveFolderOut.o: ../Agent/ArchiveFolderOut.cpp \
  ../Agent/Agent.h ../../../Common/MyCom.h ../../../Windows/PropVariant.h \
  ../../../Windows/../Common/Types.h ../Agent/../Common/OpenArchive.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
+ ../../../Windows/../../C/Types.h \
  ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
@@ -405,17 +409,17 @@ App.o: App.cpp ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
  ../../../Windows/Synchronization2.h ViewSettings.h Panel.h \
  ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- IFolder.h ../../IProgress.h ../../../Common/MyUnknown.h \
- ../../../Common/Types.h ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
- SysIconUtils.h CopyDialog.h CopyDialogRes.h ExtractCallback.h \
- ../../../Windows/ResourceString.h ../Agent/IFolderArchive.h \
- ../Agent/../../IDecl.h ../Agent/../../Archive/IArchive.h \
- ../Agent/../../Archive/../IProgress.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Control/Dialog.h \
+ ../../../Windows/Control/ProgressBar.h SysIconUtils.h CopyDialog.h \
+ CopyDialogRes.h ExtractCallback.h ../../../Windows/ResourceString.h \
+ ../Agent/IFolderArchive.h ../Agent/../../IDecl.h \
+ ../Agent/../../Archive/IArchive.h ../Agent/../../Archive/../IProgress.h \
  ../Agent/../../Archive/../IStream.h ../Agent/../../Archive/../PropID.h \
  ../Agent/../../UI/Common/LoadCodecs.h \
  ../Agent/../../UI/Common/../../../Common/Types.h \
@@ -559,19 +563,20 @@ FM.o: FM.cpp ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
  ../../../Windows/DLL.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
- ../../../Windows/Window.h ../../../Windows/Defs.h \
- ../../../Common/MyString.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
- ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
- SysIconUtils.h ../../../Common/Defs.h ../../../Common/StringConvert.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../../../Windows/../Common/MyWindows.h ../../../Windows/FileDir.h \
+ ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
+ ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
+ ../../../Windows/Defs.h ../../../Common/MyString.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
+ ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../IStream.h ProgressDialog2.h \
+ ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
+ ../../../Windows/Control/ProgressBar.h SysIconUtils.h \
+ ../../../Common/Defs.h ../../../Common/StringConvert.h \
  ../../../Common/MyString.h ../../../Windows/Error.h \
  ../../../Windows/COM.h ../GUI/ExtractRes.h App.h StringUtils.h \
  MyLoadMenu.h LangUtils.h ../../../Common/Lang.h \
@@ -694,22 +699,22 @@ FM_rc.o: FM_rc.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyCom.h ../../../Common/MyWindows.h \
  ../../../Windows/DLL.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/FileDir.h ../../../Windows/Control/ComboBox.h \
- ../../../Windows/Window.h ../../../Windows/Defs.h \
- ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
- ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
- ../../../Windows/Control/StatusBar.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
- ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
- SysIconUtils.h ../../../Windows/Control/DialogImpl.h \
- ../../../../GUI/p7zip_32.xpm res/AddPNG.h res/Add2PNG.h res/ExtractPNG.h \
- res/Extract2PNG.h res/TestPNG.h res/Test2PNG.h res/CopyPNG.h \
- res/Copy2PNG.h res/MovePNG.h res/Move2PNG.h res/DeletePNG.h \
- res/Delete2PNG.h res/InfoPNG.h res/Info2PNG.h LangUtils.h \
- ../../../Common/Lang.h ../../../Common/MyString.h \
- ../../../Windows/ResourceString.h /usr/include/wx-2.8/wx/mstream.h \
- res/ParentFolder.h
+ ../../../Windows/../../C/Types.h ../../../Windows/FileDir.h \
+ ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
+ ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
+ ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
+ ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
+ IFolder.h ../../IProgress.h ../../../Common/MyUnknown.h \
+ ../../../Common/Types.h ../../IDecl.h ../../IStream.h ProgressDialog2.h \
+ ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
+ ../../../Windows/Control/ProgressBar.h SysIconUtils.h \
+ ../../../Windows/Control/DialogImpl.h ../../../../GUI/p7zip_32.xpm \
+ res/AddPNG.h res/Add2PNG.h res/ExtractPNG.h res/Extract2PNG.h \
+ res/TestPNG.h res/Test2PNG.h res/CopyPNG.h res/Copy2PNG.h res/MovePNG.h \
+ res/Move2PNG.h res/DeletePNG.h res/Delete2PNG.h res/InfoPNG.h \
+ res/Info2PNG.h LangUtils.h ../../../Common/Lang.h \
+ ../../../Common/MyString.h ../../../Windows/ResourceString.h \
+ /usr/include/wx-2.8/wx/mstream.h res/ParentFolder.h
 OpenCallback.o: OpenCallback.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -726,9 +731,10 @@ OpenCallback.o: OpenCallback.cpp ../../../myWindows/StdAfx.h \
  ../../Common/../../Common/Types.h ../../Common/../IDecl.h OpenCallback.h \
  ../../../Common/MyCom.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../../IPassword.h ../../../Common/MyUnknown.h \
- ../../../Common/Types.h ../../IDecl.h ../../Archive/IArchive.h \
- ../../Archive/../IProgress.h ../../Archive/../../Common/MyUnknown.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../../IPassword.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../Archive/IArchive.h ../../Archive/../IProgress.h \
+ ../../Archive/../../Common/MyUnknown.h \
  ../../Archive/../../Common/Types.h ../../Archive/../IDecl.h \
  ../../Archive/../IStream.h ../../Archive/../PropID.h ProgressDialog2.h \
  ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
@@ -846,25 +852,26 @@ MyLoadMenu.o: MyLoadMenu.cpp ../../../myWindows/StdAfx.h \
  /usr/include/wx-2.8/wx/aboutdlg.h ../../../Common/StringConvert.h \
  ../../../Common/MyWindows.h ../../../Common/MyString.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
- ../../../Windows/Error.h ../../../Common/MyString.h ../../PropID.h \
- resource.h resourceGui.h App.h AppState.h \
- ../../../Windows/Synchronization.h ../../../Windows/Defs.h \
+ ../../../Windows/Menu.h ../../../Windows/Error.h \
+ ../../../Common/MyString.h ../../PropID.h resource.h resourceGui.h App.h \
+ AppState.h ../../../Windows/Synchronization.h ../../../Windows/Defs.h \
  ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
  ../../../Windows/Synchronization2.h ViewSettings.h Panel.h \
  ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/FileDir.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- IFolder.h ../../IProgress.h ../../../Common/MyUnknown.h \
- ../../../Common/Types.h ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h \
- ../Common/CompressCall.h HelpUtils.h LangUtils.h ../../../Common/Lang.h \
- ../../../Windows/ResourceString.h PluginInterface.h ../../MyVersion.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/FileDir.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h ../Common/CompressCall.h HelpUtils.h LangUtils.h \
+ ../../../Common/Lang.h ../../../Windows/ResourceString.h \
+ PluginInterface.h ../../MyVersion.h
 Panel.o: Panel.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -881,20 +888,20 @@ Panel.o: Panel.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/../../C/Types.h ../../PropID.h Panel.h \
  ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/FileDir.h \
- ../../../Windows/Synchronization.h ../../../Windows/Synchronization2.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h ProgressDialog2.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h RootFolder.h \
- FSFolder.h TextPairs.h FormatUtils.h App.h ExtractCallback.h \
- ../../../Windows/ResourceString.h ../Agent/IFolderArchive.h \
- ../Agent/../../IDecl.h ../Agent/../../Archive/IArchive.h \
- ../Agent/../../Archive/../IProgress.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
+ ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
+ ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../IStream.h ProgressDialog2.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h RootFolder.h FSFolder.h TextPairs.h FormatUtils.h App.h \
+ ExtractCallback.h ../../../Windows/ResourceString.h \
+ ../Agent/IFolderArchive.h ../Agent/../../IDecl.h \
+ ../Agent/../../Archive/IArchive.h ../Agent/../../Archive/../IProgress.h \
  ../Agent/../../Archive/../IStream.h ../Agent/../../Archive/../PropID.h \
  ../Agent/../../UI/Common/LoadCodecs.h \
  ../Agent/../../UI/Common/../../../Common/Types.h \
@@ -924,13 +931,13 @@ PanelCrc.o: PanelCrc.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/IntToString.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h ../../../Windows/FileIO.h \
- ../../../Common/MyString.h ../../../Windows/FileName.h \
- OverwriteDialogRes.h App.h AppState.h ../../../Windows/Synchronization.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h ViewSettings.h Panel.h \
- ../../../../C/Alloc.h ../../../Common/MyCom.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileIO.h ../../../Common/MyString.h \
+ ../../../Windows/FileName.h OverwriteDialogRes.h App.h AppState.h \
+ ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
+ ViewSettings.h Panel.h ../../../../C/Alloc.h ../../../Common/MyCom.h \
  ../../../Common/MyWindows.h ../../../Windows/DLL.h \
  ../../../Windows/FileDir.h ../../../Windows/Control/ComboBox.h \
  ../../../Windows/Window.h ../../../Windows/Defs.h \
@@ -954,22 +961,23 @@ PanelCopy.o: PanelCopy.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/DLL.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
- ../../../Windows/Window.h ../../../Windows/Defs.h \
- ../../../Common/MyString.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
- ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
- SysIconUtils.h resource.h resourceGui.h LangUtils.h \
- ../../../Common/Lang.h ../../../Common/MyVector.h \
- ../../../Common/MyString.h ../../../Windows/ResourceString.h \
- ExtractCallback.h ../Agent/IFolderArchive.h ../Agent/../../IDecl.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../../../Windows/../Common/MyWindows.h ../../../Windows/FileDir.h \
+ ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
+ ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
+ ../../../Windows/Defs.h ../../../Common/MyString.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
+ ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../IStream.h ProgressDialog2.h \
+ ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
+ ../../../Windows/Control/ProgressBar.h SysIconUtils.h resource.h \
+ resourceGui.h LangUtils.h ../../../Common/Lang.h \
+ ../../../Common/MyVector.h ../../../Common/MyString.h \
+ ../../../Windows/ResourceString.h ExtractCallback.h \
+ ../Agent/IFolderArchive.h ../Agent/../../IDecl.h \
  ../Agent/../../Archive/IArchive.h ../Agent/../../Archive/../IProgress.h \
  ../Agent/../../Archive/../IStream.h ../Agent/../../Archive/../PropID.h \
  ../Agent/../../UI/Common/LoadCodecs.h \
@@ -1000,11 +1008,12 @@ PanelItems.o: PanelItems.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/PropVariant.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../Common/Types.h \
  ../../../Windows/PropVariantConversions.h ../../../Common/MyString.h \
- ../../PropID.h resource.h resourceGui.h LangUtils.h \
- ../../../Common/Lang.h ../../../Windows/ResourceString.h Panel.h \
- ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
- ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
+ ../../../Windows/Menu.h ../../PropID.h resource.h resourceGui.h \
+ LangUtils.h ../../../Common/Lang.h ../../../Windows/ResourceString.h \
+ Panel.h ../../../../C/Alloc.h ../../../Common/MyCom.h \
+ ../../../Windows/DLL.h ../../../Windows/../Common/MyString.h \
+ ../../../Windows/FileFind.h ../../../Windows/FileName.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
  ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
  ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
  ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
@@ -1032,18 +1041,19 @@ PanelListNotify.o: PanelListNotify.cpp ../../../myWindows/StdAfx.h \
  ../Common/PropIDUtils.h ../../PropID.h Panel.h ../../../../C/Alloc.h \
  ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
- ../../../Windows/Window.h ../../../Windows/Defs.h \
- ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
- ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
- ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
- ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h FormatUtils.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/FileDir.h \
+ ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
+ ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
+ ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
+ ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
+ ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
+ AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h FormatUtils.h
 PanelFolderChange.o: PanelFolderChange.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1063,13 +1073,14 @@ PanelFolderChange.o: PanelFolderChange.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/Defs.h ../../../Windows/Control/ListView.h \
  ListViewDialogRes.h Panel.h ../../../../C/Alloc.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
- ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- AppState.h ViewSettings.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/FileDir.h \
+ ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
+ ../../../Windows/Control/ComboBox.h ../../../Windows/Control/Window2.h \
+ ../../../Windows/Control/Edit.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h \
+ ProgressDialog2.h ../../../Windows/Thread.h \
  ../../../Windows/Control/ProgressBar.h SysIconUtils.h RootFolder.h \
  FSFolder.h TextPairs.h resource.h resourceGui.h
 PanelItemOpen.o: PanelItemOpen.cpp ../../../myWindows/StdAfx.h \
@@ -1184,11 +1195,13 @@ PanelItemOpen.o: PanelItemOpen.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/FileDir.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/Thread.h ../../../Windows/../../C/Threads.h \
- ../../../Windows/../../C/Types.h ../../../Windows/Synchronization.h \
- ../../../Windows/Synchronization2.h ../../../Windows/Error.h \
- ../../../Common/MyString.h App.h AppState.h ViewSettings.h Panel.h \
- ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Thread.h \
+ ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Synchronization.h ../../../Windows/Synchronization2.h \
+ ../../../Windows/Error.h ../../../Common/MyString.h \
+ ../../../Windows/PropVariant.h ../../../Windows/../Common/Types.h App.h \
+ AppState.h ViewSettings.h Panel.h ../../../../C/Alloc.h \
+ ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
  ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
  ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
@@ -1227,26 +1240,28 @@ PanelMenu.o: PanelMenu.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyWindows.h ../../../Common/MyString.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h ../../../Windows/COM.h \
  ../../../Common/MyString.h ../../../Windows/Clipboard.h \
- ../../../Windows/PropVariant.h ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/Menu.h ../../../Windows/PropVariant.h \
+ ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../Common/Types.h \
  ../../../Windows/PropVariantConversions.h ../../PropID.h \
- ../Common/PropIDUtils.h App.h AppState.h \
+ ../Common/PropIDUtils.h ../Explorer/ContextMenu.h App.h AppState.h \
  ../../../Windows/Synchronization.h ../../../Windows/Defs.h \
  ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
  ../../../Windows/Synchronization2.h ViewSettings.h Panel.h \
  ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/FileDir.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Windows/Control/Window2.h \
- ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
- ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
- IFolder.h ../../IProgress.h ../../../Common/MyUnknown.h \
- ../../../Common/Types.h ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h LangUtils.h \
- ../../../Common/Lang.h ../../../Windows/ResourceString.h MyLoadMenu.h \
- PropertyName.h resource.h resourceGui.h PropertyNameRes.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/FileDir.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
+ ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Control/StatusBar.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h LangUtils.h ../../../Common/Lang.h \
+ ../../../Windows/ResourceString.h MyLoadMenu.h PropertyName.h resource.h \
+ resourceGui.h PropertyNameRes.h
 PanelOperations.o: PanelOperations.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1266,9 +1281,10 @@ PanelOperations.o: PanelOperations.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/Window.h ../../../Windows/Defs.h \
  ../../../Windows/Control/Window2.h ../../../Windows/Control/Dialog.h \
  ComboDialogRes.h FSFolder.h ../../../Common/MyCom.h \
- ../../../Windows/FileFind.h ../../../Windows/FileName.h IFolder.h \
- ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../IStream.h TextPairs.h FormatUtils.h LangUtils.h \
+ ../../../Windows/FileFind.h ../../../Windows/FileName.h \
+ ../../../Windows/../../C/Types.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h TextPairs.h FormatUtils.h LangUtils.h \
  ../../../Common/Lang.h Panel.h ../../../../C/Alloc.h \
  ../../../Windows/DLL.h ../../../Windows/Synchronization.h \
  ../../../Windows/Synchronization2.h ../../../Windows/Control/Edit.h \
@@ -1302,21 +1318,21 @@ PanelSelect.o: PanelSelect.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/Defs.h ../../../Common/Wildcard.h Panel.h \
  ../../../../C/Alloc.h ../../../Common/MyCom.h ../../../Windows/DLL.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h ../../../Windows/FileDir.h \
- ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
- ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Common/MyString.h \
- ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
- ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
- ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
- ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h ComboDialog.h \
- ComboDialogRes.h LangUtils.h ../../../Common/Lang.h \
- ../../../Windows/ResourceString.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
+ ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Common/MyString.h ../../../Windows/Control/Window2.h \
+ ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
+ ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
+ AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h ComboDialog.h ComboDialogRes.h LangUtils.h \
+ ../../../Common/Lang.h ../../../Windows/ResourceString.h
 PanelSort.o: PanelSort.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1330,18 +1346,19 @@ PanelSort.o: PanelSort.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../../../Windows/FileDir.h \
- ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
- ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
- ../../../Windows/Control/ComboBox.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Common/MyString.h \
- ../../../Windows/Control/Window2.h ../../../Windows/Control/Edit.h \
- ../../../Windows/Control/ListView.h ../../../Windows/Control/Static.h \
- ../../../Windows/Control/StatusBar.h AppState.h ViewSettings.h IFolder.h \
- ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../IStream.h ProgressDialog2.h \
- ../../../Windows/Thread.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Control/ProgressBar.h SysIconUtils.h
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../../../Windows/FileDir.h ../../../Windows/Synchronization.h \
+ ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Synchronization2.h ../../../Windows/Control/ComboBox.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Common/MyString.h ../../../Windows/Control/Window2.h \
+ ../../../Windows/Control/Edit.h ../../../Windows/Control/ListView.h \
+ ../../../Windows/Control/Static.h ../../../Windows/Control/StatusBar.h \
+ AppState.h ViewSettings.h IFolder.h ../../IProgress.h \
+ ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
+ ../../IStream.h ProgressDialog2.h ../../../Windows/Thread.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Control/ProgressBar.h \
+ SysIconUtils.h
 PanelSplitFile.o: PanelSplitFile.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1352,11 +1369,12 @@ PanelSplitFile.o: PanelSplitFile.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
  ../../../Windows/FileIO.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../GUI/ExtractRes.h resource.h resourceGui.h App.h AppState.h \
- ../../../Windows/Synchronization.h ../../../Windows/../../C/Threads.h \
- ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h \
- ViewSettings.h Panel.h ../../../../C/Alloc.h ../../../Common/MyCom.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../../../Windows/../Common/MyWindows.h ../GUI/ExtractRes.h resource.h \
+ resourceGui.h App.h AppState.h ../../../Windows/Synchronization.h \
+ ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Synchronization2.h ViewSettings.h Panel.h \
+ ../../../../C/Alloc.h ../../../Common/MyCom.h \
  ../../../Common/MyWindows.h ../../../Windows/DLL.h \
  ../../../Windows/FileDir.h ../../../Windows/Control/ComboBox.h \
  ../../../Windows/Window.h ../../../Windows/Defs.h \
@@ -1472,7 +1490,8 @@ FileFolderPluginOpen.o: FileFolderPluginOpen.cpp \
  ../Agent/../Common/OpenArchive.h ../../../Common/MyString.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
- ../../../Windows/FileName.h ../Agent/../Common/../../Archive/IArchive.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../Agent/../Common/../../Archive/IArchive.h \
  ../Agent/../Common/../../Archive/../IProgress.h \
  ../Agent/../Common/../../Archive/../../Common/MyUnknown.h \
  ../Agent/../Common/../../Archive/../../Common/MyWindows.h \
@@ -1521,12 +1540,12 @@ RootFolder.o: RootFolder.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/../Common/Types.h FSFolder.h ../../../Common/MyCom.h \
  ../../../Common/MyWindows.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h TextPairs.h ../../../Common/StringConvert.h \
- ../../../Common/MyString.h ../../PropID.h ../../../Windows/Defs.h \
- SysIconUtils.h LangUtils.h ../../../Common/Lang.h \
- ../../../Windows/ResourceString.h
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h IFolder.h \
+ ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../IStream.h TextPairs.h \
+ ../../../Common/StringConvert.h ../../../Common/MyString.h \
+ ../../PropID.h ../../../Windows/Defs.h SysIconUtils.h LangUtils.h \
+ ../../../Common/Lang.h ../../../Windows/ResourceString.h
 FSDrives.o: FSDrives.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1544,9 +1563,9 @@ FSDrives.o: FSDrives.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyCom.h IFolder.h ../../IProgress.h \
  ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
  ../../IStream.h FSFolder.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h TextPairs.h LangUtils.h \
- ../../../Common/Lang.h ../../../Windows/ResourceString.h SysIconUtils.h \
- resource.h resourceGui.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h TextPairs.h \
+ LangUtils.h ../../../Common/Lang.h ../../../Windows/ResourceString.h \
+ SysIconUtils.h resource.h resourceGui.h
 FSFolder.o: FSFolder.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1563,7 +1582,8 @@ FSFolder.o: FSFolder.cpp ../../../myWindows/StdAfx.h \
  ../../PropID.h FSDrives.h ../../../Common/MyCom.h IFolder.h \
  ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
  ../../IDecl.h ../../IStream.h FSFolder.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h TextPairs.h SysIconUtils.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h TextPairs.h \
+ SysIconUtils.h
 FSFolderCopy.o: FSFolderCopy.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1573,10 +1593,10 @@ FSFolderCopy.o: FSFolderCopy.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/MyWindows.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h IFolder.h ../../IProgress.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../IStream.h TextPairs.h ../../../Common/MyString.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h IFolder.h \
+ ../../IProgress.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
+ ../../IDecl.h ../../IStream.h TextPairs.h ../../../Common/MyString.h \
  ../../../Windows/FileDir.h ../../../Windows/Error.h \
  ../../../Common/StringConvert.h ../../../Common/MyString.h \
  ../../Common/FilePathAutoRename.h
@@ -1615,7 +1635,8 @@ ArchiveName.o: ../Common/ArchiveName.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../Common/ExtractingFilePath.h ../../../Common/MyString.h
+ ../../../Windows/../../C/Types.h ../Common/ExtractingFilePath.h \
+ ../../../Common/MyString.h
 CompressCall.o: ../Common/CompressCall.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1731,7 +1752,7 @@ CompressCall.o: ../Common/CompressCall.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/Synchronization2.h ../../../Windows/FileDir.h \
  ../../../Windows/../Common/MyString.h \
  ../Common/../FileManager/ProgramLocation.h \
- ../Common/../FileManager/RegistryUtils.h
+ ../Common/../FileManager/RegistryUtils.h ../../../myWindows/myPrivate.h
 WorkDir.o: ../Common/WorkDir.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -1743,7 +1764,8 @@ WorkDir.o: ../Common/WorkDir.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/Wildcard.h ../../../Windows/FileDir.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/Defs.h \
  ../../../Windows/../Common/MyWindows.h ../../../Windows/FileName.h \
- ../Common/WorkDir.h ../Common/ZipRegistry.h ../../../Common/MyString.h \
+ ../../../Windows/../../C/Types.h ../Common/WorkDir.h \
+ ../Common/ZipRegistry.h ../../../Common/MyString.h \
  ../Common/ExtractMode.h
 ExtractCallback.o: ExtractCallback.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
@@ -1755,11 +1777,11 @@ ExtractCallback.o: ExtractCallback.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/Defs.h ../../../Windows/FileDir.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/Defs.h \
  ../../../Windows/../Common/MyWindows.h ../../../Windows/FileFind.h \
- ../../../Windows/FileName.h ../../Common/FilePathAutoRename.h \
- ../GUI/ExtractRes.h ExtractCallback.h ../../../Common/MyCom.h \
- ../../../Common/MyWindows.h ../../../Windows/ResourceString.h \
- ../Agent/IFolderArchive.h ../Agent/../../IDecl.h \
- ../Agent/../../../Common/MyUnknown.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../Common/FilePathAutoRename.h ../GUI/ExtractRes.h ExtractCallback.h \
+ ../../../Common/MyCom.h ../../../Common/MyWindows.h \
+ ../../../Windows/ResourceString.h ../Agent/IFolderArchive.h \
+ ../Agent/../../IDecl.h ../Agent/../../../Common/MyUnknown.h \
  ../Agent/../../../Common/MyWindows.h ../Agent/../../Archive/IArchive.h \
  ../Agent/../../Archive/../IProgress.h \
  ../Agent/../../Archive/../../Common/MyUnknown.h \
@@ -1809,7 +1831,7 @@ CopyDialog.o: CopyDialog.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/../../C/Types.h ../../../Common/Types.h \
  ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
  ../../../include_windows/tchar.h ../../../Windows/FileName.h \
- ../../../Windows/../Common/MyString.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/Control/Static.h ../../../Windows/Window.h \
  ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
@@ -2056,7 +2078,7 @@ SplitDialog.o: SplitDialog.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/../../C/Types.h ../../../Common/Types.h \
  ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
  ../../../include_windows/tchar.h ../../../Windows/FileName.h \
- ../../../Windows/../Common/MyString.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  LangUtils.h ../../../Common/Lang.h ../../../Common/MyVector.h \
  ../../../Common/MyString.h ../../../Windows/ResourceString.h \
@@ -2577,13 +2599,13 @@ OverwriteDialog.o: OverwriteDialog.cpp ../../../myWindows/StdAfx.h \
  ../../../include_windows/tchar.h ../../../Common/StringConvert.h \
  ../../../Common/MyWindows.h ../../../Common/MyString.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/../Common/MyString.h \
- ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../../../Windows/ResourceString.h ../../../Common/MyString.h \
- ../../../Windows/Control/Static.h ../../../Windows/Window.h \
- ../../../Windows/PropVariantConversions.h FormatUtils.h \
- OverwriteDialog.h ../../../Windows/Control/Dialog.h DialogSize.h \
- OverwriteDialogRes.h LangUtils.h ../../../Common/Lang.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/../Common/MyString.h ../../../Windows/Defs.h \
+ ../../../Windows/../Common/MyWindows.h ../../../Windows/ResourceString.h \
+ ../../../Common/MyString.h ../../../Windows/Control/Static.h \
+ ../../../Windows/Window.h ../../../Windows/PropVariantConversions.h \
+ FormatUtils.h OverwriteDialog.h ../../../Windows/Control/Dialog.h \
+ DialogSize.h OverwriteDialogRes.h LangUtils.h ../../../Common/Lang.h
 OverwriteDialog_rc.o: OverwriteDialog_rc.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -2827,7 +2849,8 @@ ArchiveExtractCallback.o: ../Common/ArchiveExtractCallback.cpp \
  ../../../Windows/FileDir.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../../../Windows/PropVariant.h ../../../Windows/../Common/Types.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/PropVariant.h \
+ ../../../Windows/../Common/Types.h \
  ../../../Windows/PropVariantConversions.h ../../../Common/MyString.h \
  ../Common/../../Common/FilePathAutoRename.h \
  ../Common/../Common/ExtractingFilePath.h \
@@ -2877,9 +2900,10 @@ ArchiveOpenCallback.o: ../Common/ArchiveOpenCallback.cpp \
  ../Common/../../Common/../IDecl.h ../Common/ArchiveOpenCallback.h \
  ../../../Common/MyCom.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- ../../../Windows/Defs.h ../Common/../../IPassword.h \
- ../Common/../../../Common/MyUnknown.h ../Common/../../../Common/Types.h \
- ../Common/../../IDecl.h ../Common/../../Archive/IArchive.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Defs.h \
+ ../Common/../../IPassword.h ../Common/../../../Common/MyUnknown.h \
+ ../Common/../../../Common/Types.h ../Common/../../IDecl.h \
+ ../Common/../../Archive/IArchive.h \
  ../Common/../../Archive/../IProgress.h \
  ../Common/../../Archive/../../Common/MyUnknown.h \
  ../Common/../../Archive/../../Common/Types.h \
@@ -2902,9 +2926,10 @@ EnumDirItems.o: ../Common/EnumDirItems.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/Wildcard.h ../../../Common/MyString.h \
  ../../../Common/MyVector.h ../../../Common/Defs.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h ../Common/DirItem.h \
- ../../../Common/MyString.h ../Common/../../Archive/IArchive.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
+ ../Common/DirItem.h ../../../Common/MyString.h \
+ ../Common/../../Archive/IArchive.h \
  ../Common/../../Archive/../IProgress.h \
  ../Common/../../Archive/../../Common/MyUnknown.h \
  ../Common/../../Archive/../../Common/MyWindows.h \
@@ -2940,7 +2965,9 @@ LoadCodecs.o: ../Common/LoadCodecs.cpp ../../../myWindows/StdAfx.h \
  ../Common/../../Common/RegisterArc.h \
  ../Common/../../Common/../Archive/IArchive.h \
  ../Common/../../../Windows/FileFind.h \
- ../Common/../../../Windows/FileName.h ../Common/../../../Windows/Defs.h \
+ ../Common/../../../Windows/FileName.h \
+ ../Common/../../../Windows/../../C/Types.h \
+ ../Common/../../../Windows/Defs.h \
  ../Common/../../../Windows/ResourceString.h ../../../Common/MyString.h \
  ../../../Common/StringConvert.h ../../../Common/MyWindows.h \
  ../../../Common/MyString.h
@@ -2964,7 +2991,7 @@ OpenArchive.o: ../Common/OpenArchive.cpp ../../../myWindows/StdAfx.h \
  ../Common/../../Common/../IDecl.h ../Common/../../Common/StreamUtils.h \
  ../Common/DefaultName.h ../Common/OpenArchive.h \
  ../../../Windows/FileFind.h ../../../Windows/FileName.h \
- ../Common/../../Archive/IArchive.h \
+ ../../../Windows/../../C/Types.h ../Common/../../Archive/IArchive.h \
  ../Common/../../Archive/../IProgress.h \
  ../Common/../../Archive/../../Common/MyUnknown.h \
  ../Common/../../Archive/../../Common/Types.h \
@@ -2999,9 +3026,10 @@ ExtractingFilePath.o: ../Common/ExtractingFilePath.cpp \
  ../../../Common/Types.h ../../../Common/../../C/Types.h \
  ../../../Common/Types.h ../../../include_windows/windows.h \
  ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
- ../../../Common/Wildcard.h ../../../Common/MyString.h \
- ../../../Common/MyVector.h ../../../Common/Defs.h \
- ../Common/ExtractingFilePath.h ../../../Common/MyString.h
+ ../Common/../../../../C/Types.h ../../../Common/Wildcard.h \
+ ../../../Common/MyString.h ../../../Common/MyVector.h \
+ ../../../Common/Defs.h ../Common/ExtractingFilePath.h \
+ ../../../Common/MyString.h
 PropIDUtils.o: ../Common/PropIDUtils.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -3010,8 +3038,8 @@ PropIDUtils.o: ../Common/PropIDUtils.cpp ../../../myWindows/StdAfx.h \
  ../../../include_windows/tchar.h ../../../Common/IntToString.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/PropVariantConversions.h ../../../Common/MyString.h \
  ../Common/../../PropID.h ../Common/PropIDUtils.h
 SortUtils.o: ../Common/SortUtils.cpp ../../../myWindows/StdAfx.h \
@@ -3118,9 +3146,9 @@ FilePathAutoRename.o: ../../Common/FilePathAutoRename.cpp \
  ../../../Common/Defs.h ../../../Common/IntToString.h \
  ../../../Windows/FileFind.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h ../../Common/FilePathAutoRename.h \
- ../../../Common/MyString.h
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
+ ../../Common/FilePathAutoRename.h ../../../Common/MyString.h
 FileStreams.o: ../../Common/FileStreams.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \
@@ -3267,8 +3295,8 @@ FileDir.o: ../../../Windows/FileDir.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../../../Windows/FileName.h ../../../Windows/FileFind.h \
- ../../../Windows/../Common/StringConvert.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/FileFind.h ../../../Windows/../Common/StringConvert.h \
  ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/../Common/Types.h \
  ../../../Windows/../Common/IntToString.h ../../../myWindows/myPrivate.h \
@@ -3282,8 +3310,8 @@ FileFind.o: ../../../Windows/FileFind.cpp ../../../myWindows/StdAfx.h \
  ../../../include_windows/tchar.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
- ../../../Windows/FileName.h ../../../Windows/Defs.h \
- ../../../Windows/../Common/MyWindows.h \
+ ../../../Windows/FileName.h ../../../Windows/../../C/Types.h \
+ ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../Common/StringConvert.h \
  ../../../Windows/../Common/MyWindows.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/../Common/Types.h \
@@ -3307,7 +3335,7 @@ FileName.o: ../../../Windows/FileName.cpp ../../../myWindows/StdAfx.h \
  ../../../Common/../../C/Types.h ../../../Common/Types.h \
  ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
  ../../../include_windows/tchar.h ../../../Windows/FileName.h \
- ../../../Windows/../Common/MyString.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/../Common/MyString.h \
  ../../../Windows/../Common/MyVector.h ../../../Windows/../Common/Defs.h \
  ../../../Common/Wildcard.h ../../../Common/MyString.h
 PropVariant.o: ../../../Windows/PropVariant.cpp \
@@ -3617,13 +3645,13 @@ Dialog.o: ../../../Windows/Control/Dialog.cpp ../../../myWindows/StdAfx.h \
  /usr/include/wx-2.8/wx/generic/filedlgg.h \
  /usr/include/wx-2.8/wx/listctrl.h /usr/include/wx-2.8/wx/listbase.h \
  /usr/include/wx-2.8/wx/generic/listctrl.h \
- ../../../Windows/Control/DialogImpl.h ../../../Windows/Window.h \
- ../../../Windows/Defs.h ../../../Windows/../Common/MyWindows.h \
- ../../../Common/MyString.h ../../../Common/MyVector.h \
- ../../../Common/Defs.h ../../../Windows/Control/Dialog.h \
- ../../../Windows/Synchronization.h ../../../Windows/Defs.h \
- ../../../Windows/../../C/Threads.h ../../../Windows/../../C/Types.h \
- ../../../Windows/Synchronization2.h
+ /usr/include/wx-2.8/wx/filename.h ../../../Windows/Control/DialogImpl.h \
+ ../../../Windows/Window.h ../../../Windows/Defs.h \
+ ../../../Windows/../Common/MyWindows.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../Common/Defs.h \
+ ../../../Windows/Control/Dialog.h ../../../Windows/Synchronization.h \
+ ../../../Windows/Defs.h ../../../Windows/../../C/Threads.h \
+ ../../../Windows/../../C/Types.h ../../../Windows/Synchronization2.h
 Controls.o: ../../../Windows/Control/Controls.cpp \
  ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
  ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
@@ -3765,7 +3793,7 @@ LangUtils.o: LangUtils.cpp ../../../myWindows/StdAfx.h \
  ../../../Windows/Synchronization2.h ../../../Windows/Window.h \
  ../../../Windows/Defs.h ../../../Windows/FileFind.h \
  ../../../Windows/../Common/MyString.h ../../../Windows/FileName.h \
- RegistryUtils.h ProgramLocation.h
+ ../../../Windows/../../C/Types.h RegistryUtils.h ProgramLocation.h
 Lang.o: ../../../Common/Lang.cpp ../../../myWindows/StdAfx.h \
  ../../../myWindows/config.h ../../../Common/MyWindows.h \
  ../../../Common/MyGuidDef.h ../../../Common/Types.h \

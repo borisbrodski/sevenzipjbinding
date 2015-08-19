@@ -7,17 +7,7 @@
 
 #include <windows.h>
 
-#define CHAR_PATH_SEPARATOR '\\'
-#define WCHAR_PATH_SEPARATOR L'\\'
-#define STRING_PATH_SEPARATOR "\\"
-#define WSTRING_PATH_SEPARATOR L"\\"
-
 #else
-
-#define CHAR_PATH_SEPARATOR '/'
-#define WCHAR_PATH_SEPARATOR L'/'
-#define STRING_PATH_SEPARATOR "/"
-#define WSTRING_PATH_SEPARATOR L"/"
 
 #include <stddef.h> // for wchar_t
 #include <string.h>
@@ -54,6 +44,7 @@ typedef struct LARGE_INTEGER { LONGLONG QuadPart; }LARGE_INTEGER;
 typedef struct _ULARGE_INTEGER { ULONGLONG QuadPart;} ULARGE_INTEGER;
 
 typedef const CHAR *LPCSTR;
+
 typedef wchar_t WCHAR;
 
 #ifdef _UNICODE
@@ -67,6 +58,7 @@ typedef CHAR TCHAR;
 #define lstrcat strcat
 #define lstrlen strlen
 #endif
+#define _wcsicmp(str1,str2) MyStringCompareNoCase(str1,str2)
 
 typedef const TCHAR *LPCTSTR;
 typedef WCHAR OLECHAR;

@@ -189,17 +189,17 @@ STDMETHODIMP CHandler::UpdateItems(ISequentialOutStream *outStream, UInt32 numIt
         name += kSlash;
 
       bool tryUtf8 = true;
-      if (m_ForseLocal || !m_ForseUtf8)
+      if (m_ForceLocal || !m_ForceUtf8)
       {
 #ifdef _WIN32
         bool defaultCharWasUsed;
         ui.Name = UnicodeStringToMultiByte(name, CP_OEMCP, '_', defaultCharWasUsed);
-        tryUtf8 = (!m_ForseLocal && (defaultCharWasUsed ||
+        tryUtf8 = (!m_ForceLocal && (defaultCharWasUsed ||
           MultiByteToUnicodeString(ui.Name, CP_OEMCP) != name));
 #else
 	// FIXME
         ui.Name = UnicodeStringToMultiByte(name, CP_OEMCP);
-        tryUtf8 = (!m_ForseLocal);
+        tryUtf8 = (!m_ForceLocal);
 #endif
       }
 
@@ -518,15 +518,15 @@ STDMETHODIMP CHandler::SetProperties(const wchar_t **names, const PROPVARIANT *v
     }
     else if (name.CompareNoCase(L"CL") == 0)
     {
-      RINOK(SetBoolProperty(m_ForseLocal, prop));
-      if (m_ForseLocal)
-        m_ForseUtf8 = false;
+      RINOK(SetBoolProperty(m_ForceLocal, prop));
+      if (m_ForceLocal)
+        m_ForceUtf8 = false;
     }
     else if (name.CompareNoCase(L"CU") == 0)
     {
-      RINOK(SetBoolProperty(m_ForseUtf8, prop));
-      if (m_ForseUtf8)
-        m_ForseLocal = false;
+      RINOK(SetBoolProperty(m_ForceUtf8, prop));
+      if (m_ForceUtf8)
+        m_ForceLocal = false;
     }
     else
       return E_INVALIDARG;

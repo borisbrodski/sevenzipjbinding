@@ -724,9 +724,37 @@ bool CProgressDialog::OnExternalCloseMessage()
 
   if (thereAreMessages && !_cancelWasPressed)
   {
-    _waitCloseByCancelButton = true;
+
+#ifdef _WIN32
+    _waitCloseByCancelButton = true;	  
     UpdateMessagesDialog();
     return true;
+#else
+ 
+	// FIXME : p7zip does not have a messages zone
+	// FIXME : even if so, the close button does not close the main window
+	// So p7zip uses a MessageBoxW ...
+	  UStringVector messages;
+	  {
+		  NWindows::NSynchronization::CCriticalSectionLock lock(Sync._cs);
+		  for (int i = 0; i < Sync.Messages.Size(); i++)
+			  messages.Add(Sync.Messages[i]);
+		  _numPostedMessages = Sync.Messages.Size();
+	  }
+	  
+	  if (!messages.IsEmpty())
+	  {
+		  for (int i = 0; i < messages.Size(); i++)
+			  errorMessage = errorMessage + messages[i] + L"\n";
+	  }
+	  else
+		  errorMessage = L"Error(s) in the archive";
+	  
+	  MessageBoxW(*this, errorMessage, L"7-Zip - ERROR", MB_ICONERROR | MB_OK);
+
+	  MessagesDisplayed = true;
+	  
+#endif	  
   }
 
   End(0);
@@ -953,7 +981,7 @@ void CProgressDialog::ProcessWasFinished()
     PostMessage(kCloseMessage);
   else
     _needClose = true;
-};
+}
 
 
 HRESULT CProgressThreadVirt::Create(const UString &title, HWND parentWindow)

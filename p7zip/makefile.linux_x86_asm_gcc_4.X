@@ -10,7 +10,7 @@ ALLFLAGS=${OPTFLAGS} -pipe -m32 -s \
 	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
-CXX=g++ $(ALLFLAGS) -DHAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+CXX=g++ $(ALLFLAGS) -DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
 CC=gcc $(ALLFLAGS)
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared

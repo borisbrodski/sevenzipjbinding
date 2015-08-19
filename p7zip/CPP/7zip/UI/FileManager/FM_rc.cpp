@@ -764,6 +764,8 @@ static CStringTable g_stringTable[] =
 	{ IDS_PROP_SECTOR_SIZE , L"Sector Size" },
 	{ IDS_PROP_POSIX_ATTRIB , L"Mode" },
 	{ IDS_PROP_LINK , L"Link" },
+	{ IDS_PROP_ERROR , L"Error" },
+
  
 	{ 0 , 0 }
 };

@@ -2,7 +2,7 @@
 ; 7-Zip 4.07 Beta
 ; Translated by Leandro Spagnol
 ;
-; Updated to 7-Zip v9.07
+; Updated to 7-Zip v9.15
 ; by TJL73 <http://tjl73.altervista.org/>
 ; Some corrections by Vincenzo Reale
 ;
@@ -14,11 +14,11 @@
 ; 7-Zip Configuration
 
 ; Title
-01000000="Configurazione di 7-Zip "
+01000000="Configurazione di 7-Zip"
 
 ; Info Page
 01000100="Informazioni"
-01000103="7-Zip è un software gratuito e libero. Come utente registrato, potrai aiutare lo sviluppo di 7-Zip e usufruire del supporto tecnico.\n\nLocalizzazione italiana a cura di:\nTJL73 <http://tjl73.altervista.org/>"
+01000103="7-Zip è un software libero.\n\nLocalizzazione italiana a cura di:\nTJL73 <http://tjl73.altervista.org/>"
 01000104="Supporto tecnico"
 01000105="Registra"
 

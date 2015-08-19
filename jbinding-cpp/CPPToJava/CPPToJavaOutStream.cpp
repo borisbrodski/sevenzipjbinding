@@ -31,7 +31,7 @@ STDMETHODIMP CPPToJavaOutStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
     return S_OK;
 }
 
-STDMETHODIMP CPPToJavaOutStream::SetSize(Int64 newSize) {
+STDMETHODIMP CPPToJavaOutStream::SetSize(UInt64 newSize) {
     TRACE_OBJECT_CALL("SetSize");
 
 	TRACE("SetSize(size=" << newSize << ')');

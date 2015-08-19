@@ -85,18 +85,52 @@ void WINAPI RtlSecondsSince1970ToFileTime( DWORD Seconds, FILETIME * ft ) {
 /*
 void WINAPI RtlSecondsSince1970ToTime( DWORD Seconds, LARGE_INTEGER *Time )
 {
-  ULONGLONG secs = Seconds * (ULONGLONG)TICKSPERSEC + TICKS_1601_TO_1970;
-  // Time->u.LowPart  = (DWORD)secs;  Time->u.HighPart = (DWORD)(secs >> 32);
-  Time->QuadPart = secs;
+    ULONGLONG secs = Seconds * (ULONGLONG)TICKSPERSEC + TICKS_1601_TO_1970;
+    // Time->u.LowPart  = (DWORD)secs; Time->u.HighPart = (DWORD)(secs >> 32);
+    Time->QuadPart = secs;
 }
-*/
+ */
 
+BOOL WINAPI DosDateTimeToFileTime( WORD fatdate, WORD fattime, FILETIME * ft)
+{
+    struct tm newtm;
+#ifndef ENV_HAVE_TIMEGM
+    struct tm *gtm;
+    time_t time1, time2;
+#endif
 
+    TRACEN((printf("DosDateTimeToFileTime\n")))
+
+    newtm.tm_sec  = (fattime & 0x1f) * 2;
+    newtm.tm_min  = (fattime >> 5) & 0x3f;
+    newtm.tm_hour = (fattime >> 11);
+    newtm.tm_mday = (fatdate & 0x1f);
+    newtm.tm_mon  = ((fatdate >> 5) & 0x0f) - 1;
+    newtm.tm_year = (fatdate >> 9) + 80;
+    newtm.tm_isdst = -1;
+#ifdef ENV_HAVE_TIMEGM
+    RtlSecondsSince1970ToFileTime( timegm(&newtm), ft );
+#else
+    newtm.tm_isdst = 0;
+    time1 = mktime(&newtm);
+    gtm = gmtime(&time1);
+    time2 = mktime(gtm);
+    RtlSecondsSince1970ToFileTime( 2*time1-time2, ft );
+#endif
+    TRACEN((printf("DosDateTimeToFileTime(%ld,%ld) => %lx %lx\n",
+          (long)fatdate,(long)fattime,
+          (long)ft->dwHighDateTime,(long)ft->dwLowDateTime)))
+
+    return TRUE;
+}
+
+/*
 BOOL WINAPI DosDateTimeToFileTime( WORD fatdate, WORD fattime, FILETIME * ft) {
   struct tm newtm;
 
   TRACEN((printf("DosDateTimeToFileTime\n")))
-  // memset(&newtm,0,sizeof(newtm));
+
+  memset(&newtm,0,sizeof(newtm));
   newtm.tm_sec  = (fattime & 0x1f) * 2;
   newtm.tm_min  = (fattime >> 5) & 0x3f;
   newtm.tm_hour = (fattime >> 11);
@@ -109,12 +143,14 @@ BOOL WINAPI DosDateTimeToFileTime( WORD fatdate, WORD fattime, FILETIME * ft) {
   LONG   bias  = TIME_GetBias();
   RtlSecondsSince1970ToFileTime( time1 - bias, ft );
 
-  TRACEN((printf("DosDateTimeToFileTime(%ld,%ld) t1=%ld bias=%ld => %lx %lx\n",
-	(long)fatdate,(long)fattime,(long)time1,(long)bias,
+
+  TRACEN((printf("DosDateTimeToFileTime(%ld,%ld) t1=%ld => %lx %lx\n",
+        (long)fatdate,(long)fattime,(long)time1,
 	(long)ft->dwHighDateTime,(long)ft->dwLowDateTime)))
 
   return TRUE;
 }
+*/
 
 BOOLEAN WINAPI RtlTimeToSecondsSince1970( const LARGE_INTEGER *Time, DWORD *Seconds ) {
   ULONGLONG tmp = Time->QuadPart;

@@ -50,6 +50,8 @@ CPropVariant& CPropVariant::operator=(BSTR bstrSrc)
   return *this;
 }
 
+static const char *kMemException = "out of memory";
+
 CPropVariant& CPropVariant::operator=(LPCOLESTR lpszSrc)
 {
   InternalClear();
@@ -58,8 +60,9 @@ CPropVariant& CPropVariant::operator=(LPCOLESTR lpszSrc)
   bstrVal = ::SysAllocString(lpszSrc);
   if (bstrVal == NULL && lpszSrc != NULL)
   {
-    vt = VT_ERROR;
-    scode = E_OUTOFMEMORY;
+    throw kMemException;
+    // vt = VT_ERROR;
+    // scode = E_OUTOFMEMORY;
   }
   return *this;
 }
@@ -74,8 +77,9 @@ CPropVariant& CPropVariant::operator=(const char *s)
   bstrVal = ::SysAllocStringByteLen(0, (UINT)len * sizeof(OLECHAR));
   if (bstrVal == NULL)
   {
-    vt = VT_ERROR;
-    scode = E_OUTOFMEMORY;
+    throw kMemException;
+    // vt = VT_ERROR;
+    // scode = E_OUTOFMEMORY;
   }
   else
   {
@@ -164,7 +168,7 @@ HRESULT CPropVariant::Copy(const PROPVARIANT* pSrc)
       memmove((PROPVARIANT*)this, pSrc, sizeof(PROPVARIANT));
       return S_OK;
   }
-  return ::VariantCopy((tagVARIANT *)this, (tagVARIANT *)(pSrc));
+  return ::VariantCopy((tagVARIANT *)this, (tagVARIANT *)const_cast<PROPVARIANT *>(pSrc));
 }
 
 
@@ -204,6 +208,8 @@ void CPropVariant::InternalCopy(const PROPVARIANT *pSrc)
   HRESULT hr = Copy(pSrc);
   if (FAILED(hr))
   {
+    if (hr == E_OUTOFMEMORY)
+      throw kMemException;
     vt = VT_ERROR;
     scode = hr;
   }
@@ -212,7 +218,7 @@ void CPropVariant::InternalCopy(const PROPVARIANT *pSrc)
 int CPropVariant::Compare(const CPropVariant &a)
 {
   if (vt != a.vt)
-    return 0; // it's bug case
+    return MyCompare(vt, a.vt);
   switch (vt)
   {
     case VT_EMPTY: return 0;

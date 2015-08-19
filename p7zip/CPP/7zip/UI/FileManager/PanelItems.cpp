@@ -8,7 +8,7 @@
 
 #include "Windows/PropVariant.h"
 #include "Windows/PropVariantConversions.h"
-// FIXME #include "Windows/Menu.h"
+#include "Windows/Menu.h"
 
 #include "../../PropID.h"
 
@@ -101,7 +101,8 @@ void CPanel::InitColumns()
     prop.Name = GetNameOfProperty(propID, name);
     prop.Order = -1;
     prop.IsVisible = true;
-    prop.Width = 100;
+	prop.Width = 100;
+	  
     _properties.Add(prop);
   }
   // InitColumns2(sortID);
@@ -120,6 +121,7 @@ void CPanel::InitColumns()
       CItemProperty &item = _properties[index];
       item.IsVisible = columnInfo.IsVisible;
       item.Width = columnInfo.Width;
+		
       if (columnInfo.IsVisible)
         item.Order = order++;
       continue;
@@ -168,6 +170,7 @@ void CPanel::InsertColumn(int index)
   column.iOrder = prop.Order;
   column.iSubItem = index;
   column.pszText = (wchar_t *)(const wchar_t *)prop.Name;
+
   _listView.InsertColumn(index, &column);
 }
 

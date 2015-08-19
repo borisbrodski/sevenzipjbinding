@@ -46,7 +46,7 @@ public:
 
     STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);
 
-    STDMETHOD(SetSize)(Int64 newSize);
+    STDMETHOD(SetSize)(UInt64 newSize);
 };
 
 #define __JAVA_OUT_STREAM_H__INCLUDED__

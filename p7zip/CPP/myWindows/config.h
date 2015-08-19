@@ -8,42 +8,48 @@
   #if !defined(ENV_MACOSX) && !defined(ENV_BEOS)
 
     /* <wchar.h> */
-    /* HAVE_WCHAR__H and not HAVE_WCHAR_H to avoid warning with wxWidgets */
-    #define HAVE_WCHAR__H
+    /* ENV_HAVE_WCHAR__H and not ENV_HAVE_WCHAR_H to avoid warning with wxWidgets */
+    #define ENV_HAVE_WCHAR__H
 
     /* <wctype.h> */
-    #define HAVE_WCTYPE_H
+    #define ENV_HAVE_WCTYPE_H
 
     /* mbrtowc */
 /* #ifndef __hpux */
-/*    #define HAVE_MBRTOWC */
+/*    #define ENV_HAVE_MBRTOWC */
 /* #endif */
 
     /* towupper */
-    #define HAVE_TOWUPPER
+    #define ENV_HAVE_TOWUPPER
 
   #endif /* !ENV_MACOSX && !ENV_BEOS */
 
   #if !defined(ENV_BEOS)
-  #define HAVE_GETPASS
+    #define ENV_HAVE_GETPASS
+
+    #if !defined(sun)
+      #define ENV_HAVE_TIMEGM
+    #endif
+
+
   #endif
 
   /* lstat, readlink and S_ISLNK */
-  #define HAVE_LSTAT
+  #define ENV_HAVE_LSTAT
 
   /* <locale.h> */
-  #define HAVE_LOCALE
+  #define ENV_HAVE_LOCALE
 
   /* mbstowcs */
-  #define HAVE_MBSTOWCS
+  #define ENV_HAVE_MBSTOWCS
 
   /* wcstombs */
-  #define HAVE_WCSTOMBS
+  #define ENV_HAVE_WCSTOMBS
 
 #endif /* !__DJGPP__ */
 
 #ifndef ENV_BEOS
-#define HAVE_PTHREAD
+#define ENV_HAVE_PTHREAD
 #endif
 
 #if defined(ENV_MACOSX)
@@ -51,10 +57,10 @@
 #endif
 
 #ifdef LOCALE_IS_UTF8
-#undef HAVE_LOCALE
-#undef HAVE_MBSTOWCS
-#undef HAVE_WCSTOMBS
-/* #undef HAVE_MBRTOWC */
+#undef ENV_HAVE_LOCALE
+#undef ENV_HAVE_MBSTOWCS
+#undef ENV_HAVE_WCSTOMBS
+/* #undef ENV_HAVE_MBRTOWC */
 #endif
 
 #define MAX_PATHNAME_LEN   1024

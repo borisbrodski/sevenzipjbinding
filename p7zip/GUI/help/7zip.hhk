@@ -71,10 +71,6 @@
     <param name="Local" value="fm/plugins/7-zip/add.htm">
     </OBJECT>
   <LI> <OBJECT type="text/sitemap">
-    <param name="Name" value="7-Zip Plugin Options Dialog Box">
-    <param name="Local" value="fm/plugins/7-zip/options.htm">
-    </OBJECT>
-  <LI> <OBJECT type="text/sitemap">
     <param name="Name" value="Command Line Version">
     <param name="Local" value="cmdline/index.htm">
     </OBJECT>

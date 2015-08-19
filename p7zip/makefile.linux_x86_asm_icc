@@ -11,7 +11,7 @@ ALLFLAGS=${OPTFLAGS} \
 	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
-CXX=icpc -i-static $(ALLFLAGS) # -DHAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+CXX=icpc -i-static $(ALLFLAGS)
 CC=icc $(ALLFLAGS)
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared

@@ -132,9 +132,9 @@ AString UnicodeStringToMultiByte(const UString &srcString, UINT codePage)
 
 #else /* LOCALE_IS_UTF8 */
 
-UString MultiByteToUnicodeString(const AString &srcString, UINT codePage)
+UString MultiByteToUnicodeString(const AString &srcString, UINT /* codePage */ )
 {
-#ifdef HAVE_MBSTOWCS
+#ifdef ENV_HAVE_MBSTOWCS
   if ((global_use_utf16_conversion) && (!srcString.IsEmpty()))
   {
     UString resultString;
@@ -153,9 +153,9 @@ UString MultiByteToUnicodeString(const AString &srcString, UINT codePage)
   return resultString;
 }
 
-AString UnicodeStringToMultiByte(const UString &srcString, UINT codePage)
+AString UnicodeStringToMultiByte(const UString &srcString, UINT /* codePage */ )
 {
-#ifdef HAVE_WCSTOMBS
+#ifdef ENV_HAVE_WCSTOMBS
   if ((global_use_utf16_conversion) && (!srcString.IsEmpty()))
   {
     AString resultString;

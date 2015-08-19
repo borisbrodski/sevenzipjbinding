@@ -14,7 +14,7 @@ struct CArcInfo
   const wchar_t *Ext;
   const wchar_t *AddExt;
   Byte ClassId;
-  Byte Signature[28];  // FIXME Byte Signature[16];
+  Byte Signature[28];  // FIXME Byte Signature[16]; adding 22 bytes to insure kSignature[0x1A]!= 0 and  kSignature[0x1B] != 0
   int SignatureSize;
   bool KeepName;
   CreateInArchiveP CreateInArchive;

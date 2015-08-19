@@ -1,6 +1,10 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.30
-; Translated by Lazar
+; 7-Zip 9.07
+; Translated by Lazar update Ozzii
+;
+;
+;
+;
 
 00000000="Serbian - Latin"
 00000001="Srpski - latinica"
@@ -13,7 +17,7 @@
 
 ; Info Page
 01000100="O programu"
-01000103="7-Zip je besplatan program. No, ako Vam se 7-Zip dopadne i poželite da podržite dalji razvoj programa, molimo Vas registrujte se tako što ćete priložiti donaciju od 20$. To možete uraditi kreditnom karticom ili nekim drugim načinom plaćanja."
+01000103="7-Zip je besplatan program."
 01000104="Podrška"
 01000105="Registracija"
 
@@ -36,7 +40,6 @@
 ; Language Page
 01000400="Jezik"
 01000401="Jezik:"
-
 
 
 ; 7-Zip Explorer extension
@@ -77,12 +80,12 @@
 0200020A="Kreirana"
 0200020B="Pristupano"
 0200020C="Promenjeno"
-0200020D="Solid"
+0200020D="Solidno"
 0200020E="Komentar"
 0200020F="Šifrovano"
 02000210="Podeli pre"
 02000211="Podeli posle"
-02000212="Dictionary"
+02000212="Rečnik"
 02000213="CRC"
 02000214="Tip"
 02000215="Anti"
@@ -94,10 +97,41 @@
 0200021B="Blok"
 0200021C="Komentar"
 0200021D="Položaj"
+0200021E="Prefiks putanje"
+0200021F="Fascikle"
+02000220="Datoteke"
+02000221="Verzija"
+02000222="Volumen"
+02000223="VišeVolumena"
+02000224="Ofset"
+02000225="Linkovi"
+02000226="Blokovi"
+02000227="Volumeni"
+
+02000229="64-bit"
+0200022A="Big-endian"
+0200022B="Procesor"
+0200022C="Fizička veličina"
+0200022D="Veličina zaglavlja"
+0200022E="Provera rezultata"
+0200022F="Karakteristike"
+02000230="Virtuelna adresa"
+02000231="ID"
+02000232="Kratko ime"
+02000233="Kreator aplikacije"
+02000234="Veličina sektora"
+02000235="Način"
+02000236="Link"
 
 ; Status bar
 02000301="{0} objekat(a) izabrano"
 02000302="{0} objekat(a)"
+
+02000320="Datoteke:"
+02000321="Fascikle"
+02000322="Veličina:"
+02000323="Komprimovana veličina:"
+02000324="Arhive:"
 
 ; List Context Menu
 02000401="Kolona..."
@@ -117,6 +151,11 @@
 02000606="Isuviše stavki"
 02000607="Ni jedna aplikacija nije dodeljena navedenoj ekstenziji"
 02000608="Nije bilo nikakvih grešaka"
+02000609="Ne mogu da otvorim datoteku '(0)' kao arhiva"
+0200060A="Ne mogu da otvorim šifrovanu arhivu '(0)'. Pogrešna lozinka?"
+0200060B="Sistem ne može da izdvoji potrebnu količinu memorije"
+0200060C="Nepoznata greška"
+0200060D="Nepodržan tip arhive"
 
 ; Dialogs
 02000702="U redu"
@@ -177,11 +216,17 @@
 02000A91="Nepodržani metod kompresije za '{0}'."
 02000A92="Greška u '{0}'. Datoteka je neispravana."
 02000A93="CRC greška u '{0}'. Datoteka je neispravana."
+02000A94="Greške u kodiranu datoteku '(0)' Pogrešna lozinka."
+02000A95="CRC greška u šifrovane datoteke '(0)' Pogrešna lozinka."
 
 ; Password dialog
 02000B00="Unesite lozinku"
 02000B01="Unesite lozinku:"
 02000B02="Prikaži lozinku"
+02000B03="Ponovo unesite lozinku:"
+02000B10="Lozinke se ne poklapaju"
+02000B11="Koristi samo engleska slova, brojeva i specijalnih znakova (!, #, $, ...) Za lozinke"
+02000B12="Lozinka je predugačka"
 
 ; Progress dialog
 02000C00="Obrađujem"
@@ -189,6 +234,8 @@
 02000C02="Preostalo vreme:"
 02000C03="Veličina:"
 02000C04="Brzina:"
+02000C05="Obrađeno:"
+02000C06="Kompresioni odnos:"
 
 02000C10="Pozadina"
 02000C11="Na vrhu"
@@ -216,8 +263,17 @@
 02000D0D="Word size:"
 02000D0E="Potrebna memorija - kompresija:"
 02000D0F="Potrebna memorija - dekompresija:"
+02000D10="Šifrovanje"
+02000D11="Metoda šifrovanja:"
+02000D12="Broj niza procesora:"
+02000D13="Veličina čvrstog bloka:"
+02000D14="Ne-čvrste"
+02000D15="Čvrsto"
+02000D16="Kompresija deljene datoteka"
 
 02000D40="Podeli na delove, bajti:"
+02000D41="Neispravna veličina volumena"
+02000D42="Određena veličina volumena: {0} bajtova.\nDa li ste sigurni da želite da podelite arhivu u tih volumena?"
 
 02000D81="Bez kompresije"
 02000D82="Normalno"
@@ -255,6 +311,7 @@
 ; Testing
 02000F90="Testiranje"
 
+
 ; File Manager
 
 03000000="7-Zip"
@@ -279,12 +336,13 @@
 03000233="Obriši"
 03000240="Svojstva"
 03000241="Komentar"
+03000242="Izračunajte provernu veličinu"
+03000243="razlika"
 03000250="Nova fascikla"
 03000251="Nova datoteka"
 03000260="Izlaz"
 03000270="Podeli fajl..."
 03000271="Spoj delove..."
-
 
 ; Edit
 03000310="Opozovi"
@@ -311,6 +369,7 @@
 03000431="Gore za jedan nivo"
 03000432="Hronologija..."
 03000440="Osvežavanje"
+03000449="Ravan pregled"
 03000450="2 Prozora"
 03000451="Trake sa alatkama"
 03000460="Rad sa arhivama"
@@ -342,6 +401,7 @@
 ; Edit
 03010200="Promene u datotekama"
 03010201="Program:"
+03010202="Razlika:"
 
 ; System
 03010300="Sistem"
@@ -355,6 +415,7 @@
 03010410="Prikaži sistemski meni"
 03010420="Obeleži ceo red"
 03010421="Prikaži linije mreže"
+03010422="Jedan klik za otvaranje stavke"
 03010430="Alternativni način za biranje"
 03010440="Koristi velike memorijske blokove"
 
@@ -368,6 +429,7 @@
 03020206="Premeštanje u toku..."
 03020207="Nije moguće premestiti ili kopirati sadržaj ove Fascikle."
 03020208="Operacija nije podržana."
+03020209="Izaberite odredišnu fasciklu."
 
 03020210="Potvrdite brisanje datoteke"
 03020211="Potvrdite brisanje fascikle"
@@ -377,6 +439,7 @@
 03020215="Jeste li sigurni da želite da obrišete ove {0} podatke?"
 03020216="Brisanje u toku..."
 03020217="Greška pri brisanju datoteke ili fascikle"
+03020218="Sistem ne može da premesti datoteku sa dugom putu u korpu za otpatke"
 
 03020220="Preimenovanje u toku..."
 03020221="Greška pri preimenovanju datoteke ili fascikle"
@@ -403,14 +466,16 @@
 03020281="Nije moguće ažurirati datoteku\n'{0}'"
 03020282="Nije moguće započeti uređivanje."
 03020283="Otvaranje u toku..."
+03020284="Datoteka izgleda kao virus (ime datoteke sadrži puno razmaka u imenu)."
 
-03020291="Komentar"
+03020290="Komentar"
 03020291="Komentar:"
 
 030202A0="Sistem"
 
 03020300="Računar"
 03020301="Mreža"
+03020302="Dokumenti"
 
 03020400="Dodaj"
 03020401="Izdvoj"
@@ -424,10 +489,30 @@
 03020500="Podeli datoteku"
 03020501="Podeli na:"
 03020510="Podela..."
+03020520="Potvrda podele"
+03020521="Da li ste sigurni da želite da podelite datoteku na (0) dela?"
+03020522="Veličine dela mora biti manji od veličine originalne datoteke"
 
 03020600="Sastavi datoteke"
 03020601="Sastavi u:"
 03020610="Spajanje..."
+03020620="Izaberite samo prvi deo podele datoteke"
+03020621="Ne mogu da otkrijem datoteku kao deo podele"
+03020622="Ne može se naći više od jednog dela podele"
+
+03020710="Izračunavanje proverne veličine..."
+03020720="Informacija o proverne veličine"
+03020721="CRC porvera za podatak:"
+03020722="CRC provera za podatak i imena:"
+
+03020800="Skeniranje..."
+
+03020900="Osobine"
+
+03020A01="Operacija ne može biti pozvana iz fascikle koja ima dugu putanju."
+03020A02="Morate da izaberete neku datoteku"
+03020A03="Morate da izaberete jednu ili više datoteka"
+03020A04="Datoteka {0} već postoji"
 
 ; Computer
 03031100="Ukupni kapacitet"
@@ -437,7 +522,7 @@
 
 ; Network
 03031200="Lokalno ime"
-03031201="Provider"
+03031201="Provajder"
 
 ; Benchmark Dialog
 
@@ -452,5 +537,7 @@
 03080008="Rezultat"
 03080009="Prolazi:"
 0308000A="Greške:"
+0308000B="Upotreba procesora"
+0308000C="Rejting/Upotreba"
 
 ;!@LangEnd@!

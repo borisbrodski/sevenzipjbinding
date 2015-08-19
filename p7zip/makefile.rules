@@ -197,8 +197,6 @@ DeflateDecoder.o : ../../Compress/DeflateDecoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/DeflateDecoder.cpp
 DeflateEncoder.o : ../../Compress/DeflateEncoder.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/DeflateEncoder.cpp
-DeflateNsisRegister.o : ../../Compress/DeflateNsisRegister.cpp
-	$(CXX) $(CXXFLAGS) ../../Compress/DeflateNsisRegister.cpp
 DeflateRegister.o : ../../Compress/DeflateRegister.cpp
 	$(CXX) $(CXXFLAGS) ../../Compress/DeflateRegister.cpp
 DeltaFilter.o : ../../Compress/DeltaFilter.cpp
@@ -365,6 +363,8 @@ RpmHandler.o : ../../Archive/RpmHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/RpmHandler.cpp
 SwfHandler.o : ../../Archive/SwfHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/SwfHandler.cpp
+SquashfsHandler.o : ../../Archive/SquashfsHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/SquashfsHandler.cpp
 VhdHandler.o : ../../Archive/VhdHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/VhdHandler.cpp
 XarHandler.o : ../../Archive/XarHandler.cpp
@@ -380,6 +380,8 @@ DeflateProps.o : ../../Archive/DeflateProps.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/DeflateProps.cpp
 CpioHandler.o : ../../Archive/CpioHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/CpioHandler.cpp
+CramfsHandler.o : ../../Archive/CramfsHandler.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/CramfsHandler.cpp
 GzHandler.o : ../../Archive/GzHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/GzHandler.cpp
 LzhHandler.o : ../../Archive/LzhHandler.cpp
@@ -468,6 +470,8 @@ UdfRegister.o : ../../Archive/Udf/UdfRegister.cpp
 
 WimHandler.o : ../../Archive/Wim/WimHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Wim/WimHandler.cpp
+WimHandlerOut.o : ../../Archive/Wim/WimHandlerOut.cpp
+	$(CXX) $(CXXFLAGS) ../../Archive/Wim/WimHandlerOut.cpp
 WimIn.o : ../../Archive/Wim/WimIn.cpp
 	$(CXX) $(CXXFLAGS) ../../Archive/Wim/WimIn.cpp
 WimRegister.o : ../../Archive/Wim/WimRegister.cpp

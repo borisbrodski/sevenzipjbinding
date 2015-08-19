@@ -3,62 +3,25 @@ add_definitions( -DLANG -DEXTERNAL_LZMA -DEXTERNAL_CODECS -DBENCH_MT )
 
 IF(APPLE)
   add_definitions(-DENV_MACOSX  -D__WXMAC__)
-
-  include_directories(
-	../../../myWindows
-	../../../
-	../../../include_windows
-	
-	/Users/me/WXWIDGETS_2_8_10/ins/lib/wx/include/mac-unicode-release-static-2.8
-	/Users/me/WXWIDGETS_2_8_10/ins/include/wx-2.8
-  )
-
-  FIND_LIBRARY(IOKIT_LIBRARY IOKit )
-  FIND_LIBRARY(CARBON_LIBRARY Carbon )
-  FIND_LIBRARY(COCOA_LIBRARY Cocoa )
-
-  FIND_LIBRARY(SYSTEM_LIBRARY System )
-  FIND_LIBRARY(QUICKTIME_LIBRARY QuickTime )  
-  FIND_LIBRARY(OPENGL_LIBRARY OpenGL )
-  FIND_LIBRARY(AGL_LIBRARY AGL )  
-  FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation) 
-  FIND_LIBRARY(WEBKIT_LIBRARY WebKit)  
-  
-  
-	SET(OSX_FRAMEWORKS ${QUICKTIME_LIBRARY} 
-	                   ${IOKIT_LIBRARY} 
-	                   ${CARBON_LIBRARY} 
-	                   ${COCOA_LIBRARY} 
-	                   ${SYSTEM_LIBRARY} 
-	                   ${CFOUNDATION_LIBRARY}
-	                   ${AGL_LIBRARY} 
-	                   ${OPENGL_LIBRARY} 
-	                   ${COREFOUNDATION_LIBRARY}
-	                   ${WEBKIT_LIBRARY}
-	                   )   
-  
-  
-  link_directories(/Users/me/WXWIDGETS_2_8_10/ins/lib)
-
-ELSE(APPLE)
-
-  add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__)
-
-  include_directories(
-	../../../myWindows
-	../../../
-	../../../include_windows
-	
-	/usr/lib/wx/include/gtk2-unicode-release-2.8
-	/usr/include/wx-2.8
-  )
-   
 ENDIF(APPLE)
 
 
+find_package(wxWidgets COMPONENTS core base adv REQUIRED)
+
+include( ${wxWidgets_USE_FILE} )
+
+add_definitions(-D_FILE_OFFSET_BITS=64 -D_LARGE_FILES)
+
+include_directories(
+	../../../myWindows
+	../../../
+	../../../include_windows
+)
+   
+
+
+
 add_executable(7zG
-
-
 
         ../../UI/GUI/CompressDialog.cpp
         ../../UI/GUI/CompressDialog_rc.cpp
@@ -74,7 +37,7 @@ add_executable(7zG
         ../../UI/Common/ArchiveCommandLine.cpp
         ../../UI/Common/ArchiveExtractCallback.cpp
         ../../UI/Common/ArchiveOpenCallback.cpp
-	../../UI/Common/Bench.cpp
+        ../../UI/Common/Bench.cpp
         ../../UI/Common/DefaultName.cpp
         ../../UI/Common/EnumDirItems.cpp
         ../../UI/Common/Extract.cpp
@@ -156,43 +119,13 @@ add_executable(7zG
  
  )
 
-IF(APPLE)
- TARGET_LINK_LIBRARIES(7zG ${OSX_FRAMEWORKS}
-  wx_macu_richtext-2.8.a
-  wx_macu_aui-2.8.a
-  wx_macu_xrc-2.8.a
-  wx_macu_qa-2.8.a
-  wx_macu_html-2.8.a
-  wx_macu_adv-2.8.a
-  wx_macu_core-2.8.a
-  wx_base_carbonu_xml-2.8.a
-  wx_base_carbonu_net-2.8.a
-  wx_base_carbonu-2.8.a
-  expat
-  wxregexu-2.8
-  wxtiff-2.8
-  wxjpeg-2.8
-  wxpng-2.8
-  z
-  iconv       
-  ${CMAKE_THREAD_LIBS_INIT})
-  
-ELSE(APPLE)
-  IF(HAVE_PTHREADS)
-   TARGET_LINK_LIBRARIES(7zG
 
-   wx_gtk2u_richtext-2.8
-   wx_gtk2u_aui-2.8
-   wx_gtk2u_xrc-2.8
-   wx_gtk2u_qa-2.8
-   wx_gtk2u_html-2.8
-   wx_gtk2u_adv-2.8
-   wx_gtk2u_core-2.8
-   wx_baseu_xml-2.8
-   wx_baseu_net-2.8
-   wx_baseu-2.8
+IF(HAVE_PTHREADS)
+ TARGET_LINK_LIBRARIES(7zG
 
-  ${CMAKE_THREAD_LIBS_INIT})
-  ENDIF(HAVE_PTHREADS)
-ENDIF(APPLE)
+ ${wxWidgets_LIBRARIES}
+
+ ${CMAKE_THREAD_LIBS_INIT})
+ENDIF(HAVE_PTHREADS)
+
 

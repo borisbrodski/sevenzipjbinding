@@ -1,4 +1,76 @@
 
+Version 9.20.1
+==============
+
+  - #3211479 "p7zip 9.20 - "unsupported method" with RAR files - " fixed
+  	"install.sh" installs again "bin/Codecs/Rar29.so"
+
+Version 9.20
+============
+
+  - From Windows version of 7-zip 9.20, What's new after 7-Zip 4.65 (2009-02-03):
+    - 7-Zip now supports LZMA2 compression method.
+    - 7-Zip now can update solid .7z archives.
+    - 7-Zip now supports XZ archives.
+    - 7-Zip now supports PPMd compression in ZIP archives.
+    - 7-Zip now can unpack NTFS, FAT, VHD, MBR, APM, SquashFS, CramFS, MSLZ archives.
+    - 7-Zip now can unpack GZip, BZip2, LZMA, XZ and TAR archives from stdin.
+    - 7-Zip now can unpack some TAR and ISO archives with incorrect headers.
+    - 7-Zip now supports files that are larger than 8 GB in TAR archives.
+    - NSIS and WIM support was improved.
+    - Partial parsing for EXE resources, SWF and FLV.
+    - The support for archives in installers was improved.
+    - 7-Zip now can stores NTFS file timestamps to ZIP archives.
+    - Speed optimizations in PPMd codec.
+    - Speed optimizations in CRC calculation code for Intel's Atom CPUs.
+    - New -scrc switch to calculate total CRC-32 during extracting / testing.
+    - 7-Zip File Manager now doesn't use temp files to open nested archives stored without compression.
+    - Disk fragmentation problem for ZIP archives created by 7-Zip was fixed.
+    - Some bugs were fixed.
+    - New localizations: Hindi, Gujarati, Sanskrit, Tatar, Uyghur, Kazakh.
+    - Not in p7zip : Speed optimizations in AES code for Intel's 32nm CPUs.
+
+
+
+
+Version 9.18
+============
+  - From Windows version of 7-zip 9.17
+    - Disk fragmentation problem for ZIP archives created by 7-Zip was fixed.
+    Notes: 7-Zip now uses 4 MB RAM buffer as file cache, when you create ZIP archives.
+    It reduces the number of Move_File_Position and Write_to_File operations.
+
+  - From Windows version of 7-zip 9.18
+    - 7-Zip now can unpack SquashFS and CramFS filesystem images.
+    - 7-Zip now can unpack some TAR and ISO archives with incorrect headers.
+    - Some bugs were fixed.
+
+  - Some bugs were fixed in 7zG and 7zFM on MacOSX
+
+
+Version 9.16
+============
+  - From Windows version of 7-zip 9.16
+    - 7-Zip now supports files that are larger than 8 GB in TAR archives.
+    - NSIS support was improved :
+      - 7-Zip now supports BZip2 method in NSIS installers.
+      - 7-Zip now can extract identical files from NSIS installers.
+    - Some bugs were fixed.
+    - New localizations: Hindi, Gujarati, Sanskrit.
+
+  - From Windows version of 7-zip 9.15
+    - Some bugs were fixed.
+    - New localization: Tatar
+
+  - From Windows version of 7-zip 9.14    
+    - WIM support was improved. 7-Zip now can create WIM archives without compression.
+    
+
+  - #3069545 "kSignatureDummy?" fixed
+  
+  
+
+
 Version 9.13
 ============
   - From Windows version of 7-zip 9.12

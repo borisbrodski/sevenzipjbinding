@@ -1,7 +1,7 @@
 ﻿;!@Lang@!UTF-8!
-; 7-Zip 4.62
+; 7-Zip 9.07
 ; Translated by Nicolas Sierro
-; Updated to 7-Zip 4.62 beta by Philippe Berthault
+; Updated to 7-Zip 9.07 by Philippe Berthault
 ;
 ;
 ;
@@ -116,6 +116,12 @@
 0200022E="Somme de contrôle"
 0200022F="Caractéristiques"
 02000230="Adresse virtuelle"
+02000231="ID"
+02000232="Nom court"
+02000233="Application créatrice"
+02000234="Taille de secteur"
+02000235="Mode"
+02000236="Lien"
 
 ; Status bar
 02000301="{0} objet(s) sélectionné(s)"
@@ -331,6 +337,7 @@
 03000240="P&ropriétés"
 03000241="Comme&ntaire"
 03000242="Somme de contrôle"
+03000243="Diff"
 03000250="Créer un dossier"
 03000251="Créer un fichier"
 03000260="&Quitter"
@@ -394,6 +401,7 @@
 ; Edit
 03010200="Editeur"
 03010201="&Editeur:"
+03010202="&Diff:"
 
 ; System
 03010300="Système"
@@ -407,6 +415,7 @@
 03010410="Afficher le menu système"
 03010420="Sélectionner toute la ligne"
 03010421="Afficher la grille"
+03010422="Simple clic pour ouvrir un item"
 03010430="Utiliser la sélection alternative"
 03010440="Utiliser des grosses pages mémoire"
 

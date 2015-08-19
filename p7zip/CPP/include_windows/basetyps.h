@@ -1,7 +1,7 @@
 #ifndef _BASETYPS_H
 #define _BASETYPS_H
 
-#ifdef HAVE_GCCVISIBILITYPATCH
+#ifdef ENV_HAVE_GCCVISIBILITYPATCH
     #define DLLEXPORT __attribute__ ((visibility("default")))
   #else
     #define DLLEXPORT

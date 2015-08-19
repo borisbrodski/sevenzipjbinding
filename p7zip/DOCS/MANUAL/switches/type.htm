@@ -20,13 +20,19 @@
 
 <DL>
   <DT>{archive_type}</DT>
-  <DD>Specifies the type of archive. It can be: 7z, split, zip, gzip, bzip2, tar, ....
-  7z format is the default.
+  <DD>Specifies the type of archive. It can be: *, 7z, split, zip, gzip, bzip2, tar, ... , or 
+    combination of them, like: mbr.vhd
 </DD>
 </DL>
 
-<P>If -t{archive_type} switch is not specified, 7-Zip uses extension of archive to 
-  detect the type of archive.</P>
+<P>If -t{archive_type} switch is not specified, 7-Zip uses extension of archive filename to 
+  detect the type of archive. If you create new archive, -t{archive_type} switch is not 
+  specified and there is no extension of archive, 7-Zip will create .7z archive.</P>
+
+<P>When you extract archive of some types that contains another 
+archive without compression (for example, MBR in VHD), 7-Zip can open both 
+levels in one step. If you want to open/extract just top 
+level archive, use <SPAN class="filename">-t*</SPAN> switch.</P>
 
 <P>Note: gzip or bzip2 formats support only one file per archive.
 If you want to compress more than one file to these formats,

@@ -1,10 +1,13 @@
 
 OPTFLAGS=-O
 
-ALLFLAGS=-m32 ${OPTFLAGS}  \
+# don't use -DNDEBUG in order to use MacOSX wxWidgets
+
+ALLFLAGS=${OPTFLAGS}  \
+	-mmacosx-version-min=10.4 -arch i386 \
 	-DENV_MACOSX \
     	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
-	-DNDEBUG -D_REENTRANT -DENV_UNIX \
+	-D_REENTRANT -DENV_UNIX \
 	$(LOCAL_FLAGS)
 
 CXX=c++ $(ALLFLAGS)

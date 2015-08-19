@@ -395,6 +395,7 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/Windows/FileIO.cpp
         ${P7ZIP_SRC}/CPP/Windows/FileName.cpp
         ${P7ZIP_SRC}/CPP/Windows/PropVariant.cpp
+        ${P7ZIP_SRC}/CPP/Windows/PropVariantUtils.cpp
         ${P7ZIP_SRC}/CPP/Windows/PropVariantConversions.cpp
         ${P7ZIP_SRC}/CPP/Windows/Synchronization.cpp
         ${P7ZIP_SRC}/CPP/Windows/System.cpp
@@ -499,6 +500,7 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandlerOut.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 
@@ -575,7 +577,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Compress/CopyCoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/CopyRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/Deflate64Register.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateNsisRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateDecoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateEncoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/DeflateRegister.cpp
@@ -747,7 +748,7 @@ ENDIF()
 IF(MINGW)
 #   TARGET_LINK_LIBRARIES(7-Zip-JBinding c)
 ELSE(MINGW)
-    TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c)
+    TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c pthread)
 ENDIF(MINGW)
 
 
@@ -765,6 +766,9 @@ IF(MINGW)
     #    ELSE(MINGW)
     #	TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT})
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
+ELSE(MINGW)
+    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs") # Check for missing symbols
+
 ENDIF(MINGW)
 
 #TARGET_LINK_LIBRARIES(7-Zip-JBinding duma)

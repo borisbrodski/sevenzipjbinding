@@ -9,7 +9,7 @@
 
 #define NO_INLINE /* FIXME */
 
-#ifdef HAVE_PTHREAD
+#ifdef ENV_HAVE_PTHREAD
 #include <pthread.h>
 #endif
 
@@ -34,6 +34,21 @@
 #endif
 
 #undef CS /* fix for Solaris 10 x86 */
+
+
+/***************************/
+
+#ifndef ENV_HAVE_WCHAR__H
+
+EXTERN_C_BEGIN
+
+size_t	wcslen(const wchar_t *);
+wchar_t *wcscpy(wchar_t * , const wchar_t * );
+wchar_t *wcscat(wchar_t * , const wchar_t * );
+
+EXTERN_C_END
+
+#endif
 
 /***************************/
 

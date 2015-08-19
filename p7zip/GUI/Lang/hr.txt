@@ -57,7 +57,7 @@
 0200010A="Testiraj integritet odabrane arhive"
 0200010B="Raspakiraj ovdje"
 0200010C="Raspakiraj podatke iz odabrane arhive u trenutnu mapu"
-0200010D="Raspakiraj u{0}"
+0200010D="Raspakiraj u {0}"
 0200010E="Raspakiraj podatke u pod-mapu"
 0200010F="Dodaj u {0}"
 02000110="Dodaj odabrane podatke u arhiv"

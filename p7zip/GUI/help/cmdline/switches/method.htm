@@ -435,11 +435,13 @@ So GZip supports only the following parameters: x, fb, pass.
        Memory requirements depend on dictionary size (parameter "d" in table below).
     </P>
     <TABLE>
-      <TR> <TH width="60">MF_ID</TH> <TH width="120">Memory</TH> <TH>Description</TH> </TR>
-      <TR> <TD>bt2</TD> <TD>d*9.5 + 4 MB</TD> <TD>Binary Tree with 2 bytes hashing.</TD> </TR>
-      <TR> <TD>bt3</TD> <TD>d*11.5 + 4 MB</TD> <TD>Binary Tree with 3 bytes hashing.</TD> </TR>
-      <TR> <TD>bt4</TD> <TD>d*11.5 + 4 MB</TD> <TD>Binary Tree with 4 bytes hashing.</TD> </TR>
-      <TR> <TD>hc4</TD> <TD>d*7.5 + 4 MB</TD> <TD>Hash Chain with 4 bytes hashing.</TD> </TR>
+      <TR> <TH>MF_ID</TH> <TH class="cc">Dictionary</TH> <TH class="cc" colspan = 2>Memory Usage</TH> <TH class="cc" colspan = 2>Description</TH> </TR>
+      <TR> <TD class="cc">bt2</TD>           <TD></TD>                             <TD align="right"> 9.5 * d</TD> <TD class="cc" rowspan=6> + 4 MB</TD> <TD class="cc" rowspan=4>Binary Tree</TD> <TD>2 bytes hashing</TD> </TR>
+      <TR> <TD class="cc">bt3</TD>           <TD></TD>                             <TD align="right">11.5 * d</TD> <TD>3 bytes hashing</TD> </TR>
+      <TR> <TD class="cc" rowspan=2>bt4</TD> <TD class="cc">64 KB ...   48 MB</TD> <TD align="right">11.5 * d</TD> <TD class="cc" rowspan=6>4 bytes hashing</TD> </TR>
+      <TR>                                   <TD class="cc">64 MB ... 1024 MB</TD> <TD align="right">10.5 * d</TD> </TR>
+      <TR> <TD class="cc" rowspan=2>hc4</TD> <TD class="cc">64 KB ...   48 MB</TD> <TD align="right"> 7.5 * d</TD> <TD class="cc" rowspan=2>Hash Chain </TD></TR>
+      <TR>                                   <TD class="cc">64 MB ... 1024 MB</TD> <TD align="right"> 6.5 * d</TD> </TR>
     </TABLE>
     <P>Note: Your operation system also needs some amount of physical memory for internal purposes. 
       So keep at least 32MB of physical memory unused.</P>

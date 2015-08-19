@@ -3,7 +3,7 @@
 #
 
 # OPTFLAGS=-fast -msse3 -s
-OPTFLAGS=-m64 -O2 -march=core2 -xT # -ipo # -no-gcc
+OPTFLAGS=-m64 -O2 -march=core2 # -ipo # -no-gcc
 
 ALLFLAGS=${OPTFLAGS} \
     	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
@@ -11,7 +11,7 @@ ALLFLAGS=${OPTFLAGS} \
 	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
-CXX=icpc -i-static $(ALLFLAGS) # -DHAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+CXX=icpc -i-static $(ALLFLAGS)
 CC=icc $(ALLFLAGS)
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared

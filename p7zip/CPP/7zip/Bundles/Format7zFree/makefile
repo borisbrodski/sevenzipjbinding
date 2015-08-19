@@ -65,6 +65,7 @@ AR_OBJS = \
   ArjHandler.o \
   Bz2Handler.o \
   CpioHandler.o \
+  CramfsHandler.o \
   DebHandler.o \
   DeflateProps.o \
   DmgHandler.o \
@@ -84,6 +85,7 @@ AR_OBJS = \
   RpmHandler.o \
   SplitHandler.o \
   SwfHandler.o \
+  SquashfsHandler.o \
   VhdHandler.o \
   XarHandler.o \
   XzHandler.o \
@@ -180,6 +182,7 @@ UDF_OBJS = \
 
 WIM_OBJS = \
   WimHandler.o \
+  WimHandlerOut.o \
   WimIn.o \
   WimRegister.o \
 
@@ -216,7 +219,6 @@ COMPRESS_OBJS = \
   Deflate64Register.o \
   DeflateDecoder.o \
   DeflateEncoder.o \
-  DeflateNsisRegister.o \
   DeflateRegister.o \
   DeltaFilter.o \
   Lzma2Decoder.o \

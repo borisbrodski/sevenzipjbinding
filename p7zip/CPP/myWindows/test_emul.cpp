@@ -16,10 +16,10 @@
 #undef UInt32
 #endif
 
-#ifdef HAVE_WCHAR__H
+#ifdef ENV_HAVE_WCHAR__H
 #include <wchar.h>
 #endif
-#ifdef HAVE_LOCALE
+#ifdef ENV_HAVE_LOCALE
 #include <locale.h>
 #endif
 
@@ -42,10 +42,11 @@
 #include "Windows/FileFind.cpp"
 #include "Windows/Time.cpp"
 #include "../C/Threads.c"
+#include "../../C/Ppmd.h"
 
 using namespace NWindows;
 
-#if  defined(HAVE_WCHAR__H) && defined(HAVE_MBSTOWCS) && defined(HAVE_WCSTOMBS)
+#if  defined(ENV_HAVE_WCHAR__H) && defined(ENV_HAVE_MBSTOWCS) && defined(ENV_HAVE_WCSTOMBS)
 void test_mbs(void) {
   wchar_t wstr1[256] = {
                          L'e',
@@ -225,12 +226,21 @@ static void test_time()
 
 static void test_time2()
 {
-	printf("Test Time (2):\n");
+        UInt32 dosTime = 0x30d0094C;
+        FILETIME utcFileTime;
+        FILETIME localFileTime;
+        FILETIME localFileTime2;
+        UInt32 dosTime2 = 0;
+
+        printf("Test Time (2):\n");
+        printf("===========\n");
+        NTime::DosTimeToFileTime(dosTime, localFileTime);
+        NTime::FileTimeToDosTime(localFileTime, dosTime2);
+        assert(dosTime == dosTime2);
+
+        printf("Test Time (3):\n");
 	printf("===========\n");
 	/* DosTime To utcFileTime */
-	UInt32 dosTime = 0x30d0094C;
-	FILETIME utcFileTime;
-        FILETIME localFileTime;
 
 	if (NTime::DosTimeToFileTime(dosTime, localFileTime)) /* DosDateTimeToFileTime */
 	{
@@ -244,8 +254,7 @@ static void test_time2()
 
 
 	/* utcFileTime to DosTime */
-        FILETIME localFileTime2 = { 0, 0 };
-	UInt32 dosTime2 = 0;
+
         FileTimeToLocalFileTime(&utcFileTime, &localFileTime2);
         NTime::FileTimeToDosTime(localFileTime2, dosTime2);  /* FileTimeToDosDateTime */
 
@@ -299,7 +308,7 @@ static void test_semaphore()
 
 static int threads_count = 0;
 
-static THREAD_FUNC_RET_TYPE thread_fct(void *param) {
+static THREAD_FUNC_RET_TYPE thread_fct(void *  /* param */ ) {
 	threads_count++;
 	return 0;
 }
@@ -638,7 +647,7 @@ int main() {
   // return test_thread();
 
 
-#ifdef HAVE_LOCALE
+#ifdef ENV_HAVE_LOCALE
   setlocale(LC_ALL,"");
 #endif
 
@@ -663,6 +672,20 @@ int main() {
 #ifdef __APPLE_CC__
   printf("sizeof(UniChar) : %d\n",(int)sizeof(UniChar));
 #endif
+  printf("sizeof(CPpmd_See) : %d\n",(int)sizeof(CPpmd_See));
+  printf("sizeof(CPpmd_State) : %d\n",(int)sizeof(CPpmd_State));
+
+  // size tests
+  assert(sizeof(Byte)==1);
+  assert(sizeof(UInt16)==2);
+  assert(sizeof(UInt32)==4);
+  assert(sizeof(UINT32)==4);
+  assert(sizeof(UInt64)==8);
+  assert(sizeof(UINT64)==8);
+
+  // alignement tests
+  assert(sizeof(CPpmd_See)==4);
+  assert(sizeof(CPpmd_State)==6);
 
   union {
 	Byte b[2];
@@ -678,7 +701,7 @@ int main() {
     printf("CPU : unknown endianess\n");
   }
 
-#if  defined(HAVE_WCHAR__H) && defined(HAVE_MBSTOWCS) && defined(HAVE_WCSTOMBS)
+#if  defined(ENV_HAVE_WCHAR__H) && defined(ENV_HAVE_MBSTOWCS) && defined(ENV_HAVE_WCSTOMBS)
   test_mbs();
 #endif
 

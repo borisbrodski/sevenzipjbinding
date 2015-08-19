@@ -2,9 +2,7 @@
 # gcov *.c *.cpp
 
 
-ALLFLAGS=-fprofile-arcs -ftest-coverage \
-    	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
-	-DNDEBUG -D_REENTRANT -DENV_UNIX \
+LOCAL_FLAGS=-fprofile-arcs -ftest-coverage \
   -DBREAK_HANDLER \
   -DUNICODE -D_UNICODE \
 	-I../../Archive \
@@ -30,8 +28,8 @@ ALLFLAGS=-fprofile-arcs -ftest-coverage \
 -I../../../ \
 -I../../../include_windows
 
-CXX=g++ $(ALLFLAGS)
-CC=gcc $(ALLFLAGS)
+include ../../../../makefile.machine
+
 
 SRCS=\
  ../../../myWindows/myGetTickCount.cpp \
@@ -121,6 +119,7 @@ SRCS=\
  ../../Archive/DeflateProps.cpp \
  ../../Archive/GzHandler.cpp \
  ../../Archive/LzmaHandler.cpp \
+ ../../Archive/PpmdHandler.cpp \
  ../../Archive/SplitHandler.cpp \
  ../../Archive/XzHandler.cpp \
  ../../Archive/ZHandler.cpp \
@@ -211,6 +210,7 @@ SRCS=\
  ../../Compress/PpmdDecoder.cpp \
  ../../Compress/PpmdEncoder.cpp \
  ../../Compress/PpmdRegister.cpp \
+ ../../Compress/PpmdZip.cpp \
  ../../Compress/QuantumDecoder.cpp \
  ../../Compress/ShrinkDecoder.cpp \
  ../../Compress/ZDecoder.cpp \
@@ -225,6 +225,7 @@ SRCS=\
  ../../Crypto/WzAes.cpp \
  ../../Crypto/ZipCrypto.cpp \
  ../../Crypto/ZipStrong.cpp
+
 
 SRCS_C=\
  ../../../../C/Aes.c \
@@ -243,6 +244,12 @@ SRCS_C=\
  ../../../../C/LzmaDec.c \
  ../../../../C/LzmaEnc.c \
  ../../../../C/MtCoder.c \
+ ../../../../C/Ppmd7.c \
+ ../../../../C/Ppmd7Dec.c \
+ ../../../../C/Ppmd7Enc.c \
+ ../../../../C/Ppmd8.c \
+ ../../../../C/Ppmd8Dec.c \
+ ../../../../C/Ppmd8Enc.c \
  ../../../../C/Sha256.c \
  ../../../../C/Sort.c \
  ../../../../C/Threads.c \
@@ -260,7 +267,7 @@ all : copy 7za.exe
 7za.exe:
 	$(CXX) -c *.cpp 
 	$(CC)  -c *.c
-	$(CXX) *.o -o 7za.exe -lpthread
+	$(CXX) *.o -o 7za.exe $(LOCAL_LIBS)
 	ld -r *.o -o  7za.ld
 	nm -u -C 7za.ld > 7za.undefined
 copy:

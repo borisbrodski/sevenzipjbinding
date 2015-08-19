@@ -40,7 +40,9 @@ using namespace NCOM;
 using namespace NFile;
 using namespace NName;
 
+#ifdef _WIN32
 static const wchar_t *kTempFolderPrefix = L"7zE";
+#endif
 
 using namespace NUpdateArchive;
 
@@ -82,7 +84,7 @@ public:
 
   STDMETHOD(Write)(const void *data, UInt32 size, UInt32 *processedSize);
   STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);
-  STDMETHOD(SetSize)(Int64 newSize);
+  STDMETHOD(SetSize)(UInt64 newSize);
 };
 
 // static NSynchronization::CCriticalSection g_TempPathsCS;
@@ -204,7 +206,7 @@ STDMETHODIMP COutMultiVolStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
   return S_OK;
 }
 
-STDMETHODIMP COutMultiVolStream::SetSize(Int64 newSize)
+STDMETHODIMP COutMultiVolStream::SetSize(UInt64 newSize)
 {
   if (newSize < 0)
     return E_INVALIDARG;
@@ -387,12 +389,11 @@ static HRESULT Compress(
 
   CMyComPtr<ISequentialOutStream> outStream;
 
-  const UString &archiveName = archivePath.GetFinalPath();
   if (!stdOutMode)
   {
     UString resultPath;
     int pos;
-    if (!NFile::NDirectory::MyGetFullPathName(archiveName, resultPath, pos))
+    if (!NFile::NDirectory::MyGetFullPathName(archivePath.GetFinalPath(), resultPath, pos))
       throw 1417161;
     NFile::NDirectory::CreateComplexDirectory(resultPath.Left(pos));
   }
@@ -676,35 +677,38 @@ HRESULT UpdateArchive(
     }
   }
 
-  const UString archiveName = options.ArchivePath.GetFinalPath();
 
-  CArchiveLink archiveLink;
-  NFind::CFileInfoW archiveFileInfo;
+  CArchiveLink arcLink;
+  const UString arcPath = options.ArchivePath.GetFinalPath();
 
-  if (archiveFileInfo.Find(archiveName))
+  if (!options.ArchivePath.OriginalPath.IsEmpty())
   {
-    if (archiveFileInfo.IsDir())
-      throw "there is no such archive";
-    if (options.VolumesSizes.Size() > 0)
-      return E_NOTIMPL;
-    CIntVector formatIndices;
-    if (options.MethodMode.FormatIndex >= 0)
-      formatIndices.Add(options.MethodMode.FormatIndex);
-    HRESULT result = archiveLink.Open2(codecs, formatIndices, false, NULL, archiveName, openCallback);
-    if (result == E_ABORT)
-      return result;
-    RINOK(callback->OpenResult(archiveName, result));
-    RINOK(result);
-    if (archiveLink.VolumePaths.Size() > 1)
+    NFind::CFileInfoW fi;
+    if (fi.Find(arcPath))
     {
-      errorInfo.SystemError = (DWORD)E_NOTIMPL;
-      errorInfo.Message = L"Updating for multivolume archives is not implemented";
-      return E_NOTIMPL;
+      if (fi.IsDir())
+        throw "there is no such archive";
+      if (options.VolumesSizes.Size() > 0)
+        return E_NOTIMPL;
+      CIntVector formatIndices;
+      if (options.MethodMode.FormatIndex >= 0)
+        formatIndices.Add(options.MethodMode.FormatIndex);
+      HRESULT result = arcLink.Open2(codecs, formatIndices, false, NULL, arcPath, openCallback);
+      if (result == E_ABORT)
+        return result;
+      RINOK(callback->OpenResult(arcPath, result));
+      RINOK(result);
+      if (arcLink.VolumePaths.Size() > 1)
+      {
+        errorInfo.SystemError = (DWORD)E_NOTIMPL;
+        errorInfo.Message = L"Updating for multivolume archives is not implemented";
+        return E_NOTIMPL;
+      }
+      
+      CArc &arc = arcLink.Arcs.Back();
+      arc.MTimeDefined = !fi.IsDevice;
+      arc.MTime = fi.MTime;
     }
-
-    CArc &arc = archiveLink.Arcs.Back();
-    arc.MTimeDefined = !archiveFileInfo.IsDevice;
-    arc.MTime = archiveFileInfo.MTime;
   }
   else
   {
@@ -771,7 +775,7 @@ HRESULT UpdateArchive(
 
   bool createTempFile = false;
 
-  bool thereIsInArchive = archiveLink.IsOpen;
+  bool thereIsInArchive = arcLink.IsOpen;
 
   if (!options.StdOutMode && options.UpdateArchiveItself)
   {
@@ -800,7 +804,8 @@ HRESULT UpdateArchive(
       // ap.Temp = true;
       // ap.TempPrefix = tempDirPrefix;
     }
-    if (i > 0 || !createTempFile)
+    if (!options.StdOutMode &&
+        (i > 0 || !createTempFile))
     {
       const UString &path = ap.GetFinalPath();
       if (NFind::DoesFileOrDirExist(path))
@@ -816,18 +821,18 @@ HRESULT UpdateArchive(
   CObjectVector<CArcItem> arcItems;
   if (thereIsInArchive)
   {
-    RINOK(EnumerateInArchiveItems(censor, archiveLink.Arcs.Back(), arcItems));
+    RINOK(EnumerateInArchiveItems(censor, arcLink.Arcs.Back(), arcItems));
   }
 
   RINOK(UpdateWithItemLists(codecs, options,
-      thereIsInArchive ? archiveLink.GetArchive() : 0,
+      thereIsInArchive ? arcLink.GetArchive() : 0,
       arcItems, dirItems,
       tempFiles, errorInfo, callback));
 
   if (thereIsInArchive)
   {
-    RINOK(archiveLink.Close());
-    archiveLink.Release();
+    RINOK(arcLink.Close());
+    arcLink.Release();
   }
 
   tempFiles.Paths.Clear();
@@ -838,19 +843,19 @@ HRESULT UpdateArchive(
       CArchivePath &ap = options.Commands[0].ArchivePath;
       const UString &tempPath = ap.GetTempPath();
       if (thereIsInArchive)
-        if (!NDirectory::DeleteFileAlways(archiveName))
+        if (!NDirectory::DeleteFileAlways(arcPath))
         {
           errorInfo.SystemError = ::GetLastError();
           errorInfo.Message = L"7-Zip cannot delete the file";
-          errorInfo.FileName = archiveName;
+          errorInfo.FileName = arcPath;
           return E_FAIL;
         }
-      if (!NDirectory::MyMoveFile(tempPath, archiveName))
+      if (!NDirectory::MyMoveFile(tempPath, arcPath))
       {
         errorInfo.SystemError = ::GetLastError();
         errorInfo.Message = L"7-Zip cannot move the file";
         errorInfo.FileName = tempPath;
-        errorInfo.FileName2 = archiveName;
+        errorInfo.FileName2 = arcPath;
         return E_FAIL;
       }
     }
@@ -905,4 +910,3 @@ HRESULT UpdateArchive(
   #endif
   return S_OK;
 }
-

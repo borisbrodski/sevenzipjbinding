@@ -49,6 +49,7 @@ SRCS=\
  ../../Archive/ArjHandler.cpp \
  ../../Archive/Bz2Handler.cpp \
  ../../Archive/CpioHandler.cpp \
+ ../../Archive/CramfsHandler.cpp \
  ../../Archive/DebHandler.cpp \
  ../../Archive/DeflateProps.cpp \
  ../../Archive/DmgHandler.cpp \
@@ -67,6 +68,7 @@ SRCS=\
  ../../Archive/PpmdHandler.cpp \
  ../../Archive/RpmHandler.cpp \
  ../../Archive/SplitHandler.cpp \
+ ../../Archive/SquashfsHandler.cpp \
  ../../Archive/SwfHandler.cpp \
  ../../Archive/VhdHandler.cpp \
  ../../Archive/XarHandler.cpp \
@@ -151,6 +153,7 @@ SRCS=\
  ../../Archive/Udf/UdfRegister.cpp \
  \
  ../../Archive/Wim/WimHandler.cpp \
+ ../../Archive/Wim/WimHandlerOut.cpp \
  ../../Archive/Wim/WimIn.cpp \
  ../../Archive/Wim/WimRegister.cpp \
  \
@@ -185,7 +188,6 @@ SRCS=\
  ../../Compress/Deflate64Register.cpp \
  ../../Compress/DeflateDecoder.cpp \
  ../../Compress/DeflateEncoder.cpp \
- ../../Compress/DeflateNsisRegister.cpp \
  ../../Compress/DeflateRegister.cpp \
  ../../Compress/DeltaFilter.cpp \
  ../../Compress/Lzma2Decoder.cpp \

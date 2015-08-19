@@ -13,7 +13,10 @@
 // need because it includes almost all "standard" wxWidgets headers)
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
-#endif  
+#endif 
+
+#include  <wx/filename.h>
+
 
 #undef _WIN32
  
@@ -438,9 +441,18 @@ static int myCreateHandle2(int n)
 	if (id == DIALOG_ID_FILE_DIALOG)
 	{
 		wxString defaultFilename = g_tabCreate[n].initialFolderOrFile;
+		
+		wxFileName filename(defaultFilename);
+		
+		wxString dir = filename.GetPath();
+		wxString name = filename.GetFullName();
+		
+		
+		// printf("DIALOG_ID_FILE_DIALOG = '%ls' => '%ls'  '%ls'\n",&defaultFilename[0],&dir[0],&name[0]);
+		
+		
 		wxFileDialog fileDialog(g_tabCreate[n].parentWindow, g_tabCreate[n].title,
-				wxEmptyString, defaultFilename,
-		       		wxT("All Files (*.*)|*.*"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+				dir, name, wxT("All Files (*.*)|*.*"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
 		fileDialog.SetIcon(wxICON(p7zip_32));
 		int ret = fileDialog.ShowModal();
 		if (ret == wxID_OK) g_tabCreate[n].resultPath = fileDialog.GetPath();

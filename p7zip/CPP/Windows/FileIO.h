@@ -35,7 +35,7 @@ protected:
   AString _unix_filename;
   time_t   _lastAccessTime;
   time_t   _lastWriteTime;
-#ifdef HAVE_LSTAT
+#ifdef ENV_HAVE_LSTAT
   int     _size;
   char    _buffer[MAX_PATHNAME_LEN+1];
   int     _offset;

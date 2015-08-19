@@ -11,8 +11,8 @@
 #define COM_TRY_END } catch(const char * s) { throw s ; } \
 		catch(...) { return E_OUTOFMEMORY; }
   
-  // catch(const CNewException &) { return E_OUTOFMEMORY; }\
-  // catch(const CSystemException &e) { return e.ErrorCode; }\
+  // catch(const CNewException &) { return E_OUTOFMEMORY; }
+  // catch(const CSystemException &e) { return e.ErrorCode; }
   // catch(...) { return E_FAIL; }
 
 #endif

@@ -15,7 +15,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/fl_ask.H>
 #else
-#ifdef HAVE_GETPASS
+#ifdef ENV_HAVE_GETPASS
 #include <pwd.h>
 #include <unistd.h>
 #include "Common/MyException.h"
@@ -38,13 +38,19 @@ static const char *kHelpQuestionMessage =
 NUserAnswerMode::EEnum ScanUserYesNoAllQuit(CStdOutStream *outStream)
 {
   (*outStream) << kFirstQuestionMessage;
-  for(;;)
+  for (;;)
   {
     (*outStream) << kHelpQuestionMessage;
+    outStream->Flush();
     AString scannedString = g_StdIn.ScanStringUntilNewLine();
     scannedString.Trim();
-    if(!scannedString.IsEmpty())
-      switch(::MyCharUpper(scannedString[0]))
+    if (!scannedString.IsEmpty())
+      switch(
+        ::MyCharUpper(
+        #ifdef UNDER_CE
+        (wchar_t)
+        #endif
+        scannedString[0]))
       {
         case kYes:
           return NUserAnswerMode::kYes;
@@ -69,14 +75,14 @@ UString GetPassword(CStdOutStream *outStream,bool verify)
   AString oemPassword = "";
   if (r) oemPassword = r;
 #else /* USE_FLTK */
-#ifdef HAVE_GETPASS
+#ifdef ENV_HAVE_GETPASS
   (*outStream) << "\nEnter password (will not be echoed) :";
   outStream->Flush();
   AString oemPassword = getpass("");
   if (verify)
   {
     (*outStream) << "Verify password (will not be echoed) :";
-    outStream->Flush();
+  outStream->Flush();
     AString oemPassword2 = getpass("");
     if (oemPassword != oemPassword2) throw "password verification failed";
   }

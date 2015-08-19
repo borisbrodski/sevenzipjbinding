@@ -1,4 +1,4 @@
-	p7zip 9.13
+	p7zip 9.20
 	==========
 
 Homepage : http://p7zip.sourceforge.net/
@@ -42,7 +42,7 @@ BUILD :
   If you have downloaded the "bin" package,
 	use directly the program bin/7za.
 	(tested on Redhat 9.0, Fedora 2, Mandrake 10.0, Debian 3.0)
-	As the program is statically linked, its should run on many x86 linux.
+	As the program is statically linked, its should run on many x86 or amd64 linux.
 
   If you have downloaded the "source" package,
 
@@ -50,8 +50,16 @@ BUILD :
 	makefile.freebsd, makefile.cygwin, ...
         over makefile.machine
 
-	If you want to make a parallel build : make -j4 -f makefile.parallel_jobs TARGET
+  Example : building 7za, 7z (with its plugins), 7zr and Client7z and passing the internal tests
+	cp makefile.linux_x86_asm_gcc_4 makefile.linux
+	make all_test
 
+
+	If you want to make a parallel build on a 4 cpu machine : make -j 4 TARGET
+
+	If you have trouble, try : make -f makefile.oldmake TARGET
+
+	make depend   : to rebuild the makefile.depend
 	make clean    : to clean all directories
 	make          : to build bin/7za
 	make sfx      : to build bin/7zCon.sfx (7za can now create SFX archive)
@@ -74,12 +82,27 @@ BUILD :
 
   this procedure has been tested on :
    - x86 CPU :
+	Linux - Debian 3.0 Stable
+	Linux - Ubuntu 10.10
+	MacOS 10.6.6 
+
+   - AMD64 CPU :
+	Linux - Ubuntu 10.10
+	MacOS 10.6.6 
+
+   - sparc CPU :
+	Solaris 8 (sparc) with gcc 2.95.2
+
+   - powerpc CPU :
+	MacOS X 10.4 (ppc)
+
+  Some older versions of p7zip were tested :
+   - x86 CPU :
 	DOS   - (built with DJGPP, see http://blairdude.googlepages.com/p7zip )
 	Linux - Redhat 9.0 Standart
 	Linux - Fedora 2 (Redhat) (gcc 3.3.3 and gcc-3.4.1 with 
                 stack-smashing protector from www.trl.ibm.com/projects/security/ssp/)
 	Linux - Mandrake 10.0 Official
-	Linux - Debian 3.0 Stable
 	Linux - Ubuntu 8.04
 	FreeBSD 5.2.1 (gcc 3.3.3)
 	MacOS 10.4.8 
@@ -104,7 +127,6 @@ BUILD :
 	( only the 32bits built works, the 64bits built does not pass the tests )
 
    - sparc CPU :
-	Solaris 8 (sparc) with gcc 2.95.2
 	Solaris 9 (sparc) with gcc 3.3.2
 
    - powerpc CPU :

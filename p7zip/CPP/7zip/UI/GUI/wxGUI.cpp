@@ -478,7 +478,11 @@ public:
 // not wxApp)
 IMPLEMENT_APP(MyApp)
 
+
+
 time_t g_T0 = 0;
+
+/* FIXME : to erase ?
 class MyThread : public wxThread
 {
 	int _argc;
@@ -497,6 +501,7 @@ public:
 		exit(ret);
 	}
 };
+*/
 
 // 'Main program' equivalent: the program execution "starts" here
 bool MyApp::OnInit()

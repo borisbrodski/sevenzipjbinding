@@ -306,7 +306,7 @@ HRESULT CCodecs::LoadFormats()
       {
         UINT len = ::SysStringByteLen(prop.bstrVal);
         item.StartSignature.SetCapacity(len);
-        memmove(item.StartSignature, prop.bstrVal, len);
+        memmove((Byte *)item.StartSignature, prop.bstrVal, len);
       }
     Formats.Add(item);
   }
