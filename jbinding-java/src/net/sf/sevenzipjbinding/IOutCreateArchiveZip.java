@@ -14,4 +14,25 @@ package net.sf.sevenzipjbinding;
  */
 public interface IOutCreateArchiveZip extends IOutCreateArchive<IOutItemZip>, //
         IOutFeatureSetLevel {
+
+    /**
+     * Create new archive. To update an existing archive open it first and then use
+     * {@link IInArchive#getConnectedOutArchive()} to get an instance of the {@link IOutUpdateArchive} interface.<br>
+     * <br>
+     * The <code>outCreateCallback</code> is designed to get necessary information about archive items and provide
+     * information about progress of the operation.<br>
+     * <br>
+     * 
+     * @param outStream
+     *            output stream to get the new archive
+     * @param numberOfItems
+     *            number of items in the new archive
+     * @param outCreateCallback
+     *            callback object to exchange information about archive create operation.
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
+     */
+    public void createArchive(IOutStream outStream, int numberOfItems,
+            IOutCreateCallback<? extends IOutItemZip> outCreateCallback) throws SevenZipException;
+
 }

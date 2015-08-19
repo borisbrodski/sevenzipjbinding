@@ -59,4 +59,11 @@ public interface IOutUpdateArchive<T extends IOutItemBase> {
      * @return archive format used with this instance of {@link IOutStream}
      */
     public ArchiveFormat getArchiveFormat();
+
+    /**
+     * Get connected {@link IInArchive} for update operations.
+     * 
+     * @return connected {@link IInArchive} for update operations or <code>null</code> if not exists.
+     */
+    public IInArchive getConnectedInArchive();
 }

@@ -3,15 +3,16 @@ package net.sf.sevenzipjbinding;
 import java.io.Closeable;
 
 /**
- * The central interface to create new archives.<br>
+ * The central interface to create new archives. To update an existing archive open it first and then use
+ * {@link IInArchive#getConnectedOutArchive()} to get an instance of the {@link IOutUpdateArchive} interface.<br>
  * <br>
  * The are two ways to get an implementation of this interface:
  * <ul>
  * <li><b>use {@link SevenZip#openOutArchive(ArchiveFormat)}</b><br>
- * The method returns an instance of the generic {@link IOutCreateArchive}{@code <}{@link IOutItemAllFormats}{@code >}
- * interface allowing creation of an archive of any supported archive format. To get all currently supported formats see
- * the 'compression' column of the {@link ArchiveFormat} -JavaDoc. The user can check, whether the current archive
- * format supports a particular configuration method by making an <code>instanceof</code> check, like this:
+ * The method returns an instance of the {@link IOutCreateArchive}{@code <}{@link IOutItemAllFormats}{@code >} interface
+ * allowing creation of an archive of any supported archive format. To get all currently supported formats see the
+ * 'compression' column of the {@link ArchiveFormat} -JavaDoc. The user can check, whether the current archive format
+ * supports a particular configuration method by making an <code>instanceof</code> check, like this:
  * 
  * <pre>
  *  IOutCreateArchive{@code<}IOutItemCallback> outArchive = SevenZip.openOutArchive(myArchiveFormat);
@@ -84,11 +85,4 @@ public interface IOutCreateArchive<T extends IOutItemBase> extends Closeable {
      * @return archive format used with this instance of {@link IOutStream}
      */
     public ArchiveFormat getArchiveFormat();
-
-    /**
-     * Get connected {@link IInArchive} for update operations.
-     * 
-     * @return connected {@link IInArchive} for update operations or <code>null</code> if not exists.
-     */
-    public IInArchive getConnectedInArchive();
 }
