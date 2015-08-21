@@ -159,6 +159,7 @@ IF(MINGW)
         ${_7ZIP_SRC}/CPP/Windows/FileIO.cpp
         ${_7ZIP_SRC}/CPP/Windows/FileName.cpp
         ${_7ZIP_SRC}/CPP/Windows/PropVariant.cpp
+        ${_7ZIP_SRC}/CPP/Windows/PropVariantUtils.cpp
         ${_7ZIP_SRC}/CPP/Windows/PropVariantConversions.cpp
         ${_7ZIP_SRC}/CPP/Windows/Synchronization.cpp
         ${_7ZIP_SRC}/CPP/Windows/System.cpp
@@ -249,6 +250,7 @@ IF(MINGW)
         ${_7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
         ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
+        ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandlerOut.cpp
         ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimIn.cpp
         ${_7ZIP_SRC}/CPP/7zip/Archive/Wim/WimRegister.cpp
 

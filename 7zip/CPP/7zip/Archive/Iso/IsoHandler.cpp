@@ -92,7 +92,7 @@ static void AddString(AString &s, const char *name, const Byte *p, int size)
   }
 }
 
-#define ADD_STRING(n, v) AddString(s, n, vol. ## v, sizeof(vol. ## v))
+#define ADD_STRING(n, V) AddString(s, n, vol. V, sizeof(vol. V))
 
 STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
 {
