@@ -129,25 +129,25 @@ public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> ex
     @Test
     public void testUpdateLastModificationTimeConfFlat() throws Exception {
         DirectoryTreeConfiguration conf = CONF_FLAT;
-        testUpdate(false, conf, new IndexArchiveUpdater(updaterContent, getIndexies(conf, 5)));
+        testUpdate(false, conf, new IndexArchiveUpdater(updaterLastModificationTime, getIndexies(conf, 5)));
     }
 
     @Test
     public void testUpdateLastModificationTimeConfFlatMultithreaded() throws Exception {
         DirectoryTreeConfiguration conf = CONF_FLAT;
-        testUpdate(true, conf, new IndexArchiveUpdater(updaterContent, getIndexies(conf, 5)));
+        testUpdate(true, conf, new IndexArchiveUpdater(updaterLastModificationTime, getIndexies(conf, 5)));
     }
 
     @Test
     public void testUpdateLastModificationTimeConfDeep() throws Exception {
         DirectoryTreeConfiguration conf = CONF_DEEP;
-        testUpdate(false, conf, new IndexArchiveUpdater(updaterContent, getIndexies(conf, 5)));
+        testUpdate(false, conf, new IndexArchiveUpdater(updaterLastModificationTime, getIndexies(conf, 5)));
     }
 
     @Test
     public void testUpdateLastModificationTimeConfDeepMultithreaded() throws Exception {
         DirectoryTreeConfiguration conf = CONF_DEEP;
-        testUpdate(true, conf, new IndexArchiveUpdater(updaterContent, getIndexies(conf, 5)));
+        testUpdate(true, conf, new IndexArchiveUpdater(updaterLastModificationTime, getIndexies(conf, 5)));
     }
 
     @Test

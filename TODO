@@ -1,7 +1,7 @@
 Release 2.0 TODOs:
 - Rewrite all @throws SevenZipException JavaDoc tags (mention extended stacktrace)
 - Check @author, @since and @version in the JavaDoc of all files (source + test?)
-
+- OutItem: Check, !NewProperties || !NewData => OldIndex != -1
 
 Other TODOs:
 
