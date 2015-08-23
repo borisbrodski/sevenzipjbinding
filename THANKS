@@ -12,7 +12,7 @@ Special thanks to
 
 - Victor Martinez (for getting 7-Zip-JBinding to work with JNLP)
 
-- Michael Brodski (for spell checking)
+- Michael Brodski, RWTH Aachen (for spell checking and playing Dr. Watson :) )
 
 - Jeroen Frijters, IKVM developer (for finding a bug: CallIntMethod instead of CallLongMethod in InStream.Seek binding)
 

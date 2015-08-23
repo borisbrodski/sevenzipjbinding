@@ -35,6 +35,7 @@ import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.PropID.AttributesBitMask;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
@@ -412,7 +413,7 @@ public class VirtualContent {
         item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
         item.user = JUnitNativeTestBase.getRandomName(random);
         item.group = JUnitNativeTestBase.getRandomName(random);
-        item.attributes = random.nextInt(17);
+        item.attributes = random.nextInt(17) & ~(AttributesBitMask.FILE_ATTRIBUTE_DIRECTORY);
     }
 
 
