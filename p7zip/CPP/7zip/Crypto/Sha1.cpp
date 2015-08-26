@@ -148,10 +148,10 @@ void CContext::UpdateRar(Byte *data, size_t size, bool rar350Mode)
         for (int i = 0; i < kBlockSizeInWords; i++)
         {
           UInt32 d = _buffer[i];
-          data[i * 4 + 0 - kBlockSize] = (Byte)(d);
-          data[i * 4 + 1 - kBlockSize] = (Byte)(d >>  8);
-          data[i * 4 + 2 - kBlockSize] = (Byte)(d >> 16);
-          data[i * 4 + 3 - kBlockSize] = (Byte)(d >> 24);
+          data[i * 4 + 0 - (int)kBlockSize] = (Byte)(d);
+          data[i * 4 + 1 - (int)kBlockSize] = (Byte)(d >>  8);
+          data[i * 4 + 2 - (int)kBlockSize] = (Byte)(d >> 16);
+          data[i * 4 + 3 - (int)kBlockSize] = (Byte)(d >> 24);
         }
       returnRes = rar350Mode;
     }
