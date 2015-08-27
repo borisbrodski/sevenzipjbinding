@@ -29,7 +29,7 @@ public interface ISeekableStream {
      * Move current location pointer to the new offset depending on <code>seekOrigin</code>.<br>
      * <br>
      * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
-     * Synchronized implementation is recommended.
+     * Synchronized implementation may be required.
      * 
      * 
      * @param offset

@@ -6,22 +6,38 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * SevenZip core exception. This exception supports multiple 'cause by' exceptions. Multiple 'cause by' can occur, if
- * native code is involved. If one of the call-back java methods an exception will be thrown, the native code can save
- * this exception and proceed with the next call-back java methods, which can throw an exception as well. After native
- * code completes, a new SevenZipException will be thrown. This exception has multiple 'cause by' exceptions attached:
+ * SevenZip core exception. This exception supports multiple 'cause by' exceptions. Use
+ * {@link #printStackTraceExtended()} to get stack traces of all available 'cause by's. Multiple 'cause by' can occur,
+ * if native code is involved. If in one of the call-back java methods an exception will be thrown, the native code will
+ * save this exception and may proceed with the next call-back java method, which can throw a further exception as well.
+ * After native code completes, a new SevenZipException will be thrown. This exception will have multiple 'cause by'
+ * exceptions attached:
  * <ul>
  * <li>exception, thrown from the first call-back java method (first 'cause by' exception)
- * <li>exception, thrown from the second call-back java method (last 'cause by' exception)
+ * <li>exception, thrown from the last call-back java method (last 'cause by' exception)
  * </ul>
  * If more, then two 'cause by' exception was thrown, only first and last exception will be saved.<br>
  * <br>
  * 
  * In case of multi-threaded native code potential 'cause by' exception could be available in a SevenZipException. A
  * potential 'cause by' exception situation can occur, if during a pending native call, a call-back java method will be
- * called from a new thread. Since an exception thrown from another thread, can't be connected as a cause to the
- * subsequent exception from one of pending native call definitely, the 'cause by' exception will be saved as a
- * potential first/last cause.
+ * called from a new thread. Since an exception thrown in another thread can't be always reliably connected to the
+ * operation proceeding (main native call), the exception will be saves as a potential first/last cause.<br>
+ * <br>
+ * The methods
+ * <ul>
+ * <li>{@link #printStackTraceExtended()}
+ * <li>{@link #printStackTraceExtended(PrintStream)}
+ * <li>{@link #printStackTraceExtended(PrintWriter)}
+ * </ul>
+ * provide full information about underlying 'cause by' exceptions and nested {@link SevenZipException}. In order to
+ * improve readability of the long extended stack traces, the origin of the current exception being printed can be read
+ * vertically on the left of the stack trace. The standard {@link #printStackTrace()} method prints only the stack trace
+ * of the first 'cause by' exception.
+ * 
+ * @see #printStackTraceExtended()
+ * @see #printStackTraceExtended(PrintStream)
+ * @see #printStackTraceExtended(PrintWriter)
  * 
  * @author Boris Brodski
  * @version 4.65-1

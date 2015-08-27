@@ -17,7 +17,7 @@ public interface ISequentialInStream extends Closeable {
      * <code>data.length</code>. You must call <code>read()</code> function in loop, if you need exact amount of data.<br>
      * <br>
      * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
-     * Synchronized implementation is recommended.
+     * Synchronized implementation may be required.
      * 
      * 
      * @param data

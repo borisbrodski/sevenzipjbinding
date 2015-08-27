@@ -9,11 +9,11 @@ package net.sf.sevenzipjbinding;
 public interface ISequentialOutStream {
     /**
      * Write <code>data</code> byte array to the stream. If <code>data.length > 0</code> this function must write at
-     * least 1 byte. This function is allowed to write less than <code>data.length</code>. You must call Write function
-     * in loop, if you need to write exact amount of data.<br>
+     * least 1 byte. This function is allowed to write less than <code>data.length</code> bytes. You must call Write
+     * function in loop, if you need to write exact amount of data.<br>
      * <br>
      * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
-     * Synchronized implementation is recommended.
+     * Synchronized implementation may be required.
      * 
      * @param data
      *            data to write

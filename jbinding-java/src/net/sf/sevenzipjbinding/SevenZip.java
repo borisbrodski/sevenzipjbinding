@@ -16,16 +16,21 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
 
 /**
- * 7-Zip-JBinding entry point class. Finds and initializes 7-Zip-JBinding native library. Opens archives and returns
- * implementation of {@link IInArchive}
+ * 7-Zip-JBinding main class.
+ * 
+ * <ul>
+ * <li>Finds and initializes 7-Zip-JBinding native library
+ * <li>Opens existing archives and returns implementation of {@link IInArchive}
+ * <li>Create new archives by providing different implementations of the {@link IOutArchive}
+ * </ul>
  * 
  * <h3>Initialization of the native library</h3>
  * 
- * Typically the library doesn't need an explicit initialization. The first call to an open archive method will try to
- * initialize the native library by calling {@link #initSevenZipFromPlatformJAR()} method. This initialization process
- * requires a platform jar to be in a class path. The automatic initialization starts before the first access to an
- * archive, if native library wasn't already initialized manually with one of the <code>initSevenZip...</code> methods.
- * If manual or automatic initialization failed, no further automatic initialization attempts will be made. The
+ * Typically the library doesn't need an explicit initialization. The first call to an open/create archive method will
+ * try to initialize the native library by calling {@link #initSevenZipFromPlatformJAR()} method. This initialization
+ * process requires a platform jar to be in a class path. The automatic initialization starts before the first access to
+ * an archive, if native library wasn't already initialized manually with one of the <code>initSevenZip...</code>
+ * methods. If manual or automatic initialization failed, no further automatic initialization attempts will be made. The
  * initialization status and error messages can be obtained by following methods:
  * <ul>
  * <li>{@link #isInitializedSuccessfully()} - get initialization status</li>
@@ -81,10 +86,11 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * 
  * <h3>Temporary artifacts</h3>
  * 
- * During initialization phase of the 7-Zip-JBinding the native libraries from the platform jar must be extracted to the
- * disk in order to be loaded into the JVM. Since the count of the native libraries (depending on the platform) can be
- * greater than one, a temporary sub-directory is created to hold those native libraries. The path to the directory for
- * the temporary artifacts will determined according to following rules (see <code>createOrVerifyTmpDir</code> method):
+ * During automatic initialization of the 7-Zip-JBinding the native libraries from the platform jar must be extracted to
+ * the disk in order to be loaded into the JVM. Since the count of the native libraries (depending on the platform) can
+ * be greater than one, a temporary sub-directory is created to hold those native libraries. The path to the directory
+ * for the temporary artifacts will determined according to following rules (see <code>createOrVerifyTmpDir</code>
+ * method):
  * <ul>
  * <li>If path specified directly using <code>tmpDirectory</code> parameter of
  * {@link #initSevenZipFromPlatformJAR(File)} or {@link #initSevenZipFromPlatformJAR(String, File)} it will be used
@@ -96,12 +102,12 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * 7-Zip-JBinding doesn't delete those artifacts trying to reduce subsequent initialization overhead. If 7-Zip-JBinding
  * finds the native libraries within the temporary directory, it uses those without further verification. In order to
  * allow smoothly updates, the temporary sub-directory with the native libraries named with a unique build reference
- * number. If 7-Zip-JBinding get updated, a new temporary sub-directory get created and the new native libraries get
+ * number. If 7-Zip-JBinding get updated, a new temporary sub-directory get created and the new native libraries will be
  * copied and used.
  * 
- * <h3>Opening archives</h3>
+ * <h3>Opening existing archives</h3>
  * 
- * The methods for opening archive files (read-only):
+ * The methods for the opening archive files are
  * <ul>
  * <li>{@link #openInArchive(ArchiveFormat, IInStream)} - simple open archive method.</li>
  * <li>{@link #openInArchive(ArchiveFormat, IInStream, IArchiveOpenCallback)} - generic open archive method. It's
@@ -114,10 +120,40 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * {@link VolumedArchiveInStream}.</li>
  * </ul>
  * </li>
- * <li>{@link #openInArchive(ArchiveFormat, IInStream, String)} a shortcut method for opening archives with an encrypted
- * index.</li>
+ * <li>{@link #openInArchive(ArchiveFormat, IInStream, String)} a shortcut method for opening password protected
+ * archives with an encrypted index.</li>
  * </ul>
  * 
+ * <h3>Creating new archives</h3>
+ * 
+ * There are two ways to create a new archive:
+ * <ul>
+ * <li>Use {@link SevenZip#openOutArchive(ArchiveFormat)} method. It will return an instance of the
+ * {@link IOutCreateArchive}{@code <}{@link IOutItemAllFormats}{@code >} interface allowing creation of an archive of
+ * any supported archive format. To get all currently supported formats see the 'compression' column of the
+ * {@link ArchiveFormat} -JavaDoc.
+ * <li>Use one of the <code>SevenZip.openOutArchiveXxx</code> methods, that provide implementations of corresponding
+ * archive format specific interfaces. Those interfaces contain all supported configuration methods for selected archive
+ * format and are more convenient in cases, where only one archive format should be supported.
+ * </ul>
+ * 
+ * For more information see {@link IOutCreateArchive}.
+ * 
+ * <h3>Updating existing archives</h3>
+ * 
+ * In order to update an existing archive three simple steps are necessary:
+ * <ul>
+ * <li>Open the existing archive need to be modified (getting an instance of the {@link IInArchive} interface)
+ * <li>Call {@link IInArchive#getConnectedOutArchive()} to get connected instance of the {@link IOutUpdateArchive}
+ * interface
+ * <li>Call {@link IOutUpdateArchive#updateItems(ISequentialOutStream, int, IOutCreateCallback)} to start the archive
+ * update operation
+ * </ul>
+ * 
+ * During update operation user may copy item properties or item properties and content from the existing archive
+ * significantly improving performance comparing to extract and re-compress alternative.<br>
+ * <br>
+ * For more information see {@link IOutUpdateArchive}.
  * 
  * @author Boris Brodski
  * @version 4.65-1

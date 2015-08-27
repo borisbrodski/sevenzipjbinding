@@ -15,6 +15,8 @@ package net.sf.sevenzipjbinding;
  *    ...
  *  }
  *  
+ *  outArchive.updateItems(...);
+ *  
  *  ...
  *  
  *  inArchive.close();

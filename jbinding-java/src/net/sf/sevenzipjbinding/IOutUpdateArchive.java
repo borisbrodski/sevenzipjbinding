@@ -13,6 +13,7 @@ package net.sf.sevenzipjbinding;
  *      (({@link IOutFeatureSetLevel})outArchive).setLevel(myLevel);
  *  }
  *  
+ *  outArchive.updateItems(...);
  *  ...
  *  
  *  inArchive.close();
@@ -37,16 +38,14 @@ package net.sf.sevenzipjbinding;
 public interface IOutUpdateArchive<T extends IOutItemBase> {
 
     /**
-     * Create/update items in archive. If {@link ISequentialOutStream} was created stand alone via {@link SevenZip}
-     * class, only new archive creation is possible. To update an existing archive open it first and then use
-     * {@link IInArchive} to get a {@link IOutUpdateArchive} implementation.
+     * Update items in archive (actually creating a new one based on the old one).
      * 
      * @param outStream
      *            output stream to get the new archive
      * @param numberOfItems
      *            number of items in the new archive
      * @param outCreateCallback
-     *            create call back object to provide more information for archive create/update operation.
+     *            create call back object to provide more information for archive update operation.
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */
@@ -63,7 +62,7 @@ public interface IOutUpdateArchive<T extends IOutItemBase> {
     /**
      * Get connected {@link IInArchive} for update operations.
      * 
-     * @return connected {@link IInArchive} for update operations or <code>null</code> if not exists.
+     * @return connected {@link IInArchive} for update operations
      */
     public IInArchive getConnectedInArchive();
 }

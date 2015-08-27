@@ -1,7 +1,7 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * OutStream interface used to operate with seekable output streams
+ * OutStream interface used to operate with seekable output streams (random access streams)
  * 
  * @author Boris Brodski
  * @version 9.04-2.00
@@ -11,7 +11,7 @@ public interface IOutStream extends ISequentialOutStream, ISeekableStream {
      * Set new size for the out stream.<br>
      * <br>
      * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
-     * Synchronized implementation is recommended.
+     * Synchronized implementation may be required.
      * 
      * 
      * @param newSize
