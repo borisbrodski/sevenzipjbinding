@@ -41,6 +41,13 @@ LONG CPPToJavaArchiveUpdateCallback::getOrUpdateOutItem(JNIEnvInstance & jniEnvI
         return S_FALSE;
     }
 
+
+    jni::OutItem::verify(jniEnvInstance, outItem, _isInArchiveAttached);
+    if (jniEnvInstance.exceptionCheck()) {
+        jniEnvInstance->DeleteLocalRef(outItem);
+        return S_FALSE;
+    }
+
     _outItem = jniEnvInstance->NewGlobalRef(outItem);
     jniEnvInstance->DeleteLocalRef(outItem);
     _outItemLastIndex = index;

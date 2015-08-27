@@ -169,8 +169,12 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         protected void fillOutItem(int index, IOutItemAllFormats outItem) {
             Change change = changeLog.changes[index];
 
-            outItem.setUpdateIsNewProperties(change != null && !change.propertyChangeMap.isEmpty());
-            outItem.setUpdateIsNewData(change != null && change.newContent != null);
+            if (change != null && change.newContent != null) {
+                outItem.setUpdateIsNewData(true);
+                outItem.setUpdateIsNewProperties(true);
+            } else {
+                outItem.setUpdateIsNewProperties(change != null && !change.propertyChangeMap.isEmpty());
+            }
 
             if (change != null && change.newContent != null) {
                 outItem.setDataSize((long) change.newContent.length);

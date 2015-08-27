@@ -44,9 +44,10 @@ public class StandaloneUpdateArchiveUpdateContentTest extends JUnitNativeTestBas
         public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
                 throws SevenZipException {
 
-            IOutItem7z outItem = outItemFactory.createOutItem(index);
+            IOutItem7z outItem = outItemFactory.createOutItemAndCloneProperties(index);
             if (itemToUpdate == index) {
                 outItem.setUpdateIsNewData(true);
+                outItem.setUpdateIsNewProperties(true);
 
                 outItem.setDataSize((long) newContent.length);
             }

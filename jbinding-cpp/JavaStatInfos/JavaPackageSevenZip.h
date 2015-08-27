@@ -158,6 +158,8 @@ JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItem)
     JT_FIELD_OBJECT(updateIsNewProperties, JAVA_BOOLEAN_T)
     JT_FIELD_OBJECT(updateOldArchiveItemIndex, JAVA_INTEGER_T)
 
+    // final void verify(boolean update)
+    JT_CLASS_FINAL_METHOD(Void, verify, JT_BOOLEAN(update, _))
 JT_END_CLASS
 
 

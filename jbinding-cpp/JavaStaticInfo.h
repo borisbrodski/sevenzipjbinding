@@ -791,6 +791,7 @@ inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interfac
     stream << interface._getName();
 }
 #endif // TRACE_ON
+
 class JMethod {
 #ifdef TRACE_ON
     friend std::ostream & operator<<(std::ostream &, JMethod &);

@@ -63,7 +63,8 @@ public interface IOutItemBase {
     public void setDataSize(Long size);
 
     /**
-     * Get whether the archive item data has changed. <br>
+     * Get whether the archive item data has changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> also must be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -73,7 +74,8 @@ public interface IOutItemBase {
     public Boolean getUpdateIsNewData();
 
     /**
-     * Set whether the archive item data has changed. <br>
+     * Set whether the archive item data has changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> also must be <code>true</code>.<br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -84,7 +86,8 @@ public interface IOutItemBase {
     public void setUpdateIsNewData(Boolean updateIsNewData);
 
     /**
-     * Get whether the archive item properties have changed. <br>
+     * Get whether the archive item properties have changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> also must be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -94,7 +97,8 @@ public interface IOutItemBase {
     public Boolean getUpdateIsNewProperties();
 
     /**
-     * Set whether the archive item properties have changed. <br>
+     * Set whether the archive item properties have changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> also must be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -105,13 +109,13 @@ public interface IOutItemBase {
     public void setUpdateIsNewProperties(Boolean updateIsNewProperties);
 
     /**
-     * Get the index of the archive item in the archive being updated (old archive). <br>
+     * Get the index of the archive item in the archive being updated (old archive). Mandatory, if
+     * <code>isNewData</code> or <code>isNewProperties</code> set.<br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
      * @return corresponding index of the archive item in the old archive (starting from 0).<br>
-     *         <code>-1</code> if there is no corresponding archive item in the old archive or if doesn't matter (for
-     *         new archives).
+     *         <code>-1</code> if both <code>isNewData</code> and <code>isNewProperties</code> are <code>true</code>.
      */
     public Integer getUpdateOldArchiveItemIndex();
 

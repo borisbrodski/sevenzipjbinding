@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Implementation of all <code>IOutItemXxx</code> interfaces. Contains information about a single archive item required
@@ -31,7 +32,7 @@ import net.sf.sevenzipjbinding.IOutItemZip;
  * @author Boris Brodski
  * @version 9.13-2.00
  */
-public class OutItem implements IOutItemAllFormats {
+public final class OutItem implements IOutItemAllFormats {
     private int index;
 
     private Long dataSize;
@@ -271,5 +272,32 @@ public class OutItem implements IOutItemAllFormats {
      */
     public void setUpdateOldArchiveItemIndex(Integer updateOldArchiveItemIndex) {
         this.updateOldArchiveItemIndex = updateOldArchiveItemIndex;
+    }
+
+    void verify(boolean update) throws SevenZipException {
+        if (update) {
+            if (updateIsNewData == null) {
+                throw new SevenZipException("updateIsNewData can't be null");
+            }
+            if (updateIsNewProperties == null) {
+                throw new SevenZipException("updateIsNewProperties can't be null");
+            }
+            if (updateOldArchiveItemIndex == null) {
+                throw new SevenZipException("updateOldArchiveItemIndex can't be null");
+            }
+
+            if (updateOldArchiveItemIndex.intValue() == -1) {
+                if (!updateIsNewData.booleanValue()) {
+                    throw new SevenZipException("updateOldArchiveItemIndex must be provided (updateIsNewData is false)");
+                }
+                if (!updateIsNewProperties.booleanValue()) {
+                    throw new SevenZipException(
+                            "updateOldArchiveItemIndex must be provided (updateIsNewProperties is false)");
+                }
+            }
+            if (updateIsNewData.booleanValue() && !updateIsNewProperties.booleanValue()) {
+                throw new SevenZipException("updateIsNewProperties must be set (updateIsNewData is true)");
+            }
+        }
     }
 }
