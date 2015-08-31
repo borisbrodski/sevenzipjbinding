@@ -53,7 +53,7 @@ class JBindingSession {
     friend class JNIEnvInstance;
     typedef std::map<ThreadId, ThreadContext> ThreadContextMap;
 
-    std::list<CMyComPtrWrapper<IUnknown> > _objectList;
+    std::list<CMyComPtrWrapper<IUnknown> > _objectList; // TODO REMOVE unused list
     std::list<JNINativeCallContext> _jniNativeCallContextList;
     ThreadContextMap _threadContextMap;
     PlatformCriticalSection _threadContextMapCriticalSection;
