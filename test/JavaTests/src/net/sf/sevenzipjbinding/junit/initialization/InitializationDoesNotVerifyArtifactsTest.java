@@ -77,15 +77,22 @@ public class InitializationDoesNotVerifyArtifactsTest {
         File[] libraries = sevenZipJBindingTemporarySubdirectories[0].listFiles();
         assertTrue(libraries.length > 0);
         try {
-            for (File library : libraries) {
+            long[] sizes = new long[libraries.length];
+            for (int i = 0; i < libraries.length; i++) {
+                File library = libraries[i];
+                sizes[i] = library.length();
                 assertTrue(library.delete());
                 assertTrue(library.createNewFile());
+                assertEquals(0L, library.length());
             }
             try {
                 SevenZip.initSevenZipFromPlatformJAR(new File(TEMP_DIR));
-                fail("7-Zip-JBinding initialization failure was expected, but initialization was successful");
+                for (int i = 0; i < libraries.length; i++) {
+                    assertEquals(sizes[i], libraries[i].length());
+                }
             } catch (SevenZipNativeInitializationException e) {
-                // Ok
+                fail("7-Zip-JBinding initialization failure. Broken library files should be checked"
+                        + " and restored from the platform jar.");
             }
         } finally {
             for (File library : libraries) {
