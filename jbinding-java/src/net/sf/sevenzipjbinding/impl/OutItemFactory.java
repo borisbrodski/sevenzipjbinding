@@ -35,7 +35,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  *            Return type for of the all create methods of the factory.
  * 
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public class OutItemFactory<T extends IOutItemBase> {
     private int index;

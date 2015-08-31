@@ -15,7 +15,7 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  *            type of the out item class
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public abstract class UpdateMultipleFilesNonGenericAbstractTest<T extends IOutItemBase> extends
         UpdateMultipleFilesAbstractTest<T> {

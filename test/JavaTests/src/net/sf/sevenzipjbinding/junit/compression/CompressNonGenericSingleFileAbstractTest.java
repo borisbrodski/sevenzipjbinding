@@ -13,7 +13,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * Tests compression and extraction of a single file interface.
  *
  * @author Boris Brodski
- * @version 9.13-2.0
+ * @version 9.20-2.00
  */
 public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutItemBase> extends
         CompressSingleFileAbstractTest<T> {

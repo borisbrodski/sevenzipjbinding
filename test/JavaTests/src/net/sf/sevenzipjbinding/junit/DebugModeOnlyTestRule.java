@@ -9,7 +9,7 @@ import org.junit.runners.model.Statement;
  * java property set to <code>true</code>.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public class DebugModeOnlyTestRule implements TestRule {
     public static final String SKIP_DEBUG_MODE_TESTS_PROPERTS = "skip-debug-mode-tests";

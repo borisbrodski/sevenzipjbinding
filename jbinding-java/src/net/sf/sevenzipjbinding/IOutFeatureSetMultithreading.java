@@ -5,7 +5,7 @@ package net.sf.sevenzipjbinding;
  * {@link SevenZip#openOutArchive(ArchiveFormat)} to get implementation of this interface.
  * 
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  * 
  */
 public interface IOutFeatureSetMultithreading {

@@ -39,7 +39,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  *            type of the out item class
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public abstract class UpdateAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
     protected static abstract class ArchiveUpdater {

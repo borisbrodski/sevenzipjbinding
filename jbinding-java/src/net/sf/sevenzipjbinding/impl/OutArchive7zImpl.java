@@ -9,7 +9,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * 7z specific archive create and update class.
  * 
  * @author Boris Brodski
- * @version 9.13-2.0
+ * @version 9.20-2.00
  */
 public class OutArchive7zImpl extends OutArchiveImpl<IOutItem7z> implements IOutCreateArchive7z, IOutUpdateArchive7z {
     private boolean solid = true;

@@ -6,7 +6,7 @@ package net.sf.sevenzipjbinding;
  * TODO Use it or remove it
  * 
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public enum NCoderPropID {
     kBlockSize(int.class, "C"), //

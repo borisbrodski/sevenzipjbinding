@@ -29,7 +29,7 @@ import org.junit.Test;
  * Create Tar archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackTar}&gt; interface.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public class StandaloneCompressTarTest extends JUnitNativeTestBase {
     private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemTar> {

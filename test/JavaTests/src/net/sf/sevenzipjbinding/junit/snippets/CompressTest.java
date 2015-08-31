@@ -10,7 +10,7 @@ import org.junit.Test;
  * Tests {@link Compress} snippet.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public class CompressTest extends SnippetTest {
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";

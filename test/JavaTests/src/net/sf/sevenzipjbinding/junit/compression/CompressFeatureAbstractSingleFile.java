@@ -21,7 +21,7 @@ import org.junit.Assert;
  * Tests setting compression level.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public abstract class CompressFeatureAbstractSingleFile extends CompressAbstractTest {
 

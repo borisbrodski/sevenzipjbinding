@@ -28,7 +28,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemAllFormats
  * 
  * @author Boris Brodski
- * @version 9.13-2.0
+ * @version 9.20-2.00
  */
 public interface IOutUpdateArchiveGZip extends IOutUpdateArchive<IOutItemGZip>, //
         IOutFeatureSetLevel {

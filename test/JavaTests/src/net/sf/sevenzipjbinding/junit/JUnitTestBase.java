@@ -6,7 +6,7 @@ import java.util.Random;
  * Base class for all JUnit tests.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public abstract class JUnitTestBase {
     public static final int RANDOM_GLOBAL_SEED = 6;

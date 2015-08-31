@@ -29,7 +29,7 @@ import org.junit.Test;
  * Create BZip2 archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackBZip2}&gt; interface.
  *
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
     private class OutCreateArchiveBZip2 implements IOutCreateCallback<IOutItemBZip2> {

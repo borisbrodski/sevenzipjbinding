@@ -8,7 +8,7 @@ import net.sf.sevenzipjbinding.IOutUpdateArchiveGZip;
  * GZip specific archive create and update class.
  * 
  * @author Boris Brodski
- * @version 9.13-2.0
+ * @version 9.20-2.00
  */
 public class OutArchiveGZipImpl extends OutArchiveImpl<IOutItemGZip> implements IOutCreateArchiveGZip,
         IOutUpdateArchiveGZip {

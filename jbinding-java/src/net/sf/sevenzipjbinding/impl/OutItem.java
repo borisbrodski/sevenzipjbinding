@@ -30,7 +30,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @see IOutItemBase
  * 
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public final class OutItem implements IOutItemAllFormats {
     private int index;

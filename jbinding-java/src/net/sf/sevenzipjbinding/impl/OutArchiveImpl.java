@@ -23,7 +23,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @see OutArchiveTarImpl
  * 
  * @author Boris Brodski
- * @version 9.13-2.0
+ * @version 9.20-2.00
  */
 // TODO null check all parameters: If null slips through into native code there will be no NPE :( 
 public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
