@@ -1,3 +1,5 @@
+@echo off
+
 call env-win64.bat
 
 SET BUILD_DIR=SevenZipJBinding.Release64

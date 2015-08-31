@@ -1,4 +1,6 @@
-REM SET HTTP_PROXY=proxy.server:8080
+@echo off
+
+call env-win.bat
 
 SET CMD_MAKE=C:\mingw64\bin\mingw32-make.exe
 SET GCC_BIN=C:/mingw64/bin
