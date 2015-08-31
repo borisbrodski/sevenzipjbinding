@@ -28,8 +28,8 @@ public class JUnitNativeTestBase extends JUnitTestBase {
         public void run() throws Exception;
     }
 
-    private static final int SINGLE_TEST_THREAD_COUNT = 2;//15;
-    protected static final int SINGLE_TEST_REPEAT_COUNT = 2;//60;
+    private static final int SINGLE_TEST_THREAD_COUNT = 4;//15;
+    protected static final int SINGLE_TEST_REPEAT_COUNT = 3;//60;
     static final int SINGLE_TEST_TIMEOUT = 100000;
 
     private static int deadCPPObjectCount = 0;
