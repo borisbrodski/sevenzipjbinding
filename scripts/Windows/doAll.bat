@@ -1,7 +1,7 @@
 @echo off
 echo doDebug32
 cd C:\SevenZipJBinding\
-rem call doDebug32.bat > doDebug32.log 2>&1
+call doDebug32.bat > doDebug32.log 2>&1
 
 echo doRelease32
 cd C:\SevenZipJBinding\
