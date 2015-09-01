@@ -76,28 +76,23 @@ public class InitializationDoesNotVerifyArtifactsTest {
         assertEquals(1, sevenZipJBindingTemporarySubdirectories.length);
         File[] libraries = sevenZipJBindingTemporarySubdirectories[0].listFiles();
         assertTrue(libraries.length > 0);
+
+        long[] sizes = new long[libraries.length];
+        for (int i = 0; i < libraries.length; i++) {
+            File library = libraries[i];
+            sizes[i] = library.length();
+            assertTrue(library.delete());
+            assertTrue(library.createNewFile());
+            assertEquals(0L, library.length());
+        }
         try {
-            long[] sizes = new long[libraries.length];
+            SevenZip.initSevenZipFromPlatformJAR(new File(TEMP_DIR));
             for (int i = 0; i < libraries.length; i++) {
-                File library = libraries[i];
-                sizes[i] = library.length();
-                assertTrue(library.delete());
-                assertTrue(library.createNewFile());
-                assertEquals(0L, library.length());
+                assertEquals(sizes[i], libraries[i].length());
             }
-            try {
-                SevenZip.initSevenZipFromPlatformJAR(new File(TEMP_DIR));
-                for (int i = 0; i < libraries.length; i++) {
-                    assertEquals(sizes[i], libraries[i].length());
-                }
-            } catch (SevenZipNativeInitializationException e) {
-                fail("7-Zip-JBinding initialization failure. Broken library files should be checked"
-                        + " and restored from the platform jar.");
-            }
-        } finally {
-            for (File library : libraries) {
-                assertTrue(library.delete());
-            }
+        } catch (SevenZipNativeInitializationException e) {
+            fail("7-Zip-JBinding initialization failure. Broken library files should be checked"
+                    + " and restored from the platform jar.");
         }
     }
 }
