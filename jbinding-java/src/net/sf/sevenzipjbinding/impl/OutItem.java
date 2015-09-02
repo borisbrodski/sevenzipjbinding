@@ -12,8 +12,8 @@ import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Implementation of all <code>IOutItemXxx</code> interfaces. Contains information about a single archive item required
- * for a create or update operation. Instances should be created by {@link OutItemFactory}. See
+ * Implementation of the all <code>IOutItemXxx</code> interfaces. Contains information about a single archive item
+ * required for a create or update operation. Instances should be created by {@link OutItemFactory}. See
  * {@link IOutCreateCallback#getItemInformation(int, OutItemFactory)} for details.<br>
  * <br>
  * The purpose of the archive format specific interfaces <code>IOutItemXxx</code> is to hide methods unrelated to the

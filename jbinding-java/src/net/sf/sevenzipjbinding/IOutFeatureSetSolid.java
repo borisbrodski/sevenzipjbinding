@@ -2,8 +2,8 @@ package net.sf.sevenzipjbinding;
 
 /**
  * 
- * Feature interface for setting solid. Use {@link SevenZip#openOutArchive(ArchiveFormat)} to get implementation of this
- * interface.
+ * Feature interface for the setting 'solid'. Use {@link SevenZip#openOutArchive(ArchiveFormat)} to get implementation
+ * of this interface.
  * 
  * @author Boris Brodski
  * @version 9.20-2.00

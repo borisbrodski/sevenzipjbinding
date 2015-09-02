@@ -1,8 +1,8 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * Feature interface for setting compression level. Use {@link SevenZip#openOutArchive(ArchiveFormat)} or one of the
- * <code>SevenZip.openOutArchiveXxx()</code> methods to get implementation of this interface.
+ * Feature interface for the setting 'compression level'. Use {@link SevenZip#openOutArchive(ArchiveFormat)} or one of
+ * the <code>SevenZip.openOutArchiveXxx()</code> methods to get implementation of this interface.
  * 
  * @see IOutCreateArchive
  * @author Boris Brodski

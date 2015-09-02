@@ -32,7 +32,6 @@ public interface IArchiveOpenVolumeCallback {
      *             four exceptions depending on the situation can be saved for further analysis. See
      *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
-    // TODO Change 'throws SevenZipException' to 'throws Throwable'
     public Object getProperty(PropID propID) throws SevenZipException;
 
     /**
@@ -50,6 +49,5 @@ public interface IArchiveOpenVolumeCallback {
      *             four exceptions depending on the situation can be saved for further analysis. See
      *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
-    // TODO Change 'throws SevenZipException' to 'throws Throwable'
     public IInStream getStream(String filename) throws SevenZipException;
 }

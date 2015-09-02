@@ -3,8 +3,8 @@ package net.sf.sevenzipjbinding;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 
 /**
- * Interface to provide the progress information and get the information needed to create a new archive or update an
- * existing one.
+ * The interface designed to provide necessary information about new or updated archive items and to receive information
+ * about the progress of the operation.
  * 
  * @param <T>
  *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
@@ -15,11 +15,10 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  */
 public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
     /**
-     * Notify about last archive create/update operation result.
+     * Notify about success or failure of the current archive item compression or update operation.
      * 
      * @param operationResultOk
-     *            <code>true</code> - last archive create/update operation was a success, <code>false</code> - last
-     *            archive update operation failed.
+     *            <code>true</code> current archive item was processed successfully, <code>false</code> otherwise.
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
      *             as failed. There are no guarantee, that there are no further call back methods will get called. The
@@ -31,18 +30,62 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
     public void setOperationResult(boolean operationResultOk) throws SevenZipException;
 
     /**
-     * Get information about archive item with index <code>index</code> being created or updated. Implementation
-     * example:
+     * Get information about archive item with index <code>index</code> being created or updated. Consider following
+     * cases:
+     * 
+     * <ul>
+     * <li>New item within a create or an update operation:
      * 
      * <pre>
-     * IOutItemZip outItem = outItemFactory.createOutItem()
+     * public IOutItemZip getItemInformation(int index, OutItemFactory{@code <}IOutItemZip{@code >} outItemFactory) throws SevenZipException {
+     *     IOutItemZip outItem = outItemFactory.createOutItem(); 
      * 
-     * outItem.setDataSize(size);
-     * outItem.setPropertyPath("readme.txt");
-     * // ...
+     *     outItem.setDataSize(size);
+     *     outItem.setPropertyPath("readme.txt");
+     *     
+     *     // Set all other required properties here
      * 
-     * return outItem;
+     *     return outItem;
+     * }
      * </pre>
+     * 
+     * <li>Item based on an existing item (update only)
+     * 
+     * <pre>
+     * public IOutItemZip getItemInformation(int index, OutItemFactory{@code <}IOutItemZip{@code >} outItemFactory) throws SevenZipException {
+     * 
+     *     // Determine index of the corresponding existing item in the old archive (archive being updated)
+     *     int oldIndex = ...;
+     *     
+     *     IOutItemZip outItem = outItemFactory.createOutItem(oldIndex); 
+     * 
+     *     outItem.setPropertyPath("readme.txt");
+     *     // Set all other required properties here
+     * 
+     *     return outItem;
+     * }
+     * </pre>
+     * 
+     * <li>Item based on an existing item and inheriting some or all properties (update only)
+     * 
+     * <pre>
+     * public IOutItemZip getItemInformation(int index, OutItemFactory{@code <}IOutItemZip{@code >} outItemFactory) throws SevenZipException {
+     * 
+     *     // Determine index of the corresponding existing item in the old archive (archive being updated)
+     *     int oldIndex = ...;
+     * 
+     *     IOutItemZip outItem = outItemFactory.createOutItemAndCloneProperties(oldIndex); 
+     * 
+     *     // Set some properties
+     *     outItem.setPropertyAttributes(newAttributes);
+     *     
+     *     // Keep other properties unchanged
+     * 
+     *     return outItem;
+     * }
+     * </pre>
+     * 
+     * </ul>
      * 
      * @param index
      *            0-based index of the item to get data. Same index returned by {@link IOutItemBase#getIndex()} of the

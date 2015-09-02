@@ -6,12 +6,12 @@ import java.io.Closeable;
  * The central interface to create new archives. To update an existing archive open it first and then use
  * {@link IInArchive#getConnectedOutArchive()} to get an instance of the {@link IOutUpdateArchive} interface.<br>
  * <br>
- * The are two ways to get an implementation of this interface:
+ * The are two ways of getting an implementation of this interface:
  * <ul>
  * <li><b>use {@link SevenZip#openOutArchive(ArchiveFormat)}</b><br>
  * The method returns an instance of the {@link IOutCreateArchive}{@code <}{@link IOutItemAllFormats}{@code >} interface
- * allowing creation of an archive of any supported archive format. To get all currently supported formats see the
- * 'compression' column of the {@link ArchiveFormat} -JavaDoc. The user can check, whether the current archive format
+ * allowing creation of a new archive of any supported archive format. To get all currently supported formats see the
+ * 'compression' column of the {@link ArchiveFormat}-JavaDoc. The user can check, whether the current archive format
  * supports a particular configuration method by making an <code>instanceof</code> check, like this:
  * 
  * <pre>
@@ -51,7 +51,7 @@ import java.io.Closeable;
  *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
  * 
  * @author Boris Brodski
- * @since 2.0
+ * @version 9.20-2.00
  * 
  */
 public interface IOutCreateArchive<T extends IOutItemBase> extends Closeable {
@@ -60,19 +60,19 @@ public interface IOutCreateArchive<T extends IOutItemBase> extends Closeable {
      * Create new archive. To update an existing archive open it first and then use
      * {@link IInArchive#getConnectedOutArchive()} to get an instance of the {@link IOutUpdateArchive} interface.<br>
      * <br>
-     * The <code>outCreateCallback</code> is designed to get necessary information about archive items and provide
-     * information about progress of the operation.<br>
+     * The <code>outCreateCallback</code> is designed to provide necessary information about new archive items and to
+     * receive information about the progress of the operation.<br>
      * <br>
-     * <i>Note:</i> some archive formats (like Zip) require an implementation of {@link IOutStream} instead of the
-     * {@link ISequentialOutStream}.
+     * <i>Note:</i> some archive formats (like Zip) require an implementation of the {@link IOutStream} interface
+     * (instead of the {@link ISequentialOutStream}) to be passed.
      * 
      * @param outStream
-     *            output stream to get the new archive (implements {@link IOutStream} or {@link ISequentialOutStream}
-     *            depending on the archive format)
+     *            output stream to receive the new archive. An implementation of the {@link IOutStream} interface is
+     *            required for some archive formats.
      * @param numberOfItems
      *            number of items in the new archive
      * @param outCreateCallback
-     *            callback object to exchange information about archive create operation.
+     *            callback object to exchange information about the archive create operation.
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occur. Check exception message for more information.
      */

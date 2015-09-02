@@ -70,7 +70,10 @@ public enum PropID {
     /**
      * Archive item or file attributes. See {@link AttributesBitMask} for the supported bit masks. <br>
      * <br>
-     * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.
+     * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.<br>
+     * <br>
+     * <i>Compression:</i> The flag {@link AttributesBitMask#FILE_ATTRIBUTE_DIRECTORY} should be consistent with the
+     * {@link IOutItemAllFormats#getPropertyIsDir()} property.
      */
     ATTRIBUTES, //
 

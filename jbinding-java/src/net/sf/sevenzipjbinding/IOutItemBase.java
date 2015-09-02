@@ -39,9 +39,9 @@ public interface IOutItemBase {
     public ArchiveFormat getArchiveFormat();
 
     /**
-     * Return the index of the item in the archive that this object describes.
+     * Return the index of the item being described in the new archive.
      * 
-     * @return the index of the item in the archive
+     * @return the index of the item in the archive (0-based)
      */
     public int getIndex();
 
@@ -63,8 +63,8 @@ public interface IOutItemBase {
     public void setDataSize(Long size);
 
     /**
-     * Get whether the archive item data has changed. If <code>isNewData</code> is <code>true</code>,
-     * <code>isNewProperties</code> also must be <code>true</code><br>
+     * Get whether the archive item data (content) has changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> must also be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -74,8 +74,8 @@ public interface IOutItemBase {
     public Boolean getUpdateIsNewData();
 
     /**
-     * Set whether the archive item data has changed. If <code>isNewData</code> is <code>true</code>,
-     * <code>isNewProperties</code> also must be <code>true</code>.<br>
+     * Set whether the archive item data (content) has changed. If <code>isNewData</code> is <code>true</code>,
+     * <code>isNewProperties</code> must also be <code>true</code>.<br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
@@ -87,24 +87,24 @@ public interface IOutItemBase {
 
     /**
      * Get whether the archive item properties have changed. If <code>isNewData</code> is <code>true</code>,
-     * <code>isNewProperties</code> also must be <code>true</code><br>
+     * <code>isNewProperties</code> must also be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
      * @return <code>true</code> - the archive item has new properties (always true for new archives).<br>
-     *         <code>false</code> - the archive item properties from the old archive can be reused.
+     *         <code>false</code> - the archive item properties from the old archive should be reused.
      */
     public Boolean getUpdateIsNewProperties();
 
     /**
      * Set whether the archive item properties have changed. If <code>isNewData</code> is <code>true</code>,
-     * <code>isNewProperties</code> also must be <code>true</code><br>
+     * <code>isNewProperties</code> must also be <code>true</code><br>
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
      * @param updateIsNewProperties
      *            <code>true</code> - the archive item has new properties (always true for new archives).<br>
-     *            <code>false</code> - the archive item properties from the old archive can be reused.
+     *            <code>false</code> - the archive item properties from the old archive should be reused.
      */
     public void setUpdateIsNewProperties(Boolean updateIsNewProperties);
 
@@ -114,7 +114,7 @@ public interface IOutItemBase {
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
-     * @return corresponding index of the archive item in the old archive (starting from 0).<br>
+     * @return corresponding index of the archive item in alsothe old archive (starting from 0).<br>
      *         <code>-1</code> if both <code>isNewData</code> and <code>isNewProperties</code> are <code>true</code>.
      */
     public Integer getUpdateOldArchiveItemIndex();

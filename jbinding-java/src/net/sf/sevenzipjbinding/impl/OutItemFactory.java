@@ -16,7 +16,7 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Factory for the {@link OutItem} objects. The <code>E</code> type parameter determines one of the archive format
+ * Factory for the {@link OutItem} objects. The <code>E</code> type parameter references one of the archive format
  * specific interfaces <code>IOutItemXxx</code> or the archive format independent interface {@link IOutItemAllFormats}
  * to get access to subset of the {@link OutItem} methods.<br>
  * <br>
