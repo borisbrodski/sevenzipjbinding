@@ -37,10 +37,10 @@ void JMethod::initMethodID(JNIEnv * env, jclass jclazz) {
 			return;
 		}
 		if (jni::OutOfMemoryError::_isInstance(env, exception)) {
-			FATAL("Out of memory during method lookup: '%s', '%s'", _name, _signature);
+			FATAL("Out of memory during method lookup: '%s', '%s'", _name, _signature); // TODO Change fatal => exception (+test)
 		}
 		if (jni::ExceptionInInitializerError::_isInstance(env, exception)) {
-			FATAL("Exception in initializer during method lookup: '%s', '%s'", _name, _signature);
+			FATAL("Exception in initializer during method lookup: '%s', '%s'", _name, _signature); // TODO Change fatal => exception (+test)
 		}
 		FATAL("Unknown exception: '%s', '%s'", _name, _signature);
 	}

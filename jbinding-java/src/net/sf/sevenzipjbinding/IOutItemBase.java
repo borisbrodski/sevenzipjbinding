@@ -21,7 +21,7 @@ import net.sf.sevenzipjbinding.impl.OutItem;
  * </ul>
  * 
  * @author Boris Brodski
- * @version 9.13-2.00
+ * @version 9.20-2.00
  */
 public interface IOutItemBase {
     /**
