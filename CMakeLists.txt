@@ -329,7 +329,7 @@ IF(BUILD_TESTING)
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
     FILE(WRITE ${JUNIT_TEST_RUNNER} "STRING(REPLACE \"%3D\" \"=\" JAVA_OPT_TO_USE \"\${JAVA_OPT}\")
                                      EXECUTE_PROCESS(COMMAND
-                                            \"${JAVA_RUNTIME}\" -cp \"${JUNIT_LIB}${PATH_SEP}${HAMCREST_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
+                                            \"${JAVA_RUNTIME}\" -Xmx512m -cp \"${JUNIT_LIB}${PATH_SEP}${HAMCREST_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
                                             \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" \${JAVA_OPT_TO_USE} ")
     IF(JAVA_TMP)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")
