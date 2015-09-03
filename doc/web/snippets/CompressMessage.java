@@ -5,6 +5,7 @@ import java.util.Date;
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -15,24 +16,22 @@ public class CompressMessage {
     /**
      * The callback provides information about archive items
      */
-    private static final class MyCreateCallback 
-            implements IOutCreateCallback<IOutItemZip> {
+    static class MyCreateCallback implements IOutCreateCallback<IOutItemZip> {
         private final byte[] bytesToCompress;
 
         private MyCreateCallback(byte[] bytesToCompress) {
             this.bytesToCompress = bytesToCompress;
         }
 
-        public void setOperationResult(boolean operationResultOk)
-                throws SevenZipException {
-            // Handle result here
+        public void setOperationResult(boolean operationResultOk) {
+            // called for each archive item
         }
 
-        public void setTotal(long total) throws SevenZipException {
+        public void setTotal(long total) {
             // Track operation progress here
         }
 
-        public void setCompleted(long complete) throws SevenZipException {
+        public void setCompleted(long complete) {
             // Track operation progress here
         }
 
@@ -40,22 +39,20 @@ public class CompressMessage {
                 OutItemFactory<IOutItemZip> outItemFactory) {
             IOutItemZip outItem = outItemFactory.createOutItem();
 
-            // Convert the message into the sequential byte stream
-            outItem.setDataStream(new ByteArrayStream(bytesToCompress, true));
             outItem.setDataSize((long) bytesToCompress.length);
 
             // Set name of the file in the archive
             outItem.setPropertyPath("message.txt");
             outItem.setPropertyCreationTime(new Date());
 
-            // To get u+rw permissions on linux, if extracting with unzip
+            // To get u+rw permissions on linux, if extracting with "unzip"
             // outItem.setPropertyAttributes(Integer.valueOf(0x81808000));
 
             return outItem;
         }
 
-        public void freeResources(int index, IOutItemZip outItem) {
-            // no need to close ByteArrayStream
+        public ISequentialInStream getStream(int index) {
+            return new ByteArrayStream(bytesToCompress, true);
         }
     }
 

@@ -113,26 +113,29 @@ you should get something like this:
 <br/>
 
 <br/>
-<h2>Creating archives</h2>
+<h2>Creating new archives</h2>
 
 <p>
-In order to create a new archive you also need to call the corresponding open method of the SevenZip class first. Here
-you should choose one of the archive format specific methods, like SevenZip.openOutArchiveZip(...) for Zip,
-or use archive format independent method SevenZip.openOutArchive(...). Lets use Zip-specific open method and
+In order to create a new archive you need to call the corresponding open method of the SevenZip class first. Here
+you should choose one of the archive format specific methods (like SevenZip.openOutArchiveZip(...) for Zip)
+or use the archive format independent method SevenZip.openOutArchive(...). Lets use Zip-specific method and
 see how a very simple Zip archive with a single item (archived file) containing a text message can be created.
 </p>
 
 <p>
 There are 4 following steps involved:
 <ul>
-<li>Implement IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface providing information about the archive items
-(a single archive item in this example) 
+<li>Implement IOutCreateCallback&lt;IOutItemCallbackZip&gt; interface describing the archive item
 <li>Open new out-archive
 <li>Optionally configure the new archive (e.g. setting compression level)
 <li>Call createArchive(...) method to create the new archive
 </ul>
 </p>
 
+(<i>Note:</i> the following example snippet lacks the proper error handling
+and shouldn't be used as a template for production code. See <a href="basic_snippets.html">basic snippets</a> for complete examples)
+<br>
+<br>
 Here is the complete class:
 
 ##INCLUDE_SNIPPET(CompressMessage)
@@ -148,7 +151,7 @@ C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar;
 </pre></div>
 
 <p>
-and expected output is
+you will get the output
 </p>
 
 ##INCLUDE_OUTPUT(CompressMessage)

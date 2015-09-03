@@ -19,24 +19,22 @@ public class CompressMessage {
     /**
      * The callback provides information about archive items
      */
-    private static final class MyCreateCallback //
-            implements IOutCreateCallback<IOutItemZip> {
+    static class MyCreateCallback implements IOutCreateCallback<IOutItemZip> {
         private final byte[] /*f*/bytesToCompress/**/;
 
         private MyCreateCallback(byte[] bytesToCompress) {
             this./*f*/bytesToCompress/* */= bytesToCompress;
         }
 
-        public void setOperationResult(boolean operationResultOk)//
-                throws SevenZipException {
-            // Handle result here
+        public void setOperationResult(boolean operationResultOk) {
+            // called for each archive item
         }
 
-        public void setTotal(long total) throws SevenZipException {
+        public void setTotal(long total) {
             // Track operation progress here
         }
 
-        public void setCompleted(long complete) throws SevenZipException {
+        public void setCompleted(long complete) {
             // Track operation progress here
         }
 
@@ -50,13 +48,13 @@ public class CompressMessage {
             outItem.setPropertyPath("message.txt");
             outItem.setPropertyCreationTime(new Date());
 
-            // To get u+rw permissions on linux, if extracting with unzip
+            // To get u+rw permissions on linux, if extracting with "unzip"
             // outItem.setPropertyAttributes(Integer.valueOf(0x81808000));
 
             return outItem;
         }
 
-        public ISequentialInStream getStream(int index) throws SevenZipException {
+        public ISequentialInStream getStream(int index) {
             return new ByteArrayStream(/*f*/bytesToCompress/**/, true);
         }
     }
@@ -81,8 +79,8 @@ public class CompressMessage {
 
             System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {
-            System.err.println("7z-Error occurs:");
-            // Get more information using extended method
+            System.err.println("7-Zip-JBinding-Error:");
+            // Extended stack trace prints more information
             e.printStackTraceExtended();
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);

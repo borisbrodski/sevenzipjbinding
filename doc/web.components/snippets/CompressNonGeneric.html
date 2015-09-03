@@ -7,6 +7,7 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateCallback;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialInStream;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -37,7 +38,6 @@
                 OutItemFactory&#60;IOutItemZip&#62; outItemFactory) {
             IOutItemZip item = outItemFactory.createOutItem();
 
-            item.setDataStream(<span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">contents</span>[index], <span class="java-keyword">true</span>));
             item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">contents</span>[index].length);
 
             item.setPropertyPath(<span class="java-field">filenames</span>[<span class="java-field">index</span>]);
@@ -49,8 +49,8 @@
             <span class="java-keyword">return</span> item;
         }
 
-        <span class="java-comment">// Nothing to close</span>
-        <span class="java-keyword">public</span> <span class="java-keyword">void</span> freeResources(<span class="java-keyword">int</span> index, IOutItemZip outItem) <span class="java-keyword">throws</span> SevenZipException {
+        <span class="java-keyword">public</span> ISequentialInStream getStream(<span class="java-keyword">int</span> index) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">contents</span>[index], <span class="java-keyword">true</span>);
         }
     }
 
