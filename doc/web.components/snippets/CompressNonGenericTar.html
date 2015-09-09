@@ -1,11 +1,10 @@
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
 
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateArchiveZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateArchiveTar;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateCallback;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemTar;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialInStream;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -13,12 +12,12 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressNonGenericZip {
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressNonGenericTar {
 <span class="java-javadoc">    /**
      * The callback provides information about archive items.
      */</span>
     <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
-            <span class="java-keyword">implements</span> IOutCreateCallback&#60;IOutItemZip&#62; {
+            <span class="java-keyword">implements</span> IOutCreateCallback&#60;IOutItemTar&#62; {
 
         <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
                 <span class="java-keyword">throws</span> SevenZipException {
@@ -33,25 +32,19 @@
             <span class="java-comment">// Track operation progress here</span>
         }
 
-        <span class="java-keyword">public</span> IOutItemZip getItemInformation(<span class="java-keyword">int</span> index,
-                OutItemFactory&#60;IOutItemZip&#62; outItemFactory) {
-            <span class="java-keyword">int</span> attr = PropID.AttributesBitMask.<span class="java-staticfield">FILE_ATTRIBUTE_UNIX_EXTENSION</span>;
-
-            IOutItemZip item = outItemFactory.createOutItem();
+        <span class="java-keyword">public</span> IOutItemTar getItemInformation(<span class="java-keyword">int</span> index,
+                OutItemFactory&#60;IOutItemTar&#62; outItemFactory) {
+            IOutItemTar item = outItemFactory.createOutItem();
 
             <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() == <span class="java-keyword">null</span>) {
                 <span class="java-comment">// Directory</span>
                 item.setPropertyIsDir(<span class="java-keyword">true</span>);
-                attr |= PropID.AttributesBitMask.<span class="java-staticfield">FILE_ATTRIBUTE_DIRECTORY</span>;
-                attr |= 0x81ED &#60;&#60; 16; <span class="java-comment">// permissions: drwxr-xr-x</span>
             } <span class="java-keyword">else</span> {
                 <span class="java-comment">// File</span>
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
-                attr |= 0x81a4 &#60;&#60; 16; <span class="java-comment">// permissions: -rw-r--r--</span>
             }
-            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
 
-            item.setPropertyAttributes(attr);
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
 
             <span class="java-keyword">return</span> item;
         }
@@ -72,7 +65,7 @@
             <span class="java-keyword">return</span>;
         }
 
-        <span class="java-keyword">new</span> CompressNonGenericZip().compress(args[0]);
+        <span class="java-keyword">new</span> CompressNonGenericTar().compress(args[0]);
     }
 
 
@@ -81,15 +74,14 @@
 
         boolean success = <span class="java-keyword">false</span>;
         RandomAccessFile raf = <span class="java-keyword">null</span>;
-        IOutCreateArchiveZip outArchive = <span class="java-keyword">null</span>;
+        IOutCreateArchiveTar outArchive = <span class="java-keyword">null</span>;
         <span class="java-keyword">try</span> {
             raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
 
             <span class="java-comment">// Open out-archive object</span>
-            outArchive = SevenZip.openOutArchiveZip();
+            outArchive = SevenZip.openOutArchiveTar();
 
-            <span class="java-comment">// Configure archive</span>
-            outArchive.setLevel(5);
+            <span class="java-comment">// No configuration methods for Tar</span>
 
             <span class="java-comment">// Create archive</span>
             outArchive.createArchive(<span class="java-keyword">new</span> RandomAccessFileOutStream(raf),
@@ -97,7 +89,7 @@
 
             success = <span class="java-keyword">true</span>;
         } <span class="java-keyword">catch</span> (SevenZipException e) {
-            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"7z-Error occurs:"</span>);
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Tar-Error occurs:"</span>);
             <span class="java-comment">// Get more information using extended method</span>
             e.printStackTraceExtended();
         } <span class="java-keyword">catch</span> (Exception e) {

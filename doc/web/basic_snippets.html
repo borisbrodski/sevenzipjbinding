@@ -1249,7 +1249,7 @@ The key parts of the code are:
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
                 attr |= 0x81a4 &#60;&#60; 16; <span class="java-comment">// permissions: -rw-r--r--</span>
             }
-            item.setPropertyPath(<span class="java-field">items</span>[<span class="java-field">index</span>].getPath());
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
 
             item.setPropertyAttributes(attr);
 
@@ -1257,6 +1257,9 @@ The key parts of the code are:
         }
 
         <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a> getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[i].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-field">items</span>[i].getContent(), <span class="java-keyword">true</span>);
         }
     }
@@ -1362,17 +1365,7 @@ Physical Size = 718
 <p>
 Creating 7z archive is a little bit easer that creating Zip archives. The main difference is the implementation
 of the MyCreateCallback.getItemInformation() method. 7z doesn't need relative complex calculation of the attribute
-property providing a nice default behavour. Also the creation time property is  
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
-TODO 
+property providing a nice default behavour.
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
@@ -1413,22 +1406,25 @@ TODO
                 OutItemFactory&#60;IOutItem7z&#62; outItemFactory) {
             IOutItem7z item = outItemFactory.createOutItem();
 
-            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() != <span class="java-keyword">null</span>) {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-comment">// Directory</span>
+                item.setPropertyIsDir(<span class="java-keyword">true</span>);
+            } <span class="java-keyword">else</span> {
                 <span class="java-comment">// File</span>
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
-            } <span class="java-keyword">else</span> {
-                item.setPropertyIsDir(<span class="java-keyword">true</span>);
             }
 
-            item.setPropertyPath(<span class="java-field">items</span>[<span class="java-field">index</span>].getPath());
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
 
             <span class="java-keyword">return</span> item;
         }
 
         <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a> getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[i].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-field">items</span>[i].getContent(), <span class="java-keyword">true</span>);
         }
-
     }
 
     <span class="java-keyword">private</span> Item[] items;
@@ -1457,6 +1453,7 @@ TODO
 
             <span class="java-comment">// Configure archive</span>
             outArchive.setLevel(5);
+            outArchive.setSolid(<span class="java-keyword">true</span>);
 
             <span class="java-comment">// Create archive</span>
             outArchive.createArchive(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>(raf),
@@ -1495,9 +1492,139 @@ TODO
 </pre></div>
 <div class="snippet-info"><a href="snippets/CompressNonGeneric7z.java">download java code</a></div>
 <p>
-For instructions how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
 </p>
 <h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+<p>
+Creating tar archives is pretty much the same, as creating 7z archives, since the default values for most properties
+are good enough in most cases. Note, that the tar archive format do have attribute property.
+But due to the Unix-nature of the tar, it was renamed to PosixAttributes. Also the meaning of the bits is different.
+</p>
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveTar.html">IOutCreateArchiveTar</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemTar;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.<a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressNonGenericTar {
+<span class="java-javadoc">    /**
+     * The callback provides information about archive items.
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+            <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;IOutItemTar&#62; {
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
+                <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track each operation result here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setCompleted(<span class="java-keyword">long</span> complete) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> IOutItemTar getItemInformation(<span class="java-keyword">int</span> index,
+                OutItemFactory&#60;IOutItemTar&#62; outItemFactory) {
+            IOutItemTar item = outItemFactory.createOutItem();
+
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-comment">// Directory</span>
+                item.setPropertyIsDir(<span class="java-keyword">true</span>);
+            } <span class="java-keyword">else</span> {
+                <span class="java-comment">// File</span>
+                item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
+            }
+
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
+
+            <span class="java-keyword">return</span> item;
+        }
+
+        <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a> getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[i].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-field">items</span>[i].getContent(), <span class="java-keyword">true</span>);
+        }
+    }
+
+    <span class="java-keyword">private</span> Item[] items;
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 1) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java Compress &#60;archive&#62;"</span>);
+            <span class="java-keyword">return</span>;
+        }
+
+        <span class="java-keyword">new</span> CompressNonGenericTar().compress(args[0]);
+    }
+
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename) {
+        items = CompressArchiveStructure.initArchiveStructure();
+
+        boolean success = <span class="java-keyword">false</span>;
+        RandomAccessFile raf = <span class="java-keyword">null</span>;
+        <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveTar.html">IOutCreateArchiveTar</a> outArchive = <span class="java-keyword">null</span>;
+        <span class="java-keyword">try</span> {
+            raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
+
+            <span class="java-comment">// Open out-archive object</span>
+            outArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openOutArchiveTar();
+
+            <span class="java-comment">// No configuration methods for Tar</span>
+
+            <span class="java-comment">// Create archive</span>
+            outArchive.createArchive(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>(raf),
+                    <span class="java-field">items</span>.<span class="java-field">length</span>, <span class="java-keyword">new</span> MyCreateCallback());
+
+            success = <span class="java-keyword">true</span>;
+        } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Tar-Error occurs:"</span>);
+            <span class="java-comment">// Get more information using extended method</span>
+            e.printStackTraceExtended();
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (outArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    outArchive.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+            <span class="java-keyword">if</span> (raf != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    raf.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+        }
+        <span class="java-keyword">if</span> (success) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/CompressNonGenericTar.java">download java code</a></div>
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
 <h3><a name="create-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
 <h3><a name="create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
 <h2><a name="create-generic">Creating archives with the generic API</h2>

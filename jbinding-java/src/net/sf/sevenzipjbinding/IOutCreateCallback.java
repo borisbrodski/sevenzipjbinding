@@ -107,11 +107,13 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
 
     /**
      * Return sequential in-stream for the archive item with index <code>index</code> to read and compress the content
-     * of the item.
+     * of the item. Depending on a archive format, this method may be called for any archive item including directories.
+     * <code>null</code> should be returned for archive items without any content.
      * 
      * @param index
      *            index of the item to read content of (starting from 0)
-     * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>
+     * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>. Return
+     *         <code>null</code> for archive items without content (for example, for directories)
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */

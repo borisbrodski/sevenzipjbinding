@@ -57,6 +57,9 @@ public class CompressNonGenericZip {
         }
 
         public ISequentialInStream getStream(int i) throws SevenZipException {
+            if (items[i].getContent() == null) {
+                return null;
+            }
             return new ByteArrayStream(items[i].getContent(), true);
         }
     }

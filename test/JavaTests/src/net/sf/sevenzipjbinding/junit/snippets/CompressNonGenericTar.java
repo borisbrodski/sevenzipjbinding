@@ -1,9 +1,12 @@
+package net.sf.sevenzipjbinding.junit.snippets;
+
+/* BEGIN_SNIPPET(CompressNonGenericTar) */
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import net.sf.sevenzipjbinding.IOutCreateArchive7z;
+import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemTar;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
@@ -12,14 +15,14 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class CompressNonGeneric7z {
+public class CompressNonGenericTar {
     /**
      * The callback provides information about archive items.
      */
-    private final class MyCreateCallback 
-            implements IOutCreateCallback<IOutItem7z> {
+    private final class MyCreateCallback //
+            implements IOutCreateCallback<IOutItemTar> {
 
-        public void setOperationResult(boolean operationResultOk)
+        public void setOperationResult(boolean operationResultOk)//
                 throws SevenZipException {
             // Track each operation result here
         }
@@ -32,40 +35,40 @@ public class CompressNonGeneric7z {
             // Track operation progress here
         }
 
-        public IOutItem7z getItemInformation(int index,
-                OutItemFactory<IOutItem7z> outItemFactory) {
-            IOutItem7z item = outItemFactory.createOutItem();
+        public IOutItemTar getItemInformation(int index,//
+                OutItemFactory<IOutItemTar> outItemFactory) {
+            IOutItemTar item = outItemFactory.createOutItem();
 
-            if (items[index].getContent() == null) {
+            if (/*f*/items/**/[index].getContent() == null) {
                 // Directory
                 item.setPropertyIsDir(true);
             } else {
                 // File
-                item.setDataSize((long) items[index].getContent().length);
+                item.setDataSize((long) /*f*/items/**/[index].getContent()./*f*/length/**/);
             }
 
-            item.setPropertyPath(items[index].getPath());
+            item.setPropertyPath(/*f*/items/**/[index].getPath());
 
             return item;
         }
 
         public ISequentialInStream getStream(int i) throws SevenZipException {
-            if (items[i].getContent() == null) {
+            if (/*f*/items/**/[i].getContent() == null) {
                 return null;
             }
-            return new ByteArrayStream(items[i].getContent(), true);
+            return new ByteArrayStream(/*f*/items/**/[i].getContent(), true);
         }
     }
 
     private Item[] items;
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args./*f*/length/* */!= 1) {
             System.out.println("Usage: java Compress <archive>");
             return;
         }
 
-        new CompressNonGeneric7z().compress(args[0]);
+        new CompressNonGenericTar().compress(args[0]);
     }
 
 
@@ -74,24 +77,22 @@ public class CompressNonGeneric7z {
 
         boolean success = false;
         RandomAccessFile raf = null;
-        IOutCreateArchive7z outArchive = null;
+        IOutCreateArchiveTar outArchive = null;
         try {
             raf = new RandomAccessFile(filename, "rw");
 
             // Open out-archive object
-            outArchive = SevenZip.openOutArchive7z();
+            outArchive = SevenZip.openOutArchiveTar();
 
-            // Configure archive
-            outArchive.setLevel(5);
-            outArchive.setSolid(true);
+            // No configuration methods for Tar
 
             // Create archive
-            outArchive.createArchive(new RandomAccessFileOutStream(raf),
-                    items.length, new MyCreateCallback());
+            outArchive.createArchive(new RandomAccessFileOutStream(raf),//
+                    /*f*/items/**/./*f*/length/**/, new MyCreateCallback());
 
             success = true;
         } catch (SevenZipException e) {
-            System.err.println("7z-Error occurs:");
+            System.err.println("Tar-Error occurs:");
             // Get more information using extended method
             e.printStackTraceExtended();
         } catch (Exception e) {
@@ -119,3 +120,4 @@ public class CompressNonGeneric7z {
         }
     }
 }
+/* END_SNIPPET */

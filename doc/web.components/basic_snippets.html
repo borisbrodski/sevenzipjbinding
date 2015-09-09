@@ -463,6 +463,19 @@ For instructions on how to running the snippet and check the results see <a href
 </p>
 
 <h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+
+<p>
+Creating tar archives is pretty much the same, as creating 7z archives, since the default values for most properties
+are good enough in most cases. Note, that the tar archive format do have attribute property.
+But due to the Unix-nature of the tar, it was renamed to PosixAttributes. Also the meaning of the bits is different.
+</p>
+
+##INCLUDE_SNIPPET(CompressNonGenericTar)
+
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
+
 <h3><a name="create-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
 <h3><a name="create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
 

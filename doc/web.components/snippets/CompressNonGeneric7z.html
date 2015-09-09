@@ -36,22 +36,25 @@
                 OutItemFactory&#60;IOutItem7z&#62; outItemFactory) {
             IOutItem7z item = outItemFactory.createOutItem();
 
-            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() != <span class="java-keyword">null</span>) {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-comment">// Directory</span>
+                item.setPropertyIsDir(<span class="java-keyword">true</span>);
+            } <span class="java-keyword">else</span> {
                 <span class="java-comment">// File</span>
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
-            } <span class="java-keyword">else</span> {
-                item.setPropertyIsDir(<span class="java-keyword">true</span>);
             }
 
-            item.setPropertyPath(<span class="java-field">items</span>[<span class="java-field">index</span>].getPath());
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
 
             <span class="java-keyword">return</span> item;
         }
 
         <span class="java-keyword">public</span> ISequentialInStream getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[i].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
             <span class="java-keyword">return</span> <span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">items</span>[i].getContent(), <span class="java-keyword">true</span>);
         }
-
     }
 
     <span class="java-keyword">private</span> Item[] items;
@@ -80,6 +83,7 @@
 
             <span class="java-comment">// Configure archive</span>
             outArchive.setLevel(5);
+            outArchive.setSolid(<span class="java-keyword">true</span>);
 
             <span class="java-comment">// Create archive</span>
             outArchive.createArchive(<span class="java-keyword">new</span> RandomAccessFileOutStream(raf),
