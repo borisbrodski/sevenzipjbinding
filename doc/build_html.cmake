@@ -175,7 +175,7 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
     ENDFOREACH()
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
         STRING(REGEX REPLACE ".*/([^/]+)\\.html" "\\1" CLASS_NAME "${HTML_FILE}")
-        STRING(REGEX REPLACE "([^a-zA-Z0-9]|^)(${CLASS_NAME})([^a-zA-Z0-9]|$)" 
+        STRING(REGEX REPLACE "([^a-zA-Z0-9>/]|^)(${CLASS_NAME})([^a-zA-Z0-9]|$)" 
                 "\\1<a href=\"javadoc/${JD_PATH}${HTML_FILE}\">\\2</a>\\3" TMP "${TMP}")
 #        STRING(REGEX REPLACE "${CLASS_NAME}" 
 #                "XXXXX" TMP "${TMP}")
@@ -207,6 +207,8 @@ macro(ADJUST_PADDING SNIPPET_FILE)
                 SET(C1 "x")
                 SET(C2 "x")
                 WHILE("${C1}" STREQUAL "${C2}" )
+                    #MESSAGE("LINE: ${FIRST_LINE}  ${I}")
+                    # if ERROR here: verify, that the line after the BEGIN_SNIPPET is not an empty line
                     STRING(SUBSTRING "${FIRST_LINE}" ${I} 1 C1)
                     STRING(SUBSTRING "${LINE}" ${I} 1 C2)
                     MATH(EXPR I "${I} + 1")

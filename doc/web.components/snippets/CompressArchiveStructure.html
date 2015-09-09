@@ -1,0 +1,53 @@
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressArchiveStructure {
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> Item[] initArchiveStructure() {
+
+        <span class="java-comment">//     &#60;root&#62;</span>
+        <span class="java-comment">//     |</span>
+        <span class="java-comment">//     +- info.txt</span>
+        <span class="java-comment">//     +- random-100-bytes.dump</span>
+        <span class="java-comment">//     +- dir1</span>
+        <span class="java-comment">//     |  +- file-in-a-directory1.txt</span>
+        <span class="java-comment">//     +- dir2</span>
+        <span class="java-comment">//        +- file-in-a-directory2.txt</span>
+
+        Item[] items = <span class="java-keyword">new</span> Item[5];
+
+        items[0] = <span class="java-keyword">new</span> Item(<span class="java-string">"info.txt"</span>, <span class="java-string">"This is the info"</span>);
+
+        <span class="java-keyword">byte</span>[] content = <span class="java-keyword">new</span> <span class="java-keyword">byte</span>[100];
+        <span class="java-keyword">new</span> Random().nextBytes(content);
+        items[1] = <span class="java-keyword">new</span> Item(<span class="java-string">"random-100-bytes.dump"</span>, content);
+
+        <span class="java-comment">// dir1 doesn't have separate archive item</span>
+        items[2] = <span class="java-keyword">new</span> Item(<span class="java-string">"dir1"</span> + File.separator + <span class="java-string">"file1.txt"</span>, 
+                <span class="java-string">"This file located in a directory 'dir'"</span>);
+
+        <span class="java-comment">// dir2 does have separate archive item</span>
+        items[3] = <span class="java-keyword">new</span> Item(<span class="java-string">"dir2"</span> + File.separator, (<span class="java-keyword">byte</span>[]) <span class="java-keyword">null</span>);
+        items[4] = <span class="java-keyword">new</span> Item(<span class="java-string">"dir2"</span> + File.separator + <span class="java-string">"file2.txt"</span>, 
+                <span class="java-string">"This file located in a directory 'dir'"</span>);
+        <span class="java-keyword">return</span> items;
+    }
+
+    <span class="java-keyword">static</span> <span class="java-keyword">class</span> Item {
+        <span class="java-keyword">private</span> String <span class="java-field">path</span>;
+        <span class="java-keyword">private</span> <span class="java-keyword">byte</span>[] <span class="java-field">content</span>;
+
+        Item(String path, String content) {
+            <span class="java-keyword">this</span>(path, content.getBytes());
+        }
+
+        Item(String path, <span class="java-keyword">byte</span>[] content) {
+            <span class="java-keyword">this</span>.<span class="java-field">path</span>= path;
+            <span class="java-keyword">this</span>.<span class="java-field">content</span>= content;
+        }
+
+        String getPath() {
+            <span class="java-keyword">return</span> <span class="java-field">path</span>;
+        }
+
+        <span class="java-keyword">byte</span>[] getContent() {
+            <span class="java-keyword">return</span> <span class="java-field">content</span>;
+        }
+    }
+}

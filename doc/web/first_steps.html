@@ -92,8 +92,8 @@ On Linux it could be done as following:
 </p>
 <div class="fragment"><pre class="fragment">
 $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
-  &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
-  SevenZipJBindingInitCheck
+           &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
+       SevenZipJBindingInitCheck
 </pre></div>
  
 <p>
@@ -101,8 +101,8 @@ Windows users can do the same with (written in a single line)
 </p>
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  SevenZipJBindingInitCheck
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              SevenZipJBindingInitCheck
 </pre></div>
 <p>
 If the message
@@ -206,8 +206,8 @@ If you run this program with
 </p>
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  PrintCountOfItems my-test-archive.zip
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              PrintCountOfItems my-test-archive.zip
 </pre></div>
 <p>
 you should get something like this:
@@ -234,7 +234,7 @@ There are 4 following steps involved:
 </ul>
 </p>
 (<i>Note:</i> the following example snippet lacks the proper error handling
-and shouldn't be used as a template for production code. See <a href="basic_snippets.html">basic snippets</a> for more complete examples)
+and shouldn't be used as a template for production code. See <a href="basic_snippets.html">basic snippets</a> for complete examples)
 <br>
 <br>
 Here is the complete class:
@@ -317,8 +317,8 @@ Here is the complete class:
 
             System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
         } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
-            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"7z-Error occurs:"</span>);
-            <span class="java-comment">// Get more information using extended method</span>
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"7-Zip-JBinding-Error:"</span>);
+            <span class="java-comment">// Extended stack trace prints more information</span>
             e.printStackTraceExtended();
         } <span class="java-keyword">catch</span> (Exception e) {
             System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
@@ -347,8 +347,8 @@ If you run this program with
 </p>
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  CompressMessage my-archive.zip HelloWorld
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              CompressMessage compressed_message.zip HelloWorld
 </pre></div>
 <p>
 you will get the output
@@ -357,8 +357,33 @@ you will get the output
 Compression operation succeeded
 </pre></div>
 <p>
-Also the archive my-archive.zip should be created. It contains single compressed file "message.txt" with the message "HelloWorld".
+Also the archive compressed_message.zip should be created. It contains single compressed file "message.txt" with the message "HelloWorld".
 </p>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; 7z l compressed_message.zip
+Listing archive: compressed_message.zip
+--
+Path = compressed_message.zip
+Type = zip
+Physical Size = 135
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2026-08-17 23:20:28 .....           15           15  message.txt
+------------------- ----- ------------ ------------  ------------------------
+                                    15           15  1 files, 0 folders
+</pre></div>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; 7z x compressed_message.zip
+Processing archive: compressed_message.zip
+Extracting  message.txt
+Everything is Ok
+Size:       15
+Compressed: 135
+</pre></div>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; type message.txt
+HelloWorld
+</pre></div>
 <p>
 Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.
 </p>

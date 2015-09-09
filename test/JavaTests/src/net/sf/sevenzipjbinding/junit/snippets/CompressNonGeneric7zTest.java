@@ -7,16 +7,16 @@ import java.io.File;
 import org.junit.Test;
 
 /**
- * Tests {@link Compress} snippet.
+ * Tests {@link CompressNonGeneric7z} snippet.
  *
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public class CompressTest extends SnippetTest {
+public class CompressNonGeneric7zTest extends SnippetTest {
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
 
     private String getExpectedOutput() {
-        /* BEGIN_OUTPUT(Compress) */
+        /* BEGIN_OUTPUT(CompressNonGeneric7z) */
         String expected = "Compression operation succeeded\n";
         /* END_OUTPUT */
 
@@ -29,10 +29,10 @@ public class CompressTest extends SnippetTest {
     public void testCompress() {
 
         String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
-        File archiveFile = new File(tmpDir, "compressed.zip");
+        File archiveFile = new File(tmpDir, "compressed.7z");
 
         beginSnippetTest();
-        Compress.main(new String[] { archiveFile.getAbsolutePath() });
+        CompressNonGeneric7z.main(new String[] { archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(), output);
     }

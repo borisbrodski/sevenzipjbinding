@@ -76,8 +76,8 @@ public class CompressMessage {
 
             System.out.println("Compression operation succeeded");
         } catch (SevenZipException e) {
-            System.err.println("7z-Error occurs:");
-            // Get more information using extended method
+            System.err.println("7-Zip-JBinding-Error:");
+            // Extended stack trace prints more information
             e.printStackTraceExtended();
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);

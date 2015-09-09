@@ -42,16 +42,17 @@
     	</li>
     </ul>
     <li><a href="#creating">Creating new archives</a></li>
-        <li><a href="#creating-specific-api">Creating archives with the generic API</a></li>
-    	<ul>
-    		<li><a href="#creating-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
-    	</ul>
-        <li><a href="#creating-generic">Creating archives with the archive format specific API</a></li>
     <ul>
+        <li><a href="#archive-test-structure">Archive test structure</a></li>
+        <li><a href="#create-specific-api">Creating archives with the generic API</a></li>
+    	<ul>
+    		<li><a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    	</ul>
+        <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
     </ul>
     <li><a href="#modification">Modification existing archives</a></li>
     <ul>
@@ -350,24 +351,42 @@ Here is an example:
 <h1><a name="creating">Creating new archives</h1>
 
 <p>
-The are two slightly different APIs for archive creation and modification. First API is designed to work
-with one particilar archive format, like Zip. Second allows archive format independent programming.
+The are two slightly different APIs for creating new archives:
+<ul>
+<li>archive format specificAPI</li>
+<li>archive format independent API</li>
+</ul>
+The first API is designed to work with one particilar archive format, like Zip. The Second API
+allows archive format independent programming.
 </p>
 
-<h2><a name="creation-specific-api">Creating archives with the archive format specific API</h2>
+<h2><a name="archive-test-structure">Archive test structure</h2>
+
+<p>
+Some archive formats like GZip only support compression of a single file, while other archive formats
+allow multiple files and folders to be compressed.
+In order to demonstrate how those archives can be created, some test file and folder structure is required.
+The following snippets use a static structure defined by the CompressArchiveStructure class:
+</p>
+
+##INCLUDE_SNIPPET(CompressArchiveStructure)
+
+<h2><a name="create-specific-api">Creating archives with the archive format specific API</h2>
 
 <p>
 The archive format specific API provides easy access to the archive configuration
-methods (like setting compression level). Also it has "method per property" callbacks (like IOutItemCallbackZip)
-allowing easy callback implementation. The amount of mandotory and optional properties are different for each
-archive format.
+methods (e.g. for setting the compression level).
+Also it uses archive format spefic item description interfaces (like IOutItemZip for Zip).
+Different archive formats support different archive item properties. 
+Those interfaces provide access to the propreties supported by the corresponding
+archive format, whether the unsupported properties remain hidden.
 </p>
 
 <p>
-Lets see how archive of different formats can be created using archive format specific API.
+Lets see how different archives can be created using archive format specific API
 </p>
 
-<h3><a name="creation-specific-api-zip">Creating Zip archive using archive format specific API</h3>
+<h3><a name="create-specific-api-zip">Creating Zip archive using archive format specific API</h3>
 
 <p>
 Creating Zip archive using archive format specific API was already presented in the "first steps".
@@ -380,24 +399,86 @@ The key parts of the code are:
         the new archive. Also the progress of the compression/update operation get reported here.
     </li>
     <li>
+        Creating an instance of the IOutArchive interface and calling createArchive() method.
     </li>
 </lu>
 
+##INCLUDE_SNIPPET(CompressNonGenericZip)
+
+
 <p>
-Here is the snippet again:
+If you run this program with (on Linux)
 </p>
 
-##INCLUDE_SNIPPET(CompressMessage)
+<div class="fragment"><pre class="fragment">
+$ java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+           &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+       CompressNonGenericZip compressed.zip
+</pre></div>
+
+<p>
+you will get the output
+</p>
+
+##INCLUDE_OUTPUT(CompressNonGenericZip)
+
+<p>
+The archive file compressed.zip should be created. It contains files and folders speficied in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+</p>
 
 
+<div class="fragment"><pre class="fragment">
+$ 7z l compressed.zip
+Listing archive: compressed.zip
 
-<h3><a name="creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
-<h3><a name="creation-specific-api-tar">Creating Tar archive using archive format specific API</h3>
-<h3><a name="creation-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
-<h3><a name="creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
+--
+Path = compressed.zip
+Type = zip
+Physical Size = 718
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2026-09-11 05:53:00 .....           16           16  info.txt
+2026-09-11 05:53:00 .....          100          100  random-100-bytes.dump
+2026-09-11 05:53:00 .....           38           38  dir1/file1.txt
+2026-09-11 05:53:00 D....            0            0  dir2
+2026-09-11 05:53:00 .....           38           38  dir2/file2.txt
+------------------- ----- ------------ ------------  ------------------------
+                                   192          192  4 files, 1 folders
+</pre></div>
 
 
-<h2><a name="creation-generic">Creating archives with the generic API</h2>
+<h3><a name="create-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
+
+<p>
+Creating 7z archive is a little bit easer that creating Zip archives. The main difference is the implementation
+of the MyCreateCallback.getItemInformation() method. 7z doesn't need relative complex calculation of the attribute
+property providing a nice default behavour. Also the creation time property is  
+
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+</p>
+
+##INCLUDE_SNIPPET(CompressNonGeneric7z)
+
+<p>
+For instructions how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
+
+<h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+<h3><a name="create-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
+<h3><a name="create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
+
+
+<h2><a name="create-generic">Creating archives with the generic API</h2>
 
 <br/>
 

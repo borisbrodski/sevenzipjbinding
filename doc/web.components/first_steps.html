@@ -34,8 +34,8 @@ On Linux it could be done as following:
 
 <div class="fragment"><pre class="fragment">
 $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
-  &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
-  SevenZipJBindingInitCheck
+           &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
+       SevenZipJBindingInitCheck
 </pre></div>
  
 <p>
@@ -44,8 +44,8 @@ Windows users can do the same with (written in a single line)
 
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  SevenZipJBindingInitCheck
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              SevenZipJBindingInitCheck
 </pre></div>
 
 <p>
@@ -100,8 +100,8 @@ If you run this program with
 
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  PrintCountOfItems my-test-archive.zip
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              PrintCountOfItems my-test-archive.zip
 </pre></div>
 
 <p>
@@ -146,8 +146,8 @@ If you run this program with
 
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-  CompressMessage my-archive.zip HelloWorld
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+              CompressMessage compressed_message.zip HelloWorld
 </pre></div>
 
 <p>
@@ -157,8 +157,39 @@ you will get the output
 ##INCLUDE_OUTPUT(CompressMessage)
 
 <p>
-Also the archive my-archive.zip should be created. It contains single compressed file "message.txt" with the message "HelloWorld".
+Also the archive compressed_message.zip should be created. It contains single compressed file "message.txt" with the message "HelloWorld".
 </p>
+
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; 7z l compressed_message.zip
+Listing archive: compressed_message.zip
+
+--
+Path = compressed_message.zip
+Type = zip
+Physical Size = 135
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2026-08-17 23:20:28 .....           15           15  message.txt
+------------------- ----- ------------ ------------  ------------------------
+                                    15           15  1 files, 0 folders
+</pre></div>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; 7z x compressed_message.zip
+Processing archive: compressed_message.zip
+
+Extracting  message.txt
+
+Everything is Ok
+
+Size:       15
+Compressed: 135
+</pre></div>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; type message.txt
+HelloWorld
+</pre></div>
 
 <p>
 Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.

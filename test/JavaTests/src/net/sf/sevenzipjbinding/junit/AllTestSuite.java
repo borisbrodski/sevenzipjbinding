@@ -163,7 +163,8 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipPassCallback
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipPassTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressMessageTest;
-import net.sf.sevenzipjbinding.junit.snippets.CompressTest;
+import net.sf.sevenzipjbinding.junit.snippets.CompressNonGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
@@ -307,7 +308,8 @@ public class AllTestSuite extends TestSuite {
             PrintCountOfItemsTest.class, //
             SevenZipJBindingInitCheckTest.class, //
             CompressMessageTest.class, //
-            CompressTest.class, //
+            CompressNonGenericZipTest.class, //
+            CompressNonGeneric7zTest.class, //
     };
 
     static Class<?>[] toolsTests = { //

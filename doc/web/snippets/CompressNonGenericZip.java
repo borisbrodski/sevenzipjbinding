@@ -1,30 +1,26 @@
-package net.sf.sevenzipjbinding.junit.snippets;
-
-/* BEGIN_SNIPPET(CompressNonGeneric) */
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Date;
-import java.util.Random;
 
 import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.ISequentialInStream;
+import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
+import net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class Compress {
+public class CompressNonGenericZip {
     /**
-     * The callback provides information about archive items
+     * The callback provides information about archive items.
      */
-    private final class MyCreateCallback //
+    private final class MyCreateCallback 
             implements IOutCreateCallback<IOutItemZip> {
 
-        public void setOperationResult(boolean operationResultOk)//
+        public void setOperationResult(boolean operationResultOk)
                 throws SevenZipException {
             // Track each operation result here
         }
@@ -37,68 +33,68 @@ public class Compress {
             // Track operation progress here
         }
 
-        public IOutItemZip getItemInformation(int index,//
+        public IOutItemZip getItemInformation(int index,
                 OutItemFactory<IOutItemZip> outItemFactory) {
+            int attr = PropID.AttributesBitMask.FILE_ATTRIBUTE_UNIX_EXTENSION;
+
             IOutItemZip item = outItemFactory.createOutItem();
 
-            item.setDataSize((long) /*f*/contents/**/[index].length);
+            if (items[index].getContent() == null) {
+                // Directory
+                item.setPropertyIsDir(true);
+                attr |= PropID.AttributesBitMask.FILE_ATTRIBUTE_DIRECTORY;
+                attr |= 0x81ED << 16; // permissions: drwxr-xr-x
+            } else {
+                // File
+                item.setDataSize((long) items[index].getContent().length);
+                attr |= 0x81a4 << 16; // permissions: -rw-r--r--
+            }
 
-            item.setPropertyPath(/*f*/filenames/**/[/*f*/index/**/]);
-            item.setPropertyCreationTime(new Date());
+            item.setPropertyPath(items[index].getPath());
+            //            item.setPropertyCreationTime(new Date());
 
-            // Use to get u+rw permissions on linux with 'unzip'
-            // item.setPropertyAttributes(0x81808000);
+            item.setPropertyAttributes(attr);
 
             return item;
         }
 
-        public ISequentialInStream getStream(int index) throws SevenZipException {
-            return new ByteArrayStream(/*f*/contents/**/[index], true);
+        public ISequentialInStream getStream(int i) throws SevenZipException {
+            return new ByteArrayStream(items[i].getContent(), true);
         }
     }
 
-    private byte[][] contents;
-    private String[] filenames;
+    private Item[] items;
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */!= 1) {
+        if (args.length != 1) {
             System.out.println("Usage: java Compress <archive>");
             return;
         }
 
-        new Compress().compress(args[0]);
+        new CompressNonGenericZip().compress(args[0]);
     }
 
-
-    private void initArchiveStructure() {
-        contents = new byte[3][];
-        filenames = new String[3];
-
-        filenames[0] = "info.txt";
-        contents[0] = "This is the info".getBytes();
-
-        filenames[1] = "random-100-bytes.bin";
-        contents[1] = new byte[100];
-        new Random().nextBytes(contents[1]);
-
-        filenames[2] = "dir" + File.separator + "file-in-a-directory.txt";
-        contents[2] = "This file located in a directory 'dir'".getBytes();
-    }
 
     private void compress(String filename) {
-        initArchiveStructure();
+        items = CompressArchiveStructure.initArchiveStructure();
 
+        boolean success = false;
         RandomAccessFile raf = null;
         IOutCreateArchiveZip outArchive = null;
         try {
             raf = new RandomAccessFile(filename, "rw");
 
+            // Open out-archive object
             outArchive = SevenZip.openOutArchiveZip();
-            outArchive.setLevel(5);
-            outArchive.createArchive(new RandomAccessFileOutStream(raf),//
-                    /*f*/contents/**/./*f*/length/**/, new MyCreateCallback());
 
-            System.out.println("Compression operation succeeded");
+            // Configure archive
+            outArchive.setLevel(5);
+
+            // Create archive
+            outArchive.createArchive(new RandomAccessFileOutStream(raf),
+                    items.length, new MyCreateCallback());
+
+            success = true;
         } catch (SevenZipException e) {
             System.err.println("7z-Error occurs:");
             // Get more information using extended method
@@ -111,6 +107,7 @@ public class Compress {
                     outArchive.close();
                 } catch (IOException e) {
                     System.err.println("Error closing archive: " + e);
+                    success = false;
                 }
             }
             if (raf != null) {
@@ -118,9 +115,12 @@ public class Compress {
                     raf.close();
                 } catch (IOException e) {
                     System.err.println("Error closing file: " + e);
+                    success = false;
                 }
             }
         }
+        if (success) {
+            System.out.println("Compression operation succeeded");
+        }
     }
 }
-/* END_SNIPPET */
