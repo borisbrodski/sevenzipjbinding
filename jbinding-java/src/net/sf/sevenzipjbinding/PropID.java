@@ -289,6 +289,13 @@ public enum PropID {
          * @see PropID#ATTRIBUTES
          */
         public static final int FILE_ATTRIBUTE_ENCRYPTED = 0x4000;
+
+        /**
+         * Bit-mask for attribute: unix extension.
+         * 
+         * @see PropID#ATTRIBUTES
+         */
+        public static final int FILE_ATTRIBUTE_UNIX_EXTENSION = 0x8000; /* trick for Unix */
     }
 
     private final int propIDIndex;
