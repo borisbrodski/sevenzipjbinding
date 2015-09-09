@@ -38,6 +38,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @version 9.20-2.00
  */
 public class OutItemFactory<T extends IOutItemBase> {
+    private static final Long ZERO = Long.valueOf(0);
     private int index;
     private IOutArchive<?> outArchive;
 
@@ -76,6 +77,7 @@ public class OutItemFactory<T extends IOutItemBase> {
             outItem.setUpdateIsNewData(Boolean.TRUE);
             outItem.setUpdateIsNewProperties(Boolean.TRUE);
         }
+        outItem.setDataSize(ZERO);
 
         switch (outItem.getArchiveFormat()) {
         case SEVEN_ZIP:
