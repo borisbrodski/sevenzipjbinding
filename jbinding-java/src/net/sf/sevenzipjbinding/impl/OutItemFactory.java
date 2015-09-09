@@ -78,6 +78,7 @@ public class OutItemFactory<T extends IOutItemBase> {
             outItem.setUpdateIsNewProperties(Boolean.TRUE);
         }
         outItem.setDataSize(ZERO);
+        outItem.setPropertyLastModificationTime(new Date());
 
         switch (outItem.getArchiveFormat()) {
         case SEVEN_ZIP:
