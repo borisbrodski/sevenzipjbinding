@@ -43,8 +43,13 @@
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of consumed data</span>
                         }
                     });
+
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Creation time: "</span> + item.getCreationTime());
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Access time: "</span> + item.getLastAccessTime());
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Modification time: "</span> + item.getLastWriteTime());
+
                     <span class="java-keyword">if</span> (result == ExtractOperationResult.OK) {
-                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-comment">// </span>
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, 
                                 hash[0], sizeArray[0], item.getPath()));
                     } <span class="java-keyword">else</span> {
                         System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);

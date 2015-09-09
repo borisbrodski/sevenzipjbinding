@@ -92,15 +92,15 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
     <li><a href="#creating">Creating new archives</a></li>
     <ul>
         <li><a href="#archive-test-structure">Archive test structure</a></li>
-        <li><a href="#creating-specific-api">Creating archives with the generic API</a></li>
+        <li><a href="#create-specific-api">Creating archives with the generic API</a></li>
     	<ul>
-    		<li><a href="#creating-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
-    		<li><a href="#creating-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
     	</ul>
-        <li><a href="#creating-generic">Creating archives with the archive format specific API</a></li>
+        <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
     </ul>
     <li><a href="#modification">Modification existing archives</a></li>
     <ul>
@@ -393,8 +393,13 @@ checksum will be calculated.</p>
                             <span class="java-keyword">return</span> data.length; <span class="java-comment">// Return amount of consumed data</span>
                         }
                     });
+
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Creation time: "</span> + item.getCreationTime());
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Access time: "</span> + item.getLastAccessTime());
+                    System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Modification time: "</span> + item.getLastWriteTime());
+
                     <span class="java-keyword">if</span> (result == <a href="javadoc/net/sf/sevenzipjbinding/ExtractOperationResult.html">ExtractOperationResult</a>.OK) {
-                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, <span class="java-comment">// </span>
+                        System.<span class="java-staticfield">out</span>.println(String.<span class="java-staticmethod">format</span>(<span class="java-string">"%9X | %10s | %s"</span>, 
                                 hash[0], sizeArray[0], item.getPath()));
                     } <span class="java-keyword">else</span> {
                         System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error extracting item: "</span> + result);
@@ -1166,7 +1171,7 @@ The following snippets use a static structure defined by the CompressArchiveStru
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/CompressArchiveStructure.java">download java code</a></div>
-<h2><a name="creation-specific-api">Creating archives with the archive format specific API</h2>
+<h2><a name="create-specific-api">Creating archives with the archive format specific API</h2>
 <p>
 The archive format specific API provides easy access to the archive configuration
 methods (e.g. for setting the compression level).
@@ -1178,7 +1183,7 @@ archive format, whether the unsupported properties remain hidden.
 <p>
 Lets see how different archives can be created using archive format specific API
 </p>
-<h3><a name="creation-specific-api-zip">Creating Zip archive using archive format specific API</h3>
+<h3><a name="create-specific-api-zip">Creating Zip archive using archive format specific API</h3>
 <p>
 Creating Zip archive using archive format specific API was already presented in the "first steps".
 The key parts of the code are:
@@ -1191,7 +1196,7 @@ The key parts of the code are:
     <li>
         Creating an instance of the <a href="javadoc/net/sf/sevenzipjbinding/IOutArchive.html">IOutArchive</a> interface and calling createArchive() method.
     </li>
-</lu>
+</ul>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
 <span class="java-keyword">import</span> java.io.RandomAccessFile;
@@ -1244,9 +1249,7 @@ The key parts of the code are:
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
                 attr |= 0x81a4 &#60;&#60; 16; <span class="java-comment">// permissions: -rw-r--r--</span>
             }
-
             item.setPropertyPath(<span class="java-field">items</span>[<span class="java-field">index</span>].getPath());
-            <span class="java-comment">//            item.setPropertyCreationTime(new Date());</span>
 
             item.setPropertyAttributes(attr);
 
@@ -1321,11 +1324,55 @@ The key parts of the code are:
 }
 </pre></div>
 <div class="snippet-info"><a href="snippets/CompressNonGenericZip.java">download java code</a></div>
-<h3><a name="creation-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
+<p>
+If you run this program with (on Linux)
+</p>
+<div class="fragment"><pre class="fragment">
+$ java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
+           &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+       CompressNonGenericZip compressed.zip
+</pre></div>
+<p>
+you will get the output
+</p>
+<div class="fragment"><pre class="fragment">
+Compression operation succeeded
+</pre></div>
+<p>
+The archive file compressed.zip should be created. It contains files and folders speficied in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+</p>
+<div class="fragment"><pre class="fragment">
+$ 7z l compressed.zip
+Listing archive: compressed.zip
+--
+Path = compressed.zip
+Type = zip
+Physical Size = 718
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2015-09-09 08:56:42 .....           16           16  info.txt
+2015-09-09 08:56:42 .....          100          100  random-100-bytes.dump
+2015-09-09 08:56:42 .....           38           38  dir1/file1.txt
+2015-09-09 08:56:42 D....            0            0  dir2
+2015-09-09 08:56:42 .....           38           38  dir2/file2.txt
+------------------- ----- ------------ ------------  ------------------------
+                                   192          192  4 files, 1 folders
+</pre></div>
+<h3><a name="create-specific-api-7z">Creating 7-Zip archive using archive format specific API</h3>
 <p>
 Creating 7z archive is a little bit easer that creating Zip archives. The main difference is the implementation
 of the MyCreateCallback.getItemInformation() method. 7z doesn't need relative complex calculation of the attribute
 property providing a nice default behavour. Also the creation time property is  
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
+TODO 
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
@@ -1448,47 +1495,12 @@ property providing a nice default behavour. Also the creation time property is
 </pre></div>
 <div class="snippet-info"><a href="snippets/CompressNonGeneric7z.java">download java code</a></div>
 <p>
-If you run this program with
+For instructions how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
 </p>
-<div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
-              CompressNonGeneric7z compressed.7z
-</pre></div>
-<p>
-you will get the output
-</p>
-<div class="fragment"><pre class="fragment">
-Compression operation succeeded
-</pre></div>
-<p>
-The archive file compressed.7z should be created. It contains files and folders speficied in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
-</p>
-<div class="fragment"><pre class="fragment">
-C:\Test&gt; 7z l compressed_message
-Listing archive: compressed_message.zip
---
-Path = compressed_message.zip
-Type = zip
-Physical Size = 135
-   Date      Time    Attr         Size   Compressed  Name
-------------------- ----- ------------ ------------  ------------------------
-2026-08-17 23:20:28 .....           15           15  message.txt
-------------------- ----- ------------ ------------  ------------------------
-                                    15           15  1 files, 0 folders
-C:\Test&gt; 7z x compressed_message.zip
-Processing archive: compressed_message.zip
-Extracting  message.txt
-Everything is Ok
-Size:       15
-Compressed: 135
-C:\Test&gt; type message.txt
-HelloWorld
-</pre></div>
-<h3><a name="creation-specific-api-tar">Creating Tar archive using archive format specific API</h3>
-<h3><a name="creation-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
-<h3><a name="creation-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
-<h2><a name="creation-generic">Creating archives with the generic API</h2>
+<h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
+<h3><a name="create-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
+<h3><a name="create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
+<h2><a name="create-generic">Creating archives with the generic API</h2>
 <br/>
 <h1><a name="modification">Modification existing archives</h1>
 </td></tr>

@@ -39,14 +39,15 @@ public class CompressNonGeneric7z {
                 OutItemFactory<IOutItem7z> outItemFactory) {
             IOutItem7z item = outItemFactory.createOutItem();
 
-            if (/*f*/items/**/[index].getContent() != null) {
+            if (/*f*/items/**/[index].getContent() == null) {
+                // Directory
+                item.setPropertyIsDir(true);
+            } else {
                 // File
                 item.setDataSize((long) /*f*/items/**/[index].getContent()./*f*/length/**/);
-            } else {
-                item.setPropertyIsDir(true);
             }
 
-            item.setPropertyPath(/*f*/items/**/[/*f*/index/**/].getPath());
+            item.setPropertyPath(/*f*/items/**/[index].getPath());
 
             return item;
         }
@@ -83,6 +84,7 @@ public class CompressNonGeneric7z {
 
             // Configure archive
             outArchive.setLevel(5);
+            outArchive.setSolid(true);
 
             // Create archive
             outArchive.createArchive(new RandomAccessFileOutStream(raf),//

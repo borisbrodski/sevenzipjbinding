@@ -46,8 +46,13 @@ public class ExtractItemsSimple {
                             return data.length; // Return amount of consumed data
                         }
                     });
+
+                    System.out.println("Creation time: " + item.getCreationTime());
+                    System.out.println("Access time: " + item.getLastAccessTime());
+                    System.out.println("Modification time: " + item.getLastWriteTime());
+
                     if (result == ExtractOperationResult.OK) {
-                        System.out.println(String.format("%9X | %10s | %s", // 
+                        System.out.println(String.format("%9X | %10s | %s", //
                                 hash[0], sizeArray[0], item.getPath()));
                     } else {
                         System.err.println("Error extracting item: " + result);

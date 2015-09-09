@@ -52,9 +52,7 @@ public class CompressNonGenericZip {
                 item.setDataSize((long) /*f*/items/**/[index].getContent()./*f*/length/**/);
                 attr |= 0x81a4 << 16; // permissions: -rw-r--r--
             }
-
-            item.setPropertyPath(/*f*/items/**/[/*f*/index/**/].getPath());
-            //            item.setPropertyCreationTime(new Date());
+            item.setPropertyPath(/*f*/items/**/[index].getPath());
 
             item.setPropertyAttributes(attr);
 

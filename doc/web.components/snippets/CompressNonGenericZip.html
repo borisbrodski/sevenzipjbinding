@@ -49,9 +49,7 @@
                 item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
                 attr |= 0x81a4 &#60;&#60; 16; <span class="java-comment">// permissions: -rw-r--r--</span>
             }
-
             item.setPropertyPath(<span class="java-field">items</span>[<span class="java-field">index</span>].getPath());
-            <span class="java-comment">//            item.setPropertyCreationTime(new Date());</span>
 
             item.setPropertyAttributes(attr);
 
