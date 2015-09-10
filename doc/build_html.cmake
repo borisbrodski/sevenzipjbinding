@@ -350,6 +350,7 @@ FOREACH(JAVA_FILE ${JAVA_FILES})
 ENDFOREACH()
 
 
-PROCESS_HTML("index.html")
+PROCESS_HTML("compression_snippets.html")
+PROCESS_HTML("extraction_snippets.html")
 PROCESS_HTML("first_steps.html")
-PROCESS_HTML("basic_snippets.html")
+PROCESS_HTML("index.html")

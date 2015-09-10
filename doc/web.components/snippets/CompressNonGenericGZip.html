@@ -1,0 +1,106 @@
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateArchiveGZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutCreateCallback;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemGZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialInStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.ByteArrayStream;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressNonGenericGZip {
+<span class="java-javadoc">    /**
+     * The callback provides information about archive items.
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+            <span class="java-keyword">implements</span> IOutCreateCallback&#60;IOutItemGZip&#62; {
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
+                <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-comment">// Track each operation result here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setCompleted(<span class="java-keyword">long</span> complete) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> IOutItemGZip getItemInformation(<span class="java-keyword">int</span> index,
+                OutItemFactory&#60;IOutItemGZip&#62; outItemFactory) {
+            IOutItemGZip item = outItemFactory.createOutItem();
+
+            item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">content</span>.<span class="java-field">length</span>);
+
+            <span class="java-keyword">return</span> item;
+        }
+
+        <span class="java-keyword">public</span> ISequentialInStream getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> SevenZipException {
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> ByteArrayStream(<span class="java-field">content</span>, <span class="java-keyword">true</span>);
+        }
+    }
+
+    <span class="java-keyword">byte</span>[] content;
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 2) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java Compress &#60;archive&#62; &#60;msg&#62;"</span>);
+            <span class="java-keyword">return</span>;
+        }
+
+        <span class="java-keyword">new</span> CompressNonGenericGZip().compress(args[0], args[1]);
+    }
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename, String msg) {
+        boolean success = <span class="java-keyword">false</span>;
+        RandomAccessFile raf = <span class="java-keyword">null</span>;
+        IOutCreateArchiveGZip outArchive = <span class="java-keyword">null</span>;
+        content = msg.getBytes();
+        <span class="java-keyword">try</span> {
+            raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
+
+            <span class="java-comment">// Open out-archive object</span>
+            outArchive = SevenZip.openOutArchiveGZip();
+
+            <span class="java-comment">// Configure archive</span>
+            outArchive.setLevel(5);
+
+            <span class="java-comment">// Create archive</span>
+            outArchive.createArchive(<span class="java-keyword">new</span> RandomAccessFileOutStream(raf),
+                    1, <span class="java-keyword">new</span> MyCreateCallback());
+
+            success = <span class="java-keyword">true</span>;
+        } <span class="java-keyword">catch</span> (SevenZipException e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"GZip-Error occurs:"</span>);
+            <span class="java-comment">// Get more information using extended method</span>
+            e.printStackTraceExtended();
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (outArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    outArchive.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+            <span class="java-keyword">if</span> (raf != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    raf.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+        }
+        <span class="java-keyword">if</span> (success) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
+        }
+    }
+}

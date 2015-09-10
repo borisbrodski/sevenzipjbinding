@@ -38,11 +38,13 @@ table.submenu td {
     padding-left: 15px;
     padding-top: 0px;
 }
+.submenu {
+    font:italic small-caps 900 22px arial;
+    font-style:normal;
+    text-decoration:none;
+    color: #000027;
+}
 table.submenu a {
-	font:italic small-caps 900 19px arial;
-	font-style:normal;
-	text-decoration:none;
-	color: #000027;
 }
 table.submenu a:hover {
 	color: #00007F;
@@ -50,8 +52,14 @@ table.submenu a:hover {
 table.menu a:hover {
 	color: #00007F;
 }
-
-
+ul.CodeSnippets {
+    margin: 0 0 0 0;
+    padding-left: 15px;
+    list-style-type: none;
+}
+ul.CodeSnippets a {
+    font-size: 19px;
+}
 
 ul.Features li {
     padding-bottom: 10px;

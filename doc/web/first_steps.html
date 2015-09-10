@@ -36,7 +36,13 @@ piwik_log(piwik_action_name, piwik_idsite, piwik_url);
 <tr><td><a href="first_steps.html">Documentation</a><br/>
 <table class="submenu" border="0">
 	<tr><td><a href="first_steps.html" >First steps</a></td></tr>
-	<tr><td><a href="basic_snippets.html" class="submenu">Code snippets</a></td></tr>
+	<tr><td>
+	   Code snippets
+	   <ul class="CodeSnippets submenu">
+	       <li><a href="extraction_snippets.html" class="submenu">Extraction</a></li>
+	       <li><a href="compression_snippets.html" class="submenu">Compression/Update</a></li>
+	   </ul>
+	</td></tr>
 	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a></td></tr>
 </table></td></tr>
 <tr><td><a href="http://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/4.65-1.06rc-extr-only/" class="menu">Download</a></td></tr>
@@ -215,7 +221,9 @@ you should get something like this:
 <div class="fragment"><pre class="fragment">
 Count of items in archive: 4
 </pre></div>
-<br/>
+<p>
+Continue with <a href="extraction_snippets.html">extraction code snippets</a> to get more examples.
+</p>
 <br/>
 <h2>Creating new archives</h2>
 <p>
@@ -234,7 +242,7 @@ There are 4 following steps involved:
 </ul>
 </p>
 (<i>Note:</i> the following example snippet lacks the proper error handling
-and shouldn't be used as a template for production code. See <a href="basic_snippets.html">basic snippets</a> for complete examples)
+and shouldn't be used as a template for production code. See <a href="compression_snippets.html">compression/update code snippets</a> for complete examples)
 <br>
 <br>
 Here is the complete class:
@@ -385,7 +393,7 @@ C:\Test&gt; type message.txt
 HelloWorld
 </pre></div>
 <p>
-Continue with <a href="basic_snippets.html">Code snippets</a> to get more examples.
+Continue with <a href="compression_snippets.html">compression/update code snippets</a> to get more examples.
 </p>
 </td></tr>
 </table></td></tr>
