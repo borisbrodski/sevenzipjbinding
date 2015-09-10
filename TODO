@@ -53,6 +53,8 @@ Minor TODOs:
 - Improve Web site
 - Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests")
 - Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
+- Add file extension field to the ArchiveFormat enum (+JavaDoc)
+- Add isStreamFormat field to the ArchiveFormat enum (+JavaDoc) Remove third parameter of the CompressGeneric.main method
 
 Major TODOs:
 - Support more archive formats
