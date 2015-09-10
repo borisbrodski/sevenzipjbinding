@@ -48,19 +48,18 @@
     <span class="java-keyword">byte</span>[] content;
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
-        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 2) {
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java Compress &#60;archive&#62; &#60;msg&#62;"</span>);
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 2) {
+            <span class="java-keyword">new</span> CompressNonGenericGZip().compress(args[0]);
             <span class="java-keyword">return</span>;
         }
-
-        <span class="java-keyword">new</span> CompressNonGenericGZip().compress(args[0], args[1]);
+        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java CompressNonGenericGZip &#60;archive&#62;"</span>);
     }
 
-    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename, String msg) {
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename) {
         boolean success = <span class="java-keyword">false</span>;
         RandomAccessFile raf = <span class="java-keyword">null</span>;
         IOutCreateArchiveGZip outArchive = <span class="java-keyword">null</span>;
-        content = msg.getBytes();
+        content = CompressArchiveStructure.create()[0].getContent();
         <span class="java-keyword">try</span> {
             raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
 

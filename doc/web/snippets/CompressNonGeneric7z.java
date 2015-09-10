@@ -60,17 +60,16 @@ public class CompressNonGeneric7z {
     private Item[] items;
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java Compress <archive>");
+        if (args.length == 1) {
+            new CompressNonGeneric7z().compress(args[0]);
             return;
         }
-
-        new CompressNonGeneric7z().compress(args[0]);
+        System.out.println("Usage: java CompressNonGeneric7z <archive>");
     }
 
 
     private void compress(String filename) {
-        items = CompressArchiveStructure.initArchiveStructure();
+        items = CompressArchiveStructure.create();
 
         boolean success = false;
         RandomAccessFile raf = null;

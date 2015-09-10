@@ -67,17 +67,16 @@ public class CompressNonGenericZip {
     private Item[] items;
 
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: java Compress <archive>");
+        if (args.length == 1) {
+            new CompressNonGenericZip().compress(args[0]);
             return;
         }
-
-        new CompressNonGenericZip().compress(args[0]);
+        System.out.println("Usage: java CompressNonGenericZip <archive>");
     }
 
 
     private void compress(String filename) {
-        items = CompressArchiveStructure.initArchiveStructure();
+        items = CompressArchiveStructure.create();
 
         boolean success = false;
         RandomAccessFile raf = null;

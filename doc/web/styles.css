@@ -177,6 +177,14 @@ pre.fragment a {
 	color: black;
 }
 
+/* ------------- Content ------------- */
+
+td.content {
+}
+
+ul.list-with-pre-s li {
+    margin-bottom: 10px;
+}
 
 /* ------------- Voting ------------- */
 div.voting {

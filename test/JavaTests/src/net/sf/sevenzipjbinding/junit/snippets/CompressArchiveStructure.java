@@ -5,7 +5,7 @@ import java.util.Random;
 
 /* BEGIN_SNIPPET(CompressArchiveStructure) */
 public class CompressArchiveStructure {
-    public static Item[] initArchiveStructure() {
+    public static Item[] create() {
 
         //     <root>
         //     |

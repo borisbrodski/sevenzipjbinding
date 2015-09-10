@@ -1,14 +1,13 @@
-package net.sf.sevenzipjbinding.junit.snippets;
-
-/* BEGIN_SNIPPET(CompressNonGenericZip) */
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
+import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItemZip;
+import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
+import net.sf.sevenzipjbinding.IOutFeatureSetMultithreading;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -16,14 +15,14 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class CompressNonGenericZip {
+public class CompressGeneric {
     /**
      * The callback provides information about archive items.
      */
-    private final class MyCreateCallback //
-            implements IOutCreateCallback<IOutItemZip> {
+    private final class MyCreateCallback 
+            implements IOutCreateCallback<IOutItemAllFormats> {
 
-        public void setOperationResult(boolean operationResultOk)//
+        public void setOperationResult(boolean operationResultOk)
                 throws SevenZipException {
             // Track each operation result here
         }
@@ -36,66 +35,74 @@ public class CompressNonGenericZip {
             // Track operation progress here
         }
 
-        public IOutItemZip getItemInformation(int index,//
-                OutItemFactory<IOutItemZip> outItemFactory) {
-            int attr = PropID.AttributesBitMask./*sf*/FILE_ATTRIBUTE_UNIX_EXTENSION/**/;
+        public IOutItemAllFormats getItemInformation(int index,
+                OutItemFactory<IOutItemAllFormats> outItemFactory) {
+            IOutItemAllFormats item = outItemFactory.createOutItem();
 
-            IOutItemZip item = outItemFactory.createOutItem();
-
-            if (/*f*/items/**/[index].getContent() == null) {
+            if (items[index].getContent() == null) {
                 // Directory
                 item.setPropertyIsDir(true);
-                attr |= PropID.AttributesBitMask./*sf*/FILE_ATTRIBUTE_DIRECTORY/**/;
-                attr |= 0x81ED << 16; // permissions: drwxr-xr-x
             } else {
                 // File
-                item.setDataSize((long) /*f*/items/**/[index].getContent()./*f*/length/**/);
-                attr |= 0x81a4 << 16; // permissions: -rw-r--r--
+                item.setDataSize((long) items[index].getContent().length);
             }
-            item.setPropertyPath(/*f*/items/**/[index].getPath());
 
-            item.setPropertyAttributes(attr);
+            item.setPropertyPath(items[index].getPath());
 
             return item;
         }
 
         public ISequentialInStream getStream(int i) throws SevenZipException {
-            if (/*f*/items/**/[i].getContent() == null) {
+            if (items[i].getContent() == null) {
                 return null;
             }
-            return new ByteArrayStream(/*f*/items/**/[i].getContent(), true);
+            return new ByteArrayStream(items[i].getContent(), true);
         }
     }
 
     private Item[] items;
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */== 1) {
-            new CompressNonGenericZip().compress(args[0]);
+        if (args.length != 3) {
+            System.out.println("Usage: java CompressGeneric " 
+                    + "<archive-format> <archive> <count-of-files>");
+            for (ArchiveFormat af : ArchiveFormat.values()) {
+                if (af.isOutArchiveSupported()) {
+                    System.out.println("Supported formats: " + af.name());
+                }
+            }
             return;
         }
-        System.out.println("Usage: java CompressNonGenericZip <archive>");
+
+        int itemsCount = Integer.valueOf(args[2]);
+        new CompressGeneric().compress(args[0], args[1], itemsCount);
     }
 
 
-    private void compress(String filename) {
+    private void compress(String filename, String fmtName, int count) {
         items = CompressArchiveStructure.create();
 
         boolean success = false;
         RandomAccessFile raf = null;
-        IOutCreateArchiveZip outArchive = null;
+        IOutCreateArchive<IOutItemAllFormats> outArchive = null;
+        ArchiveFormat archiveFormat = ArchiveFormat.valueOf(fmtName);
         try {
             raf = new RandomAccessFile(filename, "rw");
 
             // Open out-archive object
-            outArchive = SevenZip.openOutArchiveZip();
+            outArchive = SevenZip.openOutArchive(archiveFormat);
 
             // Configure archive
-            outArchive.setLevel(5);
+            if (outArchive instanceof IOutFeatureSetLevel) {
+                ((IOutFeatureSetLevel) outArchive).setLevel(5);
+            }
+            if (outArchive instanceof IOutFeatureSetMultithreading) {
+                ((IOutFeatureSetMultithreading) outArchive).setThreadCount(2);
+            }
 
             // Create archive
-            outArchive.createArchive(new RandomAccessFileOutStream(raf),//
-                    /*f*/items/**/./*f*/length/**/, new MyCreateCallback());
+            outArchive.createArchive(new RandomAccessFileOutStream(raf),
+                    count, new MyCreateCallback());
 
             success = true;
         } catch (SevenZipException e) {
@@ -123,8 +130,8 @@ public class CompressNonGenericZip {
             }
         }
         if (success) {
-            System.out.println("Compression operation succeeded");
+            System.out.println(archiveFormat.getMethodName() 
+                    + " archive with " + count + " item(s) created");
         }
     }
 }
-/* END_SNIPPET */

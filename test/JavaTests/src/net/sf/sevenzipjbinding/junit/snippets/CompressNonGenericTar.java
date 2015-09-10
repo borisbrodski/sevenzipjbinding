@@ -63,17 +63,16 @@ public class CompressNonGenericTar {
     private Item[] items;
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */!= 1) {
-            System.out.println("Usage: java Compress <archive>");
+        if (args./*f*/length/* */== 1) {
+            new CompressNonGenericTar().compress(args[0]);
             return;
         }
-
-        new CompressNonGenericTar().compress(args[0]);
+        System.out.println("Usage: java CompressNonGenericTar <archive>");
     }
 
 
     private void compress(String filename) {
-        items = CompressArchiveStructure.initArchiveStructure();
+        items = CompressArchiveStructure.create();
 
         boolean success = false;
         RandomAccessFile raf = null;

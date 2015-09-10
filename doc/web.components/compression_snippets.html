@@ -181,6 +181,66 @@ For instructions on how to running the snippet and check the results see <a href
 
 <h2><a name="create-generic">Creating archives with the generic API</h2>
 
+<p>
+The one of the great features of the 7-Zip (and though of the 7-Zip-JBinding) is the ability to write archive format
+independent code supporting most or even all of the archive formats, supported by 7-zip. The following code snippet
+accepts the required archive format as the first parameter compressing the test data in the specified archive format. 
+</p>
+
+<p>
+The key steps to write a generic compression code are
+<ul>
+    <li>Use IOutItemAllFormats interface instead of the one of the archive specific interfaces, like IOutItem7z</li>
+    <li>Create out-archive object using generic create method SevenZip.openOutArchive(ArchiveFormat)</li>
+</ul>
+</p>
+
+##INCLUDE_SNIPPET(CompressGeneric)
+
+<p>
+Now you can run the snippet with different parameters creating archives with different formats. The last parameter
+specifies, how many archive items from the <a href="#archive-test-structure">CompressArchiveStructure</a> should be
+compressed. This number should be between 1 and 5 for 7z, Zip and Tar, and must be 1 for the stream formats GZip and BZip2.
+</p>
+
+<ul class="list-with-pre-s">
+<li>To create a 7z archive with 5 items:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric SEVEN_ZIP compressed_generic.zip 5
+##INCLUDE_RAW_OUTPUT(CompressGeneric7z)
+</pre></div>
+</li>
+<li>To create a Zip archive with 5 items:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric ZIP       compressed_generic.zip 5
+##INCLUDE_RAW_OUTPUT(CompressGenericZip)
+</pre></div>
+</li>
+<li>To create a Tar archive with 5 items:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric TAR       compressed_generic.tar 5
+##INCLUDE_RAW_OUTPUT(CompressGenericTar)
+</pre></div>
+</li>
+<li>To create a GZip archive with 1 item:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric GZIP      compressed_generic.zip 1
+##INCLUDE_RAW_OUTPUT(CompressGenericGZip)
+</pre></div>
+</li>
+<li>To create a BZip2 archive with 1 item:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric BZIP2     compressed_generic.bz2 1
+##INCLUDE_RAW_OUTPUT(CompressGenericBZip2)
+</pre></div>
+</li>
+</ul>
+
+<p>
+Also a bunch of the compressed_generic.* archives should be created with the corresponding contents.
+</p>
+
+
 <br/>
 
 <h1><a name="modification">Modification existing archives</h1>

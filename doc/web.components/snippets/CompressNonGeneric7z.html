@@ -60,17 +60,16 @@
     <span class="java-keyword">private</span> Item[] items;
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
-        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> != 1) {
-            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java Compress &#60;archive&#62;"</span>);
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 1) {
+            <span class="java-keyword">new</span> CompressNonGeneric7z().compress(args[0]);
             <span class="java-keyword">return</span>;
         }
-
-        <span class="java-keyword">new</span> CompressNonGeneric7z().compress(args[0]);
+        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java CompressNonGeneric7z &#60;archive&#62;"</span>);
     }
 
 
     <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename) {
-        items = CompressArchiveStructure.initArchiveStructure();
+        items = CompressArchiveStructure.create();
 
         boolean success = <span class="java-keyword">false</span>;
         RandomAccessFile raf = <span class="java-keyword">null</span>;

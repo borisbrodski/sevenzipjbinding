@@ -47,10 +47,6 @@ public class ExtractItemsSimple {
                         }
                     });
 
-                    System.out.println("Creation time: " + item.getCreationTime());
-                    System.out.println("Access time: " + item.getLastAccessTime());
-                    System.out.println("Modification time: " + item.getLastWriteTime());
-
                     if (result == ExtractOperationResult.OK) {
                         System.out.println(String.format("%9X | %10s | %s", //
                                 hash[0], sizeArray[0], item.getPath()));

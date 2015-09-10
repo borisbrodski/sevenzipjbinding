@@ -1,5 +1,5 @@
 public class CompressArchiveStructure {
-    public static Item[] initArchiveStructure() {
+    public static Item[] create() {
 
         //     <root>
         //     |

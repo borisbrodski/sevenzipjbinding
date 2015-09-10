@@ -48,19 +48,18 @@ public class CompressNonGenericBZip2 {
     byte[] content;
 
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("Usage: java Compress <archive> <msg>");
+        if (args.length == 1) {
+            new CompressNonGenericBZip2().compress(args[0]);
             return;
         }
-
-        new CompressNonGenericBZip2().compress(args[0], args[1]);
+        System.out.println("Usage: java CompressNonGenericBZip2 <archive>");
     }
 
-    private void compress(String filename, String msg) {
+    private void compress(String filename) {
         boolean success = false;
         RandomAccessFile raf = null;
         IOutCreateArchiveBZip2 outArchive = null;
-        content = msg.getBytes();
+        content = CompressArchiveStructure.create()[0].getContent();
         try {
             raf = new RandomAccessFile(filename, "rw");
 

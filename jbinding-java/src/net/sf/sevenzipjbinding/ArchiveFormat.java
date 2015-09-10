@@ -240,7 +240,7 @@ public enum ArchiveFormat {
     /**
      * BZip2 format.
      */
-    BZIP2("BZIP2", OutArchiveBZip2Impl.class),
+    BZIP2("BZip2", OutArchiveBZip2Impl.class),
 
     /**
      * 7z format.

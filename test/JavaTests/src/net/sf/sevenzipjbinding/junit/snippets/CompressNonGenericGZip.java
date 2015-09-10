@@ -51,19 +51,18 @@ public class CompressNonGenericGZip {
     byte[] content;
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */!= 2) {
-            System.out.println("Usage: java Compress <archive> <msg>");
+        if (args./*f*/length/* */== 2) {
+            new CompressNonGenericGZip().compress(args[0]);
             return;
         }
-
-        new CompressNonGenericGZip().compress(args[0], args[1]);
+        System.out.println("Usage: java CompressNonGenericGZip <archive>");
     }
 
-    private void compress(String filename, String msg) {
+    private void compress(String filename) {
         boolean success = false;
         RandomAccessFile raf = null;
         IOutCreateArchiveGZip outArchive = null;
-        content = msg.getBytes();
+        content = CompressArchiveStructure.create()[0].getContent();
         try {
             raf = new RandomAccessFile(filename, "rw");
 
