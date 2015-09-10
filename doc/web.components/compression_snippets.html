@@ -153,14 +153,30 @@ For instructions on how to running the snippet and check the results see <a href
 <h3><a name="create-specific-api-gzip">Creating GZip archive using archive format specific API</h3>
 
 <p>
-GZip format is a stream archive format meaning, that it can compress only a single file. This simplifies
-the programming quite a bit. In the following snippet a single message passed by the second command line
-parameter get compressed.  
+GZip format is a stream archive format meaning, that it can only compress a single file. This simplifies
+the programming quite a bit. In the following snippet a single message passed through the second command line
+parameter get compressed. Note, that like non-stream archive formats GZip also supports optional Path and
+LastModificationTime properties for the single archive item.
 </p>
 
 ##INCLUDE_SNIPPET(CompressNonGenericGZip)
 
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
+
 <h3><a name="create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</h3>
+
+<p>
+BZip2 is like GZip a stream archive format. It compresses single archive item supporting no additional
+archive item properties at all.
+</p>
+
+##INCLUDE_SNIPPET(CompressNonGenericBZip2)
+
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
 
 
 <h2><a name="create-generic">Creating archives with the generic API</h2>
