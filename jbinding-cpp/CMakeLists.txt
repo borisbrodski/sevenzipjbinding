@@ -768,8 +768,9 @@ IF(MINGW)
     #	TARGET_LINK_LIBRARIES(7-Zip-JBinding ${CMAKE_THREAD_LIBS_INIT})
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(MINGW)
-    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs") # Check for missing symbols
-
+    IF(NOT APPLE)
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs") # Check for missing symbols
+    ENDIF()
 ENDIF(MINGW)
 
 #TARGET_LINK_LIBRARIES(7-Zip-JBinding duma)
