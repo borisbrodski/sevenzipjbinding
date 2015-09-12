@@ -31,7 +31,7 @@ public class CompressNonGenericBZip2Test extends SnippetTest {
         File archiveFile = new File(tmpDir, "compressed.bz2");
 
         beginSnippetTest();
-        CompressNonGenericBZip2.main(new String[] { archiveFile.getAbsolutePath(), "Hello World" });
+        CompressNonGenericBZip2.main(new String[] { archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(), output);
     }

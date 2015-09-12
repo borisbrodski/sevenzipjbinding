@@ -51,7 +51,7 @@ public class CompressNonGenericGZip {
     byte[] content;
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */== 2) {
+        if (args./*f*/length/* */== 1) {
             new CompressNonGenericGZip().compress(args[0]);
             return;
         }

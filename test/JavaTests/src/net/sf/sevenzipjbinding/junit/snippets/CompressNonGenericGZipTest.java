@@ -31,7 +31,7 @@ public class CompressNonGenericGZipTest extends SnippetTest {
         File archiveFile = new File(tmpDir, "compressed.gz");
 
         beginSnippetTest();
-        CompressNonGenericGZip.main(new String[] { archiveFile.getAbsolutePath(), "Hello World" });
+        CompressNonGenericGZip.main(new String[] { archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(), output);
     }

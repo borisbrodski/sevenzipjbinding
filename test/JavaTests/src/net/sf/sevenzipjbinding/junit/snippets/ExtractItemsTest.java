@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link ExtractItemsSimple} and {@link ExtractItemsStandard} snippets
- *
+ * 
  * @author Boris Brodski
  * @version 4.65-1
  */
@@ -32,7 +32,7 @@ public class ExtractItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ExtractItemsSimple.main(new String[] { "/tmp/4.7z" });
+        ExtractItemsSimple.main(new String[] { "testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }
