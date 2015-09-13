@@ -18,7 +18,7 @@ Other TODOs:
 
 - Repack XAR (bz2) tests with new version of xar
 
-- Provide 7-zip version information to java (see 7zVersion.h)
+- Provide 7-zip version information to java (see 7zVersion.h), also add version to MANIFEST.MF of all jars
 
 - Find optimal gcc optimization parameters (See CPP/7zip/CMAKE/*) (Consider using -D_7ZIP_LARGE_PAGES on 64bit systems), -pipe
 
