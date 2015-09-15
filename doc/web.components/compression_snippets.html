@@ -16,8 +16,10 @@
     	</ul>
         <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
     </ul>
-    <li><a href="#modification">Modification existing archives</a></li>
+    <li><a href="#update">Modifying existing archives</a></li>
     <ul>
+        <li><a href="#update-alter-items">Altering existing archive items</a></li>
+        <li><a href="#update-add-remove-items">Adding and removing archive items</a></li>
     </ul>
 </ul>
 
@@ -27,10 +29,10 @@
 <p>
 The are two slightly different APIs for creating new archives:
 <ul>
-<li>archive format specificAPI</li>
+<li>archive format specific API</li>
 <li>archive format independent API</li>
 </ul>
-The first API is designed to work with one particilar archive format, like Zip. The Second API
+The first API is designed to work with one particular archive format, like Zip. The Second API
 allows archive format independent programming.
 </p>
 
@@ -50,9 +52,9 @@ The following snippets use a static structure defined by the CompressArchiveStru
 <p>
 The archive format specific API provides easy access to the archive configuration
 methods (e.g. for setting the compression level).
-Also it uses archive format spefic item description interfaces (like IOutItemZip for Zip).
+Also it uses archive format specific item description interfaces (like IOutItemZip for Zip).
 Different archive formats support different archive item properties. 
-Those interfaces provide access to the propreties supported by the corresponding
+Those interfaces provide access to the properties supported by the corresponding
 archive format, whether the unsupported properties remain hidden.
 </p>
 
@@ -97,7 +99,7 @@ you will get the output
 ##INCLUDE_OUTPUT(CompressNonGenericZip)
 
 <p>
-The archive file compressed.zip should be created. It contains files and folders speficied in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+The archive file compressed.zip should be created. It contains files and folders specified in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
 </p>
 
 
@@ -127,13 +129,14 @@ Physical Size = 718
 <p>
 Creating 7z archive is a little bit easer that creating Zip archives. The main difference is the implementation
 of the MyCreateCallback.getItemInformation() method. 7z doesn't need relative complex calculation of the attribute
-property providing a nice default behavour.
+property providing a nice default behavior.
 </p>
 
 ##INCLUDE_SNIPPET(CompressNonGeneric7z)
 
 <p>
-For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+For instructions on how to running the snippet and check the results see
+<a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
 </p>
 
 <h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
@@ -183,7 +186,7 @@ For instructions on how to running the snippet and check the results see <a href
 
 <p>
 The one of the great features of the 7-Zip (and though of the 7-Zip-JBinding) is the ability to write archive format
-independent code supporting most or even all of the archive formats, supported by 7-zip. The following code snippet
+independent code supporting most or even all of the archive formats, supported by 7-Zip. The following code snippet
 accepts the required archive format as the first parameter compressing the test data in the specified archive format. 
 </p>
 
@@ -243,5 +246,46 @@ Also a bunch of the compressed_generic.* archives should be created with the cor
 
 <br/>
 
-<h1><a name="modification">Modification existing archives</h1>
+<h1><a name="update">Modifying existing archives</h1>
+
+<p>
+7-Zip-JBinding provides API for archive modification. Especially by small changes the modification of an archive
+is much faster compared to the extraction and consequent compression operations.
+The archive modification API (like the compression API) offers archive format specific
+and archive format independent APIs.
+The process of the modification of an existing archive contains following steps: 
+</p>
+
+<ul>
+<li>Open existing archive obtaining an instance of the IInArchive</li>
+<li>Call IInArchive.getConnectedOutArchive to get an instance of the IOutUpdateArchive</li>
+<li>Optionally cast it to an archive format specific API like IOutUpdateArchiveZip</li>
+<li>Call IOutUpdateArchive.updateItems() passing the new count of items and a callback implementing the modification</li>
+</ul>
+
+<p>
+The following snippets show the modification process in details using archive format independent API.
+The archive to be modified is one of the Zip, 7z or Tar archives created by the corresponding compression
+snippets on this page. The structure of those archives is specified in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+</p>
+
+
+<h2><a name="update-alter-items">Altering existing archive items</h1>
+
+<p>
+The first snippet modifies only one existing item with index 1:
+</p>
+
+<ul>
+<li>It changes the path (name of the item) to the "new_name.txt"</li>
+<li>It changes content to the "new content"</li>
+</ul>
+
+##INCLUDE_SNIPPET(UpdateAlterItems)
+
+
+<h2><a name="update-add-remove-items">Adding and removing archive items</h1>
+
+
+
 

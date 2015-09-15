@@ -4,6 +4,7 @@ import net.sf.sevenzipjbinding.IOutCreateArchiveZip;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.IOutStream;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveZip;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
@@ -13,7 +14,8 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public class OutArchiveZipImpl extends OutArchiveImpl<IOutItemZip> implements IOutCreateArchiveZip {
+public class OutArchiveZipImpl extends OutArchiveImpl<IOutItemZip> implements IOutCreateArchiveZip,
+        IOutUpdateArchiveZip {
 
     /**
      * {@inheritDoc}

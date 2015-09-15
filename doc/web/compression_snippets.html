@@ -72,18 +72,20 @@
     	</ul>
         <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
     </ul>
-    <li><a href="#modification">Modification existing archives</a></li>
+    <li><a href="#update">Modifying existing archives</a></li>
     <ul>
+        <li><a href="#update-alter-items">Altering existing archive items</a></li>
+        <li><a href="#update-add-remove-items">Adding and removing archive items</a></li>
     </ul>
 </ul>
 <h1><a name="creating">Creating new archives</h1>
 <p>
 The are two slightly different APIs for creating new archives:
 <ul>
-<li>archive format specificAPI</li>
+<li>archive format specific API</li>
 <li>archive format independent API</li>
 </ul>
-The first API is designed to work with one particilar archive format, like Zip. The Second API
+The first API is designed to work with one particular archive format, like Zip. The Second API
 allows archive format independent programming.
 </p>
 <h2><a name="archive-test-structure">Archive test structure</h2>
@@ -153,9 +155,9 @@ The following snippets use a static structure defined by the CompressArchiveStru
 <p>
 The archive format specific API provides easy access to the archive configuration
 methods (e.g. for setting the compression level).
-Also it uses archive format spefic item description interfaces (like IOutItemZip for Zip).
+Also it uses archive format specific item description interfaces (like IOutItemZip for Zip).
 Different archive formats support different archive item properties. 
-Those interfaces provide access to the propreties supported by the corresponding
+Those interfaces provide access to the properties supported by the corresponding
 archive format, whether the unsupported properties remain hidden.
 </p>
 <p>
@@ -319,7 +321,7 @@ you will get the output
 Compression operation succeeded
 </pre></div>
 <p>
-The archive file compressed.zip should be created. It contains files and folders speficied in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+The archive file compressed.zip should be created. It contains files and folders specified in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
 </p>
 <div class="fragment"><pre class="fragment">
 $ 7z l compressed.zip
@@ -342,7 +344,7 @@ Physical Size = 718
 <p>
 Creating 7z archive is a little bit easer that creating Zip archives. The main difference is the implementation
 of the MyCreateCallback.getItemInformation() method. 7z doesn't need relative complex calculation of the attribute
-property providing a nice default behavour.
+property providing a nice default behavior.
 </p>
 <div class="fragment"><pre class="fragment">
 <span class="java-keyword">import</span> java.io.IOException;
@@ -468,7 +470,8 @@ property providing a nice default behavour.
 </pre></div>
 <div class="snippet-info"><a href="snippets/CompressNonGeneric7z.java">download java code</a></div>
 <p>
-For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+For instructions on how to running the snippet and check the results see
+<a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
 </p>
 <h3><a name="create-specific-api-tar">Creating Tar archive using archive format specific API</h3>
 <p>
@@ -658,7 +661,7 @@ LastModificationTime properties for the single archive item.
     <span class="java-keyword">byte</span>[] content;
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
-        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 2) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 1) {
             <span class="java-keyword">new</span> CompressNonGenericGZip().compress(args[0]);
             <span class="java-keyword">return</span>;
         }
@@ -837,14 +840,14 @@ For instructions on how to running the snippet and check the results see <a href
 <h2><a name="create-generic">Creating archives with the generic API</h2>
 <p>
 The one of the great features of the 7-Zip (and though of the 7-Zip-JBinding) is the ability to write archive format
-independent code supporting most or even all of the archive formats, supported by 7-zip. The following code snippet
+independent code supporting most or even all of the archive formats, supported by 7-Zip. The following code snippet
 accepts the required archive format as the first parameter compressing the test data in the specified archive format. 
 </p>
 <p>
 The key steps to write a generic compression code are
 <ul>
     <li>Use IOutItemAllFormats interface instead of the one of the archive specific interfaces, like IOutItem7z</li>
-    <li>Use IOutItemAllFormats interface instead of the one of the archive specific interfaces, like IOutItem7z</li>
+    <li>Create out-archive object using generic create method <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openOutArchive(<a href="javadoc/net/sf/sevenzipjbinding/ArchiveFormat.html">ArchiveFormat</a>)</li>
 </ul>
 </p>
 <div class="fragment"><pre class="fragment">
@@ -1025,10 +1028,167 @@ BZip2 archive with 1 item(s) created
 </li>
 </ul>
 <p>
-Also a bunch of the compressed_generic.* archives should be created with the corresponding content.
+Also a bunch of the compressed_generic.* archives should be created with the corresponding contents.
 </p>
 <br/>
-<h1><a name="modification">Modification existing archives</h1>
+<h1><a name="update">Modifying existing archives</h1>
+<p>
+7-Zip-JBinding provides API for archive modification. Especially by small changes the modification of an archive
+is much faster compared to the extraction and consequent compression operations.
+The archive modification API (like the compression API) offers archive format specific
+and archive format independent APIs.
+The process of the modification of an existing archive contains following steps: 
+</p>
+<ul>
+<li>Open existing archive obtaining an instance of the <a href="javadoc/net/sf/sevenzipjbinding/IInArchive.html">IInArchive</a></li>
+<li>Call <a href="javadoc/net/sf/sevenzipjbinding/IInArchive.html">IInArchive</a>.getConnectedOutArchive to get an instance of the <a href="javadoc/net/sf/sevenzipjbinding/IOutUpdateArchive.html">IOutUpdateArchive</a></li>
+<li>Optionally cast it to an archive format specific API like <a href="javadoc/net/sf/sevenzipjbinding/IOutUpdateArchiveZip.html">IOutUpdateArchiveZip</a></li>
+<li>Call <a href="javadoc/net/sf/sevenzipjbinding/IOutUpdateArchive.html">IOutUpdateArchive</a>.updateItems() passing the new count of items and a callback implementing the modification</li>
+</ul>
+<p>
+The following snippets show the modification process in details using archive format independent API.
+The archive to be modified is one of the Zip, 7z or Tar archives created by the corresponding compression
+snippets on this page. The structure of those archives is specified in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
+</p>
+<h2><a name="update-alter-items">Altering existing archive items</h1>
+<p>
+The first snippet modifies only one existing item with index 1:
+</p>
+<ul>
+<li>It changes the path (name of the item) to the "new_name.txt"</li>
+<li>It changes content to the "new content"</li>
+</ul>
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">import</span> java.io.Closeable;
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+<span class="java-keyword">import</span> java.util.ArrayList;
+<span class="java-keyword">import</span> java.util.List;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IInArchive.html">IInArchive</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemAllFormats;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutUpdateArchive.html">IOutUpdateArchive</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.<a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> UpdateAlterItems {
+<span class="java-javadoc">    /**
+     * The callback provides information about archive items.
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+            <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;IOutItemAllFormats&#62; {
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
+                <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track each operation result here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setCompleted(<span class="java-keyword">long</span> complete) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> IOutItemAllFormats getItemInformation(<span class="java-keyword">int</span> index,
+                OutItemFactory&#60;IOutItemAllFormats&#62; outItemFactory) 
+                <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (index != 1) {
+                <span class="java-comment">// Keep properties and content</span>
+                <span class="java-keyword">return</span> outItemFactory.createOutItem(index);
+            }
+
+            <span class="java-comment">// Change property PATH and content</span>
+            IOutItemAllFormats item;
+            item = outItemFactory.createOutItemAndCloneProperties(index);
+
+            item.setUpdateIsNewData(<span class="java-keyword">true</span>);
+            item.setDataSize((<span class="java-keyword">long</span>) <span class="java-staticfield">NEW_CONTENT</span>.length);
+
+            item.setUpdateIsNewProperties(<span class="java-keyword">true</span>);
+            item.setPropertyPath(<span class="java-string">"<span class="java-keyword">new</span>_name.txt"</span>);
+
+            <span class="java-keyword">return</span> item;
+        }
+
+        <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a> getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (i != 1) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-staticfield">NEW_CONTENT</span>, <span class="java-keyword">true</span>);
+        }
+    }
+
+    <span class="java-keyword">static</span> <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] NEW_CONTENT = <span class="java-string">"<span class="java-keyword">new</span> content"</span>.getBytes();
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 2) {
+            <span class="java-keyword">new</span> UpdateAlterItems().compress(args[0], args[1]);
+            <span class="java-keyword">return</span>;
+        }
+        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java UpdateAlterItems &#60;in-arc&#62; &#60;out-arc&#62;"</span>);
+    }
+
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String in, String out) {
+        boolean success = <span class="java-keyword">false</span>;
+        RandomAccessFile inRaf = <span class="java-keyword">null</span>;
+        RandomAccessFile outRaf = <span class="java-keyword">null</span>;
+        <a href="javadoc/net/sf/sevenzipjbinding/IInArchive.html">IInArchive</a> inArchive;
+        <a href="javadoc/net/sf/sevenzipjbinding/IOutUpdateArchive.html">IOutUpdateArchive</a>&#60;IOutItemAllFormats&#62; outArchive = <span class="java-keyword">null</span>;
+        List&#60;Closeable&#62; closeables = <span class="java-keyword">new</span> ArrayList&#60;Closeable&#62;();
+        <span class="java-keyword">try</span> {
+            <span class="java-comment">// Open input file</span>
+            inRaf = <span class="java-keyword">new</span> RandomAccessFile(in, <span class="java-string">"r"</span>);
+            closeables.add(inRaf);
+            <a href="javadoc/net/sf/sevenzipjbinding/IInStream.html">IInStream</a> inStream = <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html">RandomAccessFileInStream</a>(inRaf);
+
+            <span class="java-comment">// Open in-archive</span>
+            inArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, inStream);
+            closeables.add(inArchive);
+
+            outRaf = <span class="java-keyword">new</span> RandomAccessFile(out, <span class="java-string">"rw"</span>);
+
+            <span class="java-comment">// Open out-archive object</span>
+            outArchive = inArchive.getConnectedOutArchive();
+
+            <span class="java-comment">// Alter archive</span>
+            outArchive.updateItems(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>(outRaf),
+                    inArchive.getNumberOfItems(), <span class="java-keyword">new</span> MyCreateCallback());
+
+            success = <span class="java-keyword">true</span>;
+        } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"7z-Error occurs:"</span>);
+            <span class="java-comment">// Get more information using extended method</span>
+            e.printStackTraceExtended();
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = closeables.size() - 1; i &#62;= 0; i--) {
+                <span class="java-keyword">try</span> {
+                    closeables.get(i).close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing resource: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+        }
+        <span class="java-keyword">if</span> (success) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Update successful"</span>);
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/UpdateAlterItems.java">download java code</a></div>
+<h2><a name="update-add-remove-items">Adding and removing archive items</h1>
 </td></tr>
 </table></td></tr>
 </table>
