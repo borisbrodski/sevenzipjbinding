@@ -2,13 +2,14 @@
 
 ROOTDIR=$(pwd)
 
+RELEASE_NAME_PATTERN='\([a-z\-]\+binding-[0-9.-]\+\(\(alpha\|rc\)[0-9]*-\)\?\(extr-only-\)\?\)\([^.]\+\)\.zip'
 
 GetTargetName() {
-    eval "$1=$(echo $2 | sed -e 's/[a-z\-]\+binding-[0-9.-]\+\(rc-\)\?\(extr-only-\)\?\([^.]\+\)\.zip/\3/g')"
+    eval "$1=$(echo $2 | sed -e "s/$RELEASE_NAME_PATTERN/\\5/")"
 }
 
 GetReleaseName() {
-    eval "$1=$(echo $2 | sed -e 's/\([a-z\-]\+binding-[0-9.-]\+\(rc-\)\?\(extr-only-\)\)\?\([^.]\+\)\.zip/\1/g')"
+    eval "$1=$(echo $2 | sed -e "s/$RELEASE_NAME_PATTERN/\\1/")"
 }
 
 copyzipcontent=1

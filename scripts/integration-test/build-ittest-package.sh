@@ -6,7 +6,10 @@ fi
 BINARY_DIR=$(readlink -f $1)
 SOURCE_DIR=`cat $BINARY_DIR/DartConfiguration.tcl | grep SourceDirectory | sed 's$SourceDirectory: \(.*\)$\1$g'`
 SCRIPT_HOME=`readlink -f $0 | sed 's|\(.*/\)\?[^/]*|\1|g'`
-VERSION=`echo $BINARY_DIR/seven*.zip | sed 's$\(.\+/\)*\([^/]\+\)$\2$g' | sed 's/sevenzipjbinding-\(.*\)-[^-]\+-[^-]\+\.zip/\1/g'`
+
+SEVENZIP_VERSION_PATTERN='^SET(SEVENZIPJBINDING_VERSON \([^)]\+\)) *$'
+VERSION=`cat $SOURCE_DIR/CMakeLists.txt | grep "$SEVENZIP_VERSION_PATTERN" |  sed "s/$SEVENZIP_VERSION_PATTERN/\1/"`
+
 ITTEST_PACKAGE=sevenzipjbinding-it-test-$VERSION
 ITTEST_PACKAGE_ZIP=sevenzipjbinding-it-test-pack.zip
 WORKING_DIR=/tmp/$ITTEST_PACKAGE
@@ -47,7 +50,7 @@ cp $BINARY_DIR/jbinding-java/sevenzipjbinding-tests.jar .
 #cp $SCRIPT_HOME/run-it-test.sh .
 cp $SCRIPT_HOME/ITJUnitTestRunner.cmake .
 mkdir lib
-cp $SOURCE_DIR/test/JavaTests/lib/junit-4.6.jar lib/
+cp $SOURCE_DIR/test/JavaTests/lib/* lib/
 
 rm -rf testdata
 find $SOURCE_DIR/test/JavaTests/testdata -not -path "*/.svn*" -printf "%P\0" | while read -d $'\0' file
