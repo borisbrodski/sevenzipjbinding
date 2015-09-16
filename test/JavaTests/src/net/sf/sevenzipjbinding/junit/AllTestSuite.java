@@ -177,6 +177,8 @@ import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchive7zTest;
 import net.sf.sevenzipjbinding.junit.snippets.OpenMultipartArchiveRarTest;
 import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
+import net.sf.sevenzipjbinding.junit.snippets.UpdateAddRemoveItemsTest;
+import net.sf.sevenzipjbinding.junit.snippets.UpdateAlterItemsTest;
 import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
 import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
 import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
@@ -318,6 +320,8 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericBZip2Test.class, //
             CompressNonGenericGZipTest.class, //
             CompressNonGenericTarTest.class, //
+            UpdateAddRemoveItemsTest.class, //
+            UpdateAlterItemsTest.class, //
     };
 
     static Class<?>[] toolsTests = { //
