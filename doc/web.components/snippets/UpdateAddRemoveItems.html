@@ -9,6 +9,7 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemAllFormats;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutUpdateArchive;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.ISequentialInStream;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.PropID;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZip;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.SevenZipException;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -16,7 +17,7 @@
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-<span class="java-keyword">public</span> <span class="java-keyword">class</span> UpdateAlterItems {
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> UpdateAddRemoveItems {
 <span class="java-javadoc">    /**
      * The callback defines the modification to be made.
      */</span>
@@ -39,43 +40,60 @@
         <span class="java-keyword">public</span> IOutItemAllFormats getItemInformation(<span class="java-keyword">int</span> index,
                 OutItemFactory&#60;IOutItemAllFormats&#62; outItemFactory) 
                 <span class="java-keyword">throws</span> SevenZipException {
-            <span class="java-keyword">if</span> (index != 2) {
-                <span class="java-comment">// Keep properties and content</span>
-                <span class="java-keyword">return</span> outItemFactory.createOutItem(index);
+            <span class="java-keyword">if</span> (index == <span class="java-field">itemToAdd</span>) {
+                <span class="java-comment">// Adding new item</span>
+                IOutItemAllFormats outItem = outItemFactory.createOutItem();
+                outItem.setPropertyPath(<span class="java-field">itemToAddPath</span>);
+                outItem.setDataSize((<span class="java-keyword">long</span>) itemToAddContent.length);
+
+                <span class="java-keyword">return</span> outItem;
             }
 
-            IOutItemAllFormats item;
-            item = outItemFactory.createOutItemAndCloneProperties(index);
-
-            <span class="java-comment">// Change property PATH</span>
-            item.setUpdateIsNewProperties(<span class="java-keyword">true</span>);
-            item.setPropertyPath(<span class="java-string">"info2.txt"</span>);
-
-            <span class="java-comment">// Change content</span>
-            item.setUpdateIsNewData(<span class="java-keyword">true</span>);
-            item.setDataSize((<span class="java-keyword">long</span>) <span class="java-staticfield">NEW_CONTENT</span>.length);
-
-            <span class="java-keyword">return</span> item;
+            <span class="java-comment">// Remove item by changing the mapping "new index"-&#62;<span class="java-string">"old index"</span></span>
+            <span class="java-keyword">if</span> (index &#60; itemToRemove) {
+                <span class="java-keyword">return</span> outItemFactory.createOutItem(index);
+            }
+            <span class="java-keyword">return</span> outItemFactory.createOutItem(index + 1);
         }
 
         <span class="java-keyword">public</span> ISequentialInStream getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> SevenZipException {
-            <span class="java-keyword">if</span> (i != 2) {
+            <span class="java-keyword">if</span> (i != itemToAdd) {
                 <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
             }
-            <span class="java-keyword">return</span> <span class="java-keyword">new</span> ByteArrayStream(<span class="java-staticfield">NEW_CONTENT</span>, <span class="java-keyword">true</span>);
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> ByteArrayStream(<span class="java-staticfield">itemToAddContent</span>, <span class="java-keyword">true</span>);
         }
     }
 
-    <span class="java-keyword">static</span> <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] <span class="java-staticfield">NEW_CONTENT</span> = <span class="java-string">"More Info!"</span>.getBytes();
+    <span class="java-keyword">int</span> <span class="java-field">itemToAdd</span>; <span class="java-comment">// New index of the item to add</span>
+    String <span class="java-field">itemToAddPath</span>;
+    <span class="java-keyword">byte</span>[] <span class="java-field">itemToAddContent</span>;
+
+    <span class="java-keyword">int</span> <span class="java-field">itemToRemove</span>; <span class="java-comment">// Old index of the item to be removed</span>
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> initUpdate(IInArchive inArchive) <span class="java-keyword">throws</span> SevenZipException {
+        <span class="java-field">itemToAdd</span> = inArchive.getNumberOfItems() - 1;
+        <span class="java-field">itemToAddPath</span> = <span class="java-string">"data.dmp"</span>;
+        <span class="java-field">itemToAddContent</span> = <span class="java-string">"dmp-content"</span>.getBytes();
+
+        <span class="java-field">itemToRemove</span> = -1;
+        <span class="java-keyword">for</span> (<span class="java-keyword">int</span> i = 0; i &#60; inArchive.getNumberOfItems(); i++) {
+            <span class="java-keyword">if</span> (inArchive.getProperty(i, PropID.<span class="java-staticfield">PATH</span>).equals(<span class="java-string">"info.txt"</span>)) {
+                <span class="java-field">itemToRemove</span> = i;
+                <span class="java-keyword">break</span>;
+            }
+        }
+        <span class="java-keyword">if</span> (<span class="java-field">itemToRemove</span> == -1) {
+            <span class="java-keyword">throw</span> <span class="java-keyword">new</span> RuntimeException(<span class="java-string">"Item 'info.txt' not found"</span>);
+        }
+    }
 
     <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
         <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 2) {
-            <span class="java-keyword">new</span> UpdateAlterItems().compress(args[0], args[1]);
+            <span class="java-keyword">new</span> UpdateAddRemoveItems().compress(args[0], args[1]);
             <span class="java-keyword">return</span>;
         }
-        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java UpdateAlterItems &#60;in-arc&#62; &#60;out-arc&#62;"</span>);
+        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java UpdateAddRemoveItems &#60;in&#62; &#60;out&#62;"</span>);
     }
-
 
     <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String in, String out) {
         boolean success = <span class="java-keyword">false</span>;
@@ -93,6 +111,8 @@
             <span class="java-comment">// Open in-archive</span>
             inArchive = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, inStream);
             closeables.add(inArchive);
+
+            initUpdate(inArchive);
 
             outRaf = <span class="java-keyword">new</span> RandomAccessFile(out, <span class="java-string">"rw"</span>);
             closeables.add(outRaf);

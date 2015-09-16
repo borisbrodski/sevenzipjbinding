@@ -72,7 +72,7 @@ To use the 7-Zip-JBinding library you will need two JAR-files from <span class="
 distribution in your classpath:
 </p>
 <ul>
-	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
+	<li> <span class="filename">sevenzipjbinding.jar</span> - java part of 7-Zip-JBinding. 
 		 (<a href="javadoc/index.html">JavaDoc</a>)</li>
 	<li> <span class="filename">sevenzip-jbinding-&lsaquo;OS&rsaquo;.jar</span> - native libraries for
 	the target operating system &lsaquo;OS&rsaquo;</li>
@@ -99,7 +99,7 @@ To run this program correctly you will need to add two 7-Zip-JBinding JAR-files 
 On Linux it could be done as following:
 </p>
 <div class="fragment"><pre class="fragment">
-$ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
+$ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding.jar:             \  
            &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
        SevenZipJBindingInitCheck
 </pre></div>
@@ -108,8 +108,8 @@ $ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\
 Windows users can do the same with (written in a single line)
 </p>
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \  
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               SevenZipJBindingInitCheck
 </pre></div>
 <p>
@@ -213,8 +213,8 @@ Here is a complete program to print count of items in an archive of any supporte
 If you run this program with
 </p>
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \  
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               PrintCountOfItems my-test-archive.zip
 </pre></div>
 <p>
@@ -237,7 +237,7 @@ see how a very simple Zip archive with a single item (archived file) containing 
 <p>
 There are 4 following steps involved:
 <ul>
-<li>Implement <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&lt;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemCallbackZip.html">IOutItemCallbackZip</a>&gt; interface describing the archive item
+<li>Implement <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&lt;IOutItemCallbackZip&gt; interface describing the archive item
 <li>Open new out-archive
 <li>Optionally configure the new archive (e.g. setting compression level)
 <li>Call createArchive(...) method to create the new archive
@@ -255,11 +255,11 @@ Here is the complete class:
 
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveZip.html">IOutCreateArchiveZip</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.IOutItemZip;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutItemZip.html">IOutItemZip</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
-<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.OutItemFactory;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/OutItemFactory.html">OutItemFactory</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>;
 <span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.<a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>;
 
@@ -267,7 +267,7 @@ Here is the complete class:
 <span class="java-javadoc">    /**
      * The callback provides information about archive items
      */</span>
-    <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyCreateCallback <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;IOutItemZip&#62; {
+    <span class="java-keyword">static</span> <span class="java-keyword">class</span> MyCreateCallback <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemZip.html">IOutItemZip</a>&#62; {
         <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">byte</span>[] <span class="java-field">bytesToCompress</span>;
 
         <span class="java-keyword">private</span> MyCreateCallback(<span class="java-keyword">byte</span>[] bytesToCompress) {
@@ -286,9 +286,9 @@ Here is the complete class:
             <span class="java-comment">// Track operation progress here</span>
         }
 
-        <span class="java-keyword">public</span> IOutItemZip getItemInformation(<span class="java-keyword">int</span> index,
-                OutItemFactory&#60;IOutItemZip&#62; outItemFactory) {
-            IOutItemZip outItem = outItemFactory.createOutItem();
+        <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutItemZip.html">IOutItemZip</a> getItemInformation(<span class="java-keyword">int</span> index,
+                <a href="javadoc/net/sf/sevenzipjbinding/impl/OutItemFactory.html">OutItemFactory</a>&#60;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemZip.html">IOutItemZip</a>&#62; outItemFactory) {
+            <a href="javadoc/net/sf/sevenzipjbinding/IOutItemZip.html">IOutItemZip</a> outItem = outItemFactory.createOutItem();
 
             outItem.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">bytesToCompress</span>.<span class="java-field">length</span>);
 
@@ -356,8 +356,8 @@ Here is the complete class:
 If you run this program with
 </p>
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \ 
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               CompressMessage compressed_message.zip HelloWorld
 </pre></div>
 <p>

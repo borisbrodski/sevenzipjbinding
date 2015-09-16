@@ -1,6 +1,3 @@
-package net.sf.sevenzipjbinding.junit.snippets;
-
-/* BEGIN_SNIPPET(UpdateAddRemoveItems) */
 import java.io.Closeable;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -24,10 +21,10 @@ public class UpdateAddRemoveItems {
     /**
      * The callback defines the modification to be made.
      */
-    private final class MyCreateCallback //
+    private final class MyCreateCallback 
             implements IOutCreateCallback<IOutItemAllFormats> {
 
-        public void setOperationResult(boolean operationResultOk)//
+        public void setOperationResult(boolean operationResultOk)
                 throws SevenZipException {
             // Track each operation result here
         }
@@ -40,13 +37,13 @@ public class UpdateAddRemoveItems {
             // Track operation progress here
         }
 
-        public IOutItemAllFormats getItemInformation(int index,//
-                OutItemFactory<IOutItemAllFormats> outItemFactory) //
+        public IOutItemAllFormats getItemInformation(int index,
+                OutItemFactory<IOutItemAllFormats> outItemFactory) 
                 throws SevenZipException {
-            if (index == /*f*/itemToAdd/**/) {
+            if (index == itemToAdd) {
                 // Adding new item
                 IOutItemAllFormats outItem = outItemFactory.createOutItem();
-                outItem.setPropertyPath(/*f*/itemToAddPath/**/);
+                outItem.setPropertyPath(itemToAddPath);
                 outItem.setDataSize((long) itemToAddContent.length);
 
                 return outItem;
@@ -63,35 +60,35 @@ public class UpdateAddRemoveItems {
             if (i != itemToAdd) {
                 return null;
             }
-            return new ByteArrayStream(/*sf*/itemToAddContent/**/, true);
+            return new ByteArrayStream(itemToAddContent, true);
         }
     }
 
-    int /*f*/itemToAdd/**/; // New index of the item to add
-    String /*f*/itemToAddPath/**/;
-    byte[] /*f*/itemToAddContent/**/;
+    int itemToAdd; // New index of the item to add
+    String itemToAddPath;
+    byte[] itemToAddContent;
 
-    int /*f*/itemToRemove/**/; // Old index of the item to be removed
+    int itemToRemove; // Old index of the item to be removed
 
     private void initUpdate(IInArchive inArchive) throws SevenZipException {
-        /*f*/itemToAdd/* */= inArchive.getNumberOfItems() - 1;
-        /*f*/itemToAddPath/* */= "data.dmp";
-        /*f*/itemToAddContent/* */= "dmp-content".getBytes();
+        itemToAdd = inArchive.getNumberOfItems() - 1;
+        itemToAddPath = "data.dmp";
+        itemToAddContent = "dmp-content".getBytes();
 
-        /*f*/itemToRemove/* */= -1;
+        itemToRemove = -1;
         for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-            if (inArchive.getProperty(i, PropID./*sf*/PATH/**/).equals("info.txt")) {
-                /*f*/itemToRemove/* */= i;
+            if (inArchive.getProperty(i, PropID.PATH).equals("info.txt")) {
+                itemToRemove = i;
                 break;
             }
         }
-        if (/*f*/itemToRemove/* */== -1) {
+        if (itemToRemove == -1) {
             throw new RuntimeException("Item 'info.txt' not found");
         }
     }
 
     public static void main(String[] args) {
-        if (args./*f*/length/* */== 2) {
+        if (args.length == 2) {
             new UpdateAddRemoveItems().compress(args[0], args[1]);
             return;
         }
@@ -124,7 +121,7 @@ public class UpdateAddRemoveItems {
             outArchive = inArchive.getConnectedOutArchive();
 
             // Modify archive
-            outArchive.updateItems(new RandomAccessFileOutStream(outRaf),//
+            outArchive.updateItems(new RandomAccessFileOutStream(outRaf),
                     inArchive.getNumberOfItems(), new MyCreateCallback());
 
             success = true;
@@ -149,4 +146,3 @@ public class UpdateAddRemoveItems {
         }
     }
 }
-/* END_SNIPPET */

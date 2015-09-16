@@ -1,5 +1,4 @@
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 public class UpdateAlterItems {
     /**
-     * The callback provides information about archive items.
+     * The callback defines the modification to be made.
      */
     private final class MyCreateCallback 
             implements IOutCreateCallback<IOutItemAllFormats> {
@@ -40,33 +39,34 @@ public class UpdateAlterItems {
         public IOutItemAllFormats getItemInformation(int index,
                 OutItemFactory<IOutItemAllFormats> outItemFactory) 
                 throws SevenZipException {
-            if (index != 1) {
+            if (index != 2) {
                 // Keep properties and content
                 return outItemFactory.createOutItem(index);
             }
 
-            // Change property PATH and content
             IOutItemAllFormats item;
             item = outItemFactory.createOutItemAndCloneProperties(index);
 
+            // Change property PATH
+            item.setUpdateIsNewProperties(true);
+            item.setPropertyPath("info2.txt");
+
+            // Change content
             item.setUpdateIsNewData(true);
             item.setDataSize((long) NEW_CONTENT.length);
-
-            item.setUpdateIsNewProperties(true);
-            item.setPropertyPath("new_name.txt");
 
             return item;
         }
 
         public ISequentialInStream getStream(int i) throws SevenZipException {
-            if (i != 1) {
+            if (i != 2) {
                 return null;
             }
             return new ByteArrayStream(NEW_CONTENT, true);
         }
     }
 
-    static final byte[] NEW_CONTENT = "new content".getBytes();
+    static final byte[] NEW_CONTENT = "More Info!".getBytes();
 
     public static void main(String[] args) {
         if (args.length == 2) {
@@ -95,11 +95,12 @@ public class UpdateAlterItems {
             closeables.add(inArchive);
 
             outRaf = new RandomAccessFile(out, "rw");
+            closeables.add(outRaf);
 
             // Open out-archive object
             outArchive = inArchive.getConnectedOutArchive();
 
-            // Alter archive
+            // Modify archive
             outArchive.updateItems(new RandomAccessFileOutStream(outRaf),
                     inArchive.getNumberOfItems(), new MyCreateCallback());
 
@@ -114,7 +115,7 @@ public class UpdateAlterItems {
             for (int i = closeables.size() - 1; i >= 0; i--) {
                 try {
                     closeables.get(i).close();
-                } catch (IOException e) {
+                } catch (Throwable e) {
                     System.err.println("Error closing resource: " + e);
                     success = false;
                 }

@@ -27,10 +27,10 @@ public class UpdateAlterItemsTest extends SnippetTest {
     @Test
     public void testCompress7z() {
         String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
-        File archiveFile = new File(tmpDir, "updated-add-remove-items.7z");
+        File archiveFile = new File(tmpDir, "updated-alter-items.7z");
 
         beginSnippetTest();
-        UpdateAddRemoveItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
+        UpdateAlterItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(expected7z), output);
     }

@@ -18,7 +18,7 @@ distribution in your classpath:
 </p>
 
 <ul>
-	<li> <span class="filename">sevenzip-jbinding.jar</span> - java part of 7-Zip-JBinding. 
+	<li> <span class="filename">sevenzipjbinding.jar</span> - java part of 7-Zip-JBinding. 
 		 (<a href="javadoc/index.html">JavaDoc</a>)</li>
 	<li> <span class="filename">sevenzip-jbinding-&lsaquo;OS&rsaquo;.jar</span> - native libraries for
 	the target operating system &lsaquo;OS&rsaquo;</li>
@@ -33,7 +33,7 @@ On Linux it could be done as following:
 </p>
 
 <div class="fragment"><pre class="fragment">
-$ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzip-jbinding.jar:\ 
+$ java -cp &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding.jar:             \  
            &lsaquo;path-to-lib&rsaquo;/sevenzipjbinding-Linux-i686.jar:. \ 
        SevenZipJBindingInitCheck
 </pre></div>
@@ -43,8 +43,8 @@ Windows users can do the same with (written in a single line)
 </p>
 
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \  
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               SevenZipJBindingInitCheck
 </pre></div>
 
@@ -99,8 +99,8 @@ If you run this program with
 </p>
 
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \  
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               PrintCountOfItems my-test-archive.zip
 </pre></div>
 
@@ -147,8 +147,8 @@ If you run this program with
 </p>
 
 <div class="fragment"><pre class="fragment">
-C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzip-jbinding.jar; 
-                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;.
+C:\Test&gt; java -cp &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding.jar;           \ 
+                  &lsaquo;path-to-lib&rsaquo;\sevenzipjbinding-Windows-x86.jar;. \ 
               CompressMessage compressed_message.zip HelloWorld
 </pre></div>
 

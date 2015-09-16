@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class UpdateAddRemoveItemsTest extends SnippetTest {
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
-    /* BEGIN_OUTPUT(UpdateAlterItems) */
+    /* BEGIN_OUTPUT(UpdateAddRemoveItems) */
     String expected7z = "Update successful\n";
     /* END_OUTPUT */
 
@@ -28,10 +28,10 @@ public class UpdateAddRemoveItemsTest extends SnippetTest {
     @Test
     public void testCompress7z() {
         String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
-        File archiveFile = new File(tmpDir, "updated-alter-items.7z");
+        File archiveFile = new File(tmpDir, "updated-add-remove-items.7z");
 
         beginSnippetTest();
-        UpdateAlterItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
+        UpdateAddRemoveItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(expected7z), output);
     }

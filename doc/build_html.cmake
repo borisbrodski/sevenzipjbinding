@@ -99,6 +99,8 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/impl/OutArchiveImpl.html
         net/sf/sevenzipjbinding/impl/OutArchiveTarImpl.html
         net/sf/sevenzipjbinding/impl/OutArchiveZipImpl.html
+        net/sf/sevenzipjbinding/impl/OutItemFactory.html
+        net/sf/sevenzipjbinding/impl/OutItem.html
         net/sf/sevenzipjbinding/impl/package-frame.html
         net/sf/sevenzipjbinding/impl/package-summary.html
         net/sf/sevenzipjbinding/impl/package-tree.html
@@ -113,19 +115,17 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/IOutCreateArchive.html
         net/sf/sevenzipjbinding/IOutCreateArchiveTar.html
         net/sf/sevenzipjbinding/IOutCreateArchiveZip.html
-        net/sf/sevenzipjbinding/IOutCreateCallbackBase.html
-        net/sf/sevenzipjbinding/IOutCreateCallbackGeneric.html
         net/sf/sevenzipjbinding/IOutCreateCallback.html
         net/sf/sevenzipjbinding/IOutFeatureSetLevel.html
         net/sf/sevenzipjbinding/IOutFeatureSetMultithreading.html
         net/sf/sevenzipjbinding/IOutFeatureSetSolid.html
-        net/sf/sevenzipjbinding/IOutItemCallback7z.html
-        net/sf/sevenzipjbinding/IOutItemCallbackBase.html
-        net/sf/sevenzipjbinding/IOutItemCallbackBZip2.html
-        net/sf/sevenzipjbinding/IOutItemCallbackGZip.html
-        net/sf/sevenzipjbinding/IOutItemCallback.html
-        net/sf/sevenzipjbinding/IOutItemCallbackTar.html
-        net/sf/sevenzipjbinding/IOutItemCallbackZip.html
+        net/sf/sevenzipjbinding/IOutItem7z.html
+        net/sf/sevenzipjbinding/IOutItemAllFormats.html
+        net/sf/sevenzipjbinding/IOutItemBase.html
+        net/sf/sevenzipjbinding/IOutItemBZip2.html
+        net/sf/sevenzipjbinding/IOutItemGZip.html
+        net/sf/sevenzipjbinding/IOutItemTar.html
+        net/sf/sevenzipjbinding/IOutItemZip.html
         net/sf/sevenzipjbinding/IOutStream.html
         net/sf/sevenzipjbinding/IOutUpdateArchive7z.html
         net/sf/sevenzipjbinding/IOutUpdateArchiveBZip2.html
@@ -133,11 +133,7 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/IOutUpdateArchive.html
         net/sf/sevenzipjbinding/IOutUpdateArchiveTar.html
         net/sf/sevenzipjbinding/IOutUpdateArchiveZip.html
-        net/sf/sevenzipjbinding/IOutUpdateCallbackBase.html
-        net/sf/sevenzipjbinding/IOutUpdateCallbackGeneric.html
-        net/sf/sevenzipjbinding/IOutUpdateCallback.html
         net/sf/sevenzipjbinding/IProgress.html
-        net/sf/sevenzipjbinding/IPropertyProvider7z.html
         net/sf/sevenzipjbinding/ISeekableStream.html
         net/sf/sevenzipjbinding/ISequentialInStream.html
         net/sf/sevenzipjbinding/ISequentialOutStream.html
@@ -170,7 +166,7 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
     SET(TMP "${${LINE_VAR}}")
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
         IF(NOT EXISTS "javadoc/${JD_PATH}${HTML_FILE}")
-            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'")
+            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'. Copy extracted java-docs into <git-root>/doc/javadoc/, then update the list of the classes above.")
         ENDIF()
     ENDFOREACH()
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
