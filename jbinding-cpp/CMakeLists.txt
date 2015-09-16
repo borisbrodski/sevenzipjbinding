@@ -84,6 +84,7 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 ELSE()
     add_definitions(
         -DNDEBUG
+        -O2
     )
 ENDIF()
 

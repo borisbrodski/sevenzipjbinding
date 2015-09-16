@@ -19,6 +19,8 @@ Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9
 	* Bugfixes:
 	  - #17 WIM archive format contains Udf comment
 
+	* x2 performance boot (using optimization gcc -O2)
+
 Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Feature: WIM format support + tests
 
