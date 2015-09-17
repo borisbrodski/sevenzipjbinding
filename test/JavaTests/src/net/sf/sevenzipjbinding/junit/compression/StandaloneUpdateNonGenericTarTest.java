@@ -1,13 +1,15 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
-import net.sf.sevenzipjbinding.IOutUpdateArchive;
+import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveTar;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -20,12 +22,14 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Test;
 
-public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
-    private static class RemoveItemArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
-        private int itemToRemove;
+public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
+    private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItemTar> {
+        private int itemToUpdate;
+        private byte[] newContent;
 
-        public RemoveItemArchiveUpdateCallback(int itemToRemove) {
-            this.itemToRemove = itemToRemove;
+        public UpdateItemContentArchiveUpdateCallback(int itemToUpdate, byte[] newContent) {
+            this.itemToUpdate = itemToUpdate;
+            this.newContent = newContent;
         }
 
         public void setOperationResult(boolean operationResultOk) throws SevenZipException {
@@ -38,66 +42,68 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
 
         }
 
-        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
+        public IOutItemTar getItemInformation(int index, OutItemFactory<IOutItemTar> outItemFactory)
                 throws SevenZipException {
-            if (index < itemToRemove) {
-                return outItemFactory.createOutItem(index);
+
+            IOutItemTar outItem = outItemFactory.createOutItemAndCloneProperties(index);
+            if (itemToUpdate == index) {
+                outItem.setUpdateIsNewData(true);
+                outItem.setDataSize((long) newContent.length - 1);
             }
-            return outItemFactory.createOutItem(index + 1);
+
+            return outItem;
         }
 
         public ISequentialInStream getStream(int index) throws SevenZipException {
-            return null;
+            assertEquals(itemToUpdate, index);
+            return new ByteArrayStream(newContent, false);
         }
     }
 
     @Test
-    public void removeFileFromArchive() throws Exception {
+    public void updateContent() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
-
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
         byteArrayStream.rewind();
 
         ByteArrayStream byteArrayStream2 = new ByteArrayStream(100000);
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream));
-        int itemToRemove = virtualContent.getItemCount() / 2;
-        String itemToRemovePath = (String) inArchive.getProperty(itemToRemove, PropID.PATH);
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.TAR, byteArrayStream));
+        int itemToUpdate = virtualContent.getItemCount() / 2;
+        byte[] newContent = new byte[random.get().nextInt(1024) + 1024];
+        random.get().nextBytes(newContent);
 
-        IOutUpdateArchive<IOutItemAllFormats> outArchiveConnected = inArchive.getConnectedOutArchive();
+        String itemToRemovePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
 
-        outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems() - 1,
-                new RemoveItemArchiveUpdateCallback(itemToRemove));
+        IOutUpdateArchiveTar outArchiveConnected = inArchive.getConnectedOutArchiveTar();
+
+        outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
+                new UpdateItemContentArchiveUpdateCallback(itemToUpdate, newContent));
 
         byteArrayStream2.rewind();
 
         IInArchive modifiedInArchive = closeLater(SevenZip.openInArchive(null, byteArrayStream2));
 
-        // for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-        //     System.out.println(i + ": " + inArchive.getProperty(i, PropID.PATH));
-        // }
-        // for (int i = 0; i < modifiedInArchive.getNumberOfItems(); i++) {
-        //     System.out.println(i + ": " + modifiedInArchive.getProperty(i, PropID.PATH));
-        // }
-        // virtualContent.print();
-
         try {
             virtualContent.verifyInArchive(modifiedInArchive);
-            fail("Archive shouldn't contain item with id " + itemToRemove);
-        } catch (AssertionError e) {
-            assertEquals("Item '" + itemToRemovePath + "' wasn't extracted", e.getMessage());
+            fail("The content of the item with id " + itemToUpdate + " should differ");
+        } catch (SevenZipException e) {
+            AssertionError error = getExceptionCauseByClass(AssertionError.class, e);
+            assertTrue(error.getMessage().contains("expected:<"));
+            assertTrue(error.getMessage().contains("> but was:<"));
             // continue
         }
 
-        virtualContent.deleteItemByPath(itemToRemovePath);
+        virtualContent.updateItemContentByPath(itemToRemovePath, newContent);
         virtualContent.verifyInArchive(modifiedInArchive);
     }
 
+
     private ByteArrayStream compressVirtualContext(VirtualContent virtualContent) throws SevenZipException {
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
-        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
+        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.TAR));
         virtualContent.createOutArchive(outArchive, byteArrayStream);
         return byteArrayStream;
     }

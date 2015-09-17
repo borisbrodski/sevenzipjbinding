@@ -1,7 +1,6 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 
 /**
@@ -10,7 +9,7 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public class UpdateSingleFileNonGeneric7zTest extends UpdateSingleFileNonGenericAbstractTest<IOutItem7z> {
+public class UpdateSingleFileNonGeneric7zTest extends UpdateSingleFileNonGenericAbstractTest {
 
     @Override
     protected ArchiveFormat getArchiveFormat() {
@@ -18,7 +17,7 @@ public class UpdateSingleFileNonGeneric7zTest extends UpdateSingleFileNonGeneric
     }
 
     @Override
-    protected void copyFromDelegate(IOutItem7z outItem, IOutItemAllFormats delegateOutItem) {
+    protected void copyFromDelegate(IOutItemAllFormats outItem, IOutItemAllFormats delegateOutItem) {
         copyFromDelegate7z(outItem, delegateOutItem);
     }
 

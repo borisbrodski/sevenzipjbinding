@@ -2,7 +2,6 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
-import net.sf.sevenzipjbinding.IOutItemBZip2;
 
 /**
  * Tests compression, update and extraction of a single file using non-generic callback with BZip2.
@@ -10,7 +9,7 @@ import net.sf.sevenzipjbinding.IOutItemBZip2;
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public class UpdateSingleFileNonGenericBZip2Test extends UpdateSingleFileNonGenericAbstractTest<IOutItemBZip2> {
+public class UpdateSingleFileNonGenericBZip2Test extends UpdateSingleFileNonGenericAbstractTest {
 
     @Override
     protected ArchiveFormat getArchiveFormat() {
@@ -18,6 +17,6 @@ public class UpdateSingleFileNonGenericBZip2Test extends UpdateSingleFileNonGene
     }
 
     @Override
-    protected void copyFromDelegate(IOutItemBZip2 outItem, IOutItemAllFormats delegateOutItem) {
+    protected void copyFromDelegate(IOutItemAllFormats outItem, IOutItemAllFormats delegateOutItem) {
     }
 }

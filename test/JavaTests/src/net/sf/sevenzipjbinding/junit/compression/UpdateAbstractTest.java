@@ -227,7 +227,8 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
     }
 
-    protected abstract IOutCreateCallback<T> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
+    protected abstract IOutCreateCallback<IOutItemAllFormats> getOutUpdateCallbackBase(IInArchive inArchive,
+            ChangeLog changeLog)
             throws SevenZipException;
 
     private static final int OUTARCHIVE_MAX_SIZE = 10000000;
@@ -296,7 +297,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
         byteArrayStream.rewind();
         IInArchive inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream));
-        IOutUpdateArchive<T> connectedOutArchive = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItemAllFormats> connectedOutArchive = inArchive.getConnectedOutArchive();
 
         ByteArrayStream byteArrayStreamUpdated = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
         ChangeLog changeLog = new ChangeLog(inArchive);
@@ -304,7 +305,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
             archiveUpdater.prepareArchiveUpdate(inArchive, changeLog, getDefaultIndex());
         }
         int newCount = changeLog.reindex(inArchive);
-        IOutCreateCallback<T> updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
+        IOutCreateCallback<IOutItemAllFormats> updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
 
         connectedOutArchive.updateItems(byteArrayStreamUpdated, newCount, updateCallbackBase);
 

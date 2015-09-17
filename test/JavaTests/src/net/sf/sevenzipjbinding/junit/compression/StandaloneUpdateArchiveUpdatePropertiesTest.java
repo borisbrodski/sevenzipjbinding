@@ -9,7 +9,6 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
@@ -28,7 +27,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
     private String newPath;
     private Date newModificationTime;
 
-    private class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
+    private class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         private int itemToUpdate;
 
         public UpdateItemContentArchiveUpdateCallback(int itemToUpdate) {
@@ -45,11 +44,11 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
 
         }
 
-        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
                 throws SevenZipException {
 
             if (index == itemToUpdate) {
-                IOutItem7z outItem = outItemFactory.createOutItemAndCloneProperties(index);
+                IOutItemAllFormats outItem = outItemFactory.createOutItemAndCloneProperties(index);
 
                 outItem.setUpdateIsNewProperties(Boolean.TRUE);
 
@@ -83,7 +82,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
 
         String itemToUpdatePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
 
-        IOutUpdateArchive<IOutItem7z> outArchiveConnected = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItemAllFormats> outArchiveConnected = inArchive.getConnectedOutArchive();
 
         newPath = inArchive.getProperty(itemToUpdate, PropID.PATH) + "_changed";
         newModificationTime = new Date(System.currentTimeMillis() + random.get().nextInt(100000) + 100000);

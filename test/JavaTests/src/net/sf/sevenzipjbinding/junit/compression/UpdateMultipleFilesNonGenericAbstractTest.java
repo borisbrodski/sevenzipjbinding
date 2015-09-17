@@ -3,23 +3,22 @@ package net.sf.sevenzipjbinding.junit.compression;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
-import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 
 /**
  * Base class for all multiple files tests using non-generic update classback.
- * 
+ *
  * @param <T>
  *            type of the out item class
  *
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public abstract class UpdateMultipleFilesNonGenericAbstractTest<T extends IOutItemBase> extends
-        UpdateMultipleFilesAbstractTest<T> {
-    public class ArchiveUpdateCallback implements IOutCreateCallback<T> {
+public abstract class UpdateMultipleFilesNonGenericAbstractTest extends
+        UpdateMultipleFilesAbstractTest<IOutItemAllFormats> {
+    public class ArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         ArchiveUpdateCallbackGeneric delegate;
 
         private ArchiveUpdateCallback(ArchiveUpdateCallbackGeneric delegate) {
@@ -39,20 +38,21 @@ public abstract class UpdateMultipleFilesNonGenericAbstractTest<T extends IOutIt
             delegate.setOperationResult(operationResultOk);
         }
 
-        public T getItemInformation(int index, OutItemFactory<T> outItemFactory) throws SevenZipException {
-            T outItem = delegate.createOutItem(index, outItemFactory);
-            T delegateOutItem = delegate.createOutItem(index, outItemFactory);
+        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
+                throws SevenZipException {
+            IOutItemAllFormats outItem = delegate.createOutItem(index, outItemFactory);
+            IOutItemAllFormats delegateOutItem = delegate.createOutItem(index, outItemFactory);
 
             if (!(delegateOutItem instanceof IOutItemAllFormats)) {
                 throw new RuntimeException("Expected implementation of the IOutItemAllFormats interface");
             }
-            delegate.fillOutItem(index, (IOutItemAllFormats) delegateOutItem);
+            delegate.fillOutItem(index, delegateOutItem);
 
             outItem.setDataSize(delegateOutItem.getDataSize());
             outItem.setUpdateIsNewData(delegateOutItem.getUpdateIsNewData());
             outItem.setUpdateIsNewProperties(delegateOutItem.getUpdateIsNewProperties());
 
-            copyFromDelegate(outItem, (IOutItemAllFormats) delegateOutItem);
+            copyFromDelegate(outItem, delegateOutItem);
 
             return outItem;
         }
@@ -62,10 +62,10 @@ public abstract class UpdateMultipleFilesNonGenericAbstractTest<T extends IOutIt
         }
     }
 
-    protected abstract void copyFromDelegate(T outItem, IOutItemAllFormats delegateOutItem);
+    protected abstract void copyFromDelegate(IOutItemAllFormats outItem, IOutItemAllFormats delegateOutItem);
 
     @Override
-    protected IOutCreateCallback<T> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
+    protected IOutCreateCallback<IOutItemAllFormats> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
             throws SevenZipException {
         return new ArchiveUpdateCallback(new ArchiveUpdateCallbackGeneric(inArchive, changeLog));
     }

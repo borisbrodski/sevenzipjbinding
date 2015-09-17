@@ -9,7 +9,6 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
 import net.sf.sevenzipjbinding.ISequentialInStream;
@@ -24,7 +23,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.junit.Test;
 
 public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
-    private static class AddItemArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
+    private static class AddItemArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         private int itemToAdd;
         private String path;
         private byte[] blob;
@@ -45,10 +44,10 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
 
         }
 
-        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+        public IOutItemAllFormats getItemInformation(int index, OutItemFactory<IOutItemAllFormats> outItemFactory)
                 throws SevenZipException {
             if (index == itemToAdd) {
-                IOutItem7z outItem = outItemFactory.createOutItem();
+                IOutItemAllFormats outItem = outItemFactory.createOutItem();
                 outItem.setPropertyAttributes(Integer.valueOf(0));
                 outItem.setPropertyPath(path);
                 outItem.setPropertyLastModificationTime(new Date());
@@ -80,7 +79,7 @@ public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
 
         IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream));
 
-        IOutUpdateArchive<IOutItem7z> outArchiveConnected = inArchive.getConnectedOutArchive();
+        IOutUpdateArchive<IOutItemAllFormats> outArchiveConnected = inArchive.getConnectedOutArchive();
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems() + 1,
                 new AddItemArchiveUpdateCallback(inArchive.getNumberOfItems(), NEW_FILE_PATH, NEW_FILE_BLOB));
