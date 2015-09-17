@@ -198,16 +198,82 @@ public interface IInArchive extends Closeable {
     public ArchiveFormat getArchiveFormat();
 
     /**
-     * Get a {@link IOutUpdateArchive}-instance attached to the currently opened archive. The new instance allows
-     * modification of the currently opened archive.
+     * Get an instance of {@link IOutUpdateArchive} connected to the current archive. This is a part of the archive
+     * format non-specific API. The new instance allows modification of the currently opened archive. Multiple call of
+     * this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchive} isn't
+     * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
+     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
-     * @param <T>
-     *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
-     *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive
-     *            formats.
      * @return an instance of the {@link IOutUpdateArchive} interface
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      */
-    public <T extends IOutItemBase> IOutUpdateArchive<T> getConnectedOutArchive() throws SevenZipException;
+    public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchive7z} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened 7z archive. Multiple call
+     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchive7z} isn't
+     * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
+     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * 
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchiveZip} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened Zip archive. Multiple call
+     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveZip} isn't
+     * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
+     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * 
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchiveTar} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened Tar archive. Multiple call
+     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveTar} isn't
+     * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
+     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * 
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchiveGZip} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened GZip archive. Multiple
+     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveGZip} 
+     * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
+     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * be ignored.
+     * 
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchiveBZip2} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened BZip2 archive. Multiple
+     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveBZip2}
+     * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
+     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * be ignored.
+     * 
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     */
+    public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException;
 }

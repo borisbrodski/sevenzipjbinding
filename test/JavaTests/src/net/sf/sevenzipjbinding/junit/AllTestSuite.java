@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
-import net.sf.sevenzipjbinding.junit.compression.CompressExceptionTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
@@ -437,11 +437,11 @@ public class AllTestSuite extends TestSuite {
             UpdateSingleFileNonGenericTarTest.class, //
             UpdateSingleFileNonGenericZipTest.class, //
 
-            CompressExceptionTest.CompressException7zTest.class, //
-            CompressExceptionTest.CompressExceptionBZip2Test.class, //
-            CompressExceptionTest.CompressExceptionGZipTest.class, //
-            CompressExceptionTest.CompressExceptionTarTest.class, //
-            CompressExceptionTest.CompressExceptionZipTest.class, //
+            CompressExceptionGetItemInformationTest.CompressException7zTest.class, //
+            CompressExceptionGetItemInformationTest.CompressExceptionBZip2Test.class, //
+            CompressExceptionGetItemInformationTest.CompressExceptionGZipTest.class, //
+            CompressExceptionGetItemInformationTest.CompressExceptionTarTest.class, //
+            CompressExceptionGetItemInformationTest.CompressExceptionZipTest.class, //
 
     };
     static Class<?>[] initStdTests = { //

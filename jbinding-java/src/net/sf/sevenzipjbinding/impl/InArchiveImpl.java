@@ -6,9 +6,19 @@ import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
-import net.sf.sevenzipjbinding.IOutArchive;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.IOutItemBZip2;
 import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.IOutItemGZip;
+import net.sf.sevenzipjbinding.IOutItemTar;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
+import net.sf.sevenzipjbinding.IOutUpdateArchive7z;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveBZip2;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveGZip;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveTar;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveZip;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.NFileTimeType;
 import net.sf.sevenzipjbinding.PropID;
@@ -290,19 +300,67 @@ public final class InArchiveImpl implements IInArchive {
     }
 
     /**
-     * Return instance of {@link IOutArchive} connected the current archive current archive. This method allows
-     * modifications of existing archives. Multiple call of this methods return the same instance. Closing the new
-     * instance of {@link IOutArchive} if not necessary, since it get closed automatically this the current instance of
-     * {@link IInArchive}. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
-     * 
-     * @return instance of {@link IOutArchive} the current archive current archive
+     * {@inheritDoc}
      */
+    public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException {
+        return getConnectedOutArchiveIntern();
+    }
+
     @SuppressWarnings("unchecked")
-    public <T extends IOutItemBase> IOutUpdateArchive<T> getConnectedOutArchive() throws SevenZipException {
+    private <T extends IOutItemBase> IOutUpdateArchive<T> getConnectedOutArchiveIntern() throws SevenZipException {
         if (outArchiveImpl == null) {
             createConnectedOutArchive();
         }
         return (IOutUpdateArchive<T>) outArchiveImpl;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException {
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.SEVEN_ZIP);
+        return (IOutUpdateArchive7z) (this.<IOutItem7z> getConnectedOutArchiveIntern());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException {
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.ZIP);
+        return (IOutUpdateArchiveZip) (this.<IOutItemZip> getConnectedOutArchiveIntern());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException {
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.TAR);
+        return (IOutUpdateArchiveTar) (this.<IOutItemTar> getConnectedOutArchiveIntern());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException {
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.GZIP);
+        return (IOutUpdateArchiveGZip) (this.<IOutItemGZip> getConnectedOutArchiveIntern());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException {
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.BZIP2);
+        return (IOutUpdateArchiveBZip2) (this.<IOutItemBZip2> getConnectedOutArchiveIntern());
+    }
+
+    private void ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat archiveFormat)
+            throws SevenZipException {
+        if (getArchiveFormat() != archiveFormat) {
+            throw new SevenZipException("Archive format specific update API for " + archiveFormat.getMethodName()
+                    + "-archives can't work with the currently opened " + getArchiveFormat().getMethodName()
+                    + "-archive");
+        }
     }
 
     private void createConnectedOutArchive() throws SevenZipException {

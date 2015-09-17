@@ -26,13 +26,13 @@ import org.junit.Test;
  * @author Boris Brodski
  * @version 9.20-2.00
  */
-public abstract class CompressExceptionTest extends CompressAbstractTest {
+public abstract class CompressExceptionGetItemInformationTest extends CompressAbstractTest {
     public interface IOutItemModifier {
         public IOutItemAllFormats modify(IOutItemAllFormats outItem);
 
         public void verifyException(Exception e);
     }
-    public static class CompressException7zTest extends CompressExceptionTest {
+    public static class CompressException7zTest extends CompressExceptionGetItemInformationTest {
 
         @Override
         protected ArchiveFormat getArchiveFormat() {
@@ -40,7 +40,7 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
         }
     }
 
-    public static class CompressExceptionZipTest extends CompressExceptionTest {
+    public static class CompressExceptionZipTest extends CompressExceptionGetItemInformationTest {
 
         @Override
         protected ArchiveFormat getArchiveFormat() {
@@ -48,7 +48,7 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
         }
     }
 
-    public static class CompressExceptionGZipTest extends CompressExceptionTest {
+    public static class CompressExceptionGZipTest extends CompressExceptionGetItemInformationTest {
 
         @Override
         protected ArchiveFormat getArchiveFormat() {
@@ -56,7 +56,7 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
         }
     }
 
-    public static class CompressExceptionBZip2Test extends CompressExceptionTest {
+    public static class CompressExceptionBZip2Test extends CompressExceptionGetItemInformationTest {
 
         @Override
         protected ArchiveFormat getArchiveFormat() {
@@ -64,7 +64,7 @@ public abstract class CompressExceptionTest extends CompressAbstractTest {
         }
     }
 
-    public static class CompressExceptionTarTest extends CompressExceptionTest {
+    public static class CompressExceptionTarTest extends CompressExceptionGetItemInformationTest {
 
         @Override
         protected ArchiveFormat getArchiveFormat() {
