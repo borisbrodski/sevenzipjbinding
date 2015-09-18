@@ -652,7 +652,7 @@ public class SevenZip {
 		return callNativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
 	}
 
-	private static void ensureLibraryIsInitialized() {
+	private static synchronized void ensureLibraryIsInitialized() {
 		if (autoInitializationWillOccur) {
 			autoInitializationWillOccur = false;
 			try {
