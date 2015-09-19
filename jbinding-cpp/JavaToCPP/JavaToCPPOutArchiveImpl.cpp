@@ -9,6 +9,7 @@
 #include "CPPToJava/CPPToJavaArchiveUpdateCallback.h"
 
 #include "UnicodeHelper.h"
+#include "UserTrace.h"
 
 // void updateItemsNative(int archiveFormatIndex, IOutStream outStream, int numberOfItems,
 //                        IArchiveUpdateCallback archiveUpdateCallback)
@@ -49,6 +50,14 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
     jobject archiveFormat = jni::OutArchiveImpl::archiveFormat_Get(env, thiz);
     int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
     jboolean isInArchiveAttached = jni::OutArchiveImpl::inArchive_Get(env, thiz) != NULL;
+
+	if (isUserTraceEnabled(jniEnvInstance, thiz)) {
+	    if (isInArchiveAttached) {
+	        userTrace(jniEnvInstance, thiz, UString(L"Updating ") << numberOfItems << L" items");
+	    } else {
+	        userTrace(jniEnvInstance, thiz, UString(L"Compressing ") << numberOfItems << L" items");
+	    }
+	}
 
 	CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
 			outStream);

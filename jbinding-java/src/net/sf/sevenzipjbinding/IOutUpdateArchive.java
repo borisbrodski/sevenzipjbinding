@@ -35,7 +35,7 @@ package net.sf.sevenzipjbinding;
  * @version 9.04-2.0
  * 
  */
-public interface IOutUpdateArchive<T extends IOutItemBase> {
+public interface IOutUpdateArchive<T extends IOutItemBase> extends IOutArchiveBase {
 
     /**
      * Update items in archive (actually creating a new one based on the old one).

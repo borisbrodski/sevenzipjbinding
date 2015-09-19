@@ -195,112 +195,112 @@ public enum ArchiveFormat {
     /**
      * Zip format.
      */
-    ZIP("Zip", OutArchiveZipImpl.class),
+    ZIP("Zip", OutArchiveZipImpl.class, true),
 
     /**
      * Tar format.
      */
-    TAR("Tar", OutArchiveTarImpl.class),
+    TAR("Tar", OutArchiveTarImpl.class, true),
 
     /**
-     * Split format.
+     * Split format. TODO Test it
      */
-    SPLIT("Split"),
+    SPLIT("Split", true),
 
     /**
      * Rar format.
      */
-    RAR("Rar"), //
+    RAR("Rar", true), //
 
     /**
      * Lzma format.
      */
-    LZMA("Lzma"),
+    LZMA("Lzma", false),
 
     /**
      * Iso format.
      */
-    ISO("Iso"),
+    ISO("Iso", true),
 
     /**
      * Hfs format
      */
-    HFS("HFS"),
+    HFS("HFS", true),
 
     /**
      * Gzip format
      */
-    GZIP("GZip", OutArchiveGZipImpl.class),
+    GZIP("GZip", OutArchiveGZipImpl.class, false),
 
     /**
      * Cpio format.
      */
-    CPIO("Cpio"),
+    CPIO("Cpio", true),
 
     /**
      * BZip2 format.
      */
-    BZIP2("BZip2", OutArchiveBZip2Impl.class),
+    BZIP2("BZip2", OutArchiveBZip2Impl.class, false),
 
     /**
      * 7z format.
      */
-    SEVEN_ZIP("7z", OutArchive7zImpl.class),
+    SEVEN_ZIP("7z", OutArchive7zImpl.class, true),
 
     /**
      * Z format.
      */
-    Z("Z"),
+    Z("Z", false),
 
     /**
      * Arj format
      */
-    ARJ("Arj"), //
+    ARJ("Arj", true), //
 
     /**
      * Cab format.
      */
-    CAB("Cab"),
+    CAB("Cab", true),
 
     /**
      * Lzh
      */
-    LZH("Lzh"),
+    LZH("Lzh", true),
 
     /**
      * Chm
      */
-    CHM("Chm"),
+    CHM("Chm", true),
 
     /**
      * Nsis
      */
-    NSIS("Nsis"),
+    NSIS("Nsis", true),
 
     /**
      * Deb
      */
-    DEB("Deb"),
+    DEB("Deb", true),
 
     /**
      * Rpm
      */
-    RPM("Rpm"),
+    RPM("Rpm", true),
 
     /**
      * Udf
      */
-    UDF("Udf"),
+    UDF("Udf", true),
 
     /**
      * Wim
      */
-    WIM("Wim"),
+    WIM("Wim", true),
 
     /**
      * Xar
      */
-    XAR("Xar");
+    XAR("Xar", true);
 
     private String methodName;
 
@@ -313,13 +313,17 @@ public enum ArchiveFormat {
 
     Class<? extends OutArchiveImpl<?>> outArchiveImplementation;
 
-    private ArchiveFormat(String methodName) {
-        this(methodName, null);
+    private boolean supportMultipleFiles;
+
+    private ArchiveFormat(String methodName, boolean supportMultipleFiles) {
+        this(methodName, null, supportMultipleFiles);
     }
 
-    private ArchiveFormat(String methodName, Class<? extends OutArchiveImpl<?>> outArchiveImplementation) {
+    private ArchiveFormat(String methodName, Class<? extends OutArchiveImpl<?>> outArchiveImplementation,
+            boolean supportMultipleFiles) {
         this.methodName = methodName;
         this.outArchiveImplementation = outArchiveImplementation;
+        this.supportMultipleFiles = supportMultipleFiles;
     }
 
     /**
@@ -348,6 +352,16 @@ public enum ArchiveFormat {
      */
     public Class<? extends OutArchiveImpl<?>> getOutArchiveImplementation() {
         return outArchiveImplementation;
+    }
+
+    /**
+     * Return <code>true</code>, if the archive format is capable of compressing or storing multiple files within the
+     * archive.
+     * 
+     * @return <code>true</code> - support multiple files, <code>false</code> support single file or stream
+     */
+    public boolean supportMultipleFiles() {
+        return supportMultipleFiles;
     }
 
     /**

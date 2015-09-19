@@ -161,7 +161,7 @@ MESSAGE("Output package: ./${SEVENZIPJBINDING_FILENAME}.zip")
 MESSAGE("")
 MESSAGE("")
 MESSAGE("Type '${MAKE_COMMAND}' to compile")
-MESSAGE("Type 'ctest' to run tests (it could take up to 30 minutes on a slow CPU)")
+MESSAGE("Type 'ctest' to run tests (it could take up to 90 minutes on a slow CPU)")
 MESSAGE("Type '${MAKE_COMMAND} package' to build a distribution package")
 MESSAGE("")
 

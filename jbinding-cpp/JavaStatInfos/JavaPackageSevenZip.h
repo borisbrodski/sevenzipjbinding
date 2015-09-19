@@ -176,6 +176,10 @@ JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutArchiveImpl)
 	JT_FIELD(Long, sevenZipArchiveInstance)
 	JT_FIELD_OBJECT(archiveFormat, JAVA_ARCHIVE_FORMAT_T)
 	JT_FIELD_OBJECT(inArchive, JAVA_IIN_ARCHIVE_T)
+
+	JT_FIELD(Boolean, trace)
+
+	JT_CLASS_FINAL_METHOD(Void, traceMessage, JT_STRING(message, _))
 JT_END_CLASS
 
 

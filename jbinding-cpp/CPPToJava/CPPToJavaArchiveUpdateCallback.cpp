@@ -7,6 +7,7 @@
 #include "UnicodeHelper.h"
 #include "CodecTools.h"
 
+#include "UserTrace.h"
 
 void CPPToJavaArchiveUpdateCallback::freeOutItem(JNIEnvInstance & jniEnvInstance) {
     if (_outItem) {
@@ -69,6 +70,13 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
         return result;
     }
 
+    UString traceMsg;
+    bool isUserTrace = isUserTraceEnabled(jniEnvInstance, _outArchive);
+
+    if (isUserTrace) {
+        traceMsg += L"Get update info";
+    }
+
     if (newData) {
         if (_isInArchiveAttached) {
             jobject newDataObject = jni::OutItem::updateIsNewData_Get(jniEnvInstance, _outItem);
@@ -83,6 +91,14 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
             }
         } else {
             *newData = 1;
+        }
+        if (isUserTrace) {
+            traceMsg += L" (new data: ";
+            if (*newData) {
+                traceMsg += L"true)";
+            } else {
+                traceMsg += L"false)";
+            }
         }
     }
 
@@ -101,6 +117,14 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
         } else {
             *newProperties = 1;
         }
+        if (isUserTrace) {
+            traceMsg += L" (new props: ";
+            if (*newProperties) {
+                traceMsg += L"true)";
+            } else {
+                traceMsg += L"false)";
+            }
+        }
     }
 
     if (indexInArchive) {
@@ -117,6 +141,14 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
         } else {
             *indexInArchive = (UInt32) -1;
         }
+        if (isUserTrace) {
+            traceMsg += UString(L" (old index: ") << (Int32)*indexInArchive << L")";
+        }
+    }
+
+    if (isUserTrace) {
+        traceMsg += UString(L" (index: ") << index << L")";
+        userTrace(jniEnvInstance, _outArchive, traceMsg);
     }
 
     return S_OK;
@@ -173,7 +205,11 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 
 	#define GET_ATTRIBUTE(TYPE, fieldName)                                                                          \
 	{                                                                                                               \
-	    jobject value = jni::OutItem::fieldName##_Get(jniEnvInstance, _outItem);                                    \
+        if (isUserTraceEnabled(jniEnvInstance, _outArchive)) {                                                      \
+            userTrace(jniEnvInstance, _outArchive,                                                                  \
+                UString(L"Get property '" #fieldName "' (index: ") << index << L")");                               \
+        }                                                                                                           \
+        jobject value = jni::OutItem::fieldName##_Get(jniEnvInstance, _outItem);                                    \
 	    if (value) {                                                                                                \
             ASSIGN_VALUE_TO_C_PROP_VARIANT_##TYPE                                                                   \
             jniEnvInstance->DeleteLocalRef(value);                                                                  \
@@ -306,6 +342,11 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
 
     if (!inStream) {
         return S_OK;
+    }
+
+    if (isUserTraceEnabled(jniEnvInstance, _outArchive)) {
+        userTrace(jniEnvInstance, _outArchive,
+            UString(L"Get stream (index: ") << index << L")");
     }
 
     jobject inStreamImpl = _iOutCreateCallback->getStream(jniEnvInstance, _javaImplementation,

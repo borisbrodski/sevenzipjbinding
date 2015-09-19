@@ -21,6 +21,7 @@
         <li><a href="#update-alter-items">Altering existing archive items</a></li>
         <li><a href="#update-add-remove-items">Adding and removing archive items</a></li>
     </ul>
+    <li><a href="#trace">Troubleshoot problems using tracing</a></li>
 </ul>
 
 
@@ -270,7 +271,7 @@ snippets on this page. The structure of those archives is specified in the <a hr
 </p>
 
 
-<h2><a name="update-alter-items">Altering existing archive items</h1>
+<h2><a name="update-alter-items">Altering existing archive items</h2>
 
 <p>
 The first snippet modifies one existing item with index 2 (info.txt, 16 bytes):
@@ -335,7 +336,7 @@ As you can see, the file "info.txt" (16 bytes) was replaces with the file "info2
 </p>
 
 
-<h2><a name="update-add-remove-items">Adding and removing archive items</h1>
+<h2><a name="update-add-remove-items">Adding and removing archive items</h2>
 
 <p>
 Now lets see how archive items can be added and removed.
@@ -422,3 +423,33 @@ $ 7z l updated.7z
 As you can see, the file info.txt is gone and the file data.dmp (11 bytes) appears in the archive.
 </p>
 
+
+<h1><a name="trace">Troubleshoot problems using tracing</h1>
+
+<p>
+One of the weak sides of the 7-zip compression engine is a rather simple error reporting. If
+some provided data doesn't satisfy the compressor it fails without any descriptive error message.
+One way to get an clue is to use 7-Zip-JBinding tracing feature. Here is the code passing invalid
+data size for the item 1 and though failing.
+</p>
+
+##INCLUDE_SNIPPET(CompressWithError)
+
+<p>
+If you run this program you will get following error message printed to the System.err:
+</p>
+
+##INCLUDE_OUTPUT(CompressWithErrorErr)
+
+<p>
+The error message provides no useful information for finding the bug. But since the snippet enables
+tracing by calling IOutArchive.setTrace(true), the trace log get printed to the System.out.
+</p>
+
+##INCLUDE_OUTPUT(CompressWithError)
+
+<p>
+As you see, the tracing stops just after 7-zip retrieved the size of the data for the item 1. This
+suggests, that the value for the size of the data of the item 1 may cause the failure. In this
+small example, like in most other cases, this will help to find the problem.
+</p>

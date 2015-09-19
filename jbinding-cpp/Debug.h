@@ -172,7 +172,7 @@ inline std::ostream & operator<<(JOut jout, char const * str) {
 #   define TRACE_OBJECT_CREATION(classname) {TraceObjectCreation(classname, (Object *)this);}
 #   define TRACE_OBJECT_DESTRUCTION         {TraceObjectDestruction((Object *)this);}
 #   define TRACE_OBJECT_CALL(methodname)    {TraceObjectCall((Object *)this, methodname);}
-#   define TRACE_CLASS_CHECK_UNKNOWN_IMPL_DESTRUCTION(classname)                   \
+#   define TRACE_CLASS_CHECK_UNKNOWN_IMPL_DESTRUCTION(classname)                    \
         {                                                                           \
             if (__m_RefCount > 0)                                                   \
             {                                                                       \
@@ -185,7 +185,7 @@ inline std::ostream & operator<<(JOut jout, char const * str) {
 /**/void TracePrintObjectsUsingPrintf();
 
 /*
- #define TRACE_OBJECT_ENSURE_DESTRUCTION_WITH_STACK_CMYCOMPTR(object)    \
+ #define TRACE_OBJECT_ENSURE_DESTRUCTION_WITH_STACK_CMYCOMPTR(object)       \
                     {                                                       \
                         void * __p = &(*object);                            \
                         object.Release();                                   \

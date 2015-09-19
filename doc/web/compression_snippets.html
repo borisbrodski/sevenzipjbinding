@@ -77,6 +77,7 @@
         <li><a href="#update-alter-items">Altering existing archive items</a></li>
         <li><a href="#update-add-remove-items">Adding and removing archive items</a></li>
     </ul>
+    <li><a href="#trace">Troubleshoot problems using tracing</a></li>
 </ul>
 <h1><a name="creating">Creating new archives</h1>
 <p>
@@ -1050,7 +1051,7 @@ The following snippets show the modification process in details using archive fo
 The archive to be modified is one of the Zip, 7z or Tar archives created by the corresponding compression
 snippets on this page. The structure of those archives is specified in the <a href="#archive-test-structure">CompressArchiveStructure</a> class.
 </p>
-<h2><a name="update-alter-items">Altering existing archive items</h1>
+<h2><a name="update-alter-items">Altering existing archive items</h2>
 <p>
 The first snippet modifies one existing item with index 2 (info.txt, 16 bytes):
 </p>
@@ -1234,7 +1235,7 @@ $ 7z l updated.7z
 <p>
 As you can see, the file "info.txt" (16 bytes) was replaces with the file "info2.txt" (10 bytes).
 </p>
-<h2><a name="update-add-remove-items">Adding and removing archive items</h1>
+<h2><a name="update-add-remove-items">Adding and removing archive items</h2>
 <p>
 Now lets see how archive items can be added and removed.
 In order to remove an archive item a reindexing is necessary. In the previous snippet for each archive
@@ -1455,6 +1456,173 @@ $ 7z l updated.7z
 </pre></div>
 <p>
 As you can see, the file info.txt is gone and the file data.dmp (11 bytes) appears in the archive.
+</p>
+<h1><a name="trace">Troubleshoot problems using tracing</h1>
+<p>
+One of the weak sides of the 7-zip compression engine is a rather simple error reporting. If
+some provided data doesn't satisfy the compressor it fails without any descriptive error message.
+One way to get an clue is to use 7-Zip-JBinding tracing feature. Here is the code passing invalid
+data size for the item 1 and though failing.
+</p>
+<div class="fragment"><pre class="fragment">
+<span class="java-keyword">import</span> java.io.IOException;
+<span class="java-keyword">import</span> java.io.RandomAccessFile;
+
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveTar.html">IOutCreateArchiveTar</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/IOutItemTar.html">IOutItemTar</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/OutItemFactory.html">OutItemFactory</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.impl.<a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.junit.snippets.CompressArchiveStructure.Item;
+<span class="java-keyword">import</span> net.sf.sevenzipjbinding.util.<a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>;
+
+<span class="java-keyword">public</span> <span class="java-keyword">class</span> CompressWithError {
+<span class="java-javadoc">    /**
+     * The callback provides information about archive items.
+     */</span>
+    <span class="java-keyword">private</span> <span class="java-keyword">final</span> <span class="java-keyword">class</span> MyCreateCallback 
+            <span class="java-keyword">implements</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateCallback.html">IOutCreateCallback</a>&#60;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemTar.html">IOutItemTar</a>&#62; {
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setOperationResult(boolean operationResultOk)
+                <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track each operation result here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setTotal(<span class="java-keyword">long</span> total) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <span class="java-keyword">void</span> setCompleted(<span class="java-keyword">long</span> complete) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-comment">// Track operation progress here</span>
+        }
+
+        <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/IOutItemTar.html">IOutItemTar</a> getItemInformation(<span class="java-keyword">int</span> index,
+                <a href="javadoc/net/sf/sevenzipjbinding/impl/OutItemFactory.html">OutItemFactory</a>&#60;<a href="javadoc/net/sf/sevenzipjbinding/IOutItemTar.html">IOutItemTar</a>&#62; outItemFactory) {
+            <a href="javadoc/net/sf/sevenzipjbinding/IOutItemTar.html">IOutItemTar</a> item = outItemFactory.createOutItem();
+
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[index].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-comment">// Directory</span>
+                item.setPropertyIsDir(<span class="java-keyword">true</span>);
+            } <span class="java-keyword">else</span> {
+                <span class="java-comment">// File</span>
+                item.setDataSize((<span class="java-keyword">long</span>) <span class="java-field">items</span>[index].getContent().<span class="java-field">length</span>);
+            }
+
+            item.setPropertyPath(<span class="java-field">items</span>[index].getPath());
+
+            <span class="java-keyword">if</span> (index == 1) {
+                item.setDataSize(<span class="java-keyword">null</span>); <span class="java-comment">// Provide invalid data for item 1</span>
+            }
+
+            <span class="java-keyword">return</span> item;
+        }
+
+        <span class="java-keyword">public</span> <a href="javadoc/net/sf/sevenzipjbinding/ISequentialInStream.html">ISequentialInStream</a> getStream(<span class="java-keyword">int</span> i) <span class="java-keyword">throws</span> <a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> {
+            <span class="java-keyword">if</span> (<span class="java-field">items</span>[i].getContent() == <span class="java-keyword">null</span>) {
+                <span class="java-keyword">return</span> <span class="java-keyword">null</span>;
+            }
+            <span class="java-keyword">return</span> <span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/util/ByteArrayStream.html">ByteArrayStream</a>(<span class="java-field">items</span>[i].getContent(), <span class="java-keyword">true</span>);
+        }
+    }
+
+    <span class="java-keyword">private</span> Item[] items;
+
+    <span class="java-keyword">public</span> <span class="java-keyword">static</span> <span class="java-keyword">void</span> main(String[] args) {
+        <span class="java-keyword">if</span> (args.<span class="java-field">length</span> == 1) {
+            <span class="java-keyword">new</span> CompressWithError().compress(args[0]);
+            <span class="java-keyword">return</span>;
+        }
+        System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Usage: java CompressNonGenericTar &#60;archive&#62;"</span>);
+    }
+
+
+    <span class="java-keyword">private</span> <span class="java-keyword">void</span> compress(String filename) {
+        items = CompressArchiveStructure.create();
+
+        boolean success = <span class="java-keyword">false</span>;
+        RandomAccessFile raf = <span class="java-keyword">null</span>;
+        <a href="javadoc/net/sf/sevenzipjbinding/IOutCreateArchiveTar.html">IOutCreateArchiveTar</a> outArchive = <span class="java-keyword">null</span>;
+        <span class="java-keyword">try</span> {
+            raf = <span class="java-keyword">new</span> RandomAccessFile(filename, <span class="java-string">"rw"</span>);
+
+            <span class="java-comment">// Open out-archive object</span>
+            outArchive = <a href="javadoc/net/sf/sevenzipjbinding/SevenZip.html">SevenZip</a>.openOutArchiveTar();
+
+            <span class="java-comment">// Activate tracing</span>
+            outArchive.setTrace(<span class="java-keyword">true</span>);
+
+            <span class="java-comment">// Create archive</span>
+            outArchive.createArchive(<span class="java-keyword">new</span> <a href="javadoc/net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html">RandomAccessFileOutStream</a>(raf),
+                    <span class="java-field">items</span>.<span class="java-field">length</span>, <span class="java-keyword">new</span> MyCreateCallback());
+
+            success = <span class="java-keyword">true</span>;
+        } <span class="java-keyword">catch</span> (<a href="javadoc/net/sf/sevenzipjbinding/SevenZipException.html">SevenZipException</a> e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Tar-Error occurs:"</span>);
+            <span class="java-comment">// Get more information using extended method</span>
+            e.printStackTraceExtended();
+        } <span class="java-keyword">catch</span> (Exception e) {
+            System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error occurs: "</span> + e);
+        } <span class="java-keyword">finally</span> {
+            <span class="java-keyword">if</span> (outArchive != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    outArchive.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing archive: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+            <span class="java-keyword">if</span> (raf != <span class="java-keyword">null</span>) {
+                <span class="java-keyword">try</span> {
+                    raf.close();
+                } <span class="java-keyword">catch</span> (IOException e) {
+                    System.<span class="java-staticfield">err</span>.println(<span class="java-string">"Error closing file: "</span> + e);
+                    success = <span class="java-keyword">false</span>;
+                }
+            }
+        }
+        <span class="java-keyword">if</span> (success) {
+            System.<span class="java-staticfield">out</span>.println(<span class="java-string">"Compression operation succeeded"</span>);
+        }
+    }
+}
+</pre></div>
+<div class="snippet-info"><a href="snippets/CompressWithError.java">download java code</a></div>
+<p>
+If you run this program you will get following error message printed to the System.err:
+</p>
+<div class="fragment"><pre class="fragment">
+0x80070057 (Invalid argument). Error creating 'tar' archive with 5 items
+</pre></div>
+<p>
+The error message provides no useful information for finding the bug. But since the snippet enables
+tracing by calling <a href="javadoc/net/sf/sevenzipjbinding/IOutArchive.html">IOutArchive</a>.setTrace(true), the trace log get printed to the System.out.
+</p>
+<div class="fragment"><pre class="fragment">
+Compressing 5 items
+Get update info (new data: true) (new props: true) (old index: -1) (index: 0)
+Get property 'propertyIsDir' (index: 0)
+Get property 'propertyPosixAttributes' (index: 0)
+Get property 'propertyLastModificationTime' (index: 0)
+Get property 'propertyPath' (index: 0)
+Get property 'propertyUser' (index: 0)
+Get property 'propertyGroup' (index: 0)
+Get property 'dataSize' (index: 0)
+Get update info (new data: true) (new props: true) (old index: -1) (index: 1)
+Get property 'propertyIsDir' (index: 1)
+Get property 'propertyPosixAttributes' (index: 1)
+Get property 'propertyLastModificationTime' (index: 1)
+Get property 'propertyPath' (index: 1)
+Get property 'propertyUser' (index: 1)
+Get property 'propertyGroup' (index: 1)
+Get property 'dataSize' (index: 1)
+</pre></div>
+<p>
+As you see, the tracing stops just after 7-zip retrieved the size of the data for the item 1. This
+suggests, that the value for the size of the data of the item 1 may cause the failure. In this
+small example, like in most other cases, this will help to find the problem.
 </p>
 </td></tr>
 </table></td></tr>

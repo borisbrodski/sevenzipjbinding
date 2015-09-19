@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.impl;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -43,6 +44,8 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
 
     private int compressionLevel = -1;
     private int threadCount = -1;
+    private PrintStream tracePrintStream;
+    private boolean trace; // Read by native code
 
     protected void setInArchive(IInArchive inArchive) {
         this.inArchive = inArchive;
@@ -133,5 +136,44 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public IInArchive getConnectedInArchive() {
         return inArchive;
+    }
+
+    // Called by native code
+    private final void traceMessage(String message) {
+        if (trace) {
+            if (tracePrintStream == null) {
+                System.out.println(message);
+            } else {
+                tracePrintStream.println(message);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setTracePrintStream(PrintStream tracePrintStream) {
+        this.tracePrintStream = tracePrintStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PrintStream getTracePrintStream() {
+        return tracePrintStream;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setTrace(boolean trace) {
+        this.trace = trace;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isTrace() {
+        return trace;
     }
 }
