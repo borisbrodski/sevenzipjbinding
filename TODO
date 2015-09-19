@@ -43,6 +43,8 @@ Other TODOs:
 - In callbacks: Delete all local refs (jniEnvInstance->DeleteLocalRef(...)) in error cases (return S_FALSE)
 - In callbacks: Delete all local refs returned by jni.
 
+- Run tests on https://travis-ci.org/
+
 Minor TODOs:
 - OutItem: Check, that "(flag & DIRECTORY) <=> (isDir = true)" + test
 - CallbackTester: Test more callbacks (extraction(todo) + compression(done))
