@@ -38,6 +38,8 @@ import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveRemoveTe
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdateContentTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateArchiveUpdatePropertiesTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGeneric7zTest;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericBZip2Test;
+import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.compression.TraceCompressionTest;
@@ -174,6 +176,7 @@ import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericBZip2Test;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericZipTest;
+import net.sf.sevenzipjbinding.junit.snippets.CompressWithErrorTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
@@ -327,6 +330,7 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericTarTest.class, //
             UpdateAddRemoveItemsTest.class, //
             UpdateAlterItemsTest.class, //
+            CompressWithErrorTest.class, //
     };
 
     static Class<?>[] toolsTests = { //
@@ -414,6 +418,8 @@ public class AllTestSuite extends TestSuite {
             StandaloneUpdateNonGeneric7zTest.class, //
             StandaloneUpdateNonGenericTarTest.class, //
             StandaloneUpdateNonGenericZipTest.class, //
+            StandaloneUpdateNonGenericBZip2Test.class, //
+            StandaloneUpdateNonGenericGZipTest.class, //
 
             CompressFeatureSetLevel.CompressionFeatureSetLevelBZip2.class, //
             CompressFeatureSetLevel.CompressionFeatureSetLevelGZip.class, //

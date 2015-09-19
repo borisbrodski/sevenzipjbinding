@@ -48,7 +48,7 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
             IOutItemTar outItem = outItemFactory.createOutItemAndCloneProperties(index);
             if (itemToUpdate == index) {
                 outItem.setUpdateIsNewData(true);
-                outItem.setDataSize((long) newContent.length - 1);
+                outItem.setDataSize((long) newContent.length);
             }
 
             return outItem;
@@ -78,6 +78,8 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
         String itemToRemovePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
 
         IOutUpdateArchiveTar outArchiveConnected = inArchive.getConnectedOutArchiveTar();
+
+        outArchiveConnected.setTrace(true);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
                 new UpdateItemContentArchiveUpdateCallback(itemToUpdate, newContent));

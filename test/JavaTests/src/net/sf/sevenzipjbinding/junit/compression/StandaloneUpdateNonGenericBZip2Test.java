@@ -7,11 +7,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
-import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
-import net.sf.sevenzipjbinding.IOutUpdateArchive7z;
+import net.sf.sevenzipjbinding.IOutItemBZip2;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveBZip2;
 import net.sf.sevenzipjbinding.ISequentialInStream;
-import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
@@ -22,8 +21,8 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 import org.junit.Test;
 
-public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase {
-    private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
+public class StandaloneUpdateNonGenericBZip2Test extends JUnitNativeTestBase {
+    private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItemBZip2> {
         private int itemToUpdate;
         private byte[] newContent;
 
@@ -42,10 +41,10 @@ public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase {
 
         }
 
-        public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
+        public IOutItemBZip2 getItemInformation(int index, OutItemFactory<IOutItemBZip2> outItemFactory)
                 throws SevenZipException {
 
-            IOutItem7z outItem = outItemFactory.createOutItemAndCloneProperties(index);
+            IOutItemBZip2 outItem = outItemFactory.createOutItemAndCloneProperties(index);
             if (itemToUpdate == index) {
                 outItem.setUpdateIsNewData(true);
                 outItem.setDataSize((long) newContent.length);
@@ -63,22 +62,22 @@ public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase {
     @Test
     public void updateContent() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
         byteArrayStream.rewind();
 
         ByteArrayStream byteArrayStream2 = new ByteArrayStream(100000);
 
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, byteArrayStream));
+        IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.BZIP2, byteArrayStream));
         int itemToUpdate = virtualContent.getItemCount() / 2;
         byte[] newContent = new byte[random.get().nextInt(1024) + 1024];
         random.get().nextBytes(newContent);
 
-        String itemToRemovePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
+        String itemToRemovePath = virtualContent.getItemPath(0);
 
-        IOutUpdateArchive7z outArchiveConnected = inArchive.getConnectedOutArchive7z();
-        outArchiveConnected.setSolid(false);
+        IOutUpdateArchiveBZip2 outArchiveConnected = inArchive.getConnectedOutArchiveBZip2();
+        outArchiveConnected.setLevel(9);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
                 new UpdateItemContentArchiveUpdateCallback(itemToUpdate, newContent));
@@ -104,7 +103,7 @@ public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase {
 
     private ByteArrayStream compressVirtualContext(VirtualContent virtualContent) throws SevenZipException {
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
-        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.SEVEN_ZIP));
+        IOutCreateArchive<IOutItemAllFormats> outArchive = closeLater(SevenZip.openOutArchive(ArchiveFormat.BZIP2));
         virtualContent.createOutArchive(outArchive, byteArrayStream);
         return byteArrayStream;
     }

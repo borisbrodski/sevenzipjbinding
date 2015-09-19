@@ -48,7 +48,7 @@ public class StandaloneUpdateNonGenericZipTest extends JUnitNativeTestBase {
             IOutItemZip outItem = outItemFactory.createOutItemAndCloneProperties(index);
             if (itemToUpdate == index) {
                 outItem.setUpdateIsNewData(true);
-                outItem.setDataSize((long) newContent.length - 1);
+                outItem.setDataSize((long) newContent.length);
             }
 
             return outItem;
