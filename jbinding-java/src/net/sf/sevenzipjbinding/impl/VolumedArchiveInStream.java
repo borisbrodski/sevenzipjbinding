@@ -54,7 +54,8 @@ public class VolumedArchiveInStream implements IInStream {
      * @param archiveOpenVolumeCallback
      *            call back implementation used to access different volumes of archive.
      * @throws SevenZipException
-     *             in error case
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public VolumedArchiveInStream(IArchiveOpenVolumeCallback archiveOpenVolumeCallback) throws SevenZipException {
         this((String) archiveOpenVolumeCallback.getProperty(PropID.NAME), archiveOpenVolumeCallback);
@@ -69,7 +70,8 @@ public class VolumedArchiveInStream implements IInStream {
      *            call back implementation used to access different volumes of archive. The file name should ends with
      *            <code>.7z.001</code> or SevenZipException will be thrown.
      * @throws SevenZipException
-     *             in error case
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public VolumedArchiveInStream(String firstVolumeFilename, IArchiveOpenVolumeCallback archiveOpenVolumeCallback)
             throws SevenZipException {

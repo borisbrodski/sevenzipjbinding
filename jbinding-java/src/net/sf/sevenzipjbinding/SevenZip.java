@@ -688,7 +688,8 @@ public class SevenZip {
      * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      * @throws NullPointerException
      *             is thrown, if inStream is null
      * 
@@ -724,7 +725,8 @@ public class SevenZip {
      * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      * @throws NullPointerException
      *             is thrown, if inStream is null
      * 
@@ -751,7 +753,8 @@ public class SevenZip {
      * @return implementation of {@link IInArchive} which represents opened archive.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      * @throws NullPointerException
      *             is thrown, if inStream is null
      * 
@@ -888,7 +891,8 @@ public class SevenZip {
      * @see IOutCreateArchiveZip
      * @return an out-archive object initialized to create the new Zip archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public static IOutCreateArchiveZip openOutArchiveZip() throws SevenZipException {
         return (IOutCreateArchiveZip) openOutArchiveIntern(ArchiveFormat.ZIP);
@@ -900,7 +904,8 @@ public class SevenZip {
      * @see IOutCreateArchive7z
      * @return an out-archive object initialized to create the new 7z archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public static IOutCreateArchive7z openOutArchive7z() throws SevenZipException {
         return (IOutCreateArchive7z) openOutArchiveIntern(ArchiveFormat.SEVEN_ZIP);
@@ -912,7 +917,8 @@ public class SevenZip {
      * @see IOutCreateArchiveTar
      * @return an out-archive object initialized to create the new 7z archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public static IOutCreateArchiveTar openOutArchiveTar() throws SevenZipException {
         return (IOutCreateArchiveTar) openOutArchiveIntern(ArchiveFormat.TAR);
@@ -924,7 +930,8 @@ public class SevenZip {
      * @see IOutCreateArchiveBZip2
      * @return an out-archive object initialized to create the new BZip2 archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public static IOutCreateArchiveBZip2 openOutArchiveBZip2() throws SevenZipException {
         return (IOutCreateArchiveBZip2) openOutArchiveIntern(ArchiveFormat.BZIP2);
@@ -936,7 +943,8 @@ public class SevenZip {
      * @see IOutCreateArchiveGZip
      * @return an out-archive object initialized to create the new GZip archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public static IOutCreateArchiveGZip openOutArchiveGZip() throws SevenZipException {
         return (IOutCreateArchiveGZip) openOutArchiveIntern(ArchiveFormat.GZIP);
@@ -950,7 +958,8 @@ public class SevenZip {
      *            archive format of the new archive
      * @return an out-archive object initialized to create the new archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding intern error occur. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     @SuppressWarnings("unchecked")
     public static IOutCreateArchive<IOutItemAllFormats> openOutArchive(ArchiveFormat archiveFormat)

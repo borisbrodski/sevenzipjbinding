@@ -151,7 +151,8 @@ public class OutItemFactory<T extends IOutItemBase> {
      * 
      * @return a new instance
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     @SuppressWarnings("unchecked")
     public T createOutItem(int updateOldArchiveItemIndex) throws SevenZipException {
@@ -181,7 +182,8 @@ public class OutItemFactory<T extends IOutItemBase> {
      * 
      * @return a new instance
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     @SuppressWarnings("unchecked")
     public T createOutItemAndCloneProperties(int updateOldArchiveItemIndex) throws SevenZipException {

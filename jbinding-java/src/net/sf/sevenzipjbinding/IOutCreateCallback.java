@@ -115,7 +115,8 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
      * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>. Return
      *         <code>null</code> for archive items without content (for example, for directories)
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public ISequentialInStream getStream(int index) throws SevenZipException;
 }

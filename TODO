@@ -1,6 +1,4 @@
 Release 2.00 TODOs:
-- Rewrite all @throws SevenZipException JavaDoc tags (mention extended stacktrace) (partially complete)
-- Check @author, @since and @version in the JavaDoc of all files (source + test?)
 
 
 Other TODOs:

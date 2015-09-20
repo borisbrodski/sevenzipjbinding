@@ -23,7 +23,8 @@ public interface IInArchive extends Closeable {
      * no more methods should be called.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public void close() throws SevenZipException;
 
@@ -32,7 +33,8 @@ public interface IInArchive extends Closeable {
      * 
      * @return count of items in archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public int getNumberOfItems() throws SevenZipException;
 
@@ -44,8 +46,10 @@ public interface IInArchive extends Closeable {
      * @param propID
      *            property to get value of
      * @return value of property <code>propID</code> of item with index <code>index</code>
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public Object getProperty(int index, PropID propID) throws SevenZipException;
 
@@ -60,7 +64,8 @@ public interface IInArchive extends Closeable {
      * @return property <code>propID</code> of item with id <code>index</code> in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public String getStringProperty(int index, PropID propID) throws SevenZipException;
 
@@ -82,7 +87,8 @@ public interface IInArchive extends Closeable {
      *            extraction callback object. Optional implementation of {@link ICryptoGetTextPassword}.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
             throws SevenZipException;
@@ -94,9 +100,11 @@ public interface IInArchive extends Closeable {
      *            index of the item to extract. 0 - first archive item.
      * @param outStream
      *            sequential output stream to get content of the item
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      * @return result status of the extraction
+     * 
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException;
 
@@ -109,9 +117,11 @@ public interface IInArchive extends Closeable {
      *            sequential output stream to get content of the item
      * @param password
      *            password to use
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
      * @return result status of the extraction
+     * 
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
             throws SevenZipException;
@@ -124,7 +134,8 @@ public interface IInArchive extends Closeable {
      * @return value of archive property <code>propID</code>
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -136,7 +147,8 @@ public interface IInArchive extends Closeable {
      * @return property <code>propID</code> of archive in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public String getStringArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -144,8 +156,10 @@ public interface IInArchive extends Closeable {
      * Return count of properties of each archive item
      * 
      * @return count of properties of each archive item
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public int getNumberOfProperties() throws SevenZipException;
 
@@ -156,8 +170,10 @@ public interface IInArchive extends Closeable {
      * @param index
      *            property index
      * @return information about property of archive item
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
 
@@ -166,7 +182,8 @@ public interface IInArchive extends Closeable {
      * 
      * @return count of properties of archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public int getNumberOfArchiveProperties() throws SevenZipException;
 
@@ -178,8 +195,10 @@ public interface IInArchive extends Closeable {
      * @param index
      *            property index
      * @return information about archive property
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException;
 
@@ -205,8 +224,10 @@ public interface IInArchive extends Closeable {
      * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException;
 
@@ -218,8 +239,10 @@ public interface IInArchive extends Closeable {
      * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException;
 
@@ -231,8 +254,10 @@ public interface IInArchive extends Closeable {
      * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException;
 
@@ -244,8 +269,10 @@ public interface IInArchive extends Closeable {
      * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException;
 
@@ -258,8 +285,10 @@ public interface IInArchive extends Closeable {
      * be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException;
 
@@ -272,8 +301,10 @@ public interface IInArchive extends Closeable {
      * be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
+     * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error. Check exception message for more information.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException;
 }

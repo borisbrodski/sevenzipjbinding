@@ -286,7 +286,7 @@ public class SevenZipException extends IOException {
     }
 
     /**
-     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified system
+     * Prints stack traces of this SevenZipException and of the all thrown 'cause by' exceptions to the specified system
      * error stream <code>System.err</code>.
      */
     public void printStackTraceExtended() {

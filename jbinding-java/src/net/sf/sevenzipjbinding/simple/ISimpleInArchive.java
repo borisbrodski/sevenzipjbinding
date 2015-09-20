@@ -17,7 +17,8 @@ public interface ISimpleInArchive {
      * <b>Note</b>: This method should be always called to free system resources.
      * 
      * @throws SevenZipException
-     *             intern error occurs. See {@link SevenZipException#getMessage()} for details.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public void close() throws SevenZipException;
 
@@ -27,7 +28,8 @@ public interface ISimpleInArchive {
      * @return count of item in archive.
      * 
      * @throws SevenZipException
-     *             error occurs. See {@link SevenZipException#getMessage()} for details.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public int getNumberOfItems() throws SevenZipException;
 
@@ -36,7 +38,8 @@ public interface ISimpleInArchive {
      * 
      * @return array of archive items
      * @throws SevenZipException
-     *             error occurs. See {@link SevenZipException#getMessage()} for details.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public ISimpleInArchiveItem[] getArchiveItems() throws SevenZipException;
 
@@ -47,7 +50,8 @@ public interface ISimpleInArchive {
      *            index of the archive item to return
      * @return corresponding instance of {@link ISimpleInArchiveItem}
      * @throws SevenZipException
-     *             error occurs. See {@link SevenZipException#getMessage()} for details.
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException;
 }
