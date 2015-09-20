@@ -10,7 +10,7 @@ import org.junit.Test;
  * Tests {@link OpenMultipartArchive7z} snippet
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class OpenMultipartArchive7zTest extends SnippetTest {
     private String getExpectedOutput() {

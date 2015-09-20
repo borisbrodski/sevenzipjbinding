@@ -29,7 +29,7 @@ import org.junit.Test;
  * Create 7-Zip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallback7z}&gt; interface.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
     private class OutCreateArchive7z implements IOutCreateCallback<IOutItem7z> {

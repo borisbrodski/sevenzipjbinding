@@ -9,7 +9,7 @@ import org.junit.Test;
  * Abstract class for all extract multiple file archive tests using header pass.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public abstract class ExtractMultipleFileAbstractHeaderPassTest extends ExtractMultipleFileAbstractPassTest {
 

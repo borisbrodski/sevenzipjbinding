@@ -9,7 +9,7 @@ import java.util.Date;
  * @see IOutItemBase
  * 
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public interface IOutItemTar extends IOutItemBase {
     /**

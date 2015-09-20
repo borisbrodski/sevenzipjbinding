@@ -17,7 +17,7 @@ import org.junit.Test;
  * Tests behavior of SevenZipJBinding trying opening random stream of bytes as an archive.
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class GarbageArchiveFileTest extends JUnitNativeTestBase {
     private static final int SINGLE_TEST_THREAD_COUNT = 10;

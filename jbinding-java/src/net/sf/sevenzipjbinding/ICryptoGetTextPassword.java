@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * Interface to provide password to the archive engine.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public interface ICryptoGetTextPassword {
     /**

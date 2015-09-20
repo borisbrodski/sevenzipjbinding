@@ -16,7 +16,7 @@ import org.junit.Test;
  * Tests, that all 7-Zip-JBinding native methods declare throws {@link SevenZipException}.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class DeclareThrowsSevenZipExceptionTest {
     private static final Class<?>[] classesToTest = new Class<?>[] { SevenZip.class, InArchiveImpl.class,

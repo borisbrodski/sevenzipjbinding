@@ -24,7 +24,7 @@ import org.junit.Test;
  * Tests exceptions during archive compression.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class CompressExceptionGetItemInformationTest extends CompressAbstractTest {
     public interface IOutItemModifier {

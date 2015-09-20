@@ -29,7 +29,7 @@ import org.junit.Test;
  * Create GZip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackGZip}&gt; interface.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
     private class OutCreateArchiveGZip implements IOutCreateCallback<IOutItemGZip> {

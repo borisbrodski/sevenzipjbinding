@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * This interface provides progress information of a process.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public interface IProgress {
     /**

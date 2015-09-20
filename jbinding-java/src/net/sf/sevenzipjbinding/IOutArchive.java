@@ -12,7 +12,7 @@ package net.sf.sevenzipjbinding;
  *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
  * 
  * @author Boris Brodski
- * @since 2.0
+ * @since 9.20-2.00
  */
 public interface IOutArchive<T extends IOutItemBase> extends IOutCreateArchive<T>, IOutUpdateArchive<T> {
 

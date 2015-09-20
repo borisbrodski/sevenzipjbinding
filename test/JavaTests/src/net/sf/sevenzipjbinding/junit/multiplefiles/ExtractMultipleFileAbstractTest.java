@@ -59,7 +59,7 @@ import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
  *
  *
  * @author Boris Brodski
- * @version 1.0
+ * @since 1.0
  */
 public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstractTest {
 	private static final String MULTIPLE_FILES_TEST_DATA_PATH = "testdata/multiple-files";

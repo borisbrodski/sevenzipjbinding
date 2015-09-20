@@ -72,7 +72,7 @@ import org.junit.Test;
  *
  *
  * @author Boris Brodski
- * @version 1.0
+ * @since 1.0
  */
 public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractTest {
 	private static final String SINGLE_FILE_TEST_DATA_PATH = "testdata/simple";

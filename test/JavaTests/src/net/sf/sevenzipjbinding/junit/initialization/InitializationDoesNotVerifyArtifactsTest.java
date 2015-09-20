@@ -17,7 +17,7 @@ import org.junit.Test;
  * Tests, that 7-Zip-JBinding initialization procedure doesn't verify or overwrite temporary artifacts.
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class InitializationDoesNotVerifyArtifactsTest {
     private static final String SYSTEM_PROPERTY_PHASE = "sevenziptest.standard_initialization_test_phase";

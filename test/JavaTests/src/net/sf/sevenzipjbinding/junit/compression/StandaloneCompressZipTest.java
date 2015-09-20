@@ -29,7 +29,7 @@ import org.junit.Test;
  * Create Zip archive using specific {@link IOutCreateCallback}&lt;{@link IOutItemCallbackZip}&gt; interface.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class StandaloneCompressZipTest extends JUnitNativeTestBase {
     private class OutCreateArchiveZip implements IOutCreateCallback<IOutItemZip> {

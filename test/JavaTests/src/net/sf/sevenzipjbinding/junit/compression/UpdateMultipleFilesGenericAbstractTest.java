@@ -9,7 +9,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * Base class for all update multiple files tests using non-generic update classback.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class UpdateMultipleFilesGenericAbstractTest extends
         UpdateMultipleFilesAbstractTest<IOutItemAllFormats> {

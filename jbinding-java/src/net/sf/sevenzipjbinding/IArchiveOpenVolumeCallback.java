@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * Interface to provide information (properties and input streams) for open operation of a multi-volume archive.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public interface IArchiveOpenVolumeCallback {
 

@@ -28,7 +28,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemAllFormats
  * 
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public interface IOutUpdateArchive7z extends IOutUpdateArchive<IOutItem7z>, //
         IOutFeatureSetLevel, //

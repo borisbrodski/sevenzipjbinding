@@ -31,7 +31,7 @@ import net.sf.sevenzipjbinding.simple.impl.SimpleInArchiveImpl;
  * Implementation of {@link IInArchive}.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 //TODO null check all parameters: If null slips through into native code there will be no NPE :( 
 public final class InArchiveImpl implements IInArchive {

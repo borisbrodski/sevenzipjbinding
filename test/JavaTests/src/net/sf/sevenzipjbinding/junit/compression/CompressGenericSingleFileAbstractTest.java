@@ -15,7 +15,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * Tests compression and extraction of a single file using generic interface.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class CompressGenericSingleFileAbstractTest extends CompressSingleFileAbstractTest<IOutItemAllFormats> {
     public class GenericSingleFileCreateArchiveCallback extends SingleFileCreateArchiveCallback {

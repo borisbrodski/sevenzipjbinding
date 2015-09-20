@@ -10,7 +10,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutCreateArchive
  * @see ArchiveFormat#SEVEN_ZIP
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public interface IOutCreateArchive7z extends IOutCreateArchive<IOutItem7z>, //
         IOutFeatureSetLevel, //

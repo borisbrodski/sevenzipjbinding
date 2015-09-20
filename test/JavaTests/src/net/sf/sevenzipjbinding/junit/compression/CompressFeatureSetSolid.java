@@ -20,7 +20,7 @@ import org.junit.Test;
  * Tests setting solid.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles {
     private static final int DELTA_FILE_LENGTH = 100;

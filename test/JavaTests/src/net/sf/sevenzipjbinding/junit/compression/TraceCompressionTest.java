@@ -29,7 +29,7 @@ import org.junit.Test;
  * Test 7-Zip-JBinding compression/update tracing.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class TraceCompressionTest extends JUnitNativeTestBase {
     private class OutCreateArchive implements IOutCreateCallback<IOutItemAllFormats> {

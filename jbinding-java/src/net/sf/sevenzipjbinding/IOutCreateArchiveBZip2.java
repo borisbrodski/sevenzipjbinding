@@ -10,7 +10,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutCreateArchive
  * @see ArchiveFormat#BZIP2
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public interface IOutCreateArchiveBZip2 extends IOutCreateArchive<IOutItemBZip2>, //
         IOutFeatureSetLevel {

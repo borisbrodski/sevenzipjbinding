@@ -6,7 +6,7 @@ import java.io.Closeable;
  * Interface used to operate with sequential input stream.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public interface ISequentialInStream extends Closeable {
     /**

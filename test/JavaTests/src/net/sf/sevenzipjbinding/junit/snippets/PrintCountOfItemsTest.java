@@ -8,7 +8,7 @@ import org.junit.Test;
  * Tests {@link PrintCountOfItems} snippet
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class PrintCountOfItemsTest extends SnippetTest {
 

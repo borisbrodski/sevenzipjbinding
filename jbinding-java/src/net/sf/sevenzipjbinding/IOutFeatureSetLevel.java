@@ -6,7 +6,7 @@ package net.sf.sevenzipjbinding;
  * 
  * @see IOutCreateArchive
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  * 
  */
 public interface IOutFeatureSetLevel {

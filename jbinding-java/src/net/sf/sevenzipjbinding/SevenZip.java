@@ -161,7 +161,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * For more information see {@link IOutUpdateArchive}.
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class SevenZip {
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";

@@ -10,7 +10,7 @@ import org.junit.Test;
  * Tests {@link ListItemsSimple} and {@link ListItemsStandard} snippets
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class ListItemsTest extends SnippetTest {
     private String getExpectedOutput() {

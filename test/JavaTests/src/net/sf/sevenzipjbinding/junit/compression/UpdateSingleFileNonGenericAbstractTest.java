@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  * Base class for all update single file tests using non-generic update classback.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class UpdateSingleFileNonGenericAbstractTest extends UpdateSingleFileAbstractTest<IOutItemAllFormats> {
     public class ArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {

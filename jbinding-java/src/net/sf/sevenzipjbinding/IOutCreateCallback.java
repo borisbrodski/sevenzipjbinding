@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
  * 
  * @author Boris Brodski
- * @version 9.04-2.00
+ * @since 9.04-2.00
  */
 public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
     /**

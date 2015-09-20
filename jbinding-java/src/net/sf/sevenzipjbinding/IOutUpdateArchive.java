@@ -32,7 +32,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemAllFormats
  * 
  * @author Boris Brodski
- * @version 9.04-2.0
+ * @since 9.04-2.0
  * 
  */
 public interface IOutUpdateArchive<T extends IOutItemBase> extends IOutArchiveBase {

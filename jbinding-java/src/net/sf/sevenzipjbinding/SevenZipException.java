@@ -40,7 +40,7 @@ import java.io.Writer;
  * @see #printStackTraceExtended(PrintWriter)
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class SevenZipException extends IOException {
     private static final String NEW_LINE = System.getProperty("line.separator");

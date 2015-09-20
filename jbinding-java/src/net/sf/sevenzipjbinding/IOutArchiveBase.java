@@ -6,7 +6,7 @@ import java.io.PrintStream;
  * Base interface for compression/update archive main interfaces.
  * 
  * @author Boris Brodski
- * @since 2.0
+ * @since 9.20-2.00
  */
 public interface IOutArchiveBase {
     /**

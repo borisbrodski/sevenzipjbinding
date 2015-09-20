@@ -20,7 +20,7 @@ import org.junit.Rule;
  * - Initialization of the native library
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  *
  */
 public class JUnitNativeTestBase extends JUnitTestBase {

@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * Tests setting compression level.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public abstract class CompressFeatureAbstractMultpleFiles extends CompressAbstractTest {
 

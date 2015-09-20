@@ -6,7 +6,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  * Tests compression and extraction of a single file using generic callback.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class CompressGenericSingleFile7zTest extends CompressGenericSingleFileAbstractTest {
 

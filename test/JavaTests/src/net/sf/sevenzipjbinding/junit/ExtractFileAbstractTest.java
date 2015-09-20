@@ -36,7 +36,7 @@ import org.junit.Test;
  * Abstract class for all mass archive extraction tests.
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     private static final String DEFAULT_PASSWORD = "TestPass";

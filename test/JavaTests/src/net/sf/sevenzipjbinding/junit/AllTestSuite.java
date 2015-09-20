@@ -216,7 +216,7 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
  * Suite builder for all JUnit tests.
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //

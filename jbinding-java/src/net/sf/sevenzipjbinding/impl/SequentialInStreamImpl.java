@@ -12,7 +12,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @deprecated use {@link InputStreamSequentialInStream}
  * 
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 @Deprecated
 // TODO Remove in the next release

@@ -10,7 +10,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * Generates random content with different entropy.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class RandomContext implements IInStream {
 

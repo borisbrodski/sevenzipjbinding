@@ -7,7 +7,7 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
  * Tests compression, update and extraction of a single file using non-generic callback with BZip2.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class UpdateSingleFileNonGenericBZip2Test extends UpdateSingleFileNonGenericAbstractTest {
 

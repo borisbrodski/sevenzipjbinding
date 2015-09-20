@@ -11,7 +11,7 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  * Tests compression and extraction of a single file using non-generic callback with BZip2.
  *
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  */
 public class CompressNonGenericSingleFileBZip2Test extends CompressNonGenericSingleFileAbstractTest<IOutItemBZip2> {
     private class SingleFileCreateArchiveCallbackBZip2 extends SingleFileCreateArchiveCallback {

@@ -51,7 +51,7 @@ import java.io.Closeable;
  *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
  * 
  * @author Boris Brodski
- * @version 9.20-2.00
+ * @since 9.20-2.00
  * 
  */
 public interface IOutCreateArchive<T extends IOutItemBase> extends IOutArchiveBase, Closeable {

@@ -57,7 +57,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * content to the callback method.
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class VirtualContent {
     public static class VirtualContentConfiguration {

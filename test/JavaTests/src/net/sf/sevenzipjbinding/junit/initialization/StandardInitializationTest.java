@@ -21,7 +21,7 @@ import org.junit.Test;
  * </ul>
  *
  * @author Boris Brodski
- * @version 4.65-1
+ * @since 4.65-1
  */
 public class StandardInitializationTest {
     private static final String SYSTEM_PROPERTY_PHASE = "sevenziptest.standard_initialization_test_phase";
