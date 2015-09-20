@@ -9,6 +9,7 @@ package net.sf.sevenzipjbinding;
  * 
  * @see IOutCreateArchive
  * @see ArchiveFormat#BZIP2
+ * 
  * @author Boris Brodski
  * @since 9.20-2.00
  */

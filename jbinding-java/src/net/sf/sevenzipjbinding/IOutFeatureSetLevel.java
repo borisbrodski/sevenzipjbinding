@@ -5,6 +5,7 @@ package net.sf.sevenzipjbinding;
  * the <code>SevenZip.openOutArchiveXxx()</code> methods to get implementation of this interface.
  * 
  * @see IOutCreateArchive
+ * 
  * @author Boris Brodski
  * @since 9.20-2.00
  * 

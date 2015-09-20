@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * OutStream interface used to operate with seekable output streams (random access streams)
  * 
  * @author Boris Brodski
- * @since 9.04-2.00
+ * @since 9.20-2.00
  */
 public interface IOutStream extends ISequentialOutStream, ISeekableStream {
     /**

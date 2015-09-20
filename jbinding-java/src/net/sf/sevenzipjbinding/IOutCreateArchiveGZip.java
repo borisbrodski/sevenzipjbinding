@@ -9,6 +9,7 @@ package net.sf.sevenzipjbinding;
  * 
  * @see IOutCreateArchive
  * @see ArchiveFormat#GZIP
+ * 
  * @author Boris Brodski
  * @since 9.20-2.00
  */

@@ -4,7 +4,7 @@ package net.sf.sevenzipjbinding;
  * Interface for seekable streams (random access streams).
  * 
  * @author Boris Brodski
- * 
+ * @since 9.20-2.00
  */
 public interface ISeekableStream {
     /**

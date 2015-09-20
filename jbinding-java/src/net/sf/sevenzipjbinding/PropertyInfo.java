@@ -5,7 +5,6 @@ package net.sf.sevenzipjbinding;
  * 
  * @author Boris Brodski
  * @since 4.65-1
- * 
  */
 public class PropertyInfo {
     /**

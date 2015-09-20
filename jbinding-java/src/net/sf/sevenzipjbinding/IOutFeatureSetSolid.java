@@ -7,7 +7,6 @@ package net.sf.sevenzipjbinding;
  * 
  * @author Boris Brodski
  * @since 9.20-2.00
- * 
  */
 public interface IOutFeatureSetSolid {
 

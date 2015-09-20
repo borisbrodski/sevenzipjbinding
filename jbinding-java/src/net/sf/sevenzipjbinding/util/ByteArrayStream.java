@@ -28,7 +28,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * {@link OutputStream} through various methods.
  * 
  * @author Boris Brodski
- * 
+ * @since 9.20-2.00
  */
 public class ByteArrayStream implements IInStream, IOutStream {
 
