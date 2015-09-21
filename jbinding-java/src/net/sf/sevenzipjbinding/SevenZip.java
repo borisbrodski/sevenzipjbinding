@@ -195,7 +195,7 @@ public class SevenZip {
      * @see #getLastInitializationException()
      * @see #isAutoInitializationWillOccur()
      */
-    public static boolean isInitializedSuccessfully() {
+    public static synchronized boolean isInitializedSuccessfully() {
         return initializationSuccessful;
     }
 
@@ -205,7 +205,7 @@ public class SevenZip {
      * @return <code>null</code> - no initialization exception occurred (yet), else initialization exception
      * @see SevenZip#isInitializedSuccessfully()
      */
-    public static Throwable getLastInitializationException() {
+    public static synchronized Throwable getLastInitializationException() {
         return lastInitializationException;
     }
 
@@ -220,7 +220,7 @@ public class SevenZip {
      * @see #isInitializedSuccessfully()
      * @see #getLastInitializationException()
      */
-    public static boolean isAutoInitializationWillOccur() {
+    public static synchronized boolean isAutoInitializationWillOccur() {
         return autoInitializationWillOccur;
     }
 
@@ -231,7 +231,7 @@ public class SevenZip {
      * @return the platform used for the initialization or <code>null</code> if initialization wasn't performed yet.
      * @see SevenZip#getPlatformList()
      */
-    public static String getUsedPlatform() {
+    public static synchronized String getUsedPlatform() {
         return usedPlatform;
     }
 
@@ -243,7 +243,7 @@ public class SevenZip {
      * @throws SevenZipNativeInitializationException
      *             indicated problems finding or parsing platform property file
      */
-    public static List<String> getPlatformList() throws SevenZipNativeInitializationException {
+    public static synchronized List<String> getPlatformList() throws SevenZipNativeInitializationException {
         if (availablePlatforms != null) {
             return availablePlatforms;
         }
@@ -284,7 +284,7 @@ public class SevenZip {
      * 
      * @return array of {@link File}s.
      */
-    public static File[] getTemporaryArtifacts() {
+    public static synchronized File[] getTemporaryArtifacts() {
         return temporaryArtifacts;
     }
 
@@ -635,7 +635,7 @@ public class SevenZip {
      * @throws SevenZipNativeInitializationException
      *             in case of an initialization error
      */
-    public static void initLoadedLibraries() throws SevenZipNativeInitializationException {
+    public static synchronized void initLoadedLibraries() throws SevenZipNativeInitializationException {
         if (initializationSuccessful) {
             return;
         }
