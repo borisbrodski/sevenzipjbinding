@@ -164,6 +164,35 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * @since 4.65-1
  */
 public class SevenZip {
+    /**
+     * Version information about 7-Zip.
+     * 
+     * @author Boris Brodski
+     * @since 9.20-2.00
+     */
+    public static class Version {
+        /** Major version of the 7-Zip engine */
+        public int major;
+
+        /** Minor version of the 7-Zip engine */
+        public int minor;
+
+        /** Build id of the 7-Zip engine */
+
+        public int build;
+
+        /** Formatted version of the 7-Zip engine */
+        public String version;
+
+        /** Version date */
+        public String date;
+
+        /** copyright */
+        public String copyright;
+    }
+
+    private static final String SEVENZIPJBINDING_VERSION = "9.20-2.00beta";
+
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
     private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
     private static final String PROPERTY_SEVENZIPJBINDING_LIB_NAME = "lib.%s.name";
@@ -409,7 +438,7 @@ public class SevenZip {
      * @throws SevenZipNativeInitializationException
      *             by initialization failure
      */
-    private static void initSevenZipFromPlatformJARIntern(String platform, File tmpDirectory)
+    private static synchronized void initSevenZipFromPlatformJARIntern(String platform, File tmpDirectory)
             throws SevenZipNativeInitializationException {
         try {
             autoInitializationWillOccur = false;
@@ -884,6 +913,47 @@ public class SevenZip {
             throws SevenZipException;
 
     private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
+
+    private static native int nativeGetVersionMajor();
+
+    private static native int nativeGetVersionMinor();
+
+    private static native int nativeGetVersionBuild();
+
+    private static native String nativeGetVersionVersion();
+
+    private static native String nativeGetVersionDate();
+
+    private static native String nativeGetVersionCopyright();
+
+    /**
+     * Return information about native 7-Zip engine.
+     * 
+     * @return Version
+     */
+    public static Version getSevenZipVersion() {
+        ensureLibraryIsInitialized();
+
+        Version version = new Version();
+
+        version.major = nativeGetVersionMajor();
+        version.minor = nativeGetVersionMinor();
+        version.build = nativeGetVersionBuild();
+        version.version = nativeGetVersionVersion();
+        version.date = nativeGetVersionDate();
+        version.copyright = nativeGetVersionCopyright();
+
+        return version;
+    }
+
+    /**
+     * Return version of the 7-Zip-JBinding.
+     * 
+     * @return version of the 7-Zip-JBinding
+     */
+    public static String getSevenZipJBindingVersion() {
+        return SEVENZIPJBINDING_VERSION;
+    }
 
     /**
      * Create a new Zip archive.

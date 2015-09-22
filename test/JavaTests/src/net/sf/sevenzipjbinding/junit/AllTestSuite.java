@@ -63,6 +63,7 @@ import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeF
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
+import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
@@ -224,6 +225,7 @@ public class AllTestSuite extends TestSuite {
             ArchiveFormatTest.class, //
             DeclareThrowsSevenZipExceptionTest.class, //
             PTest.class, //
+            VersionTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //

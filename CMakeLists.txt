@@ -35,7 +35,12 @@ ENDIF()
 INCLUDE(cmake/FindJavaExtended.cmake)
 #INCLUDE(cmake/CheckGCC.cmake)
 
+
+
+# Change version also in SevenZip.SEVENZIPJBINDING_VERSION
 SET(SEVENZIPJBINDING_VERSON 9.20-2.00beta)
+
+
 
 SET(RELEASE_PATH ${PROJECT_BINARY_DIR})
 IF (SEVENZIPJBINDING_VERSON)
@@ -53,13 +58,15 @@ ENDIF()
 SET(PLATFORM ${JAVA_SYSTEM}-${JAVA_ARCH})
 
 SET(SEVENZIPJBINDING_LIB_JAR ${PROJECT_BINARY_DIR}/sevenzipjbinding-${PLATFORM}.jar)
+SET(SEVENZIPJBINDING_LIB_MANIFEST ${PROJECT_BINARY_DIR}/MANIFEST.MF)
 SET(SEVENZIPJBINDING_FILENAME sevenzipjbinding${SEVENZIPJBINDING_VERSON_POSTFIX}-${PLATFORM})
 SET(SEVENZIPJBINDING_SOURCE_FILENAME sevenzipjbinding${SEVENZIPJBINDING_VERSON_POSTFIX}-src)
 
-SET(JAVA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/jbinding-java/src)
-SET(SEVENZIP_JBINDING_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding.jar)
+SET(JAVA_SOURCE_DIR "${PROJECT_SOURCE_DIR}/jbinding-java/src")
+SET(SEVENZIPJBINDING_JAR "${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding.jar")
+SET(SEVENZIPJBINDING_MANIFEST "${PROJECT_BINARY_DIR}/jbinding-java/MANIFEST.MF")
 
-SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_JAR ${SEVENZIP_JBINDING_JAR}) 
+SET_PROPERTY(GLOBAL PROPERTY SEVENZIPJBINDING_JAR ${SEVENZIPJBINDING_JAR}) 
 SET_PROPERTY(GLOBAL PROPERTY MINGW                 ${MINGW}) 
 SET_PROPERTY(GLOBAL PROPERTY WINDOWS               ${WINDOWS}) 
 
@@ -70,11 +77,29 @@ ELSE()
     SET(PATH_SEP ":")
 ENDIF()
 
+MACRO(GENERATE_MANIFEST_MF
+    MANIFEST_FILE
+    TITLE
+)
+    STRING(TIMESTAMP DATE_TIME "%Y-%m-%d %H:%M:%SZ" UTC)
+    FILE(WRITE "${MANIFEST_FILE}"
+"Manifest-Version: 1.0
+CMake: ${CMAKE_VERSION}
+Created-By: 1.6.0_33-b03 (Sun Microsystems Inc.)
+Implementation-Title: ${TITLE}
+Implementation-Vendor: sevenzipjbind.sf.net
+Implementation-Version: ${SEVENZIPJBINDING_VERSON}
+Built-By: Boris Brodski
+Built-Date: ${DATE_TIME}
+")
+endmacro(GENERATE_MANIFEST_MF)
+
 MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND 
         P_BUILD_NAME    # spaceless simple name of the build process. For example: "test-src-build"  
         P_SRC_DIR       # java source directory
+        P_MANIFEST_MF   # MANIFEST.MF
         P_JAR_FILE      # output jar file
-        )    # list of classpath entries
+    )    # list of classpath entries
     SET(BIN_DIR ${PROJECT_BINARY_DIR}/jbinding-java/bin-${P_BUILD_NAME})
     FILE(MAKE_DIRECTORY ${BIN_DIR})
 
@@ -102,9 +127,9 @@ MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND
         LIST(APPEND JAVA_SOURCE_FILES_FULL "${P_SRC_DIR}/${F}")
     ENDFOREACH(F)
 
-    ADD_CUSTOM_COMMAND(OUTPUT ${P_JAR_FILE}
+    ADD_CUSTOM_COMMAND(OUTPUT "${P_JAR_FILE}"
         COMMAND ${JAVA_COMPILE} @${JAVAC_ARGS_FILE}
-        COMMAND ${JAVA_ARCHIVE} cf ${P_JAR_FILE} -C ${BIN_DIR} .
+        COMMAND ${JAVA_ARCHIVE} cfm "${P_JAR_FILE}" "${P_MANIFEST_MF}" -C "${BIN_DIR}" .
         DEPENDS ${JAVA_SOURCE_FILES_FULL}
         WORKING_DIRECTORY "${P_SRC_DIR}"
         COMMENT Compiling java ${P_BUILD_NAME}
@@ -112,10 +137,12 @@ MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND
     )
 ENDMACRO()
 
-CREATE_COMPILE_JAVA_CUSTOM_COMMAND(core "${JAVA_SOURCE_DIR}" "${SEVENZIP_JBINDING_JAR}")
+GENERATE_MANIFEST_MF("${SEVENZIPJBINDING_MANIFEST}" "7-Zip-JBinding")
+GENERATE_MANIFEST_MF("${SEVENZIPJBINDING_LIB_MANIFEST}" "7-Zip-JBinding native lib (${PLATFORM})")
+CREATE_COMPILE_JAVA_CUSTOM_COMMAND(core "${JAVA_SOURCE_DIR}" "${SEVENZIPJBINDING_MANIFEST}" "${SEVENZIPJBINDING_JAR}")
 
 ADD_CUSTOM_TARGET(sevenzipjbinding-jar ALL
-                  DEPENDS ${SEVENZIP_JBINDING_JAR}
+                  DEPENDS ${SEVENZIPJBINDING_JAR}
                   COMMENT Processing java build target)
 
 ADD_SUBDIRECTORY(jbinding-cpp)
@@ -197,7 +224,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_JAR}
                    COMMAND ${CMAKE_COMMAND} -E copy
                                            ${PROJECT_BINARY_DIR}/jbinding-cpp/${SEVENZIP_JBINDING_LIB_FILENAME}
                                            ${PLATFORM}
-                   COMMAND ${JAVA_ARCHIVE} cf ${SEVENZIPJBINDING_LIB_JAR} 
+                   COMMAND ${JAVA_ARCHIVE} cfm "${SEVENZIPJBINDING_LIB_JAR}" "${SEVENZIPJBINDING_LIB_MANIFEST}"
                                            -C ${PROJECT_BINARY_DIR}
                                            ${PLATFORM}
                    COMMAND ${JAVA_ARCHIVE} uf ${SEVENZIPJBINDING_LIB_JAR} 
@@ -292,7 +319,7 @@ INSTALL(FILES   AUTHORS
 INSTALL(FILES	CMakeFile-bin-dist.txt
 	DESTINATION .
 	RENAME CMakeLists.txt)
-INSTALL(FILES   ${SEVENZIP_JBINDING_JAR} 
+INSTALL(FILES   ${SEVENZIPJBINDING_JAR} 
                 ${SEVENZIPJBINDING_LIB_JAR}
         DESTINATION lib)
 
@@ -315,12 +342,14 @@ SET(DART_TESTING_TIMEOUT "36000" CACHE STRING "")	# Increase time out up to 10 h
 INCLUDE(CTest)
 IF(BUILD_TESTING)
     MESSAGE("-- Prepare for testing")
-    SET(JAVA_TEST_SOURCE_DIR ${PROJECT_SOURCE_DIR}/test/JavaTests/src)
-    SET(TESTS_JAR ${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar)
-    SET(JUNIT_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.11.jar)
-    SET(HAMCREST_LIB ${PROJECT_SOURCE_DIR}/test/JavaTests/lib/hamcrest-core-1.3.jar)
+    SET(JAVA_TEST_SOURCE_DIR "${PROJECT_SOURCE_DIR}/test/JavaTests/src")
+    SET(TESTS_JAR "${PROJECT_BINARY_DIR}/jbinding-java/sevenzipjbinding-tests.jar")
+    SET(TESTS_MANIFEST "${PROJECT_BINARY_DIR}/jbinding-java/test-MANIFEST.MF")
+    SET(JUNIT_LIB "${PROJECT_SOURCE_DIR}/test/JavaTests/lib/junit-4.11.jar")
+    SET(HAMCREST_LIB "${PROJECT_SOURCE_DIR}/test/JavaTests/lib/hamcrest-core-1.3.jar")
     
-    CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_JAR}" "${JUNIT_LIB}" "${HAMCREST_LIB}" ${SEVENZIP_JBINDING_JAR})
+    GENERATE_MANIFEST_MF("${TESTS_MANIFEST}" "7-Zip-JBinding tests")
+    CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_MANIFEST}" "${TESTS_JAR}" "${JUNIT_LIB}" "${HAMCREST_LIB}" "${SEVENZIPJBINDING_JAR}")
 
     ADD_CUSTOM_TARGET(sevenzipjbinding-test-jar ALL
                       DEPENDS ${TESTS_JAR}
@@ -330,7 +359,7 @@ IF(BUILD_TESTING)
     SET(JUNIT_TEST_RUNNER ${PROJECT_BINARY_DIR}/JUnitRunner.cmake)
     FILE(WRITE ${JUNIT_TEST_RUNNER} "STRING(REPLACE \"%3D\" \"=\" JAVA_OPT_TO_USE \"\${JAVA_OPT}\")
                                      EXECUTE_PROCESS(COMMAND
-                                            \"${JAVA_RUNTIME}\" -Xmx512m -cp \"${JUNIT_LIB}${PATH_SEP}${HAMCREST_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIP_JBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
+                                            \"${JAVA_RUNTIME}\" -Xmx512m -cp \"${JUNIT_LIB}${PATH_SEP}${HAMCREST_LIB}${PATH_SEP}${TESTS_JAR}${PATH_SEP}${SEVENZIPJBINDING_JAR}${PATH_SEP}${SEVENZIPJBINDING_LIB_JAR}\"
                                             \"-DSINGLEBUNDLE=\${SINGLEBUNDLE}\" \${JAVA_OPT_TO_USE} ")
     IF(JAVA_TMP)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Djava.io.tmpdir=${JAVA_TMP}\" ")

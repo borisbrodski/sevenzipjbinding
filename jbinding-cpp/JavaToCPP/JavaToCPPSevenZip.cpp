@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Common/MyInitGuid.h"
+#include "../C/7zVersion.h"
 
 #include "SevenZipJBinding.h"
 
@@ -64,6 +65,73 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
     return NULL;
 }
 
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionMajor
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionMajor(JNIEnv *, jclass) {
+    TRACE("SevenZip.nativeGetVersionMajor()")
+
+    return MY_VER_MAJOR;
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionMinor
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionMinor(JNIEnv *, jclass) {
+    TRACE("SevenZip.nativeGetVersionMinor()")
+
+    return MY_VER_MINOR;
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionBuild
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionBuild(JNIEnv *, jclass) {
+    TRACE("SevenZip.nativeGetVersionBuild()")
+
+    return MY_VER_BUILD;
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionVersion
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionVersion(JNIEnv * env, jclass) {
+    TRACE("SevenZip.nativeGetVersionVersion()")
+
+    return env->NewStringUTF(MY_VERSION);
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionDate
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionDate(JNIEnv * env, jclass) {
+    TRACE("SevenZip.nativeGetVersionDate()")
+
+    return env->NewStringUTF(MY_DATE);
+}
+
+/*
+ * Class:     net_sf_sevenzipjbinding_SevenZip
+ * Method:    nativeGetVersionCopyright
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeGetVersionCopyright(JNIEnv * env, jclass) {
+    TRACE("SevenZip.nativeGetVersionCopyright()")
+
+    return env->NewStringUTF(MY_COPYRIGHT);
+}
+
+
 JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeOpenArchive(
                                                                                            JNIEnv * env,
                                                                                            jclass thiz,
@@ -71,8 +139,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
                                                                                            jobject inStream,
                                                                                            jobject archiveOpenCallbackImpl) {
     TRACE("SevenZip.nativeOpenArchive()")
-
-
 
     JBindingSession & jbindingSession = *(new JBindingSession(env));
     DeleteInErrorCase<JBindingSession> deleteInErrorCase(jbindingSession);

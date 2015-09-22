@@ -16,9 +16,6 @@ Other TODOs:
 
 - Repack XAR (bz2) tests with new version of xar
 
-- Provide 7-Zip version information to java (see 7zVersion.h)
-- Procide 7-Zip-JBinding version information to java, also add it to MANIFEST.MF of all jars
-
 - Find optimal gcc optimization parameters (See CPP/7zip/CMAKE/*) (Consider using -D_7ZIP_LARGE_PAGES on 64bit systems), -pipe
 
 - Bind SetProperty("CRC", ...) for extraction of 7z archives and compression of XZ-archives

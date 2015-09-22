@@ -14,7 +14,7 @@ import org.junit.Test;
 
 /**
  * Tests, that all 7-Zip-JBinding native methods declare throws {@link SevenZipException}.
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -26,6 +26,11 @@ public class DeclareThrowsSevenZipExceptionTest {
     public void testDeclareThrowsSevenZipException() {
         for (Class<?> classToTest : classesToTest) {
             methodLoop: for (Method method : classToTest.getDeclaredMethods()) {
+                if (method.getName().startsWith("nativeGetVersion")) {
+                    // nativeGetVersionXxx methods are written without usage of the JBindingContext
+                    // and can't throw SevenZipExceptions.
+                    continue;
+                }
                 if (Modifier.isNative(method.getModifiers())) {
                     for (Class<?> exceptionClass : method.getExceptionTypes()) {
                         if (exceptionClass == SevenZipException.class
