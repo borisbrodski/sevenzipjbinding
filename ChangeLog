@@ -3,26 +3,27 @@
 
 Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
 
-	* Bind 7-Zip 9.20
+	* Bind 7-Zip 9.20 (beta)
 
 	* Create/update archives
 		- Supported archives: 7z, BZip2, Tar, Zip, GZip
 		- Archive format specific or generic compression API
+		- JavaDoc + Snippets
 		
 	* API changes
 	    - Extend SevenZipException from IOException
-	    - Extend Closeable interface in IInArchive and IOutArchive
+	    - Add Closeable interface to IInArchive and IOutArchive
 	    - ISevenZipInArchive renamed to IInArchive
 
-    * SHA1 hashes are used to verify libraries in the temp directory (before reusing) 
+    * SHA1 hashes are used to verify cached binaries in the temp directory (before reusing) 
 
 	* Bugfixes:
 	  - #17 WIM archive format contains Udf comment
 
-	* x2 performance boot (using optimization gcc -O2)
-	
+	* huge performance boost (using -O1 or -O2 optimization )
+
 	* SevenZip.getSevenZipVersion() and SevenZip.getSevenZipJBindingVersion() provide
-	  version information of 7-Zip and 7-Zip-JBinding
+	  version information of the 7-Zip and 7-Zip-JBinding
 
 Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Feature: WIM format support + tests

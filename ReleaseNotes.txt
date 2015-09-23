@@ -1,32 +1,48 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Main features of 4.65-1.06rc-extr-only (Release candidate, extraction only, cross-platform, based on zip/p7zip 4.65)
+Main features of 9.20-2.00beta (Release candidate, extraction/compression/update, cross-platform, based on zip/p7zip 9.20)
 
 	* Extraction of
-		- 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,
-		  Z, Arj, Lzh, Cab, Chm, Nsis, DEB, RPM, UDF, WIM
+        - 7z, Arj, BZip2, Cab, Chm, Cpio, Deb, GZip, HFS, Iso, Lzh,
+          Lzma, Nsis, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
+
+	    - Compression method auto detection
+	    - Support for password protected and volumed archives
+	    - Simple extraction interface
+
+    * Compression & update of
+        - 7z, Zip, Tar, GZip, BZip2
+        - Archive format specific or generic compression API
 	
-	* Support for password protected and volumed archives
-	
-	* Compression method auto detection
-	
-	* Simple extraction interface
-	
+	* 7-Zip-JBinding requires Java 1.5 or higher
+
 	* Cross-platform. Binaries available for
 		- Windows 32/64
 		- Linux	32/64
 		- Mac OS X 32/64
+		- ARM (ASMv4+, small endian)
 
 	* Multi-platform distributions (with platform auto-detection):
 	  	- AllWindows - includes Win32 and Win64
 	  	- AllLinux - includes Linux32 and Linux64
 	  	- AllMax - includes Mac OS X 32 and Mac OS X 64
-	  	- AllPlatforms - includes AllWindows, AllLinux and AllMac
+	  	- AllPlatforms - includes AllWindows, AllLinux and AllMac + build optimized for RaspberryPI
 
-	* Over 3600 JUnit tests extraction of archive formats:
+    * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
+
+	* Over 6900 JUnit tests:
 		- 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,
 		  Z, Arj, Lzh, Cab, Chm, Nsis, DEB, RPM, UDF
-	
-	* 7-Zip-JBinding requires Java 1.5 or higher
-	
+
+    * Available on the Maven Central (week after the official release)
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding</artifactId>
+            <version>9.20-2.00beta</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding-all-platforms</artifactId>
+            <version>9.20-2.00beta</version>
+        </dependency>
