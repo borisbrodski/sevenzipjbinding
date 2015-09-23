@@ -84,8 +84,13 @@ IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 ELSE()
     add_definitions(
         -DNDEBUG
-        -O2
     )
+
+    IF(APPLE)
+        add_definitions( -O )
+    ELSE()
+        add_definitions( -O2 )
+    ENDIF()
 ENDIF()
 
 add_definitions(
