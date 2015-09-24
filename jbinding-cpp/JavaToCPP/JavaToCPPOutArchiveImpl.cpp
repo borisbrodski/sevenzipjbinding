@@ -53,9 +53,9 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	if (isUserTraceEnabled(jniEnvInstance, thiz)) {
 	    if (isInArchiveAttached) {
-	        userTrace(jniEnvInstance, thiz, UString(L"Updating ") << numberOfItems << L" items");
+	        userTrace(jniEnvInstance, thiz, UString(L"Updating ") << (UInt32)numberOfItems << L" items");
 	    } else {
-	        userTrace(jniEnvInstance, thiz, UString(L"Compressing ") << numberOfItems << L" items");
+	        userTrace(jniEnvInstance, thiz, UString(L"Compressing ") << (UInt32)numberOfItems << L" items");
 	    }
 	}
 

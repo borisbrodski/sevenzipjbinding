@@ -148,7 +148,9 @@ struct CallRecursiveCallbackMethodMTParameter {
     jboolean _useException;
     jboolean _customErrorMessage;
     jint _mtwidthindex;
-    jstring _message = NULL;
+    jstring _message;
+
+    CallRecursiveCallbackMethodMTParameter() : _message(NULL) {}
 };
 
 static THREAD_FUNC_DECL callRecursiveCallbackMethodMT(void * parameterPtr) {

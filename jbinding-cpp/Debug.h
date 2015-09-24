@@ -174,7 +174,7 @@ inline std::ostream & operator<<(JOut jout, char const * str) {
 #   define TRACE_OBJECT_CALL(methodname)    {TraceObjectCall((Object *)this, methodname);}
 #   define TRACE_CLASS_CHECK_UNKNOWN_IMPL_DESTRUCTION(classname)                    \
         {                                                                           \
-            if (__m_RefCount > 0)                                                   \
+            if (__m_RefCount != 0)                                                  \
             {                                                                       \
                 fatal("The referenced object %s (this: 0x%08X) was destructed",     \
                         classname, (Object *)this);                                 \

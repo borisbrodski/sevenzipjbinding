@@ -117,7 +117,7 @@ public:
     }
     STDMETHOD_(ULONG, Release)()
     {
-        if (--__m_RefCount < 0)
+        if (--__m_RefCount != 0)
         {
 #ifdef TRACE_OBJECTS_ON
             fatal("StackAllocatedObject : ref < 0 (this: 0x%08X)", (Object*)this);

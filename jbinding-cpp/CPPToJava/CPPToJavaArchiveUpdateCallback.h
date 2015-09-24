@@ -10,7 +10,7 @@ class CPPToJavaArchiveUpdateCallback : public virtual IArchiveUpdateCallback,
 
 private:
     jni::IOutCreateCallback * _iOutCreateCallback;
-    jobject _outItem = NULL;
+    jobject _outItem;
     int _outItemLastIndex;
     int _archiveFormatIndex;
     jobject _outArchive;
@@ -25,6 +25,7 @@ public:
                         initEnv, archiveUpdateCallback)),
 				_outItemLastIndex(-1),
 				_archiveFormatIndex(archiveFormatIndex),
+				_outItem(NULL),
 				_outArchive(outArchive),
 				_isInArchiveAttached(isInArchiveAttached) {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveOpenCallback")
