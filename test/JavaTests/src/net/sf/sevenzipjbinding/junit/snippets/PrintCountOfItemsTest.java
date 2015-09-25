@@ -18,7 +18,7 @@ public class PrintCountOfItemsTest extends SnippetTest {
         String expected = "Count of items in archive: 4\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
 
         beginSnippetTest();
         PrintCountOfItems.main(new String[] { "testdata/snippets/simple.zip" });

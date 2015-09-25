@@ -23,7 +23,7 @@ public class OpenMultipartArchive7zTest extends SnippetTest {
         expected += "        0 |         0 | folder\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }

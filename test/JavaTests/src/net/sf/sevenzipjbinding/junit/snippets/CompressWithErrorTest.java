@@ -36,7 +36,7 @@ public class CompressWithErrorTest extends SnippetTest {
                 "Get property 'dataSize' (index: 1)\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }
@@ -46,7 +46,7 @@ public class CompressWithErrorTest extends SnippetTest {
         String expected = "0x80070057 (Invalid argument). Error creating 'tar' archive with 5 items";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         expected = expected.replaceAll("    ", "\t");
         expected = expected.replace("...", "");

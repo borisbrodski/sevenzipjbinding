@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link ExtractItemsSimple} and {@link ExtractItemsStandard} snippets
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -22,7 +22,7 @@ public class ExtractItemsTest extends SnippetTest {
         expected += " E8EEC7F4 |          6 | folder/file in folder.txt\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }

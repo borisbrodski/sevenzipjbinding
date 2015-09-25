@@ -260,13 +260,13 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
         outArchive.setTracePrintStream(new PrintStream(traceLogOutputStream));
 
         outArchive.updateItems(new ByteArrayStream(10000), inArchive.getNumberOfItems(), new OutUpdateArchive());
-        assertEquals(log, new String(traceLogOutputStream.toByteArray()));
+        assertEquals(log.replace("\n", NEW_LINE), new String(traceLogOutputStream.toByteArray()));
     }
 
     private void testCompression(ArchiveFormat format, String log) throws Exception {
         ByteArrayOutputStream traceLog = new ByteArrayOutputStream();
         compress(format, traceLog);
-        assertEquals(log, new String(traceLog.toByteArray()));
+        assertEquals(log.replace("\n", NEW_LINE), new String(traceLog.toByteArray()));
     }
 
     private ByteArrayStream compress(ArchiveFormat format, OutputStream traceLog) throws SevenZipException {

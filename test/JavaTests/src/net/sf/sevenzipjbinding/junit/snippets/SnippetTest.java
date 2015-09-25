@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public abstract class SnippetTest {
+    public static final String NEW_LINE = System.getProperty("line.separator");
 
     private PrintStream oldSystemOut;
     private PrintStream oldSystemErr;

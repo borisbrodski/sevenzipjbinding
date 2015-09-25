@@ -23,7 +23,7 @@ public class ListItemsTest extends SnippetTest {
         expected += "        6 |         6 | folder/file in folder.txt\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }

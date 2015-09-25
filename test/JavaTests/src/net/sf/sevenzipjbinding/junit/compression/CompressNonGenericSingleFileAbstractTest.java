@@ -3,7 +3,10 @@ package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertEquals;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
@@ -12,6 +15,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 /**
  * Tests compression and extraction of a single file interface.
  *
+ * @param <T>
+ *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
+ *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
+ * 
  * @author Boris Brodski
  * @since 9.20-2.00
  */

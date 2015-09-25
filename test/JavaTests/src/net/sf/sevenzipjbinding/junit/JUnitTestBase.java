@@ -9,6 +9,7 @@ import java.util.Random;
  * @since 9.20-2.00
  */
 public abstract class JUnitTestBase {
+    public static final String NEW_LINE = System.getProperty("line.separator");
     public static final int RANDOM_GLOBAL_SEED = 6;
 
     protected final ThreadLocal<Random> random = new ThreadLocal<Random>() {

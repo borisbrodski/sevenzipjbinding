@@ -20,7 +20,7 @@ public class CompressNonGenericBZip2Test extends SnippetTest {
         String expected = "Compression operation succeeded\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }

@@ -19,7 +19,7 @@ public class UpdateAlterItemsTest extends SnippetTest {
     /* END_OUTPUT */
 
     private String getExpectedOutput(String expected) {
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
         expected = expected.replace('/', File.separatorChar);
         return expected;
     }

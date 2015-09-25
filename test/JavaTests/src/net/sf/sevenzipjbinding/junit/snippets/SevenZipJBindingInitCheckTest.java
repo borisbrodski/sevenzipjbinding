@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link SevenZipJBindingInitCheck} snippet
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -17,7 +17,7 @@ public class SevenZipJBindingInitCheckTest extends SnippetTest {
         String expected = "7-Zip-JBinding library was initialized\n";
         /* END_OUTPUT */
 
-        expected = expected.replace("\n", System.getProperty("line.separator"));
+        expected = expected.replace("\n", NEW_LINE);
 
         beginSnippetTest();
         SevenZipJBindingInitCheck.main(null);
