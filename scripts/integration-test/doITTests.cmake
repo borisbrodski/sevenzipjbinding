@@ -132,16 +132,19 @@ MACRO(TEST_PACKAGE PLATFORMS)
     SET(FILES_TO_DOWNLOAD "")
     FOREACH(PLATFORM ${PLATFORMS})
         SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")
-        LIST(APPEND FILES_TO_DOWNLOAD "${URL}${RELEASE_NAME}.zip")
+        IF(NOT EXISTS "${ITTEST_DIR}/${RELEASE_NAME}.zip")
+            LIST(APPEND FILES_TO_DOWNLOAD "${URL}${RELEASE_NAME}.zip")
+        ENDIF()
     ENDFOREACH()
     
-    MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
-    
-    execute_process(COMMAND "${SCP}" ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
-                    RESULT_VARIABLE RESULT)
-    if(RESULT)
-        message(FATAL_ERROR "Error downloading file: ${RESULT}")
-    endif()
+    IF(NOT ("${FILES_TO_DOWNLOAD}" STREQUAL ""))
+	    MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
+        execute_process(COMMAND "${SCP}" ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
+                        RESULT_VARIABLE RESULT)
+        if(RESULT)
+            message(FATAL_ERROR "Error downloading file: ${RESULT}")
+        endif()
+    ENDIF()
 
 #    FILE(DOWNLOAD "${URL}${RELEASE_NAME}.zip" "${ITTEST_DIR}/${RELEASE_NAME}.zip" STATUS status LOG log)
 #    list(GET status 0 num_status)
@@ -161,19 +164,19 @@ MACRO(TEST_PACKAGE PLATFORMS)
         IF(archive_result)
             MESSAGE(FATAL_ERROR "Error extracting archive ${ITTEST_DIR}/${RELEASE_NAME}\n\n${archive_output}\n${archive_err}")
         ENDIF()
-    
+
         FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/lib/s*")
         FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
             FILE(REMOVE "${FILE}")
         ENDFOREACH()
-    
+
         FILE(GLOB SEVENZIPJBINDING_LIBS "${ITTEST_DIR}/${RELEASE_NAME}/lib/s*")
         FOREACH(FILE ${SEVENZIPJBINDING_LIBS})
             STRING(REGEX REPLACE "^.*/([^/]+)$" "\\1" NEW_FILENAME "${FILE}")
             STRING(REGEX REPLACE "^(sevenzipjbinding-)[^.]+(.jar)$" "\\1Platform\\2" NEW_FILENAME "${NEW_FILENAME}")
             EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy "${FILE}" "${ITTEST_DIR}/lib/${NEW_FILENAME}")
         ENDFOREACH()
-    
+
         EXECUTE_PROCESS(COMMAND ${CMAKE_CTEST_COMMAND} -D Experimental
                         WORKING_DIRECTORY "${ITTEST_DIR}")
     ENDFOREACH()

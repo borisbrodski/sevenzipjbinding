@@ -11,12 +11,21 @@ IF(NOT JAVA)
     MESSAGE(FATAL_ERROR "Internal error. Can't read 'java-executable' file with the java execuable name.")
 ENDIF()
 
+FILE(GLOB_RECURSE TEST_LIBS "lib/" "*.jar")
+SET(TEST_LIBS_STR "")
+FOREACH(TEST_LIB ${TEST_LIBS})
+    IF(NOT ("${TEST_LIBS_STR}" STREQUAL ""))
+        SET(TEST_LIBS_STR "${TEST_LIBS_STR}${PATH_SEP}")
+    ENDIF()
+    SET(TEST_LIBS_STR "${TEST_LIBS_STR}${TEST_LIB}")
+ENDFOREACH()
+
 EXECUTE_PROCESS(COMMAND
-                    "${JAVA}" -cp "lib/junit-4.6.jar${PATH_SEP}sevenzipjbinding-tests.jar${PATH_SEP}lib/sevenzipjbinding.jar${PATH_SEP}lib/sevenzipjbinding-Platform.jar"
+                    "${JAVA}" -cp "${TEST_LIBS_STR}"
                     "-DSINGLEBUNDLE=${SINGLEBUNDLE}"
-		    org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
-                                            WORKING_DIRECTORY .
-                                            RESULT_VARIABLE RESULT)
-                                     IF(RESULT)
-                                         MESSAGE(SEND_ERROR "Error during JUnit Tests")
-                                     ENDIF(RESULT)
+        		    org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
+                WORKING_DIRECTORY .
+                RESULT_VARIABLE RESULT)
+IF(RESULT)
+    MESSAGE(SEND_ERROR "Error during JUnit Tests")
+ENDIF(RESULT)
