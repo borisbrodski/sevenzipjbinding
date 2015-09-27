@@ -67,17 +67,18 @@ The scheme for the 7-Zip-JBinding version numbers is :
 7-Zip-JBinding minor version - major version of 7-Zip-JBinding base on the specified 7-Zip/p7zip version, beginning from 0
 
 release stage:
-	- 'alpha' - alpha release: substantion part of the functionality included, not stable. For testing purposes only.
-	- 'rc' - release candidate: all functionality included, not stable. For testing purposes only.
-	- '' - release considered stable. For generally use.
+	- 'alpha'       - alpha release: substantial part of the functionality included, not stable. For testing purposes only.
+	- 'rc' / 'beta' - release candidate: all functionality included, not tested enough to be considered stable. Use with care.
+	- ''            - release considered stable. For generally use.
 	
 impl stage: (implementation stage)
 	Optional. Information about implemented and not implemented features.
 	- '-extr-only' - compression features are not included. 
 
 Examples:
-	 4.65-1.0alpha - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
-	 4.66-1.01rc - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+	 4.65-1.0alpha      - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
+	 4.66-1.01rc        - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+	 4.66-1.01beta      - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
 	 4.66-2.3-extr-only - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 	 				      without compression features.
 	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
@@ -88,14 +89,18 @@ Examples:
 
 Please note, you will need a source code distribution to compile 7-Zip-JBinding.
 
+Hint: for more examples how to compile 7-Zip-JBinding see "<git-root>/scripts" directory (https://github.com/borisbrodski/sevenzipjbinding/tree/master/scripts) 
 
 5.1 Compile on Linux
 
 a) Download source package from http://sourceforge.net/projects/sevenzipjbind/files/
    and extract it into some <srcdir> directory. Try to avoid directory names with spaces in your path.
 
-   Optionally you can checkout a trunk (current development version) from GIT repository 
+   Optionally you can checkout a master (current development version) from GIT repository 
 	$ git clone git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind SevenZipJBinding
+	or
+	$ git clone https://github.com/borisbrodski/sevenzipjbinding.git SevenZipJBinding
+
 	$ cd SevenZipJBinding
 	$ git checkout Release-4.65-1.02rc-extr-only
 

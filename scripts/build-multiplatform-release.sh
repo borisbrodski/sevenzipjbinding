@@ -2,7 +2,7 @@
 
 ROOTDIR=$(pwd)
 
-RELEASE_NAME_PATTERN='\([a-z\-]\+binding-[0-9.-]\+\(\(alpha\|rc\)[0-9]*-\)\?\(extr-only-\)\?\)\([^.]\+\)\.zip'
+RELEASE_NAME_PATTERN='\([a-z\-]\+binding-[0-9.-]\+\(\(alpha\|rc\|beta\)[0-9]*-\)\?\(extr-only-\)\?\)\([^.]\+\)\.zip'
 
 GetTargetName() {
     eval "$1=$(echo $2 | sed -e "s/$RELEASE_NAME_PATTERN/\\5/")"

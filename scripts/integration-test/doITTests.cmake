@@ -1,5 +1,10 @@
 # TODO Check file existence before download
 
+# TODO get this to work
+#SET(JAVA          CACHE STRING "Java executable")
+SET(JAVA_PARAMS "" CACHE STRING "Additional parameters for java")
+
+
 SET(URL "boris_brodski,sevenzipjbind@frs.sourceforge.net:/home/frs/project/s/se/sevenzipjbind/OldFiles/")
 SET(IT_PACKAGE_NAME "sevenzipjbinding-it-test-pack.zip")
 SET(ITROOT "SevenZipJBinding.IT-Tests")
@@ -117,6 +122,7 @@ IF(NOT VERSION)
 ENDIF()
 
 FILE(WRITE "${ITTEST_DIR}/java-executable" "${JAVA}")
+FILE(WRITE "${ITTEST_DIR}/java-executable-params" "${JAVA_PARAMS}")
 
 SITE_NAME(SITE)
 SET(BUILD_NAME "${VERSION}")
