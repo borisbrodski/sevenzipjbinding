@@ -7,7 +7,7 @@ package net.sf.sevenzipjbinding;
  * 
  * <pre>
  *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive({@link ArchiveFormat#SEVEN_ZIP}, inStream);
- *  {@link IOutUpdateArchive}{@code<}{@link IOutItem7z}> outArchive = inArchive.openOutArchive();
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItem7z}> outArchive = inArchive.openOutArchive();
  *  
  *  if (outArchive instanceof {@link IOutFeatureSetLevel}) {
  *      (({@link IOutFeatureSetLevel})outArchive).setLevel(myLevel);

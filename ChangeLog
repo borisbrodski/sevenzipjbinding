@@ -7,23 +7,26 @@ Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9
 
 	* Create/update archives
 		- Supported archives: 7z, BZip2, Tar, Zip, GZip
-		- Archive format specific or generic compression API
+		- Archive format specific or generic compression APIs
 		- JavaDoc + Snippets
 		
-	* API changes
-	    - Extend SevenZipException from IOException
-	    - Add Closeable interface to IInArchive and IOutArchive
-	    - ISevenZipInArchive renamed to IInArchive
-
     * SHA1 hashes are used to verify cached binaries in the temp directory (before reusing) 
+
+	* Performance boost on Linux (using -O2 optimization )
+
+	* API changes
+	    - SevenZipException extends from IOException
+	    - Closeable interface added to IInArchive and IOutArchive
+	    - ISevenZipInArchive renamed to IInArchive
 
 	* Bugfixes:
 	  - #17 WIM archive format contains Udf comment
 
-	* huge performance boost (using -O1 or -O2 optimization )
 
 	* SevenZip.getSevenZipVersion() and SevenZip.getSevenZipJBindingVersion() provide
 	  version information of the 7-Zip and 7-Zip-JBinding
+
+    * Add compressed web site (website.zip) to the distribution
 
 Release - 4.65-1.06-extr-only (extraction only, cross-platform, based on zip/p7zip 4.65)
 	* Feature: WIM format support + tests

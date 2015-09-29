@@ -15,7 +15,7 @@ import java.io.Closeable;
  * supports a particular configuration method by making an <code>instanceof</code> check, like this:
  * 
  * <pre>
- *  IOutCreateArchive{@code<}IOutItemCallback> outArchive = SevenZip.openOutArchive(myArchiveFormat);
+ *  IOutCreateArchive{@code <}IOutItemCallback> outArchive = SevenZip.openOutArchive(myArchiveFormat);
  *  if (outArchive instanceof IOutFeatureSetLevel) {
  *      ((IOutFeatureSetLevel)outArchive).setLevel(myLevel);
  *  }

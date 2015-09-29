@@ -288,7 +288,23 @@ SET(PREPACKAGE_ACTIONS
                                 -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
                                 -subpackages net.sf.sevenzipjbinding 
                                 -d ${JAVADOC_DIR}
-    WORKING_DIRECTORY .)
+                    WORKING_DIRECTORY .
+    )
+    
+    # Copy javadoc back into the source folder
+    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
+                                -E copy_directory
+                                .
+                                \"${PROJECT_SOURCE_DIR}/doc/web/javadoc\"
+                    WORKING_DIRECTORY \"${JAVADOC_DIR}\"
+    )
+    
+    # Generate web site
+    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
+                                -P \"${PROJECT_SOURCE_DIR}/doc/build_html.cmake\"
+                                ${PROJECT_SOURCE_DIR}/doc/web/javadoc
+                    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/\"
+    )
     
     COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-java/src\" \"${PREPACKAGE_TMP}/java-src/\" \"\")
     COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-cpp\" \"${PREPACKAGE_TMP}/cpp-src/\" CMakeLists.txt)
@@ -300,7 +316,11 @@ SET(PREPACKAGE_ACTIONS
     WORKING_DIRECTORY ${PREPACKAGE_TMP}/cpp-src/)
 
     EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/javadoc.zip .
-    WORKING_DIRECTORY ${JAVADOC_DIR})"
+    WORKING_DIRECTORY ${JAVADOC_DIR})
+
+    EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/website.zip .
+    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/web\")
+"
 )
 
 FOREACH(PREPACKAGE_ACTION ${PREPACKAGE_ACTIONS})
@@ -326,6 +346,7 @@ INSTALL(FILES   ${SEVENZIPJBINDING_JAR}
 INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
                 ${PREPACKAGE_TMP}/cpp-src.zip
                 ${PREPACKAGE_TMP}/javadoc.zip
+                ${PREPACKAGE_TMP}/website.zip
         DESTINATION .)
 
 #INSTALL(DIRECTORY ${JAVADOC_DIR}/
@@ -403,3 +424,4 @@ IF(BUILD_TESTING)
     add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bad archive tests" -P ${JUNIT_TEST_RUNNER})
 #                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
 ENDIF(BUILD_TESTING)
+

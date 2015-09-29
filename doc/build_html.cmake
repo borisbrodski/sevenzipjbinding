@@ -80,7 +80,7 @@ endmacro()
 
 macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
 
-    # find . -name "*.html" | sort
+    # find net/sf -name "*.html" | sort
     SET(JAVADOC_HTML_FILES      
         net/sf/sevenzipjbinding/ArchiveFormat.html
         net/sf/sevenzipjbinding/ExtractAskMode.html
@@ -108,6 +108,7 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html
         net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
         net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html
+        net/sf/sevenzipjbinding/IOutArchiveBase.html
         net/sf/sevenzipjbinding/IOutArchive.html
         net/sf/sevenzipjbinding/IOutCreateArchive7z.html
         net/sf/sevenzipjbinding/IOutCreateArchiveBZip2.html
@@ -148,6 +149,7 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
         net/sf/sevenzipjbinding/SevenZipException.html
         net/sf/sevenzipjbinding/SevenZip.html
         net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html
+        net/sf/sevenzipjbinding/SevenZip.Version.html
         net/sf/sevenzipjbinding/simple/impl/package-frame.html
         net/sf/sevenzipjbinding/simple/impl/package-summary.html
         net/sf/sevenzipjbinding/simple/impl/package-tree.html
@@ -165,8 +167,8 @@ macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
     )
     SET(TMP "${${LINE_VAR}}")
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
-        IF(NOT EXISTS "javadoc/${JD_PATH}${HTML_FILE}")
-            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'. Copy extracted java-docs into <git-root>/doc/javadoc/, then update the list of the classes above.")
+        IF(NOT EXISTS "web/javadoc/${JD_PATH}${HTML_FILE}")
+            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'. Copy extracted java-docs into <git-root>/doc/web/javadoc/, then update the list of the classes above.")
         ENDIF()
     ENDFOREACH()
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
@@ -344,6 +346,18 @@ macro(PROCESS_HTML FILENAME)
     APPEND_FILE("${OUTPUT_HTML_FILE}" "web.components/footer.html")
 endmacro()
 
+macro(COPY_PATTERN PATTERN)
+    # Copy static resources
+    FILE(GLOB RESOURCE_FILES ${PATTERN})
+    FOREACH(FILE ${RESOURCE_FILES})
+        message("Copy static resource: ${FILE}")
+        EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E copy ${FILE} "web/")
+    ENDFOREACH()
+endmacro()
+
+COPY_PATTERN("web.components/*.png")
+COPY_PATTERN("web.components/*.css")
+
 FILE(GLOB JAVA_FILES "../test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippets/*.java")
 FOREACH(JAVA_FILE ${JAVA_FILES})
     PROCESS_SNIPPET("${JAVA_FILE}")
@@ -354,3 +368,4 @@ PROCESS_HTML("compression_snippets.html")
 PROCESS_HTML("extraction_snippets.html")
 PROCESS_HTML("first_steps.html")
 PROCESS_HTML("index.html")
+
