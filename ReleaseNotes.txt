@@ -3,39 +3,39 @@
 
 Main features of 9.20-2.00beta (Release candidate, extraction/compression/update, cross-platform, based on zip/p7zip 9.20)
 
-	* Extraction of
+    * Extraction of
         - 7z, Arj, BZip2, Cab, Chm, Cpio, Deb, GZip, HFS, Iso, Lzh,
           Lzma, Nsis, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
 
-	    - Compression method auto detection
-	    - Support for password protected and volumed archives
-	    - Simple extraction interface
+        - Archive format auto detection
+        - Support for password protected and volumed archives
+        - Simple extraction interface
 
     * Compression & update of
         - 7z, Zip, Tar, GZip, BZip2
         - Archive format specific or generic compression API
-	
-	* 7-Zip-JBinding requires Java 1.5 or higher
+        
+        * 7-Zip-JBinding requires Java 1.5 or higher
 
-	* Cross-platform. Binaries available for
-		- Windows 32/64
-		- Linux	32/64
-		- Mac OS X 32/64
-		- ARM (ASMv4+, small endian)
+        * Cross-platform. Binaries available for
+            - Windows 32/64
+            - Linux 32/64
+            - Mac OS X 32/64
+            - ARM (ASMv4+, small endian)
 
-	* Multi-platform distributions (with platform auto-detection):
-	  	- AllWindows - includes Win32 and Win64
-	  	- AllLinux - includes Linux32 and Linux64
-	  	- AllMax - includes Mac OS X 32 and Mac OS X 64
-	  	- AllPlatforms - includes AllWindows, AllLinux and AllMac + build optimized for RaspberryPI
+        * Multi-platform distributions (with platform auto-detection):
+            - AllWindows - includes Win32 and Win64
+            - AllLinux - includes Linux32 and Linux64 (ARM not included)
+            - AllMax - includes Mac OS X 32 and Mac OS X 64
+            - AllPlatforms - includes AllWindows, AllLinux and AllMac + build optimized for RaspberryPI
 
     * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
 
-	* Over 6900 JUnit tests:
-		- 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,
-		  Z, Arj, Lzh, Cab, Chm, Nsis, DEB, RPM, UDF
+        * Over 6900 JUnit tests:
+            - 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,
+              Z, Arj, Lzh, Cab, Chm, Nsis, DEB, RPM, UDF
 
-    * Available on the Maven Central (week after the official release)
+    * Available on the Maven Central (a week after the official release)
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>

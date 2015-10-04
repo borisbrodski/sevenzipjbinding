@@ -10,12 +10,13 @@ Content
 1. License Info
 2. GNU LGPL information
 3. License notes
-4. Version number guide lines
-5. Compile
-5.1 Compile on Linux
-5.2 Compile on Windows
-6. Developer notes
-6.1 Applying new 7-Zip release
+4. Documentation
+5. Version number guide lines
+6. Compile
+6.1 Compile on Linux
+6.2 Compile on Windows
+7. Developer notes
+7.1 Applying new 7-Zip release
 
 1. License Info
 ---------------
@@ -54,10 +55,29 @@ If you need license with other conditions, write to
 http://www.7-zip.org/support.html
 
 
-4. Version number guide lines
+6. Documentation
+----------------
+
+The documentation provided in multiple ways:
+
+- ReleaseNotes.txt
+  Summary of the included features. Found in each distribution and online (http://sevenzipjbind.sourceforge.net/)
+
+- Small introduction + collection of code snippets
+  Online: http://sevenzipjbind.sourceforge.net/first_steps.html
+  Also a copy of the archived web page is included in each distribution (website.zip)
+  
+
+- JavaDoc
+  Provided as a seperate archive within each distribution (javadoc.zip)
+  Also JavaDoc is included in both archived web page within the distribution (website.zip) and online
+
+
+
+5. Version number guide lines
 -----------------------------
 
-The scheme for the 7-Zip-JBinding version numbers is :
+The scheme for the 7-Zip-JBinding version numbers is:
 
 	<7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage><impl. stage>
 
@@ -84,14 +104,14 @@ Examples:
 	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
-5. Compile
+6. Compile
 ----------
 
 Please note, you will need a source code distribution to compile 7-Zip-JBinding.
 
 Hint: for more examples how to compile 7-Zip-JBinding see "<git-root>/scripts" directory (https://github.com/borisbrodski/sevenzipjbinding/tree/master/scripts) 
 
-5.1 Compile on Linux
+6.1 Compile on Linux
 
 a) Download source package from http://sourceforge.net/projects/sevenzipjbind/files/
    and extract it into some <srcdir> directory. Try to avoid directory names with spaces in your path.
@@ -138,7 +158,7 @@ f) You can build a binary package by typing
     $ make package
     
 
-5.2 Compile on Windows
+6.2 Compile on Windows
     Both MinGW and Cygwin environments can be used to compile 7-Zip-JBinding. Using MinGW to compile 7-Zip-JBinding 
     is recommended and is much easier. The steps are:
 
@@ -157,9 +177,9 @@ Forum: http://sourceforge.net/forum/?group_id=210915
 Tracker: http://sourceforge.net/tracker/?group_id=210915
 
 
-6 Developer notes
+7 Developer notes
 
-6.1 Binding new 7-Zip release
+7.1 Binding new 7-Zip release
 
 TODO describe this
 
