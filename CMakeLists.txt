@@ -331,7 +331,6 @@ INSTALL(FILES   AUTHORS
                 ChangeLog
                 COPYING
                 LGPL
-                NEWS
                 README
                 ReleaseNotes.txt
                 THANKS
