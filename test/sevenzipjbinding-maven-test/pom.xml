@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <version>9.20-2.00beta-SNAPSHOT</version>
+        <version>9.20-2.00beta</version>
     </properties>
 
 	<dependencies>
@@ -31,8 +31,13 @@
 	<repositories>
 		<repository>
 			<id>nexus-releases</id>
-			<name>Nexus snapshot Repository</name>
+			<name>Nexus snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+		<repository>
+			<id>nexus-releases</id>
+			<name>Nexus group repository</name>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</repository>
 	</repositories>
 </project>

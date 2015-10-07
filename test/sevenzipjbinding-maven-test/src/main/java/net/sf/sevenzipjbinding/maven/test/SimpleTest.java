@@ -9,5 +9,6 @@ public class SimpleTest {
 	@Test
 	public void initTest() throws SevenZipNativeInitializationException {
 		SevenZip.initSevenZipFromPlatformJAR();
+		System.out.println("Version: " + SevenZip.getSevenZipVersion().version);
 	}
 }
