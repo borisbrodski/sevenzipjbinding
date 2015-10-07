@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.sevenzipjbinding</groupId>
+	<artifactId>sevenzipjbinding-maven-test</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+    <properties>
+        <version>9.20-2.00beta-SNAPSHOT</version>
+    </properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.sevenzipjbinding</groupId>
+			<artifactId>sevenzipjbinding</artifactId>
+			<version>${version}</version>
+		</dependency>
+        <dependency>
+            <groupId>net.sf.sevenzipjbinding</groupId>
+            <artifactId>sevenzipjbinding-all-linux</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>junit</groupId>
+        	<artifactId>junit</artifactId>
+        	<version>4.12</version>
+        	<scope>test</scope>
+        </dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>nexus-releases</id>
+			<name>Nexus snapshot Repository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+</project>
