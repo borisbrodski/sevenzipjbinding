@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.sf.sevenzipjbinding</groupId>
+    <artifactId>sevenzipjbinding{{dist-artifactId-postfix}}</artifactId>
+    <version>{{dist-version}}</version>
+    <packaging>jar</packaging>
+
+    <name>7-Zip-JBinding{{dist-name-postfix}}</name>
+    <description>
+        7-Zip-JBinding is a free cross-platform java binding of 7-Zip free compress/decompress library
+        (http://www.7-zip.org/, http://p7zip.sourceforge.net/)
+    </description>
+    <url>http://sevenzipjbind.sourceforge.net/</url>
+
+    <licenses>
+        <license>
+            <name>LGPL</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>unRAR restriction</name>
+            <url>http://www.7-zip.org/license.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://git.code.sf.net/p/sevenzipjbind/code</url>
+        <connection>scm:git:git.code.sf.net/p/sevenzipjbind/code</connection>
+        <developerConnection>scm:git:https://boris_brodski@git.code.sf.net/p/sevenzipjbind/code</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Boris Brodski</name>
+            <email>Brodsky_Boris@yahoo.com</email>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+    <inceptionYear>2012</inceptionYear>
+    <issueManagement>
+        <url>https://sourceforge.net/p/sevenzipjbind/_list/tickets?source=navbar</url>
+    </issueManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+        </plugins>
+    </build>
+    <distributionManagement>
+        <!-- Repository for snapshots -->
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <!-- Repository for releases -->
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
+</project>
+
