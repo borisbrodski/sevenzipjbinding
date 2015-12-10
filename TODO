@@ -50,6 +50,7 @@ Minor TODOs:
 - Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests"), Use TestConfiguration
 - Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
 - Add file extension field to the ArchiveFormat enum (+JavaDoc)
+- Web: create favicon.ico
 
 Major TODOs:
 - Support more archive formats
