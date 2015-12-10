@@ -301,6 +301,7 @@ SET(PREPACKAGE_ACTIONS
     
     # Generate web site
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
+                                -D SEVENZIPJBINDING_VERSION=${SEVENZIPJBINDING_VERSON}
                                 -P \"${PROJECT_SOURCE_DIR}/doc/build_html.cmake\"
                                 ${PROJECT_SOURCE_DIR}/doc/web/javadoc
                     WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/\"

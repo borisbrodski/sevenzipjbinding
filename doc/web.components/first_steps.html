@@ -1,4 +1,5 @@
 <h1>First steps</h1>
+
 <h2>Download and extraction</h2>
 
 <p>
@@ -9,7 +10,51 @@ securing a copy of <a href="http://sevenzip.sourceforge.net/">7-Zip</a> is highl
 users may use the corresponding command line tool <a href="http://p7zip.sourceforge.net/">p7Zip</a> or build-in Zip extractors.
 </p>
 
-<br/>
+<h2 id="maven">Get from maven central</h2>
+
+<p>
+There are two dependencies need to be added to the pom.xml file. 7-Zip-JBinding library jar and the platform dependend (native) jar.
+</p>
+<p>
+<i>Note:</i> 7-Zip-JBinding library doesn't declare maven depenency to any platform jars. So you always need two &lt;dependency&gt; tags.
+</p>
+
+<p>
+The simplest way to use 7-Zip-JBinding is to use the platform autodetection with the "all-platform" native package.
+(The down side is the relatively big size of the "all-platform" jar though):
+</p>
+
+<pre>
+&lt;dependency&gt;
+    &lt;groupId&gt;net.sf.sevenzipjbinding&lt;/groupId&gt;
+    &lt;artifactId&gt;<b>sevenzipjbinding</b>&lt;/artifactId&gt;
+    &lt;version&gt;##INCLUDE_VERSION&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;net.sf.sevenzipjbinding&lt;/groupId&gt;
+    &lt;artifactId&gt;sevenzipjbinding<b>-all-platforms</b>&lt;/artifactId&gt;
+    &lt;version&gt;##INCLUDE_VERSION&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+
+<p>
+Alternatively the proper platform jar artifact can be manually selected or selected using platform dependend maven profiles.
+Here is a list of all available platform artifactIds:
+</p>
+<ul>
+	<li>sevenzipjbinding-all-linux</li>
+	<li>sevenzipjbinding-all-mac</li>
+	<li>sevenzipjbinding-all-platforms</li>
+	<li>sevenzipjbinding-all-windows</li>
+	<li>sevenzipjbinding-linux-amd64</li>
+	<li>sevenzipjbinding-linux-arm</li>
+	<li>sevenzipjbinding-linux-i386</li>
+	<li>sevenzipjbinding-mac-i386</li>
+	<li>sevenzipjbinding-mac-x86_64</li>
+	<li>sevenzipjbinding-windows-amd64</li>
+	<li>sevenzipjbinding-windows-x86</li>
+</ul>
+
 <h2>Run an example</h2>
 
 <p>
