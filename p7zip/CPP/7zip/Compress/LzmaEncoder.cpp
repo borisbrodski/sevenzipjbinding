@@ -12,29 +12,21 @@
 namespace NCompress {
 namespace NLzma {
 
-static void *SzBigAlloc(void *, size_t size) { return BigAlloc(size); }
-static void SzBigFree(void *, void *address) { BigFree(address); }
-static ISzAlloc g_BigAlloc = { SzBigAlloc, SzBigFree };
-
-static void *SzAlloc(void *, size_t size) { return MyAlloc(size); }
-static void SzFree(void *, void *address) { MyFree(address); }
-static ISzAlloc g_Alloc = { SzAlloc, SzFree };
-
 CEncoder::CEncoder()
 {
-  _encoder = 0;
+  _encoder = NULL;
   _encoder = LzmaEnc_Create(&g_Alloc);
-  if (_encoder == 0)
+  if (!_encoder)
     throw 1;
 }
 
 CEncoder::~CEncoder()
 {
-  if (_encoder != 0)
+  if (_encoder)
     LzmaEnc_Destroy(_encoder, &g_Alloc, &g_BigAlloc);
 }
 
-inline wchar_t GetUpperChar(wchar_t c)
+static inline wchar_t GetUpperChar(wchar_t c)
 {
   if (c >= 'a' && c <= 'z')
     c -= 0x20;
@@ -51,27 +43,28 @@ static int ParseMatchFinder(const wchar_t *s, int *btMode, int *numHashBytes)
     int numHashBytesLoc = (int)(*s++ - L'0');
     if (numHashBytesLoc < 4 || numHashBytesLoc > 4)
       return 0;
-    if (*s++ != 0)
+    if (*s != 0)
       return 0;
     *btMode = 0;
     *numHashBytes = numHashBytesLoc;
     return 1;
   }
+
   if (c != L'B')
     return 0;
-
   if (GetUpperChar(*s++) != L'T')
     return 0;
   int numHashBytesLoc = (int)(*s++ - L'0');
   if (numHashBytesLoc < 2 || numHashBytesLoc > 4)
     return 0;
-  c = GetUpperChar(*s++);
-  if (c != L'\0')
+  if (*s != 0)
     return 0;
   *btMode = 1;
   *numHashBytes = numHashBytesLoc;
   return 1;
 }
+
+#define SET_PROP_32(_id_, _dest_) case NCoderPropID::_id_: ep._dest_ = v; break;
 
 HRESULT SetLzmaProp(PROPID propID, const PROPVARIANT &prop, CLzmaEncProps &ep)
 {
@@ -81,18 +74,29 @@ HRESULT SetLzmaProp(PROPID propID, const PROPVARIANT &prop, CLzmaEncProps &ep)
       return E_INVALIDARG;
     return ParseMatchFinder(prop.bstrVal, &ep.btMode, &ep.numHashBytes) ? S_OK : E_INVALIDARG;
   }
+  if (propID > NCoderPropID::kReduceSize)
+    return S_OK;
+  if (propID == NCoderPropID::kReduceSize)
+  {
+    if (prop.vt == VT_UI8)
+      ep.reduceSize = prop.uhVal.QuadPart;
+    return S_OK;
+  }
   if (prop.vt != VT_UI4)
     return E_INVALIDARG;
   UInt32 v = prop.ulVal;
   switch (propID)
   {
-    case NCoderPropID::kNumFastBytes: ep.fb = v; break;
-    case NCoderPropID::kMatchFinderCycles: ep.mc = v; break;
-    case NCoderPropID::kAlgorithm: ep.algo = v; break;
-    case NCoderPropID::kDictionarySize: ep.dictSize = v; break;
-    case NCoderPropID::kPosStateBits: ep.pb = v; break;
-    case NCoderPropID::kLitPosBits: ep.lp = v; break;
-    case NCoderPropID::kLitContextBits: ep.lc = v; break;
+    case NCoderPropID::kDefaultProp: if (v > 31) return E_INVALIDARG; ep.dictSize = (UInt32)1 << (unsigned)v; break;
+    SET_PROP_32(kLevel, level)
+    SET_PROP_32(kNumFastBytes, fb)
+    SET_PROP_32(kMatchFinderCycles, mc)
+    SET_PROP_32(kAlgorithm, algo)
+    SET_PROP_32(kDictionarySize, dictSize)
+    SET_PROP_32(kPosStateBits, pb)
+    SET_PROP_32(kLitPosBits, lp)
+    SET_PROP_32(kLitContextBits, lc)
+    SET_PROP_32(kNumThreads, numThreads)
     default: return E_INVALIDARG;
   }
   return S_OK;
@@ -111,9 +115,7 @@ STDMETHODIMP CEncoder::SetCoderProperties(const PROPID *propIDs,
     switch (propID)
     {
       case NCoderPropID::kEndMarker:
-        if (prop.vt != VT_BOOL) return E_INVALIDARG; props.writeEndMark = (prop.boolVal == VARIANT_TRUE); break;
-      case NCoderPropID::kNumThreads:
-        if (prop.vt != VT_UI4) return E_INVALIDARG; props.numThreads = prop.ulVal; break;
+        if (prop.vt != VT_BOOL) return E_INVALIDARG; props.writeEndMark = (prop.boolVal != VARIANT_FALSE); break;
       default:
         RINOK(SetLzmaProp(propID, prop, props));
     }
@@ -137,6 +139,7 @@ STDMETHODIMP CEncoder::Code(ISequentialInStream *inStream, ISequentialOutStream 
   CCompressProgressWrap progressWrap(progress);
 
   SRes res = LzmaEnc_Encode(_encoder, &outWrap.p, &inWrap.p, progress ? &progressWrap.p : NULL, &g_Alloc, &g_BigAlloc);
+  _inputProcessed = inWrap.Processed;
   if (res == SZ_ERROR_READ && inWrap.Res != S_OK)
     return inWrap.Res;
   if (res == SZ_ERROR_WRITE && outWrap.Res != S_OK)
@@ -145,5 +148,5 @@ STDMETHODIMP CEncoder::Code(ISequentialInStream *inStream, ISequentialOutStream 
     return progressWrap.Res;
   return SResToHRESULT(res);
 }
-  
+
 }}

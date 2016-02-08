@@ -1,158 +1,346 @@
-CRC.o: ../../../Common/CRC.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
+InBuffer.o: ../../../../CPP/7zip/Common/InBuffer.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Common/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Common/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Common/InBuffer.h \
+ ../../../../CPP/7zip/Common/../../Common/MyException.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Common/../IStream.h \
+ ../../../../CPP/7zip/Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Common/../IDecl.h \
+ ../../../../CPP/7zip/Common/../../Common/MyUnknown.h
+OutBuffer.o: ../../../../CPP/7zip/Common/OutBuffer.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Common/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Common/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Common/OutBuffer.h \
+ ../../../../CPP/7zip/Common/../IStream.h \
+ ../../../../CPP/7zip/Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Common/../IDecl.h \
+ ../../../../CPP/7zip/Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Common/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Common/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Common/../../Common/MyException.h
+StreamUtils.o: ../../../../CPP/7zip/Common/StreamUtils.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Common/StreamUtils.h \
+ ../../../../CPP/7zip/Common/../IStream.h \
+ ../../../../CPP/7zip/Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Common/../IDecl.h \
+ ../../../../CPP/7zip/Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Common/../../Common/MyWindows.h
+CodecExports.o: ../../../../CPP/7zip/Compress/CodecExports.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Compress/../../Common/ComTry.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../../Windows/Defs.h \
+ ../../../../CPP/7zip/Compress/../../Windows/../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/RegisterCodec.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/MethodId.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../ICoder.h
+DllExportsCompress.o: \
+ ../../../../CPP/7zip/Compress/DllExportsCompress.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyInitGuid.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyGuidDef.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/RegisterCodec.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/MethodId.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../ICoder.h
+LzOutWindow.o: ../../../../CPP/7zip/Compress/LzOutWindow.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/LzOutWindow.h \
+ ../../../../CPP/7zip/Compress/../Common/OutBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyException.h
+Rar1Decoder.o: ../../../../CPP/7zip/Compress/Rar1Decoder.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/Rar1Decoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/InBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyException.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/BitmDecoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/HuffmanDecoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/LzOutWindow.h \
+ ../../../../CPP/7zip/Compress/../Common/OutBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyCom.h
+Rar2Decoder.o: ../../../../CPP/7zip/Compress/Rar2Decoder.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/Rar2Decoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/InBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyException.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/BitmDecoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/HuffmanDecoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/LzOutWindow.h \
+ ../../../../CPP/7zip/Compress/../Common/OutBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyCom.h
+Rar3Decoder.o: ../../../../CPP/7zip/Compress/Rar3Decoder.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/StreamUtils.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/Rar3Decoder.h \
+ ../../../../CPP/7zip/Compress/../../../C/Ppmd7.h \
+ ../../../../CPP/7zip/Compress/../../../C/Ppmd.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/../Common/InBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyException.h \
+ ../../../../CPP/7zip/Compress/BitmDecoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/HuffmanDecoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/Rar3Vm.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyVector.h
+Rar3Vm.o: ../../../../CPP/7zip/Compress/Rar3Vm.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zCrc.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Compress/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Compress/../../Common/Defs.h \
+ ../../../../CPP/7zip/Compress/Rar3Vm.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyVector.h
+Rar5Decoder.o: ../../../../CPP/7zip/Compress/Rar5Decoder.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../Common/StreamUtils.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/Rar5Decoder.h \
+ ../../../../CPP/7zip/Compress/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyBuffer.h \
+ ../../../../CPP/7zip/Compress/../../Common/Defs.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyException.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyVector.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/HuffmanDecoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h
+RarCodecsRegister.o: ../../../../CPP/7zip/Compress/RarCodecsRegister.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/7zip/Compress/../Common/RegisterCodec.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/MethodId.h \
+ ../../../../CPP/7zip/Compress/../Common/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../Common/../IDecl.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyUnknown.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/Rar1Decoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyWindows.h \
+ ../../../../CPP/7zip/Compress/../../Common/NewHandler.h \
+ ../../../../CPP/7zip/Compress/../ICoder.h \
+ ../../../../CPP/7zip/Compress/../Common/InBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyException.h \
+ ../../../../CPP/7zip/Compress/../Common/../IStream.h \
+ ../../../../CPP/7zip/Compress/BitmDecoder.h \
+ ../../../../CPP/7zip/Compress/../IStream.h \
+ ../../../../CPP/7zip/Compress/HuffmanDecoder.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyTypes.h \
+ ../../../../CPP/7zip/Compress/LzOutWindow.h \
+ ../../../../CPP/7zip/Compress/../Common/OutBuffer.h \
+ ../../../../CPP/7zip/Compress/../Common/../../Common/MyCom.h \
+ ../../../../CPP/7zip/Compress/Rar2Decoder.h \
+ ../../../../CPP/7zip/Compress/Rar3Decoder.h \
+ ../../../../CPP/7zip/Compress/../../../C/Ppmd7.h \
+ ../../../../CPP/7zip/Compress/../../../C/Ppmd.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../../C/7zTypes.h \
+ ../../../../CPP/7zip/Compress/Rar3Vm.h \
+ ../../../../CPP/7zip/Compress/../../../C/CpuArch.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyVector.h \
+ ../../../../CPP/7zip/Compress/Rar5Decoder.h \
+ ../../../../CPP/7zip/Compress/../../../C/Alloc.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyBuffer.h \
+ ../../../../CPP/7zip/Compress/../../Common/Defs.h \
+ ../../../../CPP/7zip/Compress/../../Common/MyException.h
+CRC.o: ../../../../CPP/Common/CRC.cpp ../../../myWindows/StdAfx.h \
+ ../../../myWindows/config.h ../../../Common/Common.h \
+ ../../../Common/../../C/Compiler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyGuidDef.h ../../../Common/MyTypes.h \
+ ../../../Common/../../C/7zTypes.h ../../../Common/NewHandler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyTypes.h \
+ ../../../Common/MyString.h ../../../Common/MyVector.h \
  ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../Common/../../C/7zCrc.h \
- ../../../Common/../../C/Types.h
-MyWindows.o: ../../../Common/MyWindows.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../Common/MyWindows.h
-MyVector.o: ../../../Common/MyVector.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../Common/MyVector.h \
- ../../../Common/Defs.h
-InBuffer.o: ../../Common/InBuffer.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../Common/../../../C/Alloc.h \
- ../../Common/InBuffer.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyUnknown.h \
- ../../Common/../../Common/MyWindows.h ../../Common/../../Common/Types.h \
- ../../Common/../IDecl.h ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h
-StreamUtils.o: ../../Common/StreamUtils.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../Common/StreamUtils.h \
- ../../Common/../IStream.h ../../Common/../../Common/MyUnknown.h \
- ../../Common/../../Common/MyWindows.h ../../Common/../../Common/Types.h \
- ../../Common/../IDecl.h
-OutBuffer.o: ../../Common/OutBuffer.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../Common/../../../C/Alloc.h \
- ../../Common/OutBuffer.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyUnknown.h \
- ../../Common/../../Common/MyWindows.h ../../Common/../../Common/Types.h \
- ../../Common/../IDecl.h ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h
-LzOutWindow.o: ../LzOutWindow.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../LzOutWindow.h ../../IStream.h \
- ../../../Common/MyUnknown.h ../../../Common/MyWindows.h \
- ../../../Common/Types.h ../../IDecl.h ../../Common/OutBuffer.h \
- ../../Common/../IStream.h ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyWindows.h \
- ../../Common/../../Common/MyException.h
-CodecExports.o: ../CodecExports.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../Common/ComTry.h \
- ../../../Common/MyWindows.h ../../../Windows/PropVariant.h \
- ../../../Windows/../Common/MyWindows.h \
- ../../../Windows/../Common/Types.h ../../ICoder.h ../../IStream.h \
- ../../../Common/MyUnknown.h ../../../Common/Types.h ../../IDecl.h \
- ../../Common/RegisterCodec.h ../../Common/../Common/MethodId.h \
- ../../Common/../Common/../../Common/Types.h
-DllExports.o: ../DllExports.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../Common/MyInitGuid.h \
- ../../ICoder.h ../../IStream.h ../../../Common/MyUnknown.h \
- ../../../Common/MyWindows.h ../../../Common/Types.h ../../IDecl.h \
- ../../Common/RegisterCodec.h ../../Common/../Common/MethodId.h \
- ../../Common/../Common/../../Common/Types.h
-Rar1Decoder.o: ../Rar1Decoder.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../Rar1Decoder.h \
- ../../../Common/MyCom.h ../../../Common/MyWindows.h ../../ICoder.h \
- ../../IStream.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../Common/InBuffer.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h \
- ../../Common/../../Common/MyWindows.h ../BitmDecoder.h ../../IStream.h \
- ../HuffmanDecoder.h ../../../Common/Types.h ../LzOutWindow.h \
- ../../Common/OutBuffer.h
-Rar2Decoder.o: ../Rar2Decoder.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../Rar2Decoder.h \
- ../../../Common/MyCom.h ../../../Common/MyWindows.h ../../ICoder.h \
- ../../IStream.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../Common/InBuffer.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h \
- ../../Common/../../Common/MyWindows.h ../BitmDecoder.h ../../IStream.h \
- ../HuffmanDecoder.h ../../../Common/Types.h ../LzOutWindow.h \
- ../../Common/OutBuffer.h
-Rar3Decoder.o: ../Rar3Decoder.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../../C/Alloc.h \
- ../../Common/StreamUtils.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyUnknown.h \
- ../../Common/../../Common/MyWindows.h ../../Common/../../Common/Types.h \
- ../../Common/../IDecl.h ../Rar3Decoder.h ../../../../C/Ppmd7.h \
- ../../../../C/Ppmd.h ../../../../C/Types.h ../../../../C/CpuArch.h \
- ../../../Common/MyCom.h ../../../Common/MyWindows.h ../../ICoder.h \
- ../../IStream.h ../../Common/InBuffer.h \
- ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h ../BitmDecoder.h ../../IStream.h \
- ../HuffmanDecoder.h ../../../Common/Types.h ../Rar3Vm.h \
- ../../../../C/CpuArch.h ../../../Common/MyVector.h \
- ../../../Common/Defs.h
-Rar3Vm.o: ../Rar3Vm.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../../../C/7zCrc.h \
- ../../../../C/Types.h ../../../../C/Alloc.h ../Rar3Vm.h \
- ../../../../C/CpuArch.h ../../../Common/MyVector.h \
- ../../../Common/Defs.h
-RarCodecsRegister.o: ../RarCodecsRegister.cpp ../../../myWindows/StdAfx.h \
- ../../../myWindows/config.h ../../../Common/MyWindows.h \
- ../../../Common/MyGuidDef.h ../../../Common/Types.h \
- ../../../Common/../../C/Types.h ../../../Common/Types.h \
- ../../../include_windows/windows.h ../../../include_windows/basetyps.h \
- ../../../include_windows/tchar.h ../../Common/RegisterCodec.h \
- ../../Common/../Common/MethodId.h \
- ../../Common/../Common/../../Common/Types.h ../Rar1Decoder.h \
- ../../../Common/MyCom.h ../../../Common/MyWindows.h ../../ICoder.h \
- ../../IStream.h ../../../Common/MyUnknown.h ../../../Common/Types.h \
- ../../IDecl.h ../../Common/InBuffer.h ../../Common/../IStream.h \
- ../../Common/../../Common/MyCom.h \
- ../../Common/../../Common/MyException.h \
- ../../Common/../../Common/MyWindows.h ../BitmDecoder.h ../../IStream.h \
- ../HuffmanDecoder.h ../../../Common/Types.h ../LzOutWindow.h \
- ../../Common/OutBuffer.h ../Rar2Decoder.h ../Rar3Decoder.h \
- ../../../../C/Ppmd7.h ../../../../C/Ppmd.h ../../../../C/Types.h \
- ../../../../C/CpuArch.h ../Rar3Vm.h ../../../../C/CpuArch.h \
- ../../../Common/MyVector.h ../../../Common/Defs.h
+ ../../../include_windows/tchar.h ../../../../CPP/Common/../../C/7zCrc.h \
+ ../../../../CPP/Common/../../C/7zTypes.h
+MyVector.o: ../../../../CPP/Common/MyVector.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h
+MyWindows.o: ../../../../CPP/Common/MyWindows.cpp \
+ ../../../myWindows/StdAfx.h ../../../myWindows/config.h \
+ ../../../Common/Common.h ../../../Common/../../C/Compiler.h \
+ ../../../Common/MyWindows.h ../../../Common/MyGuidDef.h \
+ ../../../Common/MyTypes.h ../../../Common/../../C/7zTypes.h \
+ ../../../Common/NewHandler.h ../../../Common/MyWindows.h \
+ ../../../Common/MyTypes.h ../../../Common/MyString.h \
+ ../../../Common/MyVector.h ../../../include_windows/windows.h \
+ ../../../include_windows/basetyps.h ../../../include_windows/tchar.h \
+ ../../../../CPP/Common/MyWindows.h ../../../../CPP/Common/MyTypes.h

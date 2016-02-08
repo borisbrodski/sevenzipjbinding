@@ -23,7 +23,6 @@
 #include "Windows/Control/DialogImpl.h"
 #include "Windows/Synchronization.h"
 
-
 // FIXME
 class MyApp : public wxApp
 {
@@ -194,7 +193,7 @@ void RegisterDialog(const CDialogInfo *dialogInfo)
 
 namespace NWindows {
 
-	CSysString MyLoadString(unsigned int resourceID)
+	UString MyLoadString(UINT resourceID)
 	{
 		for(unsigned i=0; i < g_NumDialogs; i++) {
 			if (g_Dialogs[i]->stringTable) {
@@ -208,7 +207,13 @@ namespace NWindows {
 				}
 			}
 		}
+		printf("MyLoadString(resourceID=%u) : NOT FOUND\n",(unsigned)resourceID);
 		return L"FIXME-MyLoadStringW-";
+	}
+
+	void MyLoadString(UINT resourceID, UString &dest)
+	{
+		dest = MyLoadString(resourceID);
 	}
 
 	namespace NControl {
@@ -260,7 +265,9 @@ namespace NWindows {
 			wxWindow * CModalDialog::GetItem(long id) const
 			{
 				LockGUI lock;
-				return _window->FindWindow(id);
+				wxWindow * w = _window->FindWindow(id);
+				if (w == 0) printf("@@WARNING :GetItem(%ld)=NULL\n",id);
+				return w;
 			}
 
 			void CModalDialog::ShowItem(int itemID, int cmdShow) const
@@ -322,7 +329,7 @@ namespace NWindows {
 				WaitInd(this->_window,ind,DIALOG_ID_END_DIALOG,0);
 			}
 
-			void CModalDialog::PostMessage(UINT message)
+			void CModalDialog::PostMsg(UINT message)
 			{
 				int ind = findFreeInd();
 
@@ -421,7 +428,7 @@ static int myCreateHandle2(int n)
 			decorated_style |= ( style & wxYES ) ? wxICON_QUESTION : wxICON_INFORMATION ;
 		}
 		wxMessageDialog dialog(parentWindow, g_tabCreate[n].msg, g_tabCreate[n].title, decorated_style);
-		dialog.SetIcon(wxICON(p7zip_32));
+		// FIXME dialog.SetIcon(wxICON(p7zip_32));
 		int ret = dialog.ShowModal();
 
 		return ret;
@@ -540,12 +547,22 @@ bool BrowseForFolder(HWND owner, LPCWSTR title, LPCWSTR initialFolder, UString &
 namespace NWindows
 {
 
-	bool MyGetOpenFileName(HWND hwnd, LPCWSTR title, LPCWSTR fullFileName, LPCWSTR s, UString &resPath)
+	// OLD bool MyGetOpenFileName(HWND hwnd, LPCWSTR title, LPCWSTR /* FIXME initialDir */ , LPCWSTR fullFileName, LPCWSTR s, UString &resPath)
+	bool MyGetOpenFileName(HWND hwnd, LPCWSTR title,
+		LPCWSTR /* FIXME initialDir */  ,  // can be NULL, so dir prefix in filePath will be used
+		LPCWSTR filePath,    // full path
+		LPCWSTR /* FIXME filterDescription */ ,  // like "All files (*.*)"
+		LPCWSTR filter,             // like "*.exe"
+		UString &resPath
+		#ifdef UNDER_CE
+		, bool openFolder = false
+		#endif
+		)
 	{
 		int ind = findFreeInd();
 
 		g_tabCreate[ind].title               = title;
-		g_tabCreate[ind].initialFolderOrFile = nameWindowToUnix(fullFileName);
+		g_tabCreate[ind].initialFolderOrFile = nameWindowToUnix(filePath);
 	
 		UString resTmp;
 		int ret = WaitInd(0,ind,DIALOG_ID_FILE_DIALOG,hwnd,resTmp); // FIXME
@@ -556,5 +573,12 @@ namespace NWindows
 		}
 		return false;
 	}
+}
+
+// From CPP/7zip/UI/FileManager/BrowseDialog.cpp
+bool CorrectFsPath(const UString & /* relBase */, const UString &path, UString &result)
+{
+  result = path;
+  return true;
 }
 

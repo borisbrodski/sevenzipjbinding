@@ -53,7 +53,9 @@ namespace NWindows {
 
 			void SetItemData(int index, int val);
 
-			int GetItemData(int index);
+			LRESULT GetItemData(int index);
+
+			LRESULT GetItemData_of_CurSel() { return GetItemData(GetCurSel()); }
 
 			void Enable(bool state);
 

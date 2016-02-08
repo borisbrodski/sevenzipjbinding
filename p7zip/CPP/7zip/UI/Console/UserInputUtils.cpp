@@ -2,8 +2,8 @@
 
 #include "StdAfx.h"
 
-#include "Common/StdInStream.h"
-#include "Common/StringConvert.h"
+#include "../../../Common/StdInStream.h"
+#include "../../../Common/StringConvert.h"
 
 #include "UserInputUtils.h"
 
@@ -22,14 +22,14 @@
 #endif
 #endif
 
-static const char kYes = 'Y';
-static const char kNo = 'N';
-static const char kYesAll = 'A';
-static const char kNoAll = 'S';
-static const char kAutoRenameAll = 'U';
-static const char kQuit = 'Q';
+static const char kYes = 'y';
+static const char kNo = 'n';
+static const char kYesAll = 'a';
+static const char kNoAll = 's';
+static const char kAutoRenameAll = 'u';
+static const char kQuit = 'q';
 
-static const char *kFirstQuestionMessage = "?\n";
+static const char *kFirstQuestionMessage = "? ";
 static const char *kHelpQuestionMessage =
   "(Y)es / (N)o / (A)lways / (S)kip all / A(u)to rename all / (Q)uit? ";
 
@@ -37,36 +37,39 @@ static const char *kHelpQuestionMessage =
 
 NUserAnswerMode::EEnum ScanUserYesNoAllQuit(CStdOutStream *outStream)
 {
-  (*outStream) << kFirstQuestionMessage;
+  if (outStream)
+    *outStream << kFirstQuestionMessage;
   for (;;)
   {
-    (*outStream) << kHelpQuestionMessage;
-    outStream->Flush();
+    if (outStream)
+    {
+      *outStream << kHelpQuestionMessage;
+      outStream->Flush();
+    }
     AString scannedString = g_StdIn.ScanStringUntilNewLine();
     scannedString.Trim();
     if (!scannedString.IsEmpty())
-      switch(
-        ::MyCharUpper(
-        #ifdef UNDER_CE
-        (wchar_t)
-        #endif
-        scannedString[0]))
+      switch(::MyCharLower_Ascii(scannedString[0]))
       {
-        case kYes:
-          return NUserAnswerMode::kYes;
-        case kNo:
-          return NUserAnswerMode::kNo;
-        case kYesAll:
-          return NUserAnswerMode::kYesAll;
-        case kNoAll:
-          return NUserAnswerMode::kNoAll;
-        case kAutoRenameAll:
-          return NUserAnswerMode::kAutoRenameAll;
-        case kQuit:
-          return NUserAnswerMode::kQuit;
+        case kYes:    return NUserAnswerMode::kYes;
+        case kNo:     return NUserAnswerMode::kNo;
+        case kYesAll: return NUserAnswerMode::kYesAll;
+        case kNoAll:  return NUserAnswerMode::kNoAll;
+        case kAutoRenameAll: return NUserAnswerMode::kAutoRenameAll;
+        case kQuit:   return NUserAnswerMode::kQuit;
       }
   }
 }
+
+#ifdef _WIN32
+#ifndef UNDER_CE
+#define MY_DISABLE_ECHO
+#endif
+#endif
+
+#ifdef ENV_HAVE_GETPASS
+#define MY_DISABLE_ECHO
+#endif
 
 UString GetPassword(CStdOutStream *outStream,bool verify)
 {
@@ -74,23 +77,29 @@ UString GetPassword(CStdOutStream *outStream,bool verify)
   const char *r = fl_password("Enter password", 0);
   AString oemPassword = "";
   if (r) oemPassword = r;
+  return MultiByteToUnicodeString(oemPassword, CP_OEMCP);
 #else /* USE_FLTK */
+  if (outStream)
+  {
+    *outStream << "\nEnter password"
+      #ifdef MY_DISABLE_ECHO
+      " (will not be echoed)"
+      #endif
+      ":";
+    outStream->Flush();
+  }
 #ifdef ENV_HAVE_GETPASS
-  (*outStream) << "\nEnter password (will not be echoed) :";
-  outStream->Flush();
   AString oemPassword = getpass("");
-  if (verify)
+  if ( (verify) && (outStream) )
   {
     (*outStream) << "Verify password (will not be echoed) :";
-  outStream->Flush();
+    outStream->Flush();
     AString oemPassword2 = getpass("");
     if (oemPassword != oemPassword2) throw "password verification failed";
   }
+  return MultiByteToUnicodeString(oemPassword, CP_OEMCP);
 #else
-  (*outStream) << "\nEnter password:";
-  outStream->Flush();
-  AString oemPassword = g_StdIn.ScanStringUntilNewLine();
+  return g_StdIn.ScanUStringUntilNewLine();
 #endif
 #endif /* USE_FLTK */
-  return MultiByteToUnicodeString(oemPassword, CP_OEMCP);
 }

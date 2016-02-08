@@ -9,12 +9,19 @@ ALLFLAGS=-m64 ${OPTFLAGS}  \
 	-D_REENTRANT -DENV_UNIX \
 	$(LOCAL_FLAGS)
 
-CXX=/Developer/usr/bin/llvm-g++ $(ALLFLAGS)
-CC=/Developer/usr/bin/llvm-gcc $(ALLFLAGS)
+# For old Mac OS X :
+# CXX=/Developer/usr/bin/llvm-g++
+# CC=/Developer/usr/bin/llvm-gcc
+
+# For new Mac OS X :
+XX=/usr/bin/llvm-g++
+CC=/usr/bin/llvm-gcc
+
 LINK_SHARED=-bundle
 
 LOCAL_LIBS=-framework CoreFoundation
 LOCAL_LIBS_DLL=$(LOCAL_LIBS)
 
 OBJ_CRC32=$(OBJ_CRC32_C)
+OBJ_AES=
 

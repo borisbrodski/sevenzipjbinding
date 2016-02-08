@@ -4,11 +4,9 @@
 #ifndef __COMMON_ALLOC_H
 #define __COMMON_ALLOC_H
 
-#include <stddef.h>
+#include "7zTypes.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+EXTERN_C_BEGIN
 
 void *MyAlloc(size_t size);
 void MyFree(void *address);
@@ -20,8 +18,9 @@ void MidFree(void *address);
 void *BigAlloc(size_t size);
 void BigFree(void *address);
 
-#ifdef __cplusplus
-}
-#endif
+extern ISzAlloc g_Alloc;
+extern ISzAlloc g_BigAlloc;
+
+EXTERN_C_END
 
 #endif

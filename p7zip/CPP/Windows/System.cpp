@@ -20,7 +20,7 @@
 #endif
 
 
-#include "Common/Types.h"
+#include "Common/MyTypes.h"
 
 namespace NWindows
 {
@@ -134,7 +134,7 @@ namespace NWindows
 			sysctl(mib, 2, &val, &size_sys, NULL, 0);
 			if (val) ullTotalPhys = val;
 #elif defined(__CYGWIN__)
-			unsigned long pagesize=4096; // FIXME - sysconf(_SC_PAGESIZE) returns 65536 !?
+			unsigned long pagesize=sysconf(_SC_PAGESIZE); // returns 65536 => OK
 					// see http://readlist.com/lists/cygwin.com/cygwin/0/3313.html
 			unsigned long maxpages=sysconf(_SC_PHYS_PAGES);
 			ullTotalPhys = ((UInt64)pagesize)*maxpages;

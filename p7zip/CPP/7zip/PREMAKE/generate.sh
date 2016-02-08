@@ -8,7 +8,7 @@ doit()
 	mkdir P7ZIP.$1
 	cd P7ZIP.$1
 	cp ../premake4.lua premake4.lua
-	${HOME}/PREMAKE/premake4 $1
+	premake4 $1
 	cd ..
 }
 

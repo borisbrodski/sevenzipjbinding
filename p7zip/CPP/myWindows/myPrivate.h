@@ -13,5 +13,13 @@ static inline const char * nameWindowToUnix(const char * lpFileName) {
   if ((lpFileName[0] == 'c') && (lpFileName[1] == ':')) return lpFileName+2;
   return lpFileName;
 }
+
+
+
 #endif
+
+// From mySplitCommandLine.cpp
+void mySplitCommandLine(int numArguments, char *arguments[],UStringVector &parts);
+class CStdOutStream;
+void showP7zipInfo(CStdOutStream *so);
 

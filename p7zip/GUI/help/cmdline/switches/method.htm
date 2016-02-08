@@ -27,7 +27,17 @@
 <LI><TD><A class="parameter" href="#BZ2">BZip2</A></TD> 
 <LI><TD><A class="parameter" href="#7Z">7z</A></TD> 
 <LI><TD><A class="parameter" href="#XZ">XZ</A></TD> 
+<LI><TD><A class="parameter" href="#WIM">WIM</A></TD> 
 </UL>
+
+<P>-m switch also can specify hash method for 
+<A href="../commands/hash.htm">h (Hash)</A> command,</P>
+
+<P><B>Notes:</B> "Default value" in switches descriptions means the value that 
+will be used if switch is not specified.</P>
+
+<P>It's allowed to use reduced forms for boolean switches: <B>sw+</B> or <B>sw</B> instead 
+<B>sw=on</B>, and <B>sw-</B> instead of <B>sw=off</B>.</P>
 
 <H2><A name="Zip"></A>Zip</H2>
 <TABLE>
@@ -70,11 +80,13 @@
     <TD align="center">ZipCrypto</TD> 
     <TD>Sets a encryption method: ZipCrypto, AES128, AES192, AES256</TD> </TR>
   <TR> <TD><A class="parameter">tc=[off | on]</A></TD> 
-     <TD align="center">off</TD>  <TD>Stores NTFS timestamps for files: Modification time, Creation time, Last access time.</TD> </TR>
+     <TD align="center">on</TD>  <TD>Stores NTFS timestamps for files: Modification time, Creation time, Last access time.</TD> </TR>
   <TR> <TD><A class="parameter">cl=[off | on]</A></TD> 
      <TD align="center">off</TD>  <TD>7-Zip always uses local code page for file names.</TD> </TR>
   <TR> <TD><A class="parameter">cu=[off | on]</A></TD> 
      <TD align="center">off</TD>  <TD>7-Zip uses UTF-8 for file names that contain non-ASCII symbols.</TD> </TR>
+  <TR> <TD><A class="parameter">cp={CodePage}</A></TD> 
+     <TD align="center">off</TD>  <TD>Sets code page</TD> </TR>
 </TABLE>
 
 <P>By default (if <B>cl</B> and <B>cu</B> switches are not specified), 7-Zip uses UTF-8 encoding
@@ -221,25 +233,22 @@ So GZip supports only the following parameters: x, fb, pass.
 
 <H2><A name="7Z"></A>7z</H2>
 <TABLE>
-  <TR> <TH width="80">Parameter</TH> <TH align="center">Default</TH> <TH>Description</TH> </TR>
-  <TR> <TD><A class="parameter" href="#SevenZipX">x=[0 | 1 | 3 | 5 | 7 | 9 ]</A></TD> 
-        <TD align="center">5</TD><TD>Sets level of compression.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#Solid">s=[off | on | [e] [{N}f] [{N}b | {N}k | {N}m | {N}g]</A></TD> 
-       <TD align="center">on</TD>  <TD>Sets solid mode.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#Filter">f=[off | on]</A></TD> 
-       <TD align="center">on</TD>  <TD>Enables or disables compression filters for executable files.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#HeaderCompress">hc=[off | on]</A></TD> 
-       <TD align="center">on</TD>  <TD>Enables or disables archive header compressing.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#HeaderEncrypt">he=[off | on]</A></TD> 
-       <TD align="center">off</TD>  <TD>Enables or disables archive header encryption.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#Bind">b{C1}[s{S1}]:{C2}[s{S2}]</A></TD> 
-       <TD align="center"> </TD>  <TD>Sets binding beetwen coders.</TD> </TR>
-  <TR> <TD><A class="parameter" href="#MethodID">{N}={MethodID}[:param1][:param2][..]</A></TD> 
-       <TD align="center">LZMA</TD>  <TD>Sets a method: LZMA, LZMA2, PPMd, BZip2, Deflate, Delta, BCJ, BCJ2, Copy.</TD> </TR>
-   <TR> <TD><A class="parameter" href="#MultiThread">mt=[off | on | {N}]</A></TD> 
-        <TD align="center">on</TD>  <TD>Sets multithreading mode.</TD> </TR>
-   <TR> <TD><A class="parameter">tc=[off | on]</A></TD> 
-        <TD align="center">off</TD>  <TD>Stores file creation timestamps.</TD> </TR>
+  <TR> 
+    <TH width="80"> Parameter </TH> 
+    <TH align="center"> Default </TH> 
+    <TH> Description </TH> 
+  </TR>
+  <TR> <TD> <A class="parameter" href="#SevenZipX"> x=[0 | 1 | 3 | 5 | 7 | 9 ] </A> </TD> <TD align="center"> 5 </TD> <TD> Sets level of compression. </TD> </TR> 
+  <TR> <TD> <A class="parameter" href="#Solid"> s=[off | on | [e] [{N}f] [{N}b | {N}k | {N}m | {N}g] </A> </TD>        <TD align="center"> on </TD> <TD> Sets solid mode. </TD> </TR>
+  <TR> <TD> <A class="parameter" href="#Filter"> f=[off | on | FilterID] </A> </TD> <TD align="center"> on </TD>  <TD>Enables or disables filters. FilterID: Delta:{N}, BCJ, BCJ2, ARM, ARMT, IA64, PPC, SPARC. </TD> </TR>
+  <TR> <TD> <A class="parameter" href="#HeaderCompress"> hc=[off | on] </A> </TD> <TD align="center">on</TD>  <TD>Enables or disables archive header compressing. </TD> </TR>
+  <TR> <TD> <A class="parameter" href="#HeaderEncrypt"> he=[off | on] </A> </TD> <TD align="center">off</TD>  <TD>Enables or disables archive header encryption. </TD> </TR>
+  <TR> <TD> <A class="parameter" href="#Bind">b{C1}[s{S1}]:{C2}[s{S2}] </A> </TD> <TD align="center"> </TD>  <TD>Sets binding beetwen coders.</TD> </TR>
+  <TR> <TD> <A class="parameter" href="#MethodID">{N}={MethodID}[:param1][:param2][..]</A></TD> <TD align="center">LZMA2</TD>  <TD>Sets a method: LZMA, LZMA2, PPMd, BZip2, Deflate, Delta, BCJ, BCJ2, Copy. </TD> </TR>
+  <TR> <TD> <A class="parameter" href="#MultiThread"> mt=[off | on | {N}] </A> </TD> <TD align="center">on</TD> <TD> Sets multithreading mode. </TD> </TR>
+  <TR> <TD> <A class="parameter"> tm=[off | on] </A> </TD> <TD align="center"> on  </TD> <TD> Stores last Modified timestamps for files. </TD> </TR>
+  <TR> <TD> <A class="parameter"> tc=[off | on] </A> </TD> <TD align="center"> off </TD> <TD> Stores Creation timestamps for files. </TD> </TR>
+  <TR> <TD> <A class="parameter"> ta=[off | on] </A> </TD> <TD align="center"> off </TD> <TD> Stores last Access timestamps for files. </TD> </TR>
 </TABLE>
 
 <DL>
@@ -249,11 +258,11 @@ So GZip supports only the following parameters: x, fb, pass.
     <TABLE>
       <TR> <TH>Level</TH> <TH>Method</TH> <TH>Dictionary</TH> <TH>FastBytes</TH> <TH>MatchFinder</TH> <TH>Filter</TH> <TH>Description</TH> </TR>
       <TR> <TD align="center">0</TD> <TD align="center">Copy</TD> <TD align="center"></TD> <TD align="center"></TD> <TD align="center"></TD> <TD align="center"></TD> <TD>No compression.</TD> </TR>
-      <TR> <TD align="center">1</TD> <TD align="center">LZMA</TD> <TD align="center">64 KB</TD> <TD align="center">32</TD> <TD align="center">HC4</TD> <TD align="center">BCJ</TD> <TD>Fastest compressing</TD> </TR>
-      <TR> <TD align="center">3</TD> <TD align="center">LZMA</TD> <TD align="center">1 MB</TD>  <TD align="center">32</TD> <TD align="center">HC4</TD> <TD align="center">BCJ</TD> <TD>Fast compressing</TD> </TR>
-      <TR> <TD align="center">5</TD> <TD align="center">LZMA</TD> <TD align="center">16 MB</TD>  <TD align="center">32</TD> <TD align="center">BT4</TD> <TD align="center">BCJ</TD> <TD>Normal compressing</TD> </TR>
-      <TR> <TD align="center">7</TD> <TD align="center">LZMA</TD> <TD align="center">32 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ</TD> <TD>Maximum compressing</TD> </TR>
-      <TR> <TD align="center">9</TD> <TD align="center">LZMA</TD> <TD align="center">64 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ2</TD><TD>Ultra compressing</TD> </TR>
+      <TR> <TD align="center">1</TD> <TD align="center">LZMA2</TD> <TD align="center">64 KB</TD> <TD align="center">32</TD> <TD align="center">HC4</TD> <TD align="center">BCJ</TD> <TD>Fastest compressing</TD> </TR>
+      <TR> <TD align="center">3</TD> <TD align="center">LZMA2</TD> <TD align="center">1 MB</TD>  <TD align="center">32</TD> <TD align="center">HC4</TD> <TD align="center">BCJ</TD> <TD>Fast compressing</TD> </TR>
+      <TR> <TD align="center">5</TD> <TD align="center">LZMA2</TD> <TD align="center">16 MB</TD>  <TD align="center">32</TD> <TD align="center">BT4</TD> <TD align="center">BCJ</TD> <TD>Normal compressing</TD> </TR>
+      <TR> <TD align="center">7</TD> <TD align="center">LZMA2</TD> <TD align="center">32 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ</TD> <TD>Maximum compressing</TD> </TR>
+      <TR> <TD align="center">9</TD> <TD align="center">LZMA2</TD> <TD align="center">64 MB</TD> <TD align="center">64</TD> <TD align="center">BT4</TD> <TD align="center">BCJ2</TD><TD>Ultra compressing</TD> </TR>
     </TABLE>
     <P>Note: "x" works as "x=9".</P>
   </DD>
@@ -298,28 +307,24 @@ So GZip supports only the following parameters: x, fb, pass.
       </PRE>
     <P>set solid mode with 100 files & 10 MB limits per one solid block.</P>
 
-  <DT><A name="Filter"></A>f=[off | on]</DT>
+  <DT><A name="Filter"></A>f=[off | on | FilterID]</DT>
   <DD>
-    <P>Enables or disables compression filters for executable files:
-     dll, exe, ocx, sfx, sys. It uses BCJ2 filter in Ultra mode and BCJ 
-     filter in other modes. The default mode is f=on. 
+    <P>Enables or disables compression filters.
+     The default mode is f=on, when 7-zip uses filter only for executable files:
+     dll, exe, ocx, sfx, sys. It uses BCJ2 filter in Ultra mode and BCJ filter in other modes.
+     If f=FilterID if specified, 7-zip uses specified filter for all files.
+     FilterID can be: Delta:{N}, BCJ, BCJ2, ARM, ARMT, IA64, PPC, SPARC.
     </P>
   <DT><A name="HeaderCompress"></A>hc=[off | on]</DT>
   <DD>
     <P> Enables or disables archive header compressing. The default mode is hc=on. 
-        If archive header compressing is enabled, some parts of archive header will 
+        If archive header compressing is enabled, the archive header will 
         be compressed with LZMA method.
     </P>
   <DT><A name="HeaderEncrypt"></A>he=[off | on]</DT>
   <DD>
     <P> Enables or disables archive header encryption. The default mode is he=off. 
     </P>
-  <DT>{N}</DT>
-  <DD>
-    <P>Sets order of methods. It is used also to associate parameters with
-        methods. Numbers must begin from 0. Methods that have smaller numbers will be used
-        before others.</P>
-  </DD>
 
   <DT><A name="Bind"></A>b{C1}[s{S1}]:{C2}[s{S2}]</DT>
   <DD>
@@ -346,7 +351,13 @@ So GZip supports only the following parameters: x, fb, pass.
   <DT><A name="MethodID"></A>{N}={MethodID}[:param1][:param2] ... [:paramN]</DT>
   <DD>
     <P>Sets compression method. You can use any number of methods. 
-       The default method is LZMA. </P>
+       The default method is LZMA2.</P>
+
+    <P>{N} sets the index number of method in methods chain.
+       Numbers must begin from 0. Methods that have smaller numbers will be used
+       before others.</P>
+
+
     <P>Parameters must be in one of the following forms:</P>
     <UL>
       <LI>{ParamName}={ParamValue}.
@@ -418,7 +429,9 @@ So GZip supports only the following parameters: x, fb, pass.
   <DT><A name="DictionarySize"></A>d={Size}[b|k|m]</DT>
   <DD>
     <P> Sets Dictionary size for LZMA. You must specify the size in bytes, kilobytes, or megabytes.
-       The maximum value for dictionary size is 1 GB = 2^30 bytes. Default values for LZMA
+       The maximum value for dictionary size is 1 GB = 2^30 bytes, but 32-bit version of 7-Zip allows 
+       to specify up to 128 MB dictionary.
+       Default values for LZMA
        are 24 (16 MB) in normal mode, 25 (32 MB) in maximum mode (-mx=7) 
        and 26 (64 MB) in ultra mode (-mx=9). 
        If you do not specify any symbol from the set [b|k|m], the
@@ -566,52 +579,107 @@ So GZip supports only the following parameters: x, fb, pass.
 </DL>
 
 <H2><A name="XZ"></A>XZ</H2>
-XZ supports only LZMA2 codec now. The switches are similar to switches for 7z format.
+
+<P>XZ supports only LZMA2 codec now. The switches are similar to switches for 7z format.</P>
+
+<TABLE>
+  <TR> 
+    <TH width="80"> Parameter </TH> 
+    <TH align="center"> Default </TH> 
+    <TH> Description </TH> 
+  </TR>
+  <TR> <TD> <A class="parameter" > x=[0 | 1 | 3 | 5 | 7 | 9 ] </A> </TD> <TD align="center"> 5 </TD> <TD> Sets level of compression </TD> </TR> 
+  <TR> <TD> <A class="parameter" > f=FilterID </A> </TD> <TD align="center"> </TD>  <TD> Sets compression filter. FilterID: Delta:{N}, BCJ, ARM, ARMT, IA64, PPC, SPARC </TD> </TR>
+  <TR> <TD> <A class="parameter" > {N}={MethodID}[:param1][:param2][..]</A></TD> <TD align="center"> LZMA2 </TD> <TD> Sets compression method: LZMA2:[param1]:[param2]:[...] </TD> </TR>
+  <TR> <TD> <A class="parameter" > mt=[off | on | {N}] </A> </TD> <TD align="center"> on </TD> <TD> Sets multithreading mode </TD> </TR>
+</TABLE>
+
+<H2><A name="WIM"></A>WIM</H2>
+
+<TABLE>
+  <TR> 
+    <TH width="160">Parameter</TH> 
+    <TH align="center">Default</TH> 
+    <TH>Description</TH> </TR>
+  <TR> 
+    <TD><A class="parameter" href="#mim">im={ImageNumber}</A></TD> 
+    <TD align="center"></TD>
+    <TD>Sets image number.</TD> </TR>
+  <TR> 
+    <TD>is=[off | on]</TD> 
+    <TD align="center">off</TD> 
+    <TD>Show image number in paths.</TD> </TR>
+</TABLE>
+
+<P>If image number is specified, 7-Zip works only with that image inside WIM archive.
+Other images will be not changed. By default 7-Zip doesn't show image number, if there is only one 
+image in WIM archive, or if image number is specified. But if the switch "is" specified, 
+7-Zip shows image number.<P>
 
 <H4>Examples</H4>
 
 <PRE class="example">
-7z a -tzip archive.zip *.jpg -mx0
+7z a archive.zip *.jpg -mx0
 </PRE>
 
 <P>adds <SPAN class="filename">*.jpg</SPAN> files to
   <SPAN class="filename">archive.zip</SPAN> archive without compression.</P>
 
 <PRE class="example">
-7z a -t7z archive.7z *.exe *.dll -m0=BCJ -m1=LZMA:d=21 -ms -mmt
+7z a archive.7z *.exe *.dll -m0=BCJ -m1=LZMA:d=21
 </PRE>
 
 <P>adds <SPAN class="filename">*.exe</SPAN> and <SPAN class="filename">*.dll</SPAN> 
 files to solid archive  <SPAN class="filename">archive.7z</SPAN> using LZMA method with 
-2 MB dictionary and BCJ converter. Compression will use multithreading optimization.</P>
+2 MB dictionary and BCJ filter.</P>
 
 <PRE class="example">
-7z a -t7z archive.7z *.exe *.dll -m0=BCJ2 -m1=LZMA:d23 -m2=LZMA:d19 -m3=LZMA:d19 
-     -mb0:1 -mb0s1:2 -mb0s2:3
+7z a archive.7z a.tar -mf=BCJ2 -mx
+</PRE>
+
+<P>adds <SPAN class="filename">a.tar</SPAN> 
+  files to archive  <SPAN class="filename">archive.7z</SPAN> using BCJ2 filter.</P>
+
+<PRE class="example">
+7z a archive.7z *.wav -mf=Delta:4
+</PRE>
+
+<P>adds <SPAN class="filename">*.wav</SPAN> 
+  files to archive  <SPAN class="filename">archive.7z</SPAN> using Delta:4 filter.</P>
+
+<PRE class="example">
+7z a a.7z *.exe *.dll -m0=BCJ2 -m1=LZMA:d25 -m2=LZMA:d19 -m3=LZMA:d19 -mb0:1 -mb0s1:2 -mb0s2:3
 </PRE>
 
 <P>adds <SPAN class="filename">*.exe</SPAN> and <SPAN class="filename">*.dll</SPAN> 
-  files to archive  <SPAN class="filename">archive.7z</SPAN> using BCJ2 converter, 
-  LZMA with 8 MB dictionary for main output stream (s0), 
+  files to archive  <SPAN class="filename">a.7z</SPAN> using BCJ2 filter, 
+  LZMA with 32 MB dictionary for main output stream (s0), 
   and LZMA with 512 KB dictionary for s1 and s2 output streams of BCJ2.</P>
 
-  
 <PRE class="example">
-7z a -t7z archive.7z *.txt -m0=PPMd
+7z a archive.7z *.txt -m0=PPMd
 </PRE>
 
 <P>adds <SPAN class="filename">*.txt</SPAN> files to archive  
 <SPAN class="filename">archive.7z</SPAN> using PPMd method.</P>
 
 
+<PRE class="example">
+7z a a.tar.xz a.tar -mf=bcj -mx
+</PRE>
+
+<P>adds <SPAN class="filename">a.tar</SPAN> 
+  files to archive  <SPAN class="filename">a.tar.xz</SPAN> using BCJ filter.</P>
 
 
 <H4>Commands that can be used with this switch</H4>
 
 <P>
   <A href="../commands/add.htm">a (Add)</A>,
+  <A href="../commands/hash.htm">h (Hash)</A>,
   <A href="../commands/delete.htm">d (Delete)</A>,
-  <A href="../commands/update.htm">u (Update)</A>,
+  <A href="../commands/rename.htm">rn (Rename)</A>,
+  <A href="../commands/update.htm">u (Update)</A>
 </P>
 
 <H4>See also</H4>

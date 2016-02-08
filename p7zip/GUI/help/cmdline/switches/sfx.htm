@@ -35,23 +35,20 @@
   </DD>
 </DL>
 
-<P>
-All SFX modules are uncompressed. You can use UPX program 
-(http://upx.sourceforge.net) 
-to compresss such modules. After compressing by the UPX program, the size of the
-sfx module will be reduced to 40-50% of its original size.
-</P>
+<P>SFX module can unpack 7z archive or 7z multivolume archive. For example, 
+if you have name.7z or name.7z.001 archive, just rename sfx muldule to name.exe and place 
+to same folder with archive.</P>
 
 <H4>SFX modules for installers</H4>
+
 <P>SFX modules for installers are included in an external package (7z_extra). You can download
 these modules from www.7-zip.org. SFX modules for installers (7zS.sfx and 7zSD.sfx)
 allow you to create your own installation program.
 Such a module extracts the archive to the user's temp folder, and runs a specified program,
 and removes the temp files after the program finishes.
-A self-extracting archive for installers must be created as joining 3 files:
-SFX_Module, Installer_Config, 7z_Archive. 
-In addition, an optional file, Installer_Config, is allowed. You can use the following command to
-create an installer self-extracting archive:</P>
+A self-extracting archive for installers must be created as joining the following files:
+SFX_Module, Installer_Config (optional), 7z_Archive. 
+You can use the following command to create an installer self-extracting archive:</P>
 <PRE class="example">
 copy /b 7zS.sfx + config.txt + archive.7z archive.exe
 </PRE>

@@ -5,18 +5,20 @@
 #ifndef _WIN32
 
 #include "MyWindows.h"
-#include "Types.h"
+#include "MyTypes.h"
 #include <stdlib.h> /* FIXED <malloc.h> */
 
 static inline void *AllocateForBSTR(size_t cb) { return ::malloc(cb); }
 static inline void FreeForBSTR(void *pv) { ::free(pv);}
 
+/* FIXME
 static UINT MyStringLen(const wchar_t *s)
 { 
   UINT i;
   for (i = 0; s[i] != '\0'; i++);
   return i;
 }
+*/
 
 BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
 {
@@ -34,6 +36,21 @@ BSTR SysAllocStringByteLen(LPCSTR psz, UINT len)
   memset(pb,0,sizeof(wchar_t) + LEN_ADDON);
   return (BSTR)bstr;
 }
+
+BSTR WINAPI SysAllocStringLen(const OLECHAR *sz, unsigned int numChars) // FIXME - code
+{
+  UINT len = (numChars + 1) * sizeof(OLECHAR);
+  void *p = AllocateForBSTR(len + sizeof(UINT));
+  if (p == 0)
+    return 0;
+  memset(p,0,len + sizeof(UINT));
+  *(UINT *)p = numChars * sizeof(OLECHAR); // FIXED
+  void * bstr = (void *)((UINT *)p + 1);
+  if (sz) memmove(bstr, sz, numChars  * sizeof(OLECHAR)); // sz does not always have "wchar_t" alignment.
+
+  return (BSTR)bstr;
+}
+
 
 BSTR SysAllocString(const OLECHAR *sz)
 {

@@ -28,14 +28,9 @@
 namespace NWindows {
 namespace NDLL {
 
-CLibrary::~CLibrary()
-{
-  Free();
-}
-
 bool CLibrary::Free()
 {
-TRACEN((printf("CLibrary::Free(%p)\n",(void *)_module)))
+TRACEN((printf("CLibrary::Free(this=%p,%p)\n",(void *)this,(void *)_module)))
   if (_module == 0)
     return true;
 
@@ -75,7 +70,7 @@ static FARPROC local_GetProcAddress(HMODULE module,LPCSTR lpProcName)
 #else
     ptr = dlsym (module, lpProcName);
 #endif
-	TRACEN((printf("CLibrary::GetProc : dlsym(%p,%s)=%p\n",(void *)module,lpProcName,ptr)))
+    TRACEN((printf("CLibrary::GetProc : dlsym(%p,%s)=%p\n",(void *)module,lpProcName,ptr)))
   }
   return (FARPROC)ptr;
 }
@@ -86,18 +81,11 @@ FARPROC CLibrary::GetProc(LPCSTR lpProcName) const
   return local_GetProcAddress(_module,lpProcName);
 }
 
-bool CLibrary::LoadOperations(HMODULE newModule)
-{
-  if (newModule == NULL)
-    return false;
-  if(!Free())
-    return false;
-  _module = newModule;
-  return true;
-}
-
 bool CLibrary::Load(LPCTSTR lpLibFileName)
 {
+  if(!Free())
+    return false;
+
   void *handler = 0;
   char  name[MAX_PATHNAME_LEN+1];
 #ifdef _UNICODE
@@ -106,14 +94,14 @@ bool CLibrary::Load(LPCTSTR lpLibFileName)
 #else
   strcpy(name,nameWindowToUnix(lpLibFileName));
 #endif
-  
+
   // replace ".dll" with ".so"
   size_t len = strlen(name);
   if ((len >=4) && (strcmp(name+len-4,".dll") == 0)) {
     strcpy(name+len-4,".so");
   }
 
-  TRACEN((printf("CLibrary::Load(%ls) => %s\n",lpLibFileName,name)))
+  TRACEN((printf("CLibrary::Load(this=%p,%ls) => %s\n",(void *)this,lpLibFileName,name)))
 
 #ifdef __APPLE_CC__
   NSObjectFileImage image;
@@ -164,10 +152,10 @@ TRACEN((printf("load_add_on(%s)=%d\n",p.Path(),(int)image)))
     // Propagate the value of global_use_utf16_conversion into the plugins
     int *tmp = (int *)local_GetProcAddress(handler,"global_use_utf16_conversion");
     if (tmp) *tmp = global_use_utf16_conversion;
-
+#ifdef ENV_HAVE_LSTAT
     tmp = (int *)local_GetProcAddress(handler,"global_use_lstat");
     if (tmp) *tmp = global_use_lstat;
-
+#endif
     // test construtors calls
     void (*fctTest)(void) = (void (*)(void))local_GetProcAddress(handler,"sync_TestConstructor");
     if (fctTest) fctTest();
@@ -184,10 +172,14 @@ TRACEN((printf("load_add_on(%s)=%d\n",p.Path(),(int)image)))
 #else
     printf("Can't load '%ls' (%s)\n", lpLibFileName,dlerror());
 #endif
-  } 
+  }
 
-  return LoadOperations(handler);
+  _module = handler;
+  TRACEN((printf("CLibrary::Load(this=%p,%ls) => _module=%p\n",(void *)this,lpLibFileName,_module)))
+
+  return true;
 }
+
 
 }}
 

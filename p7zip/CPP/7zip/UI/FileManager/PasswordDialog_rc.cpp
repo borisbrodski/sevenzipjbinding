@@ -31,12 +31,12 @@ class CPasswordDialogImpl : public NWindows::NControl::CModalDialogImpl
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
 	{
-	wxStaticBoxSizer *passwdSizer = new wxStaticBoxSizer(new wxStaticBox(this,IDC_STATIC_PASSWORD_HEADER,_T("&Enter password:")),wxVERTICAL);
+	wxStaticBoxSizer *passwdSizer = new wxStaticBoxSizer(new wxStaticBox(this,IDT_PASSWORD_ENTER,_T("&Enter password:")),wxVERTICAL);
 
-	wxTextCtrl *TxtPasswd = new wxTextCtrl(this, IDC_EDIT_PASSWORD, L"", 
+	wxTextCtrl *TxtPasswd = new wxTextCtrl(this, IDE_PASSWORD_PASSWORD, L"", 
 		wxDefaultPosition, wxSize(260,-1), bShowPassword?wxTE_LEFT:wxTE_PASSWORD );
 
-	wxCheckBox *ChkShowPasswd = new wxCheckBox(this, IDC_CHECK_PASSWORD_SHOW, wxT("&Show password"));
+	wxCheckBox *ChkShowPasswd = new wxCheckBox(this, IDX_PASSWORD_SHOW, wxT("&Show password"));
 
 	ChkShowPasswd->SetValue(bShowPassword);
 	passwdSizer->Add(TxtPasswd, 0, wxALL, 5);
@@ -56,7 +56,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-REGISTER_DIALOG(IDD_DIALOG_PASSWORD,CPasswordDialog,0)
+REGISTER_DIALOG(IDD_PASSWORD,CPasswordDialog,0)
 
 BEGIN_EVENT_TABLE(CPasswordDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)

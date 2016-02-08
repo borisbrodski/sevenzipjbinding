@@ -1,11 +1,10 @@
 /* Ppmd.h -- PPMD codec common code
-2010-03-12 : Igor Pavlov : Public domain
+2013-01-18 : Igor Pavlov : Public domain
 This code is based on PPMd var.H (2001): Dmitry Shkarin : Public domain */
 
 #ifndef __PPMD_H
 #define __PPMD_H
 
-#include "Types.h"
 #include "CpuArch.h"
 
 EXTERN_C_BEGIN
@@ -29,7 +28,8 @@ EXTERN_C_BEGIN
 #define PPMD_N4 ((128 + 3 - 1 * PPMD_N1 - 2 * PPMD_N2 - 3 * PPMD_N3) / 4)
 #define PPMD_NUM_INDEXES (PPMD_N1 + PPMD_N2 + PPMD_N3 + PPMD_N4)
 
-#pragma pack(push,1)
+#pragma pack(push, 1)
+/* Most compilers works OK here even without #pragma pack(push, 1), but some GCC compilers need it. */
 
 /* SEE-contexts for PPM-contexts with masked symbols */
 typedef struct

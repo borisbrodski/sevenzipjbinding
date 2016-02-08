@@ -11,14 +11,19 @@ sure()
   fi
 }
 
+# set -x
+
 LD_LIBRARY_PATH=`cd ../bin ; pwd`:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH
 echo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
-PZIP7=`pwd`"/$1"
+P7ZIP="$@"
+P7ZIP="${TOOLS} ${P7ZIP}" 
 
 REP=TMP_$$
 echo "REP=${REP}"
+echo "P7ZIP=${P7ZIP}"
+echo "TOOLS=${TOOLS}"
 
 chmod -R 777 ${REP} 2> /dev/null
 rm -fr   ${REP}
@@ -36,10 +41,10 @@ echo ""
 echo "# TESTING ..."
 echo "#############"
 
-sure ${PZIP7} l ../test/7za433_7zip_lzma.7z
-# sure ${PZIP7} t -pqwerty ../test/7za433_7zip_lzma_crypto.7z
-sure ${PZIP7} l ../test/7za433_7zip_ppmd.7z
-sure ${PZIP7} l ../test/7za433_7zip_bzip2.7z
+sure ${P7ZIP} l ../test/7za433_7zip_lzma.7z
+# sure ${P7ZIP} t -pqwerty ../test/7za433_7zip_lzma_crypto.7z
+sure ${P7ZIP} l ../test/7za433_7zip_ppmd.7z
+sure ${P7ZIP} l ../test/7za433_7zip_bzip2.7z
 
 
 
@@ -50,23 +55,23 @@ echo "################"
 sure tar xf ../test/7za433_tar.tar
 sure mv 7za433_tar 7za433_ref
 
-sure ${PZIP7} x ../test/7za433_7zip_lzma.7z
+sure ${P7ZIP} x ../test/7za433_7zip_lzma.7z
 sure diff -r 7za433_ref 7za433_7zip_lzma
 
-# sure ${PZIP7} x -pqwerty ../test/7za433_7zip_lzma_crypto.7z
+# sure ${P7ZIP} x -pqwerty ../test/7za433_7zip_lzma_crypto.7z
 # sure diff -r 7za433_ref 7za433_7zip_lzma_crypto
 
-sure ${PZIP7} x ../test/7za433_7zip_ppmd.7z
+sure ${P7ZIP} x ../test/7za433_7zip_ppmd.7z
 sure diff -r 7za433_ref 7za433_7zip_ppmd
 
-sure ${PZIP7} x ../test/7za433_7zip_bzip2.7z
+sure ${P7ZIP} x ../test/7za433_7zip_bzip2.7z
 sure diff -r 7za433_ref 7za433_7zip_bzip2
 
 echo ""
 echo "# Archiving ..."
 echo "###############"
 
-sure ${PZIP7} a 7za433_7zip_lzma.7z 7za433_7zip_lzma/bin/7za.exe 7za433_7zip_lzma/readme.txt 7za433_7zip_lzma/doc/copying.txt
+sure ${P7ZIP} a 7za433_7zip_lzma.7z 7za433_7zip_lzma/bin/7za.exe 7za433_7zip_lzma/readme.txt 7za433_7zip_lzma/doc/copying.txt
 
 echo ""
 echo "# EXTRACTING (PASS 2) ..."
@@ -74,7 +79,7 @@ echo "#########################"
 
 sure rm -fr 7za433_7zip_bzip2 7za433_7zip_lzma 7za433_7zip_lzma_crypto 7za433_7zip_ppmd 7za433_tar
 
-sure ${PZIP7} x 7za433_7zip_lzma.7z
+sure ${P7ZIP} x 7za433_7zip_lzma.7z
 sure diff -r 7za433_ref 7za433_7zip_lzma
 
 cd ..
