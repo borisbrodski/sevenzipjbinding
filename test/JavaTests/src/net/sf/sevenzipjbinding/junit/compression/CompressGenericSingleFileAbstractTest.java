@@ -36,7 +36,6 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
     protected long doTest(final int dataSize, final int entropy) throws Exception {
         GenericSingleFileCreateArchiveCallback createArchiveCallback = new GenericSingleFileCreateArchiveCallback();
 
-        TestContext testContext = testContextThreadContext.get();
         testContext.callbackTester = new CallbackTester<IOutCreateCallback<IOutItemAllFormats>>(createArchiveCallback);
         testContext.randomContext = new RandomContext(dataSize, entropy);
 

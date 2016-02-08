@@ -21,7 +21,7 @@ bool isUserTraceEnabled(JNIEnvInstance & jniEnvInstance, jobject thiz) {
 }
 
 void userTrace(JNIEnvInstance & jniEnvInstance, jobject thiz, UString msg) {
-    jstring jmsg = jniEnvInstance->NewString(UnicodeHelper(msg.GetBuffer(0)), msg.Length());
+    jstring jmsg = jniEnvInstance->NewString(UnicodeHelper(msg.GetBuf(0)), msg.Len());
     jni::OutArchiveImpl::traceMessage(jniEnvInstance, thiz, jmsg);
     jniEnvInstance.exceptionCheck(); // Ignore result
     jniEnvInstance->DeleteLocalRef(jmsg);

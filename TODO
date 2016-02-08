@@ -1,5 +1,7 @@
-Release 2.00 TODOs:
+Release 2.01 TODOs:
 
+- Add RAR5 tests
+- Add Tar SymLink/HardLink tests
 
 Other TODOs:
 
@@ -57,7 +59,7 @@ Major TODOs:
 - Support 7-zip volumes (see INTERFACE_IArchiveUpdateCallback2)
 - Support ICompressProgressInfo
 - Add Xz compression/decompression
-
+- Test .ar, .a, .lib extension (DEB already tested) (from ArHandler.cpp)
 
 Checklists
  - Bind new version of 7-zip

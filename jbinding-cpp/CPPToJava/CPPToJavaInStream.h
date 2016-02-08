@@ -27,7 +27,7 @@ public:
 		return result;
 	}
 
-	STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject)
+	STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject) throw()
 	{
 		if (iid == IID_IInStream)
 	    {
@@ -38,7 +38,7 @@ public:
 		return CPPToJavaSequentialInStream::QueryInterface(iid, outObject);
 	}
 
-	STDMETHOD_(ULONG, AddRef)()
+	STDMETHOD_(ULONG, AddRef)() throw()
 	{
 		return CPPToJavaSequentialInStream::AddRef();
 	}

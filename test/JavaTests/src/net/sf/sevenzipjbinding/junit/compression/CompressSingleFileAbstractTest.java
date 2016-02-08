@@ -37,7 +37,7 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         }
 
         public TestContext getTestContext() {
-            return testContextThreadContext.get();
+            return testContext;
         }
 
         public void setOperationResult(boolean operationResultOk) {
@@ -260,14 +260,7 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
     protected static final String GROUP = "mygroup";
     protected static final String USER = "me";
 
-    ThreadLocal<TestContext> testContextThreadContext = new ThreadLocal<TestContext>() {
-        @Override
-        protected TestContext initialValue() {
-            return new TestContext();
-        };
-    };
-
-
+    TestContext testContext = new TestContext();
 
     protected abstract long doTest(int dataSize, int entropy) throws Exception;
 
@@ -275,8 +268,9 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         long result = 0;
         if (multithreaded) {
             runMultithreaded(new RunnableThrowsException() {
+                @SuppressWarnings("unchecked")
                 public void run() throws Exception {
-                    doTest(dataSize, entropy, false);
+                    CompressSingleFileAbstractTest.this.newInstance().doTest(dataSize, entropy, false);
                 }
             }, null);
         } else {
@@ -290,6 +284,11 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         return result;
     }
 
+    @SuppressWarnings("unchecked")
+    protected CompressSingleFileAbstractTest<T> newInstance() throws InstantiationException, IllegalAccessException {
+        return this.getClass().newInstance();
+    }
+
     protected final void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream)
             throws SevenZipException {
         randomContext.rewind();
@@ -300,9 +299,9 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         try {
             inArchive = SevenZip.openInArchive(null, outputByteArrayStream);
             Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
+            assertEquals(1, inArchive.getNumberOfItems());
             inArchive.extractSlow(0, new AssertOutputStream(randomContext));
 
-            assertEquals(1, inArchive.getNumberOfItems());
 
             verifyCompressedArchiveDetails(inArchive);
 
@@ -321,8 +320,6 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
     }
 
     protected void verifyCompressedArchiveDetails(IInArchive inArchive) throws SevenZipException {
-        TestContext testContext = testContextThreadContext.get();
-
         if (testContext.pathSet) {
             assertEquals(SINGLE_FILE_PATH, inArchive.getProperty(0, PropID.PATH));
         }

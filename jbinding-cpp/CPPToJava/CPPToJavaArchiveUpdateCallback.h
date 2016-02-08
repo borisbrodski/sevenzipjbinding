@@ -52,13 +52,13 @@ public:
         return CPPToJavaProgress::SetCompleted(completeValue);
     }
 
-    STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) {
+    STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) throw() {
         TRACE_OBJECT_CALL("QueryInterface");
 
         return CPPToJavaProgress::QueryInterface(refguid, p);
     }
 
-    STDMETHOD_(ULONG, AddRef)() {
+    STDMETHOD_(ULONG, AddRef)() throw() {
         TRACE_OBJECT_CALL("AddRef");
         return CPPToJavaProgress::AddRef();
     }

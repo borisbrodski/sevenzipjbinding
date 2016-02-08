@@ -12,6 +12,10 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * 
  * This interface is a part of simplified 7-Zip-JBinding interface.
  * 
+ * <br>
+ * <br>
+ * <i>NOTE:</i> Some properties my only be available after the extraction operation completes.<br>
+ * Example: PACKED_SIZE of the LZMA archives.
  * 
  * @see ISimpleInArchive
  * @author Boris Brodski

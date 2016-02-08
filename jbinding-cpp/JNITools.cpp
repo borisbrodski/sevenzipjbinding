@@ -190,8 +190,7 @@ jobject DoubleToObject(JNIEnv * env, double value) {
 jobject BSTRToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
-    CMyComBSTR str(value);
-    return env->NewString(UnicodeHelper(str), str.Length());
+    return env->NewString(UnicodeHelper(value), wcslen(value));
 }
 
 /**
@@ -227,8 +226,9 @@ bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & f
  */
 jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant) {
 
-    UString string = ConvertPropertyToString(propVariant, propID, true);
-    return env->NewString(UnicodeHelper(string), string.Length());
+    UString string;
+    ConvertPropertyToString(string, propVariant, propID, true);
+    return env->NewString(UnicodeHelper(string), string.Len());
 }
 
 void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVARIANT * propVariant) {

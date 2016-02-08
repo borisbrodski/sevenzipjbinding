@@ -88,8 +88,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
         outNewArchive7z.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getProxyInstance());
 
-        // No setCompleted call
-        assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());
+        assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

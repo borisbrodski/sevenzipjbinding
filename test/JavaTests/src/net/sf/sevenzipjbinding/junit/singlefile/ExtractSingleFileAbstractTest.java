@@ -239,10 +239,6 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncompressedFilename);
 			checkDataSize(inArchive, index, expectedFilename);
-			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
-					&& archiveFormat != ArchiveFormat.UDF) {
-				checkPropertyPackedSize(inArchive, index, expectedFilename);
-			}
 			checkPropertyIsFolder(inArchive, index);
 			ExtractOperationResult operationResult;
 			if (usingPassword) {
@@ -263,6 +259,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			outputStream.checkAndCloseInputFile();
 			outputStream = null;
 
+            if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
+                    && archiveFormat != ArchiveFormat.UDF) {
+                checkPropertyPackedSize(inArchive, index, expectedFilename);
+            }
 			checkPropertyIsEncrypted(inArchive, index, expectedFilename);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
