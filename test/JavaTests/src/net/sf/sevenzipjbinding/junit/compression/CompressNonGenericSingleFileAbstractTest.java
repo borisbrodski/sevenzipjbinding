@@ -18,7 +18,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @param <T>
  *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
  *            {@link IOutItemZip}. Use {@link IOutItemAllFormats} interface to support all available archive formats.
- * 
+ *
  * @author Boris Brodski
  * @since 9.20-2.00
  */
@@ -37,7 +37,6 @@ public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutIte
     protected long doTest(int dataSize, int entropy) throws Exception {
         SingleFileCreateArchiveCallback createArchiveCallback = getSingleFileCreateArchiveCallback();
 
-        TestContext testContext = testContextThreadContext.get();
         testContext.callbackTester = new CallbackTester<IOutCreateCallback<T>>(createArchiveCallback);
         testContext.randomContext = new RandomContext(dataSize, entropy);
 

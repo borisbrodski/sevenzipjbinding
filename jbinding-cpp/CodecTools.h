@@ -26,6 +26,7 @@ public:
 	 * Retrieve 7-zip CCoders-index of the archive format.
 	 */
 	int getArchiveFormatIndex(JNIEnv * env, jobject archiveFormat);
+	void getArchiveFormatName(JNIEnv * env, jobject archiveFormat, UString & formatNameString);
 
 	bool isCabArchive(int index) {
 		return cabIndex == index;

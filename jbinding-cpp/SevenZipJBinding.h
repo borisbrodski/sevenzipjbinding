@@ -9,7 +9,6 @@
 #include "7zip/UI/Common/PropIDUtils.h"
 #include "7zip/Common/FileStreams.h"
 #include "Windows/PropVariant.h"
-#include "Windows/PropVariantConversions.h"
 #include "7zip/Archive/IArchive.h"
 
 #include <jni.h>

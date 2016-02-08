@@ -191,7 +191,8 @@ public class SevenZip {
         public String copyright;
     }
 
-    private static final String SEVENZIPJBINDING_VERSION = "9.20-2.00beta";
+    // Also change in /CMakeLists.txt
+    private static final String SEVENZIPJBINDING_VERSION = "15.09-2.01beta";
 
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
     private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";

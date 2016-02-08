@@ -20,14 +20,7 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
     }
 
     if (password) {
-        const jchar * passwordJChars = jniEnvInstance->GetStringChars(passwordString, NULL);
-        //CMyComBSTR passwordBSTR((OLECHAR*)(const wchar_t*)UnicodeHelper(passwordJChars));
-        //CMyComBSTR passwordBSTR(L"TestXXX");
-
-        //printf("PASSWORD: '%S'\n", (BSTR)passwordBSTR);
-        //fflush(stdout);
-        StringToBstr(UString(UnicodeHelper(passwordJChars)), password);//passwordBSTR.MyCopy();
-        jniEnvInstance->ReleaseStringChars(passwordString, passwordJChars);
+        StringToBstr(UString(FromJChar(jniEnvInstance, passwordString)), password);
     }
 
     if (passwordString) {

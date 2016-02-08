@@ -151,6 +151,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     if (archiveFormat) {
         index = codecTools.getArchiveFormatIndex(env, archiveFormat);
         if (index == -1) {
+            codecTools.getArchiveFormatName(env, archiveFormat, formatNameString);
             jniNativeCallContext.reportError("Not registered archive format: '%S'",
                     (const wchar_t*) formatNameString);
             deleteInErrorCase.setErrorCase();
@@ -272,8 +273,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         return NULL;
     }
 
-    jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString),
-            formatNameString.Length());
+    jstring jstringFormatNameString = ToJChar(formatNameString).toNewString(env);
     jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);
     if (jniEnvInstance.exceptionCheck()) {
         archive->Close();

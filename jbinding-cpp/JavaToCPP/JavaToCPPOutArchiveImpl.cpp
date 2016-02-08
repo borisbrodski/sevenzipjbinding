@@ -160,10 +160,8 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 		// printf("[SolidSpec:false]");fflush(stdout);
         propValues[0] = false;
     } else {
-        const jchar * jchars = env->GetStringChars(solidSpec, NULL);
 		// printf("[SolidSpec:%S]", UString(UnicodeHelper(jchars)).GetBuffer(100000));fflush(stdout);
-        propValues[0] = UString(UnicodeHelper(jchars));
-        env->ReleaseStringChars(solidSpec, jchars);
+        propValues[0] = UString(FromJChar(env, solidSpec));
     }
     CRecordVector<const wchar_t *> names;
     names.Add(L"S");

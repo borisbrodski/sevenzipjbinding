@@ -174,7 +174,7 @@ public enum PropID {
      * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     POSIX_ATTRIB, //
-    LINK, //
+    SYM_LINK, //
 
     // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
 

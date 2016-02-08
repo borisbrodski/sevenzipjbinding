@@ -787,8 +787,8 @@ PlatformCriticalSection JInterface<T>::_criticalSection;
 
 #ifdef TRACE_ON
 template<typename T>
-inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interface) {
-    stream << interface._getName();
+inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & jinterface) {
+    stream << jinterface._getName();
 }
 #endif // TRACE_ON
 

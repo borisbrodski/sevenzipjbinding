@@ -60,10 +60,10 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #CPIO}</td>
  * </tr>
  * <tr align="center">
- * <td>Deb</td>
+ * <td>ar, a, deb, lib</td>
  * <td>X</td>
  * <td>-</td>
- * <td>{@link #DEB}</td>
+ * <td>{@link #AR}</td>
  * </tr>
  * <tr align="center">
  * <td>Dmg</td>
@@ -278,9 +278,9 @@ public enum ArchiveFormat {
     NSIS("Nsis", true),
 
     /**
-     * Deb
+     * ar, a, deb, lib
      */
-    DEB("Deb", true),
+    AR("Ar", true),
 
     /**
      * Rpm

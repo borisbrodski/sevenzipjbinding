@@ -2,6 +2,7 @@
 #define JAVAPACKAGESEVENZIP_H_
 
 #include "JavaStaticInfo.h"
+#include "JavaStandardLibrary.h"
 
 #define SEVEN_ZIP_PACKAGE								"net/sf/sevenzipjbinding"
 #define SEVEN_ZIP_PACKAGE_IMPL							"net/sf/sevenzipjbinding/impl"
@@ -153,6 +154,8 @@ JT_BEGIN_CLASS(SEVEN_ZIP_PACKAGE_IMPL, OutItem)
     JT_FIELD_OBJECT(propertyUser, JAVA_STRING_T)
     JT_FIELD_OBJECT(propertyGroup, JAVA_STRING_T)
     JT_FIELD_OBJECT(propertyIsAnti, JAVA_BOOLEAN_T)
+    JT_FIELD_OBJECT(propertySymLink, JAVA_STRING_T)
+    JT_FIELD_OBJECT(propertyHardLink, JAVA_STRING_T)
 
     JT_FIELD_OBJECT(updateIsNewData, JAVA_BOOLEAN_T)
     JT_FIELD_OBJECT(updateIsNewProperties, JAVA_BOOLEAN_T)

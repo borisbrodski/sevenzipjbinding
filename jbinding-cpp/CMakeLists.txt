@@ -48,20 +48,23 @@ IF(MINGW)
         PlatformMinGW/MyUser32.cpp
     )
 ELSE(MINGW)
-    include_directories(PlatformUnix/)
+    ###include_directories(PlatformUnix/)
 ENDIF(MINGW)
 
-include_directories(/usr/include)
-include_directories(/usr/include/c++/4.3)
+###include_directories(/usr/include)
+###include_directories(/usr/include/c++/4.3)
 include_directories(${JAVA_INCLUDE_PATH})
 include_directories(${JAVA_INCLUDE_PATH2})
+
 IF(MINGW)
     include_directories(${_7ZIP_SRC}/)
     include_directories(${_7ZIP_SRC}/C)
     include_directories(${_7ZIP_SRC}/CPP/)
 ELSE(MINGW)
+    include_directories(${P7ZIP_SRC})
+    include_directories(${P7ZIP_SRC}/CPP)
+    include_directories(${P7ZIP_SRC}/C)
     include_directories(${P7ZIP_SRC}/CPP/myWindows)
-    include_directories(${P7ZIP_SRC}/CPP/)
     include_directories(${P7ZIP_SRC}/CPP/include_windows)
 ENDIF(MINGW)
 include_directories(${PROJECT_BINARY_DIR}/javah)
@@ -95,19 +98,38 @@ ENDIF()
 
 add_definitions(
 #    -DTRACE_ON
-    -D_FILE_OFFSET_BITS=64
-    -D_LARGEFILE_SOURCE
-    -D_REENTRANT
-    -DENV_UNIX
-#    -DCOMPRESS_MT         # commented since 9.13
-#    -DCOMPRESS_BZIP2_MT   # commented since 9.13
-#    -DCOMPRESS_MF_MT      # commented since 9.13
-    -DUNICODE      # since 9.13
-    -D_UNICODE     # since 9.13
-    -DBREAK_HANDLER
-    -DBENCH_MT
 )
 
+IF(MINGW)
+    add_definitions(
+        -D_FILE_OFFSET_BITS=64
+        -D_LARGEFILE_SOURCE
+        -D_REENTRANT
+        -DENV_UNIX
+        -DUNICODE      # since 9.13
+        -D_UNICODE     # since 9.13
+        -DBREAK_HANDLER
+        -DBENCH_MT
+    )
+ELSE(MINGW)
+#  -s 
+    add_definitions(
+        -pipe
+        -D_FILE_OFFSET_BITS=64
+        -D_LARGEFILE_SOURCE
+        -D_REENTRANT
+        -DENV_UNIX
+        -D_7ZIP_LARGE_PAGES
+        -DENV_HAVE_GCCVISIBILITYPATCH
+        #-fvisibility=hidden
+        #-fvisibility-inlines-hidden
+        
+        -DBREAK_HANDLER
+        -DUNICODE
+        -D_UNICODE
+        -DUNIX_USE_WIN_FILE
+    )
+ENDIF(MINGW)
 
 IF(MINGW)
     SET(P7ZIP_SOURCE_FILES
@@ -375,17 +397,13 @@ IF(MINGW)
         )
 ELSE(MINGW)
     SET(P7ZIP_SOURCE_FILES
-        ${P7ZIP_SRC}/CPP/myWindows/myGetTickCount.cpp
         ${P7ZIP_SRC}/CPP/myWindows/wine_date_and_time.cpp
-        ${P7ZIP_SRC}/CPP/myWindows/myAddExeFlag.cpp
-        ${P7ZIP_SRC}/CPP/myWindows/mySplitCommandLine.cpp
 
         ${P7ZIP_SRC}/CPP/Common/CommandLineParser.cpp
         ${P7ZIP_SRC}/CPP/Common/CRC.cpp
         ${P7ZIP_SRC}/CPP/Common/IntToString.cpp
         ${P7ZIP_SRC}/CPP/Common/ListFileUtils.cpp
         ${P7ZIP_SRC}/CPP/Common/StdInStream.cpp
-        ${P7ZIP_SRC}/CPP/Common/StdOutStream.cpp
         ${P7ZIP_SRC}/CPP/Common/MyString.cpp
         ${P7ZIP_SRC}/CPP/Common/MyWindows.cpp
         ${P7ZIP_SRC}/CPP/Common/StringConvert.cpp
@@ -393,20 +411,19 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/Common/UTFConvert.cpp
         ${P7ZIP_SRC}/CPP/Common/MyVector.cpp
         ${P7ZIP_SRC}/CPP/Common/MyMap.cpp
-        #    ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
         ${P7ZIP_SRC}/CPP/Common/MyXml.cpp
+        ${P7ZIP_SRC}/CPP/Common/Wildcard.cpp
 
-        ${P7ZIP_SRC}/CPP/Windows/Error.cpp
         ${P7ZIP_SRC}/CPP/Windows/FileDir.cpp
         ${P7ZIP_SRC}/CPP/Windows/FileFind.cpp
         ${P7ZIP_SRC}/CPP/Windows/FileIO.cpp
         ${P7ZIP_SRC}/CPP/Windows/FileName.cpp
         ${P7ZIP_SRC}/CPP/Windows/PropVariant.cpp
+        ${P7ZIP_SRC}/CPP/Windows/PropVariantConv.cpp
         ${P7ZIP_SRC}/CPP/Windows/PropVariantUtils.cpp
-        ${P7ZIP_SRC}/CPP/Windows/PropVariantConversions.cpp
         ${P7ZIP_SRC}/CPP/Windows/Synchronization.cpp
         ${P7ZIP_SRC}/CPP/Windows/System.cpp
-        ${P7ZIP_SRC}/CPP/Windows/Time.cpp
+        ${P7ZIP_SRC}/CPP/Windows/TimeUtils.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Common/CreateCoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/CWrappers.cpp
@@ -416,7 +433,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Common/InBuffer.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/InOutTempBuffer.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/LimitedStreams.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Common/LockedStream.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/MemBlocks.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/MethodId.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/MethodProps.cpp
@@ -425,42 +441,27 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Common/OutMemStream.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/ProgressMt.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/ProgressUtils.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Common/PropId.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/StreamBinder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/StreamObjects.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/StreamUtils.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Common/UniqBlocks.cpp
         ${P7ZIP_SRC}/CPP/7zip/Common/VirtThread.cpp
 
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/ArchiveCommandLine.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/ArchiveExtractCallback.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/ArchiveOpenCallback.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/DefaultName.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/EnumDirItems.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/Extract.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/ExtractingFilePath.cpp
         ${P7ZIP_SRC}/CPP/7zip/UI/Common/LoadCodecs.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/OpenArchive.cpp
         ${P7ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/SetProperties.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/SortUtils.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/TempFiles.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/Update.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateAction.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateCallback.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdatePair.cpp
-        #${P7ZIP_SRC}/CPP/7zip/UI/Common/UpdateProduce.cpp
-        #${P7ZIP_SRC}/CPP/7zip/Archive/ArchiveExports.cpp
         ${P7ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/DeflateProps.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Archive/HandlerCont.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/SplitHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2MT.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Common/DummyOutStream.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Common/FindSignature.cpp
@@ -496,15 +497,13 @@ ELSE(MINGW)
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/LzhHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Compress/LzmsDecoder.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHeader.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Chm/ChmRegister.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Udf/UdfRegister.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandlerOut.cpp
@@ -513,21 +512,17 @@ ELSE(MINGW)
 
         # Com ??
 
-        ${P7ZIP_SRC}/CPP/7zip/Archive/DebHandler.cpp
 
+        ${P7ZIP_SRC}/CPP/7zip/Archive/ArHandler.cpp
+        
         ${P7ZIP_SRC}/CPP/7zip/Archive/RpmHandler.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/XarHandler.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/ArjHandler.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder1.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Compress/ArjDecoder2.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/CpioHandler.cpp
 
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsHandler.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsIn.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Hfs/HfsRegister.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Iso/IsoHeader.cpp
@@ -540,11 +535,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisRegister.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHandler.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarHeader.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarIn.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarItem.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarRegister.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Rar/RarVolumeInStream.cpp
 
         ${P7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandlerOut.cpp
@@ -561,7 +551,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipAddCommon.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandler.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHandlerOut.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipHeader.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipIn.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipItem.cpp
         ${P7ZIP_SRC}/CPP/7zip/Archive/Zip/ZipOut.cpp
@@ -573,7 +562,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Compress/BcjCoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/BcjRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/BitlDecoder.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Compress/BranchCoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/BranchMisc.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/BranchRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/ByteSwap.cpp
@@ -597,7 +585,6 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Compress/LzmaEncoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/LzmaRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/LzOutWindow.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Compress/Lzx86Converter.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/LzxDecoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdDecoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/PpmdEncoder.cpp
@@ -608,11 +595,11 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Compress/Rar2Decoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/Rar3Decoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/Rar3Vm.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Compress/Rar5Decoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/RarCodecsRegister.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/ShrinkDecoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/ZDecoder.cpp
-        #    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBench.cpp
-        #    ${P7ZIP_SRC}/CPP/7zip/Compress/LZMA_Alone/LzmaBenchCon.cpp
+        ${P7ZIP_SRC}/CPP/7zip/Compress/XpressDecoder.cpp
         ${P7ZIP_SRC}/CPP/7zip/Compress/ZlibDecoder.cpp
 
 
@@ -624,20 +611,23 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/CPP/7zip/Crypto/RandGen.cpp
         ${P7ZIP_SRC}/CPP/7zip/Crypto/Rar20Crypto.cpp
         ${P7ZIP_SRC}/CPP/7zip/Crypto/RarAes.cpp
-        ${P7ZIP_SRC}/CPP/7zip/Crypto/Sha1.cpp
         ${P7ZIP_SRC}/CPP/7zip/Crypto/WzAes.cpp
         ${P7ZIP_SRC}/CPP/7zip/Crypto/ZipCrypto.cpp
         ${P7ZIP_SRC}/CPP/7zip/Crypto/ZipStrong.cpp
+        ${P7ZIP_SRC}/C/Bcj2.c
+        ${P7ZIP_SRC}/C/Bcj2Enc.c
         ${P7ZIP_SRC}/C/Bra.c
         ${P7ZIP_SRC}/C/Bra86.c
         ${P7ZIP_SRC}/C/BraIA64.c
         ${P7ZIP_SRC}/C/BwtSort.c
+        ${P7ZIP_SRC}/C/CpuArch.c
         ${P7ZIP_SRC}/C/HuffEnc.c
         ${P7ZIP_SRC}/C/LzFind.c
         ${P7ZIP_SRC}/C/LzFindMt.c
         ${P7ZIP_SRC}/C/LzmaDec.c
         ${P7ZIP_SRC}/C/LzmaEnc.c
         ${P7ZIP_SRC}/C/Sort.c
+        ${P7ZIP_SRC}/C/Sha1.c
         ${P7ZIP_SRC}/C/Threads.c
         ${P7ZIP_SRC}/C/Aes.c
         ${P7ZIP_SRC}/C/Alloc.c
@@ -658,10 +648,11 @@ ELSE(MINGW)
         ${P7ZIP_SRC}/C/Ppmd8Enc.c
         ${P7ZIP_SRC}/C/Xz.c
         ${P7ZIP_SRC}/C/XzCrc64.c
+        ${P7ZIP_SRC}/C/XzCrc64Opt.c
         ${P7ZIP_SRC}/C/XzDec.c
         ${P7ZIP_SRC}/C/XzEnc.c
         ${P7ZIP_SRC}/C/XzIn.c
-        )
+    )
 ENDIF(MINGW)
 
 SET(JBINDING_CPP_FILES
@@ -776,7 +767,7 @@ IF(MINGW)
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(MINGW)
     IF(NOT APPLE)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs") # Check for missing symbols
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -Wl,--no-undefined") # Check for missing symbols
     ENDIF()
 ENDIF(MINGW)
 

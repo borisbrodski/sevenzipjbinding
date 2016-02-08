@@ -38,7 +38,7 @@ INCLUDE(cmake/FindJavaExtended.cmake)
 
 
 # Change version also in SevenZip.SEVENZIPJBINDING_VERSION
-SET(SEVENZIPJBINDING_VERSON 9.20-2.00beta)
+SET(SEVENZIPJBINDING_VERSON 15.09-2.01beta)
 
 
 

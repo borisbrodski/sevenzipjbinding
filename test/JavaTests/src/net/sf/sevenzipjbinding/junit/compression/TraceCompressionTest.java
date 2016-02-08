@@ -110,8 +110,8 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyIsDir' (index: 1)\n" + //
                 "Get property 'propertyIsAnti' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
-                "Get stream (index: 0)\n" + //
-                "Get stream (index: 1)\n");
+                "Get stream (index: 1)\n" + //
+                "Get stream (index: 0)\n");
     }
 
     @Test
@@ -152,8 +152,12 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyUser' (index: 1)\n" + //
                 "Get property 'propertyGroup' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
+                "Get property 'propertySymLink' (index: 0)\n" + //
                 "Get stream (index: 0)\n" + //
-                "Get stream (index: 1)\n");
+                "Get property 'propertyHardLink' (index: 0)\n" + //
+                "Get property 'propertySymLink' (index: 1)\n" + //
+                "Get stream (index: 1)\n" + //
+                "Get property 'propertyHardLink' (index: 1)\n");
     }
 
     @Test
@@ -215,7 +219,9 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyUser' (index: 1)\n" + //
                 "Get property 'propertyGroup' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
-                "Get stream (index: 1)\n");
+                "Get property 'propertySymLink' (index: 1)\n" + //
+                "Get stream (index: 1)\n" + //
+                "Get property 'propertyHardLink' (index: 1)\n");
     }
 
     @Test
