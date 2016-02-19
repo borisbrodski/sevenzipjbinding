@@ -34,21 +34,21 @@ void my_delete(void *p) throw();
 */
 #endif
 
-#ifdef _WIN32
-
-void *
-#ifdef _MSC_VER
-__cdecl
-#endif
-operator new(size_t size);
-
-void
-#ifdef _MSC_VER
-__cdecl
-#endif
-operator delete(void *p) throw();
-
-#endif
+// 7-Zip-JBinding  #ifdef _WIN32
+// 7-Zip-JBinding  
+// 7-Zip-JBinding  void *
+// 7-Zip-JBinding  #ifdef _MSC_VER
+// 7-Zip-JBinding  __cdecl
+// 7-Zip-JBinding  #endif
+// 7-Zip-JBinding  operator new(size_t size);
+// 7-Zip-JBinding  
+// 7-Zip-JBinding  void
+// 7-Zip-JBinding  #ifdef _MSC_VER
+// 7-Zip-JBinding  __cdecl
+// 7-Zip-JBinding  #endif
+// 7-Zip-JBinding  operator delete(void *p) throw();
+// 7-Zip-JBinding  
+// 7-Zip-JBinding  #endif
 
 /*
 #ifdef _WIN32

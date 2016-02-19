@@ -492,6 +492,10 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
                 prop = _db.DataStreams[ss.StreamIndex].Resource.PackSize;
             }
           }
+        } else {
+            if (!item.IsDir) {
+                prop = size;
+            }
         }
         break;
       }
@@ -522,6 +526,10 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
             size = si->Resource.UnpackSize;
             prop = size;
           }
+        } else {
+            if (!item.IsDir) {
+                prop = size;
+            }
         }
         break;
       }

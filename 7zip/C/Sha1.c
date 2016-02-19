@@ -151,18 +151,24 @@ void Sha1_Update(CSha1 *p, const Byte *data, size_t size)
   
   if (pos2 != 0)
   {
+    int bytes = 1;
     UInt32 w = ((UInt32)data[0]) << 24;
     if (--size && pos2 < 3)
     {
+      bytes++;
       w |= ((UInt32)data[1]) << 16;
       if (--size && pos2 < 2)
       {
+        bytes++;
         w |= ((UInt32)data[2]) << 8;
         --size;
       }
     }
     data += 4 - pos2;
-    p->buffer[pos++] |= (w >> (8 * pos2));
+    p->buffer[pos] |= (w >> (8 * pos2));
+    if (bytes == (4-pos2)) {
+        pos++;
+    }
   }
 
   for (;;)

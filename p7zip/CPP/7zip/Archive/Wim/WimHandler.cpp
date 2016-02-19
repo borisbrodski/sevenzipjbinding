@@ -493,7 +493,9 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
             }
           }
         } else {
-            prop = size;
+            if (!item.IsDir) {
+            	prop = size;
+            }
         }
         break;
       }
@@ -525,7 +527,9 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
             prop = size;
           }
         } else {
-            prop = size;
+            if (!item.IsDir) {
+            	prop = size;
+            }
         }
         break;
       }
