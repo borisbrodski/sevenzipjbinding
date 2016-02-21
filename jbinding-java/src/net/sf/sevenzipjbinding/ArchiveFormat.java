@@ -138,10 +138,16 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #RAR}</td>
  * </tr>
  * <tr align="center">
+ * <td>Rar5</td>
+ * <td>X</td>
+ * <td>-</td>
+ * <td>{@link #RAR5}</td>
+ * </tr>
+ * <tr align="center">
  * <td>Rpm</td>
  * <td>X</td>
  * <td>-</td>
- * <td>{@link #RAR}</td>
+ * <td>{@link #RPM}</td>
  * </tr>
  * <tr align="center">
  * <td>Split</td>
@@ -211,6 +217,11 @@ public enum ArchiveFormat {
      * Rar format.
      */
     RAR("Rar", true), //
+
+    /**
+     * Rar5 format.
+     */
+    RAR5("Rar5", true), //
 
     /**
      * Lzma format.

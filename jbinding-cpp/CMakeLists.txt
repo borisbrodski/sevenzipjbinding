@@ -282,6 +282,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Nsis/NsisRegister.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Rar/RarHandler.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Rar/Rar5Handler.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Tar/TarHandlerOut.cpp
@@ -353,16 +354,19 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/7zAes.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/7zAesRegister.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/HmacSha1.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/HmacSha256.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/MyAes.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/Pbkdf2HmacSha1.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/RandGen.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/Rar20Crypto.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/Rar5Aes.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/RarAes.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/WzAes.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/ZipCrypto.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Crypto/ZipStrong.cpp
     ${SEVEN_ZIP_SRC}/C/Bcj2.c
     ${SEVEN_ZIP_SRC}/C/Bcj2Enc.c
+    ${SEVEN_ZIP_SRC}/C/Blake2s.c
     ${SEVEN_ZIP_SRC}/C/Bra.c
     ${SEVEN_ZIP_SRC}/C/Bra86.c
     ${SEVEN_ZIP_SRC}/C/BraIA64.c
