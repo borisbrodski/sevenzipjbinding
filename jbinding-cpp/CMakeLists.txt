@@ -40,13 +40,15 @@ SET(_7ZIP_SRC ../7zip)
 
 SET(JBINDING_PLATFORM_CPP_FILES)
 IF(MINGW)
-    include_directories(PlatformMinGW/)
-    set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
     add_definitions(-include PlatformMinGW/StdAfx.h)
-    SET(JBINDING_PLATFORM_CPP_FILES
-        PlatformMinGW/MyWindows.cpp
-        PlatformMinGW/MyUser32.cpp
-    )
+    include_directories(PlatformMinGW/)
+    IF(MINGW64)
+        set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
+        SET(JBINDING_PLATFORM_CPP_FILES
+            PlatformMinGW/MyWindows.cpp
+            PlatformMinGW/MyUser32.cpp
+        )
+    ENDIF(MINGW64)
 ELSE(MINGW)
     ###include_directories(PlatformUnix/)
 ENDIF(MINGW)
@@ -530,3 +532,5 @@ ENDIF(MINGW)
 #        "gcc <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
 #  ENDIF()
 #ENDIF()
+
+# vim: ts=4 sts=4 sw=4 expandtab
