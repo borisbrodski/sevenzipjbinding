@@ -1,7 +1,7 @@
 Release 2.01 TODOs:
 
-- Add RAR5 tests
 - Add Tar SymLink/HardLink tests
+- Check stdlib version, try to downgrade.
 
 Other TODOs:
 

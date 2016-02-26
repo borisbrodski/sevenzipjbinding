@@ -111,6 +111,12 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileDebTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileIsoTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileLzhTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5HeaderPassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5PassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5Test;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumeHeaderPassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumePassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarTest;
@@ -142,6 +148,15 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileLzhTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileLzmaTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileNsisSolidTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileNsisTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5HeaderPassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5HeaderPassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5PassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5PassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5Test;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumeHeaderPassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumePassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumePassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarHeaderPassCallbackTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarPassCallbackTest;
@@ -257,6 +272,12 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileRarVolumeHeaderPassTest.class, //
             ExtractMultipleFileRarVolumePassTest.class, //
             ExtractMultipleFileRarVolumeTest.class, //
+            ExtractMultipleFileRar5HeaderPassTest.class, //
+            ExtractMultipleFileRar5PassTest.class, //
+            ExtractMultipleFileRar5Test.class, //
+            ExtractMultipleFileRar5VolumeHeaderPassTest.class, //
+            ExtractMultipleFileRar5VolumePassTest.class, //
+            ExtractMultipleFileRar5VolumeTest.class, //
             ExtractMultipleFileSevenZipHeaderPassTest.class, //
             ExtractMultipleFileSevenZipPassTest.class, //
             ExtractMultipleFileSevenZipTest.class, //
@@ -293,6 +314,15 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileRarVolumePassCallbackTest.class, //
             ExtractSingleFileRarVolumePassTest.class, //
             ExtractSingleFileRarVolumeTest.class, //
+            ExtractSingleFileRar5HeaderPassCallbackTest.class, //
+            ExtractSingleFileRar5HeaderPassTest.class, //
+            ExtractSingleFileRar5PassCallbackTest.class, //
+            ExtractSingleFileRar5PassTest.class, //
+            ExtractSingleFileRar5Test.class, //
+            ExtractSingleFileRar5VolumeHeaderPassCallbackTest.class, //
+            ExtractSingleFileRar5VolumePassCallbackTest.class, //
+            ExtractSingleFileRar5VolumePassTest.class, //
+            ExtractSingleFileRar5VolumeTest.class, //
             ExtractSingleFileRpmTest.class, //
             ExtractSingleFileSevenZipHeaderPassCallbackTest.class, //
             ExtractSingleFileSevenZipHeaderPassTest.class, //
