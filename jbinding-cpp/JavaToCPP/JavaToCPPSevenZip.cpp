@@ -218,7 +218,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             TRACE("Success=false, throwing exception...")
 
             jniEnvInstance.reportError(
-                    "Archive file can't be opened with none of the registered codecs");
+                    "Archive file can't be opened with any of the registered codecs");
             deleteInErrorCase.setErrorCase();
             return NULL;
 
