@@ -268,7 +268,6 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         long result = 0;
         if (multithreaded) {
             runMultithreaded(new RunnableThrowsException() {
-                @SuppressWarnings("unchecked")
                 public void run() throws Exception {
                     CompressSingleFileAbstractTest.this.newInstance().doTest(dataSize, entropy, false);
                 }

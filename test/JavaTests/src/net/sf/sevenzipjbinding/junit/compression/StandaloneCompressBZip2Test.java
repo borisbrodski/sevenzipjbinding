@@ -72,7 +72,7 @@ public class StandaloneCompressBZip2Test extends JUnitNativeTestBase {
     @Test
     public void testCompressionBZip2() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(1, 0, 0, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 

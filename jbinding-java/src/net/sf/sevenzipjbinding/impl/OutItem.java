@@ -237,6 +237,20 @@ public final class OutItem implements IOutItemAllFormats {
     /**
      * {@inheritDoc}
      */
+    public String getPropertyHardLink() {
+        return propertyHardLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPropertyHardLink(String propertyHardLink) {
+        this.propertyHardLink = propertyHardLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Boolean getPropertyIsAnti() {
         return propertyIsAnti;
     }

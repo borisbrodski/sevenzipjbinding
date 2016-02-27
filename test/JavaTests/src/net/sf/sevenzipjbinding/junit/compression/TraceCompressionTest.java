@@ -250,7 +250,7 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
     @Test
     public void testCompression7zNoTrace() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(2, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(2, 0, 0, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
 
@@ -330,7 +330,7 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
     private ByteArrayStream compress(ArchiveFormat format, OutputStream traceLog) throws SevenZipException {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
         int countOfFiles = format.supportMultipleFiles() ? 2 : 1;
-        virtualContent.fillRandomly(countOfFiles, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(countOfFiles, 0, 0, 100, 50, null, format == ArchiveFormat.TAR);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
         IOutCreateArchive<IOutItemAllFormats> outNewArchive = closeLater(SevenZip.openOutArchive(format));

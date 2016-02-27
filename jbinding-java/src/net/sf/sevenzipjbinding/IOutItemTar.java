@@ -130,4 +130,21 @@ public interface IOutItemTar extends IOutItemBase {
      *            see {@link PropID#SYM_LINK}
      */
     public void setPropertySymLink(String symLink);
+
+    /**
+     * Get property {@link PropID#HARD_LINK}.
+     * 
+     * @see PropID#SYM_LINK
+     * @return symLink
+     */
+    public String getPropertyHardLink();
+
+    /**
+     * Set property {@link PropID#HARD_LINK}.
+     * 
+     * @see PropID#GROUP
+     * @param symLink
+     *            see {@link PropID#HARD_LINK}
+     */
+    public void setPropertyHardLink(String symLink);
 }

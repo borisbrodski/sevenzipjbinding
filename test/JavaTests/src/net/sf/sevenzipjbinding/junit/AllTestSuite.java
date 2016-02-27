@@ -64,6 +64,7 @@ import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeF
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.EnumTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
@@ -428,6 +429,7 @@ public class AllTestSuite extends TestSuite {
             Width3Depth2MtWidth3.class, //
             JNIToolsTest.class, //
             ParamSpecTest.class, //
+            EnumTest.class, //
     };
     static Class<?>[] compressionTests = { //
     /*    */CompressExceptionGetItemInformationTest.CompressException7zTest.class, //

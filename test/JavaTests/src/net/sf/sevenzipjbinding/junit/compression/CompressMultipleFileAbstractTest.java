@@ -173,9 +173,9 @@ public abstract class CompressMultipleFileAbstractTest extends CompressAbstractT
     private VirtualContent doTest(int countOfFiles, int directoriesDepth, int maxSubdirectories, int averageFileLength,
             int deltaFileLength) throws Exception {
         VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
-        virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
-                deltaFileLength, null);
         ArchiveFormat archiveFormat = getArchiveFormat();
+        virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
+                deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
         ByteArrayStream byteArrayStream;
         boolean ok = false;

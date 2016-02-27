@@ -174,17 +174,61 @@ public enum PropID {
      * Type: {@link Integer} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     POSIX_ATTRIB, //
+
+    /**
+     * Represent a symbolic link. Used for example in Tar archives.
+     */
     SYM_LINK, //
 
+    ERROR, //
+    TOTAL_SIZE, //
+    FREE_SPACE, //
+    CLUSTER_SIZE, //
+    VOLUME_NAME, //
+    LOCAL_NAME, //
+    PROVIDER, //
+    NT_SECURE, //
+    IS_ALT_STREAM, //
+    IS_AUX, //
+    IS_DELETED, //
+    IS_TREE, //
+    SHA1, //
+    SHA256, //
+    ERROR_TYPE, //
+    NUM_ERRORS, //
+    ERROR_FLAGS, //
+    WARNING_FLAGS, //
+    WARNING, //
+    NUM_STREAMS, //
+    NUM_ALT_STREAMS, //
+    ALT_STREAMS_SIZE, //
+    VIRTUAL_SIZE, //
+    UNPACK_SIZE, //
+    TOTAL_PHY_SIZE, //
+    VOLUME_INDEX, //
+    SUB_TYPE, //
+    SHORT_COMMENT, //
+    CODE_PAGE, //
+    IS_NOT_ARC_TYPE, //
+    PHY_SIZE_CANT_BE_DETECTED, //
+    ZEROS_TAIL_IS_ALLOWED, //
+    TAIL_SIZE, //
+    EMBEDDED_STUB_SIZE, //
+    NT_REPARSE, //
+
+    /**
+     * Represent a hard link. Used for example in Tar archives.
+     */
+    HARD_LINK, //
+    INODE, //
+    STREAM_ID, //
+    READ_ONLY, //
+    OUT_NAME, //
+    COPY_LINK, //
+
+    NUM_DEFINED, //
+
     // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
-
-    TOTAL_SIZE(0x1100), //
-    FREE_SPACE(0x1101), //
-    CLUSTER_SIZE(0x1102), //
-    VOLUME_NAME(0x1103), //
-
-    LOCAL_NAME(0x1200), //
-    PROVIDER(0x1201), //
 
     USER_DEFINED(0x10000), //
 

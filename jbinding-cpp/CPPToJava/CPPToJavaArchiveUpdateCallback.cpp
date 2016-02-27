@@ -403,8 +403,6 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             *inStream = inStreamComPtr.Detach();
         }
         jniEnvInstance->DeleteLocalRef(inStreamImpl);
-    } else {
-        return S_FALSE;
     }
 
     return S_OK;

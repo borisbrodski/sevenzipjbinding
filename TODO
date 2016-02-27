@@ -1,6 +1,4 @@
 Release 2.01 TODOs:
-
-- Add Tar SymLink/HardLink tests
 - Check stdlib version, try to downgrade.
 
 Other TODOs:

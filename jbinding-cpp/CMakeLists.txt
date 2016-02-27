@@ -433,6 +433,7 @@ SET(JBINDING_CPP_FILES
 
     ../test/CTests/JniToolsTest.cpp
     ../test/CTests/JBindingTest.cpp
+    ../test/CTests/EnumTest.cpp
 )
 
 SET(JBINDING_JAVAH_H_FILES
