@@ -9,6 +9,7 @@ import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
@@ -255,7 +256,8 @@ public class AllTestSuite extends TestSuite {
 
     static Class<?>[] bugArchiveTests = { //
     /*    */RarPasswordToLongCrash.class, //
-            WrongCRCGetterInSimpleInterface.class
+            WrongCRCGetterInSimpleInterface.class, //
+            Ticket18NullAsPassword.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //

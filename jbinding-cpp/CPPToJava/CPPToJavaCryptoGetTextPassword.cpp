@@ -19,6 +19,11 @@ STDMETHODIMP CPPToJavaCryptoGetTextPassword::CryptoGetTextPassword(BSTR * passwo
         return S_FALSE;
     }
 
+    if (!passwordString) {
+        jniEnvInstance.reportError("Password is 'null'");
+        return S_FALSE;
+    }
+
     if (password) {
         StringToBstr(UString(FromJChar(jniEnvInstance, passwordString)), password);
     }

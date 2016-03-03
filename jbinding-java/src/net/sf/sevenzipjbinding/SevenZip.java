@@ -766,10 +766,10 @@ public class SevenZip {
     public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream, String passwordForOpen)
             throws SevenZipException {
         ensureLibraryIsInitialized();
-        if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
+        if (passwordForOpen == null) {
+            return openInArchive(archiveFormat, inStream);
         }
-        return callNativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
+        return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
     }
 
     /**
@@ -793,10 +793,7 @@ public class SevenZip {
      */
     public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream) throws SevenZipException {
         ensureLibraryIsInitialized();
-        if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
-        }
-        return callNativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
+        return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
     }
 
     private static void ensureLibraryIsInitialized() {
