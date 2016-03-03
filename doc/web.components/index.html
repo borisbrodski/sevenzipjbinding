@@ -24,7 +24,7 @@ many archive formats using a very fast native library directly from java through
 		<td>Cab</td>
 		<td>Nsis</td></tr>
 		<tr>
-		<td>Deb</td>
+		<td>Ar/A/Lib/Deb</td>
 		<td>Rpm</td>
 		<td>Wim</td>
 		<td>Udf</td></tr>
@@ -45,11 +45,11 @@ many archive formats using a very fast native library directly from java through
 		    <td>&rsaquo; ARM</td>
 	    </tr>
 		</table></li>
-	<li> Full support for extraction of password protected and volumed archives</li>
-	<li> In-memory archive creation/update/extraction</li>
+	<li> Full support for extraction of password protected and in volumes splitted archives</li>
+	<li> In-memory archive extraction/creation/update</li>
 	<li> <a href="first_steps.html#maven">Artifacts on Maven central</a> (groupId: <a href="http://repo1.maven.org/maven2/net/sf/sevenzipjbinding/">net.sf.sevenzipjbinding</a>)</li>
 	<li> ##INCLUDE_SNIPPET_COUNT example code snippets</li>
-	<li> Over 6700 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Over 7500 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
 	<li> Planned: Creation/update of password protected and volumed archives</li>
 	<li> Planned: Extraction of more archive formats supported by 7-Zip</li>
 	<li>
@@ -90,6 +90,33 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br/>
 <h2>News</h2>
 <div class="infobox">
+
+1 Match 2016: <b>7-Zip-JBinding Release: 15.09-2.01beta</b>
+<br/><br/>
+Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p7zip 15.09
+<ul>
+    <li>
+	   New feature: Bind 7-Zip 15.09
+	   <ul>
+	       <li>DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib</li>
+           <li><a href="javadoc/index.html?net/sf/sevenzipjbinding/PropID.html">PropID</a>.LINK
+                renamed to <a href="javadoc/index.html?net/sf/sevenzipjbinding/PropID.html">PropID</a>.SYM_LINK</li>
+	   </ul>
+    </li>
+    <li>Full RAR5 extraction support (format name: <a href="javadoc/index.html?net/sf/sevenzipjbinding/ArchiveFormat.html">ArchiveFormat</a>.RAR5)
+      <ul>
+        <li>password protected archives</li> 
+        <li>archives with encrypted headers</li>
+        <li>archives splitted in volumes</li>
+        <li>251 new tests</li>
+      </ul>
+    </li>
+    <li>Support for SYM_LINK & HARD_LINK properties</li>
+    <li>Improving performance by using GCC 5.3 for Windows builds</li>
+    <li>Bugfix: Bug #18 (null as password causes JVM crash)</li>
+</ul>
+
+<br/>
 
 6 Oktober 2015: <b>7-Zip-JBinding Release: 9.20-2.00beta</b>
 <br/><br/>
