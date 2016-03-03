@@ -357,14 +357,19 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		long unpackedSize = Long.valueOf(new File(uncommpressedFilename).length());
 		long expectedPackedSize;
 		if (unpackedSize < 1024) {
-			expectedPackedSize = 1024;
+            if (inArchive.getArchiveFormat() == ArchiveFormat.FAT) {
+                expectedPackedSize = 2048;
+            } else {
+                expectedPackedSize = 1024;
+            }
 		} else {
 			expectedPackedSize = unpackedSize * 2;
 		}
 		assertNotNull(size1);
 		assertNotNull(size2);
 		assertTrue("Packed size == 0 (PropID.PACKED_SIZE)", unpackedSize == 0 || size1 != 0);
-		assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected=" + expectedPackedSize + ", actual=" + size1,
+        assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected >= " + expectedPackedSize + ", actual="
+                + size1,
 				expectedPackedSize >= size1);
 		assertEquals("Simple interface problem: wrong size of the file", size1, size2);
 	}

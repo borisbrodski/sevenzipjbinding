@@ -12,6 +12,9 @@ Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
         - archives with encrypted headers
         - archives splitted in volumes
         - 251 new tests
+
+    * Support for FAT (file system)
+
     * Support for SYM_LINK & HARD_LINK properties
 
     * Improving performance by using GCC 5.3 for Windows builds

@@ -204,6 +204,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/DeflateProps.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/FatHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HandlerCont.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp

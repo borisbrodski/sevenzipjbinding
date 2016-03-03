@@ -15,6 +15,7 @@ CREATE_SIMPLE_DEB=n
 CREATE_SIMPLE_XAR=n
 CREATE_SIMPLE_UDF=n
 CREATE_SIMPLE_WIM=n
+CREATE_SIMPLE_FAT=n
 
 
 TMP=/tmp
@@ -199,4 +200,40 @@ if test $CREATE_SIMPLE_WIM = y -o $CREATE_ALL = y ;then
             cmd "/c imagex /capture f: wim/$j.${i:0:1}.wim Multiple_files_test__$j /compress ${i:2}"
         done
     done
+fi
+
+if test $CREATE_SIMPLE_FAT = y -o $CREATE_ALL = y ;then
+    mkdir -p fat
+    rm -rf __tmp_volume
+    mkdir -p __tmp_volume
+    rm -f fat/*.fat
+    rm -f fat/*.zip
+    #for i in 0:maximum 1:fast 2:none
+
+    for sectorsPerCluster in 1 2 4
+    do
+      for i in 1:1300 2:70 3:60
+      do
+          #for j in *.dat
+          #do
+              FILE="fat/archive${i:0:1}.zip.$sectorsPerCluster.fat"
+              echo ""
+              echo "----------------> Creating $FILE"
+              echo ""
+              dd if=/dev/zero "of=$FILE" count=${i:2} bs=1024 \
+                && mkfs.vfat -s $sectorsPerCluster "$FILE" \
+                && sudo mount "$FILE" __tmp_volume \
+                && sudo unzip -q archive${i:0:1}.zip -d __tmp_volume/ \
+                && ls -l __tmp_volume \
+                && echo "COPIED SUCCESSFULLY"
+              sync
+              sudo umount "$PWD/__tmp_volume"
+              zip -9 --junk-paths $FILE.zip $FILE
+              rm $FILE
+              #cp $j /$IMAGEX_SUBST_DRIVE/
+              #cmd /c "imagex /capture $IMAGEX_SUBST_DRIVE: wim/$j.${i:0:1}.wim Simple_test__$j /compress ${i:2}"
+          #done
+      done
+    done
+    rm -rf __tmp_volume
 fi

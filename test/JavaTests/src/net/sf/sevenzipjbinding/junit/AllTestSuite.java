@@ -111,6 +111,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeT
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeWithoutVolumedTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileDebTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileFatTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileIsoTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileLzhTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5HeaderPassTest;
@@ -144,6 +145,7 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCabVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileChmTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileDebTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileFatTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileGzipTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileIsoTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileLzhTest;
@@ -267,6 +269,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
             ExtractMultipleFileCpioTest.class, //
             ExtractMultipleFileDebTest.class, //
+            ExtractMultipleFileFatTest.class, //
             ExtractMultipleFileIsoTest.class, //
             ExtractMultipleFileLzhTest.class, //
             ExtractMultipleFileRarHeaderPassTest.class, //
@@ -293,6 +296,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileXarTest.class, //
             ExtractMultipleFileZipPassTest.class, //
             ExtractMultipleFileZipTest.class, //
+
     };
     static Class<?>[] singleFileTests = { //
     /*    */ExtractSingleFileArjTest.class, //
@@ -302,6 +306,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileChmTest.class, //
             ExtractSingleFileCpioTest.class, //
             ExtractSingleFileDebTest.class, //
+            ExtractSingleFileFatTest.class, //
             ExtractSingleFileGzipTest.class, //
             ExtractSingleFileIsoTest.class, //
             ExtractSingleFileLzhTest.class, //

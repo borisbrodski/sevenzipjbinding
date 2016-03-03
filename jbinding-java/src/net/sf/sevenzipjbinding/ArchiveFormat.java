@@ -311,7 +311,12 @@ public enum ArchiveFormat {
     /**
      * Xar
      */
-    XAR("Xar", true);
+    XAR("Xar", true),
+
+    /**
+     * FAT - (vfat file system);
+     */
+    FAT("fat", true);
 
     private String methodName;
 
