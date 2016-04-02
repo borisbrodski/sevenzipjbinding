@@ -316,7 +316,12 @@ public enum ArchiveFormat {
     /**
      * FAT - (vfat file system);
      */
-    FAT("fat", true);
+    FAT("fat", true),
+
+    /**
+     * NTFS - (NTFS file system);
+     */
+    NTFS("ntfs", true);
 
     private String methodName;
 

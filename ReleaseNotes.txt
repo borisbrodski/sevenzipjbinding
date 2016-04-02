@@ -6,8 +6,8 @@ Main features of 15.09-2.01beta (Release candidate, extraction/compression/updat
     * Bind 7-Zip 15.09 (beta), In-memory archive extraction/creation/update
 
     * Extraction of
-        - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, HFS,
-          Iso, Lzh, Lzma, Nsis, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
+        - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, HFS, Iso,
+          Lzh, Lzma, Nsis, Ntfs, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
 
         - Archive format auto detection
         - Support for password protected and in volumes splitted archives

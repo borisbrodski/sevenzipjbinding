@@ -13,6 +13,8 @@ Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
         - archives splitted in volumes
         - 251 new tests
 
+    * Support for NTFS (file system)
+
     * Support for FAT (file system)
 
     * Support for SYM_LINK & HARD_LINK properties

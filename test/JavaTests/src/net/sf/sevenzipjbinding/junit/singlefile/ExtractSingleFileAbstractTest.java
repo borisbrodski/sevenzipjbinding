@@ -230,8 +230,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 				sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
 			}
 
-			if (archiveFormat == ArchiveFormat.CHM) {
-				index = calcSampleFileIndexInChmArchive(inArchive);
+            if (archiveFormat == ArchiveFormat.CHM || archiveFormat == ArchiveFormat.NTFS) {
+                index = calcSampleFileIndexInArchive(inArchive);
 			}
 
 			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
@@ -284,7 +284,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		return false;
 	}
 
-	private int calcSampleFileIndexInChmArchive(IInArchive inArchive) throws SevenZipException {
+    private int calcSampleFileIndexInArchive(IInArchive inArchive) throws SevenZipException {
 		int count = inArchive.getNumberOfItems();
 		for (int i = 0; i < count; i++) {
 			String name = (String) inArchive.getProperty(i, PropID.PATH);
@@ -292,7 +292,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 				return i;
 			}
 		}
-		fail("Can't find sample file in chm archive");
+        fail("Can't find sample file in archive");
 		return -1;
 	}
 

@@ -13,8 +13,8 @@ many archive formats using a very fast native library directly from java through
 		<td>Lzma</td>
 		<td>Iso</td>
 		<td>HFS</td>
-		<td>GZip</td></tr>
-		<tr>
+		<td>GZip</td>
+		</tr><tr>
 		<td>Cpio</td>
 		<td>BZip2</td>
 		<td>Z</td>
@@ -22,13 +22,15 @@ many archive formats using a very fast native library directly from java through
 		<td>Chm</td>
 		<td>Lhz</td>
 		<td>Cab</td>
-		<td>Nsis</td></tr>
-		<tr>
+		<td>Nsis</td>
+		</tr><tr>
 		<td>Ar/A/Lib/Deb</td>
 		<td>Rpm</td>
 		<td>Wim</td>
-		<td>Udf</td></tr>
-		</table></li>
+		<td>Udf</td>
+		<td>Fat</td>
+		<td>Ntfs</td>
+		</tr></table></li>
 	<li> Create/update 
 		<table border="0" class="ArchiveTypeEnum"><tr>
 		<td>7-Zip</td>
@@ -111,6 +113,8 @@ Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p
         <li>251 new tests</li>
       </ul>
     </li>
+    <li>Support for FAT (file system)</li>
+    <li>Support for NTFS (file system)</li>
     <li>Support for SYM_LINK & HARD_LINK properties</li>
     <li>Improving performance by using GCC 5.3 for Windows builds</li>
     <li>Bugfix: Bug #18 (null as password causes JVM crash)</li>
