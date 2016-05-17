@@ -114,7 +114,11 @@ private:
             _attachedThreadCountCriticalSection.Leave();
 #endif
             jint result;
+#ifdef ANDROID_NDK
+            if ((result = _vm->AttachCurrentThread(&threadContext._env, NULL))
+#else
             if ((result = _vm->AttachCurrentThread((void**) &threadContext._env, NULL))
+#endif
                     || threadContext._env == NULL) {
                 TRACE("New thread couldn't be attached: " << result)
                 // throw SevenZipException("Can't attach current thread (id: %i) to the VM", currentThreadId);
