@@ -209,11 +209,27 @@ public class SevenZip {
     private static String usedPlatform = null;
     private static File[] temporaryArtifacts = null;
 
+    // 0 for false, 1 for true, -1 for undetected
+    private static int isAndroid = -1;
+
     /**
      * Hide default constructor
      */
     private SevenZip() {
 
+    }
+
+    // http://stackoverflow.com/questions/4519556/how-to-determine-if-my-app-is-running-on-android
+    private static boolean isAndroidInternal() {
+        String property = System.getProperty("java.vendor");
+        return property != null && property.equalsIgnoreCase("The Android Project");
+    }
+
+    private static boolean isAndroid() {
+        if (isAndroid == -1) {
+            isAndroid = isAndroidInternal() ? 1 : 0;
+        }
+        return isAndroid != 0;
     }
 
     /**
@@ -448,12 +464,21 @@ public class SevenZip {
                 return;
             }
 
-            determineAndSetUsedPlatform(platform);
-            Properties properties = loadSevenZipJBindingLibProperties();
-            File tmpDirFile = createOrVerifyTmpDir(tmpDirectory);
-            File sevenZipJBindingTmpDir = getOrCreateSevenZipJBindingTmpDir(tmpDirFile, properties);
-            List<File> nativeLibraries = copyOrSkipLibraries(properties, sevenZipJBindingTmpDir);
-            loadNativeLibraries(nativeLibraries);
+            if (isAndroid()) {
+                try {
+                    System.loadLibrary("7z");
+                } catch (UnsatisfiedLinkError e) {
+                    throwInitException("Can't load lib7z.so: " + e.getMessage());
+                }
+            } else {
+                determineAndSetUsedPlatform(platform);
+                Properties properties = loadSevenZipJBindingLibProperties();
+                File tmpDirFile = createOrVerifyTmpDir(tmpDirectory);
+                File sevenZipJBindingTmpDir = getOrCreateSevenZipJBindingTmpDir(tmpDirFile, properties);
+                List<File> nativeLibraries = copyOrSkipLibraries(properties, sevenZipJBindingTmpDir);
+                loadNativeLibraries(nativeLibraries);
+            }
+
             nativeInitialization();
         } catch (SevenZipNativeInitializationException sevenZipNativeInitializationException) {
             lastInitializationException = sevenZipNativeInitializationException;
@@ -674,23 +699,29 @@ public class SevenZip {
     }
 
     private static void nativeInitialization() throws SevenZipNativeInitializationException {
-        String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
         final String errorMessage[] = new String[1];
         final Throwable throwable[] = new Throwable[1];
-        if (doPrivileged == null || doPrivileged.trim().equals("0")) {
-            AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                public Void run() {
-                    try {
-                        errorMessage[0] = nativeInitSevenZipLibrary();
-                    } catch (Throwable e) {
-                        throwable[0] = e;
-                    }
-                    return null;
-                }
-            });
-        } else {
+
+        if (isAndroid()) {
             errorMessage[0] = nativeInitSevenZipLibrary();
+        } else {
+            String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
+            if (doPrivileged == null || doPrivileged.trim().equals("0")) {
+                AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                    public Void run() {
+                        try {
+                            errorMessage[0] = nativeInitSevenZipLibrary();
+                        } catch (Throwable e) {
+                            throwable[0] = e;
+                        }
+                        return null;
+                    }
+                });
+            } else {
+                errorMessage[0] = nativeInitSevenZipLibrary();
+            }
         }
+
         if (errorMessage[0] != null || throwable[0] != null) {
             String message = errorMessage[0];
             if (message == null) {
