@@ -344,6 +344,12 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
 }
 
 #ifdef ANDROID_NDK
+// 'FindClass' start in the "system" class loader in the threads created by native code.
+// So attempts to find app-specific classes will fail.
+// I make 'Class SevenZip.findClass(String)' java static method to find class with
+// app class loader.
+// Check https://developer.android.com/training/articles/perf-jni.html
+// FAQ: Why didn't FindClass find my class?
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     JNIEnv* env = NULL;
     FATALIF(vm->GetEnv((void**) (&env), JNI_VERSION_1_6) != JNI_OK, "Can't get JNIEnv");
