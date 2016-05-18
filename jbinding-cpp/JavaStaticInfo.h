@@ -614,6 +614,15 @@
 //            va_end(args);                                                       \
 //            TRACE_JNI_CALLED(&_instance, name, signature _JT_JSIG_##ret_type)
 
+#ifdef ANDROID_NDK
+void InitFindClass(jclass sevenZipClass, jmethodID findClassMethodID);
+#endif
+
+/**
+ * Find the java class with the name
+ */
+jclass FindClass(JNIEnv *env, const char *className);
+
 namespace jni {
 
 inline void expectExceptionCheck(JNIEnv * env) {
@@ -683,7 +692,7 @@ private:
     }
     void init(JNIEnv * env) {
         TRACE ("env->FindClass() for " << _fullname)
-        jclass clazz = env->FindClass(_fullname);
+        jclass clazz = FindClass(env, _fullname);
         FATALIF1(!clazz, "Error finding class '%s'", _fullname)
         _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
         MY_ASSERT(_jclass);

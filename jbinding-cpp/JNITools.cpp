@@ -39,7 +39,7 @@ static void localinit(JNIEnv * env) {
     //	g_NumberClass = (jclass) env->NewGlobalRef(g_NumberClass);
 
     // class: Integer
-    g_IntegerClass = env->FindClass(JAVA_INTEGER);
+    g_IntegerClass = FindClass(env, JAVA_INTEGER);
     FATALIF(g_IntegerClass == NULL, "Can't find Integer class");
     g_IntegerClass = (jclass) env->NewGlobalRef(g_IntegerClass);
 
@@ -50,7 +50,7 @@ static void localinit(JNIEnv * env) {
     FATALIF(g_IntegerIntValue == NULL, "Can't find Integer.intValue() method");
 
     // class: Long
-    g_LongClass = env->FindClass(JAVA_LONG);
+    g_LongClass = FindClass(env, JAVA_LONG);
     FATALIF(g_LongClass == NULL, "Can't find Long class");
     g_LongClass = (jclass) env->NewGlobalRef(g_LongClass);
     g_LongValueOf = env->GetStaticMethodID(g_LongClass, "valueOf", "(J)L" JAVA_LONG ";");
@@ -60,13 +60,13 @@ static void localinit(JNIEnv * env) {
     FATALIF(g_LongLongValue == NULL, "Can't find Long.longValue() method");
 
     // class: Double
-    g_DoubleClass = env->FindClass(JAVA_DOUBLE);
+    g_DoubleClass = FindClass(env, JAVA_DOUBLE);
     FATALIF(g_DoubleClass == NULL, "Can't find Double class");
     g_DoubleClass = (jclass) env->NewGlobalRef(g_DoubleClass);
     g_DoubleValueOf = env->GetStaticMethodID(g_DoubleClass, "valueOf", "(D)Ljava/lang/Double;");
     FATALIF(g_DoubleValueOf == NULL, "Can't find Double.valueOf() method");
 
-    g_BooleanClass = env->FindClass(JAVA_BOOLEAN);
+    g_BooleanClass = FindClass(env, JAVA_BOOLEAN);
     FATALIF(g_BooleanClass == NULL, "Can't find Boolean class");
 
     g_BooleanClass = (jclass) env->NewGlobalRef(g_BooleanClass);
@@ -77,11 +77,11 @@ static void localinit(JNIEnv * env) {
     FATALIF(g_BooleanBooleanValue == NULL, "Can't find Boolean.booleanValue() method");
 
     // class: String
-    g_StringClass = env->FindClass(JAVA_STRING);
+    g_StringClass = FindClass(env, JAVA_STRING);
     FATALIF(g_StringClass == NULL, "Can't find String class");
     g_StringClass = (jclass) env->NewGlobalRef(g_StringClass);
 
-    g_DateClass = env->FindClass("java/util/Date");
+    g_DateClass = FindClass(env, "java/util/Date");
     FATALIF(g_DateClass == NULL, "Can't find java.util.Date class");
     g_DateClass = (jclass) env->NewGlobalRef(g_DateClass);
 

@@ -219,6 +219,16 @@ public class SevenZip {
 
     }
 
+    // For native code
+    private static Class findClass(String className) {
+        try {
+            return SevenZip.class.getClassLoader().loadClass(className.replace('/', '.'));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     // http://stackoverflow.com/questions/4519556/how-to-determine-if-my-app-is-running-on-android
     private static boolean isAndroidInternal() {
         String property = System.getProperty("java.vendor");

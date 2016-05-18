@@ -342,3 +342,22 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
 
     jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
 }
+
+#ifdef ANDROID_NDK
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv* env = NULL;
+    FATALIF(vm->GetEnv((void**) (&env), JNI_VERSION_1_6) != JNI_OK, "Can't get JNIEnv");
+    FATALIF(env == NULL, "Can't get JNIEnv");
+
+    jclass sevenZipClass = env->FindClass(SEVEN_ZIP_PACKAGE "/SevenZip");
+    FATALIF(sevenZipClass == NULL, "Can't SevenZip appClass");
+    sevenZipClass = (jclass) env->NewGlobalRef(sevenZipClass);
+
+    jmethodID findClassMethodID = env->GetStaticMethodID(sevenZipClass, "findClass",
+            "(Ljava/lang/String;)Ljava/lang/Class;");
+
+    InitFindClass(sevenZipClass, findClassMethodID);
+
+    return JNI_VERSION_1_6;
+}
+#endif
