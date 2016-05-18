@@ -62,6 +62,12 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 	CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
 			outStream);
 
+#ifdef ANDROID_NDK
+	// thiz will be accessed in other thread when creating 7z archive,
+	// In Android, if we use it directly, we will get error like this.
+	//     JNI DETECTED ERROR IN APPLICATION: use of invalid jobject 0x7f49b9dd
+	thiz = env->NewGlobalRef(thiz);
+#endif
 	CPPToJavaArchiveUpdateCallback * cppToJavaArchiveUpdateCallback = new CPPToJavaArchiveUpdateCallback(
 	        jbindingSession, env,
 	        archiveUpdateCallback,
@@ -80,6 +86,9 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 	}
 
 	cppToJavaArchiveUpdateCallback->freeOutItem(jniEnvInstance);
+#ifdef ANDROID_NDK
+	env->DeleteGlobalRef(thiz);
+#endif
 }
 
 /*
