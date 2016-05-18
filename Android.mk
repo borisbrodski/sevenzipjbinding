@@ -1,3 +1,6 @@
+# This project need C++ STL support, so add APP_STL variable in your Application.mk.
+# Check https://developer.android.com/ndk/guides/cpp-support.html for more information.
+
 LOCAL_PATH := $(call my-dir)
 
 JBINDING_CPP_FILES := \
