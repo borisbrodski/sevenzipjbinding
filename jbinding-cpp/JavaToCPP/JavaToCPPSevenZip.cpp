@@ -356,7 +356,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
     FATALIF(env == NULL, "Can't get JNIEnv");
 
     jclass sevenZipClass = env->FindClass(SEVEN_ZIP_PACKAGE "/SevenZip");
-    FATALIF(sevenZipClass == NULL, "Can't SevenZip appClass");
+    FATALIF(sevenZipClass == NULL, "Can't find " SEVEN_ZIP_PACKAGE "/SevenZip class");
     sevenZipClass = (jclass) env->NewGlobalRef(sevenZipClass);
 
     jmethodID findClassMethodID = env->GetStaticMethodID(sevenZipClass, "findClass",
