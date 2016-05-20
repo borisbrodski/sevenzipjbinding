@@ -709,29 +709,23 @@ public class SevenZip {
     }
 
     private static void nativeInitialization() throws SevenZipNativeInitializationException {
+        String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
         final String errorMessage[] = new String[1];
         final Throwable throwable[] = new Throwable[1];
-
-        if (isAndroid()) {
-            errorMessage[0] = nativeInitSevenZipLibrary();
-        } else {
-            String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
-            if (doPrivileged == null || doPrivileged.trim().equals("0")) {
-                AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                    public Void run() {
-                        try {
-                            errorMessage[0] = nativeInitSevenZipLibrary();
-                        } catch (Throwable e) {
-                            throwable[0] = e;
-                        }
-                        return null;
+        if (!isAndroid() && (doPrivileged == null || doPrivileged.trim().equals("0"))) {
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                public Void run() {
+                    try {
+                        errorMessage[0] = nativeInitSevenZipLibrary();
+                    } catch (Throwable e) {
+                        throwable[0] = e;
                     }
-                });
-            } else {
-                errorMessage[0] = nativeInitSevenZipLibrary();
-            }
+                    return null;
+                }
+            });
+        } else {
+            errorMessage[0] = nativeInitSevenZipLibrary();
         }
-
         if (errorMessage[0] != null || throwable[0] != null) {
             String message = errorMessage[0];
             if (message == null) {
