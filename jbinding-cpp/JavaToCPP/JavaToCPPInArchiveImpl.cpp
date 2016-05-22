@@ -277,6 +277,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
+    env->DeleteLocalRef(javaName);
+
     return propertInfo;
 
 }
@@ -488,6 +490,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
+
+    env->DeleteLocalRef(javaName);
 
     return propertInfo;
 }

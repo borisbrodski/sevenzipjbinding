@@ -30,7 +30,7 @@ public:
         } else {
             _cryptoGetTextPasswordImpl = NULL;
         }
-
+        initEnv->DeleteLocalRef(cryptoGetTextPasswordClass);
     }
 
     ~CPPToJavaArchiveExtractCallback() {

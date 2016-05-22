@@ -275,6 +275,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
     jstring jstringFormatNameString = ToJChar(formatNameString).toNewString(env);
     jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);
+    env->DeleteLocalRef(jstringFormatNameString);
     if (jniEnvInstance.exceptionCheck()) {
         archive->Close();
         deleteInErrorCase.setErrorCase();

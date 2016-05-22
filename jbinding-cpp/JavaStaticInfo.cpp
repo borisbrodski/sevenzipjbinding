@@ -14,7 +14,10 @@ void InitFindClass(jclass sevenZipClass, jmethodID findClassMethodID) {
 
 jclass FindClass(JNIEnv *env, const char *className) {
 #ifdef ANDROID_NDK
-    return static_cast<jclass>(env->CallStaticObjectMethod(g_SevenZipClass, g_FindClassMethodID, env->NewStringUTF(className)));
+    jstring jclassName = env->NewStringUTF(className);
+    jclass clazz = static_cast<jclass>(env->CallStaticObjectMethod(g_SevenZipClass, g_FindClassMethodID, jclassName));
+    env->DeleteLocalRef(jclassName);
+    return clazz;
 #else
     return env->FindClass(className);
 #endif

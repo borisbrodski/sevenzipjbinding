@@ -101,6 +101,7 @@ char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, size_t size) 
     FATALIF(id == NULL, "Method Class.getName() can't be found");
 
     jstring string = (jstring) env->CallNonvirtualObjectMethod(clazz, reflectionClass, id);
+    env->DeleteLocalRef(reflectionClass);
     FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
 
     const char * cstr = env->GetStringUTFChars(string, NULL);
@@ -135,6 +136,7 @@ void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute, jlon
     jfieldID fieldID = env->GetFieldID(clazz, attribute, "J");
     FATALIF2(fieldID == NULL, "Field '%s' in the class '%s' was not found", attribute,
             GetJavaClassName(env, clazz, classname, sizeof(classname)));
+    env->DeleteLocalRef(clazz);
 
     env->SetLongField(object, fieldID, value);
 }

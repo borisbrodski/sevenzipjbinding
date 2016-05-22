@@ -402,6 +402,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
         }
+        jniEnvInstance->DeleteLocalRef(inStreamInterface);
         jniEnvInstance->DeleteLocalRef(inStreamImpl);
     }
 

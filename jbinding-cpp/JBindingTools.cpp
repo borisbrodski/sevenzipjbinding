@@ -144,6 +144,7 @@ JNINativeCallContext::~JNINativeCallContext() {
             }
             sevenZipException = static_cast<jthrowable> (jni::SevenZipException::newInstance(
                     _jniCallOriginalEnv, message));
+            _jniCallOriginalEnv->DeleteLocalRef(message);
             assertNoExceptionOnJniCallOriginalEnv();
 
             if (_firstThrownException) {

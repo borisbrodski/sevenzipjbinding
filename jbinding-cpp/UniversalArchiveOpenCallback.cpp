@@ -31,6 +31,7 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
             new CPPToJavaCryptoGetTextPassword(jbindingSession, initEnv, archiveOpenCallbackImpl);
         _cryptoGetTextPassword = cryptoGetTextPasswordComPtr.Detach();
     }
+    initEnv->DeleteLocalRef(cryptoGetTextPasswordClass);
 
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
     {
@@ -39,6 +40,7 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
             new CPPToJavaArchiveOpenVolumeCallback(jbindingSession, initEnv, archiveOpenCallbackImpl);
         _archiveOpenVolumeCallback = archiveOpenVolumeCallbackComPtr.Detach();
     }
+    initEnv->DeleteLocalRef(archiveOpenVolumeCallbackClass);
 }
 
 STDMETHODIMP(UniversalArchiveOpencallback::QueryInterface)(REFGUID iid, void **outObject)
