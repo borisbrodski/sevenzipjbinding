@@ -45,8 +45,8 @@ IF(MINGW)
     IF(MINGW64)
         set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
         SET(JBINDING_PLATFORM_CPP_FILES
-            PlatformMinGW/MyWindows.cpp
-            PlatformMinGW/MyUser32.cpp
+            #PlatformMinGW/MyWindows.cpp
+            #PlatformMinGW/MyUser32.cpp
         )
     ENDIF(MINGW64)
 ELSE(MINGW)
