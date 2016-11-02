@@ -153,6 +153,8 @@ ENDIF()
 
 ADD_DEPENDENCIES(7-Zip-JBinding sevenzipjbinding-jar)
 
+cmake_policy(SET CMP0026 OLD)
+# TODO: Not allowed due to policy CMP0026
 GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 GET_FILENAME_COMPONENT(SEVENZIP_JBINDING_LIB_FILENAME "${SEVENZIP_JBINDING_LIB}" NAME)
 
@@ -216,7 +218,7 @@ ENDIF(RUNTIME_LIB)
 
 ADD_CUSTOM_COMMAND(OUTPUT ${SEVENZIPJBINDING_LIB_PROPERTY_FILE}
                    COMMAND ${CMAKE_COMMAND} -P ${LIB_PROPERTY_FILE_CREATOR}
-                   DEPENDS ${SEVENZIP_JBINDING_LIB}
+                   DEPENDS 7-Zip-JBinding
                    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                    COMMENT Calculating hash of the native libraries)
 
@@ -373,7 +375,7 @@ IF(BUILD_TESTING)
     CREATE_COMPILE_JAVA_CUSTOM_COMMAND(test "${JAVA_TEST_SOURCE_DIR}" "${TESTS_MANIFEST}" "${TESTS_JAR}" "${JUNIT_LIB}" "${HAMCREST_LIB}" "${SEVENZIPJBINDING_JAR}")
 
     ADD_CUSTOM_TARGET(sevenzipjbinding-test-jar ALL
-                      DEPENDS ${TESTS_JAR}
+                      DEPENDS 7-Zip-JBinding ${TESTS_JAR}
                       COMMENT Processing java build target)
 
 
