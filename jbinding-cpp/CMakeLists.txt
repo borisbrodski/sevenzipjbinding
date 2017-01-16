@@ -419,6 +419,7 @@ SET(JBINDING_CPP_FILES
     UserTrace.cpp
     CodecTools.cpp
     JBindingTools.cpp
+    CHeadCacheInStream.cpp
     JavaToCPP/JavaToCPPSevenZip.cpp
     JavaToCPP/JavaToCPPInArchiveImpl.cpp
     JavaToCPP/JavaToCPPOutArchiveImpl.cpp
@@ -436,6 +437,7 @@ SET(JBINDING_CPP_FILES
     ../test/CTests/JniToolsTest.cpp
     ../test/CTests/JBindingTest.cpp
     ../test/CTests/EnumTest.cpp
+    ../test/CTests/CHeadCacheInStreamTest.cpp
 )
 
 SET(JBINDING_JAVAH_H_FILES

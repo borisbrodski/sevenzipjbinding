@@ -83,6 +83,9 @@
     (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}
 
 
+#define MIN(a,b) ((a) > (b) ? (b) : (a))
+#define MAX(a,b) ((a) < (b) ? (b) : (a))
+
 //typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
 //		const GUID *interfaceID, void **outObject);
 
