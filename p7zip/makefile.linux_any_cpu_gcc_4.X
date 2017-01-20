@@ -2,16 +2,18 @@
 # makefile for Linux (x86, PPC, alpha ...)
 #
 
-OPTFLAGS=-O
+OPTFLAGS=-O -s
 
-ALLFLAGS=${OPTFLAGS} -pipe -s \
+ALLFLAGS=${OPTFLAGS} -pipe \
     	-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
 	-DNDEBUG -D_REENTRANT -DENV_UNIX \
 	-D_7ZIP_LARGE_PAGES \
 	$(LOCAL_FLAGS)
 
-CXX=g++ $(ALLFLAGS) -DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
-CC=gcc $(ALLFLAGS)
+ALLFLAGS_CPP=-DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+
+CXX=g++
+CC=gcc
 CC_SHARED=-fPIC
 LINK_SHARED=-fPIC -shared
 
@@ -21,4 +23,5 @@ LOCAL_LIBS=-lpthread
 LOCAL_LIBS_DLL=$(LOCAL_LIBS) -ldl
 
 OBJ_CRC32=$(OBJ_CRC32_C)
+OBJ_AES=
 

@@ -272,9 +272,9 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
     protected void testUpdate(final int countOfFiles, final int directoriesDepth, final int maxSubdirectories,
             final int averageFileLength, final int deltaFileLength, ArchiveUpdater... archiveUpdaters) throws Exception {
         VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
-        virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
-                deltaFileLength, null);
         ArchiveFormat archiveFormat = getArchiveFormat();
+        virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
+                deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
         if (archiveFormat == ArchiveFormat.BZIP2) {
             virtualContent.updateItemPathByPath(virtualContent.getItemPath(0), "");
         }

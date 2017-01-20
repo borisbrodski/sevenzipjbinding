@@ -151,6 +151,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     if (archiveFormat) {
         index = codecTools.getArchiveFormatIndex(env, archiveFormat);
         if (index == -1) {
+            codecTools.getArchiveFormatName(env, archiveFormat, formatNameString);
             jniNativeCallContext.reportError("Not registered archive format: '%S'",
                     (const wchar_t*) formatNameString);
             deleteInErrorCase.setErrorCase();
@@ -217,7 +218,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             TRACE("Success=false, throwing exception...")
 
             jniEnvInstance.reportError(
-                    "Archive file can't be opened with none of the registered codecs");
+                    "Archive file can't be opened with any of the registered codecs");
             deleteInErrorCase.setErrorCase();
             return NULL;
 
@@ -272,9 +273,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         return NULL;
     }
 
-    jstring jstringFormatNameString = env->NewString(UnicodeHelper(formatNameString),
-            formatNameString.Length());
+    jstring jstringFormatNameString = ToJChar(formatNameString).toNewString(env);
     jni::InArchiveImpl::setArchiveFormat(env, inArchiveImplObject, jstringFormatNameString);
+    env->DeleteLocalRef(jstringFormatNameString);
     if (jniEnvInstance.exceptionCheck()) {
         archive->Close();
         deleteInErrorCase.setErrorCase();
@@ -342,3 +343,28 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
 
     jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
 }
+
+#ifdef ANDROID_NDK
+// 'FindClass' start in the "system" class loader in the threads created by native code.
+// So attempts to find app-specific classes will fail.
+// I make 'Class SevenZip.findClass(String)' java static method to find class with
+// app class loader.
+// Check https://developer.android.com/training/articles/perf-jni.html
+// FAQ: Why didn't FindClass find my class?
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+    JNIEnv* env = NULL;
+    FATALIF(vm->GetEnv((void**) (&env), JNI_VERSION_1_6) != JNI_OK, "Can't get JNIEnv");
+    FATALIF(env == NULL, "Can't get JNIEnv");
+
+    jclass sevenZipClass = env->FindClass(SEVEN_ZIP_PACKAGE "/SevenZip");
+    FATALIF(sevenZipClass == NULL, "Can't find " SEVEN_ZIP_PACKAGE "/SevenZip class");
+    sevenZipClass = (jclass) env->NewGlobalRef(sevenZipClass);
+
+    jmethodID findClassMethodID = env->GetStaticMethodID(sevenZipClass, "findClass",
+            "(Ljava/lang/String;)Ljava/lang/Class;");
+
+    InitFindClass(sevenZipClass, findClassMethodID);
+
+    return JNI_VERSION_1_6;
+}
+#endif

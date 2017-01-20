@@ -15,21 +15,26 @@
 <H4>Syntax</H4>
 
 <PRE class="syntax">
--scs{UTF-8 | WIN | DOS}
+-scs{UTF-8 | UTF-16LE | UTF-16BE | WIN | DOS | {id} }
 </PRE>
 
 <P>Default charset is UTF-8.</P>
 
-<DL>
-  <DT>UTF-8</DT>
-  <DD>Unicode UTF-8 character set.</DD>
-  <DT>WIN</DT>
-  <DD>Default character set of Windows.</DD>
-  <DT>DOS</DT>
-  <DD>Default DOS (OEM) character set of Windows.</DD>
-</DL>
+<TABLE>
+  <TR><TH> Value </TH> <TH> Description </TH></TR>
+  <TR><TD> UTF-8    </TD> <TD> Unicode UTF-8 character set. </TD></TR>
+  <TR><TD> UTF-16LE </TD> <TD> Unicode UTF-16 little-endian character set. </TD></TR>
+  <TR><TD> UTF-16BE </TD> <TD> Unicode UTF-16 big-endian character set. </TD></TR>
+  <TR><TD> WIN      </TD> <TD> Default character set of Windows. </TD></TR>
+  <TR><TD> DOS      </TD> <TD> Default DOS (OEM) character set of Windows. </TD></TR>
+  <TR><TD> {id}     </TD> <TD> The code page number (as specified in Microsoft Windows). </TD></TR>
+</TABLE>
 
-<H4>Example</H4>
+<P>Notes: The list file in Unicode charset can start with the BOM (byte order mark) character (U+FEFF).
+   In that case 7-Zip checks that encoding of BOM corresponds to encoding
+   specified with this switch (for UTF-16LE and UTF-16BE).</P>
+
+<H4>Examples</H4>
 
 <PRE class="example">
 7z a archive.7z @listfile.txt -scsWIN
@@ -37,6 +42,13 @@
 
 <P>compresses files from <SPAN class="filename">listfile.txt</SPAN> list, that contains 
 list of files in default character set of Windows.</P>
+
+<PRE class="example">
+7z a archive.7z @listfile.txt -scs1251
+</PRE>
+
+<P>compresses files from <SPAN class="filename">listfile.txt</SPAN> list, that contains 
+list of files in 1251 (Cyrillic Windows) codepage.</P>
 
 <H4>Commands that can be used with this switch</H4>
 

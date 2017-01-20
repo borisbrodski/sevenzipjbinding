@@ -15,16 +15,35 @@
 #define FILE_END	SEEK_END
 #define INVALID_SET_FILE_POINTER	((DWORD)-1)
 
-#define CREATE_NEW	  1
-#define CREATE_ALWAYS	  2
-#define OPEN_EXISTING	  3
-#define OPEN_ALWAYS	  4
-/* #define TRUNCATE_EXISTING 5 */
-
 #endif
+
+#define _my_IO_REPARSE_TAG_MOUNT_POINT  (0xA0000003L)
+#define _my_IO_REPARSE_TAG_SYMLINK      (0xA000000CL)
+
+#define _my_SYMLINK_FLAG_RELATIVE 1
 
 namespace NWindows {
 namespace NFile {
+
+struct CReparseAttr
+{
+  UInt32 Tag;
+  UInt32 Flags;
+  UString SubsName;
+  UString PrintName;
+
+  CReparseAttr(): Tag(0), Flags(0) {}
+  bool Parse(const Byte *p, size_t size);
+
+  bool IsMountPoint() const { return Tag == _my_IO_REPARSE_TAG_MOUNT_POINT; } // it's Junction
+  bool IsSymLink() const { return Tag == _my_IO_REPARSE_TAG_SYMLINK; }
+  bool IsRelative() const { return Flags == _my_SYMLINK_FLAG_RELATIVE; }
+  // bool IsVolume() const;
+
+  bool IsOkNamePair() const;
+  UString GetPath() const;
+};
+
 namespace NIO {
 
 
@@ -41,9 +60,7 @@ protected:
   int     _offset;
 #endif
 
-  bool Create(LPCSTR fileName, DWORD desiredAccess,
-      DWORD shareMode, DWORD creationDisposition,  DWORD flagsAndAttributes,bool ignoreSymbolicLink=false);
-  bool Create(LPCWSTR fileName, DWORD desiredAccess,
+  bool Create(CFSTR fileName, DWORD desiredAccess,
       DWORD shareMode, DWORD creationDisposition,  DWORD flagsAndAttributes,bool ignoreSymbolicLink=false);
 
 public:
@@ -61,18 +78,11 @@ public:
 class CInFile: public CFileBase
 {
 public:
-  bool Open(LPCTSTR fileName, DWORD shareMode, DWORD creationDisposition,  DWORD flagsAndAttributes);
-  bool OpenShared(LPCTSTR fileName, bool /* shareForWrite */ ,bool ignoreSymbolicLink=false) {
+  bool Open(CFSTR fileName, DWORD shareMode, DWORD creationDisposition,  DWORD flagsAndAttributes);
+  bool OpenShared(CFSTR fileName, bool /* shareForWrite */ ,bool ignoreSymbolicLink=false) {
     return Open(fileName,ignoreSymbolicLink);
   }
-  bool Open(LPCTSTR fileName,bool ignoreSymbolicLink=false);
-  #ifndef _UNICODE
-  bool Open(LPCWSTR fileName, DWORD shareMode, DWORD creationDisposition,  DWORD flagsAndAttributes);
-  bool OpenShared(LPCWSTR fileName, bool /* shareForWrite */ ,bool ignoreSymbolicLink=false) {
-    return Open(fileName,ignoreSymbolicLink);
-  }
-  bool Open(LPCWSTR fileName,bool ignoreSymbolicLink=false);
-  #endif
+  bool Open(CFSTR fileName,bool ignoreSymbolicLink=false);
   bool ReadPart(void *data, UINT32 size, UINT32 &processedSize);
   bool Read(void *data, UINT32 size, UINT32 &processedSize);
 };
@@ -80,29 +90,17 @@ public:
 class COutFile: public CFileBase
 {
 public:
-  bool Open(LPCTSTR fileName, DWORD shareMode, DWORD creationDisposition, DWORD flagsAndAttributes);
-  bool Open(LPCTSTR fileName, DWORD creationDisposition);
-  bool Create(LPCTSTR fileName, bool createAlways);
+  bool Open(CFSTR fileName, DWORD shareMode, DWORD creationDisposition, DWORD flagsAndAttributes);
+  bool Open(CFSTR fileName, DWORD creationDisposition);
+  bool Create(CFSTR fileName, bool createAlways);
+  bool CreateAlways(CFSTR fileName, DWORD flagsAndAttributes);
 
-  #ifndef _UNICODE
-  bool Open(LPCWSTR fileName, DWORD shareMode, DWORD creationDisposition, DWORD flagsAndAttributes);
-  bool Open(LPCWSTR fileName, DWORD creationDisposition);
-  bool Create(LPCWSTR fileName, bool createAlways);
-  #endif
-
-  /*
-  void SetOpenCreationDisposition(DWORD creationDisposition)
-    { m_CreationDisposition = creationDisposition; }
-  void SetOpenCreationDispositionCreateAlways()
-    { m_CreationDisposition = CREATE_ALWAYS; }
-  */
-
-  bool SetTime(const FILETIME *cTime, const FILETIME *aTime, const FILETIME *mTime);
-  bool SetMTime(const FILETIME *mTime);
-  bool WritePart(const void *data, UINT32 size, UINT32 &processedSize);
-  bool Write(const void *data, UINT32 size, UINT32 &processedSize);
-  bool SetEndOfFile();
-  bool SetLength(UINT64 length);
+  bool SetTime(const FILETIME *cTime, const FILETIME *aTime, const FILETIME *mTime) throw();
+  bool SetMTime(const FILETIME *mTime) throw();
+  bool WritePart(const void *data, UInt32 size, UInt32 &processedSize) throw();
+  bool Write(const void *data, UInt32 size, UInt32 &processedSize) throw();
+  bool SetEndOfFile() throw();
+  bool SetLength(UInt64 length) throw();
 };
 
 }}}

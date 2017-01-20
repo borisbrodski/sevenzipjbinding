@@ -7,22 +7,19 @@
 
 #ifdef LANG
 #include "LangUtils.h"
-static CIDLangPair kIDLangPairs[] =
-{
-  { IDOK, 0x02000702 },
-  { IDCANCEL, 0x02000710 }
-};
 #endif
+
+using namespace NWindows;
 
 bool CListViewDialog::OnInit()
 {
   #ifdef LANG
-  LangSetDlgItemsText(HWND(*this), kIDLangPairs, sizeof(kIDLangPairs) / sizeof(kIDLangPairs[0]));
+  LangSetDlgItems(*this, NULL, 0);
   #endif
-  _listView.Attach(GetItem(IDC_LISTVIEW_LIST));
+  _listView.Attach(GetItem(IDL_LISTVIEW));
 
-//FIXME  if (ReadSingleClick())
-//FIXME    _listView.SetExtendedListViewStyle(LVS_EX_ONECLICKACTIVATE | LVS_EX_TRACKSELECT);
+  // FIXME if (ReadSingleClick())
+    // FIXME _listView.SetExtendedListViewStyle(LVS_EX_ONECLICKACTIVATE | LVS_EX_TRACKSELECT);
 
   SetText(Title);
 
@@ -34,7 +31,7 @@ bool CListViewDialog::OnInit()
 
   _listView.InsertColumn(0, &columnInfo);
 
-  for (int i = 0; i < Strings.Size(); i++)
+  FOR_VECTOR (i, Strings)
     _listView.InsertItem(i, Strings[i]);
 
   if (Strings.Size() > 0)
@@ -47,12 +44,44 @@ bool CListViewDialog::OnInit()
   return CModalDialog::OnInit();
 }
 
-#ifdef _WIN32 // FIXME
+bool CListViewDialog::OnSize(WPARAM /* wParam */, int xSize, int ySize)
+{
+#ifdef _WIN32
+  int mx, my;
+  GetMargins(8, mx, my);
+  int bx1, bx2, by;
+  GetItemSizes(IDCANCEL, bx1, by);
+  GetItemSizes(IDOK, bx2, by);
+  int y = ySize - my - by;
+  int x = xSize - mx - bx1;
+
+  /*
+  RECT rect;
+  GetClientRect(&rect);
+  rect.top = y - my;
+  InvalidateRect(&rect);
+  */
+  InvalidateRect(NULL);
+
+  MoveItem(IDCANCEL, x, y, bx1, by);
+  MoveItem(IDOK, x - mx - bx2, y, bx2, by);
+  /*
+  if (wParam == SIZE_MAXSHOW || wParam == SIZE_MAXIMIZED || wParam == SIZE_MAXHIDE)
+    mx = 0;
+  */
+  _listView.Move(mx, my, xSize - mx * 2, y - my * 2);
+#endif
+  return false;
+}
+
+extern bool g_LVN_ITEMACTIVATE_Support;
+
 bool CListViewDialog::OnNotify(UINT /* controlID */, LPNMHDR header)
 {
+#ifdef _WIN32
   if (header->hwndFrom != _listView)
     return false;
-  switch(header->code)
+  switch (header->code)
   {
     case LVN_ITEMACTIVATE:
       if (g_LVN_ITEMACTIVATE_Support)
@@ -73,7 +102,7 @@ bool CListViewDialog::OnNotify(UINT /* controlID */, LPNMHDR header)
     case LVN_KEYDOWN:
     {
       LPNMLVKEYDOWN keyDownInfo = LPNMLVKEYDOWN(header);
-      switch(keyDownInfo->wVKey)
+      switch (keyDownInfo->wVKey)
       {
         case VK_DELETE:
         {
@@ -96,21 +125,18 @@ bool CListViewDialog::OnNotify(UINT /* controlID */, LPNMHDR header)
         }
         case 'A':
         {
-          bool ctrl = (::GetKeyState(VK_CONTROL) & 0x8000) != 0;
-          if (ctrl)
+          if (IsKeyDown(VK_CONTROL))
           {
-            int numItems = _listView.GetItemCount();
-            for (int i = 0; i < numItems; i++)
-              _listView.SetItemState(i, LVIS_SELECTED, LVIS_SELECTED);
+            _listView.SelectAll();
             return true;
           }
         }
       }
     }
   }
+#endif
   return false;
 }
-#endif
 
 void CListViewDialog::OnOK()
 {

@@ -1,38 +1,27 @@
 // RootFolder.h
 
-#ifndef __ROOTFOLDER_H
-#define __ROOTFOLDER_H
+#ifndef __ROOT_FOLDER_H
+#define __ROOT_FOLDER_H
 
-#include "Common/MyString.h"
+#include "../../../Common/MyString.h"
 
-#include "Windows/PropVariant.h"
+#include "IFolder.h"
 
-#include "FSFolder.h"
-
-#ifdef _WIN32
-const int kNumRootFolderItems = 3;
-#endif
+const unsigned kNumRootFolderItems_Max = 4;
 
 class CRootFolder:
   public IFolderFolder,
   public IFolderGetSystemIconIndex,
   public CMyUnknownImp
 {
+  UString _names[kNumRootFolderItems_Max];
+  int _iconIndices[kNumRootFolderItems_Max];
+
 public:
-  MY_UNKNOWN_IMP1(
-    IFolderGetSystemIconIndex
-  )
-
+  MY_UNKNOWN_IMP1(IFolderGetSystemIconIndex)
   INTERFACE_FolderFolder(;)
-
-  STDMETHOD(GetSystemIconIndex)(UInt32 index, INT32 *iconIndex);
-
+  STDMETHOD(GetSystemIconIndex)(UInt32 index, Int32 *iconIndex);
   void Init();
-private:
-#ifdef _WIN32
-  UString _names[kNumRootFolderItems];
-  int _iconIndices[kNumRootFolderItems];
-#endif
 };
 
 #endif

@@ -31,10 +31,9 @@ class CListViewDialogImpl : public NWindows::NControl::CModalDialogImpl
 			   wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX | wxMINIMIZE_BOX)
 
   {
-
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
-	wxListCtrl *list = new wxListCtrl(this, IDC_LISTVIEW_LIST, wxDefaultPosition, wxSize(645,195), wxLC_REPORT | wxLC_NO_HEADER);
+	wxListCtrl *list = new wxListCtrl(this, IDL_LISTVIEW, wxDefaultPosition, wxSize(645,195), wxLC_REPORT | wxLC_NO_HEADER);
 
 	topsizer->Add(list, 1, wxALL|wxEXPAND, 5);
 
@@ -50,7 +49,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-REGISTER_DIALOG(IDD_DIALOG_LISTVIEW,CListViewDialog,0)
+REGISTER_DIALOG(IDD_LISTVIEW,CListViewDialog,0)
 
 BEGIN_EVENT_TABLE(CListViewDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)

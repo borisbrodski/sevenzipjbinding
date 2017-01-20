@@ -33,6 +33,16 @@ inline UString operator<<(UString msg, Int32 number) {
     return msg + UString(sz);
 }
 
+inline UString operator<<(UString msg, BSTR bstr) {
+    UString ustring;
+    ustring.SetFromBstr(bstr);
+    return msg + ustring;
+}
+
+inline UString operator<<(UString msg, CMyComBSTR myComBSTR) {
+    return msg << *(&myComBSTR);
+}
+
 bool isUserTraceEnabled(JNIEnvInstance & jniEnvInstance, jobject thiz);
 void userTrace(JNIEnvInstance & jniEnvInstance, jobject thiz, UString msg);
 

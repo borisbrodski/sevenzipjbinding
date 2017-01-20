@@ -4,6 +4,7 @@
 #include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "CodecTools.h"
+#include "UnicodeHelper.h"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 
@@ -260,10 +261,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     }
 
     jstring javaName;
-    if (&name == NULL) {
+    if (((const wchar_t *)name) == NULL) {
         javaName = env->NewStringUTF("");
     } else {
-        javaName = env->NewString((jchar *) (BSTR) name, name.Length());
+        javaName = ToJChar(name).toNewString(env);
     }
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
@@ -275,6 +276,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
+
+    env->DeleteLocalRef(javaName);
 
     return propertInfo;
 
@@ -472,10 +475,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     }
 
     jstring javaName;
-    if (&name == NULL) {
+    if (((const wchar_t *)name) == NULL) {
         javaName = env->NewStringUTF("");
     } else {
-        javaName = env->NewString((jchar *) (BSTR) name, name.Length());
+        javaName = ToJChar(name).toNewString(env);
     }
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
@@ -487,6 +490,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
+
+    env->DeleteLocalRef(javaName);
 
     return propertInfo;
 }

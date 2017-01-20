@@ -8,7 +8,7 @@ mv ./bin/7z ../${BIN} && mv ./bin/7za ../${BIN} && mv ./bin/7zr ../${BIN} && mv 
 make clean && \
 cp makefile.qnx_shared.so makefile.machine && \
 make 7z && \
-mv ./bin/7z.so ../${BIN} && mv ./bin/Codecs/Rar29.so ../${BIN}/Codecs && \
+mv ./bin/7z.so ../${BIN} && mv ./bin/Codecs/Rar.so ../${BIN}/Codecs && \
 make clean && \
 mv makefile.machine.bak makefile.machine
 echo "All done - look for binaries in ../${BIN}"

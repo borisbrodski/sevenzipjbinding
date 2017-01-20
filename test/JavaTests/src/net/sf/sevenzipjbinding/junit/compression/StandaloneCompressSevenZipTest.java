@@ -70,7 +70,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
     @Test
     public void testCompression7z() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
+        virtualContent.fillRandomly(100, 3, 3, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
 
@@ -88,8 +88,7 @@ public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
         outNewArchive7z.createArchive(byteArrayStream, virtualContent.getItemCount(),
                 callbackTesterCreateArchive.getProxyInstance());
 
-        // No setCompleted call
-        assertEquals(4, callbackTesterCreateArchive.getDifferentMethodsCalled());
+        assertEquals(5, callbackTesterCreateArchive.getDifferentMethodsCalled());
 
         byteArrayStream.rewind();
 

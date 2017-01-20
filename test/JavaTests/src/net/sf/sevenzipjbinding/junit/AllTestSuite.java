@@ -9,6 +9,7 @@ import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
@@ -64,6 +65,7 @@ import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeF
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.EnumTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
@@ -109,8 +111,16 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeT
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeWithoutVolumedTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileDebTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileFatTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileIsoTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileLzhTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileNtfsTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5HeaderPassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5PassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5Test;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumeHeaderPassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumePassTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRar5VolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileRarTest;
@@ -136,12 +146,23 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCabVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileChmTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCpioTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileDebTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileFatTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileGzipTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileIsoTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileLzhTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileLzmaTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileNsisSolidTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileNsisTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileNtfsTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5HeaderPassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5HeaderPassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5PassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5PassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5Test;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumeHeaderPassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumePassCallbackTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumePassTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRar5VolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarHeaderPassCallbackTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarHeaderPassTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileRarPassCallbackTest;
@@ -239,7 +260,8 @@ public class AllTestSuite extends TestSuite {
 
     static Class<?>[] bugArchiveTests = { //
     /*    */RarPasswordToLongCrash.class, //
-            WrongCRCGetterInSimpleInterface.class
+            WrongCRCGetterInSimpleInterface.class, //
+            Ticket18NullAsPassword.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //
@@ -249,8 +271,16 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileCabVolumeWithoutVolumedTest.class, //
             ExtractMultipleFileCpioTest.class, //
             ExtractMultipleFileDebTest.class, //
+            ExtractMultipleFileFatTest.class, //
             ExtractMultipleFileIsoTest.class, //
             ExtractMultipleFileLzhTest.class, //
+            ExtractMultipleFileNtfsTest.class, //
+            ExtractMultipleFileRar5HeaderPassTest.class, //
+            ExtractMultipleFileRar5PassTest.class, //
+            ExtractMultipleFileRar5Test.class, //
+            ExtractMultipleFileRar5VolumeHeaderPassTest.class, //
+            ExtractMultipleFileRar5VolumePassTest.class, //
+            ExtractMultipleFileRar5VolumeTest.class, //
             ExtractMultipleFileRarHeaderPassTest.class, //
             ExtractMultipleFileRarPassTest.class, //
             ExtractMultipleFileRarTest.class, //
@@ -269,6 +299,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileXarTest.class, //
             ExtractMultipleFileZipPassTest.class, //
             ExtractMultipleFileZipTest.class, //
+
     };
     static Class<?>[] singleFileTests = { //
     /*    */ExtractSingleFileArjTest.class, //
@@ -278,12 +309,23 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileChmTest.class, //
             ExtractSingleFileCpioTest.class, //
             ExtractSingleFileDebTest.class, //
+            ExtractSingleFileFatTest.class, //
             ExtractSingleFileGzipTest.class, //
             ExtractSingleFileIsoTest.class, //
             ExtractSingleFileLzhTest.class, //
             ExtractSingleFileLzmaTest.class, //
             ExtractSingleFileNsisSolidTest.class, //
             ExtractSingleFileNsisTest.class, //
+            ExtractSingleFileNtfsTest.class, //
+            ExtractSingleFileRar5HeaderPassCallbackTest.class, //
+            ExtractSingleFileRar5HeaderPassTest.class, //
+            ExtractSingleFileRar5PassCallbackTest.class, //
+            ExtractSingleFileRar5PassTest.class, //
+            ExtractSingleFileRar5Test.class, //
+            ExtractSingleFileRar5VolumeHeaderPassCallbackTest.class, //
+            ExtractSingleFileRar5VolumePassCallbackTest.class, //
+            ExtractSingleFileRar5VolumePassTest.class, //
+            ExtractSingleFileRar5VolumeTest.class, //
             ExtractSingleFileRarHeaderPassCallbackTest.class, //
             ExtractSingleFileRarHeaderPassTest.class, //
             ExtractSingleFileRarPassCallbackTest.class, //
@@ -308,10 +350,10 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileUdfTest.class, //
             ExtractSingleFileWimTest.class, //
             ExtractSingleFileXarTest.class, //
+            ExtractSingleFileZTest.class, //
             ExtractSingleFileZipPassCallbackTest.class, //
             ExtractSingleFileZipPassTest.class, //
             ExtractSingleFileZipTest.class, //
-            ExtractSingleFileZTest.class, //
             OpenMultipartCabWithNonVolumedCallbackTest.class, // // TODO extract to a special group
     };
     static Class<?>[] snippetsTests = { //
@@ -398,6 +440,7 @@ public class AllTestSuite extends TestSuite {
             Width3Depth2MtWidth3.class, //
             JNIToolsTest.class, //
             ParamSpecTest.class, //
+            EnumTest.class, //
     };
     static Class<?>[] compressionTests = { //
     /*    */CompressExceptionGetItemInformationTest.CompressException7zTest.class, //

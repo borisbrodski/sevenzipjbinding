@@ -210,6 +210,11 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         sstream << ")";
     }
 
+    // path will be accessed in other thread
+    // In Android, if we use it directly, we will get error like this.
+    //     JNI DETECTED ERROR IN APPLICATION: use of invalid jobject 0x7f49b9dd
+    path = (jstring) env->NewGlobalRef(path);
+
     if (mtwidth > 0) {
         ThreadHelper threadHelper(sstream);
         NWindows::CThread * threads = new NWindows::CThread[mtwidth];
@@ -257,6 +262,8 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
 
         error |= threadHelper.isError();
     }
+
+    env->DeleteGlobalRef(path);
 
     if (error) {
         if (customErrorMessage) {

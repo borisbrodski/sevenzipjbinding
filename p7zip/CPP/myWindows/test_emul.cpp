@@ -37,12 +37,55 @@
 #include "Common/StringConvert.cpp"
 #include "Common/StdOutStream.cpp"
 #include "Common/IntToString.cpp"
+#include "Common/UTFConvert.cpp"
 
 #include "Windows/Synchronization.cpp"
 #include "Windows/FileFind.cpp"
-#include "Windows/Time.cpp"
+#include "Windows/TimeUtils.cpp"
+#include "Windows/System.cpp"
 #include "../C/Threads.c"
 #include "../../C/Ppmd.h"
+
+int g_CodePage = -1;
+
+int global_use_lstat = 0; // FIXME
+
+/* FIXME */
+
+LPSTR WINAPI CharNextA( LPCSTR ptr ) {
+  if (!*ptr)
+    return (LPSTR)ptr;
+  return (LPSTR)(ptr + 1); // p7zip search only for ASCII characters like '/' so no need to worry about current locale
+}
+
+
+int MyStringCompare(const char *s1, const char *s2)
+{
+  while (true)
+  {
+    unsigned char c1 = (unsigned char)*s1++;
+    unsigned char c2 = (unsigned char)*s2++;
+    if (c1 < c2) return -1;
+    if (c1 > c2) return 1;
+    if (c1 == 0) return 0;
+  }
+}
+
+int MyStringCompare(const wchar_t *s1, const wchar_t *s2)
+{
+  while (true)
+  {
+    wchar_t c1 = *s1++;
+    wchar_t c2 = *s2++;
+    if (c1 < c2) return -1;
+    if (c1 > c2) return 1;
+    if (c1 == 0) return 0;
+  }
+}
+
+
+
+/* FIXME */
 
 using namespace NWindows;
 
@@ -89,19 +132,19 @@ void test_mbs(void) {
   }
 
   UString ustr(wstr1);
-  assert(ustr.Length() == (int)len1);
+  assert(ustr.Len() == (int)len1);
 
   AString  ansistr(astr);
-  assert(ansistr.Length() == (int)len0);
+  assert(ansistr.Len() == (int)len0);
 
   ansistr = UnicodeStringToMultiByte(ustr);
-  assert(ansistr.Length() == (int)len0);
+  assert(ansistr.Len() == (int)len0);
 
   assert(strcmp(ansistr,astr) == 0);
   assert(wcscmp(ustr,wstr1) == 0);
 
   UString ustr2 = MultiByteToUnicodeString(astr);
-  assert(ustr2.Length() == (int)len1);
+  assert(ustr2.Len() == (int)len1);
   assert(wcscmp(ustr2,wstr1) == 0);
 }
 #endif
@@ -413,12 +456,12 @@ void  testMaxOSX_stringConvert()
      // dumpWStr("1",&ustr[0]);
 
      assert(MyStringCompare(&ustr[0],tab[i].ustr) == 0);
-     assert(ustr.Length() == wcslen(tab[i].ustr) );
+     assert(ustr.Len() == wcslen(tab[i].ustr) );
 
 
      AString astr = GetAnsiString(ustr);
      assert(MyStringCompare(&astr[0],tab[i].astr) == 0);
-     assert(astr.Length() == strlen(tab[i].astr) );
+     assert(astr.Len() == strlen(tab[i].astr) );
 
      i++;
    }
@@ -594,11 +637,11 @@ static void  test_AString()
 
    a = "abc";
    assert(MyStringCompare(&a[0],"abc") == 0);
-   assert(a.Length() == 3);
+   assert(a.Len() == 3);
 
    a = GetAnsiString(L"abc");
    assert(MyStringCompare(&a[0],"abc") == 0);
-   assert(a.Length() == 3);
+   assert(a.Len() == 3);
 }
 
 
@@ -634,11 +677,11 @@ static void test_UString()
 
    u1 = L"abc";
    assert(MyStringCompare(&u1[0],L"abc") == 0);
-   assert(u1.Length() == 3);
+   assert(u1.Len() == 3);
 
    u1 = GetUnicodeString("abc");
    assert(MyStringCompare(&u1[0],L"abc") == 0);
-   assert(u1.Length() == 3);
+   assert(u1.Len() == 3);
 }
 
 /****************************************************************************************/

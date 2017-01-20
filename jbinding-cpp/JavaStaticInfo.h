@@ -614,6 +614,15 @@
 //            va_end(args);                                                       \
 //            TRACE_JNI_CALLED(&_instance, name, signature _JT_JSIG_##ret_type)
 
+#ifdef ANDROID_NDK
+void InitFindClass(jclass sevenZipClass, jmethodID findClassMethodID);
+#endif
+
+/**
+ * Find the java class with the name
+ */
+jclass FindClass(JNIEnv *env, const char *className);
+
 namespace jni {
 
 inline void expectExceptionCheck(JNIEnv * env) {
@@ -662,11 +671,18 @@ protected:
         	jstring objectClassNameString = (jstring)env->CallObjectMethod(objectClass, getCanonicalNameMethod);
         	const char* objectClassName = env->GetStringUTFChars(objectClassNameString, NULL);
 
+        	env->DeleteLocalRef(objectClass);
+
         	jstring expectedClassNameString = (jstring)env->CallObjectMethod(expectedClass, getCanonicalNameMethod);
         	const char* expectedClassName = env->GetStringUTFChars(expectedClassNameString, NULL);
 
         	fatal("Passed object (instance of %s) doesn't match expected class %s (%s)\n",
         			objectClassName, expectedClassName, _fullname);
+
+        	env->ReleaseStringUTFChars(objectClassNameString, objectClassName);
+        	env->DeleteLocalRef(objectClassNameString);
+        	env->ReleaseStringUTFChars(expectedClassNameString, expectedClassName);
+        	env->DeleteLocalRef(expectedClassNameString);
         }
     }
 #endif // USE_MY_ASSERTS
@@ -683,9 +699,10 @@ private:
     }
     void init(JNIEnv * env) {
         TRACE ("env->FindClass() for " << _fullname)
-        jclass clazz = env->FindClass(_fullname);
+        jclass clazz = FindClass(env, _fullname);
         FATALIF1(!clazz, "Error finding class '%s'", _fullname)
         _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
+        env->DeleteLocalRef(clazz);
         MY_ASSERT(_jclass);
     }
 public:
@@ -742,6 +759,7 @@ protected:
         jclass clazz = env->GetObjectClass(object);
         FATALIF(!clazz, "JInterface::checkObject(): GetObjectClass() failed")
         MY_ASSERT(env->IsSameObject(_jclass, clazz))
+        env->DeleteLocalRef(clazz);
     }
 #endif // USE_MY_ASSERTS
 public:
@@ -763,10 +781,13 @@ public:
         T ** instance = _jinterfaceMap.get(env, objectClass);
         if (instance) {
             _criticalSection.Leave();
+            env->DeleteLocalRef(objectClass);
             return *instance;
         }
 
-        objectClass = (jclass) env->NewGlobalRef(objectClass);
+        jclass localObjectClass = objectClass;
+        objectClass = (jclass) env->NewGlobalRef(localObjectClass);
+        env->DeleteLocalRef(localObjectClass);
         T * newInstance = new T();
         newInstance->_jclass = objectClass;
         _jinterfaceMap.add(objectClass, newInstance);
@@ -787,8 +808,8 @@ PlatformCriticalSection JInterface<T>::_criticalSection;
 
 #ifdef TRACE_ON
 template<typename T>
-inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & interface) {
-    stream << interface._getName();
+inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & jinterface) {
+    stream << jinterface._getName();
 }
 #endif // TRACE_ON
 
@@ -811,6 +832,7 @@ public:
     jmethodID getMethodID(JNIEnv * env, jclass jclazz) {
     	initMethodID(env, jclazz);
     	if (!_jmethodID) {
+    	    jstring name = NULL;
     	    char const * javaClassName = "(error getting ObjectClass)";
             env->ExceptionClear();
             jclass classClass = env->GetObjectClass(jclazz);
@@ -818,7 +840,7 @@ public:
                 javaClassName = "(error getting Class.getName() method)";
                 jmethodID method_getName = env->GetMethodID(classClass, "getName", "()Ljava/lang/String;");
                 if (method_getName) {
-                    jstring name = (jstring)env->CallObjectMethod(jclazz, method_getName);
+                    name = (jstring)env->CallObjectMethod(jclazz, method_getName);
                     if (env->ExceptionCheck()) {
                         javaClassName = "(error calling Class.getName())";
                     } else {
@@ -826,8 +848,13 @@ public:
                     }
                 }
             }
+            env->DeleteLocalRef(classClass);
     		FATALIF4(!_jmethodID, "Method not found: %s() signature '%s'%s, java-class: %s", _name, _signature,
                     _isStatic ? " (static)" : "", javaClassName);
+            if (name != NULL) {
+                env->ReleaseStringUTFChars(name, javaClassName);
+                env->DeleteLocalRef(name);
+            }
     	}
 		return _jmethodID;
     }

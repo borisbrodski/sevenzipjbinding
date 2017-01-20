@@ -328,6 +328,14 @@ SOURCE=..\..\..\Common\StringToInt.cpp
 
 SOURCE=..\..\..\Common\StringToInt.h
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Common\Wildcard.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Common\Wildcard.h
+# End Source File
 # End Group
 # Begin Group "Archive Common"
 
@@ -339,14 +347,6 @@ SOURCE=..\Common\CoderMixer2.cpp
 # Begin Source File
 
 SOURCE=..\Common\CoderMixer2.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\Common\CoderMixer2MT.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\Common\CoderMixer2MT.h
 # End Source File
 # Begin Source File
 
@@ -482,6 +482,10 @@ SOURCE=..\..\Common\ProgressUtils.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\Common\PropId.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\Common\RegisterArc.h
 # End Source File
 # Begin Source File
@@ -555,6 +559,10 @@ SOURCE=..\..\..\Windows\FileIO.cpp
 # Begin Source File
 
 SOURCE=..\..\..\Windows\FileIO.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Windows\FileName.cpp
 # End Source File
 # Begin Source File
 

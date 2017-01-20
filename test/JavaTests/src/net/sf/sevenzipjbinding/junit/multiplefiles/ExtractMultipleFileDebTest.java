@@ -8,7 +8,7 @@ import org.junit.Test;
 public class ExtractMultipleFileDebTest extends ExtractMultipleFileAbstractTest {
 
     public ExtractMultipleFileDebTest() {
-        super(ArchiveFormat.DEB, 1, 2, 3);
+        super(ArchiveFormat.AR, "deb", 1, 2, 3);
     }
 
     @Override

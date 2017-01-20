@@ -116,6 +116,7 @@ inline std::ostream & operator<<(JOut jout, jobject object) {
     jclass objectClass = jout._env->GetObjectClass(object);
     MY_ASSERT(objectClass)
     jmethodID id = jout._env->GetMethodID(objectClass, "toString", "()Ljava/lang/String;");
+    jout._env->DeleteLocalRef(objectClass);
     jstring string = (jstring) jout._env->CallObjectMethod(object, id);
     MY_ASSERT(string)//FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
 
@@ -136,6 +137,7 @@ inline std::ostream & operator<<(JOut jout, jclass clazz) {
     MY_ASSERT(id) //FATALIF(!id, "Method Class.getName() can't be found");
 
     jstring string = (jstring) jout._env->CallNonvirtualObjectMethod(clazz, classClass, id);
+    jout._env->DeleteLocalRef(classClass);
     MY_ASSERT(string)//FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
 
     std::ostream & stream = jout << string;

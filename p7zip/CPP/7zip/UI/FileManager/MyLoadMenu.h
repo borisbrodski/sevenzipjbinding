@@ -1,7 +1,7 @@
 // MyLoadMenu.h
 
-#ifndef __MYLOADMENU_H
-#define __MYLOADMENU_H
+#ifndef __MY_LOAD_MENU_H
+#define __MY_LOAD_MENU_H
 
 class myHMENU; // FIXME
 typedef myHMENU * HMENU; // FIXME
@@ -10,11 +10,30 @@ void OnMenuActivating(HWND hWnd, HMENU hMenu, int position);
 // void OnMenuUnActivating(HWND hWnd, HMENU hMenu, int id);
 // void OnMenuUnActivating(HWND hWnd);
 
-void MyLoadMenu(HWND hWnd);
 bool OnMenuCommand(HWND hWnd, int id);
 void MyLoadMenu();
-void LoadFileMenu(HMENU hMenu, int startPos, bool programMenu,
-    bool isFsFolder, int numItems, bool allAreFiles);
+
+struct CFileMenu
+{
+  bool programMenu;
+  bool readOnly;
+  bool isFsFolder;
+  bool allAreFiles;
+  bool isAltStreamsSupported;
+  int numItems;
+  
+  CFileMenu():
+      programMenu(false),
+      readOnly(false),
+      isFsFolder(false),
+      allAreFiles(false),
+      isAltStreamsSupported(true),
+      numItems(0)
+    {}
+
+  void Load(HMENU hMenu, unsigned startPos);
+};
+
 bool ExecuteFileCommand(int id);
 
 #endif

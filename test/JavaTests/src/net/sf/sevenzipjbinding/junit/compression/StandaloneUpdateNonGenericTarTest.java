@@ -62,8 +62,9 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
 
     @Test
     public void updateContent() throws Exception {
+        // No SymLink/HardLink, since we only update content in this test
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(10, 1, 1, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
         byteArrayStream.rewind();
@@ -79,7 +80,7 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
 
         IOutUpdateArchiveTar outArchiveConnected = inArchive.getConnectedOutArchiveTar();
 
-        outArchiveConnected.setTrace(true);
+        //        outArchiveConnected.setTrace(true);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
                 new UpdateItemContentArchiveUpdateCallback(itemToUpdate, newContent));

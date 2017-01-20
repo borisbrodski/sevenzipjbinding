@@ -54,7 +54,7 @@ public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
     @Test
     public void removeFileFromArchive() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(10, 1, 1, 100, 50, null, false);
 
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);

@@ -165,24 +165,19 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 //	#define JNI_TYPE_LONG                                jlong
 
 	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_STRING                                                                   \
-        const jchar * jChars = jniEnvInstance->GetStringChars((jstring)value, NULL);                                \
-        if (!jChars) {                                                                                              \
-            return S_FALSE;                                                                                         \
-        }                                                                                                           \
-        cPropVariant = UString(UnicodeHelper(jChars));                                                              \
-        jniEnvInstance->ReleaseStringChars((jstring)value, jChars);                                                 \
+        cPropVariant = UString(FromJChar(jniEnvInstance, (jstring)value));
 
 	#define ASSIGN_VALUE_TO_C_PROP_VARIANT_INTEGER                                                                  \
-        cPropVariant = (Int32)jni::Integer::intValue(jniEnvInstance, value);                                               \
+        cPropVariant = (Int32)jni::Integer::intValue(jniEnvInstance, value);                                        \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
-        }                                                                                                           \
+        }
 
     #define ASSIGN_VALUE_TO_C_PROP_VARIANT_BOOLEAN                                                                  \
         cPropVariant = (bool)jni::Boolean::booleanValue(jniEnvInstance, value);                                     \
         if (jniEnvInstance.exceptionCheck()) {                                                                      \
             return S_FALSE;                                                                                         \
-        }                                                                                                           \
+        }
 
     #define ASSIGN_VALUE_TO_C_PROP_VARIANT_LONG                                                                     \
         cPropVariant = (UInt64)jni::Long::longValue(jniEnvInstance, value);                                         \
@@ -259,72 +254,109 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     case kpidCTime:              GET_ATTRIBUTE(DATE,     propertyCreationTime)
     case kpidUser:               GET_ATTRIBUTE(STRING,   propertyUser)
     case kpidGroup:              GET_ATTRIBUTE(STRING,   propertyGroup)
+    case kpidSymLink:            GET_ATTRIBUTE(STRING,   propertySymLink)
+    case kpidHardLink:           GET_ATTRIBUTE(STRING,   propertyHardLink)
 
     case kpidTimeType: // Should be processed by now
     default:
 #ifdef _DEBUG
-    	printf("kpidNoProperty: %i\n", (int) kpidNoProperty);
-    	printf("kpidMainSubfile: %i\n", (int) kpidMainSubfile);
-    	printf("kpidHandlerItemIndex: %i\n", (int) kpidHandlerItemIndex);
-    	printf("kpidPath: %i\n", (int) kpidPath);
-    	printf("kpidName: %i\n", (int) kpidName);
-    	printf("kpidExtension: %i\n", (int) kpidExtension);
-    	printf("kpidIsDir: %i\n", (int) kpidIsDir);
-    	printf("kpidSize: %i\n", (int) kpidSize);
-    	printf("kpidPackSize: %i\n", (int) kpidPackSize);
-    	printf("kpidAttrib: %i\n", (int) kpidAttrib);
-    	printf("kpidCTime: %i\n", (int) kpidCTime);
-    	printf("kpidATime: %i\n", (int) kpidATime);
-    	printf("kpidMTime: %i\n", (int) kpidMTime);
-    	printf("kpidSolid: %i\n", (int) kpidSolid);
-    	printf("kpidCommented: %i\n", (int) kpidCommented);
-    	printf("kpidEncrypted: %i\n", (int) kpidEncrypted);
-    	printf("kpidSplitBefore: %i\n", (int) kpidSplitBefore);
-    	printf("kpidSplitAfter: %i\n", (int) kpidSplitAfter);
-    	printf("kpidDictionarySize: %i\n", (int) kpidDictionarySize);
-    	printf("kpidCRC: %i\n", (int) kpidCRC);
-    	printf("kpidType: %i\n", (int) kpidType);
-    	printf("kpidIsAnti: %i\n", (int) kpidIsAnti);
-    	printf("kpidMethod: %i\n", (int) kpidMethod);
-    	printf("kpidHostOS: %i\n", (int) kpidHostOS);
-    	printf("kpidFileSystem: %i\n", (int) kpidFileSystem);
-    	printf("kpidUser: %i\n", (int) kpidUser);
-    	printf("kpidGroup: %i\n", (int) kpidGroup);
-    	printf("kpidBlock: %i\n", (int) kpidBlock);
-    	printf("kpidComment: %i\n", (int) kpidComment);
-    	printf("kpidPosition: %i\n", (int) kpidPosition);
-    	printf("kpidPrefix: %i\n", (int) kpidPrefix);
-    	printf("kpidNumSubDirs: %i\n", (int) kpidNumSubDirs);
-    	printf("kpidNumSubFiles: %i\n", (int) kpidNumSubFiles);
-    	printf("kpidUnpackVer: %i\n", (int) kpidUnpackVer);
-    	printf("kpidVolume: %i\n", (int) kpidVolume);
-    	printf("kpidIsVolume: %i\n", (int) kpidIsVolume);
-    	printf("kpidOffset: %i\n", (int) kpidOffset);
-    	printf("kpidLinks: %i\n", (int) kpidLinks);
-    	printf("kpidNumBlocks: %i\n", (int) kpidNumBlocks);
-    	printf("kpidNumVolumes: %i\n", (int) kpidNumVolumes);
-    	printf("kpidTimeType: %i\n", (int) kpidTimeType);
-    	printf("kpidBit64: %i\n", (int) kpidBit64);
-    	printf("kpidBigEndian: %i\n", (int) kpidBigEndian);
-    	printf("kpidCpu: %i\n", (int) kpidCpu);
-    	printf("kpidPhySize: %i\n", (int) kpidPhySize);
-    	printf("kpidHeadersSize: %i\n", (int) kpidHeadersSize);
-    	printf("kpidChecksum: %i\n", (int) kpidChecksum);
-    	printf("kpidCharacts: %i\n", (int) kpidCharacts);
-    	printf("kpidVa: %i\n", (int) kpidVa);
-    	printf("kpidId: %i\n", (int) kpidId);
-    	printf("kpidShortName: %i\n", (int) kpidShortName);
-    	printf("kpidCreatorApp: %i\n", (int) kpidCreatorApp);
-    	printf("kpidSectorSize: %i\n", (int) kpidSectorSize);
-    	printf("kpidPosixAttrib: %i\n", (int) kpidPosixAttrib);
-    	printf("kpidLink: %i\n", (int) kpidLink);
-    	printf("kpidTotalSize: %i\n", (int) kpidTotalSize);
-    	printf("kpidFreeSpace: %i\n", (int) kpidFreeSpace);
-    	printf("kpidClusterSize: %i\n", (int) kpidClusterSize);
-    	printf("kpidVolumeName: %i\n", (int) kpidVolumeName);
-    	printf("kpidLocalName: %i\n", (int) kpidLocalName);
-    	printf("kpidProvider: %i\n", (int) kpidProvider);
-    	printf("kpidUserDefined: %i\n", (int) kpidUserDefined);
+
+        printf("kpidMainSubfile: %i\n", (int) kpidMainSubfile);
+        printf("kpidHandlerItemIndex: %i\n", (int) kpidHandlerItemIndex);
+        printf("kpidPath: %i\n", (int) kpidPath);
+        printf("kpidName: %i\n", (int) kpidName);
+        printf("kpidExtension: %i\n", (int) kpidExtension);
+        printf("kpidIsDir: %i\n", (int) kpidIsDir);
+        printf("kpidSize: %i\n", (int) kpidSize);
+        printf("kpidPackSize: %i\n", (int) kpidPackSize);
+        printf("kpidAttrib: %i\n", (int) kpidAttrib);
+        printf("kpidCTime: %i\n", (int) kpidCTime);
+        printf("kpidATime: %i\n", (int) kpidATime);
+        printf("kpidMTime: %i\n", (int) kpidMTime);
+        printf("kpidSolid: %i\n", (int) kpidSolid);
+        printf("kpidCommented: %i\n", (int) kpidCommented);
+        printf("kpidEncrypted: %i\n", (int) kpidEncrypted);
+        printf("kpidSplitBefore: %i\n", (int) kpidSplitBefore);
+        printf("kpidSplitAfter: %i\n", (int) kpidSplitAfter);
+        printf("kpidDictionarySize: %i\n", (int) kpidDictionarySize);
+        printf("kpidCRC: %i\n", (int) kpidCRC);
+        printf("kpidType: %i\n", (int) kpidType);
+        printf("kpidIsAnti: %i\n", (int) kpidIsAnti);
+        printf("kpidMethod: %i\n", (int) kpidMethod);
+        printf("kpidHostOS: %i\n", (int) kpidHostOS);
+        printf("kpidFileSystem: %i\n", (int) kpidFileSystem);
+        printf("kpidUser: %i\n", (int) kpidUser);
+        printf("kpidGroup: %i\n", (int) kpidGroup);
+        printf("kpidBlock: %i\n", (int) kpidBlock);
+        printf("kpidComment: %i\n", (int) kpidComment);
+        printf("kpidPosition: %i\n", (int) kpidPosition);
+        printf("kpidPrefix: %i\n", (int) kpidPrefix);
+        printf("kpidNumSubDirs: %i\n", (int) kpidNumSubDirs);
+        printf("kpidNumSubFiles: %i\n", (int) kpidNumSubFiles);
+        printf("kpidUnpackVer: %i\n", (int) kpidUnpackVer);
+        printf("kpidVolume: %i\n", (int) kpidVolume);
+        printf("kpidIsVolume: %i\n", (int) kpidIsVolume);
+        printf("kpidOffset: %i\n", (int) kpidOffset);
+        printf("kpidLinks: %i\n", (int) kpidLinks);
+        printf("kpidNumBlocks: %i\n", (int) kpidNumBlocks);
+        printf("kpidNumVolumes: %i\n", (int) kpidNumVolumes);
+        printf("kpidTimeType: %i\n", (int) kpidTimeType);
+        printf("kpidBit64: %i\n", (int) kpidBit64);
+        printf("kpidBigEndian: %i\n", (int) kpidBigEndian);
+        printf("kpidCpu: %i\n", (int) kpidCpu);
+        printf("kpidPhySize: %i\n", (int) kpidPhySize);
+        printf("kpidHeadersSize: %i\n", (int) kpidHeadersSize);
+        printf("kpidChecksum: %i\n", (int) kpidChecksum);
+        printf("kpidCharacts: %i\n", (int) kpidCharacts);
+        printf("kpidVa: %i\n", (int) kpidVa);
+        printf("kpidId: %i\n", (int) kpidId);
+        printf("kpidShortName: %i\n", (int) kpidShortName);
+        printf("kpidCreatorApp: %i\n", (int) kpidCreatorApp);
+        printf("kpidSectorSize: %i\n", (int) kpidSectorSize);
+        printf("kpidPosixAttrib: %i\n", (int) kpidPosixAttrib);
+        printf("kpidSymLink: %i\n", (int) kpidSymLink);
+        printf("kpidError: %i\n", (int) kpidError);
+        printf("kpidTotalSize: %i\n", (int) kpidTotalSize);
+        printf("kpidFreeSpace: %i\n", (int) kpidFreeSpace);
+        printf("kpidClusterSize: %i\n", (int) kpidClusterSize);
+        printf("kpidVolumeName: %i\n", (int) kpidVolumeName);
+        printf("kpidLocalName: %i\n", (int) kpidLocalName);
+        printf("kpidProvider: %i\n", (int) kpidProvider);
+        printf("kpidNtSecure: %i\n", (int) kpidNtSecure);
+        printf("kpidIsAltStream: %i\n", (int) kpidIsAltStream);
+        printf("kpidIsAux: %i\n", (int) kpidIsAux);
+        printf("kpidIsDeleted: %i\n", (int) kpidIsDeleted);
+        printf("kpidIsTree: %i\n", (int) kpidIsTree);
+        printf("kpidSha1: %i\n", (int) kpidSha1);
+        printf("kpidSha256: %i\n", (int) kpidSha256);
+        printf("kpidErrorType: %i\n", (int) kpidErrorType);
+        printf("kpidNumErrors: %i\n", (int) kpidNumErrors);
+        printf("kpidErrorFlags: %i\n", (int) kpidErrorFlags);
+        printf("kpidWarningFlags: %i\n", (int) kpidWarningFlags);
+        printf("kpidWarning: %i\n", (int) kpidWarning);
+        printf("kpidNumStreams: %i\n", (int) kpidNumStreams);
+        printf("kpidNumAltStreams: %i\n", (int) kpidNumAltStreams);
+        printf("kpidAltStreamsSize: %i\n", (int) kpidAltStreamsSize);
+        printf("kpidVirtualSize: %i\n", (int) kpidVirtualSize);
+        printf("kpidUnpackSize: %i\n", (int) kpidUnpackSize);
+        printf("kpidTotalPhySize: %i\n", (int) kpidTotalPhySize);
+        printf("kpidVolumeIndex: %i\n", (int) kpidVolumeIndex);
+        printf("kpidSubType: %i\n", (int) kpidSubType);
+        printf("kpidShortComment: %i\n", (int) kpidShortComment);
+        printf("kpidCodePage: %i\n", (int) kpidCodePage);
+        printf("kpidIsNotArcType: %i\n", (int) kpidIsNotArcType);
+        printf("kpidPhySizeCantBeDetected: %i\n", (int) kpidPhySizeCantBeDetected);
+        printf("kpidZerosTailIsAllowed: %i\n", (int) kpidZerosTailIsAllowed);
+        printf("kpidTailSize: %i\n", (int) kpidTailSize);
+        printf("kpidEmbeddedStubSize: %i\n", (int) kpidEmbeddedStubSize);
+        printf("kpidNtReparse: %i\n", (int) kpidNtReparse);
+        printf("kpidHardLink: %i\n", (int) kpidHardLink);
+        printf("kpidINode: %i\n", (int) kpidINode);
+        printf("kpidStreamId: %i\n", (int) kpidStreamId);
+        printf("kpidReadOnly: %i\n", (int) kpidReadOnly);
+        printf("kpidOutNam: %i\n", (int) kpidOutName);
+        printf("kpidCopyLink: %i\n", (int) kpidCopyLink);
+
 #endif // _DEBUG
 
     	jniEnvInstance.reportError("CPPToJavaArchiveUpdateCallback::GetProperty() : unexpected propID=%u", propID);
@@ -357,7 +389,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
 
     if (inStreamImpl) {
 
-        jclass inStreamInterface = jniEnvInstance->FindClass(INSTREAM_CLASS);
+        jclass inStreamInterface = FindClass(jniEnvInstance, INSTREAM_CLASS);
         FATALIF(!inStreamInterface, "Class " INSTREAM_CLASS " not found");
 
         if (jniEnvInstance->IsInstanceOf(inStreamImpl, inStreamInterface)) {
@@ -370,9 +402,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
         }
+        jniEnvInstance->DeleteLocalRef(inStreamInterface);
         jniEnvInstance->DeleteLocalRef(inStreamImpl);
-    } else {
-        return S_FALSE;
     }
 
     return S_OK;

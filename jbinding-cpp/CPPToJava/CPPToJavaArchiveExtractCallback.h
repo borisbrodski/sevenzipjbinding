@@ -18,7 +18,7 @@ public:
                         initEnv, archiveExtractCallbackImpl)) {
         TRACE_OBJECT_CREATION("CPPToJavaArchiveExtractCallback")
 
-        jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
+        jclass cryptoGetTextPasswordClass = FindClass(initEnv, CRYPTOGETTEXTPASSWORD_CLASS);
         FATALIF(cryptoGetTextPasswordClass == NULL,
                 "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
 
@@ -30,7 +30,7 @@ public:
         } else {
             _cryptoGetTextPasswordImpl = NULL;
         }
-
+        initEnv->DeleteLocalRef(cryptoGetTextPasswordClass);
     }
 
     ~CPPToJavaArchiveExtractCallback() {
@@ -41,7 +41,7 @@ public:
         }
     }
 
-    STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) {
+    STDMETHOD(QueryInterface)(REFGUID refguid, void ** p) throw() {
         TRACE_OBJECT_CALL("QueryInterface");
 
         if (refguid == IID_ICryptoGetTextPassword && _cryptoGetTextPasswordImpl) {
@@ -53,7 +53,7 @@ public:
         return CPPToJavaProgress::QueryInterface(refguid, p);
     }
 
-    STDMETHOD_(ULONG, AddRef)() {
+    STDMETHOD_(ULONG, AddRef)() throw() {
         TRACE_OBJECT_CALL("AddRef");
         return CPPToJavaProgress::AddRef();
     }

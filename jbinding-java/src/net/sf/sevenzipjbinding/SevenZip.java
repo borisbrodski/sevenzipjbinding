@@ -191,7 +191,8 @@ public class SevenZip {
         public String copyright;
     }
 
-    private static final String SEVENZIPJBINDING_VERSION = "9.20-2.00beta";
+    // Also change in /CMakeLists.txt
+    private static final String SEVENZIPJBINDING_VERSION = "15.09-2.01beta";
 
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
     private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";
@@ -208,11 +209,37 @@ public class SevenZip {
     private static String usedPlatform = null;
     private static File[] temporaryArtifacts = null;
 
+    // 0 for false, 1 for true, -1 for undetected
+    private static int isAndroid = -1;
+
     /**
      * Hide default constructor
      */
     private SevenZip() {
 
+    }
+
+    // For native code
+    private static Class findClass(String className) {
+        try {
+            return SevenZip.class.getClassLoader().loadClass(className.replace('/', '.'));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // http://stackoverflow.com/questions/4519556/how-to-determine-if-my-app-is-running-on-android
+    private static boolean isAndroidInternal() {
+        String property = System.getProperty("java.vendor");
+        return property != null && property.equalsIgnoreCase("The Android Project");
+    }
+
+    private static boolean isAndroid() {
+        if (isAndroid == -1) {
+            isAndroid = isAndroidInternal() ? 1 : 0;
+        }
+        return isAndroid != 0;
     }
 
     /**
@@ -447,12 +474,21 @@ public class SevenZip {
                 return;
             }
 
-            determineAndSetUsedPlatform(platform);
-            Properties properties = loadSevenZipJBindingLibProperties();
-            File tmpDirFile = createOrVerifyTmpDir(tmpDirectory);
-            File sevenZipJBindingTmpDir = getOrCreateSevenZipJBindingTmpDir(tmpDirFile, properties);
-            List<File> nativeLibraries = copyOrSkipLibraries(properties, sevenZipJBindingTmpDir);
-            loadNativeLibraries(nativeLibraries);
+            if (isAndroid()) {
+                try {
+                    System.loadLibrary("7z");
+                } catch (UnsatisfiedLinkError e) {
+                    throwInitException("Can't load lib7z.so: " + e.getMessage());
+                }
+            } else {
+                determineAndSetUsedPlatform(platform);
+                Properties properties = loadSevenZipJBindingLibProperties();
+                File tmpDirFile = createOrVerifyTmpDir(tmpDirectory);
+                File sevenZipJBindingTmpDir = getOrCreateSevenZipJBindingTmpDir(tmpDirFile, properties);
+                List<File> nativeLibraries = copyOrSkipLibraries(properties, sevenZipJBindingTmpDir);
+                loadNativeLibraries(nativeLibraries);
+            }
+
             nativeInitialization();
         } catch (SevenZipNativeInitializationException sevenZipNativeInitializationException) {
             lastInitializationException = sevenZipNativeInitializationException;
@@ -676,7 +712,7 @@ public class SevenZip {
         String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
         final String errorMessage[] = new String[1];
         final Throwable throwable[] = new Throwable[1];
-        if (doPrivileged == null || doPrivileged.trim().equals("0")) {
+        if (!isAndroid() && (doPrivileged == null || doPrivileged.trim().equals("0"))) {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
                 public Void run() {
                     try {
@@ -765,10 +801,10 @@ public class SevenZip {
     public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream, String passwordForOpen)
             throws SevenZipException {
         ensureLibraryIsInitialized();
-        if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
+        if (passwordForOpen == null) {
+            return openInArchive(archiveFormat, inStream);
         }
-        return callNativeOpenArchive(null, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
+        return callNativeOpenArchive(archiveFormat, inStream, new ArchiveOpenCryptoCallback(passwordForOpen));
     }
 
     /**
@@ -792,10 +828,7 @@ public class SevenZip {
      */
     public static IInArchive openInArchive(ArchiveFormat archiveFormat, IInStream inStream) throws SevenZipException {
         ensureLibraryIsInitialized();
-        if (archiveFormat != null) {
-            return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
-        }
-        return callNativeOpenArchive(null, inStream, new DummyOpenArchiveCallback());
+        return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
     }
 
     private static void ensureLibraryIsInitialized() {

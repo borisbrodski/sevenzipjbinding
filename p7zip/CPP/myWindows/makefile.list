@@ -1,4 +1,7 @@
-SRCS=myGetTickCount.cpp \
+
+all: $(PCH_NAME) $(PROG)
+
+SRCS= \
  mySplitCommandLine.cpp \
  myAddExeFlag.cpp \
  test_emul.cpp \
@@ -12,8 +15,6 @@ mySplitCommandLine.o : mySplitCommandLine.cpp
 	$(CXX) $(CXXFLAGS) mySplitCommandLine.cpp
 myAddExeFlag.o : myAddExeFlag.cpp
 	$(CXX) $(CXXFLAGS) myAddExeFlag.cpp
-myGetTickCount.o : myGetTickCount.cpp
-	$(CXX) $(CXXFLAGS) myGetTickCount.cpp
 test_emul.o : test_emul.cpp
 	$(CXX) $(CXXFLAGS) test_emul.cpp
 wine_date_and_time.o : wine_date_and_time.cpp

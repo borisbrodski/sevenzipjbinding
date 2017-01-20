@@ -1,6 +1,28 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
+
+    * Bind 7-Zip 15.09 (beta)
+        - DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib 
+        - PropID.LINK renamed to PropID.SYM_LINK
+        
+    * Full RAR5 extraction support (format name: ArchiveFormat.RAR5)
+        - password protected archives 
+        - archives with encrypted headers
+        - archives splitted in volumes
+        - 251 new tests
+
+    * Support for NTFS (file system)
+
+    * Support for FAT (file system)
+
+    * Support for SYM_LINK & HARD_LINK properties
+
+    * Improving performance by using GCC 5.3 for Windows builds
+    
+    * Bugfix: Bug #18 (null as password causes JVM crash)
+
 Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
 
     * Bind 7-Zip 9.20 (beta)

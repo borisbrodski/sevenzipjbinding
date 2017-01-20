@@ -230,8 +230,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 				sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
 			}
 
-			if (archiveFormat == ArchiveFormat.CHM) {
-				index = calcSampleFileIndexInChmArchive(inArchive);
+            if (archiveFormat == ArchiveFormat.CHM || archiveFormat == ArchiveFormat.NTFS) {
+                index = calcSampleFileIndexInArchive(inArchive);
 			}
 
 			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
@@ -239,10 +239,6 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			assertTrue(inArchive.getNumberOfItems() > 0);
 			checkPropertyPath(inArchive, index, uncompressedFilename);
 			checkDataSize(inArchive, index, expectedFilename);
-			if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
-					&& archiveFormat != ArchiveFormat.UDF) {
-				checkPropertyPackedSize(inArchive, index, expectedFilename);
-			}
 			checkPropertyIsFolder(inArchive, index);
 			ExtractOperationResult operationResult;
 			if (usingPassword) {
@@ -263,6 +259,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			outputStream.checkAndCloseInputFile();
 			outputStream = null;
 
+            if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
+                    && archiveFormat != ArchiveFormat.UDF) {
+                checkPropertyPackedSize(inArchive, index, expectedFilename);
+            }
 			checkPropertyIsEncrypted(inArchive, index, expectedFilename);
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
@@ -284,7 +284,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		return false;
 	}
 
-	private int calcSampleFileIndexInChmArchive(IInArchive inArchive) throws SevenZipException {
+    private int calcSampleFileIndexInArchive(IInArchive inArchive) throws SevenZipException {
 		int count = inArchive.getNumberOfItems();
 		for (int i = 0; i < count; i++) {
 			String name = (String) inArchive.getProperty(i, PropID.PATH);
@@ -292,7 +292,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 				return i;
 			}
 		}
-		fail("Can't find sample file in chm archive");
+        fail("Can't find sample file in archive");
 		return -1;
 	}
 
@@ -357,14 +357,19 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		long unpackedSize = Long.valueOf(new File(uncommpressedFilename).length());
 		long expectedPackedSize;
 		if (unpackedSize < 1024) {
-			expectedPackedSize = 1024;
+            if (inArchive.getArchiveFormat() == ArchiveFormat.FAT) {
+                expectedPackedSize = 2048;
+            } else {
+                expectedPackedSize = 1024;
+            }
 		} else {
 			expectedPackedSize = unpackedSize * 2;
 		}
 		assertNotNull(size1);
 		assertNotNull(size2);
 		assertTrue("Packed size == 0 (PropID.PACKED_SIZE)", unpackedSize == 0 || size1 != 0);
-		assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected=" + expectedPackedSize + ", actual=" + size1,
+        assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected >= " + expectedPackedSize + ", actual="
+                + size1,
 				expectedPackedSize >= size1);
 		assertEquals("Simple interface problem: wrong size of the file", size1, size2);
 	}

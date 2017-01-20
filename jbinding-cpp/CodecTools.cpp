@@ -44,23 +44,24 @@ void CodecTools::init() {
 /**
  * Return index of the archive type. Save to UString converted archive type name into 'formatNameString'.
  * @param env instance of JNIEnv
- * @param formatName archive type format name
+ * @param archiveFormat Java ArchiveFormat object
  */
-static int getIndexByName(JNIEnv * env, jstring formatName) {
-	const jchar * formatNameJChars = env->GetStringChars(formatName, NULL);
-	UString formatNameString;
-	formatNameString = UnicodeHelper(formatNameJChars);
-	env->ReleaseStringChars(formatName, formatNameJChars);
-
+static int getIndexByName(JNIEnv * env, UString & formatNameString) {
 	TRACE("Format: " << formatNameString)
 	return codecTools.codecs.FindFormatForArchiveType(formatNameString);
+}
+
+void CodecTools::getArchiveFormatName(JNIEnv * env, jobject archiveFormat, UString & formatNameString) {
+    jstring formatName = jni::ArchiveFormat::methodName_Get(env, archiveFormat);
+    formatNameString = FromJChar(env, formatName);
 }
 
 int CodecTools::getArchiveFormatIndex(JNIEnv * env, jobject archiveFormat) {
 	int index = jni::ArchiveFormat::codecIndex_Get(env, archiveFormat);
 	if (index == -2) {
-		jstring formatName = jni::ArchiveFormat::methodName_Get(env, archiveFormat);
-		index = getIndexByName(env, formatName);
+	    UString formatNameString;
+	    getArchiveFormatName(env, archiveFormat, formatNameString);
+		index = getIndexByName(env, formatNameString);
 		jni::ArchiveFormat::codecIndex_Set(env, archiveFormat, index);
 	}
 	return index;

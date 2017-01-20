@@ -23,11 +23,13 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
 
     jobject result = _iArchiveOpenVolumeCallback->getProperty(jniEnvInstance, _javaImplementation,
             propIDObject);
+    jniEnvInstance->DeleteLocalRef(propIDObject);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
 
     ObjectToPropVariant(jniEnvInstance, result, value);
+    jniEnvInstance->DeleteLocalRef(result);
 
     return S_OK;
 }
@@ -42,7 +44,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
         *inStream = NULL;
     }
 
-    jstring nameString = jniEnvInstance->NewString(UnicodeHelper(name), (jsize) wcslen(name));
+    jstring nameString = ToJChar(name).toNewString(jniEnvInstance);
 
     jobject inStreamImpl = _iArchiveOpenVolumeCallback->getStream(jniEnvInstance,
             _javaImplementation, nameString);
@@ -59,6 +61,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
 
             CMyComPtr<IInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
+            jniEnvInstance->DeleteLocalRef(inStreamImpl);
         } else {
             //			jniInstance.ThrowSevenZipException(
             //					"IArchiveOpenVolumeCallback.GetStream() returns stream=null. "

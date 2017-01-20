@@ -2,7 +2,7 @@
 
 #include "StdAfx.h"
 //#include "MyWindows.h"
-#include "Types.h"
+#include "7zTypes.h"
 //#include <stdlib.h> /* FIXED <malloc.h> */
 
 
