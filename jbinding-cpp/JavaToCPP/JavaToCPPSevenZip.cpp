@@ -161,19 +161,15 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         formatNameString = codecTools.codecs.Formats[index].Name;
     }
 
-printf("starting\n");fflush(stdout);
     UInt64 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
 
     CMyComPtr<IInArchive> archive;
     CMyComPtr<IInStream> rawStream = new CPPToJavaInStream(jbindingSession, env, inStream);
-    //CHeadCacheInStream * cheadCacheInStream = new CHeadCacheInStream(rawStream, maxCheckStartPosition + 4096);
-    //CMyComPtr<IInStream> stream = cheadCacheInStream;
-    CMyComPtr<IInStream> stream = rawStream;
+    CHeadCacheInStream * cheadCacheInStream = new CHeadCacheInStream(rawStream, maxCheckStartPosition + 4096);
+    CMyComPtr<IInStream> stream = cheadCacheInStream;
 
     UniversalArchiveOpencallback * universalArchiveOpencallback = new UniversalArchiveOpencallback(jbindingSession, env, archiveOpenCallbackImpl);
 	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback = universalArchiveOpencallback;
-
-printf("cont 1\n");fflush(stdout);
 
     if (index != -1) {
         // Use one specified codec
@@ -202,28 +198,6 @@ printf("cont 1\n");fflush(stdout);
         for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
             TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
 
-//printf("Signatures of the ArchiveFormat %S\n", (const wchar_t*)codecTools.codecs.Formats[i].Name);
-//for (size_t ii = 0; ii < codecTools.codecs.Formats[i].Signatures.Size(); ii++) {
-//	printf("  %lu: (%lu) ", ii, codecTools.codecs.Formats[i].Signatures[ii].Size());
-//	for (size_t iii = 0; iii < codecTools.codecs.Formats[i].Signatures[ii].Size(); iii++) {
-//		printf(" %i", codecTools.codecs.Formats[i].Signatures[ii][iii]);
-//	}
-//	printf(" [");
-//	for (size_t iii = 0; iii < codecTools.codecs.Formats[i].Signatures[ii].Size(); iii++) {
-//		printf(" %c", (char)(codecTools.codecs.Formats[i].Signatures[ii][iii]));
-//	}
-//	printf(")\n");
-//}
-//printf("\n");
-//fflush(stdout);
-
-//printf("Try all known codecs\n");fflush(stdout);
-			//// TODO CHECK HRESULT
-            //stream->Seek(0, STREAM_SEEK_SET, NULL);
-//printf("Seek OK\n");fflush(stdout);
-//char data[10];
-//stream->Read(&data, 10, NULL);
-//printf("Read OK\n");fflush(stdout);
             stream->Seek(0, STREAM_SEEK_SET, NULL);
 
             codecTools.codecs.CreateInArchive(i, archive);
@@ -317,12 +291,7 @@ printf("cont 1\n");fflush(stdout);
             (jlong) (size_t) (void*) (&jbindingSession));
 
     jni::InArchiveImpl::sevenZipInStreamInstance_Set(env, inArchiveImplObject, //
-            (jlong) (size_t) (void*) (stream));
-
-    // SetLongAttribute(env, inArchiveImplObject, IN_STREAM_IMPL_OBJ_ATTRIBUTE,
-    //        (jlong) (size_t) (void*) (stream));
-
-    stream.Detach();
+            (jlong) (size_t) (void*) ((IInStream *) stream.Detach()));
 
     return inArchiveImplObject;
 }
