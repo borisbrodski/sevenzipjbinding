@@ -103,15 +103,16 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
         openBadArchiveMultithreaded(ArchiveFormat.ISO);
     }
 
-    @Test
-    public void openBadArchiveHFS() throws Throwable {
-        openBadArchive(ArchiveFormat.HFS);
-    }
-
-    @Test
-    public void openBadArchiveHFSMultithreaded() throws Throwable {
-        openBadArchiveMultithreaded(ArchiveFormat.HFS);
-    }
+    // TODO Uncomment after resolving security problems in 7-zip
+    //    @Test
+    //    public void openBadArchiveHFS() throws Throwable {
+    //        openBadArchive(ArchiveFormat.HFS);
+    //    }
+    //
+    //    @Test
+    //    public void openBadArchiveHFSMultithreaded() throws Throwable {
+    //        openBadArchiveMultithreaded(ArchiveFormat.HFS);
+    //    }
 
     @Test
     public void openBadArchiveGZip() throws Throwable {

@@ -253,8 +253,9 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
 
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    # TODO 7-ZIP 9.x uncomment
+    #    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    #    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandlerOut.cpp
