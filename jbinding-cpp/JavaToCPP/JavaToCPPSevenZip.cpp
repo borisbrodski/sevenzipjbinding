@@ -52,7 +52,7 @@ static inline bool IsItWindowsNT()
 JBINDING_JNIEXPORT jstring JNICALL
 Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jclass thiz) {
 
-    TRACE("7-zip library initialized (TODO)")
+    TRACE("7-zip library initialized")
 
 	codecTools.init();
 
@@ -139,6 +139,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
                                                                                            jobject archiveFormat,
                                                                                            jobject inStream,
                                                                                            jobject archiveOpenCallbackImpl) {
+
+#define MAX_CHECK_START_POSITION  (4 * 1024 * 1024)  // Advice from Igor Pavlov
+#define CHEAD_CACHE_SIZE          16384
+
     TRACE("SevenZip.nativeOpenArchive()")
 
     JBindingSession & jbindingSession = *(new JBindingSession(env));
@@ -161,17 +165,16 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         formatNameString = codecTools.codecs.Formats[index].Name;
     }
 
-    UInt32 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
-
     CMyComPtr<IInArchive> archive;
     CMyComPtr<IInStream> rawStream = new CPPToJavaInStream(jbindingSession, env, inStream);
-    CHeadCacheInStream * cheadCacheInStream = new CHeadCacheInStream(rawStream, maxCheckStartPosition + 4096);
-    CMyComPtr<IInStream> stream = cheadCacheInStream;
+    CMyComPtr<IInStream> stream;
 
     UniversalArchiveOpencallback * universalArchiveOpencallback = new UniversalArchiveOpencallback(jbindingSession, env, archiveOpenCallbackImpl);
 	CMyComPtr<IArchiveOpenCallback> archiveOpenCallback = universalArchiveOpencallback;
 
     if (index != -1) {
+		stream = rawStream; // Don't use caching
+
         // Use one specified codec
     	codecTools.codecs.CreateInArchive(index, archive);
         if (!archive) {
@@ -182,7 +185,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
         universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(index));
 
-		UInt64 pos = maxCheckStartPosition;
+		UInt64 pos = MAX_CHECK_START_POSITION;
         HRESULT result = archive->Open(stream, &pos, archiveOpenCallback);
 
         if (result != S_OK) {
@@ -193,10 +196,20 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             return NULL;
         }
     } else {
+		CHeadCacheInStream * cheadCacheInStream = new CHeadCacheInStream(rawStream, CHEAD_CACHE_SIZE);
+		HRESULT result = cheadCacheInStream->Init(TRUE);
+		if (result != S_OK) {
+            TRACE("Result = 0x" << std::hex << result << ", throwing exception...")
+            jniEnvInstance.reportError(result, "Error reading input stream");
+            deleteInErrorCase.setErrorCase();
+			return NULL;
+		}
+		stream = cheadCacheInStream;
+
         // Try all known codecs
 		bool success = false;
-		for (UInt32 pos = 0; !success && pos <= maxCheckStartPosition; pos += maxCheckStartPosition) {
-			TRACE("Iterating through all available codecs with maxCheckStartPosition=" << pos);
+		for (UInt32 pos = 0; !success && pos <= MAX_CHECK_START_POSITION; pos += MAX_CHECK_START_POSITION) {
+			TRACE("Iterating through all available codecs with MAX_CHECK_START_POSITION=" << pos);
 
 			for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
 				TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
@@ -255,8 +268,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
      TRACE("Opening...")
 
-     UInt64 maxCheckStartPosition = 0;
-     HRESULT openResult = archive->Open((IInStream *)stream, &maxCheckStartPosition, archiveOpenCallback);
+     UInt64 pos = 0;
+     HRESULT openResult = archive->Open((IInStream *)stream, &pos, archiveOpenCallback);
      if (openResult != S_OK)
      {name
      TRACE1("Result = 0x%08X, throwing exception...", (int)openResult)

@@ -19,8 +19,12 @@ Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
 
     * Support for SYM_LINK & HARD_LINK properties
 
-    * Improving performance by using GCC 5.3 for Windows builds
+    * Improving performance on Window by using GCC 5.3 for Windows builds
     
+    * Improve archive type auto-detection (algorithm + performance)
+
+    * Bugfix: Bug #Xxx (7z-archive in Tar)
+
     * Bugfix: Bug #18 (null as password causes JVM crash)
 
 Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
@@ -235,3 +239,4 @@ Release - 0.1 (alpha, extraction only)
             - Progress information
             - Archive item password
  
+

@@ -76,46 +76,28 @@ STDMETHODIMP CHeadCacheInStream::InStreamSeekAndRead(void *data, UInt32 size, UI
 
 STDMETHODIMP CHeadCacheInStream::Read(void *data, UInt32 size, UInt32 *processedSize) {
 	if (_inStreamSize == -1) {
-		HRESULT res = InitSize();
-		if (res != S_OK) {
-			return res;
-		}
+		TRACE("Uninitialized. Call Init() first");
+		return S_FALSE;
 	}
-
-	if (_cacheBuffer == NULL && _cacheSize > 0) {
-		UInt64 size = _inStreamSize;
-		_cacheSize = MIN(_cacheSize, size);
-		_cacheBuffer = (Byte *)malloc(_cacheSize);
-		if (_cacheBuffer == NULL) {
-			return E_OUTOFMEMORY;
-		}
-	}
-	UInt64 streamSize = _inStreamSize;
-	if (_pos >= streamSize || size == 0) {
+	if (_pos >= _inStreamSize || size == 0) {
 		if (processedSize) {
 			*processedSize = 0;
 		}
 		return S_OK;
 	}
-	if (_pos < _cacheSize) {
-		size = MIN(size, streamSize - _pos);
+	if (_pos < _cacheSize && _cacheBuffer) {
+		size = MIN(size, _inStreamSize - _pos);
 		return ReadFromCache(data, MIN(size, _cacheSize - _pos), processedSize);
 	}
 	return InStreamSeekAndRead(data, size, processedSize);
 }
-STDMETHODIMP CHeadCacheInStream::InitSize() {
-	if (_inStreamSize == -1) {
-		HRESULT res = _inStream->Seek(0, SEEK_END, &_inStreamSize);
-		if (res != S_OK) {
-			return res;
-		}
-		_inStreamPos = _inStreamSize;
-	}
 
-	return S_OK;
-}
 
 STDMETHODIMP CHeadCacheInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition) {
+	if (_inStreamSize == -1) {
+		TRACE("Uninitialized. Call Init() first");
+		return S_FALSE;
+	}
 	switch (seekOrigin) {
 		case SEEK_SET:
 			_pos = offset;
@@ -124,12 +106,6 @@ STDMETHODIMP CHeadCacheInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
 			_pos += offset;
 			break;
 		case SEEK_END:
-			if (_inStreamSize == -1) {
-				HRESULT res = InitSize();
-				if (res != S_OK) {
-					return res;
-				}
-			}
 			_pos = _inStreamSize + offset;
 	}
 	if (newPosition) {
@@ -137,3 +113,33 @@ STDMETHODIMP CHeadCacheInStream::Seek(Int64 offset, UInt32 seekOrigin, UInt64 *n
 	}
 	return S_OK;
 }
+
+STDMETHODIMP CHeadCacheInStream::Init(bool readEntireCache) {
+	if (_inStreamSize != -1 || _cacheBuffer) {
+		TRACE("Already initialized. Don't call Init() twice");
+		return S_FALSE;
+	}
+
+	HRESULT res = _inStream->Seek(0, SEEK_END, &_inStreamSize);
+	if (res != S_OK) {
+		return res;
+	}
+	_inStreamPos = _inStreamSize;
+
+	_cacheSize = MIN(_cacheSize, _inStreamSize);
+	if (_cacheSize) {
+		_cacheBuffer = (Byte *)malloc(_cacheSize);
+		if (_cacheBuffer == NULL) {
+			return E_OUTOFMEMORY;
+		}
+
+		if (readEntireCache) {
+			res = ReadIntoCache(_cacheSize);
+			if (res != S_OK) {
+				return res;
+			}
+		}
+	}
+	return S_OK;
+}
+

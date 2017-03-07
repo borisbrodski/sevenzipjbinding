@@ -34,8 +34,8 @@ public:
 
     STDMETHOD(Read)(void *data, UInt32 size, UInt32 *processedSize);
     STDMETHOD(Seek)(Int64 offset, UInt32 seekOrigin, UInt64 *newPosition);
+    STDMETHOD(Init)(bool readEntireCache);
 private:
-    STDMETHOD(InitSize)();
 	STDMETHOD(InStreamSeekAndRead)(void *data, UInt32 size, UInt32 *processedSize);
 	STDMETHOD(ReadIntoCache)(UInt64 newCacheInitializedSize);
 	STDMETHOD(ReadFromCache)(void *data, UInt32 size, UInt32 *processedSize);

@@ -9,6 +9,7 @@ import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
 import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
@@ -65,6 +66,7 @@ import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeF
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.CHeadCacheInStreamTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.EnumTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
 import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
@@ -139,6 +141,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileWimTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileXarTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipPassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipTest;
+import net.sf.sevenzipjbinding.junit.performance.HeadCacheOnAutodetectionTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileArjTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileBzip2Test;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileCabTest;
@@ -247,6 +250,8 @@ public class AllTestSuite extends TestSuite {
             DeclareThrowsSevenZipExceptionTest.class, //
             PTest.class, //
             VersionTest.class, //
+            CHeadCacheInStreamTest.class, //
+            HeadCacheOnAutodetectionTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //
@@ -262,6 +267,7 @@ public class AllTestSuite extends TestSuite {
     /*    */RarPasswordToLongCrash.class, //
             WrongCRCGetterInSimpleInterface.class, //
             Ticket18NullAsPassword.class, //
+            SevenZipInTar.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //

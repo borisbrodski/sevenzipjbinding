@@ -12,7 +12,6 @@
 using namespace std;
 
 #define TEST_BUFFER_CONTENT(i)  ((unsigned char)((i) % 0xFF))
-// #define TEST_BUFFER_CONTENT(i)  ((unsigned char)((i * i) % 0xFF))
 
 
 class CGeneratorInStream : public IInStream, public CMyUnknownImp {
@@ -85,7 +84,7 @@ const char * checkReadCount(CMyComPtr<CGeneratorInStream> inStream, UInt64 expec
 	UInt32 * count = inStream->GetReadCount();
 	for (UInt64 i = 0; i < expectedSize; i++) {
 		if (count[i] != expectedCount) {
-			printf("Invalid read count at pos %" PRIu64 ". Expected %lu, Get %lu\n", i, expectedCount, count[i]);
+			printf("Invalid read count at pos %u. Expected %u, Get %u\n", (UInt32)i, (UInt32)expectedCount, count[i]);
 			return "Invalid read count";
 		}
 	}
@@ -158,7 +157,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
     UInt64 actualSize;
     WITH_HRESULT(inStream->Seek(0L, SEEK_END, &actualSize));
     if (actualSize != expectedSize) {
-        printf("Expected size: %" PRId64 ", Actual size: %" PRId64 "\n", expectedSize, actualSize);
+        printf("Expected size: %u, Actual size: %u\n", (UInt32)expectedSize, (UInt32)actualSize);
         return "Stream size mismatch";
     }
     UInt64 pos = expectedSize;
@@ -179,7 +178,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
             break;
         }
         if (newPosition != targetPos) {
-            printf("Seeked to unexpected position. Expected pos: %" PRId64 ", Actual pos: %" PRId64 " (origin: %i)\n", targetPos, newPosition, origin);
+            printf("Seek to unexpected position. Expected pos: %u, Actual pos: %u (origin: %i)\n", (UInt32)targetPos, (UInt32)newPosition, origin);
             delete [] data;
             return "Stream size mismatch";
         }
@@ -204,7 +203,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
                 for (UInt32 i = 0; i < size + 1 - read; i++) {
                     unsigned char expectedByte = i < processedSize ? TEST_BUFFER_CONTENT(pos + read + i) : 0;
                     if (expectedByte != buffer[i]) {
-                        printf("Data error. At position %" PRId64 " (buffer pos: %u) read: %i, expected %i\n", pos + read + i, i, buffer[i], expectedByte);
+                        printf("Data error. At position %u (buffer pos: %u) read: %i, expected %i\n", (UInt32)(pos + read + i), i, buffer[i], expectedByte);
                         delete [] data;
                         return "Data error";
                     }
@@ -216,7 +215,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
             };
 
             if (read != size) {
-                printf("Read wrong amount of data at pos %" PRId64 ". Expected: %u, read: %u\n", pos, size, read);
+                printf("Read wrong amount of data at pos %u. Expected: %u, read: %u\n", (UInt32)pos, size, read);
                 delete [] data;
                 return "Read wrong amount of data";
             }
@@ -224,8 +223,8 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
             UInt64 positionAfterRead = 0;
             WITH_HRESULT(inStream->Seek(0, SEEK_CUR, &positionAfterRead));
             if (positionAfterRead != pos) {
-                printf("Invalid current position. Expected: %" PRId64 ", current: %" PRId64 "\n", pos, positionAfterRead);
-                printf("%" PRIu64, pos);
+                printf("Invalid current position. Expected: %u, current: %u\n", (UInt32)pos, (UInt32)positionAfterRead);
+                printf("%u", (UInt32)pos);
                 delete [] data;
                 return "Invalid position after read";
             }
@@ -237,7 +236,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
 		UInt64 newPos;
 		WITH_HRESULT(inStream->Seek(expectedSize, SEEK_SET, &newPos));
 		if (newPos != expectedSize) {
-			printf("Moved pos outside of the stream. Expected: %" PRId64 ", currnet: %" PRId64 "\n", expectedSize, newPos);
+			printf("Move pos outside of the stream. Expected: %u, current: %u\n", (UInt32)expectedSize, (UInt32)newPos);
 			delete [] data;
 			return "Moved pos outside of the stream";
 		}
@@ -246,7 +245,7 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
 		UInt32 read;
 		WITH_HRESULT(inStream->Read(&buffer, 3, &read));
 		if (read != 0) {
-			printf("Read outside of the stream. Expected read bytes: 0, read: %lu\n", read);
+			printf("Read outside of the stream. Expected read bytes: 0, read: %u\n", read);
 			delete [] data;
 			return "Read outside of the stream";
 		}
@@ -256,12 +255,15 @@ const char * testInStream(CMyComPtr<IInStream> inStream, UInt64 expectedSize) {
     return NULL;
 }
 
-const char * testHeadCacheInStream(UInt32 streamSize, UInt32 cacheSize) {
+const char * testHeadCacheInStream(UInt32 streamSize, UInt32 cacheSize, bool readEntireCache) {
     CGeneratorInStream * generator = new CGeneratorInStream(streamSize);
     CMyComPtr<IInStream> generatorInStream = generator;
-    CMyComPtr<IInStream> headCacheInStream = new CHeadCacheInStream(generatorInStream, cacheSize);
+	CHeadCacheInStream * headCacheInStream = new CHeadCacheInStream(generatorInStream, cacheSize);
+    CMyComPtr<IInStream> inStream = headCacheInStream;
 
-    const char * err = testInStream(headCacheInStream, streamSize);
+	headCacheInStream->Init(readEntireCache);
+
+    const char * err = testInStream(inStream, streamSize);
 	if (err) {
 		return err;
 	}
@@ -269,12 +271,12 @@ const char * testHeadCacheInStream(UInt32 streamSize, UInt32 cacheSize) {
 	for (UInt32 i = 0; i < streamSize; i++) {
 		if (i < cacheSize) {
 			if (count[i] != 1) {
-				printf("Invalid read count in the cached area of the stream, Pos: %lu. Expected 1, Get: %lu\n", i, count[i]);
+				printf("Invalid read count in the cached area of the stream, Pos: %u. Expected 1, Get: %u\n", i, count[i]);
 				return "Invalid read count in the cached area of the stream. Expected 1";
 			}
 		} else {
 			if (count[i] == 0) {
-				printf("Invalid read count in the non-cached area of the stream, Pos: %lu. Expected non-null, Get: %lu\n", i, count[i]);
+				printf("Invalid read count in the non-cached area of the stream, Pos: %u. Expected non-null, Get: %u\n", i, count[i]);
 				return "Invalid read count in the non-cached area of the stream. Expected non-null";
 			}
 		}
@@ -295,16 +297,26 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_CHeadCacheInStreamTest_nativeSi
     RUN("CGeneratorInStream ReadCount test, size 100", testReadCountInStream(CMyComPtr<CGeneratorInStream>(new CGeneratorInStream(100)), 100));
 	
 
-    RUN("CHeadCacheInStream, empty (no cache)", testHeadCacheInStream(0, 0))
-    RUN("CHeadCacheInStream, empty (1 cache)", testHeadCacheInStream(0, 1))
-    RUN("CHeadCacheInStream, empty (100 cache)", testHeadCacheInStream(0, 100))
-	RUN("CHeadCacheInStream, size 1 (no cache)", testHeadCacheInStream(1, 0))
-	RUN("CHeadCacheInStream, size 1 (full cache)", testHeadCacheInStream(1, 1))
-	RUN("CHeadCacheInStream, size 1 (100 cache)", testHeadCacheInStream(1, 100))
-    RUN("CHeadCacheInStream, size 100 (no cache)", testHeadCacheInStream(100, 0))
-    RUN("CHeadCacheInStream, size 100 (1/2 cache)", testHeadCacheInStream(100, 50))
-    RUN("CHeadCacheInStream, size 100 (full cache)", testHeadCacheInStream(100, 100))
-    RUN("CHeadCacheInStream, size 100 (200 cache)", testHeadCacheInStream(100, 200))
+    RUN("CHeadCacheInStream, empty (no cache)", testHeadCacheInStream(0, 0, false))
+    RUN("CHeadCacheInStream, empty (no cache, reb)", testHeadCacheInStream(0, 0, true))
+    RUN("CHeadCacheInStream, empty (1 cache)", testHeadCacheInStream(0, 1, false))
+    RUN("CHeadCacheInStream, empty (1 cache, reb)", testHeadCacheInStream(0, 1, true))
+    RUN("CHeadCacheInStream, empty (100 cache)", testHeadCacheInStream(0, 100, false))
+    RUN("CHeadCacheInStream, empty (100 cache, reb)", testHeadCacheInStream(0, 100, true))
+	RUN("CHeadCacheInStream, size 1 (no cache)", testHeadCacheInStream(1, 0, false))
+	RUN("CHeadCacheInStream, size 1 (no cache, reb)", testHeadCacheInStream(1, 0, true))
+	RUN("CHeadCacheInStream, size 1 (full cache)", testHeadCacheInStream(1, 1, false))
+	RUN("CHeadCacheInStream, size 1 (full cache, reb)", testHeadCacheInStream(1, 1, true))
+	RUN("CHeadCacheInStream, size 1 (100 cache)", testHeadCacheInStream(1, 100, false))
+	RUN("CHeadCacheInStream, size 1 (100 cache, reb)", testHeadCacheInStream(1, 100, true))
+    RUN("CHeadCacheInStream, size 100 (no cache)", testHeadCacheInStream(100, 0, false))
+    RUN("CHeadCacheInStream, size 100 (no cache, reb)", testHeadCacheInStream(100, 0, true))
+    RUN("CHeadCacheInStream, size 100 (1/2 cache)", testHeadCacheInStream(100, 50, false))
+    RUN("CHeadCacheInStream, size 100 (1/2 cache, reb)", testHeadCacheInStream(100, 50, true))
+    RUN("CHeadCacheInStream, size 100 (full cache)", testHeadCacheInStream(100, 100, false))
+    RUN("CHeadCacheInStream, size 100 (full cache, reb)", testHeadCacheInStream(100, 100, true))
+    RUN("CHeadCacheInStream, size 100 (200 cache)", testHeadCacheInStream(100, 200, false))
+    RUN("CHeadCacheInStream, size 100 (200 cache, reb)", testHeadCacheInStream(100, 200, true))
 
     return NULL;
 }
