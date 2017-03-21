@@ -4,14 +4,14 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
-
-import org.junit.Test;
 
 /**
  * Tests behavior of SevenZipJBinding trying opening random stream of bytes as an archive.

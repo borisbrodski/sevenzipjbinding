@@ -7,6 +7,8 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import net.sf.sevenzipjbinding.junit.badarchive.GarbageArchiveFileTest;
+import net.sf.sevenzipjbinding.junit.bug.CallMethodsOnClosedInStreamTest;
+import net.sf.sevenzipjbinding.junit.bug.CallMethodsOnClosedOutStreamTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
@@ -266,6 +268,8 @@ public class AllTestSuite extends TestSuite {
             WrongCRCGetterInSimpleInterface.class, //
             Ticket18NullAsPassword.class, //
             SevenZipInTar.class, //
+            CallMethodsOnClosedInStreamTest.class, //
+            CallMethodsOnClosedOutStreamTest.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //
