@@ -161,7 +161,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         formatNameString = codecTools.codecs.Formats[index].Name;
     }
 
-    UInt64 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
+    UInt32 maxCheckStartPosition = 4 * 1024 * 1024; // Advice from Igor Pavlov
 
     CMyComPtr<IInArchive> archive;
     CMyComPtr<IInStream> rawStream = new CPPToJavaInStream(jbindingSession, env, inStream);
@@ -182,7 +182,8 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 
         universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(index));
 
-        HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
+		UInt64 pos = maxCheckStartPosition;
+        HRESULT result = archive->Open(stream, &pos, archiveOpenCallback);
 
         if (result != S_OK) {
             TRACE("Result = 0x" << std::hex << result << ", throwing exception...")
@@ -193,29 +194,33 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
         }
     } else {
         // Try all known codecs
-        TRACE("Iterating through all available codecs...")
-        bool success = false;
-        for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
-            TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
+		bool success = false;
+		for (UInt32 pos = 0; !success && pos <= maxCheckStartPosition; pos += maxCheckStartPosition) {
+			TRACE("Iterating through all available codecs with maxCheckStartPosition=" << pos);
 
-            stream->Seek(0, STREAM_SEEK_SET, NULL);
+			for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
+				TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
 
-            codecTools.codecs.CreateInArchive(i, archive);
-            if (!archive) {
-                continue;
-            }
+				stream->Seek(0, STREAM_SEEK_SET, NULL);
 
-            universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(i));
+				codecTools.codecs.CreateInArchive(i, archive);
+				if (!archive) {
+					continue;
+				}
 
-            HRESULT result = archive->Open(stream, &maxCheckStartPosition, archiveOpenCallback);
-            if (result != S_OK) {
-                continue;
-            }
+				universalArchiveOpencallback->setSimulateArchiveOpenVolumeCallback(codecTools.isCabArchive(i));
 
-            formatNameString = codecTools.codecs.Formats[i].Name;
-            success = true;
-            break;
-        }
+				UInt64 pos2 = pos;
+				HRESULT result = archive->Open(stream, &pos2, archiveOpenCallback);
+				if (result != S_OK) {
+					continue;
+				}
+
+				formatNameString = codecTools.codecs.Formats[i].Name;
+				success = true;
+				break;
+			}
+		}
 
         if (!success) {
             TRACE("Success=false, throwing exception...")

@@ -23,9 +23,7 @@ public class SevenZipInTar {
             randomAccessFile = new RandomAccessFile("testdata/bug/TarArchiveWith7zInside.tar", "r");
             inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile));
             assertEquals(ArchiveFormat.TAR, inArchive.getArchiveFormat());
-            //            ISimpleInArchiveItem[] archiveItems = inArchive.getSimpleInterface().getArchiveItems();
-            //            assertEquals(2, archiveItems.length);
-            //            assertTrue(archiveItems[0].getCRC().intValue() != archiveItems[1].getCRC().intValue());
+            assertEquals(1, inArchive.getNumberOfItems());
         } catch (Throwable e) {
             throwable = e;
         }
