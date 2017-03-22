@@ -424,6 +424,7 @@ IF(BUILD_TESTING)
     add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Multiple files tests" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-compression                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Compression tests" -P ${JUNIT_TEST_RUNNER})
     add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bad archive tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-misc                         ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Misc tests" -P ${JUNIT_TEST_RUNNER})
 #                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
 ENDIF(BUILD_TESTING)
 

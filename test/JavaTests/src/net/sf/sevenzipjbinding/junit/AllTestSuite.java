@@ -109,6 +109,7 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3D
 import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
+import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswords;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
@@ -515,6 +516,9 @@ public class AllTestSuite extends TestSuite {
             UpdateSingleFileNonGenericZipTest.class, //
 
     };
+    static Class<?>[] miscTests = { //
+            ArchiveWithTwoPasswords.class, //
+    };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
     };
@@ -535,6 +539,7 @@ public class AllTestSuite extends TestSuite {
         tests.put("Multiple files tests", multipleFilesTests);
         tests.put("Bad archive tests", badArchiveTests);
         tests.put("Compression tests", compressionTests);
+        tests.put("Misc tests", miscTests);
     }
 
     public static Test suite() throws Exception {
