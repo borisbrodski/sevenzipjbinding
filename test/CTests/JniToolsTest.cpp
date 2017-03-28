@@ -50,7 +50,7 @@ JT_BEGIN_CLASS("net/sf/sevenzipjbinding/junit/jnitools", JTestFinalClass)
 	JT_FIELD_OBJECT(privateJTestAbstractClassField, "Lnet/sf/sevenzipjbinding/junit/jnitools/JTestAbstractClass;")
 JT_END_CLASS
 
-JT_BEGIN_INTERFACE(Interface1)
+JT_BEGIN_INTERFACE("net/sf/sevenzipjbinding/junit/jnitools", Interface1)
 	JT_INTERFACE_METHOD(Long, longMethod, JT_INT(i, _))
 	JT_INTERFACE_METHOD(String, stringMethod, JT_INT(i, _))
 	JT_INTERFACE_METHOD(Void, voidMethod, JT_INT(i, _))
@@ -177,6 +177,13 @@ Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterface1(JNIEnv
         return env->NewStringUTF(errmsgstring);
     }
     return NULL;
+}
+
+JBINDING_JNIEXPORT jboolean JNICALL
+Java_net_sf_sevenzipjbinding_junit_jnitools_JNIToolsTest_nativeInterfaceIsInstance(JNIEnv * env,
+                                                                                   jobject thiz,
+                                                                                   jobject object) {
+	return jni::Interface1::_isInstance(env, object);
 }
 
 JBINDING_JNIEXPORT jstring JNICALL

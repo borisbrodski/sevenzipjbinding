@@ -51,13 +51,13 @@
 #define JT_EXTRACT_OPERATION_RESULT(name, param_spec)   JT_PARAM(Object, JAVA_EXTRACT_OPERATION_RESULT_T, name, param_spec)
 
 
-JT_BEGIN_INTERFACE(ISequentialInStream)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ISequentialInStream)
 	// public int read(byte[] data)
 	JT_INTERFACE_METHOD(Int, read, JT_BYTE_ARRAY(data,_))
 JT_END_CLASS
 
 
-JT_BEGIN_INTERFACE(IArchiveOpenCallback)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IArchiveOpenCallback)
 	// public void setTotal(Long files, Long bytes)
 	JT_INTERFACE_METHOD(Void, setTotal, JT_LONG_OBJECT(files, JT_LONG_OBJECT(bytes, _)))
 
@@ -66,7 +66,7 @@ JT_BEGIN_INTERFACE(IArchiveOpenCallback)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IArchiveOpenVolumeCallback)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IArchiveOpenVolumeCallback)
 	// public Object getProperty(PropID propId)
 	JT_INTERFACE_METHOD(Object, getProperty, JT_PROP_ID(propId, _))
 
@@ -75,13 +75,13 @@ JT_BEGIN_INTERFACE(IArchiveOpenVolumeCallback)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(ICryptoGetTextPassword)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ICryptoGetTextPassword)
 	// public String cryptoGetTextPassword()
 	JT_INTERFACE_METHOD(String, cryptoGetTextPassword, _)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IProgress)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IProgress)
 	// public void setTotal(long total)
 	JT_INTERFACE_METHOD(Void, setTotal, JT_LONG(total, _))
 
@@ -90,7 +90,7 @@ JT_BEGIN_INTERFACE(IProgress)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IArchiveExtractCallback)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IArchiveExtractCallback)
 	// public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode)
 	JT_INTERFACE_METHOD_OBJECT(JAVA_ISEQUENTIAL_OUT_STREAM_T,
 			getStream, JT_INT(index, JT_EXTRACT_ASK_MODE(extractAskMode, _)))
@@ -103,25 +103,25 @@ JT_BEGIN_INTERFACE(IArchiveExtractCallback)
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(ISequentialOutStream)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ISequentialOutStream)
 	// public int write(byte[] data)
 	JT_INTERFACE_METHOD(Int, write, JT_BYTE_ARRAY(data, _))
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IOutStream)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IOutStream)
 	// public void setSize(long newSize)
 	JT_INTERFACE_METHOD(Void, setSize, JT_LONG(newSize, _))
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(ISeekableStream)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ISeekableStream)
 	// public long seek(long offset, int seekOrigin) throws SevenZipException;
 	JT_INTERFACE_METHOD(Long, seek, JT_LONG(offset, JT_INT(seekOrigin, _)))
 JT_END_INTERFACE
 
 
-JT_BEGIN_INTERFACE(IOutCreateCallback)
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IOutCreateCallback)
 	// public void setOperationResult(boolean operationResultOk)
 	JT_INTERFACE_METHOD(Void, setOperationResult, JT_BOOLEAN(operationResultOk, _))
 

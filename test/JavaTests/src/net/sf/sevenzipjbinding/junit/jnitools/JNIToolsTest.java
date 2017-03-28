@@ -5,12 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 import org.junit.Rule;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.junit.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 public class JNIToolsTest extends JUnitNativeTestBase {
     private static final int TEST_REPEAT_COUNT = 100;
@@ -25,6 +26,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     private native String nativeFinalClass(JTestAbstractClass jTestFinalClass);
 
     private native String nativeInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
+
+    private native boolean nativeInterfaceIsInstance(Object object);
 
     private native JTestFinalClass nativeJTestFinalClassNewInstance();
 
@@ -95,6 +98,14 @@ public class JNIToolsTest extends JUnitNativeTestBase {
             assertEquals(18, interface1Impl1.getStringMethodParameterI());
             assertEquals(19, interface1Impl1.getVoidMethodParameterI());
         }
+    }
+
+    @Test
+    @DebugModeOnly
+    public void testInterfaceInstanceOf() {
+        assertFalse(nativeInterfaceIsInstance("test"));
+        assertTrue(nativeInterfaceIsInstance(new Interface2Impl1()));
+        assertFalse(nativeInterfaceIsInstance(null));
     }
 
     @Test
