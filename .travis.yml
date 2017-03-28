@@ -1,4 +1,10 @@
 language: c
+addons:
+  apt:
+    sources:
+    - kubuntu-backports
+    packages:
+    - cmake
 install:
   - sudo apt-get update -qq
   - sudo apt-get install -y -qq lcov curl
