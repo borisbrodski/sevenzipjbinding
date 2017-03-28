@@ -9,4 +9,4 @@ addons:
 #  - sudo apt-get update -qq
 #  - sudo apt-get install -y -qq lcov curl
 script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest -I 1,13,17#
+  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest -I 1,13,,17#
