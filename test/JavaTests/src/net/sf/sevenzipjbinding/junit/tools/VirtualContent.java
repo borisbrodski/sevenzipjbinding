@@ -24,6 +24,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
@@ -218,6 +219,18 @@ public class VirtualContent {
         }
     }
 
+    private class ArchiveCreateCallbackWithPassword extends ArchiveCreateCallback implements ICryptoGetTextPassword {
+        private String password;
+
+        ArchiveCreateCallbackWithPassword(String password) {
+            this.password = password;
+        }
+
+        public String cryptoGetTextPassword() throws SevenZipException {
+            return password;
+        }
+    }
+
     private class TestSequentailOutStream implements ISequentialOutStream {
         private final ByteArrayStream byteArrayStream;
 
@@ -354,6 +367,19 @@ public class VirtualContent {
         }
     }
 
+    private class VerifyExtractCallbackWithPassword extends VerifyExtractCallback implements ICryptoGetTextPassword {
+        private String password;
+
+        VerifyExtractCallbackWithPassword(IInArchive inArchive, String password) {
+            super(inArchive);
+            this.password = password;
+        }
+
+        public String cryptoGetTextPassword() throws SevenZipException {
+            return password;
+        }
+    }
+
     // TODO Use it or remove it
     public interface FilenameGenerator {
         String nextFilename();
@@ -464,11 +490,30 @@ public class VirtualContent {
 
     public void createOutArchive(IOutCreateArchive<IOutItemAllFormats> outArchive, ISequentialOutStream outputStream)
             throws SevenZipException {
-        outArchive.createArchive(outputStream, itemList.size(), new ArchiveCreateCallback());
+        createOutArchive(outArchive, outputStream, false, null);
+    }
+
+    public void createOutArchive(IOutCreateArchive<IOutItemAllFormats> outArchive, ISequentialOutStream outputStream,
+            boolean implememntICryptoGetTextPassword, String password) throws SevenZipException {
+        ArchiveCreateCallback outCreateCallback;
+        if (implememntICryptoGetTextPassword) {
+            outCreateCallback = new ArchiveCreateCallbackWithPassword(password);
+        } else {
+            outCreateCallback = new ArchiveCreateCallback();
+        }
+        outArchive.createArchive(outputStream, itemList.size(), outCreateCallback);
     }
 
     public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
-        VerifyExtractCallback verifyExtractCallback = new VerifyExtractCallback(inArchive);
+        verifyInArchive(inArchive, null);
+    }
+    public void verifyInArchive(IInArchive inArchive, String password) throws SevenZipException {
+        VerifyExtractCallback verifyExtractCallback;
+        if (password == null) {
+            verifyExtractCallback = new VerifyExtractCallback(inArchive);
+        } else {
+            verifyExtractCallback = new VerifyExtractCallbackWithPassword(inArchive, password);
+        }
         inArchive.extract(null, false, verifyExtractCallback);
         verifyExtractCallback.finish();
 

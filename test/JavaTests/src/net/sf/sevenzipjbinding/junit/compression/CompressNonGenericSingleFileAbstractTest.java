@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertEquals;
+
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItem7z;
@@ -55,7 +56,7 @@ public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutIte
         //        System.out.println("Length: " + dataSize + ", entropy: " + entropy + ": compressed size: "
         //                + outputByteArrayStream.getSize());
 
-        verifyCompressedArchive(testContext.randomContext, outputByteArrayStream);
+        verifyCompressedArchive(testContext.randomContext, outputByteArrayStream, null, false);
         if (dataSize > 100000) {
             assertEquals(IOutCreateCallback.class.getMethods().length,
                     testContext.callbackTester.getDifferentMethodsCalled());

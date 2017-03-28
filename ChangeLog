@@ -6,8 +6,15 @@ Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
     * Bind 7-Zip 15.09 (beta)
         - DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib 
         - PropID.LINK renamed to PropID.SYM_LINK
-    * Temporary remove support for HFS and UDF due to the security gap in
-      7-zip
+        
+    * Create password archives 
+        - Support 7z and zip
+        - Encrypted archive items
+        - Encrypt archive header (7z only)
+        - Create & update tests
+        
+    * Temporary remove support for HFS and UDF due to the security gap in 7-zip
+
     * Full RAR5 extraction support (format name: ArchiveFormat.RAR5)
         - password protected archives 
         - archives with encrypted headers

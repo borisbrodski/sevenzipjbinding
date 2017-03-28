@@ -1,21 +1,44 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileOutputStream;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
+import net.sf.sevenzipjbinding.IOutFeatureSetEncryptHeader;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Before;
-import org.junit.Test;
-
 public abstract class CompressMultipleFileAbstractTest extends CompressAbstractTest {
 
     private static final int OUTARCHIVE_MAX_SIZE = 5000000;
+    private static final String PASSWORD = "test-pass-321";
+
     private VirtualContentConfiguration virtualContentConfiguration;
+
+    private boolean useEncryption;
+    private boolean useEncryptionNoPassword;
+    private boolean useHeaderEncryption;
+
+    public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
+        this.useEncryptionNoPassword = useEncryptionNoPassword;
+    }
+
+    public void setUseEncryption(boolean useEncryption) {
+        this.useEncryption = useEncryption;
+    }
+
+    public void setUseHeaderEncryption(boolean useHeaderEncryption) {
+        this.useHeaderEncryption = useHeaderEncryption;
+    }
 
     @Before
     public void init() {
@@ -177,30 +200,42 @@ public abstract class CompressMultipleFileAbstractTest extends CompressAbstractT
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
-        ByteArrayStream byteArrayStream;
-        boolean ok = false;
-        try {
-            byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
+        addCloseable(outArchive);
 
-            virtualContent.createOutArchive(outArchive, byteArrayStream);
-            ok = true;
-        } finally {
-            try {
-                outArchive.close();
-            } catch (Throwable throwable) {
-                if (ok) {
-                    throw new RuntimeException("Error closing archive", throwable);
-                }
-            }
+        if (useHeaderEncryption) {
+            assertTrue(outArchive instanceof IOutFeatureSetEncryptHeader);
+            ((IOutFeatureSetEncryptHeader) outArchive).setHeaderEncryption(true);
         }
+
+        String password = useEncryptionNoPassword ? null : PASSWORD;
+
+        ByteArrayStream byteArrayStream;
+        byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
+
+        virtualContent.createOutArchive(outArchive, byteArrayStream, useEncryption, password);
+
+        outArchive.close();
+        removeCloseable(outArchive);
+
+        byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/x.7z"), true);
         byteArrayStream.rewind();
-        IInArchive inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
-        try {
-            virtualContent.verifyInArchive(inArchive);
-            // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
-        } finally {
-            inArchive.close();
+        if (useHeaderEncryption) {
+            assertHeaderCrypted(byteArrayStream, archiveFormat);
         }
+        IInArchive inArchive;
+        if (useHeaderEncryption) {
+            inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream, password);
+        } else {
+            inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
+        }
+        addCloseable(inArchive);
+        if (useEncryption && !useEncryptionNoPassword) {
+            assertAllItemsCrypted(inArchive);
+        }
+
+        virtualContent.verifyInArchive(inArchive, password);
+        // byteArrayStream.writeToOutputStream(new FileOutputStream("test-2.7z"), true);
+
         return virtualContent;
     }
 }

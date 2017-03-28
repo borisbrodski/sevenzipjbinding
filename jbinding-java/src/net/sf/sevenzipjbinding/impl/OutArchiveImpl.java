@@ -42,6 +42,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     private ArchiveFormat archiveFormat;
 
+    private Boolean headerEncryption;
     private int compressionLevel = -1;
     private int threadCount = -1;
     private PrintStream tracePrintStream;
@@ -50,6 +51,10 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
 
     protected void setInArchive(IInArchive inArchive) {
         this.inArchive = inArchive;
+    }
+
+    protected void featureSetHeaderEncryption(boolean enabled) {
+        this.headerEncryption = Boolean.valueOf(enabled);
     }
 
     protected void featureSetLevel(int compressionLevel) {
@@ -64,6 +69,9 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         ensureOpened();
         if (compressionLevel != -1) {
             nativeSetLevel(compressionLevel);
+        }
+        if (headerEncryption != null) {
+            nativeSetHeaderEncryption(headerEncryption.booleanValue());
         }
 
         if (threadCount >= 0) {
@@ -81,6 +89,8 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     protected void setArchiveFormat(ArchiveFormat archiveFormat) {
         this.archiveFormat = archiveFormat;
     }
+
+    protected native void nativeSetHeaderEncryption(boolean encryptHeader) throws SevenZipException;
 
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 

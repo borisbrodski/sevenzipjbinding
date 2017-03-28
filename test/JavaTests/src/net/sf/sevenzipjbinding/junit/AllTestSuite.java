@@ -19,13 +19,23 @@ import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInforma
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileBZip2Test;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileTarTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileZipPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileZipPassTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileZipTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zPassHeaderTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zPassTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFile7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileTarTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipPassTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileZipTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressNonGenericSingleFile7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressNonGenericSingleFileBZip2Test;
@@ -47,8 +57,13 @@ import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericGZipT
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.StandaloneUpdateNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.compression.TraceCompressionTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGeneric7zPassHeaderTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGeneric7zPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGeneric7zPassTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericTarTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipPassNullTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipPassTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericTarTest;
@@ -203,6 +218,7 @@ import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressWithErrorTest;
+import net.sf.sevenzipjbinding.junit.snippets.CompressWithPasswordTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
@@ -383,9 +399,10 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericBZip2Test.class, //
             CompressNonGenericGZipTest.class, //
             CompressNonGenericTarTest.class, //
+            CompressWithErrorTest.class, //
+            CompressWithPasswordTest.class, //
             UpdateAddRemoveItemsTest.class, //
             UpdateAlterItemsTest.class, //
-            CompressWithErrorTest.class, //
     };
 
     static Class<?>[] toolsTests = { //
@@ -484,12 +501,23 @@ public class AllTestSuite extends TestSuite {
             CompressFeatureSetSolid.CompressionFeatureSetSolidSevenZip.class, //
             CompressFeatureSetThreadCount.CompressionFeatureSetLevelSevenZip.class, //
 
+            CompressGenericSingleFile7zPassHeaderTest.class, //
+            CompressGenericSingleFile7zPassNullTest.class, //
+            CompressGenericSingleFile7zPassTest.class, //
             CompressGenericSingleFile7zTest.class, //
             CompressGenericSingleFileBZip2Test.class, //
             CompressGenericSingleFileGZipTest.class, //
             CompressGenericSingleFileTarTest.class, //
+            CompressGenericSingleFileZipPassNullTest.class, //
+            CompressGenericSingleFileZipPassTest.class, //
             CompressGenericSingleFileZipTest.class, //
+            CompressMultipleFile7zPassHeaderTest.class, //
+            CompressMultipleFile7zPassNullTest.class, //
+            CompressMultipleFile7zPassTest.class, //
             CompressMultipleFile7zTest.class, //
+            CompressMultipleFileZipPassNullTest.class, //
+            CompressMultipleFileZipPassTest.class, //
+
             CompressMultipleFileTarTest.class, //
             CompressMultipleFileZipTest.class, //
             CompressNonGenericSingleFile7zTest.class, //
@@ -498,8 +526,13 @@ public class AllTestSuite extends TestSuite {
             CompressNonGenericSingleFileTarTest.class, //
             CompressNonGenericSingleFileZipTest.class, //
 
+            UpdateMultipleFilesGeneric7zPassHeaderTest.class, //
+            UpdateMultipleFilesGeneric7zPassNullTest.class, //
+            UpdateMultipleFilesGeneric7zPassTest.class, //
             UpdateMultipleFilesGeneric7zTest.class, //
             UpdateMultipleFilesGenericTarTest.class, //
+            UpdateMultipleFilesGenericZipPassNullTest.class, //
+            UpdateMultipleFilesGenericZipPassTest.class, //
             UpdateMultipleFilesGenericZipTest.class, //
             UpdateMultipleFilesNonGeneric7zTest.class, //
             UpdateMultipleFilesNonGenericTarTest.class, //

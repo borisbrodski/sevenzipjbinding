@@ -422,3 +422,47 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::SetOperationResult(Int32 operationR
 
     return S_OK;
 }
+
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword(BSTR *password) {
+	Int32 passwordIsDefined;
+	CryptoGetTextPassword2(&passwordIsDefined, password);
+	if (!passwordIsDefined) {
+		*password = NULL;
+	}
+    return S_OK;
+}
+
+STDMETHODIMP CPPToJavaArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passwordIsDefined, BSTR *password) {
+    TRACE_OBJECT_CALL("CryptoGetTextPassword");
+    JNIEnvInstance jniEnvInstance(_jbindingSession);
+
+	if (!_cryptoGetTextPassword) {
+		_cryptoGetTextPassword = jni::ICryptoGetTextPassword::_getInstanceFromObject(jniEnvInstance, _javaImplementation);
+	}
+
+	jstring passwordString = _cryptoGetTextPassword->cryptoGetTextPassword(jniEnvInstance, _javaImplementation);
+
+    if (jniEnvInstance.exceptionCheck()) {
+        return S_FALSE;
+    }
+
+	if (!passwordString)
+	{
+        if (passwordIsDefined)
+        	*passwordIsDefined = false;
+        if (password)
+            *password = NULL;
+        return S_OK;
+	}
+
+	if (passwordIsDefined)
+		*passwordIsDefined = true;
+
+    if (password)
+        StringToBstr(UString(FromJChar(jniEnvInstance, passwordString)), password);
+
+    if (passwordString)
+        jniEnvInstance->DeleteLocalRef(passwordString);
+
+	return S_OK;
+}

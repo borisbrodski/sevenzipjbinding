@@ -19,6 +19,7 @@ Main features of 15.09-2.01beta (Release candidate, extraction/compression/updat
     * Compression & update of
         - 7z, Zip, Tar, GZip, BZip2
         - Convenient archive format specific and generic compression APIs
+        - Password protected archives (7z, zip) with encrypted archive headers (7z only)
         
     * 7-Zip-JBinding requires Java 1.5 or higher
 
@@ -36,7 +37,7 @@ Main features of 15.09-2.01beta (Release candidate, extraction/compression/updat
 
     * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
 
-        * Over 7600 JUnit tests:
+        * Over 8350 JUnit tests:
             - Initialization
             - All extraction methods
             - Compression

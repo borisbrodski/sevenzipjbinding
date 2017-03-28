@@ -1,9 +1,10 @@
-package net.sf.sevenzipjbinding.junit.compression;
 
+package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,9 +14,11 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutFeatureSetEncryptHeader;
 import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBase;
@@ -227,12 +230,65 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
     }
 
+
+    static class OutCreateCallbackWithPasswordWrapper<T extends IOutItemBase>
+            implements IOutCreateCallback<T>, ICryptoGetTextPassword {
+        private IOutCreateCallback<T> delegate;
+        private String password;
+
+        OutCreateCallbackWithPasswordWrapper(IOutCreateCallback<T> delegate, String password) {
+            this.delegate = delegate;
+            this.password = password;
+        }
+
+        public void setTotal(long total) throws SevenZipException {
+            delegate.setTotal(total);
+        }
+
+        public void setOperationResult(boolean operationResultOk) throws SevenZipException {
+            delegate.setOperationResult(operationResultOk);
+        }
+
+        public void setCompleted(long complete) throws SevenZipException {
+            delegate.setCompleted(complete);
+        }
+
+        public T getItemInformation(int index, OutItemFactory<T> outItemFactory) throws SevenZipException {
+            return delegate.getItemInformation(index, outItemFactory);
+        }
+
+        public ISequentialInStream getStream(int index) throws SevenZipException {
+            return delegate.getStream(index);
+        }
+
+        public String cryptoGetTextPassword() throws SevenZipException {
+            return password;
+        }
+    }
+
     protected abstract IOutCreateCallback<IOutItemAllFormats> getOutUpdateCallbackBase(IInArchive inArchive,
             ChangeLog changeLog)
             throws SevenZipException;
 
     private static final int OUTARCHIVE_MAX_SIZE = 10000000;
+    private static final String DEFAULT_PASSWORD = "test-pass-321";
     private VirtualContentConfiguration virtualContentConfiguration = new VirtualContentConfiguration();
+
+    private boolean useEncryption;
+    private boolean useEncryptionNoPassword;
+    private boolean useHeaderEncryption;
+
+    public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
+        this.useEncryptionNoPassword = useEncryptionNoPassword;
+    }
+
+    public void setUseEncryption(boolean useEncryption) {
+        this.useEncryption = useEncryption;
+    }
+
+    public void setUseHeaderEncryption(boolean useHeaderEncryption) {
+        this.useHeaderEncryption = useHeaderEncryption;
+    }
 
     protected ArchiveUpdater updaterContent = new ArchiveUpdater() {
         @Override
@@ -278,13 +334,22 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         if (archiveFormat == ArchiveFormat.BZIP2) {
             virtualContent.updateItemPathByPath(virtualContent.getItemPath(0), "");
         }
+
+        String password = null;
+        if (useEncryption && !useEncryptionNoPassword) {
+            password = DEFAULT_PASSWORD;
+        }
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
+        if (useHeaderEncryption) {
+            assertTrue(outArchive instanceof IOutFeatureSetEncryptHeader);
+            ((IOutFeatureSetEncryptHeader) outArchive).setHeaderEncryption(true);
+        }
         ByteArrayStream byteArrayStream;
         boolean ok = false;
         try {
             byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-            virtualContent.createOutArchive(outArchive, byteArrayStream);
+            virtualContent.createOutArchive(outArchive, byteArrayStream, useEncryption, password);
             ok = true;
         } finally {
             try {
@@ -296,7 +361,12 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
             }
         }
         byteArrayStream.rewind();
-        IInArchive inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream));
+        IInArchive inArchive;
+        if (password == null) {
+            inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream));
+        } else {
+            inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream, password));
+        }
         IOutUpdateArchive<IOutItemAllFormats> connectedOutArchive = inArchive.getConnectedOutArchive();
 
         ByteArrayStream byteArrayStreamUpdated = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
@@ -307,14 +377,32 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         int newCount = changeLog.reindex(inArchive);
         IOutCreateCallback<IOutItemAllFormats> updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
 
+        if (useEncryption) {
+            updateCallbackBase = new OutCreateCallbackWithPasswordWrapper<IOutItemAllFormats>(updateCallbackBase,
+                    password);
+        }
         connectedOutArchive.updateItems(byteArrayStreamUpdated, newCount, updateCallbackBase);
 
         byteArrayStreamUpdated.rewind();
-        IInArchive updatedInArchive = closeLater(SevenZip.openInArchive(getArchiveFormat(), byteArrayStreamUpdated));
+
+        if (useHeaderEncryption) {
+            assertHeaderCrypted(byteArrayStream, archiveFormat);
+        }
+
+        IInArchive updatedInArchive;
+        if (password == null) {
+            updatedInArchive = closeLater(SevenZip.openInArchive(getArchiveFormat(), byteArrayStreamUpdated));
+        } else {
+            updatedInArchive = closeLater(SevenZip.openInArchive(getArchiveFormat(), byteArrayStreamUpdated, password));
+        }
 
         updateVirtualContent(virtualContent, changeLog);
 
-        virtualContent.verifyInArchive(updatedInArchive);
+        if (useEncryption && !useEncryptionNoPassword) {
+            byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/u.7z"), true);
+            assertAllItemsCrypted(inArchive);
+        }
+        virtualContent.verifyInArchive(updatedInArchive, password);
     }
 
     protected abstract int getDefaultIndex();

@@ -12,7 +12,7 @@ many archive formats using a very fast native library directly from java through
 		<td>Split</td>
 		<td>Lzma</td>
 		<td>Iso</td>
-		<td>HFS</td>
+		<td><i>HFS *</i></td>
 		<td>GZip</td>
 		</tr><tr>
 		<td>Cpio</td>
@@ -27,10 +27,15 @@ many archive formats using a very fast native library directly from java through
 		<td>Ar/A/Lib/Deb</td>
 		<td>Rpm</td>
 		<td>Wim</td>
-		<td>Udf</td>
+		<td><i>Udf *</i></td>
 		<td>Fat</td>
 		<td>Ntfs</td>
-		</tr></table></li>
+		</tr></table>
+		<p>
+		* - temporary disabled due to the security issue in the 7-zip prior to 16.x.<br>
+		More information <a href="http://blog.talosintelligence.com/2016/05/multiple-7-zip-vulnerabilities.html">here</a>.
+		</p>
+	</li>
 	<li> Create/update 
 		<table border="0" class="ArchiveTypeEnum"><tr>
 		<td>7-Zip</td>
@@ -48,12 +53,13 @@ many archive formats using a very fast native library directly from java through
 	    </tr>
 		</table></li>
 	<li> Full support for extraction of password protected and in volumes splitted archives</li>
+	<li> Full support for creation of password protected archives</li>
 	<li> In-memory archive extraction/creation/update</li>
 	<li> <a href="first_steps.html#maven">Artifacts on Maven central</a> (groupId: <a href="http://repo1.maven.org/maven2/net/sf/sevenzipjbinding/">net.sf.sevenzipjbinding</a>)</li>
 	<li> ##INCLUDE_SNIPPET_COUNT example code snippets</li>
-	<li> Over 7500 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
-	<li> Planned: Creation/update of password protected and volumed archives</li>
-	<li> Planned: Extraction of more archive formats supported by 7-Zip</li>
+	<li> Over 8350 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+	<li> Planned: Create volumed archives</li>
+	<li> Planned: Create/Extract more archive formats supported by 7-Zip</li>
 	<li>
 	   Known bug: JVM crash in case of OutOfMemory exception.<br>
 	   Workaround: Increase heap using -Xmx parameter.
