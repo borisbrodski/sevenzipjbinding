@@ -36,14 +36,14 @@ script:
   - if [ "$BUILDMODE" = "mingw64" ]; then
       mkdir build &&
         cd build &&
-        cmake -DCMAKE_BUILD_TYPE=Debug \
-            -G"MinGW Makefiles" \
-            -DMINGW32=Yes \
-            -DCMAKE_RC_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-windres \
-            -DCMAKE_C_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-gcc \
-            -DCMAKE_CXX_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-g++ \
-            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-specs ../scripts/Windows/gcc64.specs" \
-            -DRUNTIME_LIB= \
+        cmake -DCMAKE_BUILD_TYPE=Debug
+            -G"MinGW Makefiles"
+            -DMINGW32=Yes
+            -DCMAKE_RC_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-windres
+            -DCMAKE_C_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-gcc
+            -DCMAKE_CXX_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-g++
+            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-specs ../scripts/Windows/gcc64.specs"
+            -DRUNTIME_LIB=""
             .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
