@@ -7,7 +7,7 @@ addons:
     - cmake
     
 env:
-  - BUILDMODE=linux
+#  - BUILDMODE=linux
   - BUILDMODE=mingw64
 
 before_script:
@@ -33,7 +33,7 @@ script:
         cmake --build . &&
         ctest -I 1,13,,17# ;
     fi
-  - if [ "$BUILDMODE" = "mingw" ]; then
+  - if [ "$BUILDMODE" = "mingw64" ]; then
       mkdir build &&
         cd build &&
         cmake -DCMAKE_BUILD_TYPE=Debug \
