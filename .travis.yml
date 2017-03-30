@@ -31,7 +31,7 @@ script:
         cd build &&
         cmake -DCMAKE_BUILD_TYPE=Debug .. &&
         cmake --build . &&
-        ctest -I 1,13,,17#
+        ctest -I 1,13,,17# ;
     fi
   - if [ "$BUILDMODE" = "mingw" ]; then
       mkdir build &&
@@ -46,5 +46,5 @@ script:
             -DRUNTIME_LIB= \
             .. &&
         cmake --build . &&
-        ctest -I 1,13,,17#
+        ctest -I 1,13,,17# ;
     fi
