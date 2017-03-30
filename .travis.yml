@@ -5,8 +5,46 @@ addons:
     - kubuntu-backports
     packages:
     - cmake
+    
+env:
+  - BUILDMODE=linux
+  - BUILDMODE=mingw64
+
+before_script:
+  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+  - sudo apt-get -qq update
+#  - sudo apt-get -qq install libsmbclient-dev libssh2-1-dev
+#  - sudo apt-get -qq install gcc-4.8 g++-4.8
+#  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20
+#  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
+#  - sudo update-alternatives --config gcc
+#  - sudo update-alternatives --config g++
+  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get -qq install mingw64-x-gcc; fi
+
 #install:
 #  - sudo apt-get update -qq
 #  - sudo apt-get install -y -qq lcov curl
 script:
-  - mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && cmake --build . && ctest -I 1,13,,17#
+  - if [ "$BUILDMODE" = "linux" ]; then
+      mkdir build &&
+        cd build &&
+        cmake -DCMAKE_BUILD_TYPE=Debug .. &&
+        cmake --build . &&
+        ctest -I 1,13,,17#
+    fi
+  - if [ "$BUILDMODE" = "mingw" ]; then
+      mkdir build &&
+        cd build &&
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+            -G"MinGW Makefiles" \
+            -DMINGW32=Yes \
+            -DCMAKE_RC_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-windres \
+            -DCMAKE_C_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-gcc \
+            -DCMAKE_CXX_COMPILER:FILEPATH=/opt/mingw64/bin/x86_64-w64-mingw32-g++ \
+            -DCMAKE_SHARED_LINKER_FLAGS:STRING="-specs ../scripts/Windows/gcc64.specs" \
+            -DRUNTIME_LIB= \
+            .. &&
+        cmake --build . &&
+        ctest -I 1,13,,17#
+    fi
