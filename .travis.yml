@@ -20,7 +20,7 @@ before_script:
 #  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
 #  - sudo update-alternatives --config gcc
 #  - sudo update-alternatives --config g++
-  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get -qq install mingw64-x-gcc; fi
+  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get install -y mingw64-x-gcc; fi
 
 #install:
 #  - sudo apt-get update -qq
