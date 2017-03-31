@@ -34,6 +34,7 @@ script:
         ctest -I 1,13,,17# ;
     fi
   - if [ "$BUILDMODE" = "mingw64" ]; then
+      ls -l /usr/lib/jvm/java-7-oracle/ &&
       mkdir build &&
         cd build &&
         echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
@@ -48,6 +49,7 @@ script:
             -DMINGW32=Yes
             -DRUNTIME_LIB=""
             -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -DCMAKE_INSTALL_PREFIX=prefix
+            -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
             .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
