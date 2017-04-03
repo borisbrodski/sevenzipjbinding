@@ -47,6 +47,13 @@ script:
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
         cmake -DCMAKE_BUILD_TYPE=Debug
             -DMINGW32=Yes
+            -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
+            -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
+            -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
+            -DJAVA_HEADER_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javah
+            -DJAVA_DOC=/usr/lib/jvm/java-7-oracle/bin/javadoc
+            -DJAVA_RUNTIME=/usr/lib/jvm/java-7-oracle/bin/java
+            -DJAVA_ARCHIVE=/usr/lib/jvm/java-7-oracle/bin/jar
             -DRUNTIME_LIB=""
             -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -DCMAKE_INSTALL_PREFIX=prefix
             -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
