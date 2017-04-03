@@ -57,6 +57,8 @@ script:
             -DRUNTIME_LIB=""
             -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -DCMAKE_INSTALL_PREFIX=prefix
             -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
+            -DJAVA_SYSTEM=Windows
+            -DJAVA_ARCH=x86
             .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
