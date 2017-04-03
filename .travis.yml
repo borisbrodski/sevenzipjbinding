@@ -46,7 +46,8 @@ script:
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
         cmake -DCMAKE_BUILD_TYPE=Debug
-            -DMINGW32=Yes
+#            -DMINGW32=Yes
+            -DMINGW64=Yes
             -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
             -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
             -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
@@ -58,7 +59,8 @@ script:
             -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -DCMAKE_INSTALL_PREFIX=prefix
             -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
             -DJAVA_SYSTEM=Windows
-            -DJAVA_ARCH=x86
+#            -DJAVA_ARCH=x86
+            -DJAVA_ARCH=amd64
             .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
