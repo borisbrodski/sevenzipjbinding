@@ -16,7 +16,6 @@ env:
   - BUILDMODE=mingw64
 
 install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt54                   # < Qt
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
   - sudo apt-get update -qq
   - uname -m
