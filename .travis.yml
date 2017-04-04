@@ -5,15 +5,37 @@ addons:
     - kubuntu-backports
     packages:
     - cmake
-    
+include:    
+  - compiler: ": w64"
+    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64"
+  - compiler: ": w32"
+    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86"
+
 env:
 #  - BUILDMODE=linux
   - BUILDMODE=mingw64
 
-before_script:
-  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
-  - sudo apt-get -qq update
+install:
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt54                   # < Qt
+  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
+  - sudo apt-get update -qq
+  - uname -m
+  - sudo apt-get install -y cloog-isl mingw32
+  - if [ $BITSIZE == 32 ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
+  - if [ $BITSIZE == 64 ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
+  - export MINGW=/opt/mingw$BITSIZE
+  - export PATH=$MINGW/bin:$PATH
+  - export CC=$HOST-w64-mingw32-gcc
+  - export CXX=$HOST-w64-mingw32-g++
+
+#  - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
+#  - export QTDIR=/opt/qt54
+#  - export PATH=$QTDIR/bin:$PATH
+#  - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
+#before_script:
+#  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+#  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+#  - sudo apt-get -qq update
 #  - sudo apt-get -qq install libsmbclient-dev libssh2-1-dev
 #  - sudo apt-get -qq install gcc-4.8 g++-4.8
 #  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20
@@ -21,7 +43,7 @@ before_script:
 #  - sudo update-alternatives --config gcc
 #  - sudo update-alternatives --config g++
 # Packages: https://launchpad.net/~tobydox/+ppa-packages
-  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get install -y mingw64-x-gcc mingw-x-binutils mingw-x-runtime; fi
+#  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get install -y mingw64-x-gcc mingw-x-binutils mingw-x-runtime; fi
 
 #install:
 #  - sudo apt-get update -qq
@@ -39,15 +61,15 @@ script:
       mkdir build &&
         cd build &&
         echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
-        echo "SET(CMAKE_C_COMPILER /opt/mingw64/bin/x86_64-w64-mingw32-gcc)" >> toolchain.cmake &&
-        echo "SET(CMAKE_CXX_COMPILER /opt/mingw64/bin/x86_64-w64-mingw32-g++)" >> toolchain.cmake &&
-        echo "SET(CMAKE_RC_COMPILER /opt/mingw64/bin/x86_64-w64-mingw32-windres)" >> toolchain.cmake &&
-        echo "SET(CMAKE_FIND_ROOT_PATH /opt/mingw64)" >> toolchain.cmake &&
+        echo "SET(CMAKE_C_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-gcc)" >> toolchain.cmake &&
+        echo "SET(CMAKE_CXX_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-g++)" >> toolchain.cmake &&
+        echo "SET(CMAKE_RC_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-windres)" >> toolchain.cmake &&
+        echo "SET(CMAKE_FIND_ROOT_PATH /opt/mingw$BITSIZE)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
         cmake -DCMAKE_BUILD_TYPE=Debug
-            -DMINGW64=Yes
+            -DMINGW64=$(if [ $BITSIZE == 64 ]; then echo Yes ; else echo No ; fi)
             -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
             -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
             -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
@@ -59,11 +81,11 @@ script:
             -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake -DCMAKE_INSTALL_PREFIX=prefix
             -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
             -DJAVA_SYSTEM=Windows
-            -DJAVA_ARCH=amd64
+            -DJAVA_ARCH=$JAVA_ARCH
             .. &&
         cmake --build . &&
-        ctest -I 1,13,,17# ;
     fi
 
+#        ctest -I 1,13,,17# ;
 # -DJAVA_ARCH=x86
 # -DMINGW32=Yes
