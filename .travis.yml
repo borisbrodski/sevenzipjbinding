@@ -60,13 +60,14 @@ script:
   - if [ "$PLATFORM" = "mingw32" ]; then
       ls -l /usr/lib/jvm/java-7-oracle/ &&
       echo "Searching for predefs.h" &&
-      find / -name predefs.h &&
+      find / -name predefs.h ;
       mkdir build &&
         cd build &&
         echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
         echo "SET(CMAKE_C_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-gcc)" >> toolchain.cmake &&
         echo "SET(CMAKE_CXX_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-g++)" >> toolchain.cmake &&
         echo "SET(CMAKE_RC_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-windres)" >> toolchain.cmake &&
+        echo "SET(CMAKE_SYSROOT /opt/mingw$BITSIZE/)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH /opt/mingw$BITSIZE)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
@@ -86,7 +87,7 @@ script:
             -DJAVA_SYSTEM=Windows
             -DJAVA_ARCH=$JAVA_ARCH
             .. &&
-        cmake --build .
+        make VERBOSE=1
         ;
     fi
 
