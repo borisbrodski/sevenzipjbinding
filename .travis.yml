@@ -60,7 +60,6 @@ script:
   - if [ "$PLATFORM" = "mingw32" ]; then
       ls -l /usr/lib/jvm/java-7-oracle/ &&
       echo "Searching for predefs.h" &&
-      find / -name predefs.h ;
       mkdir build &&
         cd build &&
         echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
@@ -88,6 +87,7 @@ script:
             -DJAVA_SYSTEM=Windows
             -DJAVA_ARCH=$JAVA_ARCH
             .. &&
+        find . -name includes_CXX.rsp -print -exec cat "{}" \; ;
         make VERBOSE=1
         ;
     fi
