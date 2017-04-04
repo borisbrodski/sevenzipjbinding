@@ -14,6 +14,7 @@ addons:
 env:
 #  - BUILDMODE=linux
   - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
+  - BUILDMODE=mingw32 PLATFORM="mingw32" ARCH="x86"    BITSIZE=32 HOST="i686"   JAVA_ARCH="x86 "  MINGW64=No
 
 install:
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
@@ -56,8 +57,10 @@ script:
         cmake --build . &&
         ctest -I 1,13,,17# ;
     fi
-  - if [ "$BUILDMODE" = "mingw64" ]; then
+  - if [ "$PLATFORM" = "mingw32" ]; then
       ls -l /usr/lib/jvm/java-7-oracle/ &&
+      echo "Searching for predefs.h" &&
+      find / -name predefs.h &&
       mkdir build &&
         cd build &&
         echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
