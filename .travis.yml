@@ -84,6 +84,7 @@ script:
             -DJAVA_ARCH=$JAVA_ARCH
             .. &&
         cmake --build .
+        ;
     fi
 
 #        ctest -I 1,13,,17# ;
