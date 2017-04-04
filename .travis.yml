@@ -87,6 +87,7 @@ script:
             -DJAVA_SYSTEM=Windows
             -DJAVA_ARCH=$JAVA_ARCH
             .. &&
+        cmake . &&
         make VERBOSE=1
         ;
     fi
