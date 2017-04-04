@@ -7,9 +7,9 @@ addons:
     - cmake
 include:    
   - compiler: ": w64"
-    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64"
+    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
   - compiler: ": w32"
-    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86"
+    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
 
 env:
 #  - BUILDMODE=linux
@@ -68,7 +68,7 @@ script:
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
         cmake -DCMAKE_BUILD_TYPE=Debug
-            -DMINGW64=$(if [ $BITSIZE == 64 ]; then echo Yes ; else echo No ; fi)
+            -DMINGW64=$MINGW64
             -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
             -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
             -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
