@@ -13,13 +13,7 @@ addons:
 
 env:
 #  - BUILDMODE=linux
-  - BUILDMODE=mingw64
-    PLATFORM="mingw32"
-    ARCH="x86_64"
-    BITSIZE=64
-    HOST="x86_64"
-    JAVA_ARCH="amd64"
-    MINGW64=Yes
+  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
 
 install:
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
@@ -54,6 +48,7 @@ install:
 #  - sudo apt-get update -qq
 #  - sudo apt-get install -y -qq lcov curl
 script:
+  - echo $BUILDMODE . $PLATFORM . $ARCH . $BITSIZE . $HOST . $JAVA_ARCH . $MINGW64
   - if [ "$BUILDMODE" = "linux" ]; then
       mkdir build &&
         cd build &&
