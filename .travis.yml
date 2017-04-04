@@ -5,15 +5,21 @@ addons:
     - kubuntu-backports
     packages:
     - cmake
-include:    
-  - compiler: ": w64"
-    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
-  - compiler: ": w32"
-    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
+#include:    
+#  - compiler: ": w64"
+#    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
+#  - compiler: ": w32"
+#    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
 
 env:
 #  - BUILDMODE=linux
   - BUILDMODE=mingw64
+    PLATFORM="mingw32"
+    ARCH="x86_64"
+    BITSIZE=64
+    HOST="x86_64"
+    JAVA_ARCH="amd64"
+    MINGW64=Yes
 
 install:
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
