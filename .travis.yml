@@ -50,6 +50,7 @@ install:
 #  - sudo apt-get install -y -qq lcov curl
 script:
   - echo $BUILDMODE . $PLATFORM . $ARCH . $BITSIZE . $HOST . $JAVA_ARCH . $MINGW64
+  - set
   - if [ "$BUILDMODE" = "linux" ]; then
       mkdir build &&
         cd build &&
