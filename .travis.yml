@@ -16,8 +16,8 @@ addons:
 
 env:
 #  - BUILDMODE=linux
-  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
-  - BUILDMODE=mingw32 PLATFORM="mingw32" ARCH="x86"    BITSIZE=32 HOST="i686"   JAVA_ARCH="x86 "  MINGW64=No
+  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW32=No MINGW64=Yes
+  - BUILDMODE=mingw32 PLATFORM="mingw32" ARCH="x86"    BITSIZE=32 HOST="i686"   JAVA_ARCH="x86 "  MINGW32=Yes MINGW64=No
 
 install:
   - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
@@ -76,7 +76,7 @@ script:
         echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
         cmake -DCMAKE_BUILD_TYPE=Debug
             -DMINGW64=$MINGW64
-            -DMINGW=Yes
+            -DMINGW32=$MINGW32
             -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
             -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
             -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
@@ -97,6 +97,8 @@ script:
 
 after_failure:
   - cat /home/travis/build/borisbrodski/sevenzipjbinding/build/javac-args-test.tmp
+  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/
+  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/junit-4.11.jar
 #        ctest -I 1,13,,17# ;
 # -DJAVA_ARCH=x86
 # -DMINGW32=Yes
