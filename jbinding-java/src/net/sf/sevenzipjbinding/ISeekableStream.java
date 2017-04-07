@@ -2,7 +2,7 @@ package net.sf.sevenzipjbinding;
 
 /**
  * Interface for seekable streams (random access streams).
- * 
+ *
  * @author Boris Brodski
  * @since 9.20-2.00
  */
@@ -30,19 +30,21 @@ public interface ISeekableStream {
      * <br>
      * <i>Note:</i> depending on the archive format and the data size this method may be called from different threads.
      * Synchronized implementation may be required.
-     * 
-     * 
+     *
+     *
      * @param offset
      *            absolute or relative offset in the stream to move to
      * @param seekOrigin
      *            on of three possible seek origins:<br>
-     *            <li> {@link #SEEK_SET} - <code>offset</code> is an absolute offset to move to,<br><li>
-     *            {@link #SEEK_CUR} - <code>offset</code> is a relative offset to the current position in stream,<br>
-     *            <li> {@link #SEEK_END} - <code>offset</code> is an offset from the end of the stream
-     *            <code>(offset <= 0)</code>.
-     * 
+     *            <ul>
+     *            <li>{@link #SEEK_SET} - <code>offset</code> is an absolute offset to move to,
+     *            <li>{@link #SEEK_CUR} - <code>offset</code> is a relative offset to the current position in stream,
+     *            <li>{@link #SEEK_END} - <code>offset</code> is an offset from the end of the stream
+     *            </ul>
+     *            {@code (offset <= 0)}.
+     *
      * @return new absolute position in the stream.
-     * 
+     *
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
      *             as failed. There are no guarantee, that there are no further call back methods will get called. The

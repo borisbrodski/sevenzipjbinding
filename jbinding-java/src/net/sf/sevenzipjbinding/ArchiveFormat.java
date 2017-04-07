@@ -8,9 +8,9 @@ import net.sf.sevenzipjbinding.impl.OutArchiveTarImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
 
 /**
- * Enumeration of all supported archive types. <blockquote>
+ * Enumeration of all supported archive types.
  *
- * <table border="1">
+ * <table border="1" summary="Archive format overview">
  * <tr>
  * <td><b>Format</b></td>
  * <td><b>extraction</b></td>
@@ -138,7 +138,6 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #ZIP}</td>
  * </tr>
  * </table>
- * <blockquote> <br>
  *
  * @author Boris Brodski
  * @since 1.0
