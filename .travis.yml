@@ -2,17 +2,34 @@
 
 language: c
 os: osx
+osx_image: xcode6.4
+
+env:
+  - BUILDMODE=osx-32
+  - BUILDMODE=osx-64
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install graphviz; fi
 
 script:
-  - mkdir build &&
+  - cmake --version
+  - if [[ "$BUILDMODE" == "osx-64" ]]; then
+        mkdir build &&
         cd build &&
         cmake -DCMAKE_BUILD_TYPE=Debug .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
+    fi
+  - if [[ "$BUILDMODE" == "osx-32" ]]; then
+        mkdir build &&
+        cd build &&
+        cmake -DCMAKE_BUILD_TYPE=Debug -DJAVA_PARAMS=-d32 .. &&
+        cmake --build . &&
+        ctest -I 1,13,,17# ;
+    fi
+
+
 
 #addons:
 #  apt:
@@ -27,6 +44,7 @@ script:
 ##    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
 #
 #
+  
 #env:
 ##  - BUILDMODE=linux
 #  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW32=No MINGW64=Yes
