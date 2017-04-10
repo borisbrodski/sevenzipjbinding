@@ -1,104 +1,117 @@
 # TODO Add to MinGW build "-static-libgcc -static-libstdc++"
 
 language: c
-addons:
-  apt:
-    sources:
-    - kubuntu-backports
-    packages:
-    - cmake
-#include:    
-#  - compiler: ": w64"
-#    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
-#  - compiler: ": w32"
-#    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
+os: osx
 
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install graphviz; fi
 
-env:
-#  - BUILDMODE=linux
-  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW32=No MINGW64=Yes
-  - BUILDMODE=mingw32 PLATFORM="mingw32" ARCH="x86"    BITSIZE=32 HOST="i686"   JAVA_ARCH="x86 "  MINGW32=Yes MINGW64=No
-
-install:
-  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
-  - sudo apt-get update -qq
-  - uname -m
-  - sudo apt-get install -y cloog-isl mingw32
-  - if [ "$BITSIZE" = "32" ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
-  - if [ "$BITSIZE" = "64" ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
-  - export MINGW=/opt/mingw$BITSIZE
-  - export PATH=$MINGW/bin:$PATH
-  - export CC=$HOST-w64-mingw32-gcc
-  - export CXX=$HOST-w64-mingw32-g++
-
-#  - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
-#  - export QTDIR=/opt/qt54
-#  - export PATH=$QTDIR/bin:$PATH
-#  - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
-#before_script:
-#  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-#  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
-#  - sudo apt-get -qq update
-#  - sudo apt-get -qq install libsmbclient-dev libssh2-1-dev
-#  - sudo apt-get -qq install gcc-4.8 g++-4.8
-#  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20
-#  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
-#  - sudo update-alternatives --config gcc
-#  - sudo update-alternatives --config g++
-# Packages: https://launchpad.net/~tobydox/+ppa-packages
-#  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get install -y mingw64-x-gcc mingw-x-binutils mingw-x-runtime; fi
-
-#install:
-#  - sudo apt-get update -qq
-#  - sudo apt-get install -y -qq lcov curl
 script:
-  - echo $BUILDMODE . $PLATFORM . $ARCH . $BITSIZE . $HOST . $JAVA_ARCH . $MINGW64
-  - if [ "$BUILDMODE" = "linux" ]; then
-      mkdir build &&
+  - mkdir build &&
         cd build &&
         cmake -DCMAKE_BUILD_TYPE=Debug .. &&
         cmake --build . &&
         ctest -I 1,13,,17# ;
-    fi
-  - if [ "$PLATFORM" = "mingw32" ]; then
-      ls -l /usr/lib/jvm/java-7-oracle/ &&
-      echo "Searching for predefs.h" &&
-      mkdir build &&
-        cd build &&
-        echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
-        echo "SET(CMAKE_C_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-gcc)" >> toolchain.cmake &&
-        echo "SET(CMAKE_CXX_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-g++)" >> toolchain.cmake &&
-        echo "SET(CMAKE_RC_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-windres)" >> toolchain.cmake &&
-        echo "SET(CMAKE_SYSROOT /opt/mingw$BITSIZE/)" >> toolchain.cmake &&
-        echo "SET(CMAKE_FIND_ROOT_PATH /opt/mingw$BITSIZE)" >> toolchain.cmake &&
-        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)" >> toolchain.cmake &&
-        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
-        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
-        cmake -DCMAKE_BUILD_TYPE=Debug
-            -DMINGW64=$MINGW64
-            -DMINGW32=$MINGW32
-            -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
-            -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
-            -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
-            -DJAVA_HEADER_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javah
-            -DJAVA_DOC=/usr/lib/jvm/java-7-oracle/bin/javadoc
-            -DJAVA_RUNTIME=/usr/lib/jvm/java-7-oracle/bin/java
-            -DJAVA_ARCHIVE=/usr/lib/jvm/java-7-oracle/bin/jar
-            -DRUNTIME_LIB=""
-            -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
-            -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
-            -DJAVA_SYSTEM=Windows
-            -DJAVA_ARCH=$JAVA_ARCH
-            .. &&
-        find . -name includes_CXX.rsp -print -exec cat "{}" \; ;
-        make VERBOSE=1
-        ;
-    fi
 
-after_failure:
-  - cat /home/travis/build/borisbrodski/sevenzipjbinding/build/javac-args-test.tmp
-  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/
-  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/junit-4.11.jar
+#addons:
+#  apt:
+#    sources:
+#    - kubuntu-backports
+#    packages:
+#    - cmake
+##include:    
+##  - compiler: ": w64"
+##    env: PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW64=Yes
+##  - compiler: ": w32"
+##    env: PLATFORM="mingw32" ARCH="x86" BITSIZE=32 HOST="i686" JAVA_ARCH="x86" MINGW64=No
+#
+#
+#env:
+##  - BUILDMODE=linux
+#  - BUILDMODE=mingw64 PLATFORM="mingw32" ARCH="x86_64" BITSIZE=64 HOST="x86_64" JAVA_ARCH="amd64" MINGW32=No MINGW64=Yes
+#  - BUILDMODE=mingw32 PLATFORM="mingw32" ARCH="x86"    BITSIZE=32 HOST="i686"   JAVA_ARCH="x86 "  MINGW32=Yes MINGW64=No
+#
+#install:
+#  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise            # < MinGW
+#  - sudo apt-get update -qq
+#  - uname -m
+#  - sudo apt-get install -y cloog-isl mingw32
+#  - if [ "$BITSIZE" = "32" ]; then sudo apt-get install -y mingw32-x-binutils mingw32-x-gcc mingw32-x-runtime; fi
+#  - if [ "$BITSIZE" = "64" ]; then sudo apt-get install -y mingw64-x-binutils mingw64-x-gcc mingw64-x-runtime; fi
+#  - export MINGW=/opt/mingw$BITSIZE
+#  - export PATH=$MINGW/bin:$PATH
+#  - export CC=$HOST-w64-mingw32-gcc
+#  - export CXX=$HOST-w64-mingw32-g++
+#
+##  - sudo apt-get install qt54base qt54imageformats qt54tools -y -qq
+##  - export QTDIR=/opt/qt54
+##  - export PATH=$QTDIR/bin:$PATH
+##  - export LD_LIBRARY_PATH=$QTDIR/lib/:$QTDIR/lib/`uname -m`-linux-gnu:$LD_LIBRARY_PATH
+##before_script:
+##  - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
+##  - sudo add-apt-repository --yes ppa:tobydox/mingw-x-precise
+##  - sudo apt-get -qq update
+##  - sudo apt-get -qq install libsmbclient-dev libssh2-1-dev
+##  - sudo apt-get -qq install gcc-4.8 g++-4.8
+##  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20
+##  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20
+##  - sudo update-alternatives --config gcc
+##  - sudo update-alternatives --config g++
+## Packages: https://launchpad.net/~tobydox/+ppa-packages
+##  - if [ "$BUILDMODE" = "mingw64" ]; then sudo apt-get install -y mingw64-x-gcc mingw-x-binutils mingw-x-runtime; fi
+#
+##install:
+##  - sudo apt-get update -qq
+##  - sudo apt-get install -y -qq lcov curl
+#script:
+#  - echo $BUILDMODE . $PLATFORM . $ARCH . $BITSIZE . $HOST . $JAVA_ARCH . $MINGW64
+#  - if [ "$BUILDMODE" = "linux" ]; then
+#      mkdir build &&
+#        cd build &&
+#        cmake -DCMAKE_BUILD_TYPE=Debug .. &&
+#        cmake --build . &&
 #        ctest -I 1,13,,17# ;
-# -DJAVA_ARCH=x86
-# -DMINGW32=Yes
+#    fi
+#  - if [ "$PLATFORM" = "mingw32" ]; then
+#      ls -l /usr/lib/jvm/java-7-oracle/ &&
+#      echo "Searching for predefs.h" &&
+#      mkdir build &&
+#        cd build &&
+#        echo "SET(CMAKE_SYSTEM_NAME Windows)" > toolchain.cmake &&
+#        echo "SET(CMAKE_C_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-gcc)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_CXX_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-g++)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_RC_COMPILER /opt/mingw$BITSIZE/bin/$HOST-w64-mingw32-windres)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_SYSROOT /opt/mingw$BITSIZE/)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_FIND_ROOT_PATH /opt/mingw$BITSIZE)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)" >> toolchain.cmake &&
+#        echo "SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)" >> toolchain.cmake &&
+#        cmake -DCMAKE_BUILD_TYPE=Debug
+#            -DMINGW64=$MINGW64
+#            -DMINGW32=$MINGW32
+#            -DJAVA_INCLUDE_PATH=/usr/lib/jvm/java-7-oracle/include
+#            -DJAVA_INCLUDE_PATH2=/usr/lib/jvm/java-7-oracle/include/linux
+#            -DJAVA_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javac
+#            -DJAVA_HEADER_COMPILE=/usr/lib/jvm/java-7-oracle/bin/javah
+#            -DJAVA_DOC=/usr/lib/jvm/java-7-oracle/bin/javadoc
+#            -DJAVA_RUNTIME=/usr/lib/jvm/java-7-oracle/bin/java
+#            -DJAVA_ARCHIVE=/usr/lib/jvm/java-7-oracle/bin/jar
+#            -DRUNTIME_LIB=""
+#            -DCMAKE_TOOLCHAIN_FILE=toolchain.cmake
+#            -DJAVA_JDK=/usr/lib/jvm/java-7-oracle/
+#            -DJAVA_SYSTEM=Windows
+#            -DJAVA_ARCH=$JAVA_ARCH
+#            .. &&
+#        find . -name includes_CXX.rsp -print -exec cat "{}" \; ;
+#        make VERBOSE=1
+#        ;
+#    fi
+#
+#after_failure:
+#  - cat /home/travis/build/borisbrodski/sevenzipjbinding/build/javac-args-test.tmp
+#  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/
+#  - ls -l /home/travis/build/borisbrodski/sevenzipjbinding/test/JavaTests/lib/junit-4.11.jar
+##        ctest -I 1,13,,17# ;
+## -DJAVA_ARCH=x86
+## -DMINGW32=Yes
