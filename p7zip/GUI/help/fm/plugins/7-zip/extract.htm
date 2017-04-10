@@ -13,22 +13,11 @@
 <P>Allows you to specify options for extracting files from archive.</P>
 
 <H4>How to run this dialog box</H4>
-<P>There are two ways to run this dialog</P>
-<UL>
-  <LI>To extract all files from an archive:
-    <OL>
-      <LI>In Windows Explorer or in 7-Zip, right-click the archive file.</LI>
-      <LI>Point to <B>7-Zip</B>, and then click <B>Extract files...</B>.</LI>
-    </OL>
-  </LI>
 
-  <LI>To extract specified files from an archive opened in the browsing window:
-    <OL>
-      <LI>Open archive with 7-Zip.</LI>
-      <LI>Select items to extract.</LI>
-      <LI>Right-click items and then click <B>Copy To...</B>.</LI>
-    </OL>
-  </LI>
+<P>There are two ways to run this dialog to extract all files from an archive:</P>
+<UL>
+  <LI>In Windows Explorer or in 7-Zip, right-click the archive file, point to <B>7-Zip</B>, and then click <B>Extract files...</B>.</LI>
+  <LI>Select the archive file in 7-Zip and press <B>Extract</B> button.</LI>
 </UL>
 
 
@@ -45,9 +34,16 @@
     <TABLE>
       <TR> <TH>Value</TH> <TH>Meaning</TH> </TR>
       <TR> <TD>Full pathnames</TD> <TD>Extract files with full pathnames.</TD> </TR>
-      <TR> <TD>No pathnmes</TD> <TD>Extract files without folder paths.</TD> </TR>
+      <TR> <TD>No pathnames</TD> <TD>Extract files without folder paths.</TD> </TR>
+      <TR> <TD>Absolute pathnames</TD> <TD>Extract files with absolute pathnames. 
+               7-Zip doesn't use folder specified in "Extract to" field for files in archive 
+               that have absolute pathnames. Absolute path can include drive name. </TD> </TR>
     </TABLE>
   </DD>
+
+  <DT>Eliminate duplication of root folder</DT>
+  <DD>That option allows to eliminate duplication of root folder, if all files
+      in archive are placed in folder with name that is identical to name of output folder.</DD>
 
   <DT>Overwrite mode</DT>
   <DD>
@@ -64,20 +60,17 @@
     </TABLE>
   </DD>
 
-  <DT>Files</DT>
-  <DD>
-    <P>Specifies files for extracting:</P>
-    <TABLE>
-      <TR> <TH>Value</TH> <TH>Meaning</TH> </TR>
-      <TR> <TD>Selected files</TD> <TD>Extract only files that are selected in the main window.</TD> </TR>
-      <TR> <TD>All files</TD> <TD>Extract all files.</TD> </TR>
-    </TABLE>
-  </DD>
-
   <DT>Password</DT>
   <DD>
     <P>Specifies a password for encrypted archives.</P>
   </DD>
+  <DT>Show Password</DT>
+    <DD>Show a password in Password field.</DD>
+
+  <DT>Restore file security</DT>
+  <DD>Restore file security information, if archive contains that information.
+      That feature now is implemented only for WIM archives.</DD>
+
 </DL>
 <UL>
 

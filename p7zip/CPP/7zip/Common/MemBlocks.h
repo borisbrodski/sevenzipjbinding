@@ -3,9 +3,9 @@
 #ifndef __MEM_BLOCKS_H
 #define __MEM_BLOCKS_H
 
-#include "Common/MyVector.h"
+#include "../../Common/MyVector.h"
 
-#include "Windows/Synchronization.h"
+#include "../../Windows/Synchronization.h"
 
 #include "../IStream.h"
 
@@ -35,7 +35,7 @@ public:
   CMemBlockManagerMt(size_t blockSize = (1 << 20)): CMemBlockManager(blockSize) {}
   ~CMemBlockManagerMt() { FreeSpace(); }
 
-  HRes AllocateSpace(NWindows::NSynchronization::CSynchro *sync, size_t numBlocks, size_t numNoLockBlocks = 0);
+  HRes AllocateSpace(NWindows::NSynchronization::CSynchro *sync ,size_t numBlocks, size_t numNoLockBlocks = 0);
   HRes AllocateSpaceAlways(NWindows::NSynchronization::CSynchro *sync, size_t desiredNumberOfBlocks, size_t numNoLockBlocks = 0);
   void FreeSpace();
   void *AllocateBlock();

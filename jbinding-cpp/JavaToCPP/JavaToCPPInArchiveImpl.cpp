@@ -1,9 +1,9 @@
 #include "SevenZipJBinding.h"
 #include "JNITools.h"
 #include "net_sf_sevenzipjbinding_impl_InArchiveImpl.h"
-#include "CPPToJava/CPPToJavaInStream.h"
 #include "CPPToJava/CPPToJavaArchiveExtractCallback.h"
 #include "CodecTools.h"
+#include "UnicodeHelper.h"
 
 #include "JavaStatInfos/JavaPackageSevenZip.h"
 
@@ -22,11 +22,11 @@ static JBindingSession & GetJBindingSession(JNIEnv * env, jobject thiz) {
     return *((JBindingSession *) (void *) (size_t) pointer);
 }
 
-static CPPToJavaInStream * GetInStream(JNIEnv * env, jobject thiz) {
+static IInStream * GetInStream(JNIEnv * env, jobject thiz) {
     jlong pointer = jni::InArchiveImpl::sevenZipInStreamInstance_Get(env, thiz);
     FATALIF(!pointer, "GetInStream() : pointer == NULL.");
 
-    return (CPPToJavaInStream *) (void *) (size_t) pointer;
+    return (IInStream *) (void *) (size_t) pointer;
 }
 
 int CompareIndicies(const void *pi1, const void * pi2) {
@@ -58,8 +58,6 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
         TRACE("Archive==NULL. Do nothing...");
         return;
     }
-
-    CPPToJavaInStream * inStream = GetInStream(env, thiz);
 
     jint * indices = NULL;
     UInt32 indicesCount = (UInt32) -1;
@@ -137,10 +135,6 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    CPPToJavaInStream * p = GetInStream(env, thiz);
-
-    CMyComPtr<CPPToJavaInStream> inStream(p);
-
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
         return 0;
@@ -172,7 +166,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
         JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
         CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-        CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
+        CMyComPtr<IInStream> inStream(GetInStream(env, thiz));
 
         if (archive == NULL) {
             TRACE("Archive==NULL. Do nothing...");
@@ -210,7 +204,6 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -241,7 +234,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...")
@@ -260,10 +252,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     }
 
     jstring javaName;
-    if (&name == NULL) {
+    if (((const wchar_t *)name) == NULL) {
         javaName = env->NewStringUTF("");
     } else {
-        javaName = env->NewString((jchar *) (BSTR) name, name.Length());
+        javaName = ToJChar(name).toNewString(env);
     }
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
@@ -296,7 +288,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...")
@@ -327,7 +318,6 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -357,7 +347,6 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -389,7 +378,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -398,7 +386,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     NWindows::NCOM::CPropVariant propVariant;
 
-    //    TRACE3("Index: %i, PropID: %i, archive: 0x%08X", index, propID, (unsigned int)(Object *)(CPPToJavaInStream *)(void*)(*(&archive)))
     CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
     return PropVariantToObject(jniEnvInstance, &propVariant);
@@ -422,7 +409,6 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -453,7 +439,6 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-    CMyComPtr<CPPToJavaInStream> inStream(GetInStream(env, thiz));
 
     if (archive == NULL) {
         TRACE("Archive==NULL. Do nothing...");
@@ -472,10 +457,10 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     }
 
     jstring javaName;
-    if (&name == NULL) {
+    if (((const wchar_t *)name) == NULL) {
         javaName = env->NewStringUTF("");
     } else {
-        javaName = env->NewString((jchar *) (BSTR) name, name.Length());
+        javaName = ToJChar(name).toNewString(env);
     }
     jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 

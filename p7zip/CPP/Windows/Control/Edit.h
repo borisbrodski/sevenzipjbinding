@@ -14,6 +14,7 @@ class CEdit: public CWindow
 public:
 	void SetPasswordChar(WPARAM c);
 	void Show(int cmdShow);
+	void Show_Bool(bool show) { Show(show ? SW_SHOW: SW_HIDE); }
 	virtual void SetText(LPCWSTR s);
 	virtual bool GetText(CSysString &s);
 };

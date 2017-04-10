@@ -39,7 +39,10 @@ public interface IInArchive extends Closeable {
     public int getNumberOfItems() throws SevenZipException;
 
     /**
-     * Get value of property <code>propID</code> of the item with the index <code>index</code>.
+     * Get value of property <code>propID</code> of the item with the index <code>index</code>.<br>
+     * <br>
+     * <i>NOTE:</i> Some properties my only be available after the extraction operation completes.<br>
+     * Example: PACKED_SIZE of the LZMA archives.
      * 
      * @param index
      *            index of item to get property value. 0 - first archive item.

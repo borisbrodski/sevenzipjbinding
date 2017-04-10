@@ -7,8 +7,7 @@
 
 #include "../Common/StreamUtils.h"
 
-#include "MyAes.h"
-#include "Sha1.h"
+#include "Sha1Cls.h"
 #include "ZipStrong.h"
 
 namespace NCrypto {
@@ -57,20 +56,22 @@ STDMETHODIMP CBaseCoder::CryptoSetPassword(const Byte *data, UInt32 size)
   return S_OK;
 }
 
-HRESULT CDecoder::ReadHeader(ISequentialInStream *inStream, UInt32 /* crc */, UInt64 /* unpackSize */)
+STDMETHODIMP CBaseCoder::Init()
+{
+  return S_OK;
+}
+
+HRESULT CDecoder::ReadHeader(ISequentialInStream *inStream, UInt32 crc, UInt64 unpackSize)
 {
   Byte temp[4];
   RINOK(ReadStream_FALSE(inStream, temp, 2));
   _ivSize = GetUi16(temp);
   if (_ivSize == 0)
   {
-    return E_NOTIMPL;
-    /*
-    SetUi32(_iv, crc);
-    for (int i = 0; i < 8; i++)
-     _iv[4 + i] = (Byte)(unpackSize >> (8 * i));
-    SetUi32(_iv + 12, 0);
-    */
+    memset(_iv, 0, 16);
+    SetUi32(_iv + 0, crc);
+    SetUi64(_iv + 4, unpackSize);
+    _ivSize = 12;
   }
   else if (_ivSize == 16)
   {
@@ -83,16 +84,15 @@ HRESULT CDecoder::ReadHeader(ISequentialInStream *inStream, UInt32 /* crc */, UI
   const UInt32 kAlign = 16;
   if (_remSize < 16 || _remSize > (1 << 18))
     return E_NOTIMPL;
-  if (_remSize + kAlign > _buf.GetCapacity())
+  if (_remSize + kAlign > _buf.Size())
   {
-    _buf.Free();
-    _buf.SetCapacity(_remSize + kAlign);
+    _buf.Alloc(_remSize + kAlign);
     _bufAligned = (Byte *)((ptrdiff_t)((Byte *)_buf + kAlign - 1) & ~(ptrdiff_t)(kAlign - 1));
   }
   return ReadStream_FALSE(inStream, _bufAligned, _remSize);
 }
 
-HRESULT CDecoder::CheckPassword(bool &passwOK)
+HRESULT CDecoder::Init_and_CheckPassword(bool &passwOK)
 {
   passwOK = false;
   if (_remSize < 16)
@@ -135,14 +135,14 @@ HRESULT CDecoder::CheckPassword(bool &passwOK)
   {
     RINOK(SetKey(_key.MasterKey, _key.KeySize));
     RINOK(SetInitVector(_iv, 16));
-    Init();
+    RINOK(Init());
     Filter(p, rdSize);
   }
 
   Byte fileKey[32];
   NSha1::CContext sha;
   sha.Init();
-  sha.Update(_iv, 16);
+  sha.Update(_iv, _ivSize);
   sha.Update(p, rdSize - 16); // we don't use last 16 bytes (PAD bytes)
   DeriveKey(sha, fileKey);
   
@@ -157,7 +157,6 @@ HRESULT CDecoder::CheckPassword(bool &passwOK)
   if (GetUi32(validData + validSize) != CrcCalc(validData, validSize))
     return S_OK;
   passwOK = true;
-  Init();
   return S_OK;
 }
 

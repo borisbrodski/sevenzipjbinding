@@ -1,8 +1,4 @@
-Release 2.00 TODOs:
-
-
 Other TODOs:
-
 - Prevent JVM from crash in OutOfMemory cases (see JavaStaticInfo.cpp)
 
 - Post a issue for p7zip: core dump if referencing not existing archive item (index out of range).
@@ -20,17 +16,13 @@ Other TODOs:
 
 - Bind SetProperty("CRC", ...) for extraction of 7z archives and compression of XZ-archives
 
-- Test creation of password protected archives (7z, zip, ??)
-- Test: Create archives with unicode symbols in PATH 
+- Test: creation of password protected archives (7z, zip, ??)
+- Test: create archives with unicode symbols in PATH 
 
 - Write tests to check, that all enumerations are mapped correctly
-  - PropID
-    - Add test to ensure "kpidLink"(c++) == "LINK" (java)
   - NCoderID
   - ExtractAskMode
   - ExtractOperationResult
-
-- Add privileged initialization of the native part. See forum "Help" (done?)
 
 - Add to integration tests
   - Test, that the release and not the debug compilation of the binary was used to build each platform jar
@@ -57,7 +49,7 @@ Major TODOs:
 - Support 7-zip volumes (see INTERFACE_IArchiveUpdateCallback2)
 - Support ICompressProgressInfo
 - Add Xz compression/decompression
-
+- Test .ar, .a, .lib extension (DEB already tested) (from ArHandler.cpp)
 
 Checklists
  - Bind new version of 7-zip
@@ -68,26 +60,3 @@ Info:
   * http://ifctfvax.harhan.org/Quasijarus/compress.html
   * ftp://ifctfvax.harhan.org/pub/UNIX/
 
-
-Use AsciiDoc to write User Manual
-
-Example:
-
-7-Zip-JBinding User Manual
-==========================
-Boris Brodski <brodsky_boris@yahoo.com>
-v1.0, February 2010:
-First release.
-
-
-
-Level One Section Title
------------------------
-
-Level 2 Subsection Title
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-Hello World
-
- 

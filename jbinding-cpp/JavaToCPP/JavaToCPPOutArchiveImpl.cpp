@@ -128,6 +128,49 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 
 /*
  * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
+ * Method:    nativeSetHeaderEncryption
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSetHeaderEncryption
+  (JNIEnv * env, jobject thiz, jboolean enabled) {
+    TRACE("OutArchiveImpl::nativeSetHeaderEncryption(). ThreadID=" << PlatformGetCurrentThreadId());
+
+    JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
+    JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+
+    CMyComPtr<IOutArchive> outArchive(GetArchive(env, thiz));
+    // TODO Delete this and all other such ifs, also in J2CppInArchive.cpp, since this is already tested in GetArchive()
+    if (outArchive == NULL) {
+        TRACE("Archive==NULL. Do nothing...");
+        return;
+    }
+
+    // TODO Move query interface to the central location in J2C+SevenZip.cpp
+    CMyComPtr<ISetProperties> setProperties;
+    HRESULT result = outArchive->QueryInterface(IID_ISetProperties, (void**)&setProperties);
+    if (result != S_OK) {
+        TRACE("Error getting IID_ISetProperties interface. Result: 0x" << std::hex << result)
+        jniNativeCallContext.reportError(result, "Error getting IID_ISetProperties interface.");
+        return;
+    }
+
+    const int size = 1;
+    NWindows::NCOM::CPropVariant *propValues = new NWindows::NCOM::CPropVariant[size];
+    propValues[0] = (bool)enabled;
+
+    CRecordVector<const wchar_t *> names;
+    names.Add(L"HE"); // See 7zHandlerOut.cpp:823
+
+    result = setProperties->SetProperties(&names.Front(), propValues, names.Size());
+    if (result) {
+        TRACE("Error setting 'Header Encryption' property. Result: 0x" << std::hex << result)
+        jniNativeCallContext.reportError(result, "Error setting 'Header Encryption' property.");
+        return;
+    }
+}
+/*
+ * Class:     net_sf_sevenzipjbinding_impl_OutArchiveImpl
  * Method:    nativeSetSolidSpec
  * Signature: (Ljava/land/String;)V
  */
@@ -160,10 +203,8 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
 		// printf("[SolidSpec:false]");fflush(stdout);
         propValues[0] = false;
     } else {
-        const jchar * jchars = env->GetStringChars(solidSpec, NULL);
 		// printf("[SolidSpec:%S]", UString(UnicodeHelper(jchars)).GetBuffer(100000));fflush(stdout);
-        propValues[0] = UString(UnicodeHelper(jchars));
-        env->ReleaseStringChars(solidSpec, jchars);
+        propValues[0] = UString(FromJChar(env, solidSpec));
     }
     CRecordVector<const wchar_t *> names;
     names.Add(L"S");

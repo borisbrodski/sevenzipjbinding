@@ -55,7 +55,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
         virtualContentThreadLocal.set(virtualContent);
         virtualContent.fillRandomly(COUNT_OF_FILES, DIRECTORIES_DEPTH, MAX_SUBDIRECTORIES, AVERAGE_FILE_LENGTH,
-                DELTA_FILE_LENGTH, filenameGenerator);
+                DELTA_FILE_LENGTH, filenameGenerator, false);
     }
 
     @Test

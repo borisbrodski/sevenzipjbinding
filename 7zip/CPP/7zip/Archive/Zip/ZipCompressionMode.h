@@ -3,38 +3,58 @@
 #ifndef __ZIP_COMPRESSION_MODE_H
 #define __ZIP_COMPRESSION_MODE_H
 
-#include "Common/MyString.h"
+#include "../../../Common/MyString.h"
+
+#ifndef _7ZIP_ST
+#include "../../../Windows/System.h"
+#endif
+
+#include "../Common/HandlerOut.h"
 
 namespace NArchive {
 namespace NZip {
 
-struct CCompressionMethodMode
+struct CBaseProps
 {
-  CRecordVector<Byte> MethodSequence;
-  UString MatchFinder;
-  UInt32 Algo;
-  UInt32 NumPasses;
-  UInt32 NumFastBytes;
-  bool NumMatchFinderCyclesDefined;
-  UInt32 NumMatchFinderCycles;
-  UInt32 DicSize;
-  UInt32 MemSize;
-  UInt32 Order;
+  CMethodProps MethodInfo;
+  Int32 Level;
 
   #ifndef _7ZIP_ST
   UInt32 NumThreads;
+  bool NumThreadsWasChanged;
   #endif
-  bool PasswordIsDefined;
-  AString Password;
   bool IsAesMode;
   Byte AesKeyMode;
+
+  void Init()
+  {
+    MethodInfo.Clear();
+    Level = -1;
+    #ifndef _7ZIP_ST
+    NumThreads = NWindows::NSystem::GetNumberOfProcessors();;
+    NumThreadsWasChanged = false;
+    #endif
+    IsAesMode = false;
+    AesKeyMode = 3;
+  }
+};
+
+struct CCompressionMethodMode: public CBaseProps
+{
+  CRecordVector<Byte> MethodSequence;
+  bool PasswordIsDefined;
+  AString Password;
+
+  UInt64 _dataSizeReduce;
+  bool _dataSizeReduceDefined;
   
-  CCompressionMethodMode():
-      NumMatchFinderCyclesDefined(false),
-      PasswordIsDefined(false),
-      IsAesMode(false),
-      AesKeyMode(3)
-      {}
+  bool IsRealAesMode() const { return PasswordIsDefined && IsAesMode; }
+
+  CCompressionMethodMode(): PasswordIsDefined(false)
+  {
+    _dataSizeReduceDefined = false;
+    _dataSizeReduce = 0;
+  }
 };
 
 }}

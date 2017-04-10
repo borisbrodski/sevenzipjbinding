@@ -15,18 +15,18 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * accessing 7z volumed archives. 7z splits its archives into volumes on the byte layout. Each archive volume gets
  * extension <code>.7z.nnn</code> (<code>.7z.001</code>, <code>.7z.002</code>, <code>.7z.003</code>, ...). Such archives
  * can be reassembled into single archive file using simple concatenation: <br>
- * <blockquote> <code>cat name.7z.* > name.7z</code> </blockquote>
- * 
+ * <blockquote> {@code cat name.7z.* > name.7z} </blockquote>
+ *
  * To use this you need to implement {@link IArchiveOpenVolumeCallback} interface.
  * <ul>
- * <li> {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the <code>propID</code>={@link PropID#NAME} will be
+ * <li>{@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the <code>propID</code>={@link PropID#NAME} will be
  * called ones to get the file name of the first volume in case it was not given to constructor. The file name should
  * ends with <code>.7z.001</code> or SevenZipException will be thrown.
- * <li> {@link IArchiveOpenVolumeCallback#getStream(String)} will be called multiple times to get instance of
+ * <li>{@link IArchiveOpenVolumeCallback#getStream(String)} will be called multiple times to get instance of
  * {@link IInStream} representing required volume. The implementation of {@link IArchiveOpenVolumeCallback} should close
  * file associated with the old {@link IInStream}, if a new {@link IInStream} was successfully instantiated.
  * </ul>
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -50,7 +50,7 @@ public class VolumedArchiveInStream implements IInStream {
      * first archive volume will be asked using {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
      * <code>propID</code>={@link PropID#NAME}. The file name should ends with <code>.7z.001</code> or SevenZipException
      * will be thrown.
-     * 
+     *
      * @param archiveOpenVolumeCallback
      *            call back implementation used to access different volumes of archive.
      * @throws SevenZipException
@@ -63,7 +63,7 @@ public class VolumedArchiveInStream implements IInStream {
 
     /**
      * Creates instance of {@link VolumedArchiveInStream} using {@link IArchiveOpenVolumeCallback}.
-     * 
+     *
      * @param firstVolumeFilename
      *            the file name of the first volume.
      * @param archiveOpenVolumeCallback
@@ -229,8 +229,8 @@ public class VolumedArchiveInStream implements IInStream {
     }
 
     public void close() throws IOException {
-        throw new RuntimeException("close() method not supported. "
-                + "The user should implement its own caching and closing stratagies "
-                + "within the IArchiveOpenVolumeCallback.getStream() implementation.");
+        throw new RuntimeException(
+                "close() method not supported. " + "The user should implement its own caching and closing stratagies "
+                        + "within the IArchiveOpenVolumeCallback.getStream() implementation.");
     }
 }

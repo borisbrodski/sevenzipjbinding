@@ -48,6 +48,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     protected final String extention;
     protected String passwordToUse;
     protected boolean usingPassword = false;
+    protected String generalPrefix = "";
     protected String cryptedArchivePrefix = "";
     protected String volumedArchivePrefix = "";
     protected String volumeArchivePostfix = "";
@@ -79,6 +80,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
     protected void expectException(Class<? extends Exception> exceptionClass) {
         exceptionToBeExpected = exceptionClass;
+    }
+
+    protected void setGeneralPrefix(String generalPrefix) {
+        this.generalPrefix = generalPrefix;
     }
 
     protected void setCryptedArchivePrefix(String cryptedArchivePrefix) {
@@ -352,7 +357,8 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
         public IInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
                 boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
             String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
-                    + volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "." + testFileExt
+                    + generalPrefix + volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "."
+                    + testFileExt
                     + "." + compressionIndex + "." + extention + volumeArchivePostfix;
 
             if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {

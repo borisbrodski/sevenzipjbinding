@@ -24,6 +24,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutCreateCallback;
@@ -103,10 +104,18 @@ public class VirtualContent {
         String group;
         boolean groupSet;
 
+        String symLink;
+        boolean symLinkSet;
+
+        String hardLink;
+        boolean hardLinkSet;
+
         // TODO Add more parameters, that we can test
 
         Item(byte[] blobData) {
-            blob = new ByteArrayStream(blobData, false);
+            if (blobData != null) {
+                blob = new ByteArrayStream(blobData, false);
+            }
         }
 
         public VirtualContent getVirtualContent() {
@@ -134,7 +143,9 @@ public class VirtualContent {
 
             Item item = itemList.get(index);
             ByteArrayStream byteArrayStream = item.blob;
-            byteArrayStream.rewind();
+            if (byteArrayStream != null) {
+                byteArrayStream.rewind();
+            }
 
             switch (outItem.getArchiveFormat()) {
             case SEVEN_ZIP:
@@ -184,12 +195,20 @@ public class VirtualContent {
 
                 outItemTar.setPropertyGroup(item.group);
                 item.groupSet = (item.group != null);
+
+                outItemTar.setPropertySymLink(item.symLink);
+                item.symLinkSet = (item.symLink != null);
+
+                outItemTar.setPropertyHardLink(item.hardLink);
+                item.hardLinkSet = (item.hardLink != null);
                 break;
             default:
                 throw new RuntimeException("Unknown ArchiveFormat: " + outItem.getArchiveFormat());
             }
 
-            outItem.setDataSize((long) item.blob.getSize());
+            if (item.blob != null) {
+                outItem.setDataSize((long) item.blob.getSize());
+            }
             outItem.setPropertyPath(item.path);
 
             return outItem;
@@ -197,6 +216,18 @@ public class VirtualContent {
 
         public ISequentialInStream getStream(int index) throws SevenZipException {
             return itemList.get(index).blob;
+        }
+    }
+
+    private class ArchiveCreateCallbackWithPassword extends ArchiveCreateCallback implements ICryptoGetTextPassword {
+        private String password;
+
+        ArchiveCreateCallbackWithPassword(String password) {
+            this.password = password;
+        }
+
+        public String cryptoGetTextPassword() throws SevenZipException {
+            return password;
         }
     }
 
@@ -286,7 +317,16 @@ public class VirtualContent {
                 assertNotNull(isDate);
                 assertTrue(Math.abs(item.creationTime.getTime() - isDate.getTime()) <= 2000);
             }
+            if (item.symLinkSet) {
+                assertEquals(item.symLink, inArchive.getProperty(index, PropID.SYM_LINK));
+            }
+            if (item.hardLinkSet) {
+                assertEquals(item.hardLink, inArchive.getProperty(index, PropID.HARD_LINK));
+            }
             extracted[myIndex] = true;
+            if (item.blob == null) {
+                return null;
+            }
             testSequentailOutStream = new TestSequentailOutStream(item);
             return testSequentailOutStream;
         }
@@ -324,6 +364,19 @@ public class VirtualContent {
             for (int i = 0; i < extracted.length; i++) {
                 assertTrue("Item '" + itemList.get(i).path + "' wasn't extracted", extracted[i]);
             }
+        }
+    }
+
+    private class VerifyExtractCallbackWithPassword extends VerifyExtractCallback implements ICryptoGetTextPassword {
+        private String password;
+
+        VerifyExtractCallbackWithPassword(IInArchive inArchive, String password) {
+            super(inArchive);
+            this.password = password;
+        }
+
+        public String cryptoGetTextPassword() throws SevenZipException {
+            return password;
         }
     }
 
@@ -407,6 +460,15 @@ public class VirtualContent {
         reindexUsedNames();
     }
 
+    private void addSymLink(Item item) {
+        item.symLink = JUnitNativeTestBase.getRandomName(random);
+        item.symLinkSet = true;
+    }
+
+    private void addHardLink(Item item) {
+        item.hardLink = JUnitNativeTestBase.getRandomName(random);
+        item.hardLinkSet = true;
+    }
     private void fillWithRandomData(Item item) {
         item.creationTime = JUnitNativeTestBase.getDate(3 * WEEK);
         item.modificationTime = JUnitNativeTestBase.getDate(2 * WEEK);
@@ -428,18 +490,37 @@ public class VirtualContent {
 
     public void createOutArchive(IOutCreateArchive<IOutItemAllFormats> outArchive, ISequentialOutStream outputStream)
             throws SevenZipException {
-        outArchive.createArchive(outputStream, itemList.size(), new ArchiveCreateCallback());
+        createOutArchive(outArchive, outputStream, false, null);
+    }
+
+    public void createOutArchive(IOutCreateArchive<IOutItemAllFormats> outArchive, ISequentialOutStream outputStream,
+            boolean implememntICryptoGetTextPassword, String password) throws SevenZipException {
+        ArchiveCreateCallback outCreateCallback;
+        if (implememntICryptoGetTextPassword) {
+            outCreateCallback = new ArchiveCreateCallbackWithPassword(password);
+        } else {
+            outCreateCallback = new ArchiveCreateCallback();
+        }
+        outArchive.createArchive(outputStream, itemList.size(), outCreateCallback);
     }
 
     public void verifyInArchive(IInArchive inArchive) throws SevenZipException {
-        VerifyExtractCallback verifyExtractCallback = new VerifyExtractCallback(inArchive);
+        verifyInArchive(inArchive, null);
+    }
+    public void verifyInArchive(IInArchive inArchive, String password) throws SevenZipException {
+        VerifyExtractCallback verifyExtractCallback;
+        if (password == null) {
+            verifyExtractCallback = new VerifyExtractCallback(inArchive);
+        } else {
+            verifyExtractCallback = new VerifyExtractCallbackWithPassword(inArchive, password);
+        }
         inArchive.extract(null, false, verifyExtractCallback);
         verifyExtractCallback.finish();
 
     }
 
     public void fillRandomly(int countOfFiles, int directoriesDepth, int maxSubdirectories, int averageFileLength,
-            int deltaFileLength, FilenameGenerator filenameGenerator) {
+            int deltaFileLength, FilenameGenerator filenameGenerator, boolean addLinks) {
         itemList.clear();
         List<String> directoryList = getRandomDirectory(directoriesDepth, maxSubdirectories, countOfFiles);
         for (int i = 0; i < countOfFiles; i++) {
@@ -451,7 +532,17 @@ public class VirtualContent {
 
             String directory = directoryList.get(random.nextInt(directoryList.size()));
 
-            Item item = new Item(fileContent);
+            Item item;
+            if (addLinks && random.nextInt(5) == 3) {
+                item = new Item(null);
+                if (random.nextInt(2) == 0) {
+                    addSymLink(item);
+                } else {
+                    addHardLink(item);
+                }
+            } else {
+                item = new Item(fileContent);
+            }
             fillWithRandomData(item);
             for (int j = 0; j < 50; j++) {
                 String filename = filenameGenerator == null ? JUnitNativeTestBase.getRandomFilename(random)
@@ -579,6 +670,14 @@ public class VirtualContent {
     public void updateGroupByPath(String itemToUpdatePath, String newValue) {
         int index = getIndexByPath(itemToUpdatePath);
         itemList.get(index).group = newValue;
+    }
+
+    public String getItemSymLink(int index) {
+        return itemList.get(index).symLink;
+    }
+
+    public String getItemHardLink(int index) {
+        return itemList.get(index).hardLink;
     }
 
 }

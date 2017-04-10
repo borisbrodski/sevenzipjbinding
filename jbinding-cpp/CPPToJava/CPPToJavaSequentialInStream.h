@@ -24,6 +24,8 @@ public:
 	    TRACE_OBJECT_CREATION("CPPToJavaSequentialInStream")
 	}
 
+	virtual ~CPPToJavaSequentialInStream() {}
+
 	/*
 	 * FROM 7-ZIP:
 	 * Out: if size != 0, return_value = S_OK and (*processedSize == 0),

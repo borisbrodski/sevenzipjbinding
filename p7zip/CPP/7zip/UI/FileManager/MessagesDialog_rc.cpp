@@ -23,12 +23,12 @@
 #include "MessagesDialogRes.h"
 
 /*
-IDD_DIALOG_MESSAGES DIALOG 0, 0, xSize, ySize  MY_MODAL_DIALOG_STYLE
+IDD_MESSAGES DIALOG 0, 0, xSize, ySize  MY_MODAL_DIALOG_STYLE
 CAPTION "7-Zip: Diagnostic messages"
 MY_FONT
 BEGIN
   DEFPUSHBUTTON "&Close", IDOK, bXPos, bYPos, bXSize, bYSize
-  CONTROL "List1",IDC_MESSAGE_LIST,"SysListView32",
+  CONTROL "List1",IDL_MESSAGE,"SysListView32",
           LVS_REPORT | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP, 
           marg, marg, xSize2, ySize2 - bYSize - 6
 END
@@ -49,7 +49,7 @@ class CMessagesDialogImpl : public NWindows::NControl::CModalDialogImpl
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
 
-	wxListCtrl *list = new wxListCtrl(this, IDC_MESSAGE_LIST, wxDefaultPosition, wxSize(645,195), wxLC_REPORT );
+	wxListCtrl *list = new wxListCtrl(this, IDL_MESSAGE, wxDefaultPosition, wxSize(645,195), wxLC_REPORT );
 
 #if 0
 	list->InsertColumn(0, wxT("Col1"), wxLIST_FORMAT_LEFT);
@@ -74,13 +74,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-static CStringTable g_stringTable[] =
-{
-	{ IDS_MESSAGES_DIALOG_MESSAGE_COLUMN, L"Message" },
-	{ 0 , 0 }
-};
-
-REGISTER_DIALOG(IDD_DIALOG_MESSAGES,CMessagesDialog,g_stringTable)
+REGISTER_DIALOG(IDD_MESSAGES,CMessagesDialog,0)
 
 BEGIN_EVENT_TABLE(CMessagesDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY, CModalDialogImpl::OnAnyButton)

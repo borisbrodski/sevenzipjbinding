@@ -46,6 +46,8 @@ public final class OutItem implements IOutItemAllFormats {
     private String propertyUser;
     private String propertyGroup;
     private Boolean propertyIsAnti;
+    private String propertySymLink;
+    private String propertyHardLink;
 
     private Boolean updateIsNewData;
     private Boolean updateIsNewProperties;
@@ -216,6 +218,34 @@ public final class OutItem implements IOutItemAllFormats {
      */
     public void setPropertyGroup(String group) {
         this.propertyGroup = group;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getPropertySymLink() {
+        return propertySymLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPropertySymLink(String propertySymLink) {
+        this.propertySymLink = propertySymLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getPropertyHardLink() {
+        return propertyHardLink;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setPropertyHardLink(String propertyHardLink) {
+        this.propertyHardLink = propertyHardLink;
     }
 
     /**

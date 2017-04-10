@@ -50,9 +50,10 @@
     <P>Specifies compression method. Each archive format can have its own compression methods:</P>
     <TABLE>
       <TR> <TH>Method</TH> <TH>Description</TH> </TR>
-      <TR> <TD>LZMA</TD> <TD>Default compression method of 7z format. It provides high 
-                     compression ratio and very fast decompression.</TD> </TR>
-      <TR> <TD>LZMA2</TD> <TD>LZMA-based compression method. 
+      <TR> <TD>LZMA</TD> <TD>It's base compression method for 7z format. 
+                     Even old versions of 7-Zip can decompress archives created with LZMA method.
+                     It provides high  compression ratio and very fast decompression.</TD> </TR>
+      <TR> <TD>LZMA2</TD> <TD>Default compression method of 7z format.  LZMA2 is LZMA-based compression method. 
                      It provides better multithreading support than LZMA. But compression ratio
                      can be worse in some cases. For best compression ratio with LZMA2 use 1 
                      or 2 CPU threads. If you use LZMA2 with more than 2 threads, 7-zip splits data 
@@ -237,12 +238,12 @@
     more details. Omit the -m prefix (as in -m switch) when using this dialog box.<P>
     <P><B>Examples</B></P>
     <PRE class="example">
-      0=PPMd</PRE>
-      <P>uses PPMd method for compressing files.</P>
+      f=delta:4</PRE>
+      <P>uses Delta:4 filter (if you want to compress WAV files).</P>
 
     <PRE class="example">
-      0=bcj2 1=lzma:d23 2=lzma 3=lzma b0:1 b0s1:2 b0s2:3</PRE>
-      <P>uses BCJ2 filter (for x86 executables) and LZMA.</P>
+      f=bcj2</PRE>
+      <P>uses BCJ2 filter (for x86 executables).</P>
 
   </DD>
 
@@ -269,10 +270,12 @@
     <TABLE>
       <TR> <TH width="30%">Option</TH> <TH>Meaning</TH> </TR>
       <TR> <TD>Create SFX archive</TD> <TD>Create self-extracting archive. You can use this option only 
-        for 7z archives. Look to 
-    <A href="../../../../cmdline/switches/sfx.htm">-sfx (Create SFX archive)</A> switch description for 
-    more details about SFX modules.</TD> </TR>
-      <TR> <TD>Compress shared files</TD> <TD>Compress files open for writing by another applications.</TD> </TR>
+           for 7z archives. Look to 
+           <A href="../../../../cmdline/switches/sfx.htm">-sfx (Create SFX archive)</A> switch description for 
+           more details about SFX modules.</TD> </TR>
+      <TR> <TD>Delete files after compression</TD> <TD>Delete files 
+           after including to archive. So it works like moving files to archive.
+           7-Zip deletes files at the end of operation and only if archive was successfully created.</TD> </TR>
     </TABLE>
   </DD>
 

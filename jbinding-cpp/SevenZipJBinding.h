@@ -9,7 +9,6 @@
 #include "7zip/UI/Common/PropIDUtils.h"
 #include "7zip/Common/FileStreams.h"
 #include "Windows/PropVariant.h"
-#include "Windows/PropVariantConversions.h"
 #include "7zip/Archive/IArchive.h"
 
 #include <jni.h>
@@ -83,6 +82,9 @@
     {TRACE1("Exception catched: " << &sevenZipException);                       \
     (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}
 
+
+#define MIN(a,b) ((a) > (b) ? (b) : (a))
+#define MAX(a,b) ((a) < (b) ? (b) : (a))
 
 //typedef UINT32 (WINAPI * CreateObjectFunc)(const GUID *clsID,
 //		const GUID *interfaceID, void **outObject);

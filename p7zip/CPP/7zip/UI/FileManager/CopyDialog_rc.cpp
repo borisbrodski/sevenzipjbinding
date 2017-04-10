@@ -30,23 +30,23 @@ class CopyDialogImpl : public NWindows::NControl::CModalDialogImpl
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
 
-	topsizer->Add(new wxStaticText(this, IDC_COPY_STATIC, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
+	topsizer->Add(new wxStaticText(this, IDT_COPY, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
 
 
 	{
 	wxBoxSizer *pathSizer = new wxBoxSizer(wxHORIZONTAL);
 
 	wxArrayString pathArray;
-	wxComboBox *combo = new wxComboBox(this, IDC_COPY_COMBO, wxEmptyString, wxDefaultPosition, wxSize(600,-1), pathArray, wxCB_DROPDOWN|wxCB_SORT);
-	wxButton *button = new wxButton(this, IDC_COPY_SET_PATH, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+	wxComboBox *combo = new wxComboBox(this, IDC_COPY, wxEmptyString, wxDefaultPosition, wxSize(600,-1), pathArray, wxCB_DROPDOWN|wxCB_SORT);
+	wxButton *button = new wxButton(this, IDB_COPY_SET_PATH, wxT("..."), wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
 	pathSizer->Add(combo, 1, wxLEFT|wxRIGHT|wxEXPAND, 5);
 	pathSizer->Add(button, 0, wxLEFT|wxRIGHT|wxEXPAND, 5);
 
 	topsizer->Add(pathSizer, 0 ,wxALL | wxALIGN_LEFT, 5 );
 	}
 
-//	topsizer->Add(new wxStaticText(this, IDC_COPY_INFO, _T("line1\nline2\nline3\nline4\n")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
-	topsizer->Add(new wxStaticText(this, IDC_COPY_INFO, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
+//	topsizer->Add(new wxStaticText(this, IDT_COPY_INFO, _T("line1\nline2\nline3\nline4\n")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
+	topsizer->Add(new wxStaticText(this, IDT_COPY_INFO, _T("")) , 0 ,wxEXPAND | wxALL | wxALIGN_LEFT, 5 );
 	  
 	topsizer->Add(CreateButtonSizer(wxOK|wxCANCEL), 0, wxALL|wxEXPAND, 5);
 
@@ -67,7 +67,7 @@ static CStringTable g_stringTable[] =
 };
 
 
-REGISTER_DIALOG(IDD_DIALOG_COPY,CopyDialog,g_stringTable)
+REGISTER_DIALOG(IDD_COPY,CopyDialog,g_stringTable)
 
 BEGIN_EVENT_TABLE(CopyDialogImpl, wxDialog)
 	EVT_BUTTON(wxID_ANY,   CModalDialogImpl::OnAnyButton)

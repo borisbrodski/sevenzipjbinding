@@ -101,18 +101,18 @@ public class ZipContentComparator {
 
                 String expectedFilename = expectedInfo.filename;
                 if (!actualFilename.equalsIgnoreCase(expectedFilename)) {
-                    error("Filename missmatch: expected '" + expectedFilename + "', actual '" + actualFilename + "'");
+                    error("Filename mismatch: expected '" + expectedFilename + "', actual '" + actualFilename + "'");
                 }
 
                 if (actualInfo.realSize != expectedInfo.realSize) {
-                    error("Real file size missmatch for file '" + expectedFilename + "': expected "
+                    error("Real file size mismatch for file '" + expectedFilename + "': expected "
                             + expectedInfo.realSize + ", actual " + actualInfo.realSize);
                 }
 
                 // TODO test LastModificationTime in ZipComparator
                 // if (!actualInfo.fileLastModificationTime
                 // .equals(expectedInfo.fileLastModificationTime)) {
-                // error("Last modification time missmatch for file '"
+                // error("Last modification time mismatch for file '"
                 // + expectedInfo.filename + "': expected "
                 // + expectedInfo.fileLastModificationTime
                 // + ", actual " + actualInfo.fileLastModificationTime);
@@ -401,8 +401,8 @@ public class ZipContentComparator {
                     } while (readBytes < data.length);
 
                     if (!Arrays.equals(expectedData, data)) {
-                        dataError("Extracted data missmatched for file '" + filename + "'");
-                        throw new RuntimeException("Extracted data missmatched for file '" + filename + "'");
+                        dataError("Extracted data mismatched for file '" + filename + "'");
+                        throw new RuntimeException("Extracted data mismatched for file '" + filename + "'");
                     }
                 }
             } catch (IOException e) {

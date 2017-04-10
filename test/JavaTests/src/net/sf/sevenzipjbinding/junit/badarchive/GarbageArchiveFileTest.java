@@ -4,14 +4,14 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
-
-import org.junit.Test;
 
 /**
  * Tests behavior of SevenZipJBinding trying opening random stream of bytes as an archive.
@@ -103,15 +103,16 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase {
         openBadArchiveMultithreaded(ArchiveFormat.ISO);
     }
 
-    @Test
-    public void openBadArchiveHFS() throws Throwable {
-        openBadArchive(ArchiveFormat.HFS);
-    }
-
-    @Test
-    public void openBadArchiveHFSMultithreaded() throws Throwable {
-        openBadArchiveMultithreaded(ArchiveFormat.HFS);
-    }
+    // TODO Uncomment after resolving security problems in 7-zip
+    //    @Test
+    //    public void openBadArchiveHFS() throws Throwable {
+    //        openBadArchive(ArchiveFormat.HFS);
+    //    }
+    //
+    //    @Test
+    //    public void openBadArchiveHFSMultithreaded() throws Throwable {
+    //        openBadArchiveMultithreaded(ArchiveFormat.HFS);
+    //    }
 
     @Test
     public void openBadArchiveGZip() throws Throwable {

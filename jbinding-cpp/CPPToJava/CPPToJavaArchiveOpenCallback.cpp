@@ -21,6 +21,15 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, con
 
     _iArchiveOpenCallback->setCompleted(jniEnvInstance, _javaImplementation, filesLongObject,
             bytesLongObject);
+
+    if (filesLongObject) {
+        jniEnvInstance->DeleteLocalRef(filesLongObject);
+    }
+
+    if (bytesLongObject) {
+        jniEnvInstance->DeleteLocalRef(bytesLongObject);
+    }
+
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
 
@@ -41,6 +50,15 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const U
     }
 
     _iArchiveOpenCallback->setTotal(jniEnvInstance, _javaImplementation, filesLongObject, bytesLongObject);
+
+    if (filesLongObject) {
+        jniEnvInstance->DeleteLocalRef(filesLongObject);
+    }
+
+    if (bytesLongObject) {
+        jniEnvInstance->DeleteLocalRef(bytesLongObject);
+    }
+
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
 

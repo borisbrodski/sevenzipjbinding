@@ -22,34 +22,34 @@
 #include "Windows/Control/DialogImpl.h"
 
 /*
-IDD_DIALOG_PROGRESS  DIALOG  0, 0, xSize, ySize  MY_MODAL_DIALOG_STYLE | WS_MINIMIZEBOX 
+IDD_PROGRESS  DIALOG  0, 0, xSize, ySize  MY_MODAL_DIALOG_STYLE | WS_MINIMIZEBOX 
 CAPTION "Progress"
 MY_FONT
 BEGIN
-  PUSHBUTTON  "&Background", IDC_BUTTON_PROGRESS_PRIORITY,  bXPos3, bYPos, bXSize, bYSize
-  PUSHBUTTON  "&Pause",      IDC_BUTTON_PAUSE,              bXPos2, bYPos, bXSize, bYSize
+  PUSHBUTTON  "&Background", IDB_PROGRESS_BACKGROUND,  bXPos3, bYPos, bXSize, bYSize
+  PUSHBUTTON  "&Pause",      IDB_PAUSE,              bXPos2, bYPos, bXSize, bYSize
   PUSHBUTTON  "Cancel",      IDCANCEL,                      bXPos1, bYPos, bXSize, bYSize
-  LTEXT  "Elapsed time:",   IDC_PROGRESS_ELAPSED,   marg, y0, x0Size, 8
-  LTEXT  "Remaining time:", IDC_PROGRESS_REMAINING, marg, y1, x0Size, 8
-  LTEXT  "Files:",          IDC_PROGRESS_FILES,     marg, y2, x0Size, 8
-  LTEXT  "Compression ratio:",IDC_PROGRESS_RATIO,   marg, y3, x0Size, 8
+  LTEXT  "Elapsed time:",   IDT_PROGRESS_ELAPSED,   marg, y0, x0Size, 8
+  LTEXT  "Remaining time:", IDT_PROGRESS_REMAINING, marg, y1, x0Size, 8
+  LTEXT  "Files:",          IDT_PROGRESS_FILES,     marg, y2, x0Size, 8
+  LTEXT  "Compression ratio:",IDT_PROGRESS_RATIO,   marg, y3, x0Size, 8
 
-  LTEXT  "Total size:",      IDC_PROGRESS_TOTAL,    x2, y0, x2Size, 8
-  LTEXT  "Speed:",           IDC_PROGRESS_SPEED,    x2, y1, x2Size, 8
-  LTEXT  "Processed:",       IDC_PROGRESS_UNPACKED, x2, y2, x2Size, 8
-  LTEXT  "Compressed size:", IDC_PROGRESS_PACKED,   x2, y3, x2Size, 8
+  LTEXT  "Total size:",      IDT_PROGRESS_TOTAL,    x2, y0, x2Size, 8
+  LTEXT  "Speed:",           IDT_PROGRESS_SPEED,    x2, y1, x2Size, 8
+  LTEXT  "Processed:",       IDT_PROGRESS_PROCESSED, x2, y2, x2Size, 8
+  LTEXT  "Compressed size:", IDT_PROGRESS_PACKED,   x2, y3, x2Size, 8
 
-  RTEXT  "00:00:00",  IDC_PROGRESS_ELAPSED_VALUE,     x1, y0, x1Size, 8
-  RTEXT  "",          IDC_PROGRESS_REMAINING_VALUE,   x1, y1, x1Size, 8
-  RTEXT  "",          IDC_PROGRESS_FILES_VALUE,       x1, y2, x1Size, 8
-  RTEXT  "",          IDC_PROGRESS_RATIO_VALUE,       x1, y3, x1Size, 8
+  RTEXT  "00:00:00",  IDT_PROGRESS_ELAPSED_VAL,     x1, y0, x1Size, 8
+  RTEXT  "",          IDT_PROGRESS_REMAINING_VAL,   x1, y1, x1Size, 8
+  RTEXT  "",          IDT_PROGRESS_FILES_VAL,       x1, y2, x1Size, 8
+  RTEXT  "",          IDT_PROGRESS_RATIO_VAL,       x1, y3, x1Size, 8
 
-  RTEXT  "",          IDC_PROGRESS_TOTAL_VALUE,       x3, y0, x3Size, 8
-  RTEXT  "",          IDC_PROGRESS_SPEED_VALUE,       x3, y1, x3Size, 8
-  RTEXT  "",          IDC_PROGRESS_UNPACKED_VALUE,    x3, y2, x3Size, 8
-  RTEXT  "",          IDC_PROGRESS_PACKED_VALUE,      x3, y3, x3Size, 8
+  RTEXT  "",          IDT_PROGRESS_TOTAL_VAL,       x3, y0, x3Size, 8
+  RTEXT  "",          IDT_PROGRESS_SPEED_VAL,       x3, y1, x3Size, 8
+  RTEXT  "",          IDT_PROGRESS_PROCESSED_VAL,    x3, y2, x3Size, 8
+  RTEXT  "",          IDT_PROGRESS_PACKED_VAL,      x3, y3, x3Size, 8
 
-  LTEXT  "", IDC_PROGRESS_FILE_NAME, marg, bYPos - 30, xSize2, 8, SS_NOPREFIX
+  LTEXT  "", IDT_PROGRESS_FILE_NAME, marg, bYPos - 30, xSize2, 8, SS_NOPREFIX
   CONTROL "Progress1", IDC_PROGRESS1, "msctls_progress32", PBS_SMOOTH | WS_BORDER, marg, bYPos - 20, xSize2, 13
 END
 
@@ -73,28 +73,28 @@ class CProgressDialogImpl : public NWindows::NControl::CModalDialogImpl
 	///Sizer for adding the controls created by users
 	wxBoxSizer* topsizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *pStaticTextElapsedTime = new wxStaticText(this, IDC_PROGRESS_ELAPSED, wxT("Elapsed time:"));
-	wxStaticText *m_pStaticTextElapsedTime = new wxStaticText(this, IDC_PROGRESS_ELAPSED_VALUE, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	wxStaticText *pStaticTextRemainingTime = new wxStaticText(this, IDC_PROGRESS_REMAINING, wxT("Remaining time"));
-	wxStaticText *m_pStaticTextRemainingTime = new wxStaticText(this, IDC_PROGRESS_REMAINING_VALUE, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextElapsedTime = new wxStaticText(this, IDT_PROGRESS_ELAPSED, wxT("Elapsed time:"));
+	wxStaticText *m_pStaticTextElapsedTime = new wxStaticText(this, IDT_PROGRESS_ELAPSED_VAL, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextRemainingTime = new wxStaticText(this, IDT_PROGRESS_REMAINING, wxT("Remaining time"));
+	wxStaticText *m_pStaticTextRemainingTime = new wxStaticText(this, IDT_PROGRESS_REMAINING_VAL, wxT("00:00:00"), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 
-	wxStaticText *pStaticTextFiles = new wxStaticText(this, IDC_PROGRESS_FILES, wxT("Files:"));
-	wxStaticText *m_pStaticTextFiles = new wxStaticText(this, IDC_PROGRESS_FILES_VALUE, wxT("      "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextFiles = new wxStaticText(this, IDT_PROGRESS_FILES, wxT("Files:"));
+	wxStaticText *m_pStaticTextFiles = new wxStaticText(this, IDT_PROGRESS_FILES_VAL, wxT("      "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 
-	wxStaticText *pStaticTextRatio = new wxStaticText(this, IDC_PROGRESS_RATIO, wxT("Compression ratio:"));
-	wxStaticText *m_pStaticTextRatio = new wxStaticText(this, IDC_PROGRESS_RATIO_VALUE, wxT("       "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextRatio = new wxStaticText(this, IDT_PROGRESS_RATIO, wxT("Compression ratio:"));
+	wxStaticText *m_pStaticTextRatio = new wxStaticText(this, IDT_PROGRESS_RATIO_VAL, wxT("       "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 
 
-	wxStaticText *pStaticTextSize = new wxStaticText(this, IDC_PROGRESS_TOTAL, wxT("Total Size:"));
-	wxStaticText *m_pStaticTextSize = new wxStaticText(this, IDC_PROGRESS_TOTAL_VALUE, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
-	wxStaticText *pStaticTextSpeed = new wxStaticText(this, IDC_PROGRESS_SPEED, wxT("Speed:"));
-	wxStaticText *m_pStaticTextSpeed = new wxStaticText(this, IDC_PROGRESS_SPEED_VALUE, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextSize = new wxStaticText(this, IDT_PROGRESS_TOTAL, wxT("Total Size:"));
+	wxStaticText *m_pStaticTextSize = new wxStaticText(this, IDT_PROGRESS_TOTAL_VAL, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextSpeed = new wxStaticText(this, IDT_PROGRESS_SPEED, wxT("Speed:"));
+	wxStaticText *m_pStaticTextSpeed = new wxStaticText(this, IDT_PROGRESS_SPEED_VAL, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 
-	wxStaticText *pStaticTextUnpacked = new wxStaticText(this, IDC_PROGRESS_UNPACKED, wxT("Processed:"));
-	wxStaticText *m_pStaticTextUnpacked = new wxStaticText(this, IDC_PROGRESS_UNPACKED, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextUnpacked = new wxStaticText(this, IDT_PROGRESS_PROCESSED, wxT("Processed:"));
+	wxStaticText *m_pStaticTextUnpacked = new wxStaticText(this, IDT_PROGRESS_PROCESSED_VAL, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 	
-	wxStaticText *pStaticTextPacked = new wxStaticText(this, IDC_PROGRESS_PACKED, wxT("Compressed size:"));
-	wxStaticText *m_pStaticTextPacked = new wxStaticText(this, IDC_PROGRESS_PACKED_VALUE, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
+	wxStaticText *pStaticTextPacked = new wxStaticText(this, IDT_PROGRESS_PACKED, wxT("Compressed size:"));
+	wxStaticText *m_pStaticTextPacked = new wxStaticText(this, IDT_PROGRESS_PACKED_VAL, wxT("          "), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
 
 	wxBoxSizer *pInfoSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *pTimeSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -128,15 +128,15 @@ class CProgressDialogImpl : public NWindows::NControl::CModalDialogImpl
 	pInfoSizer->Add(pTimeSizer, 0, wxALL|wxEXPAND, 5);
 	pInfoSizer->Add(pSizeSpeedSizer, 0, wxALL|wxEXPAND, 5);
 
-	// wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDC_PROGRESS_FILE_NAME, wxT(" \n "));
-	wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDC_PROGRESS_FILE_NAME, wxT(""));
+	// wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDT_PROGRESS_FILE_NAME, wxT(" \n "));
+	wxStaticText *m_pStaticArchiveName = new wxStaticText(this, IDT_PROGRESS_FILE_NAME, wxT(""));
 	// m_pStaticArchiveName->Wrap( -1 ); // No Wrapping 
 	  
 	wxGauge *m_pGaugeProgress = new wxGauge(this, IDC_PROGRESS1, 100);
 
 	wxBoxSizer *pButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxButton *m_pButtonBackground = new wxButton(this, IDC_BUTTON_PROGRESS_PRIORITY, wxT("&Background"));
-	wxButton *m_pButtonPause = new wxButton(this, IDC_BUTTON_PAUSE, wxT("&Pause"));
+	wxButton *m_pButtonBackground = new wxButton(this, IDB_PROGRESS_BACKGROUND, wxT("&Background"));
+	wxButton *m_pButtonPause = new wxButton(this, IDB_PAUSE, wxT("&Pause"));
 	wxButton *m_pButtonCancel = new wxButton(this, wxID_CANCEL, wxT("&Cancel"));
 	// FIXME pButtonSizer->AddStretchSpacer(1);
 	pButtonSizer->Add(m_pButtonBackground, 0, wxALL|wxEXPAND, 5);
@@ -163,14 +163,13 @@ static CStringTable g_stringTable[] =
 {
 	{ IDS_PROGRESS_PAUSED     , L"Paused" },
 	{ IDS_PROGRESS_FOREGROUND , L"&Foreground" },
-	{ IDS_PROGRESS_CONTINUE   , L"&Continue" },
+	{ IDS_CONTINUE            , L"&Continue" },
 	{ IDS_PROGRESS_ASK_CANCEL , L"Are you sure you want to cancel?" },
 	{ IDS_CLOSE               , L"&Close" },
-	{ IDS_MESSAGES_DIALOG_MESSAGE_COLUMN , L"Message"},
 	{ 0 , 0 }
 };
 
-REGISTER_DIALOG(IDD_DIALOG_PROGRESS,CProgressDialog,g_stringTable)
+REGISTER_DIALOG(IDD_PROGRESS,CProgressDialog,g_stringTable)
 
 BEGIN_EVENT_TABLE(CProgressDialogImpl, wxDialog)
 	EVT_TIMER(wxID_ANY, CModalDialogImpl::OnAnyTimer)

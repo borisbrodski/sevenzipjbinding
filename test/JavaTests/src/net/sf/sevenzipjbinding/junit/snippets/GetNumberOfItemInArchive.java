@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.RandomAccessFile;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-
-import org.junit.Test;
 
 public class GetNumberOfItemInArchive {
     @Test
@@ -25,8 +25,7 @@ public class GetNumberOfItemInArchive {
         randomAccessFile = new RandomAccessFile(archiveFile, "r");
 
         archive = SevenZip.openInArchive(ArchiveFormat.ZIP, // null - autodetect
-                new RandomAccessFileInStream(//
-                        randomAccessFile));
+                new RandomAccessFileInStream(randomAccessFile));
 
         int numberOfItems = archive.getNumberOfItems();
 

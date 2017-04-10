@@ -73,6 +73,11 @@ void LangSetDlgItemsText(HWND dialogWindow, CIDLangPair *idLangPairs, int numIte
 }
 
 
+void LangSetDlgItems(HWND dialog, const UInt32 *ids, unsigned numItems)
+{
+
+}
+
 #if 0
 
 int Main1(int argc,TCHAR **argv);

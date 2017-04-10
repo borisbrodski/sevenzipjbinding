@@ -62,7 +62,7 @@ public class StandaloneUpdateNonGenericBZip2Test extends JUnitNativeTestBase {
     @Test
     public void updateContent() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(1, 0, 0, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
         byteArrayStream.rewind();

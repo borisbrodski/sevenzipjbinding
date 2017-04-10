@@ -8,9 +8,9 @@ import net.sf.sevenzipjbinding.impl.OutArchiveTarImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
 
 /**
- * Enumeration of all supported archive types. <blockquote>
- * 
- * <table border="1">
+ * Enumeration of all supported archive types.
+ *
+ * <table border="1" summary="Archive format overview">
  * <tr>
  * <td><b>Format</b></td>
  * <td><b>extraction</b></td>
@@ -48,46 +48,22 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #CHM}</td>
  * </tr>
  * <tr align="center">
- * <td>Compound</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
- * </tr>
- * <tr align="center">
  * <td>Cpio</td>
  * <td>X</td>
  * <td>-</td>
  * <td>{@link #CPIO}</td>
  * </tr>
  * <tr align="center">
- * <td>Deb</td>
+ * <td>ar, a, deb, lib</td>
  * <td>X</td>
  * <td>-</td>
- * <td>{@link #DEB}</td>
- * </tr>
- * <tr align="center">
- * <td>Dmg</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
- * </tr>
- * <tr align="center">
- * <td>Elf</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
+ * <td>{@link #AR}</td>
  * </tr>
  * <tr align="center">
  * <td>GZip</td>
  * <td>X</td>
  * <td>X</td>
  * <td>{@link #GZIP}</td>
- * </tr>
- * <tr align="center">
- * <td>Hfs</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
  * </tr>
  * <tr align="center">
  * <td>Iso</td>
@@ -108,28 +84,10 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #LZMA}</td>
  * </tr>
  * <tr align="center">
- * <td>Macho</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
- * </tr>
- * <tr align="center">
- * <td>Mub</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
- * </tr>
- * <tr align="center">
  * <td>Nsis</td>
  * <td>X</td>
  * <td>-</td>
  * <td>{@link #NSIS}</td>
- * </tr>
- * <tr align="center">
- * <td>Pa</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
  * </tr>
  * <tr align="center">
  * <td>Rar</td>
@@ -138,28 +96,22 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #RAR}</td>
  * </tr>
  * <tr align="center">
+ * <td>Rar5</td>
+ * <td>X</td>
+ * <td>-</td>
+ * <td>{@link #RAR5}</td>
+ * </tr>
+ * <tr align="center">
  * <td>Rpm</td>
  * <td>X</td>
  * <td>-</td>
- * <td>{@link #RAR}</td>
- * </tr>
- * <tr align="center">
- * <td>Split</td>
- * <td>-</td>
- * <td>-</td>
- * <td>-</td>
+ * <td>{@link #RPM}</td>
  * </tr>
  * <tr align="center">
  * <td>Tar</td>
  * <td>X</td>
  * <td>X</td>
  * <td>{@link #TAR}</td>
- * </tr>
- * <tr align="center">
- * <td>Udf</td>
- * <td>X</td>
- * <td>-</td>
- * <td>{@link #UDF}</td>
  * </tr>
  * <tr align="center">
  * <td>Wim</td>
@@ -186,8 +138,7 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #ZIP}</td>
  * </tr>
  * </table>
- * <blockquote> <br>
- * 
+ *
  * @author Boris Brodski
  * @since 1.0
  */
@@ -213,6 +164,11 @@ public enum ArchiveFormat {
     RAR("Rar", true), //
 
     /**
+     * Rar5 format.
+     */
+    RAR5("Rar5", true), //
+
+    /**
      * Lzma format.
      */
     LZMA("Lzma", false),
@@ -221,11 +177,6 @@ public enum ArchiveFormat {
      * Iso format.
      */
     ISO("Iso", true),
-
-    /**
-     * Hfs format
-     */
-    HFS("HFS", true),
 
     /**
      * Gzip format
@@ -278,19 +229,20 @@ public enum ArchiveFormat {
     NSIS("Nsis", true),
 
     /**
-     * Deb
+     * ar, a, deb, lib
      */
-    DEB("Deb", true),
+    AR("Ar", true),
 
     /**
      * Rpm
      */
     RPM("Rpm", true),
 
-    /**
-     * Udf
-     */
-    UDF("Udf", true),
+    // TODO Uncomment after resolving security problems in 7-zip
+    //    /**
+    //     * Udf
+    //     */
+    //    UDF("Udf", true),
 
     /**
      * Wim
@@ -300,7 +252,17 @@ public enum ArchiveFormat {
     /**
      * Xar
      */
-    XAR("Xar", true);
+    XAR("Xar", true),
+
+    /**
+     * FAT - (vfat file system);
+     */
+    FAT("fat", true),
+
+    /**
+     * NTFS - (NTFS file system);
+     */
+    NTFS("ntfs", true);
 
     private String methodName;
 
@@ -328,7 +290,7 @@ public enum ArchiveFormat {
 
     /**
      * Return name of the archive method
-     * 
+     *
      * @return name of the archive method
      */
     public String getMethodName() {
@@ -337,7 +299,7 @@ public enum ArchiveFormat {
 
     /**
      * Return whether this archive type supports creation/update operations
-     * 
+     *
      * @return <code>true</code> - creation/update operations are supported,<br>
      *         <code>false</code> - only archive extraction is supported
      */
@@ -347,7 +309,7 @@ public enum ArchiveFormat {
 
     /**
      * Get corresponding implementation class for archive update operations.
-     * 
+     *
      * @return the {@link IOutArchive} implementation class
      */
     public Class<? extends OutArchiveImpl<?>> getOutArchiveImplementation() {
@@ -357,7 +319,7 @@ public enum ArchiveFormat {
     /**
      * Return <code>true</code>, if the archive format is capable of compressing or storing multiple files within the
      * archive.
-     * 
+     *
      * @return <code>true</code> - support multiple files, <code>false</code> support single file or stream
      */
     public boolean supportMultipleFiles() {
@@ -374,7 +336,7 @@ public enum ArchiveFormat {
 
     /**
      * Finds the {@link ArchiveFormat} corresponding to the given out-archive interface.
-     * 
+     *
      * @param outArchiveInterface
      *            out-archive interface
      * @return corresponding out-archive implementation class

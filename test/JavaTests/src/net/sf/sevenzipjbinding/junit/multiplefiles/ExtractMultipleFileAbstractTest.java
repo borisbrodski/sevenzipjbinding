@@ -8,6 +8,8 @@ import java.util.zip.ZipFile;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
 import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
 
@@ -98,13 +100,12 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
 					false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
-            if (archiveFormat == ArchiveFormat.WIM) {
-                zipContentComparator1.addToIgnoreList("1.xml");
-            }
+            addFilesToIgnore(inArchive, zipContentComparator1);
 			assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
 
 			ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
 					true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+            addFilesToIgnore(inArchive, zipContentComparator2);
 
             if (archiveFormat == ArchiveFormat.WIM) {
                 zipContentComparator2.addToIgnoreList("1.xml");
@@ -126,4 +127,20 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 			extractionInArchiveTestHelper.closeAllStreams();
 		}
 	}
+
+    private void addFilesToIgnore(IInArchive inArchive, ZipContentComparator zipContentComparator1)
+            throws SevenZipException {
+        if (archiveFormat == ArchiveFormat.WIM) {
+            zipContentComparator1.addToIgnoreList("1.xml");
+        }
+        if (archiveFormat == ArchiveFormat.NTFS) {
+            int numberOfItems = inArchive.getNumberOfItems();
+            for (int i = 0; i < numberOfItems; i++) {
+                String path = (String) inArchive.getProperty(i, PropID.PATH);
+                if (path.startsWith("[SYSTEM]")) {
+                    zipContentComparator1.addToIgnoreList(path);
+                }
+            }
+        }
+    }
 }

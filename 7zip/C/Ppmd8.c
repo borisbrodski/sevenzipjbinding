@@ -1,8 +1,10 @@
 /* Ppmd8.c -- PPMdI codec
-2010-03-24 : Igor Pavlov : Public domain
+2015-09-28 : Igor Pavlov : Public domain
 This code is based on PPMd var.I (2002): Dmitry Shkarin : Public domain */
 
-#include <memory.h>
+#include "Precomp.h"
+
+#include <string.h>
 
 #include "Ppmd8.h"
 
@@ -65,7 +67,7 @@ void Ppmd8_Construct(CPpmd8 *p)
   for (i = 0, k = 0; i < PPMD_NUM_INDEXES; i++)
   {
     unsigned step = (i >= 12 ? 4 : (i >> 2) + 1);
-    do { p->Units2Indx[k++] = (Byte)i; } while(--step);
+    do { p->Units2Indx[k++] = (Byte)i; } while (--step);
     p->Indx2Units[i] = (Byte)k;
   }
 
@@ -239,7 +241,7 @@ static void *AllocUnits(CPpmd8 *p, unsigned indx)
 
 #define MyMem12Cpy(dest, src, num) \
   { UInt32 *d = (UInt32 *)dest; const UInt32 *s = (const UInt32 *)src; UInt32 n = num; \
-    do { d[0] = s[0]; d[1] = s[1]; d[2] = s[2]; s += 3; d += 3; } while(--n); }
+    do { d[0] = s[0]; d[1] = s[1]; d[2] = s[2]; s += 3; d += 3; } while (--n); }
 
 static void *ShrinkUnits(CPpmd8 *p, void *oldPtr, unsigned oldNU, unsigned newNU)
 {
@@ -483,10 +485,11 @@ static CPpmd_Void_Ref CutOff(CPpmd8 *p, CTX_PTR ctx, unsigned order)
     }
     if (i == 0)
     {
-      ctx->Flags = (ctx->Flags & 0x10) + 0x08 * (s->Symbol >= 0x40);
+      ctx->Flags = (Byte)((ctx->Flags & 0x10) + 0x08 * (s->Symbol >= 0x40));
       *ONE_STATE(ctx) = *s;
       FreeUnits(p, s, tmp);
-      ONE_STATE(ctx)->Freq = (Byte)((unsigned)ONE_STATE(ctx)->Freq + 11) >> 3;
+      /* 9.31: the code was fixed. It's was not BUG, if Freq <= MAX_FREQ = 124 */
+      ONE_STATE(ctx)->Freq = (Byte)(((unsigned)ONE_STATE(ctx)->Freq + 11) >> 3);
     }
     else
       Refresh(p, ctx, tmp, ctx->SummFreq > 16 * i);
@@ -554,17 +557,17 @@ static void RestoreModel(CPpmd8 *p, CTX_PTR c1
     if (--(c->NumStats) == 0)
     {
       s = STATS(c);
-      c->Flags = (c->Flags & 0x10) + 0x08 * (s->Symbol >= 0x40);
+      c->Flags = (Byte)((c->Flags & 0x10) + 0x08 * (s->Symbol >= 0x40));
       *ONE_STATE(c) = *s;
       SpecialFreeUnit(p, s);
-      ONE_STATE(c)->Freq = (ONE_STATE(c)->Freq + 11) >> 3;
+      ONE_STATE(c)->Freq = (Byte)(((unsigned)ONE_STATE(c)->Freq + 11) >> 3);
     }
     else
       Refresh(p, c, (c->NumStats+3) >> 1, 0);
  
   for (; c != p->MinContext; c = SUFFIX(c))
     if (!c->NumStats)
-      ONE_STATE(c)->Freq -= ONE_STATE(c)->Freq >> 1;
+      ONE_STATE(c)->Freq = (Byte)(ONE_STATE(c)->Freq - (ONE_STATE(c)->Freq >> 1));
     else if ((c->SummFreq += 4) > 128 + 4 * c->NumStats)
       Refresh(p, c, (c->NumStats + 2) >> 1, 1);
 
@@ -636,7 +639,7 @@ static CTX_PTR CreateSuccessors(CPpmd8 *p, Bool skip, CPpmd_State *s1, CTX_PTR c
     else
     {
       s = ONE_STATE(c);
-      s->Freq += (!SUFFIX(c)->NumStats & (s->Freq < 24));
+      s->Freq = (Byte)(s->Freq + (!SUFFIX(c)->NumStats & (s->Freq < 24)));
     }
     successor = SUCCESSOR(s);
     if (successor != upBranch)
@@ -651,7 +654,7 @@ static CTX_PTR CreateSuccessors(CPpmd8 *p, Bool skip, CPpmd_State *s1, CTX_PTR c
   
   upState.Symbol = *(const Byte *)Ppmd8_GetPtr(p, upBranch);
   SetSuccessor(&upState, upBranch + 1);
-  flags = 0x10 * (p->FoundState->Symbol >= 0x40) + 0x08 * (upState.Symbol >= 0x40);
+  flags = (Byte)(0x10 * (p->FoundState->Symbol >= 0x40) + 0x08 * (upState.Symbol >= 0x40));
 
   if (c->NumStats == 0)
     upState.Freq = ONE_STATE(c)->Freq;
@@ -743,7 +746,7 @@ static CTX_PTR ReduceOrder(CPpmd8 *p, CPpmd_State *s1, CTX_PTR c)
       else
       {
         s = ONE_STATE(c);
-        s->Freq += (s->Freq < 32);
+        s->Freq = (Byte)(s->Freq + (s->Freq < 32));
       }
     }
     if (SUCCESSOR(s))
@@ -889,7 +892,7 @@ static void UpdateModel(CPpmd8 *p)
   #endif
   
   s0 = p->MinContext->SummFreq - (ns = p->MinContext->NumStats) - fFreq;
-  flag = 0x08 * (fSymbol >= 0x40);
+  flag = (Byte)(0x08 * (fSymbol >= 0x40));
   
   for (; c != p->MinContext; c = SUFFIX(c))
   {
@@ -1012,7 +1015,7 @@ static void Rescale(CPpmd8 *p)
       if (tmp.Freq > MAX_FREQ / 3)
         tmp.Freq = MAX_FREQ / 3;
       InsertNode(p, stats, U2I((numStats + 2) >> 1));
-      p->MinContext->Flags = (p->MinContext->Flags & 0x10) + 0x08 * (tmp.Symbol >= 0x40);
+      p->MinContext->Flags = (Byte)((p->MinContext->Flags & 0x10) + 0x08 * (tmp.Symbol >= 0x40));
       *(p->FoundState = ONE_STATE(p->MinContext)) = tmp;
       return;
     }

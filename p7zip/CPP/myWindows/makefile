@@ -7,7 +7,7 @@ include ../../makefile.machine
 
 LIBS=$(LOCAL_LIBS)
 
-OBJS=myGetTickCount.o \
+OBJS= \
 	wine_date_and_time.o \
 	mySplitCommandLine.o \
 	myAddExeFlag.o \

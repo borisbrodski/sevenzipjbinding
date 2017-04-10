@@ -190,8 +190,7 @@ jobject DoubleToObject(JNIEnv * env, double value) {
 jobject BSTRToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
-    CMyComBSTR str(value);
-    return env->NewString(UnicodeHelper(str), str.Length());
+    return ToJChar(value).toNewString(env);
 }
 
 /**
@@ -227,8 +226,9 @@ bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & f
  */
 jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant) {
 
-    UString string = ConvertPropertyToString(propVariant, propID, true);
-    return env->NewString(UnicodeHelper(string), string.Length());
+    UString string;
+    ConvertPropertyToString(string, propVariant, propID, true);
+    return ToJChar(string).toNewString(env);
 }
 
 void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVARIANT * propVariant) {
@@ -240,12 +240,7 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
             jint value = jniEnvInstance->CallIntMethod(object, g_IntegerIntValue);
             cPropVariant = (Int32) value;
         } else if (jniEnvInstance->IsInstanceOf(object, g_StringClass)) {
-            const jchar * jChars = jniEnvInstance->GetStringChars((jstring) object, NULL);
-            //			BSTR bstr;
-            //	        StringToBstr(UnicodeHelper(jChars), &bstr);
-            //			cPropVariant = bstr;
-            cPropVariant = UString(UnicodeHelper(jChars));
-            jniEnvInstance->ReleaseStringChars((jstring) object, jChars);
+            cPropVariant = UString(FromJChar(jniEnvInstance, (jstring)object));
         } else if (jniEnvInstance->IsInstanceOf(object, g_BooleanClass)) {
             jboolean value = jniEnvInstance->CallBooleanMethod(object, g_BooleanBooleanValue);
             cPropVariant = (bool) value;

@@ -15,6 +15,7 @@
     		<li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
     	</ul>
         <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
+        <li><a href="#create-encrypted">Creating password protected archives</a></li>
     </ul>
     <li><a href="#update">Modifying existing archives</a></li>
     <ul>
@@ -244,7 +245,35 @@ C:\Test&gt; java -cp ... CompressGeneric BZIP2     compressed_generic.bz2 1
 Also a bunch of the compressed_generic.* archives should be created with the corresponding contents.
 </p>
 
+<h2><a name="create-encrypted">Creating password protected archives</h2>
 
+<p>
+Depending on the archive format it's possible to create and update password protected archives or even encrypt the archive header.
+Encrypting archive items secures the content of the item leaving the item meta data (like archive item name, size, ...) unprotected.
+The header encryption solves this problem by encrypting the entire archive.
+</p>
+
+<p>
+To create a password protected archive the create- or update-callback class should additionally implement the ICryptoGetTextPassword interface.
+The cryptoGetTextPassword() method of the interface is called to get the password for the encryption. The header encryption can be
+activated using IOutFeatureSetEncryptHeader.setHeaderEncryption() method of the outArchive object, if the outArchive object implements the
+IOutFeatureSetEncryptHeader interface an though supports the header encryption.
+</p>
+
+<p>
+The following snippet takes the password as a second argument of the main() method. It uses the password to encrypt archive items.
+It also activates the header encryption. It's supported by the selected 7z algorithm.
+</p>
+
+##INCLUDE_SNIPPET(CompressWithPassword)
+
+<p>
+You can test the snippet like this:
+</p>
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressWithPassword compressed_with_pass.zip my-pass
+##INCLUDE_RAW_OUTPUT(CompressWithPassword)
+</pre></div>
 <br/>
 
 <h1><a name="update">Modifying existing archives</h1>
