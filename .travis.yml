@@ -14,6 +14,8 @@ before_install:
 
 script:
   - cmake --version
+  - find / -name javac
+  - find / -name jni.h
   - if [[ "$BUILDMODE" == "osx-64" ]]; then
         mkdir build &&
         cd build &&
