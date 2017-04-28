@@ -2,8 +2,8 @@ package net.sf.sevenzipjbinding.junit.jbindingtools;
 
 import static org.junit.Assert.assertEquals;
 import net.sf.sevenzipjbinding.PropID;
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
 import org.junit.Rule;
 import org.junit.Test;

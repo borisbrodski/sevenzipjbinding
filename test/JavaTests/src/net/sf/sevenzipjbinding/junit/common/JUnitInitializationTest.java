@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.common;
 
 import static org.junit.Assert.assertTrue;
 
@@ -6,6 +6,7 @@ import java.io.File;
 
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 import org.junit.Test;
 

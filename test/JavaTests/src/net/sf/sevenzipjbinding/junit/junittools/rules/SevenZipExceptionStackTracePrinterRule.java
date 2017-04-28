@@ -1,11 +1,12 @@
-package net.sf.sevenzipjbinding.junit;
-
-import net.sf.sevenzipjbinding.SevenZipException;
+package net.sf.sevenzipjbinding.junit.junittools.rules;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import net.sf.sevenzipjbinding.SevenZipException;
+
+// TODO REMOVE ME
 public class SevenZipExceptionStackTracePrinterRule implements TestRule {
     private static class SevenZipExceptionStackTracePrinterStatement extends Statement {
         private Statement base;

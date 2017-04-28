@@ -5,6 +5,8 @@ import java.util.Random;
 /**
  * Base class for all JUnit tests.
  *
+ * TODO REMOVE ME (replaced with {@link TestBase})
+ *
  * @author Boris Brodski
  * @since 9.20-2.00
  */

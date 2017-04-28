@@ -14,6 +14,10 @@ import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
 import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
+import net.sf.sevenzipjbinding.junit.common.ArchiveFormatTest;
+import net.sf.sevenzipjbinding.junit.common.DeclareThrowsSevenZipExceptionTest;
+import net.sf.sevenzipjbinding.junit.common.JUnitInitializationTest;
+import net.sf.sevenzipjbinding.junit.common.TestBaseTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
@@ -265,7 +269,7 @@ public class AllTestSuite extends TestSuite {
     /*    */JUnitInitializationTest.class, //
             ArchiveFormatTest.class, //
             DeclareThrowsSevenZipExceptionTest.class, //
-            PTest.class, //
+            TestBaseTest.class, //
             VersionTest.class, //
             CHeadCacheInStreamTest.class, //
             HeadCacheOnAutodetectionTest.class, //

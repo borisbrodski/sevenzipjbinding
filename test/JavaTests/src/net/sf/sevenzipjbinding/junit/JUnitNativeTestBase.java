@@ -9,6 +9,8 @@ import java.util.Date;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
+import net.sf.sevenzipjbinding.junit.junittools.rules.CloseableRule;
+import net.sf.sevenzipjbinding.junit.junittools.rules.SevenZipExceptionStackTracePrinterRule;
 import net.sf.sevenzipjbinding.junit.tools.SevenZipDebug;
 
 import org.junit.After;

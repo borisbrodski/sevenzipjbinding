@@ -1,10 +1,11 @@
 package net.sf.sevenzipjbinding.junit.junittools;
 
 import static org.junit.Assert.fail;
-import net.sf.sevenzipjbinding.SevenZipException;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
+
+import net.sf.sevenzipjbinding.SevenZipException;
 
 public class MultithreadedAndExpectException extends Statement {
     private Statement next;
@@ -17,7 +18,6 @@ public class MultithreadedAndExpectException extends Statement {
 
     @Override
     public void evaluate() throws Exception {
-
         final int threadCount = 3;
         final int[] threadsFinished = new int[] { threadCount };
         final Throwable[] firstThrowableArray = new Throwable[] { null };

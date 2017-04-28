@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
-
 import org.junit.Rule;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
 public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
     private static final String NO_CUSTOM_MESSSAGE_TEXT = "One or multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
@@ -603,7 +603,6 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         } catch (Throwable throwable) {
             assertTrue(useException);
             checkException(throwable);
-            // throwable.printStackTrace();
             if (getWidth() == 1 && getMtWidth() == 0 && !customErrorMessage) {
                 assertFalse(throwable instanceof SevenZipException);
                 assertNull(throwable.getCause());

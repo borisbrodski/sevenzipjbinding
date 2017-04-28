@@ -5,9 +5,9 @@ import static org.junit.Assert.assertNull;
 import org.junit.Rule;
 import org.junit.Test;
 
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
 public class CHeadCacheInStreamTest extends JUnitNativeTestBase {
     @Rule

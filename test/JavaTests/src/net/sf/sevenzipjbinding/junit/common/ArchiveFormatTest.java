@@ -1,9 +1,10 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.common;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
 import org.junit.Test;
 

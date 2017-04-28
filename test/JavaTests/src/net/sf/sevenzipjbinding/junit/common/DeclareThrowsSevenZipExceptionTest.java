@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.common;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

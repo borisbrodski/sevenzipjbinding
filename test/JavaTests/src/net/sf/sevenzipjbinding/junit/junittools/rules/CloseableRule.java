@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.junittools.rules;
 
 import java.io.Closeable;
 import java.util.ArrayList;

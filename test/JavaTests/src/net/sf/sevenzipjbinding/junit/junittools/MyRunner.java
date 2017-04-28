@@ -7,10 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.sevenzipjbinding.junit.TestConfiguration;
-
 import org.junit.Test;
-import org.junit.Test.None;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -21,8 +18,13 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+
 public class MyRunner extends Suite {
-    private static class MultithreadedFrameworkMethod extends FrameworkMethod {
+    public static class MultithreadedFrameworkMethod extends FrameworkMethodWithRuntimeInfo {
+        public static final RuntimeInfoAnnotation RUN_MULTITHREADED_ANNOTATION = new RuntimeInfoAnnotation(true);
+
         public MultithreadedFrameworkMethod(Method method) {
             super(method);
         }
@@ -31,6 +33,12 @@ public class MyRunner extends Suite {
         public String getName() {
             return super.getName() + " <Multithreaded>";
         }
+
+        @Override
+        protected RuntimeInfoAnnotation getRuntimeInfoAnnotation() {
+            return RUN_MULTITHREADED_ANNOTATION;
+        }
+
     }
 
     private class TestClassRunner extends BlockJUnit4ClassRunner {
@@ -49,32 +57,34 @@ public class MyRunner extends Suite {
             List<FrameworkMethod> computeTestMethods = new ArrayList<FrameworkMethod>();
             TestClass targetClass = getTestClass();
             boolean multithreadedOnClass = targetClass.getJavaClass().getAnnotation(Multithreaded.class) != null;
+            boolean multithreadedEnabled = TestConfiguration.getCurrent().isMultithreadedEnabled();
             for (FrameworkMethod frameworkMethod : targetClass.getAnnotatedMethods(Test.class)) {
                 computeTestMethods.add(frameworkMethod);
                 Method method = frameworkMethod.getMethod();
-                if (multithreadedOnClass || method.getAnnotation(Multithreaded.class) != null) {
+                if (multithreadedEnabled//
+                        && (multithreadedOnClass || method.getAnnotation(Multithreaded.class) != null)) {
                     computeTestMethods.add(new MultithreadedFrameworkMethod(method));
                 }
             }
             return computeTestMethods;
         }
 
-        @Override
-        protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test, Statement next) {
-            if (method.getClass() == MultithreadedFrameworkMethod.class) {
-                Test annotation = method.getAnnotation(Test.class);
-                return new MultithreadedAndExpectException(method, next, getExpectedException(annotation));
-            }
-            return super.possiblyExpectingExceptions(method, test, next);
-        }
+        //        @Override
+        //        protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test, Statement next) {
+        //            if (method.getClass() == MultithreadedFrameworkMethod.class) {
+        //                Test annotation = method.getAnnotation(Test.class);
+        //                return new MultithreadedAndExpectException(method, next, getExpectedException(annotation));
+        //            }
+        //            return super.possiblyExpectingExceptions(method, test, next);
+        //        }
 
-        private Class<? extends Throwable> getExpectedException(Test annotation) {
-            if (annotation == null || annotation.expected() == None.class) {
-                return null;
-            } else {
-                return annotation.expected();
-            }
-        }
+        //        private Class<? extends Throwable> getExpectedException(Test annotation) {
+        //            if (annotation == null || annotation.expected() == None.class) {
+        //                return null;
+        //            } else {
+        //                return annotation.expected();
+        //            }
+        //        }
 
         @Override
         public Object createTest() throws Exception {
@@ -100,25 +110,26 @@ public class MyRunner extends Suite {
             return childrenInvoker(notifier);
         }
 
-        @Override
-        protected Statement withPotentialTimeout(FrameworkMethod method, Object test, Statement next) {
-            long timeout = 0;
-            Test annotation = method.getAnnotation(Test.class);
-            if (annotation != null) {
-                timeout = annotation.timeout();
-            }
-
-            if (timeout == 0) {
-                timeout = TestConfiguration.getTimeout();
-            }
-            return timeout > 0 ? new FailAndStackDumpOnTimeout(next, timeout) : next;
-        }
+        //        @Override
+        //        protected Statement withPotentialTimeout(FrameworkMethod method, Object test, Statement next) {
+        //            long timeout = 0;
+        //            Test annotation = method.getAnnotation(Test.class);
+        //            if (annotation != null) {
+        //                timeout = annotation.timeout();
+        //            }
+        //
+        //            if (timeout == 0) {
+        //                timeout = 1000 * TestConfiguration.getCurrent().getSingleTestTimeout();
+        //            }
+        //            return timeout > 0 ? new FailAndStackDumpOnTimeout(next, timeout) : next;
+        //        }
     }
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
 
     public MyRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner> emptyList());
+        TestConfiguration.init();
         List<Object[]> parametersList = getParametersList(getTestClass());
         for (int i = 0; i < parametersList.size(); i++) {
             runners.add(new TestClassRunner(getTestClass().getJavaClass(), parametersList.get(i), i));

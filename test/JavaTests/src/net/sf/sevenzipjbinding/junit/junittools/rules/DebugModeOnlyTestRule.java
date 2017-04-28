@@ -1,12 +1,15 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.junittools.rules;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import net.sf.sevenzipjbinding.junit.TestLogger;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+
 /**
- * This rule stips execution of tests annotated with {@link DebugModeOnly}, if <code>skip-debug-mode-tests</code>
- * java property set to <code>true</code>.
+ * This rule skips execution of tests annotated with {@link DebugModeOnly}, if <code>skip-debug-mode-tests</code> java
+ * property set to <code>true</code>.
  *
  * @author Boris Brodski
  * @since 9.20-2.00
@@ -29,7 +32,7 @@ public class DebugModeOnlyTestRule implements TestRule {
                 String value = System.getProperties().getProperty(SKIP_DEBUG_MODE_TESTS_PROPERTS);
                 if (value != null && (value.trim().toLowerCase().matches("1|true"))) {
                     // Skip test execution
-                    System.out.println(description.getClassName() + "." + description.getMethodName()
+                    TestLogger.log(description.getClassName() + "." + description.getMethodName()
                             + "Test execution skiped due to the " + SKIP_DEBUG_MODE_TESTS_PROPERTS
                             + " property");
                     return;

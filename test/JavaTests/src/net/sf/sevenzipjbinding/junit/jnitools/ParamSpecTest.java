@@ -10,9 +10,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
 import org.junit.Rule;
 import org.junit.Test;

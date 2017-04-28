@@ -1,15 +1,16 @@
-package net.sf.sevenzipjbinding.junit;
+package net.sf.sevenzipjbinding.junit.common;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.sf.sevenzipjbinding.junit.junittools.Multithreaded;
-
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
-// TODO Remove it
-public class PTest extends TestBase {
+import net.sf.sevenzipjbinding.junit.TestBase;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+
+public class TestBaseTest extends TestBase {
     private final String a;
     private final int b;
 
@@ -19,7 +20,7 @@ public class PTest extends TestBase {
                 { "c", 8 } });
     }
 
-    public PTest(String a, int b) {
+    public TestBaseTest(String a, int b) {
         this.a = a;
         this.b = b;
 
@@ -28,11 +29,20 @@ public class PTest extends TestBase {
     @Test
     @Multithreaded
     public void test1() throws Exception {
-        System.out.println("Testing 1: " + a + ", " + b);
+        log(Thread.currentThread() + ": Testing 1: " + a + "," + b);
     }
 
     @Test
     public void test2() throws Exception {
-        System.out.println("Testing 2: " + a + ", " + b);
+        log("Testing 2: " + a + ", " + b);
+    }
+
+    @Test
+    @Multithreaded
+    @Ignore
+    public void test3() {
+        log("Endless loop");
+        while (true) {
+        }
     }
 }
