@@ -60,7 +60,7 @@ public class TestConfiguration {
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
         /*                    name           | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
         new TestConfiguration("MINIMAL"      ,       0,            1,                0,       300,   false,    true), //
-        new TestConfiguration(DEFAULT_PROFILE,       5,            4,                3,       600,   true,    false), //
+        new TestConfiguration(DEFAULT_PROFILE,       5,            4,                3,       600,   true,     true), //
         new TestConfiguration("STRESS"       ,      15,           10,               10,      1200,   true,    false)  //
     };
     // @formatter:off

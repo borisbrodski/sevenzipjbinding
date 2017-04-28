@@ -9,6 +9,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public class TestBaseTest extends TestBase {
     private final String a;
@@ -28,6 +29,7 @@ public class TestBaseTest extends TestBase {
 
     @Test
     @Multithreaded
+    @Repeat
     public void test1() throws Exception {
         log(Thread.currentThread() + ": Testing 1: " + a + "," + b);
     }

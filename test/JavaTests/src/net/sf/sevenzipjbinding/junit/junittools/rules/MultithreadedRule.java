@@ -20,6 +20,7 @@ import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.TestLogger;
 import net.sf.sevenzipjbinding.junit.junittools.RuntimeInfoAnnotation;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 /**
  * Run tests multithreaded, annotated with {@link Multithreaded}.
@@ -48,6 +49,9 @@ public class MultithreadedRule implements TestRule {
             } else {
                 threadCount = 1;
                 repeatCount = TestConfiguration.getCurrent().getRepeatSingleThreadedTest();
+            }
+            if (description.getAnnotation(Repeat.class) == null) {
+                repeatCount = 1;
             }
             Test test = description.getAnnotation(Test.class);
             runMultithreaded(base, getExpectedException(test), threadCount, repeatCount, getTimeout());
