@@ -1,22 +1,19 @@
 package net.sf.sevenzipjbinding.junit.jbindingtools;
 
 import static org.junit.Assert.assertEquals;
-import net.sf.sevenzipjbinding.PropID;
-import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-public class EnumTest extends JBindingToolsTestBase {
+import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+
+public class EnumTest extends JUnitNativeTestBase2 {
     private static native int getPropertyIndexSymLink();
 
     private static native int getPropertyIndexHardLink();
 
     private static native int getPropertyIndexCopyLink();
-
-    @Rule
-    public DebugModeOnlyTestRule skipDebugModeOnlyTestRule = new DebugModeOnlyTestRule();
 
     @Test
     @DebugModeOnly

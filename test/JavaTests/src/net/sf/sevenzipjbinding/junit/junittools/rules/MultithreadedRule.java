@@ -50,9 +50,13 @@ public class MultithreadedRule implements TestRule {
                 threadCount = 1;
                 repeatCount = TestConfiguration.getCurrent().getRepeatSingleThreadedTest();
             }
-            if (description.getAnnotation(Repeat.class) == null) {
+            Repeat repeatAnnotation = description.getAnnotation(Repeat.class);
+            if (repeatAnnotation == null) {
                 repeatCount = 1;
+            } else {
+                repeatCount *= repeatAnnotation.multiplyBy();
             }
+
             Test test = description.getAnnotation(Test.class);
             runMultithreaded(base, getExpectedException(test), threadCount, repeatCount, getTimeout());
         }
@@ -118,17 +122,21 @@ public class MultithreadedRule implements TestRule {
                 if (expectedException != null) {
                     result = new AssertionError(
                             "FAILURE: Expected exception wasn't thrown: " + expectedException.getSimpleName());
-                    TestLogger.log(result.getMessage());
-                    return result;
                 }
             } catch (Throwable e) {
-                if (expectedException == null || expectedException != e.getClass()) {
+                if (expectedException == null) {
+                    result = e;
+                } else if (expectedException != e.getClass()) {
                     result = new AssertionError(
                             "FAILURE: Unexpected exception. Expected: " + expectedException.getName() //
-                                    + ", got: " + e.getMessage(),
-                            e);
+                                    + ", got: " + e.getMessage());
+                    result.setStackTrace(e.getStackTrace());
                     TestLogger.log(result.getMessage(), e);
+                    return result;
                 }
+            }
+            if (result != null) {
+                TestLogger.log(result);
             }
             return result;
         }

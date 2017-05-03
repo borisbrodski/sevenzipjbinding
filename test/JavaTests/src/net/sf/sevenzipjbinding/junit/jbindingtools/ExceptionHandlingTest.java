@@ -11,471 +11,47 @@ import static org.junit.Assert.fail;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
+public class ExceptionHandlingTest extends JUnitNativeTestBase2 {
     private static final String NO_CUSTOM_MESSSAGE_TEXT = "One or multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
-
-    public static abstract class Width1 extends ExceptionHandlingTest {
-        @Override
-        protected int getWidth() {
-            return 1;
-        }
-    }
-
-    public static abstract class Width2 extends ExceptionHandlingTest {
-        @Override
-        protected int getWidth() {
-            return 2;
-        }
-    }
-
-    public static abstract class Width3 extends ExceptionHandlingTest {
-        @Override
-        protected int getWidth() {
-            return 3;
-        }
-    }
-
-    public static abstract class Width1Depth0 extends Width1 {
-        @Override
-        protected int getDepth() {
-            return 0;
-        }
-    }
-
-    public static abstract class Width1Depth1 extends Width1 {
-        @Override
-        protected int getDepth() {
-            return 1;
-        }
-    }
-
-    public static abstract class Width1Depth2 extends Width1 {
-        @Override
-        protected int getDepth() {
-            return 2;
-        }
-    }
-
-    //    public static abstract class Width1Depth3 extends Width1 {
-    //        @Override
-    //        protected int getDepth() {
-    //            return 3;
-    //        }
-    //    }
-
-    public static abstract class Width2Depth0 extends Width2 {
-        @Override
-        protected int getDepth() {
-            return 0;
-        }
-    }
-
-    public static abstract class Width2Depth1 extends Width2 {
-        @Override
-        protected int getDepth() {
-            return 1;
-        }
-    }
-
-    public static abstract class Width2Depth2 extends Width2 {
-        @Override
-        protected int getDepth() {
-            return 2;
-        }
-    }
-
-    //    public static abstract class Width2Depth3 extends Width2 {
-    //        @Override
-    //        protected int getDepth() {
-    //            return 3;
-    //        }
-    //    }
-
-    public static abstract class Width3Depth0 extends Width3 {
-        @Override
-        protected int getDepth() {
-            return 0;
-        }
-    }
-
-    public static abstract class Width3Depth1 extends Width3 {
-        @Override
-        protected int getDepth() {
-            return 1;
-        }
-    }
-
-    public static abstract class Width3Depth2 extends Width3 {
-        @Override
-        protected int getDepth() {
-            return 2;
-        }
-    }
-
-    //    public static abstract class Width3Depth3 extends Width3 {
-    //        @Override
-    //        protected int getDepth() {
-    //            return 3;
-    //        }
-    //    }
-
-    public static class Width1Depth0MtWidth0 extends Width1Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width1Depth1MtWidth0 extends Width1Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width1Depth2MtWidth0 extends Width1Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    //    public static class Width1Depth3MtWidth0 extends Width1Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 0;
-    //        }
-    //    }
-
-    public static class Width2Depth0MtWidth0 extends Width2Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width2Depth1MtWidth0 extends Width2Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width2Depth2MtWidth0 extends Width2Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    //    public static class Width2Depth3MtWidth0 extends Width2Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 0;
-    //        }
-    //    }
-
-    public static class Width3Depth0MtWidth0 extends Width3Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width3Depth1MtWidth0 extends Width3Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    public static class Width3Depth2MtWidth0 extends Width3Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 0;
-        }
-    }
-
-    //    public static class Width3Depth3MtWidth0 extends Width3Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 0;
-    //        }
-    //    }
-
-    public static class Width1Depth0MtWidth1 extends Width1Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width1Depth1MtWidth1 extends Width1Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width1Depth2MtWidth1 extends Width1Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    //    public static class Width1Depth3MtWidth1 extends Width1Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 1;
-    //        }
-    //    }
-
-    public static class Width2Depth0MtWidth1 extends Width2Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width2Depth1MtWidth1 extends Width2Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width2Depth2MtWidth1 extends Width2Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    //    public static class Width2Depth3MtWidth1 extends Width2Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 1;
-    //        }
-    //    }
-
-    public static class Width3Depth0MtWidth1 extends Width3Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width3Depth1MtWidth1 extends Width3Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    public static class Width3Depth2MtWidth1 extends Width3Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 1;
-        }
-    }
-
-    //    public static class Width3Depth3MtWidth1 extends Width3Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 1;
-    //        }
-    //    }
-
-    public static class Width1Depth0MtWidth2 extends Width1Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width1Depth1MtWidth2 extends Width1Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width1Depth2MtWidth2 extends Width1Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    //    public static class Width1Depth3MtWidth2 extends Width1Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 2;
-    //        }
-    //    }
-
-    public static class Width2Depth0MtWidth2 extends Width2Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width2Depth1MtWidth2 extends Width2Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width2Depth2MtWidth2 extends Width2Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    //    public static class Width2Depth3MtWidth2 extends Width2Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 2;
-    //        }
-    //    }
-
-    public static class Width3Depth0MtWidth2 extends Width3Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width3Depth1MtWidth2 extends Width3Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    public static class Width3Depth2MtWidth2 extends Width3Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 2;
-        }
-    }
-
-    //    public static class Width3Depth3MtWidth2 extends Width3Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 2;
-    //        }
-    //    }
-
-    public static class Width1Depth0MtWidth3 extends Width1Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width1Depth1MtWidth3 extends Width1Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width1Depth2MtWidth3 extends Width1Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    //    public static class Width1Depth3MtWidth3 extends Width1Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 3;
-    //        }
-    //    }
-
-    public static class Width2Depth0MtWidth3 extends Width2Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width2Depth1MtWidth3 extends Width2Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width2Depth2MtWidth3 extends Width2Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    //    public static class Width2Depth3MtWidth3 extends Width2Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 3;
-    //        }
-    //    }
-
-    public static class Width3Depth0MtWidth3 extends Width3Depth0 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width3Depth1MtWidth3 extends Width3Depth1 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    public static class Width3Depth2MtWidth3 extends Width3Depth2 {
-        @Override
-        protected int getMtWidth() {
-            return 3;
-        }
-    }
-
-    //    public static class Width3Depth3MtWidth3 extends Width3Depth3 {
-    //        @Override
-    //        protected int getMtWidth() {
-    //            return 2;
-    //        }
-    //    }
-
-    @Rule
-    public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
 
     private static native String callRecursiveCallbackMethod(String path, int depth, int width, int mtwidth,
             boolean useException, boolean customErrorMessage) throws SevenZipException;
 
-    protected abstract int getWidth();
+    private int width;
+    private int depth;
+    private int mtWidth;
 
-    protected abstract int getDepth();
+    @Parameters
+    public static Collection<Object[]> getParameters() {
+        Collection<Object[]> parameters = new ArrayList<Object[]>();
+        for (int width = 1; width <= 3; width++) {
+            for (int depth = 0; depth <= 2; depth++) {
+                for (int mtWidth = 0; mtWidth <= 3; mtWidth++) {
+                    parameters.add(new Object[] { width, depth, mtWidth });
+                }
+            }
+        }
+        return parameters;
+    }
 
-    protected abstract int getMtWidth();
+    public ExceptionHandlingTest(int width, int depth, int mtWidth) {
+        this.width = width;
+        this.depth = depth;
+        this.mtWidth = mtWidth;
+    }
 
     static String recursiveCallbackMethod(String path, int depth, int width, int mtWidth, boolean useException,
             boolean customErrorMessage, int widthIndex, int mtWidthIndex) throws SevenZipException {
@@ -524,65 +100,27 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
 
     @Test
     @DebugModeOnly
+    @Multithreaded
+    @Repeat(multiplyBy = 10)
     public void testCallRecursive() throws Exception {
-        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), false, false);
-
-        }
+        testCallRecursiveCallbackMethod("", depth, width, mtWidth, false, false);
     }
 
     @Test
     @DebugModeOnly
-    public void testCallRecursiveMultithreaded() throws Exception {
-        int threadCount = THREAD_COUNT;
-        // TODO verify/optimize
-        if (getWidth() + 10 * getMtWidth() + getDepth() >= 32) {
-            threadCount = 5;
-        }
-        if (getWidth() + 10 * getMtWidth() + getDepth() >= 34) {
-            threadCount = 2;
-        }
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testCallRecursive();
-            }
-        }, null, threadCount, THREAD_TIMEOUT);
-    }
-
-    @Test
-    @DebugModeOnly
+    @Multithreaded
+    @Repeat(multiplyBy = 10)
     public void testCallRecursiveWithException() throws Exception {
-        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), true, false);
-        }
+        testCallRecursiveCallbackMethod("", depth, width, mtWidth, true, false);
     }
+
 
     @Test
     @DebugModeOnly
-    public void testCallRecursiveWithExceptionMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testCallRecursiveWithException();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
-    @DebugModeOnly
+    @Multithreaded
+    @Repeat(multiplyBy = 10)
     public void testCallRecursiveWithExceptionWithCustomMessage() throws Exception {
-        for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
-            testCallRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), true, true);
-        }
-    }
-
-    @Test
-    @DebugModeOnly
-    public void testCallRecursiveWithExceptionWithCustomMessageMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testCallRecursiveWithExceptionWithCustomMessage();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
+        testCallRecursiveCallbackMethod("", depth, width, mtWidth, true, true);
     }
 
     private void testCallRecursiveCallbackMethod(String string, int depth, int width, int mtWidth,
@@ -590,10 +128,10 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         try {
             String expected = null;
             if (!useException) {
-                expected = testRecCPP(getDepth(), getWidth(), getMtWidth());
+                expected = testRecCPP(depth, width, mtWidth);
             }
 
-            String result = callRecursiveCallbackMethod("", getDepth(), getWidth(), getMtWidth(), useException,
+            String result = callRecursiveCallbackMethod("", depth, width, mtWidth, useException,
                     customErrorMessage);
             if (useException) {
                 fail("No exception occurred");
@@ -603,7 +141,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
         } catch (Throwable throwable) {
             assertTrue(useException);
             checkException(throwable);
-            if (getWidth() == 1 && getMtWidth() == 0 && !customErrorMessage) {
+            if (width == 1 && mtWidth == 0 && !customErrorMessage) {
                 assertFalse(throwable instanceof SevenZipException);
                 assertNull(throwable.getCause());
                 checkPathInSingleException(throwable);
@@ -616,13 +154,13 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
 
     private void checkPathInSingleException(Throwable throwable) {
         assertNull(throwable.getCause());
-        assertEquals(Integer.valueOf(1), Integer.valueOf(getWidth()));
-        assertEquals(Integer.valueOf(0), Integer.valueOf(getMtWidth()));
+        assertEquals(Integer.valueOf(1), Integer.valueOf(width));
+        assertEquals(Integer.valueOf(0), Integer.valueOf(mtWidth));
         List<int[]> path = parsePath(throwable.getMessage());
-        assertEquals(Integer.valueOf(getDepth() + 1), Integer.valueOf(path.size()));
+        assertEquals(Integer.valueOf(depth + 1), Integer.valueOf(path.size()));
         for (int i = 0; i < path.size(); i++) {
             int[] pathElement = path.get(i);
-            assertEquals(Integer.valueOf(getDepth() - i), Integer.valueOf(pathElement[0]));
+            assertEquals(Integer.valueOf(depth - i), Integer.valueOf(pathElement[0]));
             assertEquals(Integer.valueOf(0), Integer.valueOf(pathElement[1]));
             assertEquals(Integer.valueOf(-1), Integer.valueOf(pathElement[2]));
         }
@@ -641,7 +179,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
             lastPotentialCause = sevenZipException.getCauseLastPotentialThrown();
 
             if (customErrorMessage) {
-                assertEquals("Error: depth=" + (getDepth() - level) + ", width=" + getWidth(), //
+                assertEquals("Error: depth=" + (depth - level) + ", width=" + width, //
                         sevenZipException.getSevenZipExceptionMessage());
             } else {
                 assertEquals(NO_CUSTOM_MESSSAGE_TEXT, sevenZipException.getSevenZipExceptionMessage());
@@ -675,40 +213,40 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
                 lastPotentialCausePathElement = lastPotentialCausePath.get(level);
                 path = checkPathAndPutToResult(path, lastPotentialCausePath);
             }
-            if (getWidth() == 0) {
+            if (width == 0) {
                 assertNull(firstCausePathElement);
                 assertNull(lastCausePathElement);
-            } else if (getWidth() == 1) {
+            } else if (width == 1) {
                 assertNotNull(firstCausePathElement);
                 assertNull(lastCausePathElement);
                 assertEquals(Integer.valueOf(0), Integer.valueOf(firstCausePathElement[1]));
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(firstCausePathElement[2]));
-            } else if (getWidth() > 1) {
+            } else if (width > 1) {
                 assertNotNull(firstCausePathElement);
                 assertNotNull(lastCausePathElement);
                 assertEquals(Integer.valueOf(0), Integer.valueOf(firstCausePathElement[1]));
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(firstCausePathElement[2]));
-                assertEquals(Integer.valueOf(getWidth() - 1), Integer.valueOf(lastCausePathElement[1]));
+                assertEquals(Integer.valueOf(width - 1), Integer.valueOf(lastCausePathElement[1]));
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(lastCausePathElement[2]));
             }
 
-            if (getMtWidth() == 0) {
+            if (mtWidth == 0) {
                 assertNull(firstPotentialCausePathElement);
                 assertNull(lastPotentialCausePathElement);
-            } else if (getMtWidth() == 1) {
+            } else if (mtWidth == 1) {
                 assertNotNull(firstPotentialCausePathElement);
                 assertNull(lastPotentialCausePathElement);
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(firstPotentialCausePathElement[1]));
                 assertEquals(Integer.valueOf(0), Integer.valueOf(firstPotentialCausePathElement[2]));
-            } else if (getMtWidth() > 1) {
+            } else if (mtWidth > 1) {
                 assertNotNull(firstPotentialCausePathElement);
                 assertNotNull(lastPotentialCausePathElement);
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(firstPotentialCausePathElement[1]));
                 assertTrue(firstPotentialCausePathElement[2] >= 0);
-                assertTrue(firstPotentialCausePathElement[2] < getMtWidth());
+                assertTrue(firstPotentialCausePathElement[2] < mtWidth);
                 assertEquals(Integer.valueOf(-1), Integer.valueOf(lastPotentialCausePathElement[1]));
                 assertTrue(lastPotentialCausePathElement[2] >= 0);
-                assertTrue(lastPotentialCausePathElement[2] < getMtWidth());
+                assertTrue(lastPotentialCausePathElement[2] < mtWidth);
                 assertTrue(firstPotentialCausePathElement[2] != lastPotentialCausePathElement[2]);
             }
         } else {
@@ -719,7 +257,7 @@ public abstract class ExceptionHandlingTest extends JBindingToolsTestBase {
 
         assertEquals(Integer.valueOf(level), Integer.valueOf(path.size()));
         for (int i = 0; i < path.size(); i++) {
-            assertEquals(Integer.valueOf(getDepth() - i), Integer.valueOf(path.get(i)[0]));
+            assertEquals(Integer.valueOf(depth - i), Integer.valueOf(path.get(i)[0]));
         }
         return path;
     }

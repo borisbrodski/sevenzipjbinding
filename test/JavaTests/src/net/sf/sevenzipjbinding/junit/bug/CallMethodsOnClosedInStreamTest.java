@@ -12,9 +12,9 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 
-public class CallMethodsOnClosedInStreamTest extends JUnitNativeTestBase {
+public class CallMethodsOnClosedInStreamTest extends JUnitNativeTestBase2 {
     public interface InArchiveMethodCall {
         void callMethod(IInArchive inArchive) throws SevenZipException;
     }

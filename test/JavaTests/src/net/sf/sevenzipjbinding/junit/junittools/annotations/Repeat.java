@@ -17,5 +17,8 @@ import net.sf.sevenzipjbinding.junit.TestConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface Repeat {
-
+    /**
+     * Multiply the number of repetitions configured in {@link TestConfiguration} by the given number.
+     */
+    int multiplyBy() default 1;
 }

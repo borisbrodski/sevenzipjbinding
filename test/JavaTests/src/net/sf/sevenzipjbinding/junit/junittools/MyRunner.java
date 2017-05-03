@@ -1,9 +1,12 @@
 package net.sf.sevenzipjbinding.junit.junittools;
 
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,22 +72,11 @@ public class MyRunner extends Suite {
             return computeTestMethods;
         }
 
-        //        @Override
-        //        protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test, Statement next) {
-        //            if (method.getClass() == MultithreadedFrameworkMethod.class) {
-        //                Test annotation = method.getAnnotation(Test.class);
-        //                return new MultithreadedAndExpectException(method, next, getExpectedException(annotation));
-        //            }
-        //            return super.possiblyExpectingExceptions(method, test, next);
-        //        }
-
-        //        private Class<? extends Throwable> getExpectedException(Test annotation) {
-        //            if (annotation == null || annotation.expected() == None.class) {
-        //                return null;
-        //            } else {
-        //                return annotation.expected();
-        //            }
-        //        }
+        @Override
+        protected Statement possiblyExpectingExceptions(FrameworkMethod method, Object test, Statement next) {
+            // MultithreadedRule takes care of the expected exceptions
+            return next;
+        }
 
         @Override
         public Object createTest() throws Exception {
@@ -93,6 +85,9 @@ public class MyRunner extends Suite {
 
         @Override
         protected String getName() {
+            if (parameterSet == NO_PARAMETERS_ARRAY) {
+                return "All test";
+            }
             return "Set " + parameterSetNumber + ": " + Arrays.toString(parameterSet);
         }
 
@@ -109,23 +104,10 @@ public class MyRunner extends Suite {
         protected Statement classBlock(RunNotifier notifier) {
             return childrenInvoker(notifier);
         }
-
-        //        @Override
-        //        protected Statement withPotentialTimeout(FrameworkMethod method, Object test, Statement next) {
-        //            long timeout = 0;
-        //            Test annotation = method.getAnnotation(Test.class);
-        //            if (annotation != null) {
-        //                timeout = annotation.timeout();
-        //            }
-        //
-        //            if (timeout == 0) {
-        //                timeout = 1000 * TestConfiguration.getCurrent().getSingleTestTimeout();
-        //            }
-        //            return timeout > 0 ? new FailAndStackDumpOnTimeout(next, timeout) : next;
-        //        }
     }
 
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
+    private final Object[] NO_PARAMETERS_ARRAY = new Object[0];
 
     public MyRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner> emptyList());
@@ -144,12 +126,28 @@ public class MyRunner extends Suite {
     @SuppressWarnings("unchecked")
     private List<Object[]> getParametersList(TestClass klass) throws Throwable {
         FrameworkMethod parametersMethod = getParametersMethod(klass);
-        if (parametersMethod == null) {
-            ArrayList<Object[]> arrayList = new ArrayList<Object[]>();
-            arrayList.add(new Object[0]);
-            return arrayList;
+        if (parametersMethod != null) {
+            Object param = parametersMethod.invokeExplosively(null);
+            if (param != null) {
+                assertTrue("Return type for the parameter method should be a Collection", param instanceof Collection);
+                Collection<?> paramCollection = (Collection<?>) param;
+                if (paramCollection.size() > 0) {
+                    Object element = paramCollection.iterator().next();
+                    if (element instanceof Object[]) {
+                        return (List<Object[]>) param;
+                    }
+                    List<Object[]> result = new ArrayList<Object[]>();
+                    for (Object object : paramCollection) {
+                        result.add(new Object[] { object });
+                    }
+                    return result;
+                }
+            }
         }
-        return (List<Object[]>) parametersMethod.invokeExplosively(null);
+
+        ArrayList<Object[]> arrayList = new ArrayList<Object[]>();
+        arrayList.add(NO_PARAMETERS_ARRAY);
+        return arrayList;
     }
 
     private FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {

@@ -9,13 +9,13 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
 
-import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZip.Version;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
-
 import org.junit.Test;
 
-public class VersionTest extends JUnitNativeTestBase {
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZip.Version;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+
+public class VersionTest extends JUnitNativeTestBase2 {
 
     @Test
     public void testSevenZipJBindingVersionSet() throws Exception {
@@ -37,7 +37,7 @@ public class VersionTest extends JUnitNativeTestBase {
     public void testSevenZipVersion() {
         Version version = SevenZip.getSevenZipVersion();
 
-        System.out.println("Testing binding of 7-Zip " + version.version + " (" + version.date + ")");
+        log("Testing binding of 7-Zip " + version.version + " (" + version.date + ")");
 
         assertEquals(0, version.build);
         assertTrue(version.major > 0);

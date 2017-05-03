@@ -1,5 +1,9 @@
 package net.sf.sevenzipjbinding.junit.common;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -12,8 +16,17 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public class TestBaseTest extends TestBase {
+    private static class CloseableEmpty implements Closeable {
+        boolean closed = false;
+
+        public void close() throws IOException {
+            closed = true;
+        }
+    }
+
     private final String a;
     private final int b;
+    private static CloseableEmpty closeableEmpty;
 
     @Parameters
     public static Collection<Object[]> data() {
@@ -39,12 +52,29 @@ public class TestBaseTest extends TestBase {
         log("Testing 2: " + a + ", " + b);
     }
 
-    @Test
+    @Test(timeout = 2000)
     @Multithreaded
     @Ignore
     public void test3() {
         log("Endless loop");
         while (true) {
         }
+    }
+
+    @Multithreaded
+    @Repeat
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void testExpectedException() {
+        throw new IndexOutOfBoundsException();
+    }
+
+    @Test
+    public void testClosable() {
+        if (closeableEmpty != null) {
+            assertEquals(closeableEmpty.closed, true);
+        }
+        closeableEmpty = new CloseableEmpty();
+        addCloseable(closeableEmpty);
+
     }
 }
