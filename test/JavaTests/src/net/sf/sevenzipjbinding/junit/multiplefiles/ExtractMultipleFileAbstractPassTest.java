@@ -1,8 +1,10 @@
 package net.sf.sevenzipjbinding.junit.multiplefiles;
 
-import net.sf.sevenzipjbinding.ArchiveFormat;
-
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipleFileAbstractTest {
 
@@ -24,6 +26,8 @@ public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipl
     }
 
     @Test(expected = Exception.class)
+    @Multithreaded
+    @Repeat
     public void test1Compression1WithoutPassword() throws Exception {
         expectException(Exception.class);
         usingPassword(false);
@@ -31,6 +35,8 @@ public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipl
     }
 
     @Test(expected = Exception.class)
+    @Multithreaded
+    @Repeat
     public void test1Compression1WithoutPasswordFormatAutodetect() throws Exception {
         expectException(Exception.class);
         usingPassword(false);
@@ -38,20 +44,8 @@ public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipl
     }
 
     @Test(expected = Exception.class)
-    public void test1Compression1WithoutPasswordMultithreaded() throws Exception {
-        expectException(Exception.class);
-        usingPassword(false);
-        test1Compression1Multithreaded();
-    }
-
-    @Test(expected = Exception.class)
-    public void test1Compression1WithoutPasswordFormatAutodetectMultithreaded() throws Exception {
-        expectException(Exception.class);
-        usingPassword(false);
-        test1Compression1FormatAutodetectMultithreaded();
-    }
-
-    @Test(expected = Exception.class)
+    @Multithreaded
+    @Repeat
     public void test1Compression1WithWrongPassword() throws Exception {
         expectException(Exception.class);
         setPasswordToUse("12345");
@@ -59,23 +53,12 @@ public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipl
     }
 
     @Test(expected = Exception.class)
+    @Multithreaded
+    @Repeat
     public void test1Compression1WithWrongPasswordFormatAutodetect() throws Exception {
         expectException(Exception.class);
         setPasswordToUse("12345");
         test1Compression1FormatAutodetect();
     }
 
-    @Test(expected = Exception.class)
-    public void test1Compression1WithWrongPasswordMultithreaded() throws Exception {
-        expectException(Exception.class);
-        setPasswordToUse("12345");
-        test1Compression1Multithreaded();
-    }
-
-    @Test(expected = Exception.class)
-    public void test1Compression1WithWrongPasswordFormatAutodetectMultithreaded() throws Exception {
-        expectException(Exception.class);
-        setPasswordToUse("12345");
-        test1Compression1FormatAutodetectMultithreaded();
-    }
 }

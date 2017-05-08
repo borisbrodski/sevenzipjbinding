@@ -1,9 +1,9 @@
 package net.sf.sevenzipjbinding.junit.multiplefiles;
 
-import net.sf.sevenzipjbinding.ArchiveFormat;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstractTest {
 
@@ -22,19 +22,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test2Compression1Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test2Compression1FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test2Compression1FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Ignore
@@ -46,19 +34,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test2Compression2Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test2Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test2Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Ignore
@@ -70,19 +46,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test2Compression3Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test2Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test2Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Ignore
@@ -94,19 +58,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test3Compression1Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test3Compression1FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test3Compression1FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Ignore
@@ -118,19 +70,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test3Compression2Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test3Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test3Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Ignore
@@ -142,19 +82,7 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
     @Ignore
     @Test
     @Override
-    public void test3Compression3Multithreaded() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
     public void test3Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Ignore
-    @Test
-    @Override
-    public void test3Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
 }

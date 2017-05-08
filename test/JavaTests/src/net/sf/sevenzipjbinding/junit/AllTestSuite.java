@@ -506,6 +506,8 @@ public class AllTestSuite extends TestSuite {
     }
 
     public static Test suite() throws Exception {
+        setSystemPropretyIfNotAlready(TestConfiguration.TEST_PARAM__TRACE, "false");
+
         String singleBundle = System.getProperty("SINGLEBUNDLE");
         if (singleBundle != null) {
             singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
@@ -530,5 +532,11 @@ public class AllTestSuite extends TestSuite {
         }
 
         return allTestSuite;
+    }
+
+    static void setSystemPropretyIfNotAlready(String name, String value) {
+        if (System.getProperty(name) == null) {
+            System.setProperty(name, value);
+        }
     }
 }

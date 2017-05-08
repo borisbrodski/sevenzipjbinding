@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,6 +24,8 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 /**
  * This test tests extraction of archives with a single file. Test data: <code>testdata/simple</code>.<br>
@@ -87,194 +90,150 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		super(archiveFormat, extention, compression1, compression2, compression3);
 	}
 
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression1() throws Exception {
 		testArchiveExtraction(4, compression1, false, false);
 	}
 
-	@Test
-	public void test4Compression1Multithreaded() throws Exception {
-		testArchiveExtraction(4, compression1, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression1FormatAutodetect() throws Exception {
 		testArchiveExtraction(4, compression1, true, false);
 	}
 
-	@Test
-	public void test4Compression1FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(4, compression1, true, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression2() throws Exception {
 		testArchiveExtraction(4, compression2, false, false);
 	}
 
-	@Test
-	public void test4Compression2Multithreaded() throws Exception {
-		testArchiveExtraction(4, compression2, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression2FormatAutodetect() throws Exception {
 		testArchiveExtraction(4, compression2, true, false);
 	}
 
-	@Test
-	public void test4Compression2FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(4, compression2, true, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression3() throws Exception {
 		testArchiveExtraction(4, compression3, false, false);
 	}
 
-	@Test
-	public void test4Compression3Multithreaded() throws Exception {
-		testArchiveExtraction(4, compression3, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test4Compression3FormatAutodetect() throws Exception {
 		testArchiveExtraction(4, compression3, true, false);
 	}
 
-	@Test
-	public void test4Compression3FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(4, compression3, true, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression1() throws Exception {
 		testArchiveExtraction(5, compression1, false, false);
 	}
 
-	@Test
-	public void test5Compression1Multithreaded() throws Exception {
-		testArchiveExtraction(5, compression1, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression1FormatAutodetect() throws Exception {
 		testArchiveExtraction(5, compression1, true, false);
 	}
 
-	@Test
-	public void test5Compression1FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(5, compression1, true, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression2() throws Exception {
 		testArchiveExtraction(5, compression2, false, false);
 	}
 
-	@Test
-	public void test5Compression2Multithreaded() throws Exception {
-		testArchiveExtraction(5, compression2, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression2FormatAutodetect() throws Exception {
 		testArchiveExtraction(5, compression2, true, false);
 	}
 
-	@Test
-	public void test5Compression2FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(5, compression2, true, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression3() throws Exception {
 		testArchiveExtraction(5, compression3, false, false);
 	}
 
-	@Test
-	public void test5Compression3Multithreaded() throws Exception {
-		testArchiveExtraction(5, compression3, false, true);
-	}
-
-	@Test
+    @Test
+    @Multithreaded
+    @Repeat
 	public void test5Compression3FormatAutodetect() throws Exception {
 		testArchiveExtraction(5, compression3, true, false);
 	}
 
-	@Test
-	public void test5Compression3FormatAutodetectMultithreaded() throws Exception {
-		testArchiveExtraction(5, compression3, true, true);
-	}
-
 	@Override
 	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
-			throws SevenZipException {
-		String uncompressedFilename = getUncompressedFilename(fileIndex);
-		String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename;
+            throws Exception {
+        String uncompressedFilename = getUncompressedFilename(fileIndex);
+        String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename;
 
-		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
-		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
-				compressionIndex, autodetectFormat, "simple", "dat");
+        ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
+        closeLater(extractionInArchiveTestHelper);
 
-		SingleFileSequentialOutStreamComparator outputStream = null;
-		try {
-			int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
-			long sizes[] = null;
+        IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex, compressionIndex,
+                autodetectFormat, "simple", "dat");
+        closeLater(inArchive);
 
-			if (archiveFormat != ArchiveFormat.Z && archiveFormat != ArchiveFormat.BZIP2) {
-				sizes = new long[inArchive.getNumberOfItems()];
-				for (int i = 0; i < sizes.length; i++) {
-					sizes[i] = -1;
-				}
-				sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
-			}
+        int index = archiveFormat == ArchiveFormat.ISO ? 1 : 0;
+        long sizes[] = null;
 
-            if (archiveFormat == ArchiveFormat.CHM || archiveFormat == ArchiveFormat.NTFS) {
-                index = calcSampleFileIndexInArchive(inArchive);
-			}
-
-			outputStream = new SingleFileSequentialOutStreamComparator(inArchive, sizes, expectedFilename);
-
-			assertTrue(inArchive.getNumberOfItems() > 0);
-			checkPropertyPath(inArchive, index, uncompressedFilename);
-			checkDataSize(inArchive, index, expectedFilename);
-			checkPropertyIsFolder(inArchive, index);
-			ExtractOperationResult operationResult;
-			if (usingPassword) {
-				if (usingPasswordCallback) {
-					PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(outputStream);
-					inArchive.extract(new int[] { index }, false, extractCallback);
-					operationResult = extractCallback.getExtractOperationResult();
-				} else {
-					operationResult = inArchive.extractSlow(index, outputStream, passwordToUse);
-				}
-			} else {
-				operationResult = inArchive.extractSlow(index, outputStream);
-			}
-			if (ExtractOperationResult.OK != operationResult) {
-				throw new ExtractOperationResultException(operationResult);
-			}
-            checkArchiveGeneric(inArchive);
-			outputStream.checkAndCloseInputFile();
-			outputStream = null;
-
-            // TODO Uncomment after resolving security problems in 7-zip
-            if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
-            /* && archiveFormat != ArchiveFormat.UDF */) {
-                checkPropertyPackedSize(inArchive, index, expectedFilename);
+        if (archiveFormat != ArchiveFormat.Z && archiveFormat != ArchiveFormat.BZIP2) {
+            sizes = new long[inArchive.getNumberOfItems()];
+            for (int i = 0; i < sizes.length; i++) {
+                sizes[i] = -1;
             }
-			checkPropertyIsEncrypted(inArchive, index, expectedFilename);
-		} catch (IOException exception) {
-			throw new RuntimeException(exception);
-		} finally {
-			inArchive.close();
-			if (outputStream != null) {
-				outputStream.closeInputFile();
-			}
+            sizes[index] = (Long) inArchive.getProperty(index, PropID.SIZE);
+        }
 
-			extractionInArchiveTestHelper.closeAllStreams();
-		}
+        if (archiveFormat == ArchiveFormat.CHM || archiveFormat == ArchiveFormat.NTFS) {
+            index = calcSampleFileIndexInArchive(inArchive);
+        }
+
+        SingleFileSequentialOutStreamComparator outputStream = new SingleFileSequentialOutStreamComparator(inArchive,
+                sizes, expectedFilename);
+        closeLater(outputStream);
+
+        assertTrue(inArchive.getNumberOfItems() > 0);
+        checkPropertyPath(inArchive, index, uncompressedFilename);
+        checkDataSize(inArchive, index, expectedFilename);
+        checkPropertyIsFolder(inArchive, index);
+        ExtractOperationResult operationResult;
+        if (usingPassword) {
+            if (usingPasswordCallback) {
+                PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(outputStream);
+                inArchive.extract(new int[] { index }, false, extractCallback);
+                operationResult = extractCallback.getExtractOperationResult();
+            } else {
+                operationResult = inArchive.extractSlow(index, outputStream, passwordToUse);
+            }
+        } else {
+            operationResult = inArchive.extractSlow(index, outputStream);
+        }
+        if (ExtractOperationResult.OK != operationResult) {
+            throw new ExtractOperationResultException(operationResult);
+        }
+        checkArchiveGeneric(inArchive);
+        outputStream.check();
+
+        // TODO Uncomment after resolving security problems in 7-zip
+        if (archiveFormat != ArchiveFormat.CAB && archiveFormat != ArchiveFormat.CHM
+        /* && archiveFormat != ArchiveFormat.UDF */) {
+            checkPropertyPackedSize(inArchive, index, expectedFilename);
+        }
+        checkPropertyIsEncrypted(inArchive, index, expectedFilename);
 	}
 
     protected String getUncompressedFilename(int fileIndex) {
@@ -395,7 +354,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		}
 	}
 
-	private class SingleFileSequentialOutStreamComparator implements ISequentialOutStream {
+    private class SingleFileSequentialOutStreamComparator implements ISequentialOutStream, Closeable {
 		private InputStream fileInputStream;
 		private long processed = 0;
 		private Random random = new Random();
@@ -413,17 +372,12 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 			fileInputStream = new FileInputStream(file);
 		}
 
-		public void closeInputFile() {
-			try {
-				fileInputStream.close();
-			} catch (IOException e) {
-				throw new RuntimeException("Error closing 'expected' input file", e);
-			}
+        public void close() throws IOException {
+            fileInputStream.close();
 		}
 
-		void checkAndCloseInputFile() {
+        void check() {
 			try {
-
 				if (firstException instanceof RuntimeException) {
 					throw (RuntimeException) firstException;
 				}
@@ -437,8 +391,6 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 						fileInputStream.read());
 			} catch (IOException e) {
 				throw new RuntimeException("Error reading 'expected' input file (testing for EOF)", e);
-			} finally {
-				closeInputFile();
 			}
 		}
 

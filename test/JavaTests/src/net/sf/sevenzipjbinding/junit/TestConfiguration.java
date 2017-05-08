@@ -13,55 +13,65 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.LongRunning;
  */
 public class TestConfiguration {
     /**
+     * Name of the "minimal" profile.
+     */
+    public static String PR_MINUMAL = "MINIMAL";
+
+    /**
      * Name of the default profile.
      */
-    private static String DEFAULT_PROFILE = "DEFAULT";
+    public static String PR_DEFAULT = "DEFAULT";
+
+    /**
+     * Name of the "stress" profile.
+     */
+    public static String PR_STRESS = "STRESS";
 
     /**
      * Use named test profile.
      */
-    private static String TEST_PARAM__PROFILE = "TEST_PROFILE";
+    public static String TEST_PARAM__PROFILE = "TEST_PROFILE";
 
     /**
      * Count of threads to the used for multithreaded tests.<br>
      * 0 - disables multithreaded tests.
      */
-    private static String TEST_PARAM__THREADS_MULTITHREADED_TEST = "TEST_MULTITHREADED_THREADS";
+    public static String TEST_PARAM__THREADS_MULTITHREADED_TEST = "TEST_MULTITHREADED_THREADS";
 
     /**
      * The number of time a single threaded (normal) test should be repeated.<br>
      * 0 - disables single threaded tests.
      */
-    private static String TEST_PARAM__REPEAT_SINGLETHREADED_TEST = "TEST_REPEAT_SINGLETHREADED";
+    public static String TEST_PARAM__REPEAT_SINGLETHREADED_TEST = "TEST_REPEAT_SINGLETHREADED";
 
     /**
      * The number of time a multithreaded test should be repeated. 0 - disables multithreaded tests.
      */
-    private static String TEST_PARAM__REPEAT_MULTITHREADED_TEST = "TEST_REPEAT_MULTITHREADED";
+    public static String TEST_PARAM__REPEAT_MULTITHREADED_TEST = "TEST_REPEAT_MULTITHREADED";
 
     /**
      * The timeout in seconds for a <i>single</i> run of a test.
      */
-    private static String TEST_PARAM__TIMEOUT = "TEST_TIMEOUT";
+    public static String TEST_PARAM__TIMEOUT = "TEST_TIMEOUT";
 
     /**
      * If <code>true</code> run tests marked as 'long running'.
      *
      * @see LongRunning
      */
-    private static String TEST_PARAM__LONG_RUNNING = "TEST_LONG_RUNNING";
+    public static String TEST_PARAM__LONG_RUNNING = "TEST_LONG_RUNNING";
 
     /**
      * If enable, print trace output. Default: ON.
      */
-    private static String TEST_PARAM__TRACE = "TEST_TRACE";
+    public static String TEST_PARAM__TRACE = "TEST_TRACE";
 
     // @formatter:off
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
-        /*                    name           | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
-        new TestConfiguration("MINIMAL"      ,       0,            1,                0,       300,   false,    true), //
-        new TestConfiguration(DEFAULT_PROFILE,       5,            4,                3,       600,   true,     true), //
-        new TestConfiguration("STRESS"       ,      15,           10,               10,      1200,   true,    false)  //
+        /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
+        new TestConfiguration(PR_MINUMAL,         0,             1,               0,      300,   false,   true), //
+        new TestConfiguration(PR_DEFAULT,         5,             4,               3,      600,   true,    true), //
+        new TestConfiguration(PR_STRESS ,        15,            10,              10,     1200,   true,   false)  //
     };
     // @formatter:off
     private static TestConfiguration currentProfile;
@@ -208,7 +218,7 @@ public class TestConfiguration {
             if (profileName != null) {
                 loadProfile(profileName);
             } else {
-                loadProfile(DEFAULT_PROFILE);
+                loadProfile(PR_DEFAULT);
             }
             currentProfile.overwriteFromSystemProperties();
             currentProfile.printParameter();

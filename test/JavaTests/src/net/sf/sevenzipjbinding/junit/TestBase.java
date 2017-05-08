@@ -19,11 +19,12 @@ public class TestBase {
     public static final String NEW_LINE = System.getProperty("line.separator");
     public static final int RANDOM_GLOBAL_SEED = 6;
 
-    @Rule
-    public CloseableRule closeableRule = new CloseableRule();
 
     @Rule
     public MultithreadedRule multithreadedRule = new MultithreadedRule();
+
+    @Rule
+    public CloseableRule closeableRule = new CloseableRule();
 
     @Rule
     public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
@@ -51,6 +52,10 @@ public class TestBase {
     }
     public void log(String msg, Object... args) {
         TestLogger.log(msg, args);
+    }
+
+    public void log(Throwable throwable, String msg, Object... args) {
+        TestLogger.log(throwable, msg, args);
     }
 
     public static Random getRandom() {

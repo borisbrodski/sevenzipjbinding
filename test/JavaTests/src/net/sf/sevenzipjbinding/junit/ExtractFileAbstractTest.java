@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -10,6 +11,9 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
@@ -27,10 +31,9 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.ZipInStream;
-
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Abstract class for all mass archive extraction tests.
@@ -38,7 +41,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
+public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase2 {
     private static final String DEFAULT_PASSWORD = "TestPass";
 
     protected final ArchiveFormat archiveFormat;
@@ -139,198 +142,134 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression1() throws Exception {
         testArchiveExtraction(1, compression1, false, false);
     }
 
     @Test
-    public void test1Compression1Multithreaded() throws Exception {
-        testArchiveExtraction(1, compression1, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression1FormatAutodetect() throws Exception {
         testArchiveExtraction(1, compression1, true, false);
     }
 
     @Test
-    public void test1Compression1FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(1, compression1, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression2() throws Exception {
         testArchiveExtraction(1, compression2, false, false);
     }
 
     @Test
-    public void test1Compression2Multithreaded() throws Exception {
-        testArchiveExtraction(1, compression2, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression2FormatAutodetect() throws Exception {
         testArchiveExtraction(1, compression2, true, false);
     }
 
     @Test
-    public void test1Compression2FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(1, compression2, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression3() throws Exception {
         testArchiveExtraction(1, compression3, false, false);
     }
 
     @Test
-    public void test1Compression3Multithreaded() throws Exception {
-        testArchiveExtraction(1, compression3, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test1Compression3FormatAutodetect() throws Exception {
         testArchiveExtraction(1, compression3, true, false);
     }
 
     @Test
-    public void test1Compression3FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(1, compression3, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression1() throws Exception {
         testArchiveExtraction(2, compression1, false, false);
     }
 
     @Test
-    public void test2Compression1Multithreaded() throws Exception {
-        testArchiveExtraction(2, compression1, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression1FormatAutodetect() throws Exception {
         testArchiveExtraction(2, compression1, true, false);
     }
 
     @Test
-    public void test2Compression1FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(2, compression1, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression2() throws Exception {
         testArchiveExtraction(2, compression2, false, false);
     }
 
     @Test
-    public void test2Compression2Multithreaded() throws Exception {
-        testArchiveExtraction(2, compression2, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression2FormatAutodetect() throws Exception {
         testArchiveExtraction(2, compression2, true, false);
     }
 
     @Test
-    public void test2Compression2FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(2, compression2, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression3() throws Exception {
         testArchiveExtraction(2, compression3, false, false);
     }
 
     @Test
-    public void test2Compression3Multithreaded() throws Exception {
-        testArchiveExtraction(2, compression3, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test2Compression3FormatAutodetect() throws Exception {
         testArchiveExtraction(2, compression3, true, false);
     }
 
     @Test
-    public void test2Compression3FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(2, compression3, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression1() throws Exception {
         testArchiveExtraction(3, compression1, false, false);
     }
 
     @Test
-    public void test3Compression1Multithreaded() throws Exception {
-        testArchiveExtraction(3, compression1, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression1FormatAutodetect() throws Exception {
         testArchiveExtraction(3, compression1, true, false);
     }
 
     @Test
-    public void test3Compression1FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(3, compression1, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression2() throws Exception {
         testArchiveExtraction(3, compression2, false, false);
     }
 
     @Test
-    public void test3Compression2Multithreaded() throws Exception {
-        testArchiveExtraction(3, compression2, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression2FormatAutodetect() throws Exception {
         testArchiveExtraction(3, compression2, true, false);
     }
 
     @Test
-    public void test3Compression2FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(3, compression2, true, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression3() throws Exception {
         testArchiveExtraction(3, compression3, false, false);
     }
 
     @Test
-    public void test3Compression3Multithreaded() throws Exception {
-        testArchiveExtraction(3, compression3, false, true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void test3Compression3FormatAutodetect() throws Exception {
         testArchiveExtraction(3, compression3, true, false);
     }
 
-    @Test
-    public void test3Compression3FormatAutodetectMultithreaded() throws Exception {
-        testArchiveExtraction(3, compression3, true, true);
-    }
-
     protected void testArchiveExtraction(final int fileIndex, final int compressionIndex,
             final boolean autodetectFormat, boolean multithreaded) throws Exception {
-        if (multithreaded) {
-            runMultithreaded(new RunnableThrowsException() {
-                public void run() throws Exception {
-                    testArchiveExtraction(fileIndex, compressionIndex, autodetectFormat, false);
-                }
-            }, exceptionToBeExpected);
-        } else {
-            for (int i = 0; i < SINGLE_TEST_REPEAT_COUNT; i++) {
-                doTestArchiveExtraction(fileIndex, compressionIndex, autodetectFormat);
-            }
-        }
+        doTestArchiveExtraction(fileIndex, compressionIndex, autodetectFormat);
     }
 
     protected abstract void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
@@ -346,7 +285,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
         return archiveFormat.toString().toLowerCase();
     }
 
-    protected class ExtractionInArchiveTestHelper {
+    protected class ExtractionInArchiveTestHelper implements Closeable {
         private IInStream randomAccessFileInStream;
         private VolumeArchiveOpenCallback volumeArchiveOpenCallback;
 
@@ -449,27 +388,19 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
             return inArchive;
         }
 
-        public void closeAllStreams() {
+        public void close() throws IOException {
             if (randomAccessFileInStream != null) {
-                try {
-                    if (randomAccessFileInStream instanceof RandomAccessFileInStream) {
-                        ((RandomAccessFileInStream) randomAccessFileInStream).close();
-                    } else if (randomAccessFileInStream instanceof ZipInStream) {
-                        ((ZipInStream) randomAccessFileInStream).close();
-                    } else {
-                        throw new IllegalStateException("Unknown IInStream implementation: "
-                                + randomAccessFileInStream.getClass().getCanonicalName());
-                    }
-                } catch (Throwable t) {
-                    throw new RuntimeException(t);
+                if (randomAccessFileInStream instanceof RandomAccessFileInStream) {
+                    ((RandomAccessFileInStream) randomAccessFileInStream).close();
+                } else if (randomAccessFileInStream instanceof ZipInStream) {
+                    ((ZipInStream) randomAccessFileInStream).close();
+                } else {
+                    throw new IllegalStateException("Unknown IInStream implementation: "
+                            + randomAccessFileInStream.getClass().getCanonicalName());
                 }
             }
             if (volumeArchiveOpenCallback != null) {
-                try {
-                    volumeArchiveOpenCallback.close();
-                } catch (Throwable t) {
-                    throw new RuntimeException(t);
-                }
+                volumeArchiveOpenCallback.close();
             }
         }
     }

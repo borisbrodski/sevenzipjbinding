@@ -88,14 +88,17 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 		String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
+		closeLater(extractionInArchiveTestHelper);
 		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
 				compressionIndex, autodetectFormat, "archive", "zip");
+        closeLater(inArchive);
 
         checkArchiveGeneric(inArchive);
 
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(new File(sollFullFilename));
+        ZipFile zipFile = null;
+        boolean ok = false;
+        try {
+            zipFile = new ZipFile(new File(sollFullFilename));
 			assertTrue(inArchive.getNumberOfItems() > 0);
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
@@ -112,20 +115,21 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
             }
 
             assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
-		} catch (IOException exception) {
-			throw new RuntimeException(exception);
-		} finally {
-			inArchive.close();
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			extractionInArchiveTestHelper.closeAllStreams();
-		}
+            ok = true;
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    if (ok) {
+                        throw new RuntimeException(e);
+                    }
+                    log(e, "Error closing zip file");
+                }
+            }
+        }
 	}
 
     private void addFilesToIgnore(IInArchive inArchive, ZipContentComparator zipContentComparator1)
