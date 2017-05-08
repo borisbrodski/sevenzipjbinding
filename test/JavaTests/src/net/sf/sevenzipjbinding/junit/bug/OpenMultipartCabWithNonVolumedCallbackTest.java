@@ -9,20 +9,20 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IArchiveOpenCallback;
 import net.sf.sevenzipjbinding.IArchiveOpenVolumeCallback;
-import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 
-import org.junit.Test;
-
-public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase {
+public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase2 {
     private class MyArchiveOpenCallback implements IArchiveOpenCallback, IArchiveOpenVolumeCallback {
         public Object getProperty(PropID propID) throws SevenZipException {
             return null;

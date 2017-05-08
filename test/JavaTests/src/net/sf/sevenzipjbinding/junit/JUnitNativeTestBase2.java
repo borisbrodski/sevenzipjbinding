@@ -1,15 +1,11 @@
 package net.sf.sevenzipjbinding.junit;
 
-import java.io.Closeable;
 import java.util.Date;
 
 import org.junit.BeforeClass;
-import org.junit.Rule;
 
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
-import net.sf.sevenzipjbinding.junit.junittools.rules.CloseableRule;
-import net.sf.sevenzipjbinding.junit.junittools.rules.SevenZipExceptionStackTracePrinterRule;
 
 /**
  * This is the base class for all JUnit test classes, that needs native library to be loaded. This class provides:<br>
@@ -27,12 +23,6 @@ public class JUnitNativeTestBase2 extends TestBase {
     private static boolean initializeNativeLibrary = true;
 
 
-    @Rule
-    public CloseableRule closeableRule = new CloseableRule();
-
-    @Rule
-    public SevenZipExceptionStackTracePrinterRule stackTracePrinterRule = new SevenZipExceptionStackTracePrinterRule();
-
     /**
      * Initialize native SevenZipJBinding library for all JUnit tests
      *
@@ -45,41 +35,6 @@ public class JUnitNativeTestBase2 extends TestBase {
             SevenZip.initSevenZipFromPlatformJAR();
             initializeNativeLibrary = false;
         }
-    }
-
-    /**
-     * Add closeable to be closed automatically at the end of the test.
-     *
-     * @param closeable
-     *            closeable
-     */
-    @Override
-    public void addCloseable(Closeable closeable) {
-        closeableRule.addCloseable(closeable);
-    }
-
-    /**
-     * Remove closeable from the list.
-     *
-     * @param closeable
-     *            closeable to remove
-     */
-    public void removeCloseable(Closeable closeable) {
-        closeableRule.removeCloseable(closeable);
-    }
-
-    /**
-     * Add closeable to be closed automatically at the end of the test.
-     *
-     * @param <T>
-     *            Concrete type of closeable
-     * @param closeable
-     *            closeable
-     * @return <code>closeable</code> parameter allowing call chains
-     */
-    public <T extends Closeable> T closeLater(T closeable) {
-        closeableRule.addCloseable(closeable);
-        return closeable;
     }
 
     public static Date getDate(int period) {

@@ -66,4 +66,28 @@ public class TestBase {
     public void addCloseable(Closeable closeable) {
         closeableRule.addCloseable(closeable);
     }
+
+    /**
+     * Remove closeable from the list.
+     *
+     * @param closeable
+     *            closeable to remove
+     */
+    public void removeCloseable(Closeable closeable) {
+        closeableRule.removeCloseable(closeable);
+    }
+
+    /**
+     * Add closeable to be closed automatically at the end of the test.
+     *
+     * @param <T>
+     *            Concrete type of closeable
+     * @param closeable
+     *            closeable
+     * @return <code>closeable</code> parameter allowing call chains
+     */
+    public <T extends Closeable> T closeLater(T closeable) {
+        closeableRule.addCloseable(closeable);
+        return closeable;
+    }
 }

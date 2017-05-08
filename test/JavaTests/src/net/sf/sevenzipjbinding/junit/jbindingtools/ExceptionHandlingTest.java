@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -22,6 +23,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public class ExceptionHandlingTest extends JUnitNativeTestBase2 {
@@ -45,6 +47,11 @@ public class ExceptionHandlingTest extends JUnitNativeTestBase2 {
             }
         }
         return parameters;
+    }
+
+    @ParameterNames
+    public static Collection<String> getParameterNames() {
+        return Arrays.asList("width", "depth", "mtWidth");
     }
 
     public ExceptionHandlingTest(int width, int depth, int mtWidth) {

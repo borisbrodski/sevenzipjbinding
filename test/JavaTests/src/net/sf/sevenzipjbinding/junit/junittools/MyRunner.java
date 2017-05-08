@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.junit.runners.model.TestClass;
 
 import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 
 public class MyRunner extends Suite {
     public static class MultithreadedFrameworkMethod extends FrameworkMethodWithRuntimeInfo {
@@ -48,10 +50,13 @@ public class MyRunner extends Suite {
         private final int parameterSetNumber;
 
         private final Object[] parameterSet;
+        private Collection<String> parameterNamesList;
 
-        TestClassRunner(Class<?> type, Object[] parameterSet, int parameterSetNumber) throws InitializationError {
+        TestClassRunner(Class<?> type, Object[] parameterSet, Collection<String> parameterNamesList,
+                int parameterSetNumber) throws InitializationError {
             super(type);
             this.parameterSet = parameterSet;
+            this.parameterNamesList = parameterNamesList;
             this.parameterSetNumber = parameterSetNumber;
         }
 
@@ -88,7 +93,29 @@ public class MyRunner extends Suite {
             if (parameterSet == NO_PARAMETERS_ARRAY) {
                 return "All test";
             }
-            return "Set " + parameterSetNumber + ": " + Arrays.toString(parameterSet);
+
+            String setDescription;
+            if (parameterNamesList == null) {
+                setDescription = Arrays.toString(parameterSet);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                Iterator<String> nameIterator = parameterNamesList.iterator();
+                sb.append('[');
+                for (int i = 0; i < parameterSet.length; i++) {
+                    if (i > 0) {
+                        sb.append(", ");
+                    }
+                    if (nameIterator.hasNext()) {
+                        String name = nameIterator.next();
+                        sb.append(name);
+                        sb.append(": ");
+                    }
+                    sb.append(parameterSet[i]);
+                }
+                sb.append(']');
+                setDescription = sb.toString();
+            }
+            return "Set " + parameterSetNumber + ": " + setDescription;
         }
 
         @Override
@@ -112,15 +139,26 @@ public class MyRunner extends Suite {
     public MyRunner(Class<?> klass) throws Throwable {
         super(klass, Collections.<Runner> emptyList());
         TestConfiguration.init();
-        List<Object[]> parametersList = getParametersList(getTestClass());
+        TestClass testClass = getTestClass();
+        List<Object[]> parametersList = getParametersList(testClass);
+        Collection<String> parameterNamesList = getParameterNamesList(testClass);
         for (int i = 0; i < parametersList.size(); i++) {
-            runners.add(new TestClassRunner(getTestClass().getJavaClass(), parametersList.get(i), i));
+            runners.add(new TestClassRunner(testClass.getJavaClass(), parametersList.get(i), parameterNamesList, i));
         }
     }
 
     @Override
     protected List<Runner> getChildren() {
         return runners;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Collection<String> getParameterNamesList(TestClass klass) throws Throwable {
+        FrameworkMethod parameterNamesMethod = getParameterNamesMethod(klass);
+        if (parameterNamesMethod != null) {
+            return (Collection<String>) parameterNamesMethod.invokeExplosively(null);
+        }
+        return null;
     }
 
     @SuppressWarnings("unchecked")
@@ -150,6 +188,17 @@ public class MyRunner extends Suite {
         return arrayList;
     }
 
+    private FrameworkMethod getParameterNamesMethod(TestClass testClass) throws Exception {
+        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(ParameterNames.class);
+        for (FrameworkMethod each : methods) {
+            int modifiers = each.getMethod().getModifiers();
+            if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
+                return each;
+            }
+        }
+
+        return null;
+    }
     private FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
         List<FrameworkMethod> methods = testClass.getAnnotatedMethods(Parameters.class);
         for (FrameworkMethod each : methods) {

@@ -5,6 +5,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -15,14 +17,12 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Test;
-
-public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase {
+public class StandaloneUpdateArchiveAddTest extends JUnitNativeTestBase2 {
     private static class AddItemArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         private int itemToAdd;
         private String path;

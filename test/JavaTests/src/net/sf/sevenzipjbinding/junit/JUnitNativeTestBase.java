@@ -6,16 +6,15 @@ import static org.junit.Assert.fail;
 import java.io.Closeable;
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import net.sf.sevenzipjbinding.junit.junittools.rules.CloseableRule;
-import net.sf.sevenzipjbinding.junit.junittools.rules.SevenZipExceptionStackTracePrinterRule;
 import net.sf.sevenzipjbinding.junit.tools.SevenZipDebug;
-
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 
 /**
  * This is the base class for all JUnit test classes, that needs native library to be loaded. This class provides:<br>
@@ -43,8 +42,6 @@ public class JUnitNativeTestBase extends JUnitTestBase {
     @Rule
     public CloseableRule closeableRule = new CloseableRule();
 
-    @Rule
-    public SevenZipExceptionStackTracePrinterRule stackTracePrinterRule = new SevenZipExceptionStackTracePrinterRule();
 
     /**
      * Initialize native SevenZipJBinding library for all JUnit tests

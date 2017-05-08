@@ -126,7 +126,7 @@ public class MultithreadedRule implements TestRule {
             } catch (Throwable e) {
                 if (expectedException == null) {
                     result = e;
-                } else if (expectedException != e.getClass()) {
+                } else if (!expectedException.isAssignableFrom(e.getClass())) {
                     result = new AssertionError(
                             "FAILURE: Unexpected exception. Expected: " + expectedException.getName() //
                                     + ", got: " + e.getMessage());

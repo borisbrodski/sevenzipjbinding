@@ -2,6 +2,9 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -13,14 +16,12 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Test;
-
-public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase {
+public class StandaloneUpdateArchiveRemoveTest extends JUnitNativeTestBase2 {
     private static class RemoveItemArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         private int itemToRemove;
 
