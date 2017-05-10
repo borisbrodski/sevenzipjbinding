@@ -1,8 +1,10 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
-import net.sf.sevenzipjbinding.IOutItemBase;
-
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.IOutItemBase;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public abstract class UpdateSingleFileAbstractTest<T extends IOutItemBase> extends UpdateAbstractTest<T> {
     @Override
@@ -11,81 +13,55 @@ public abstract class UpdateSingleFileAbstractTest<T extends IOutItemBase> exten
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testEmptyUpdate() throws Exception {
-        testUpdate(false);
+        testUpdate();
     }
 
     @Test
-    public void testEmptyUpdateMultithreaded() throws Exception {
-        testUpdate(true);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdateContent() throws Exception {
-        testUpdate(false, updaterContent);
+        testUpdate(updaterContent);
     }
 
     @Test
-    public void testUpdateContentMultithreaded() throws Exception {
-        testUpdate(true, updaterContent);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdateLastModificationTime() throws Exception {
-        testUpdate(false, updaterLastModificationTime);
+        testUpdate(updaterLastModificationTime);
     }
 
     @Test
-    public void testUpdateLastModificationTimeMultithreaded() throws Exception {
-        testUpdate(true, updaterLastModificationTime);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdateContentAndLastModificationTime() throws Exception {
-        testUpdate(false, updaterContent, updaterLastModificationTime);
+        testUpdate(updaterContent, updaterLastModificationTime);
     }
 
     @Test
-    public void testUpdateContentAndLastModificationTimeMultithreaded() throws Exception {
-        testUpdate(true, updaterContent, updaterLastModificationTime);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdatePath() throws Exception {
-        testUpdate(false, updaterPath);
+        testUpdate(updaterPath);
     }
 
     @Test
-    public void testUpdatePathMultithreaded() throws Exception {
-        testUpdate(true, updaterPath);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdatePathAndContentAndLastModificationTime() throws Exception {
-        testUpdate(false, updaterContent, updaterPath, updaterLastModificationTime);
+        testUpdate(updaterContent, updaterPath, updaterLastModificationTime);
     }
 
     @Test
-    public void testUpdatePathAndContentAndLastModificationTimeMultithreaded() throws Exception {
-        testUpdate(true, updaterContent, updaterPath, updaterLastModificationTime);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdateUserGroup() throws Exception {
-        testUpdate(false, updaterUserGroup);
+        testUpdate(updaterUserGroup);
     }
 
-    @Test
-    public void testUpdateUserGroupMultithreaded() throws Exception {
-        testUpdate(true, updaterUserGroup);
-    }
-
-    private void testUpdate(boolean multithreaded, final ArchiveUpdater... archiveUpdaters) throws Exception {
-        testSingleOrMultithreaded(multithreaded, new RunnableThrowsException() {
-
-            public void run() throws Exception {
-                testUpdate(1, 0, 0, 100000, 50000, archiveUpdaters);
-            }
-        });
+    private void testUpdate(final ArchiveUpdater... archiveUpdaters) throws Exception {
+        testUpdate(1, 0, 0, 100000, 50000, archiveUpdaters);
     }
 }

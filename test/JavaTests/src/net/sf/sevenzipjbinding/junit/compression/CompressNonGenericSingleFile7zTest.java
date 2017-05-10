@@ -14,7 +14,6 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  * @since 9.20-2.00
  */
 public class CompressNonGenericSingleFile7zTest extends CompressNonGenericSingleFileAbstractTest<IOutItem7z> {
-
     private class SingleFileCreateArchiveCallback7z extends SingleFileCreateArchiveCallback {
         public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> outItemFactory)
                 throws SevenZipException {
@@ -25,6 +24,10 @@ public class CompressNonGenericSingleFile7zTest extends CompressNonGenericSingle
 
             return outItem;
         }
+    }
+
+    public CompressNonGenericSingleFile7zTest(int size, int entropy) {
+        super(size, entropy);
     }
 
     @Override

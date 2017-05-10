@@ -26,6 +26,10 @@ public class CompressNonGenericSingleFileBZip2Test extends CompressNonGenericSin
         }
     }
 
+    public CompressNonGenericSingleFileBZip2Test(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.BZIP2;

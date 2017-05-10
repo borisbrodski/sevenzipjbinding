@@ -10,6 +10,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  */
 public class CompressGenericSingleFileTarTest extends CompressGenericSingleFileAbstractTest {
 
+    public CompressGenericSingleFileTarTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.TAR;

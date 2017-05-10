@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit.tools;
+package net.sf.sevenzipjbinding.junit.misc;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;

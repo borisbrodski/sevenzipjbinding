@@ -56,6 +56,10 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
     private boolean useEncryptionNoPassword;
     private boolean useHeaderEncryption;
 
+    protected CompressGenericSingleFileAbstractTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
         this.useEncryptionNoPassword = useEncryptionNoPassword;
     }
@@ -82,6 +86,7 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
             createArchiveCallback = new GenericSingleFileCreateArchiveCallback();
         }
 
+        TestContext testContext = getTestContext();
         testContext.callbackTester = new CallbackTester<IOutCreateCallback<IOutItemAllFormats>>(createArchiveCallback);
         testContext.randomContext = new RandomContext(dataSize, entropy);
 

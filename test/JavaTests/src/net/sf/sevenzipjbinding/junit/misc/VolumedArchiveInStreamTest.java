@@ -1,4 +1,4 @@
-package net.sf.sevenzipjbinding.junit.tools;
+package net.sf.sevenzipjbinding.junit.misc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -2,7 +2,6 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -14,8 +13,6 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
-import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
-import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -25,32 +22,36 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile {
+public class CompressFeatureSetLevelRatioImpact extends CompressFeatureAbstractSingleFile {
+
     private static final int ENTROPY = 100;
     private static final int DATA_SIZE = 300000;
     private ArchiveFormat archiveFormat;
-    private int level;
+    private List<Integer> levels;
 
     @Parameters
-    public static Collection<Object> getLevels() {
-        List<Object> result = new ArrayList<Object>();
-        ArchiveFormat[] formats = new ArchiveFormat[] {//
-                ArchiveFormat.SEVEN_ZIP, //
-                ArchiveFormat.ZIP, //
-                ArchiveFormat.BZIP2, //
-                ArchiveFormat.GZIP};
-        for (ArchiveFormat archiveFormat : formats) {
-            for (int level : Arrays.asList(0, 3, 5, 7, 9)) {
-                result.add(new Object[] { archiveFormat, level });
-            }
-        }
-
-        return result;
+    public static Collection<Object[]> getParameters() {
+        return Arrays.asList(//
+                new Object[] { ArchiveFormat.SEVEN_ZIP, Arrays.asList(1, 3, 5, 7) }, //
+                new Object[] { ArchiveFormat.ZIP, Arrays.asList(1, 5, 9) }, //
+                new Object[] { ArchiveFormat.BZIP2, Arrays.asList(1, 4, 7) }, //
+                new Object[] { ArchiveFormat.GZIP, Arrays.asList(1, 5, 9) }//
+        );
     }
 
-    public CompressFeatureSetLevel(ArchiveFormat archiveFormat, int level) {
+    public CompressFeatureSetLevelRatioImpact(ArchiveFormat archiveFormat, List<Integer> levels) {
         this.archiveFormat = archiveFormat;
-        this.level = level;
+        this.levels = levels;
+    }
+
+    @Test
+    public void testCompressionRatioImpact() throws Exception {
+        double ration = 0;
+        for (int level : levels) {
+            double newRation = calcCompressionRatio(level);
+            assertTrue("Level " + level + ", ration: " + ration + ", newRation: " + newRation, newRation > ration);
+            ration = newRation;
+        }
     }
 
     @Override
@@ -58,20 +59,21 @@ public class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile {
         return archiveFormat;
     }
 
-    @Test
-    @Multithreaded
-    @Repeat
-    public void testCompressionFeatureSetLevel() throws Exception {
+    private double calcCompressionRatio(int compressionLevel) throws Exception {
         IOutCreateArchive<IOutItemAllFormats> outArchive = createArchive();
         addCloseable(outArchive);
 
         assertTrue(outArchive instanceof IOutFeatureSetLevel);
         IOutFeatureSetLevel featureOutArchive = (IOutFeatureSetLevel) outArchive;
-        featureOutArchive.setLevel(level);
+        featureOutArchive.setLevel(compressionLevel);
 
         RandomContext randomContext = new RandomContext(DATA_SIZE, ENTROPY);
         ByteArrayStream outputByteArrayStream = new ByteArrayStream(DATA_SIZE * 2);
         outArchive.createArchive(outputByteArrayStream, 1, new FeatureSingleFileCreateArchiveCallback(randomContext));
         verifySingleFileArchive(randomContext, outputByteArrayStream);
+
+        removeCloseable(outArchive);
+        closeArchive(outArchive);
+        return ((double) randomContext.getSize()) / outputByteArrayStream.getSize();
     }
 }

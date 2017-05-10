@@ -6,6 +6,12 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class CompressMultipleFileZipPassNullTest extends CompressMultipleFileAbstractTest {
 
+    public CompressMultipleFileZipPassNullTest(int countOfFiles, int directoriesDepth, int maxSubdirectories,
+            int averageFileLength, int deltaFileLength, boolean forbiddenRootDirectory) {
+        super(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength, deltaFileLength,
+                forbiddenRootDirectory);
+    }
+
     @Before
     public void configureEncryption() {
         setUseEncryption(true);

@@ -26,6 +26,10 @@ public class CompressNonGenericSingleFileZipTest extends CompressNonGenericSingl
         }
     }
 
+    public CompressNonGenericSingleFileZipTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.ZIP;

@@ -14,7 +14,7 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
@@ -23,7 +23,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressAbstractTest extends JUnitNativeTestBase {
+public abstract class CompressAbstractTest extends JUnitNativeTestBase2 {
 
     protected abstract ArchiveFormat getArchiveFormat();
 

@@ -26,6 +26,10 @@ public class CompressNonGenericSingleFileTarTest extends CompressNonGenericSingl
         }
     }
 
+    public CompressNonGenericSingleFileTarTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.TAR;

@@ -461,23 +461,22 @@ public class VirtualContent {
     }
 
     private void addSymLink(Item item) {
-        item.symLink = JUnitNativeTestBase.getRandomName(random);
+        item.symLink = RandomTools.getRandomName(random);
         item.symLinkSet = true;
     }
 
     private void addHardLink(Item item) {
-        item.hardLink = JUnitNativeTestBase.getRandomName(random);
+        item.hardLink = RandomTools.getRandomName(random);
         item.hardLinkSet = true;
     }
     private void fillWithRandomData(Item item) {
         item.creationTime = JUnitNativeTestBase.getDate(3 * WEEK);
         item.modificationTime = JUnitNativeTestBase.getDate(2 * WEEK);
         item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
-        item.user = JUnitNativeTestBase.getRandomName(random);
-        item.group = JUnitNativeTestBase.getRandomName(random);
+        item.user = RandomTools.getRandomName(random);
+        item.group = RandomTools.getRandomName(random);
         item.attributes = random.nextInt(17) & ~(AttributesBitMask.FILE_ATTRIBUTE_DIRECTORY);
     }
-
 
     private void reindexUsedNames() {
         usedNames.clear();
@@ -545,7 +544,7 @@ public class VirtualContent {
             }
             fillWithRandomData(item);
             for (int j = 0; j < 50; j++) {
-                String filename = filenameGenerator == null ? JUnitNativeTestBase.getRandomFilename(random)
+                String filename = filenameGenerator == null ? RandomTools.getRandomFilename(random)
                         : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
                     item.path = directory + filename;
@@ -613,7 +612,7 @@ public class VirtualContent {
         for (int i = 0; i < maxSubdirectories; i++) {
             String name = null;
             for (int j = 0; j < 50; j++) {
-                name = JUnitNativeTestBase.getRandomFilename(random);
+                name = RandomTools.getRandomFilename(random);
                 if (usedNames.containsKey(name)) {
                     name = null;
                 } else {

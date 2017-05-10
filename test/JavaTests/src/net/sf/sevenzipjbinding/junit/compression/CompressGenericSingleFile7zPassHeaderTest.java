@@ -12,6 +12,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  */
 public class CompressGenericSingleFile7zPassHeaderTest extends CompressGenericSingleFileAbstractTest {
 
+    public CompressGenericSingleFile7zPassHeaderTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Before
     public void configureEncryption() {
         setUseEncryption(true);

@@ -295,7 +295,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);
             change.newContent = new byte[100];
-            random.get().nextBytes(change.newContent);
+            getRandom().nextBytes(change.newContent);
         }
     };
 

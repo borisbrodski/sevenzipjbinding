@@ -25,6 +25,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  */
 public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutItemBase> extends
         CompressSingleFileAbstractTest<T> {
+    protected CompressNonGenericSingleFileAbstractTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     public abstract class SingleFileOutItemCallback extends SingleFileCreateArchiveCallback {
 
     }
@@ -38,6 +42,7 @@ public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutIte
     protected long doTest(int dataSize, int entropy) throws Exception {
         SingleFileCreateArchiveCallback createArchiveCallback = getSingleFileCreateArchiveCallback();
 
+        TestContext testContext = getTestContext();
         testContext.callbackTester = new CallbackTester<IOutCreateCallback<T>>(createArchiveCallback);
         testContext.randomContext = new RandomContext(dataSize, entropy);
 

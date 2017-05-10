@@ -21,7 +21,6 @@ import net.sf.sevenzipjbinding.junit.common.TestBaseTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
-import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassNullTest;
@@ -72,11 +71,7 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipTe
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericZipTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGeneric7zTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericBZip2Test;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericGZipTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericTarTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericBZip2Test;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipTest;
@@ -92,6 +87,29 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength3;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength4;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength5;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength6;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength7;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength8;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength9;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithEmptyBuffer;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekSet;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
@@ -196,29 +214,6 @@ import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAddRemoveItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAlterItemsTest;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength3;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength4;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength5;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength6;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength7;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength8;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength9;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithEmptyBuffer;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekSet;
 
 
 /**
@@ -401,11 +396,7 @@ public class AllTestSuite extends TestSuite {
             EnumTest.class, //
     };
     static Class<?>[] compressionTests = { //
-    /*    */CompressExceptionGetItemInformationTest.CompressException7zTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionBZip2Test.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionGZipTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionTarTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionZipTest.class, //
+            CompressExceptionGetItemInformationTest.class, //
             CompressExceptionGetConnectedArchiveTest.class, //
 
             TraceCompressionTest.class, //
@@ -424,12 +415,8 @@ public class AllTestSuite extends TestSuite {
             StandaloneUpdateNonGenericBZip2Test.class, //
             StandaloneUpdateNonGenericGZipTest.class, //
 
-            CompressFeatureSetLevel.CompressionFeatureSetLevelBZip2.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelGZip.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelSevenZip.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelZip.class, //
-            CompressFeatureSetSolid.CompressionFeatureSetSolidSevenZip.class, //
-            CompressFeatureSetThreadCount.CompressionFeatureSetLevelSevenZip.class, //
+            CompressFeatureSetLevel.class, //
+            CompressFeatureSetThreadCount.class, //
 
             CompressGenericSingleFile7zPassHeaderTest.class, //
             CompressGenericSingleFile7zPassNullTest.class, //
@@ -467,11 +454,7 @@ public class AllTestSuite extends TestSuite {
             UpdateMultipleFilesNonGeneric7zTest.class, //
             UpdateMultipleFilesNonGenericTarTest.class, //
             UpdateMultipleFilesNonGenericZipTest.class, //
-            UpdateSingleFileGeneric7zTest.class, //
-            UpdateSingleFileGenericBZip2Test.class, //
-            UpdateSingleFileGenericGZipTest.class, //
-            UpdateSingleFileGenericTarTest.class, //
-            UpdateSingleFileGenericZipTest.class, //
+            UpdateSingleFileGenericTest.class, //
             UpdateSingleFileNonGeneric7zTest.class, //
             UpdateSingleFileNonGenericBZip2Test.class, //
             UpdateSingleFileNonGenericGZipTest.class, //
