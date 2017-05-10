@@ -12,7 +12,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
@@ -22,7 +22,7 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
  * @author Boris Brodski
  * @since 15.09
  */
-public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase2 {
+public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase {
     private static final int BAD_ARCHIVE_SIZE = 1 * 1024 * 1024;
 
     private static ThreadLocal<Long> headReadingCounter = newThreadLocalLongInit0();

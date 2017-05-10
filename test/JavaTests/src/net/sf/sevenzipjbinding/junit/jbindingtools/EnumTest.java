@@ -5,10 +5,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.PropID;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 
-public class EnumTest extends JUnitNativeTestBase2 {
+public class EnumTest extends JUnitNativeTestBase {
     private static native int getPropertyIndexSymLink();
 
     private static native int getPropertyIndexHardLink();

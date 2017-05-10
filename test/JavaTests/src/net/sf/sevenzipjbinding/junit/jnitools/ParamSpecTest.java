@@ -13,11 +13,11 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 
-public class ParamSpecTest extends JUnitNativeTestBase2 {
+public class ParamSpecTest extends JUnitNativeTestBase {
     private static class MyClass {
         public int value;
 

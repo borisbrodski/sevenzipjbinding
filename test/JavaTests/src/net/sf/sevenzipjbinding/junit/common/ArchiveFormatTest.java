@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
-public class ArchiveFormatTest extends JUnitNativeTestBase2 {
+public class ArchiveFormatTest extends JUnitNativeTestBase {
     @Test
     public void testAllOutArchiveFormats() {
         for (ArchiveFormat archiveFormat : ArchiveFormat.values()) {

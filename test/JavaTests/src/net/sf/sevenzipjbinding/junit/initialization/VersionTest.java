@@ -13,9 +13,9 @@ import org.junit.Test;
 
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZip.Version;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
-public class VersionTest extends JUnitNativeTestBase2 {
+public class VersionTest extends JUnitNativeTestBase {
 
     @Test
     public void testSevenZipJBindingVersionSet() throws Exception {

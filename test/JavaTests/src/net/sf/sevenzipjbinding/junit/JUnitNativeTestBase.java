@@ -15,7 +15,7 @@ import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
  * @since 4.65-1
  *
  */
-public class JUnitNativeTestBase2 extends TestBase {
+public class JUnitNativeTestBase extends TestBase {
     protected interface RunnableThrowsException {
         public void run() throws Exception;
     }

@@ -11,12 +11,12 @@ import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class CompressExceptionGetConnectedArchiveTest extends JUnitNativeTestBase2 {
+public class CompressExceptionGetConnectedArchiveTest extends JUnitNativeTestBase {
 
     @Test
     public void testGetConnectedOutArchive7z() throws Exception {

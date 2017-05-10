@@ -20,9 +20,9 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
-public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase2 {
+public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase {
     private class MyArchiveOpenCallback implements IArchiveOpenCallback, IArchiveOpenVolumeCallback {
         public Object getProperty(PropID propID) throws SevenZipException {
             return null;

@@ -18,12 +18,12 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase2 {
+public class StandaloneUpdateNonGeneric7zTest extends JUnitNativeTestBase {
     private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItem7z> {
         private int itemToUpdate;
         private byte[] newContent;

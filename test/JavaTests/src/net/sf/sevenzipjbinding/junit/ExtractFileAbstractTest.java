@@ -41,7 +41,7 @@ import net.sf.sevenzipjbinding.junit.tools.ZipInStream;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase2 {
+public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     private static final String DEFAULT_PASSWORD = "TestPass";
 
     protected final ArchiveFormat archiveFormat;

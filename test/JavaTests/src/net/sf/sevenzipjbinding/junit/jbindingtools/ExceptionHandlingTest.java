@@ -20,13 +20,13 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class ExceptionHandlingTest extends JUnitNativeTestBase2 {
+public class ExceptionHandlingTest extends JUnitNativeTestBase {
     private static final String NO_CUSTOM_MESSSAGE_TEXT = "One or multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
 
     private static native String callRecursiveCallbackMethod(String path, int depth, int width, int mtwidth,

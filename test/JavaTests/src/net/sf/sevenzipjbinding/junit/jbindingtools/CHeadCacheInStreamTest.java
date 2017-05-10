@@ -4,11 +4,11 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase2;
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class CHeadCacheInStreamTest extends JUnitNativeTestBase2 {
+public class CHeadCacheInStreamTest extends JUnitNativeTestBase {
     private native String nativeSimpleTests();
 
     @Test
