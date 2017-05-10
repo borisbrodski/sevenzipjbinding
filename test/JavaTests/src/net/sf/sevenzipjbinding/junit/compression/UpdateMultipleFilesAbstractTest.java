@@ -59,7 +59,7 @@ public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> ex
             String path;
 
             do {
-                path = new File(file.getParentFile(), RandomTools.getRandomFilename(getRandom())).getPath();
+                path = new File(file.getParentFile(), RandomTools.getRandomFilename()).getPath();
             } while (changeLog.usedUpperCaseNames.contains(path.toUpperCase()));
 
             changeLog.usedUpperCaseNames.add(path.toUpperCase());

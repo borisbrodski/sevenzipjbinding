@@ -11,13 +11,13 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import net.sf.sevenzipjbinding.ISeekableStream;
-import net.sf.sevenzipjbinding.junit.JUnitTestBase;
-import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.ISeekableStream;
+import net.sf.sevenzipjbinding.junit.JUnitTestBase;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 public abstract class ByteArrayStreamTest extends JUnitTestBase {
     public static class ByteArrayStreamTestWithEmptyBuffer extends ByteArrayStreamTest {
@@ -93,7 +93,7 @@ public abstract class ByteArrayStreamTest extends JUnitTestBase {
     public static class ByteArrayStreamTestWithBufferLength100 extends ByteArrayStreamTest {
         private byte[] buffers = new byte[100];
         {
-            random.get().nextBytes(buffers);
+            getRandom().nextBytes(buffers);
         }
 
         @Override
@@ -207,7 +207,7 @@ public abstract class ByteArrayStreamTest extends JUnitTestBase {
     @Test
     public void testWrite50ByteFirst() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.get().nextBytes(firstBytes);
+        getRandom().nextBytes(firstBytes);
         write(firstBytes);
         write(testBuffer);
         compareWithExpectedBuffer(firstBytes, testBuffer);
@@ -289,7 +289,7 @@ public abstract class ByteArrayStreamTest extends JUnitTestBase {
     @Test
     public void testWrite50SetBytes() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.get().nextBytes(firstBytes);
+        getRandom().nextBytes(firstBytes);
         setBytes(firstBytes);
         write(testBuffer);
         truncateToCurrentPosition();
@@ -385,7 +385,7 @@ public abstract class ByteArrayStreamTest extends JUnitTestBase {
     @Test
     public void testWriteFromInputStream50ByteFirst() throws Exception {
         byte[] firstBytes = new byte[50];
-        random.get().nextBytes(firstBytes);
+        getRandom().nextBytes(firstBytes);
         writeFromInputStream(firstBytes);
         writeFromInputStream(testBuffer);
         compareWithExpectedBuffer(firstBytes, testBuffer);

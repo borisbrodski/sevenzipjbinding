@@ -13,6 +13,8 @@ import net.sf.sevenzipjbinding.junit.junittools.rules.CloseableRule;
 import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
 import net.sf.sevenzipjbinding.junit.junittools.rules.LogTestInfoRule;
 import net.sf.sevenzipjbinding.junit.junittools.rules.MultithreadedRule;
+import net.sf.sevenzipjbinding.junit.junittools.rules.RandomRule;
+import net.sf.sevenzipjbinding.junit.tools.RandomTools;
 
 @RunWith(MyRunner.class)
 public class TestBase {
@@ -20,6 +22,8 @@ public class TestBase {
     public static final int RANDOM_GLOBAL_SEED = 6;
     public static final int WEEK = 1000 * 60 * 60 * 24 * 7; // Milliseconds in a week
 
+    @Rule
+    public RandomRule randomRule = new RandomRule();
 
     @Rule
     public MultithreadedRule multithreadedRule = new MultithreadedRule();
@@ -35,13 +39,6 @@ public class TestBase {
 
     @Rule
     public LogTestInfoRule logTestInfoRule = new LogTestInfoRule();
-
-    private static final ThreadLocal<Random> random = new ThreadLocal<Random>() {
-        @Override
-        protected Random initialValue() {
-            return new Random(RANDOM_GLOBAL_SEED);
-        };
-    };
 
     @BeforeClass
     public static void printTestConfiguration() throws Exception {
@@ -60,7 +57,7 @@ public class TestBase {
     }
 
     public static Random getRandom() {
-        return random.get();
+        return RandomTools.getRandom();
     }
 
     /**

@@ -3,10 +3,28 @@ package net.sf.sevenzipjbinding.junit.tools;
 import java.util.Random;
 
 public final class RandomTools {
+    private static final long INITIAL_SEED = 7329427545945041180L;
+
     private static final char[] SYMBOLS = new char[] { ' ', '_', '-', '+', '=' };
     private static final char[] SYMBOLS_FIRST_CHAR = new char[] { '_', '-', '+', '=' };
 
-    public static String getRandomFilename(Random random) {
+    private static final ThreadLocal<Random> RANDOM_TL = new ThreadLocal<Random>() {
+        @Override
+        protected Random initialValue() {
+            return new Random(INITIAL_SEED);
+        };
+    };
+
+    public static Random getRandom() {
+        return RANDOM_TL.get();
+    }
+
+    public static void initForThread() {
+        getRandom().setSeed(INITIAL_SEED);
+    }
+
+    public static String getRandomFilename() {
+        Random random = getRandom();
         int length;
         switch (random.nextInt(3)) {
         case 0:
@@ -22,21 +40,23 @@ public final class RandomTools {
         }
         char[] filenameArray = new char[length];
         for (int j = 0; j < length; j++) {
-            filenameArray[j] = getRandomFilenameChar(random, j == 0);
+            filenameArray[j] = getRandomFilenameChar(j == 0);
         }
         return new String(filenameArray);
     }
 
-    public static String getRandomName(Random random) {
+    public static String getRandomName() {
+        Random random = getRandom();
         int length = 3 + random.nextInt(9);
         char[] filenameArray = new char[length];
         for (int j = 0; j < length; j++) {
-            filenameArray[j] = getRandomLetter(random);
+            filenameArray[j] = getRandomLetter();
         }
         return new String(filenameArray);
     }
 
-    public static char getRandomFilenameChar(Random random, boolean firstChar) {
+    public static char getRandomFilenameChar(boolean firstChar) {
+        Random random = getRandom();
         switch (random.nextInt()) {
         case 0:
             // Symbols
@@ -49,11 +69,12 @@ public final class RandomTools {
             return (char) ('0' + random.nextInt(10));
 
         default:
-            return getRandomLetter(random);
+            return getRandomLetter();
         }
     }
 
-    public static char getRandomLetter(Random random) {
+    public static char getRandomLetter() {
+        Random random = getRandom();
         if (random.nextBoolean()) {
             // Upper case letters
             return (char) ('A' + random.nextInt(26));
