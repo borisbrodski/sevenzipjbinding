@@ -62,6 +62,11 @@ public class TestConfiguration {
     public static String TEST_PARAM__LONG_RUNNING = "TEST_LONG_RUNNING";
 
     /**
+     * If set, trace log output will be written to the corresponding file.
+     */
+    public static String TEST_PARAM__TRACE_FILE = "TEST_TRACE_FILE";
+
+    /**
      * If enable, print trace output. Default: ON.
      */
     public static String TEST_PARAM__TRACE = "TEST_TRACE";
@@ -83,6 +88,7 @@ public class TestConfiguration {
     private int singleTestTimeout;
     private boolean longRunning;
     private boolean trace;
+    private String traceFile;
 
     TestConfiguration(String name, int multiThreadedThreads, int repeatSingleThreadedTest, int repeatMultiThreadedTest,
             int singleTestTimeout,
@@ -103,6 +109,7 @@ public class TestConfiguration {
         singleTestTimeout = getInt(TEST_PARAM__TIMEOUT, singleTestTimeout);
         longRunning = getBoolean(TEST_PARAM__LONG_RUNNING, longRunning);
         trace = getBoolean(TEST_PARAM__TRACE, trace);
+        traceFile = getString(TEST_PARAM__TRACE, traceFile);
     }
 
     private static int getInt(String name, int defaultValue) {
@@ -124,6 +131,14 @@ public class TestConfiguration {
             return stringValue.equalsIgnoreCase("f") && !stringValue.equalsIgnoreCase("false")
                     && !stringValue.equalsIgnoreCase("no") && !stringValue.equalsIgnoreCase("n")
                     && !stringValue.equalsIgnoreCase("off") && !stringValue.equalsIgnoreCase("disable");
+        }
+        return defaultValue;
+    }
+
+    private static String getString(String name, String defaultValue) {
+        String stringValue = System.getProperty(name.trim());
+        if (stringValue != null) {
+            return stringValue.trim();
         }
         return defaultValue;
     }

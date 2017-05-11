@@ -21,6 +21,8 @@ import net.sf.sevenzipjbinding.junit.common.TestBaseTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevelRatioImpact;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassNullTest;
@@ -83,6 +85,7 @@ import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.CHeadCacheInStreamTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.EnumTest;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
@@ -224,13 +227,14 @@ import net.sf.sevenzipjbinding.junit.snippets.UpdateAlterItemsTest;
  */
 public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //
-    /*    */JUnitInitializationTest.class, //
             ArchiveFormatTest.class, //
+            CHeadCacheInStreamTest.class, //
             DeclareThrowsSevenZipExceptionTest.class, //
+            ExceptionHandlingTest.class, //
+            HeadCacheOnAutodetectionTest.class, //
+            JUnitInitializationTest.class, //
             TestBaseTest.class, //
             VersionTest.class, //
-            CHeadCacheInStreamTest.class, //
-            HeadCacheOnAutodetectionTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //
@@ -416,6 +420,8 @@ public class AllTestSuite extends TestSuite {
             StandaloneUpdateNonGenericGZipTest.class, //
 
             CompressFeatureSetLevel.class, //
+            CompressFeatureSetLevelRatioImpact.class, //
+            CompressFeatureSetSolid.class, //
             CompressFeatureSetThreadCount.class, //
 
             CompressGenericSingleFile7zPassHeaderTest.class, //

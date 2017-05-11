@@ -27,7 +27,9 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.AssertOutputStream;
@@ -340,13 +342,22 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
                 { 3000000, 0 }, //
                 { 3000000, 8000 }, //
                 { 3000000, 3000000 }, //
+                { 20000000, 50 }, //
+                { 500000000, 50 } //
         });
-        // TODO ADD IF(STRESS_TEST) {20000000, 50}, {500000000, 50}
     }
 
     @ParameterNames
     public static Collection<String> getParameterNames() {
         return Arrays.asList("size", "entropy");
+    }
+
+    @ParameterIgnores
+    public static boolean isParameterIgnores(int size, int entropy) {
+        if (size >= 20000000) {
+            return !TestConfiguration.getCurrent().isLongRunning();
+        }
+        return false;
     }
 
     protected CompressSingleFileAbstractTest(int size, int entropy) {

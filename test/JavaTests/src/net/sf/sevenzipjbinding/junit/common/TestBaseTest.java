@@ -12,7 +12,10 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.junit.TestBase;
+import net.sf.sevenzipjbinding.junit.TestLogger;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.LongRunning;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 public class TestBaseTest extends TestBase {
@@ -76,5 +79,27 @@ public class TestBaseTest extends TestBase {
         closeableEmpty = new CloseableEmpty();
         addCloseable(closeableEmpty);
 
+    }
+
+    @Test
+    @LongRunning
+    public void testLongRunning() {
+        log("LONG RUNNING TEST!!!");
+    }
+
+    @Test
+    @LongRunning
+    @Multithreaded
+    public void testLongRunningWithMT() {
+        log("LONG RUNNING TEST!!!");
+    }
+
+    @ParameterIgnores
+    public static boolean isParameterIgnores(String a, int b) {
+        if (a.equals("c") && b == 8) {
+            TestLogger.log("IGNORING SET: [a=" + a + ", b=" + b + "]");
+            return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package net.sf.sevenzipjbinding.junit.junittools;
 
 import static org.junit.Assert.assertTrue;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -23,15 +25,34 @@ import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
 
 import net.sf.sevenzipjbinding.junit.TestConfiguration;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.LongRunning;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 
 public class MyRunner extends Suite {
+
+    public static class IgnoredFrameworkMethod extends FrameworkMethod {
+        public IgnoredFrameworkMethod(Method method) {
+            super(method);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+            if (annotationType == Ignore.class) {
+                return (T) IGNORE_ANNOTATION;
+            }
+            return super.getAnnotation(annotationType);
+        }
+    }
     public static class MultithreadedFrameworkMethod extends FrameworkMethodWithRuntimeInfo {
         public static final RuntimeInfoAnnotation RUN_MULTITHREADED_ANNOTATION = new RuntimeInfoAnnotation(true);
+        private boolean ignored;
 
-        public MultithreadedFrameworkMethod(Method method) {
+        public MultithreadedFrameworkMethod(Method method, boolean ignored) {
             super(method);
+            this.ignored = ignored;
         }
 
         @Override
@@ -44,6 +65,14 @@ public class MyRunner extends Suite {
             return RUN_MULTITHREADED_ANNOTATION;
         }
 
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends Annotation> T getAnnotation(Class<T> annotationType) {
+            if (ignored && annotationType == Ignore.class) {
+                return (T) IGNORE_ANNOTATION;
+            }
+            return super.getAnnotation(annotationType);
+        }
     }
 
     private class TestClassRunner extends BlockJUnit4ClassRunner {
@@ -67,14 +96,41 @@ public class MyRunner extends Suite {
             boolean multithreadedOnClass = targetClass.getJavaClass().getAnnotation(Multithreaded.class) != null;
             boolean multithreadedEnabled = TestConfiguration.getCurrent().isMultithreadedEnabled();
             for (FrameworkMethod frameworkMethod : targetClass.getAnnotatedMethods(Test.class)) {
-                computeTestMethods.add(frameworkMethod);
                 Method method = frameworkMethod.getMethod();
-                if (multithreadedEnabled//
-                        && (multithreadedOnClass || method.getAnnotation(Multithreaded.class) != null)) {
-                    computeTestMethods.add(new MultithreadedFrameworkMethod(method));
+                boolean isIgnored = isIgnored(method);
+                if (isIgnored) {
+                    computeTestMethods.add(new IgnoredFrameworkMethod(method));
+                } else {
+                    computeTestMethods.add(frameworkMethod);
+                }
+                if (multithreadedOnClass || method.getAnnotation(Multithreaded.class) != null) {
+                    computeTestMethods
+                            .add(new MultithreadedFrameworkMethod(method, isIgnored || !multithreadedEnabled));
                 }
             }
             return computeTestMethods;
+        }
+
+        private boolean isIgnored(Method method) {
+            if (parameterSet != NO_PARAMETERS_ARRAY) {
+                TestClass testClass = new TestClass(method.getDeclaringClass());
+                FrameworkMethod ignoreMethod = getMethodWithAnnotation(ParameterIgnores.class, testClass);
+                if (ignoreMethod != null) {
+                    try {
+                        boolean result = (Boolean) ignoreMethod.invokeExplosively(null, parameterSet);
+                        if (result) {
+                            return true;
+                        }
+                    } catch (Throwable e) {
+                        throw new RuntimeException("Error invoking the @ParameterIgnores method: " + ignoreMethod, e);
+                    }
+                }
+            }
+
+            if (method.isAnnotationPresent(LongRunning.class)) {
+                return !TestConfiguration.getCurrent().isLongRunning();
+            }
+            return false;
         }
 
         @Override
@@ -133,6 +189,15 @@ public class MyRunner extends Suite {
         }
     }
 
+    static final Ignore IGNORE_ANNOTATION = new Ignore() {
+        public Class<? extends Annotation> annotationType() {
+            return Ignore.class;
+        }
+
+        public String value() {
+            return "Ignored";
+        }
+    };
     private final ArrayList<Runner> runners = new ArrayList<Runner>();
     private final Object[] NO_PARAMETERS_ARRAY = new Object[0];
 
@@ -154,7 +219,7 @@ public class MyRunner extends Suite {
 
     @SuppressWarnings("unchecked")
     private Collection<String> getParameterNamesList(TestClass klass) throws Throwable {
-        FrameworkMethod parameterNamesMethod = getParameterNamesMethod(klass);
+        FrameworkMethod parameterNamesMethod = getMethodWithAnnotation(ParameterNames.class, klass);
         if (parameterNamesMethod != null) {
             return (Collection<String>) parameterNamesMethod.invokeExplosively(null);
         }
@@ -163,7 +228,7 @@ public class MyRunner extends Suite {
 
     @SuppressWarnings("unchecked")
     private List<Object[]> getParametersList(TestClass klass) throws Throwable {
-        FrameworkMethod parametersMethod = getParametersMethod(klass);
+        FrameworkMethod parametersMethod = getMethodWithAnnotation(Parameters.class, klass);
         if (parametersMethod != null) {
             Object param = parametersMethod.invokeExplosively(null);
             if (param != null) {
@@ -188,8 +253,8 @@ public class MyRunner extends Suite {
         return arrayList;
     }
 
-    private FrameworkMethod getParameterNamesMethod(TestClass testClass) throws Exception {
-        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(ParameterNames.class);
+    private FrameworkMethod getMethodWithAnnotation(Class<? extends Annotation> annotationClass, TestClass testClass) {
+        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(annotationClass);
         for (FrameworkMethod each : methods) {
             int modifiers = each.getMethod().getModifiers();
             if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
@@ -199,16 +264,4 @@ public class MyRunner extends Suite {
 
         return null;
     }
-    private FrameworkMethod getParametersMethod(TestClass testClass) throws Exception {
-        List<FrameworkMethod> methods = testClass.getAnnotatedMethods(Parameters.class);
-        for (FrameworkMethod each : methods) {
-            int modifiers = each.getMethod().getModifiers();
-            if (Modifier.isStatic(modifiers) && Modifier.isPublic(modifiers)) {
-                return each;
-            }
-        }
-
-        return null;
-    }
-
 }
