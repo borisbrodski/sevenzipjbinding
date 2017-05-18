@@ -29,18 +29,21 @@ public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutIte
         super(size, entropy);
     }
 
-    public abstract class SingleFileOutItemCallback extends SingleFileCreateArchiveCallback {
-
+    public static abstract class SingleFileOutItemCallback<T extends IOutItemBase>
+            extends SingleFileCreateArchiveCallback<T> {
+        protected SingleFileOutItemCallback(TestContext testContext) {
+            super(testContext);
+        }
     }
 
-    protected abstract SingleFileCreateArchiveCallback getSingleFileCreateArchiveCallback();
+    protected abstract SingleFileCreateArchiveCallback<T> getSingleFileCreateArchiveCallback();
 
     protected abstract IOutCreateArchive<T> openOutArchive() throws SevenZipException;
 
     @SuppressWarnings("unchecked")
     @Override
     protected long doTest(int dataSize, int entropy) throws Exception {
-        SingleFileCreateArchiveCallback createArchiveCallback = getSingleFileCreateArchiveCallback();
+        SingleFileCreateArchiveCallback<T> createArchiveCallback = getSingleFileCreateArchiveCallback();
 
         TestContext testContext = getTestContext();
         testContext.callbackTester = new CallbackTester<IOutCreateCallback<T>>(createArchiveCallback);

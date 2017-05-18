@@ -38,10 +38,17 @@ import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
-    protected abstract class SingleFileCreateArchiveCallback implements IOutCreateCallback<T> {
+    protected static abstract class SingleFileCreateArchiveCallback<T extends IOutItemBase>
+            implements IOutCreateCallback<T> {
+        protected TestContext testContext;
+
+        protected SingleFileCreateArchiveCallback(TestContext testContext) {
+            this.testContext = testContext;
+        }
+
         public ISequentialInStream getStream(int index) throws SevenZipException {
             assertEquals(0, index);
-            return getTestContext().randomContext;
+            return testContext.randomContext;
         }
 
         public void setOperationResult(boolean operationResultOk) {
@@ -90,8 +97,6 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         }
 
         protected void setBaseProperties(IOutItemBase outItem) {
-            TestContext testContext = getTestContext();
-
             outItem.setDataSize(Long.valueOf(testContext.randomContext.getSize()));
         }
 
@@ -155,7 +160,7 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
         }
     }
 
-    protected class TestContext {
+    protected static class TestContext {
         RandomContext randomContext;
         CallbackTester<? extends IOutCreateCallback<?>> callbackTester;
 
@@ -217,12 +222,14 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
             Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
             assertEquals(1, inArchive.getNumberOfItems());
             ExtractOperationResult result;
+            AssertOutputStream assertOutputStream = new AssertOutputStream(randomContext);
             if (password != null) {
-                result = inArchive.extractSlow(0, new AssertOutputStream(randomContext), password);
+                result = inArchive.extractSlow(0, assertOutputStream, password);
             } else {
-                result = inArchive.extractSlow(0, new AssertOutputStream(randomContext));
+                result = inArchive.extractSlow(0, assertOutputStream);
             }
             assertEquals(ExtractOperationResult.OK, result);
+            assertTrue(assertOutputStream.readEnitireStream());
 
             verifyCompressedArchiveDetails(inArchive);
 

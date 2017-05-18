@@ -242,7 +242,7 @@ public class TestConfiguration {
 
     private static void loadProfile(String profileName) {
         for (TestConfiguration profile : PROFILES) {
-            if (profile.name.equals(profileName)) {
+            if (profile.name.equalsIgnoreCase(profileName)) {
                 currentProfile = profile;
                 return;
             }

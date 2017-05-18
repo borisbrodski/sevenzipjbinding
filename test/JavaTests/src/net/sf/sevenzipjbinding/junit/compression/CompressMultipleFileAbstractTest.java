@@ -64,17 +64,17 @@ public abstract class CompressMultipleFileAbstractTest extends CompressAbstractT
     @Parameters
     public static Collection<Object[]> getParameters() {
         return Arrays.asList(new Object[][] { //
-                { 1, 0, 0, 0, 0, false, false }, //
-                { 1, 0, 0, 300, 200, false, false }, //
-                { 2, 0, 0, 0, 0, false, false }, //
-                { 2, 0, 0, 300, 200, false, false }, //
-                { 3, 0, 0, 300, 200, false, false }, //
-                { 3, 1, 1, 300, 200, false, true }, //
-                { 65, 5, 2, 200, 150, false, true }, //
-                { 20, 15, 1, 200, 150, false, true }, //
-                { 90, 3, 4, 200, 150, false, true }, //
-                { 10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, false, false }, //
-                { 50, 1, 2, 80000, 5000, false, false }//
+                { 1, 0, 0, 0, 0, false }, //
+                { 1, 0, 0, 300, 200, false }, //
+                { 2, 0, 0, 0, 0, false }, //
+                { 2, 0, 0, 300, 200, false }, //
+                { 3, 0, 0, 300, 200, false }, //
+                { 3, 1, 1, 300, 200, true }, //
+                { 65, 5, 2, 200, 150, true }, //
+                { 20, 15, 1, 200, 150, true }, //
+                { 90, 3, 4, 200, 150, true }, //
+                { 10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, false }, //
+                { 50, 1, 2, 80000, 5000, false }//
         });
     }
 
