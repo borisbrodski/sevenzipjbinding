@@ -366,11 +366,11 @@
             C_DefaultConstructor() : JMethod("<init>", "()V") {}                                \
         };                                                                                      \
         C_DefaultConstructor _defaultConstructor;                                               \
+    public:                                                                                     \
         static const char * getName() {                                                         \
             static const char * _name = package "/" #name ;                                     \
             return _name;                                                                       \
         }                                                                                       \
-    public:                                                                                     \
         name() : JavaClass<name>() {}
 
 #define JT_END_CLASS                      };};
@@ -412,7 +412,7 @@
         static _JT_CTYPE_##ret_type name(JNIEnv * __env, jobject __obj param_def) {             \
             CHECK_OBJECT_CLASS(__env, &_instance, __obj)                                        \
             TRACE_JNI_CALLING(&_instance, name, sig)                                            \
-            jclass __clazz = _instance._getJClass(__env);                                       \
+            jclass __clazz = _instance.getJClass(__env);                                        \
             _JT_CALL_AND_ASSIGN_TO_RESULT(ret_type,                                             \
                 __env->_JT_ENV_NON_VIRTUAL_CALL_##ret_type(__obj, __clazz,                      \
                     _instance._JT_METHOD_OBJECT(name).getMethodID(__env, __clazz) param_list))  \
@@ -445,7 +445,7 @@
         static _JT_CTYPE_##ret_type name(JNIEnv * __env, jobject __obj param_def) {             \
             CHECK_OBJECT_CLASS(__env, &_instance, __obj)                                        \
             TRACE_JNI_CALLING(&_instance, name, sig)                                            \
-            jclass __clazz = _instance._getJClass(__env);                                       \
+            jclass __clazz = _instance.getJClass(__env);                                        \
             _JT_CALL_AND_ASSIGN_TO_RESULT_##ret_type(                                           \
                 __env->_JT_ENV_VIRTUAL_CALL_##ret_type(__obj,                                   \
                     _instance._JT_METHOD_OBJECT(name).getMethodID(__env, __clazz) param_list))  \
@@ -477,7 +477,7 @@
     public:                                                                                     \
         static _JT_CTYPE_##ret_type name(JNIEnv * __env param_def) {                            \
             TRACE_JNI_CALLING(&_instance, name, sig)                                            \
-            jclass __clazz = _instance._getJClass(__env);                                       \
+            jclass __clazz = _instance.getJClass(__env);                                        \
             _JT_CALL_AND_ASSIGN_TO_RESULT_##ret_type(                                           \
                 __env->_JT_ENV_STATIC_CALL_##ret_type(__clazz,                                  \
                     _instance._JT_METHOD_OBJECT(name).getMethodID(__env, __clazz) param_list))  \
@@ -507,7 +507,7 @@
             _JT_CTYPE_##ret_type __result = static_cast<_JT_CTYPE_##ret_type>(                  \
                 env->_JT_ENV_GET_##ret_type(object,                                             \
                         _instance._JT_METHOD_OBJECT(name).getFieldID(env,                       \
-                                    _instance._getJClass(env))));                               \
+                                    _instance.getJClass(env))));                                \
             TRACE_JNI_GOT(&_instance, name, signature)                                          \
             _JT_RETURN_RESULT_##ret_type                                                        \
         }                                                                                       \
@@ -516,7 +516,7 @@
             CHECK_OBJECT_CLASS(env, &_instance, object)                                         \
             TRACE_JNI_SETTING(&_instance, name, signature)                                      \
             env->_JT_ENV_SET_##ret_type(object,                                                 \
-                _instance._JT_METHOD_OBJECT(name).getFieldID(env, _instance._getJClass(env)),   \
+                _instance._JT_METHOD_OBJECT(name).getFieldID(env, _instance.getJClass(env)),    \
                 value);                                                                         \
             TRACE_JNI_SET(&_instance, name, signature)                                          \
         }
@@ -538,7 +538,7 @@
     public:                                                                                     \
         static _JT_CTYPE_##ret_type name##_Get(JNIEnv * env) {                                  \
             TRACE_JNI_GETTING(&_instance, name, signature)                                      \
-            jclass clazz = _instance._getJClass(env);                                           \
+            jclass clazz = _instance.getJClass(env);                                            \
             _JT_CTYPE_##ret_type __result = static_cast<_JT_CTYPE_##ret_type>(                  \
                 env->_JT_ENV_STATIC_GET_##ret_type(clazz,                                       \
                         _instance._JT_METHOD_OBJECT(name).getFieldID(env, clazz)));             \
@@ -547,7 +547,7 @@
         }                                                                                       \
         static void name##_Set(JNIEnv * env, _JT_CTYPE_##ret_type value) {                      \
             TRACE_JNI_SETTING(&_instance, name, signature)                                      \
-            jclass clazz = _instance._getJClass(env);                                           \
+            jclass clazz = _instance.getJClass(env);                                            \
             env->_JT_ENV_STATIC_SET_##ret_type(clazz,                                           \
                 _instance._JT_METHOD_OBJECT(name).getFieldID(env, clazz), value);               \
             TRACE_JNI_SET(&_instance, name, signature)                                          \
@@ -578,13 +578,13 @@
             TRACE_JNI_CALLING(this, name, sig)                                                  \
             _JT_CALL_AND_ASSIGN_TO_RESULT_##ret_type(                                           \
                     __env->_JT_ENV_VIRTUAL_CALL_##ret_type(__object,                            \
-                        _JT_METHOD_OBJECT(name).getMethodID(__env, _getJClass()) param_list))   \
+                        _JT_METHOD_OBJECT(name).getMethodID(__env, getJClass()) param_list))    \
             TRACE_JNI_CALLED(this, name, sig)                                                   \
             expectExceptionCheck(__env);                                                        \
             _JT_RETURN_RESULT_##ret_type                                                        \
         }                                                                                       \
         bool _##name##_exists(JNIEnv * __env) {                                                 \
-            return _JT_METHOD_OBJECT(name).exists(__env, _getJClass());                         \
+            return _JT_METHOD_OBJECT(name).exists(__env, getJClass());                          \
         }
 
 
@@ -604,7 +604,7 @@
     _JT_METHOD_CLASS(name) _JT_METHOD_OBJECT(name);                                             \
     public:                                                                                     \
         static jobject newInstance(JNIEnv * env param_def) {                                    \
-            jclass clazz = _instance._getJClass(env);                                           \
+            jclass clazz = _instance.getJClass(env);                                            \
             jobject __result = env->NewObject(clazz, _instance._JT_METHOD_OBJECT(name)          \
                                     .getMethodID(env, clazz) param_list);                       \
             expectExceptionCheck(env);                                                          \
@@ -660,7 +660,7 @@ protected:
 #endif
 #ifdef USE_MY_ASSERTS
     void checkObjectClass(JNIEnv * env, jobject object) {
-        jclass expectedClass = _getJClass(env);
+        jclass expectedClass = getJClass(env);
         if (!env->IsInstanceOf(object, expectedClass)) {
             jclass objectClass = env->GetObjectClass(object);
 
@@ -697,7 +697,7 @@ private:
         MY_ASSERT(_jclass);
     }
 public:
-    jclass _getJClass(JNIEnv * env) {
+    jclass getJClass(JNIEnv * env) {
         initIfNecessary(env);
         return _jclass;
     }
@@ -708,7 +708,7 @@ public:
 
     // TODO Remove it
     static jobject _newInstance(JNIEnv * env) {
-        jclass clazz = _instance._getJClass(env);
+        jclass clazz = _instance.getJClass(env);
         jmethodID defaultConstructor = _instance._defaultConstructor.getMethodID(env, clazz);
         FATALIF1(defaultConstructor == NULL, "Class '%s' has no default constructor",
                 T::getName());
@@ -723,12 +723,12 @@ public:
      */
     static bool _isInstance(JNIEnv * env, jobject object) {
         if (object) {
-            return env->IsInstanceOf(object, _instance._getJClass(env));
+            return env->IsInstanceOf(object, _instance.getJClass(env));
         }
         return false;
     }
     static bool _isAssingableFromInstanceOf(JNIEnv * env, jclass clazz) {
-        return env->IsAssignableFrom(clazz, _instance._getJClass(env));
+        return env->IsAssignableFrom(clazz, _instance.getJClass(env));
     }
 };
 
@@ -760,7 +760,7 @@ protected:
     }
 #endif // USE_MY_ASSERTS
 public:
-    jclass _getJClass() {
+    jclass getJClass() {
         return _jclass;
     }
     static jclass _getClassObject(JNIEnv * env) {
@@ -824,7 +824,7 @@ PlatformCriticalSection JInterface<T>::_criticalSection;
 #ifdef TRACE_ON
 template<typename T>
 inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & jinterface) {
-    stream << jinterface._getName();
+    stream << T::_getName(); // TODO Also output the class of the implementation here
 }
 #endif // TRACE_ON
 

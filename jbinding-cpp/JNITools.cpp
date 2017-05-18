@@ -285,6 +285,9 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_I8:
         return LongToObject(jniEnvInstance, propVariant->hVal.QuadPart);
 
+    case VT_UI8:
+        return LongToObject(jniEnvInstance, propVariant->uhVal.QuadPart);
+
     case VT_UI1:
         return IntToObject(jniEnvInstance, propVariant->bVal);
 
@@ -294,9 +297,6 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_UINT: // TODO Check this: Variant 'VT_UINT'
     case VT_UI4:
         return IntToObject(jniEnvInstance, propVariant->ulVal);
-
-    case VT_UI8:
-        return LongToObject(jniEnvInstance, propVariant->uhVal.QuadPart);
 
     case VT_BOOL:
         return BooleanToObject(jniEnvInstance, propVariant->boolVal);
