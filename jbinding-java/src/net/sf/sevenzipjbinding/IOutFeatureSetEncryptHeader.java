@@ -7,7 +7,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutCreateArchive
  *
  * @author Boris Brodski
- * @since 15.09-2.01
+ * @since 16.02-2.01
  *
  */
 public interface IOutFeatureSetEncryptHeader {

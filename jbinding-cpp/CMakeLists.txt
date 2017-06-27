@@ -213,7 +213,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
+    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/DummyOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/FindSignature.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/HandlerOut.cpp
@@ -229,7 +229,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zEncode.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zExtract.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderInStream.cpp
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
+    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandlerOut.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHeader.cpp

@@ -1,9 +1,9 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
+Release - 16.02-2.01beta (Release candidate, cross-platform, based on zip/p7zip 16.02 beta)
 
-    * Bind 7-Zip 15.09 (beta)
+    * Bind 7-Zip 16.02 (beta)
         - DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib 
         - PropID.LINK renamed to PropID.SYM_LINK
         
@@ -34,6 +34,10 @@ Release - 15.09-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
     * Bugfix: Bug #21 (7z-archive in Tar)
 
     * Bugfix: Bug #18 (null as password causes JVM crash)
+
+    * Complete rewrite of the test framework
+
+    * Add travis-build
 
 Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
 

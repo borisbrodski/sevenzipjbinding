@@ -30,8 +30,6 @@ Other TODOs:
 - In callbacks: Delete all local refs (jniEnvInstance->DeleteLocalRef(...)) in error cases (return S_FALSE)
 - In callbacks: Delete all local refs returned by jni.
 
-- Run tests on https://travis-ci.org/
-
 Minor TODOs:
 - OutItem: Check, that "(flag & DIRECTORY) <=> (isDir = true)" + test
 - CallbackTester: Test more callbacks (extraction(todo) + compression(done))
@@ -39,7 +37,6 @@ Minor TODOs:
 - Write test to use OutArchive more then ones before closing it. Verify, that all feature settings remains unchanged.
 - Test some untested archive formats (NFS, ...)
 - Redesign Web site
-- Separate stress tests from functional tests (Search for "TODO Separate stress tests from functional tests"), Use TestConfiguration
 - Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
 - Add file extension field to the ArchiveFormat enum (+JavaDoc)
 - Web: create favicon.ico
