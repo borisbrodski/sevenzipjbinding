@@ -11,14 +11,19 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
 import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.TestLogger;
+import net.sf.sevenzipjbinding.junit.common.TestBaseTest.TestBaseTestContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.LongRunning;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class TestBaseTest extends TestBase {
+public class TestBaseTest extends TestBase<TestBaseTestContext> {
+    public static class TestBaseTestContext extends AbstractTestContext {
+        int param1;
+    }
     private static class CloseableEmpty implements Closeable {
         boolean closed = false;
 
@@ -101,5 +106,11 @@ public class TestBaseTest extends TestBase {
             return true;
         }
         return false;
+    }
+
+    @Test
+    public void testContext() {
+        context().param1 = 1;
+        assertEquals(1, context().param1);
     }
 }

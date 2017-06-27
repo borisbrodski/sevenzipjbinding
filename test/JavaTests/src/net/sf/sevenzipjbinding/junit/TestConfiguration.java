@@ -74,8 +74,8 @@ public class TestConfiguration {
     // @formatter:off
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
         /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
-        new TestConfiguration(PR_MINUMAL,         0,             1,               0,      300,   false,   true), //
-        new TestConfiguration(PR_DEFAULT,         5,             4,               3,      600,   true,    true), //
+        new TestConfiguration(PR_MINUMAL,         2,             1,               0,      300,   false,   true), //
+        new TestConfiguration(PR_DEFAULT,         2,             2,               2,      600,   false,   true), //
         new TestConfiguration(PR_STRESS ,        15,            10,              10,     1200,   true,   false)  //
     };
     // @formatter:off

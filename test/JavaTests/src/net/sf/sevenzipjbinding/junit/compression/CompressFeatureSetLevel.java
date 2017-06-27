@@ -14,6 +14,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
@@ -25,11 +26,11 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile {
+public class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile<VoidContext> {
     private static final int ENTROPY = 100;
     private static final int DATA_SIZE = 300000;
-    private ArchiveFormat archiveFormat;
-    private int level;
+    private final ArchiveFormat archiveFormat;
+    private final int level;
 
     @Parameters
     public static Collection<Object> getLevels() {

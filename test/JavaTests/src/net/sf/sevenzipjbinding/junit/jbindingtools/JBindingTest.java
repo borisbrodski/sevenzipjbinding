@@ -6,11 +6,12 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class JBindingTest extends JUnitNativeTestBase {
+public class JBindingTest extends JUnitNativeTestBase<VoidContext> {
     private static class Callback1Impl implements Callback1 {
         public String test(int i) {
             return simpleCallbackMethod(i);

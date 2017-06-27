@@ -11,11 +11,14 @@ import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
  * This is the base class for all JUnit test classes, that needs native library to be loaded. This class provides:<br>
  * - Initialization of the native library
  *
+ * @param <C>
+ *            TestContext class
+ *
  * @author Boris Brodski
  * @since 4.65-1
  *
  */
-public class JUnitNativeTestBase extends TestBase {
+public class JUnitNativeTestBase<C extends AbstractTestContext> extends TestBase<C> {
     protected interface RunnableThrowsException {
         public void run() throws Exception;
     }

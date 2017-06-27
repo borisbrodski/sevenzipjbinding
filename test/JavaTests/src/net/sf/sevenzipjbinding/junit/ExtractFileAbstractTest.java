@@ -31,6 +31,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
+import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest.ExtractFileAbstractTestContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.ZipInStream;
@@ -41,7 +42,19 @@ import net.sf.sevenzipjbinding.junit.tools.ZipInStream;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
+public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<ExtractFileAbstractTestContext> {
+    public static class ExtractFileAbstractTestContext extends AbstractTestContext {
+        public String passwordToUse;
+        public boolean usingPassword = false;
+        public String generalPrefix = "";
+        public String cryptedArchivePrefix = "";
+        public String volumedArchivePrefix = "";
+        public String volumeArchivePostfix = "";
+        public boolean usingHeaderPassword = false;
+        public boolean usingPasswordCallback = false;
+        public boolean usingVolumes = false;
+        public Class<? extends Exception> exceptionToBeExpected = null;
+    }
     private static final String DEFAULT_PASSWORD = "TestPass";
 
     protected final ArchiveFormat archiveFormat;
@@ -49,16 +62,6 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     protected final int compression2;
     protected final int compression3;
     protected final String extention;
-    protected String passwordToUse;
-    protected boolean usingPassword = false;
-    protected String generalPrefix = "";
-    protected String cryptedArchivePrefix = "";
-    protected String volumedArchivePrefix = "";
-    protected String volumeArchivePostfix = "";
-    protected boolean usingHeaderPassword = false;
-    protected boolean usingPasswordCallback = false;
-    protected boolean usingVolumes = false;
-    protected Class<? extends Exception> exceptionToBeExpected = null;
 
     public ExtractFileAbstractTest(ArchiveFormat archiveFormat, String extention, int compression1, int compression2,
             int compression3) {
@@ -77,32 +80,32 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
         if (using) {
             usingPassword();
         } else {
-            usingPassword = false;
+            context().usingPassword = false;
         }
     }
 
     protected void expectException(Class<? extends Exception> exceptionClass) {
-        exceptionToBeExpected = exceptionClass;
+        context().exceptionToBeExpected = exceptionClass;
     }
 
     protected void setGeneralPrefix(String generalPrefix) {
-        this.generalPrefix = generalPrefix;
+        context().generalPrefix = generalPrefix;
     }
 
     protected void setCryptedArchivePrefix(String cryptedArchivePrefix) {
-        this.cryptedArchivePrefix = cryptedArchivePrefix;
+        context().cryptedArchivePrefix = cryptedArchivePrefix;
     }
 
     protected void usingPassword() {
-        usingPassword = true;
+        context().usingPassword = true;
     }
 
     protected void usingPasswordCallback() {
-        usingPasswordCallback = true;
+        context().usingPasswordCallback = true;
     }
 
     protected void setPasswordToUse(String password) {
-        passwordToUse = password;
+        context().passwordToUse = password;
     }
 
     protected void usingHeaderPassword() {
@@ -110,11 +113,11 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     }
 
     protected void usingHeaderPassword(boolean using) {
-        usingHeaderPassword = using;
+        context().usingHeaderPassword = using;
     }
 
     protected void usingVolumes(boolean usingVolumes) {
-        this.usingVolumes = usingVolumes;
+        context().usingVolumes = usingVolumes;
         if (usingVolumes) {
             setVolumedArchivePrefix("vol-");
         } else {
@@ -124,11 +127,11 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
     }
 
     public void setVolumedArchivePrefix(String volumedArchivePrefix) {
-        this.volumedArchivePrefix = volumedArchivePrefix;
+        context().volumedArchivePrefix = volumedArchivePrefix;
     }
 
     public void setVolumeArchivePostfix(String volumeArchivePostfix) {
-        this.volumeArchivePostfix = volumeArchivePostfix;
+        context().volumeArchivePostfix = volumeArchivePostfix;
     }
 
     final protected void usingVolumedSevenZip() {
@@ -138,7 +141,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
     @Before
     public void initPasswordToUse() {
-        passwordToUse = DEFAULT_PASSWORD;
+        context().passwordToUse = DEFAULT_PASSWORD;
     }
 
     @Test
@@ -295,10 +298,12 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
 
         public IInArchive openArchiveFileWithSevenZip(int fileIndex, int compressionIndex,
                 boolean autodetectFormat, String testFileNameWE, String testFileExt) throws SevenZipException {
+            ExtractFileAbstractTestContext context = context();
             String archiveFilename = getTestDataPath() + File.separatorChar + getTestSubdir() + File.separatorChar
-                    + generalPrefix + volumedArchivePrefix + cryptedArchivePrefix + testFileNameWE + fileIndex + "."
+                    + context.generalPrefix + context.volumedArchivePrefix + context.cryptedArchivePrefix
+                    + testFileNameWE + fileIndex + "."
                     + testFileExt
-                    + "." + compressionIndex + "." + extention + volumeArchivePostfix;
+                    + "." + compressionIndex + "." + extention + context.volumeArchivePostfix;
 
             if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
                 archiveFilename = archiveFilename.replace("part1.rar", "part01.rar");
@@ -328,7 +333,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                 IInStream inStreamToUse = randomAccessFileInStream;
                 IArchiveOpenCallback archiveOpenCallbackToUse = null;
 
-                if (usingVolumes) {
+                if (context().usingVolumes) {
 					volumeArchiveOpenCallback = new VolumeArchiveOpenCallback(archiveFilename, getTestDataPath()
 							+ File.separatorChar + getTestSubdir());
                     if (archiveFormat == ArchiveFormat.SEVEN_ZIP) {
@@ -339,9 +344,9 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                     }
                 }
 
-                if (usingHeaderPassword) {
-                    if (usingPasswordCallback) {
-                        if (usingVolumes) {
+                if (context().usingHeaderPassword) {
+                    if (context().usingPasswordCallback) {
+                        if (context().usingVolumes) {
                             inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
                                     new CombinedArchiveOpenCallback(archiveOpenCallbackToUse,
                                             new PasswordArchiveOpenCallback(), volumeArchiveOpenCallback));
@@ -352,7 +357,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
                         }
                     } else {
                         inArchive = SevenZip.openInArchive(autodetectFormat ? null : archiveFormat, inStreamToUse,
-                                passwordToUse);
+                                context().passwordToUse);
                     }
                 } else {
                     if (archiveOpenCallbackToUse == null) {
@@ -405,7 +410,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
         }
     }
 
-    public class CombinedArchiveOpenCallback implements IArchiveOpenCallback, ICryptoGetTextPassword,
+    public static class CombinedArchiveOpenCallback implements IArchiveOpenCallback, ICryptoGetTextPassword,
             IArchiveOpenVolumeCallback {
         private final ICryptoGetTextPassword cryptoGetTextPassword;
         private final IArchiveOpenVolumeCallback archiveOpenVolumeCallback;
@@ -462,7 +467,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
          */
 
         public String cryptoGetTextPassword() throws SevenZipException {
-            return passwordToUse;
+            return context().passwordToUse;
         }
 
     }
@@ -518,7 +523,7 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase {
          */
 
         public String cryptoGetTextPassword() throws SevenZipException {
-            return passwordToUse;
+            return context().passwordToUse;
         }
 
         public ExtractOperationResult getExtractOperationResult() {

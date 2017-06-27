@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.singlefile;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,6 +10,10 @@ public class ExtractSingleFileRar5VolumePassTest extends ExtractSingleFileAbstra
 
     public ExtractSingleFileRar5VolumePassTest() {
         super(ArchiveFormat.RAR5, "part01.rar", 0, 2, 5);
+    }
+
+    @Before
+    public void initExtractSingleFileRar5VolumePassTest() {
         usingVolumes(true);
     }
 

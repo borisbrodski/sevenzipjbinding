@@ -27,6 +27,7 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
 import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
@@ -37,7 +38,8 @@ import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
+public abstract class CompressSingleFileAbstractTest<C extends AbstractTestContext, T extends IOutItemBase>
+        extends CompressAbstractTest<C> {
     protected static abstract class SingleFileCreateArchiveCallback<T extends IOutItemBase>
             implements IOutCreateCallback<T> {
         protected TestContext testContext;
@@ -188,22 +190,17 @@ public abstract class CompressSingleFileAbstractTest<T extends IOutItemBase> ext
     protected static final String GROUP = "mygroup";
     protected static final String USER = "me";
 
-    ThreadLocal<TestContext> testContextTL = new ThreadLocal<TestContext>() {
+    static ThreadLocal<TestContext> testContextTL = new ThreadLocal<TestContext>() {
         @Override
         protected TestContext initialValue() {
             return new TestContext();
         };
     };
 
-    private int size;
-    private int entropy;
+    private final int size;
+    private final int entropy;
 
     protected abstract long doTest(int dataSize, int entropy) throws Exception;
-
-    @SuppressWarnings("unchecked")
-    protected CompressSingleFileAbstractTest<T> newInstance() throws InstantiationException, IllegalAccessException {
-        return this.getClass().newInstance();
-    }
 
     protected final void verifyCompressedArchive(RandomContext randomContext, ByteArrayStream outputByteArrayStream,
             String password, boolean useHeaderEncryption)

@@ -13,6 +13,8 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFileAbstractTest.CompressGenericSingleFileAbstractTestContext;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -23,7 +25,14 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressGenericSingleFileAbstractTest extends CompressSingleFileAbstractTest<IOutItemAllFormats> {
+public abstract class CompressGenericSingleFileAbstractTest
+        extends CompressSingleFileAbstractTest<CompressGenericSingleFileAbstractTestContext, IOutItemAllFormats> {
+    public static class CompressGenericSingleFileAbstractTestContext extends AbstractTestContext {
+        boolean useEncryption;
+        boolean useEncryptionNoPassword;
+        boolean useHeaderEncryption;
+    }
+
     public static class GenericSingleFileCreateArchiveCallback
             extends SingleFileCreateArchiveCallback<IOutItemAllFormats> {
         protected GenericSingleFileCreateArchiveCallback(TestContext testContext) {
@@ -58,24 +67,21 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
 
     public static final String PASSWORD = "test-pass-321";
 
-    private boolean useEncryption;
-    private boolean useEncryptionNoPassword;
-    private boolean useHeaderEncryption;
 
     protected CompressGenericSingleFileAbstractTest(int size, int entropy) {
         super(size, entropy);
     }
 
     public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
-        this.useEncryptionNoPassword = useEncryptionNoPassword;
+        context().useEncryptionNoPassword = useEncryptionNoPassword;
     }
 
     public void setUseEncryption(boolean useEncryption) {
-        this.useEncryption = useEncryption;
+        context().useEncryption = useEncryption;
     }
 
     public void setUseHeaderEncryption(boolean useHeaderEncryption) {
-        this.useHeaderEncryption = useHeaderEncryption;
+        context().useHeaderEncryption = useHeaderEncryption;
     }
 
     @SuppressWarnings("unchecked")
@@ -84,8 +90,9 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
         GenericSingleFileCreateArchiveCallback createArchiveCallback;
         String password = null;
         TestContext testContext = getTestContext();
-        if (useEncryption) {
-            if (!useEncryptionNoPassword) {
+        CompressGenericSingleFileAbstractTestContext context = context();
+        if (context.useEncryption) {
+            if (!context.useEncryptionNoPassword) {
                 password = PASSWORD;
             }
             createArchiveCallback = new GenericSingleFileCreateArchiveWithPasswordCallback(testContext, password);
@@ -102,7 +109,7 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(getArchiveFormat());
         addCloseable(outArchive);
 
-        if (useHeaderEncryption) {
+        if (context.useHeaderEncryption) {
             assertTrue(outArchive instanceof IOutFeatureSetEncryptHeader);
             ((IOutFeatureSetEncryptHeader) outArchive).setHeaderEncryption(true);
         }
@@ -117,8 +124,8 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
         //  System.out.println("Length: " + dataSize + ", entropy: " + entropy + ": compressed size: "
         //      + outputByteArrayStream.getSize());
 
-        if (useEncryption && !useEncryptionNoPassword && dataSize > 0) {
-            if (useHeaderEncryption) {
+        if (context.useEncryption && !context.useEncryptionNoPassword && dataSize > 0) {
+            if (context.useHeaderEncryption) {
                 try {
                     verifyCompressedArchive(testContext.randomContext, outputByteArrayStream, password, false);
                     fail("Archive shouldn't be extractable without the password");
@@ -136,10 +143,11 @@ public abstract class CompressGenericSingleFileAbstractTest extends CompressSing
                 assertFalse("Archive shouldn't be extractable without the password", extracted);
             }
         }
-        verifyCompressedArchive(testContext.randomContext, outputByteArrayStream, password, useHeaderEncryption);
+        verifyCompressedArchive(testContext.randomContext, outputByteArrayStream, password,
+                context.useHeaderEncryption);
         if (dataSize > 100000) {
             int encryptionMethods = 0;
-            if (useEncryption) {
+            if (context.useEncryption) {
                 encryptionMethods += ICryptoGetTextPassword.class.getMethods().length;
             }
             assertEquals(IOutCreateCallback.class.getMethods().length + encryptionMethods,

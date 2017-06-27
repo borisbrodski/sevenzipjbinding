@@ -102,12 +102,14 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 			assertTrue(inArchive.getNumberOfItems() > 0);
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-					false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+                    false, context().usingPassword ? context().passwordToUse : null,
+                    context().exceptionToBeExpected != null);
             addFilesToIgnore(inArchive, zipContentComparator1);
 			assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
 
 			ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-					true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+                    true, context().usingPassword ? context().passwordToUse : null,
+                    context().exceptionToBeExpected != null);
             addFilesToIgnore(inArchive, zipContentComparator2);
 
             if (archiveFormat == ArchiveFormat.WIM) {

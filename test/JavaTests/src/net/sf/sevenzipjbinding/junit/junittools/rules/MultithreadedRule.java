@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.junittools.rules;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.TestLogger;
 import net.sf.sevenzipjbinding.junit.junittools.RuntimeInfoAnnotation;
@@ -29,6 +32,8 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
  * @since 15.09-2.01
  */
 public class MultithreadedRule implements TestRule {
+    private Description description;
+
     private class MultithreadedStatement extends Statement {
         private Statement base;
         private Description description;
@@ -100,14 +105,16 @@ public class MultithreadedRule implements TestRule {
 
         public Throwable call() throws Exception {
             Throwable firstException = null;
-            for (int i = 0; i < repeatCount; i++) {
-                if (i > 0) {
-                    TestLogger.log("--- Repeating test: " + (i + 1) + "/" + repeatCount);
+            for (int i = 1; i <= repeatCount; i++) {
+                if (i > 1) {
+                    if (i <= 5 || i == repeatCount || i % 10 == 0) {
+                        TestLogger.log("--- Repeating test: " + i + "/" + repeatCount);
+                    }
                 }
                 Throwable throwable = executeExpectingException();
                 if (throwable != null && firstException == null) {
-                    if (i > 0) {
-                        TestLogger.log("The following exception is first occured at " + (i + 1) + "-th execution!");
+                    if (i > 1) {
+                        TestLogger.log("The following exception is first occured at " + i + "-th execution!");
                     }
                     firstException = throwable;
                 }
@@ -143,7 +150,49 @@ public class MultithreadedRule implements TestRule {
     }
 
     public Statement apply(Statement base, Description description) {
+        this.description = description;
         return new MultithreadedStatement(base, description);
+    }
+
+    private void verifyNoAttibutesDefined(Class<?> clazz) {
+        Class<?> superClazz = clazz;
+        List<String> invalidFields = new ArrayList<String>();
+        //        List<Class<?>> invalidSubclasses = new ArrayList<Class<?>>();
+        while (superClazz != null && superClazz != TestBase.class && superClazz != Object.class) {
+            for (Field field : superClazz.getDeclaredFields()) {
+                if (!Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+                    invalidFields.add(superClazz.getSimpleName() + "." + field.getName());
+                }
+            }
+            //            for (Class<?> subclass : superClazz.getDeclaredClasses()) {
+            //                if (!Modifier.isStatic(subclass.getModifiers())) {
+            //                    invalidSubclasses.add(subclass);
+            //                }
+            //            }
+            superClazz = superClazz.getSuperclass();
+        }
+        if (invalidFields.size() > 0) {
+            throwNoFieldsInMultithreadedTestAreAllowed(superClazz, invalidFields);
+        }
+        //        if (invalidSubclasses.size() > 0) {
+        //            throwNoSubclassesInMultithreadedTestAreAllowed(superClazz, invalidSubclasses);
+        //        }
+    }
+
+    //    private void throwNoSubclassesInMultithreadedTestAreAllowed(Class<?> superClazz, List<Class<?>> invalidSubclasses) {
+    //        String msg = "Only static subclasses are allowed due to the presents of the @Multithreaded. Use TestContext instead. Prohibited subclasses: "
+    //                + invalidSubclasses;
+    //        RuntimeException exception = new RuntimeException(msg);
+    //        TestLogger.logWithoutPrefix(msg, exception);
+    //        throw exception;
+    //    }
+
+    private void throwNoFieldsInMultithreadedTestAreAllowed(Class<?> superClazz, List<String> invalidFields) {
+        String msg = "Only static or final fields are allowed due to the presents of the @Multithreaded. Use TestContext instead. Prohibited fields: "
+                + invalidFields;
+        RuntimeException exception = new RuntimeException(msg);
+        TestLogger.logWithoutPrefix(msg, exception);
+        throw exception;
     }
 
     public void runMultithreaded(final Statement base, final Class<? extends Throwable> expectedException,
@@ -156,6 +205,7 @@ public class MultithreadedRule implements TestRule {
         if (threadCount > 1) {
             TestLogger.logWithoutPrefix(
                     "[Running test in " + threadCount + " threadeds, repeating " + repeatCount + " times]");
+            verifyNoAttibutesDefined(description.getTestClass());
         }
         List<Future<Throwable>> futureList = new ArrayList<Future<Throwable>>();
 

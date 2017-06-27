@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -24,7 +25,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @since 9.20-2.00
  */
 public abstract class CompressNonGenericSingleFileAbstractTest<T extends IOutItemBase> extends
-        CompressSingleFileAbstractTest<T> {
+        CompressSingleFileAbstractTest<VoidContext, T> {
     protected CompressNonGenericSingleFileAbstractTest(int size, int entropy) {
         super(size, entropy);
     }

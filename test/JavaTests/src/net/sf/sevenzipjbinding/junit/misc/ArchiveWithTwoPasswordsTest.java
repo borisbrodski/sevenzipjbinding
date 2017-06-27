@@ -25,6 +25,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
@@ -33,7 +34,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 15.09
  */
-public class ArchiveWithTwoPasswordsTest extends JUnitNativeTestBase {
+public class ArchiveWithTwoPasswordsTest extends JUnitNativeTestBase<VoidContext> {
     private class ArchiveWithTwoPasswordsExtractCallback implements IArchiveExtractCallback, ICryptoGetTextPassword {
         Map<Integer, ByteArrayStream> outStreams = new HashMap<Integer, ByteArrayStream>();
         int passwordIndex;

@@ -21,20 +21,21 @@ import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class ExceptionHandlingTest extends JUnitNativeTestBase {
+public class ExceptionHandlingTest extends JUnitNativeTestBase<VoidContext> {
     private static final String NO_CUSTOM_MESSSAGE_TEXT = "One or multiple exceptions without specific error message were thrown. See multiple 'caused by' exceptions for more information.";
 
     private static native String callRecursiveCallbackMethod(String path, int depth, int width, int mtwidth,
             boolean useException, boolean customErrorMessage) throws SevenZipException;
 
-    private int width;
-    private int depth;
-    private int mtWidth;
+    private final int width;
+    private final int depth;
+    private final int mtWidth;
 
     @Parameters
     public static Collection<Object[]> getParameters() {

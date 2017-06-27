@@ -12,6 +12,8 @@ import net.sf.sevenzipjbinding.IOutFeatureSetSolid;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid.CompressFeatureSetSolidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -25,7 +27,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles {
+public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles<CompressFeatureSetSolidContext> {
+    public static class CompressFeatureSetSolidContext extends AbstractTestContext {
+        VirtualContent virtualContent;
+    }
     private static final int DELTA_FILE_LENGTH = 100;
     private static final int AVERAGE_FILE_LENGTH = 100;
     private static final int MAX_SUBDIRECTORIES = 5;
@@ -36,7 +41,6 @@ public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles
         public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException;
     }
 
-    private static ThreadLocal<VirtualContent> virtualContentThreadLocal = new ThreadLocal<VirtualContent>();
 
     public void initVirtualContentForThread() {
         FilenameGenerator filenameGenerator = new FilenameGenerator() {
@@ -48,9 +52,9 @@ public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles
             }
         };
 
-        VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContentThreadLocal.set(virtualContent);
-        virtualContent.fillRandomly(COUNT_OF_FILES, DIRECTORIES_DEPTH, MAX_SUBDIRECTORIES, AVERAGE_FILE_LENGTH,
+        context().virtualContent = new VirtualContent(new VirtualContentConfiguration());
+        context().virtualContent.fillRandomly(COUNT_OF_FILES, DIRECTORIES_DEPTH, MAX_SUBDIRECTORIES,
+                AVERAGE_FILE_LENGTH,
                 DELTA_FILE_LENGTH, filenameGenerator, false);
     }
 
@@ -278,7 +282,7 @@ public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles
 
         tester.applyFeatures(featureOutArchive);
 
-        VirtualContent virtualContent = virtualContentThreadLocal.get();
+        VirtualContent virtualContent = context().virtualContent;
         virtualContent.createOutArchive(outArchive, outputByteArrayStream);
         closeArchive(outArchive);
 

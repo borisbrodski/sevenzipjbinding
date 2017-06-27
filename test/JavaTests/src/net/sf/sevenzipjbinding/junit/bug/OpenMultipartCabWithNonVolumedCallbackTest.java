@@ -3,11 +3,8 @@ package net.sf.sevenzipjbinding.junit.bug;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -21,8 +18,9 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 
-public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase {
+public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase<VoidContext> {
     private class MyArchiveOpenCallback implements IArchiveOpenCallback, IArchiveOpenVolumeCallback {
         public Object getProperty(PropID propID) throws SevenZipException {
             return null;
@@ -33,7 +31,6 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
             try {
                 randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + filename, "r");
                 assertNotNull(randomAccessFile);
-                closeableList.add(randomAccessFile);
             } catch (FileNotFoundException e) {
                 throw new SevenZipException(e);
             }
@@ -49,8 +46,6 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
 
     private static final String PATH_TO_ARCHIVES = "testdata/multiple-files/cab/";
     private static final String DISK1_FILE = "vol-archive1.zip.0.disk1.cab";
-
-    List<Closeable> closeableList = new ArrayList<Closeable>();
 
     @Test
     public void extractWithoutCallback() throws Throwable {
@@ -79,7 +74,6 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
         try {
             RandomAccessFile randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + DISK1_FILE, "r");
             assertNotNull(randomAccessFile);
-            closeableList.add(randomAccessFile);
             try {
                 inArchive = SevenZip.openInArchive(archiveType, new RandomAccessFileInStream(randomAccessFile),
                         archiveOpenCallback);

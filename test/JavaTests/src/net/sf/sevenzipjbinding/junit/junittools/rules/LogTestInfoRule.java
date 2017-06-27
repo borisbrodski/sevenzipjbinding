@@ -4,6 +4,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.TestLogger;
 import net.sf.sevenzipjbinding.junit.junittools.RuntimeInfoAnnotation;
 
@@ -15,8 +16,10 @@ import net.sf.sevenzipjbinding.junit.junittools.RuntimeInfoAnnotation;
  */
 public class LogTestInfoRule implements TestRule {
     private static class LogTestInfoStatement extends Statement {
-        private Statement base;
-        private Description description;
+        private static int dotCounter;
+
+        private final Statement base;
+        private final Description description;
 
         LogTestInfoStatement(Statement base, Description description) {
             this.base = base;
@@ -25,6 +28,9 @@ public class LogTestInfoRule implements TestRule {
 
         @Override
         public void evaluate() throws Throwable {
+            if (!TestConfiguration.getCurrent().isTrace()) {
+                printDotForTest();
+            }
             Throwable exception = null;
             long start = System.currentTimeMillis();
             String addons = "";
@@ -63,6 +69,17 @@ public class LogTestInfoRule implements TestRule {
             if (exception != null) {
                 throw exception;
             }
+        }
+
+        private void printDotForTest() {
+            synchronized (LogTestInfoStatement.class) {
+                dotCounter++;
+                if (dotCounter % 80 == 0) {
+                    System.out.println();
+                }
+            }
+            System.out.print(".");
+            System.out.flush();
         }
 
         private void printInDashes(String message, char dashChar) {

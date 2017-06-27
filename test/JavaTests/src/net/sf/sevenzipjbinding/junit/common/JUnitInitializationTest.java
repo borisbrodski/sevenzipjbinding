@@ -9,6 +9,7 @@ import org.junit.Test;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 
 /**
  * Tests initialization of SevenZipJBinding
@@ -16,7 +17,7 @@ import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public class JUnitInitializationTest extends JUnitNativeTestBase {
+public class JUnitInitializationTest extends JUnitNativeTestBase<VoidContext> {
 
     /**
      * Tests standard initialization of SevenZipJBinding by the base class for all JUnit tests.

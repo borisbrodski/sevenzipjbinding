@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.singlefile;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
@@ -12,16 +13,15 @@ public abstract class ExtractSingleFileAbstractHeaderPassTest extends ExtractSin
     public ExtractSingleFileAbstractHeaderPassTest(ArchiveFormat archiveFormat, int compression1, int compression2,
             int compression3) {
         super(archiveFormat, compression1, compression2, compression3);
-        init();
     }
 
     public ExtractSingleFileAbstractHeaderPassTest(ArchiveFormat archiveFormat, String extention, int compression1,
             int compression2, int compression3) {
         super(archiveFormat, extention, compression1, compression2, compression3);
-        init();
     }
 
-    private void init() {
+    @Before
+    public void initExtractSingleFileAbstractHeaderPassTest() {
         usingHeaderPassword();
         setCryptedArchivePrefix("passh-");
     }

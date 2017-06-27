@@ -17,6 +17,7 @@ import net.sf.sevenzipjbinding.IOutFeatureSetMultithreading;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
@@ -28,7 +29,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingleFile {
+public class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingleFile<VoidContext> {
 
     private class ThreadCountingCreateArchiveCallback extends FeatureSingleFileCreateArchiveCallback {
         private Set<Long> threadIdSet = Collections.synchronizedSet(new HashSet<Long>());

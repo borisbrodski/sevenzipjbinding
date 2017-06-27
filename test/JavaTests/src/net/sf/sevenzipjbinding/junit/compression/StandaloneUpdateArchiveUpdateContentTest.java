@@ -17,11 +17,12 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public class StandaloneUpdateArchiveUpdateContentTest extends JUnitNativeTestBase {
+public class StandaloneUpdateArchiveUpdateContentTest extends JUnitNativeTestBase<VoidContext>{
     private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItemAllFormats> {
         private int itemToUpdate;
         private byte[] newContent;

@@ -9,11 +9,12 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class JNIToolsTest extends JUnitNativeTestBase {
+public class JNIToolsTest extends JUnitNativeTestBase<VoidContext> {
     private static final int TEST_REPEAT_COUNT = 100;
     private static final int THREAD_COUNT = 40;
     private static final int THREAD_TIMEOUT = 200 * TEST_REPEAT_COUNT;

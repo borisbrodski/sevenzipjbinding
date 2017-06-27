@@ -6,9 +6,10 @@ import org.junit.Test;
 
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
 
-public class EnumTest extends JUnitNativeTestBase {
+public class EnumTest extends JUnitNativeTestBase<VoidContext> {
     private static native int getPropertyIndexSymLink();
 
     private static native int getPropertyIndexHardLink();

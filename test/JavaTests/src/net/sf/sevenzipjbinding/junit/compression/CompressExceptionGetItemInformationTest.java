@@ -21,6 +21,7 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -31,13 +32,13 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class CompressExceptionGetItemInformationTest extends CompressAbstractTest {
+public class CompressExceptionGetItemInformationTest extends CompressAbstractTest<VoidContext> {
     public interface IOutItemModifier {
         public IOutItemAllFormats modify(IOutItemAllFormats outItem);
         public void verifyException(Exception e);
     }
 
-    private ArchiveFormat archiveFormat;
+    private final ArchiveFormat archiveFormat;
 
     @Parameters
     public static Collection<ArchiveFormat> getLevels() {

@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.multiplefiles;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -9,7 +10,10 @@ public class ExtractMultipleFileRar5VolumeTest extends ExtractMultipleFileAbstra
 
     public ExtractMultipleFileRar5VolumeTest() {
         super(ArchiveFormat.RAR5, "part001.rar", 0, 2, 5);
+    }
 
+    @Before
+    public void initExtractMultipleFileRar5VolumeTest() {
         usingVolumes(true);
     }
 

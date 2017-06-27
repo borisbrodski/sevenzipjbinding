@@ -14,16 +14,19 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
  * Common class for all compress tests besides standalone tests like {@link StandaloneCompressSevenZipTest}.
  *
+ * @param <C>
+ *            TestContext class
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressAbstractTest extends JUnitNativeTestBase {
+public abstract class CompressAbstractTest<C extends AbstractTestContext> extends JUnitNativeTestBase<C> {
 
     protected abstract ArchiveFormat getArchiveFormat();
 

@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.multiplefiles;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
@@ -11,18 +12,17 @@ public abstract class ExtractMultipleFileAbstractPassTest extends ExtractMultipl
     public ExtractMultipleFileAbstractPassTest(ArchiveFormat archiveFormat, int compression1, int compression2,
             int compression3) {
         super(archiveFormat, compression1, compression2, compression3);
-        init();
-    }
-
-    private void init() {
-        usingPassword();
-        setCryptedArchivePrefix("pass-");
     }
 
     public ExtractMultipleFileAbstractPassTest(ArchiveFormat archiveFormat, String extention, int compression1,
             int compression2, int compression3) {
         super(archiveFormat, extention, compression1, compression2, compression3);
-        init();
+    }
+
+    @Before
+    public void initExtractMultipleFileAbstractPassTest() {
+        usingPassword();
+        setCryptedArchivePrefix("pass-");
     }
 
     @Test(expected = Exception.class)

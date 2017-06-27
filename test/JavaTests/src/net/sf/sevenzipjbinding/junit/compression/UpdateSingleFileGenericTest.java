@@ -18,7 +18,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @since 9.20-2.00
  */
 public class UpdateSingleFileGenericTest extends UpdateSingleFileAbstractTest<IOutItemAllFormats> {
-    private ArchiveFormat archiveFormat;
+    private final ArchiveFormat archiveFormat;
     @Override
     protected IOutCreateCallback<IOutItemAllFormats> getOutUpdateCallbackBase(IInArchive inArchive, ChangeLog changeLog)
             throws SevenZipException {

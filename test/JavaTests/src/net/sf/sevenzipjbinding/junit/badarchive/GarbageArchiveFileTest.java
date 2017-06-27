@@ -15,6 +15,7 @@ import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
@@ -24,8 +25,8 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public class GarbageArchiveFileTest extends JUnitNativeTestBase {
-    private ArchiveFormat archiveFormat;
+public class GarbageArchiveFileTest extends JUnitNativeTestBase<VoidContext> {
+    private final ArchiveFormat archiveFormat;
 
     @Parameters
     public static Collection<?> getParameters() {

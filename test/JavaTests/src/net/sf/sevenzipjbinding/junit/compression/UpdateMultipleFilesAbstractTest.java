@@ -50,7 +50,7 @@ public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> ex
     private static final DirectoryTreeConfiguration CONF_FLAT = new DirectoryTreeConfiguration(10, 0, 0, 100000, 50000);
     private static final DirectoryTreeConfiguration CONF_DEEP = new DirectoryTreeConfiguration(64, 5, 2, 10000, 5000);
 
-    protected ArchiveUpdater updaterAddNewItem = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterAddNewItem = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.addNewChange();
@@ -72,7 +72,7 @@ public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> ex
         }
     };
 
-    protected ArchiveUpdater updaterDeleteItem = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterDeleteItem = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);

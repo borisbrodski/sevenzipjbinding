@@ -16,6 +16,8 @@ import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetEncryptHeader;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileAbstractTest.CompressMultipleFileAbstractTestContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
@@ -23,41 +25,44 @@ import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-public abstract class CompressMultipleFileAbstractTest extends CompressAbstractTest {
+public abstract class CompressMultipleFileAbstractTest
+        extends CompressAbstractTest<CompressMultipleFileAbstractTestContext> {
+    public static class CompressMultipleFileAbstractTestContext extends AbstractTestContext {
+        VirtualContentConfiguration virtualContentConfiguration;
+
+        boolean useEncryption;
+        boolean useEncryptionNoPassword;
+        boolean useHeaderEncryption;
+    }
 
     private static final int OUTARCHIVE_MAX_SIZE = 5000000;
     private static final String PASSWORD = "test-pass-321";
 
-    private VirtualContentConfiguration virtualContentConfiguration;
-
-    private boolean useEncryption;
-    private boolean useEncryptionNoPassword;
-    private boolean useHeaderEncryption;
-    private int countOfFiles;
-    private int directoriesDepth;
-    private int maxSubdirectories;
-    private int averageFileLength;
-    private int deltaFileLength;
-    private boolean forbiddenRootDirectory;
+    private final int countOfFiles;
+    private final int directoriesDepth;
+    private final int maxSubdirectories;
+    private final int averageFileLength;
+    private final int deltaFileLength;
+    private final boolean forbiddenRootDirectory;
 
     @Override
     protected abstract ArchiveFormat getArchiveFormat();
 
     public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
-        this.useEncryptionNoPassword = useEncryptionNoPassword;
+        context().useEncryptionNoPassword = useEncryptionNoPassword;
     }
 
     public void setUseEncryption(boolean useEncryption) {
-        this.useEncryption = useEncryption;
+        context().useEncryption = useEncryption;
     }
 
     public void setUseHeaderEncryption(boolean useHeaderEncryption) {
-        this.useHeaderEncryption = useHeaderEncryption;
+        context().useHeaderEncryption = useHeaderEncryption;
     }
 
     @Before
     public void init() {
-        virtualContentConfiguration = new VirtualContentConfiguration();
+        context().virtualContentConfiguration = new VirtualContentConfiguration();
 
     }
 
@@ -98,43 +103,43 @@ public abstract class CompressMultipleFileAbstractTest extends CompressAbstractT
     @Repeat
     public void compress() throws Exception {
         if (forbiddenRootDirectory) {
-            virtualContentConfiguration.setForbiddenRootDirectory(true);
+            context().virtualContentConfiguration.setForbiddenRootDirectory(true);
         }
-        VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
+        VirtualContent virtualContent = new VirtualContent(context().virtualContentConfiguration);
         ArchiveFormat archiveFormat = getArchiveFormat();
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
         addCloseable(outArchive);
 
-        if (useHeaderEncryption) {
+        if (context().useHeaderEncryption) {
             assertTrue(outArchive instanceof IOutFeatureSetEncryptHeader);
             ((IOutFeatureSetEncryptHeader) outArchive).setHeaderEncryption(true);
         }
 
-        String password = useEncryptionNoPassword ? null : PASSWORD;
+        String password = context().useEncryptionNoPassword ? null : PASSWORD;
 
         ByteArrayStream byteArrayStream;
         byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-        virtualContent.createOutArchive(outArchive, byteArrayStream, useEncryption, password);
+        virtualContent.createOutArchive(outArchive, byteArrayStream, context().useEncryption, password);
 
         outArchive.close();
         removeCloseable(outArchive);
 
         byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/x.7z"), true);
         byteArrayStream.rewind();
-        if (useHeaderEncryption) {
+        if (context().useHeaderEncryption) {
             assertHeaderCrypted(byteArrayStream, archiveFormat);
         }
         IInArchive inArchive;
-        if (useHeaderEncryption) {
+        if (context().useHeaderEncryption) {
             inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream, password);
         } else {
             inArchive = SevenZip.openInArchive(archiveFormat, byteArrayStream);
         }
         addCloseable(inArchive);
-        if (useEncryption && !useEncryptionNoPassword) {
+        if (context().useEncryption && !context().useEncryptionNoPassword) {
             assertAllItemsCrypted(inArchive);
         }
 

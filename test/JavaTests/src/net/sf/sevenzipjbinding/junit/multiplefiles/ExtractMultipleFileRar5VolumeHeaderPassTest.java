@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.multiplefiles;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -8,6 +9,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 public class ExtractMultipleFileRar5VolumeHeaderPassTest extends ExtractMultipleFileAbstractHeaderPassTest {
     public ExtractMultipleFileRar5VolumeHeaderPassTest() {
         super(ArchiveFormat.RAR5, "part001.rar", 0, 2, 5);
+    }
+
+    @Before
+    public void initExtractMultipleFileRar5VolumeHeaderPassTest() {
         usingVolumes(true);
         usingPasswordCallback();
     }

@@ -19,6 +19,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
@@ -31,7 +32,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase {
+public class StandaloneCompressSevenZipTest extends JUnitNativeTestBase<VoidContext>{
     private class OutCreateArchive7z implements IOutCreateCallback<IOutItem7z> {
         public void setTotal(long total) throws SevenZipException {
         }

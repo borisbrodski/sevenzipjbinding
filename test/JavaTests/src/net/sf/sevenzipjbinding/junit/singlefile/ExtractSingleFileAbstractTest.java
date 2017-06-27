@@ -211,13 +211,13 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
         checkDataSize(inArchive, index, expectedFilename);
         checkPropertyIsFolder(inArchive, index);
         ExtractOperationResult operationResult;
-        if (usingPassword) {
-            if (usingPasswordCallback) {
+        if (context().usingPassword) {
+            if (context().usingPasswordCallback) {
                 PasswordArchiveExtractCallback extractCallback = new PasswordArchiveExtractCallback(outputStream);
                 inArchive.extract(new int[] { index }, false, extractCallback);
                 operationResult = extractCallback.getExtractOperationResult();
             } else {
-                operationResult = inArchive.extractSlow(index, outputStream, passwordToUse);
+                operationResult = inArchive.extractSlow(index, outputStream, context().passwordToUse);
             }
         } else {
             operationResult = inArchive.extractSlow(index, outputStream);
@@ -273,7 +273,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		}
 		assertNotNull(isEncrypted1);
 		assertNotNull(isEncrypted1);
-		if (usingPassword || usingHeaderPassword) {
+        if (context().usingPassword || context().usingHeaderPassword) {
 			assertTrue("File reported not to be crypted (PropID.ENCRYPTED)", isEncrypted1);
 		} else {
 			assertFalse("File reported to be crypted (PropID.ENCRYPTED)", isEncrypted1);
@@ -354,7 +354,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		}
 	}
 
-    private class SingleFileSequentialOutStreamComparator implements ISequentialOutStream, Closeable {
+    private static class SingleFileSequentialOutStreamComparator implements ISequentialOutStream, Closeable {
 		private InputStream fileInputStream;
 		private long processed = 0;
 		private Random random = new Random();

@@ -217,6 +217,7 @@ import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAddRemoveItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAlterItemsTest;
+import net.sf.sevenzipjbinding.junit.tools.TypeVariableResolverTest;
 
 
 /**
@@ -371,20 +372,8 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] toolsTests = { //
-    /*    */NoReadLimitSeekSet.class, //
-            NoReadLimitSeekCur.class, //
-            NoReadLimitSeekEnd.class, //
-            ReadSingleBytesSeekSet.class, //
-            ReadSingleBytesSeekCur.class, //
-            ReadSingleBytesSeekEnd.class, //
-            ReadMaxTwoBytesSeekSet.class, //
-            ReadMaxTwoBytesSeekCur.class, //
-            ReadMaxTwoBytesSeekEnd.class, //
-            ReadMaxThreeBytesSeekSet.class, //
-            ReadMaxThreeBytesSeekCur.class, //
-            ReadMaxThreeBytesSeekEnd.class, //
-            ByteArrayStreamTestWithEmptyBuffer.class, //
             ByteArrayStreamTestWithBufferLength1.class, //
+            ByteArrayStreamTestWithBufferLength100.class, //
             ByteArrayStreamTestWithBufferLength2.class, //
             ByteArrayStreamTestWithBufferLength3.class, //
             ByteArrayStreamTestWithBufferLength4.class, //
@@ -393,11 +382,24 @@ public class AllTestSuite extends TestSuite {
             ByteArrayStreamTestWithBufferLength7.class, //
             ByteArrayStreamTestWithBufferLength8.class, //
             ByteArrayStreamTestWithBufferLength9.class, //
-            ByteArrayStreamTestWithBufferLength100.class, //
+            ByteArrayStreamTestWithEmptyBuffer.class, //
+            EnumTest.class, //
             JBindingTest.class, //
             JNIToolsTest.class, //
+            NoReadLimitSeekCur.class, //
+            NoReadLimitSeekEnd.class, //
+            NoReadLimitSeekSet.class, //
             ParamSpecTest.class, //
-            EnumTest.class, //
+            ReadMaxThreeBytesSeekCur.class, //
+            ReadMaxThreeBytesSeekEnd.class, //
+            ReadMaxThreeBytesSeekSet.class, //
+            ReadMaxTwoBytesSeekCur.class, //
+            ReadMaxTwoBytesSeekEnd.class, //
+            ReadMaxTwoBytesSeekSet.class, //
+            ReadSingleBytesSeekCur.class, //
+            ReadSingleBytesSeekEnd.class, //
+            ReadSingleBytesSeekSet.class, //
+            TypeVariableResolverTest.class, //
     };
     static Class<?>[] compressionTests = { //
             CompressExceptionGetItemInformationTest.class, //
