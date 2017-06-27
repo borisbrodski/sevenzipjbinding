@@ -5,21 +5,17 @@
 
 #include <string.h>
 
-#ifndef _WIN32
-	#ifdef ENV_BEOS
-		#ifdef ENV_HAIKU
-			#include <wctype.h>
-		#else
-			// FIXME
-			#define towupper(c) (c)
-			int wcscmp(const wchar_t *s1, const wchar_t *s2);
-			wchar_t * wmemcpy(wchar_t *dest, const wchar_t *src, size_t num);
-			wchar_t * wcsstr(const wchar_t *wcs1, const wchar_t *wcs2);
-		#endif
-#else
-#include <wctype.h>
-#endif
+#ifdef ENV_HAVE_WCHAR__H
 #include <wchar.h>
+#endif
+
+#ifdef ENV_HAVE_WCTYPE_H
+#include <wctype.h>
+#else
+#define towupper(c) (c)  // FIXME
+int wcscmp(const wchar_t *s1, const wchar_t *s2);
+wchar_t * wmemcpy(wchar_t *dest, const wchar_t *src, size_t num);
+wchar_t * wcsstr(const wchar_t *wcs1, const wchar_t *wcs2);
 #endif
 
 #include "MyWindows.h"
@@ -315,7 +311,7 @@ public:
   void SetFrom_CalcLen(const char *s, unsigned len);
   // void SetFromAscii(const char *s) { operator+=(s); }
 
-  // AString Mid(unsigned startIndex, unsigned count) const { return AString(count, _chars + startIndex); }
+  AString Mid(unsigned startIndex, unsigned count) const { return AString(count, _chars + startIndex); }
   AString Left(unsigned count) const { return AString(count, *this); }
 
   // void MakeUpper() { MyStringUpper(_chars); }

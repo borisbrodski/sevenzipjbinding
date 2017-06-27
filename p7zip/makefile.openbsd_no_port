@@ -9,9 +9,12 @@ ALLFLAGS=${OPTFLAGS} \
         -DNDEBUG -D_REENTRANT -DENV_UNIX \
         $(LOCAL_FLAGS)
                                                                                                       
+ALLFLAGS_CPP=-DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+
 CXX=g++
 CC=gcc
-LINK_SHARED=-shared
+CC_SHARED=-fPIC
+LINK_SHARED=-fPIC -shared
                                                                                                       
 LOCAL_LIBS=-lpthread
 LOCAL_LIBS_DLL=$(LOCAL_LIBS)

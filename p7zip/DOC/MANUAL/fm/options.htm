@@ -49,9 +49,16 @@ from the Tools menu.</P>
 <P>Allows you to specify behavior of 7-Zip in Windows Shell.</P>
 <DL>
   <DT>Integrate 7-Zip to shell context menu</DT>
-    <DD>Select this check box to add 7-Zip commands to Shell Context Menu.</DD>
+    <DD>Select this check box to add 7-Zip commands to Shell Context Menu. 
+        There are two check boxes in 64-bit system. So it's possible to enable
+        7-Zip context menu for 32-bit and 64-bit applications.</DD>
   <DT>Cascaded context menu</DT>
     <DD>Select this check box to group 7-Zip context menu items to one <B>7-Zip</B> submenu.</DD>
+  <DT>Icons in context menu</DT>
+    <DD>Select this check box to show 7-Zip icon in context menu items.</DD>
+  <DT>Eliminate duplication of root folder</DT>
+    <DD>That option allows to eliminate duplication of root folder for "Extract to" operations,
+        if all files in archive are placed in folder with name that is identical to name of output folder.</DD>
   <DT>Context menu items</DT>
     <DD>Lists the optional context menu items. If an item is checked,
         7-Zip will add this item to the context menu.</DD>
@@ -111,8 +118,6 @@ So, for speed reasons, it is recommended that you select the
   <DT>Show real file icons</DT>
     <DD>Shows real file icons in file list. If this option is enabled,
       listing updates can be slower.</DD>
-  <DT>Show system menu</DT>
-    <DD>Shows a system context sub-menu in the File menu.</DD>
   <DT>Full row select</DT>
     <DD>When an item is selected, the item and all its subitems are highlighted.</DD>
   <DT>Show grid lines</DT>
@@ -121,6 +126,10 @@ So, for speed reasons, it is recommended that you select the
     <DD>If enabled, File Manager opens files and folders by single-clicking them.</DT>
   <DT>Alternative selection mode</DT>
     <DD>If enabled, File Manager keeps selection mark when you move cursor.</DD>
+
+  <DT>Show system menu</DT>
+    <DD>Shows a system context sub-menu in the File menu.</DD>
+
   <DT>Use large memory pages</DT>
     <DD>If enabled, 7-Zip will try to use large pages. This feature allows an increase in speed of compression.
       This may cause 7-Zip to pause when starting compression, because of allocation of the large pages.

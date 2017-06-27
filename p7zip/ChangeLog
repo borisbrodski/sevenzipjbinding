@@ -1,14 +1,123 @@
 
-Version 15.09 beta
-=================
+Version 16.02
+=============
 
-  - From Windows version of 7-zip 15.08 beta:
+
+  - From Windows version of 7-Zip 16.02:
+    - The BUG in 16.00 - 16.01 was fixed: 7-Zip mistakenly reported the warning 
+      "There are some data after the end of the payload data" for split archives.
+
+Version 16.01 (never published)
+=============
+
+  - From Windows version of 7-Zip 16.01:
+    - The bugs in SWM (WIM), EXE (PE) and CHM code were fixed.
+    - there are some internal changes in source code for better compatibility with VS2015 C++ compiler.
+
+Version 16.00 (never published)
+=============
+
+  - better support for OpenBsd (CPP/Windows/System.cpp), thanks Josh (https://sourceforge.net/p/p7zip/discussion/383043/thread/ee32dcd8/?limit=25#c322)
+
+  - From Windows version of 7-Zip 16.00:
+    - 7-Zip now can extract multivolume ZIP archives (z01, z02, ... , zip).
+    - Some fixed bugs:
+      - bzip2 decoder -mmt2 reported E_FAIL (for k_My_HRESULT_WritingWasCut case), if we extract partial file.
+      - 7z solid update (hang in break)
+      - sha1 worked incorrectly for call after call with ((size & 3) != 0)
+      - 7z update bcj bugs were fixed.
+      - split (aaa.001) fixed
+      - iso loop fix
+      - rar4 multivol -stdin kpidSize
+      - drag and drop 1<2.txt
+      - memory access violation fix
+
+
+
+Version 15.14.1
+===============
+
+  - patch #32 Compiling in OS X fails with p7zip_15.14 
+
+
+Version 15.14
+=============
+
+  - bug #147 Directory traversal through symlinks
+    ( https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-1038 )
+
+  - patch #26 : Patch to correctly set permissions for docs that permits non-sudo deletion of docs 
+
+  - patch #27 : Update Mac OS X LLVM 64bits Makefile 
+
+  - patch #28 : p7zip version 15.09 fails to build on s390 
+
+  - patch #29 : please fix incorrect fsf address 
+
+  - patch #31 : p7zip 15.09 fails to build on mips 
+
+  - bug :  "7za a -p ..." was fixed
+
+  - bug #172 : Impossible to create archive with some unicode symbols in filename 
+
+  - From Windows version of 7-Zip 15.13:
+    - The BUG in 15.13 in CAB code was fixed.
+    
+  - From Windows version of 7-Zip 15.12:
+    - Some bugs were fixed.
+    - New localization: Yoruba.
+
+  - test_emul becomes test_lib  (tests libraries)
+
+  - cross building added :
+		makefile.linux_cross_mipsel
+
+  - support for android 5+ (-fPIE -pie)
+
+Version 15.12 (never published)
+=============
+  - From Windows version of 7-Zip 15.12 :
+    - "There are no errors" string after "Test" operation inside archive.
+    - The bugs in LZMA SDK were fixed (but these bugs are not related directly to 7-Zip's code).
+
+
+  - From Windows version of 7-Zip 15.11 :
+        - Some bugs were fixed.
+        - 7-Zip 15.10 showed incorrect error message about missing volume for multivolume RAR archives.
+
+   - ..../LZHAM added
+   
+
+
+Version 15.10 beta
+==================
+
+  - bug #147 Directory traversal through symlinks 
+    Bug-Debian: https://bugs.debian.org/774660
+    Delay creation of symlinks to prevent arbitrary file writes (CVE-2015-1038)
+    Fix given by Ben Hutchings
+
+  - From Windows version of 7-zip 15.10 beta:
+    - The BUG in 9.21 - 15.09 was fixed:
+      7-Zip could ignore some parameters, specified for archive creation operation
+	  for gzip and bzip2 formats in "Add to Archive" window and in command line 
+	  version (-m switch).
+    - Some bugs were fixed.
+      - extracting from solid wim archives worked incorrectly in some cases,
+    - Also there are some minor changes.
+      - 7-Zip can show the name of missing volume for multivolume RAR and VMDK archives.
+      - Some internal changes with 7-Zip Benchmark.
+
+Version 15.09 beta
+==================
+
+  - From Windows version of 7-zip 15.09 beta:
     - 7-Zip now can extract ext2 and multivolume VMDK images.
     - Some bugs were fixed.
 
 
 Version 15.08 beta
-=================
+==================
 
   - From Windows version of 7-zip 15.08 beta:
 
@@ -17,13 +126,13 @@ Version 15.08 beta
 
 
 Version 15.07 beta
-=================
+==================
 
   - "bin/Codecs/Rar29.so" renamed to "bin/Codecs/Rar.so"
   
-  - support of cygwin 64 bits
+  - support for cygwin 64 bits
   
-  - support of cygwin 64 bits with asm
+  - support for cygwin 64 bits with asm
   
   - cygwin : fix in GetRamSize()
   

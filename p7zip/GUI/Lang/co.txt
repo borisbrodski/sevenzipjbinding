@@ -1,5 +1,5 @@
 ﻿;!@Lang2@!UTF-8!
-;  15.00 : Patriccollu di Santa Maria Sichè
+;  15.00 : Patriccollu di Santa Maria è Sichè
 ;
 ;
 ;
@@ -29,8 +29,8 @@ Aiutu
 440
 Iè per &Tutti
 Innò per T&utti
-Fermà
-Rilancià
+Piantà
+Riavvià
 &Arci pianu
 P&rimu pianu
 &Pausa
@@ -52,7 +52,7 @@ A&ffissà
 &Rinumà
 &Cupià Ver Di...
 &Dispiazzà Ver Di...
-S&guassà
+S&quassà
 &Sparte u schedariu...
 &Unisce i schedarii...
 &Pruprietà
@@ -69,7 +69,7 @@ Selezziunà &Tuttu
 Ùn selezziunà &Nunda
 &Arritrusà a Selezzione
 &Selezziunà...
-Ùn selezziunà &Micca...
+Ùn selezziunà &micca...
 Selezziunà da u Tipu
 Ùn Selezziunà da u Tipu
 700
@@ -78,22 +78,22 @@ Icone &Chjuche
 &Lista
 &Detaglii
 730
-Non &Urdinatu
+Non &Ordinatu
 &Vista Sparta
 &2 Finestre
 &Barre d'Attrezzi
-Apre u Cartulare di a &Radica
+Apre u Cartulare di &Radica
 Livellu &Superiore
 Crunulugia di i Cartulari...
 &Attualizà
-Attualisazione Automatica
+Attualisazione Autumatica
 750
 Barra d'Attrezzi d'Archiviu
 Barra d'Attrezzi Classica
 Buttoni Maiò
 Affissà u Testu di i Buttoni
 800
-&Aghjunghje u Cartulare à i Favuriti cum'è
+&Aghjunghje u cartulare à i Favuriti cum'è
 Indetta
 900
 &Ozzioni...
@@ -107,9 +107,9 @@ Nome
 Estensione
 Cartulare
 Dimensione
-Dimensione Strinta
+Dimensione Cumpressa
 Attributi
-Criatu u
+Creatu u
 Accessu u
 Mudificatu u
 Solidu
@@ -145,7 +145,7 @@ Big-endian
 CPU
 Dimensione Fisica
 Dimensione di l'Intestature
-Somma di Cuntrollu
+Somma di cuntrollu
 Caratteristiche
 Indirizzu Virtuale
 ID
@@ -154,7 +154,7 @@ Appiecazione d'Urigine
 Dimensione di Settore
 Modu
 Leia Simbolica
-Errore
+Sbagliu
 Dimensione Tutale
 Spaziu Liberu
 Dimensione di Cluster
@@ -164,13 +164,13 @@ Furnidore
 Sicurità NT
 Flussu Alternativu
 Ausiliaru
-Sguassatu
+Squassatu
 In Arburu
 
 
-Tipu d'errore
-Errori
-Errori
+Tipu di Sbagliu
+Sbaglii
+Sbaglii
 Avertimenti
 Avertimentu
 Flussi
@@ -219,16 +219,16 @@ Verificà l'archiviu
 Estrae Quì
 Estrae ver di {0}
 Aghjunghje à {0}
-Stringhje è mandà da email...
-Stringhje verdi {0} è mandà da email.
+Cumprime è mandà da email...
+Cumprime ver di {0} è mandà da email.
 2400
 Cartulari
 Cartulare di &travagliu
 Cartulare timpurariu di &sistema
-Cartulare &currente
-Cartulare s&pecificatu :
-Impiegà solu per i dischetti amuvibili
-Specificate un cartulare per i schedarii timpurarii.
+&Currente
+&Specificatu :
+Impiegà solu per i dischi amuvibili
+Specificate un cartulare per i schedarii timpurarii d'archiviu.
 2500
 Preferenze
 Affissà l'elementu ".."
@@ -236,30 +236,30 @@ Affissà e vere icone di i schedarii
 Affissà l'interfaccia sistema
 Selezziunà tutta a linea
 Affissà linee &quadrittate
-Cliccu simplice per apre un elementu
+Cliccu unicu per apre un elementu
 Modu di selezzione &alternativa
 Impiegà pagine maiò di memoria
 2900
 Apprupositu di 7-Zip
-7-Zip hè un prugramma gratisi.\n\nTraduttu in lingua corsa da Patriccollu di Santa Maria Sichè.
+7-Zip hè un prugramma liberu.\n\nTraduttu in lingua corsa da Patriccollu di Santa Maria è Sichè.
 3000
-U sistema ùn pò micca attribuisce a quantità richiesa di memoria
-Ùn c'hè micca d'errore
+U sistema ùn pò micca attribuisce a quantità richiesta di memoria
+Ùn ci hè micca sbagliu
 {0} ughjettu(i) selezziunatu(i)
-U cartulare '{0}' ùn pò micca esse criatu
+U cartulare '{0}' ùn pò micca esse creatu
 L'azzioni di mudificazione ùn sò micca pussibule per quessu archiviu.
-U schedariu '{0}' ùn pò micca esse apertu tale un'archiviu
+U schedariu '{0}' ùn pò micca esse apertu cum'è un archiviu
 L'archiviu cifratu '{0}' ùn pò micca esse apertu. Parolla d'intrata falsa ?
-Stu tipu d'archiviu ùn hè micca suppurtatu
+Stu tipu d'archiviu ùn hè micca accettatu
 U schedariu {0} esiste dighjà
 U schedariu '{0}' hè statu mudificatu.\nVulete cambiallu in l'archiviu ?
 Ùn hè micca pussibule di cambià u schedariu\n'{0}'
-Ùn hè micca pussibule di avvià l'editore.
-U schedariu hè podasse infettatu da un virus perchè u so nome pare stranu.
+Ùn hè micca pussibule d'avvià l'editore.
+U schedariu hè podasse infettatu da un virus (u so nome cuntene spazii numerosi).
 St'azzione ùn pò micca fassi dapoi un cartulare cù u nome di passeghju cusì longu.
 Ci vole à selezziunà un schedariu
 Ci vole à selezziunà al menu un schedariu
-Troppu d'elementi
+Troppu elementi
 Ùn hè micca pussibule d'apre u schedariu cum'è un archiviu {0}
 U schedariu hè apertu cum'è un archiviu {0}
 L'archiviu hè apertu cù offset
@@ -267,9 +267,9 @@ L'archiviu hè apertu cù offset
 Estrazzione
 Cumpressione
 Verificazione
-Apertura..
+Apertura...
 Esplurazione...
-Suppressione
+Cacciatura
 3320
 Aghjuntu
 Mudificazione
@@ -277,7 +277,7 @@ Analisa
 Riproduzzione
 Rimballasgiu
 Tralasciamentu
-Sguassatura
+Squassatura
 Creazione di l'intestatura in corsu
 3400
 Estrae
@@ -307,22 +307,22 @@ cù quessu ?
 {0} ottetti
 Rinumà &Autumaticamente
 3700
-Metodu di cumpressione micca suppurtatu per '{0}'.
-Errore di dati in '{0}'. U schedariu hè alteratu.
+Metoda di cumpressione micca accettatu per '{0}'.
+Sbagliu di dati in '{0}'. U schedariu hè alteratu.
 Fiascu di l'ispezzione CRC per u schedariu '{0}'. U schedariu hè alteratu.
-Errore di dati in u schedariu cifratu '{0}'. Parolla d'intrata falsa ?
+Sbagliu di dati in u schedariu cifratu '{0}'. Parolla d'intrata falsa ?
 Fiascu di l'ispezzione CRC per u schedariu cifratu '{0}'. Parolla d'intrata falsa ?
 3710
 Parolla d'intrata falsa ?
 3721
-Metodu di compressione micca suppurtatu
-Errore di dati
+Metoda di compressione micca accettatu
+Sbagliu di dati
 Fiascu di CRC
 Dati micca dispunibule
 Fine inaspettata di dati
 Ci hè d'altri dati dopu à a fine di i dati ghjuvevule
 Ùn hè un archiviu
-Errore d'Intestature
+Sbagliu d'Intestature
 Parolla d'intrata falsa 
 3763
 Principiu di l'archiviu micca dispunibule
@@ -330,14 +330,14 @@ Principiu di l'archiviu micca confirmatu
 
 
 
-Funzione micca suppurtata
+Funzione micca accettata
 3800
 Scrivite a parolla d'intrata
 Scrivite a parolla d'intrata :
 Scrivite torna a parolla d'intrata :
 &Affissà a parolla d'intrata
-E parolle d'intrata ùn currispondenu micca
-Per a parolla d'intrata, pudete impiegà solu : lettere senza aletta, cifri è sti segni particulari (!, #, $, ...)
+E parolle d'intrata sò sfarente
+Per a parolla d'intrata, pudete impiegà solu : lettere senza aletta, cifri è segni particulari (!, #, $, ...)
 A parolla d'intrata hè troppu longa
 Parolla d'intrata
 3900
@@ -347,15 +347,15 @@ Dimensione tutale :
 Celerità :
 Prucessu :
 Reditu di cumpressione :
-Errori :
-Archivi :
+Sbaglii :
+Archivii :
 4000
 Aghjunghje à l'archiviu
 &Archiviu :
 Modu di m&udificazione :
 &Forma d'archiviu :
 &Livellu de cumpressione :
-&Metodu di cumpressione :
+&Metoda di cumpressione :
 &Dimensione di u dizziunariu :
 Dimensione di &e parolle :
 Dimensione di u bloccu solidu :
@@ -363,13 +363,13 @@ Numeru di flussi CPU :
 &Parametri :
 Ozzioni
 Creà un archiviu SF&X
-Stringhje schedarii sparti
+Cumprime schedarii sparti
 Cifratura
-Metodu di cifratura :
-Cifrà i &nomi di schedarii
-Memoria per a Cumpressione :
-Memoria per a Scumpressione :
-Sguassà i schedarii dopu à a cumpresione
+Metoda di cifratura :
+Cifrà i &nomi di schedariu
+Memoria impiegata da a Cumpressione :
+Memoria impiegata da a Scumpressione :
+Squassà i schedarii dopu à a cumpressione
 4040
 Cunservà e leie simboliche
 Cunservà e leie solide
@@ -377,8 +377,8 @@ Cunservà i flussi di dati alternativi
 Cunservà a sicurità di i schedarii
 4050
 Alcuna
-A più presta
-Veloce
+A più rapida
+Rapida
 Nurmale
 Massima
 Ultra
@@ -395,35 +395,35 @@ Solidu
 6000
 Cupià
 Dispiazzà
-Cupià verdi :
-Dispiazzà verdi :
+Cupià ver di :
+Dispiazzà ver di :
 Copia in corsu...
 Dispiazzamentu in corsu...
 Cambiamentu di nome in corsu...
 Selezziunà u cartulare di distinazione.
-St'azzione ùn hè micca suppurtata per stu cartulare.
-Problema mentre u Cambiu di Nome di Schedariu o di Cartulare
-Cunfirmazione di a Copia di i Schedarii
-Site sicuru di vulè cupià u(i) schedariu(i) verdi l'archiviu
+St'azzione ùn hè micca accettata per stu cartulare.
+Sbagliu durante u Cambiu di Nome di Schedariu o di Cartulare
+Cunfirmazione di a Copia di Schedariu
+Site sicuru di vulè cupià u(i) schedariu(i) ver di l'archiviu
 6100
-Cunfirmà a Sguassatura di u Schedariu
-Cunfirmà a Sguassatura di u Cartulare
-Cunfirmà a Sguassatura di Schedarii Multiplice
-Site sicuru di vulè sguassà '{0}'?
-Site sicuru di vulè sguassà u cartulare '{0}' è tuttu u so cuntenutu ?
-Site sicuru di vulè sguassà sti {0} elementi ?
-Sguassatura in corsu...
-Problemu mentre a Sguassatura di Schedariu o di Cartulare
+Cunfirmà a Squassatura di u Schedariu
+Cunfirmà a Squassatura di u Cartulare
+Cunfirmà a Squassatura di Schedarii Multiplice
+Site sicuru di vulè squassà '{0}' ?
+Site sicuru di vulè squassà u cartulare '{0}' è tuttu u so cuntenutu ?
+Site sicuru di vulè squassà sti {0} elementi ?
+Squassatura in corsu...
+Sbagliu durante a Squassatura di Schedariu o di Cartulare
 U sistema ùn pò micca mette à a Rumenzula un schedariu cù u nome di passeghju cusì longu
 6300
 Creà un Cartulare
 Creà un Schedariu
-Nome di u cartulare :
-Nome di u schedariu :
+Nome di cartulare :
+Nome di schedariu :
 Novu Cartulare
 Novu Schedariu
-Errore mentre a Creazione di u Cartulare
-Errore mentre a Creazione di u Schedariu
+Sbagliu durante a Creazione di Cartulare
+Sbagliu durante a Creazione di Schedariu
 6400
 Cummentu
 &Cummentu :
@@ -434,7 +434,7 @@ Filtru :
 Pruprietà
 Crunulugia di i Cartulari
 Messaghji di diagnosticu
-Messaghjiu
+Messaghju
 7100
 Urdinatore
 Reta
@@ -446,7 +446,7 @@ Estrae
 Verificà
 Cupià
 Dispiazzà
-Sguassà
+Squassà
 Infurmazione
 7300
 Sparte u schedariu
@@ -456,37 +456,37 @@ Spartimentu...
 Cunfirmà u Spartimentu
 Site sicuru di vulè sparte u schedariu in {0} vulumi ?
 A dimensione di u vulume deve esse più chjucu chì u schedariu d'urighjine
-Dimensione di vulume false
+Dimensione di vulume falsa
 Dimensione di vulume specificata : {0} ottetti.\nSite sicuru di vulè taglià l'archiviu in tali vulumi ?
 7400
 Unisce i Schedarii
 &Unisce in :
 Unione...
-Selezziunà solu a prima parte di l'archiviu divisu
-Ùn si trova alcuna parte d'archiviu divisu
-Ùn si trova micca più d'una parte d'archiviu divisu
+Selezziunà solu a prima parte di l'archiviu spartutu
+Ùn si trova alcuna parte d'archiviu spartutu
+Ùn si trova micca più d'una parte d'archiviu spartutu
 7500
 Calculu di a somma di cuntrollu...
-Infurmazione nantu à a somma di cuntrollu
+Infurmazione nant'à a somma di cuntrollu
 Somma di cuntrollu CRC per i dati :
 Somma di cuntrollu CRC per i dati è i nomi :
 7600
 Sperimentu di pussibilità
-Memoria aduprata :
-Cumprezzione
-Scumprezzione
-Valutazione
-Valutazione tutale
-Currente
+Memoria impiegata :
+Cumpressione
+Scumpressione
+Percentuale
+Percentuale tutale
+Attuale
 Risultante
-Adopru CPU
-Estimu / Adopru
+Impiegu CPU
+Estimatu / Impiegatu
 Passagi :
 7700
 Leia
 Ligà
 Leia d'urigine :
-Leia di destinazione :
+Leia di distinazione :
 7710
 Tipu di Leia
 Leia Solida

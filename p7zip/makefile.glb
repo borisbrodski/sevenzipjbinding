@@ -3,17 +3,18 @@ RM=rm -f
 
 CFLAGS=-c -I. \
 -I../../../../C \
--I../../../myWindows \
--I../../../include_windows \
--I../../.. \
+-I../../../../CPP/myWindows \
+-I../../../../CPP/include_windows \
+-I../../../../CPP \
 $(ALLFLAGS) $(ALLFLAGS_C)
 
 CXXFLAGS=-c -I. \
 -I../../../../C \
--I../../../myWindows \
--I../../../ \
--I../../../include_windows \
+-I../../../../CPP/myWindows \
+-I../../../../CPP/include_windows \
+-I../../../../CPP \
 $(ALLFLAGS) $(ALLFLAGS_CPP)
+
 
 PCH_NAME=$(PRE_COMPILED_HEADER)
 
@@ -22,8 +23,12 @@ include makefile.list
 include makefile.depend
 
 $(PROG): $(OBJS)
-	$(CXX) $(ALLFLAGS) $(ALLFLAGS_CPP) $(LOCAL_SHARED) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIBS)
+	$(CXX) $(ALLFLAGS) $(ALLFLAGS_CPP) $(LOCAL_LINK) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIBS)
 
+debug:
+	@echo "LOCAL_FLAGS=$(LOCAL_FLAGS)"
+	@echo "ALLFLAGS=$(ALLFLAGS)"
+	
 depend:
 	rm -f makefile.depend
 	$(CXX) -MM $(CXXFLAGS) $(SRCS)   > makefile.depend

@@ -69,7 +69,6 @@ SRCS=\
   ../../../../CPP/7zip/Archive/Cab/CabIn.cpp \
   ../../../../CPP/7zip/Archive/Cab/CabRegister.cpp \
   ../../../../CPP/7zip/Archive/Common/CoderMixer2.cpp \
-  ../../../../CPP/7zip/Archive/Common/CrossThreadProgress.cpp \
   ../../../../CPP/7zip/Archive/Common/DummyOutStream.cpp \
   ../../../../CPP/7zip/Archive/Common/FindSignature.cpp \
   ../../../../CPP/7zip/Archive/Common/HandlerOut.cpp \

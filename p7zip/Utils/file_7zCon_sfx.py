@@ -21,13 +21,11 @@ files_c=[
 files_cpp=[
  'CPP/7zip/Archive/7z/7zDecode.cpp',
  'CPP/7zip/Archive/7z/7zExtract.cpp',
- 'CPP/7zip/Archive/7z/7zFolderOutStream.cpp',
  'CPP/7zip/Archive/7z/7zHandler.cpp',
  'CPP/7zip/Archive/7z/7zHeader.cpp',
  'CPP/7zip/Archive/7z/7zIn.cpp',
  'CPP/7zip/Archive/7z/7zRegister.cpp',
  'CPP/7zip/Archive/Common/CoderMixer2.cpp',
- 'CPP/7zip/Archive/Common/CrossThreadProgress.cpp',
  'CPP/7zip/Archive/Common/ItemNameUtils.cpp',
  'CPP/7zip/Archive/Common/OutStreamWithCRC.cpp',
  'CPP/7zip/Bundles/SFXCon/SfxCon.cpp',

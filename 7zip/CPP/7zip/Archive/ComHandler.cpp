@@ -167,7 +167,7 @@ HRESULT CDatabase::ReadSector(IInStream *inStream, Byte *buf, unsigned sectorSiz
 {
   UpdatePhySize(((UInt64)sid + 2) << sectorSizeBits);
   RINOK(inStream->Seek((((UInt64)sid + 1) << sectorSizeBits), STREAM_SEEK_SET, NULL));
-  return ReadStream_FALSE(inStream, buf, (UInt32)1 << sectorSizeBits);
+  return ReadStream_FALSE(inStream, buf, (size_t)1 << sectorSizeBits);
 }
 
 HRESULT CDatabase::ReadIDs(IInStream *inStream, Byte *buf, unsigned sectorSizeBits, UInt32 sid, UInt32 *dest)
@@ -571,23 +571,30 @@ HRESULT CDatabase::Open(IInStream *inStream)
   RINOK(AddNode(-1, root.SonDid));
   
   unsigned numCabs = 0;
+  
   FOR_VECTOR (i, Refs)
   {
     const CItem &item = Items[Refs[i].Did];
     if (item.IsDir() || numCabs > 1)
       continue;
     bool isMsiName;
-    UString msiName = ConvertName(item.Name, isMsiName);
-    if (isMsiName)
+    const UString msiName = ConvertName(item.Name, isMsiName);
+    if (isMsiName && !msiName.IsEmpty())
     {
+      // bool isThereExt = (msiName.Find(L'.') >= 0);
+      bool isMsiSpec = (msiName[0] == k_Msi_SpecChar);
       if (msiName.Len() >= 4 && StringsAreEqualNoCase_Ascii(msiName.RightPtr(4), ".cab")
-          || msiName.Len() >= 3 && msiName[0] != k_Msi_SpecChar && StringsAreEqualNoCase_Ascii(msiName.RightPtr(3), "exe"))
+          || !isMsiSpec && msiName.Len() >= 3 && StringsAreEqualNoCase_Ascii(msiName.RightPtr(3), "exe")
+          // || !isMsiSpec && !isThereExt
+          )
+
       {
         numCabs++;
         MainSubfile = i;
       }
     }
   }
+  
   if (numCabs > 1)
     MainSubfile = -1;
 

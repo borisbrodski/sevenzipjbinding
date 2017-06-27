@@ -3,7 +3,7 @@
 ;  4.26 : Jeroen van der Weijde.
 ;       : Harm Hilvers
 ;  9.07 : Jeroen Tulp 
-;
+; 15.00 : Jeroen Tulp 
 ;
 ;
 ;
@@ -49,27 +49,29 @@ Open B&innen
 Open B&uiten
 Bee&ld
 &Bewerken
-Naam wi&jzigen
-Kopiëren &naar...
+&Hernoemen
+&Kopiëren naar...
 &Verplaatsen naar...
 Verwij&deren
-Bestand opspli&tsen...
-Bestanden s&amenvoegen...
-Ei&genschappen
+Bestand &opsplitsen...
+Bestanden &samenvoegen...
+&Eigenschappen
 O&pmerking
 &Checksum berekenen
-Vergelijken
+Ver&gelijken
 Nieuwe &map
-Nieuw b&estand
+&Nieuw bestand
 &Sluiten
+Koppe&ling
+&Alternate Streams
 600
 &Alles selecteren
-All&es de-selecteren
-Sele&ctie omkeren
+A&lles de-selecteren
+Selectie &omkeren
 &Selecteer...
 &De-selecteer...
-&Selecteer op type
-&De-selecteer op type
+Selecteer op &type
+De-selecteer op t&ype
 700
 &Grote pictogrammen
 &Kleine pictogrammen
@@ -83,15 +85,16 @@ Sele&ctie omkeren
 &Root map openen
 Één &niveau omhoog
 &Mappen Geschiedenis...
-&Vernieuwen
+&Verversen
+&Automatisch verversen 
 750
 &Archief werkbalk
 &Standaard werkbalk
 Grote kn&oppen
 Knop&tekst weergeven
 800
-&Map toevoegen aan favorieten
-Toevoegen als
+&Map toevoegen aan Favorieten
+Favoriet maken
 900
 &Opties...
 &Benchmark
@@ -115,7 +118,7 @@ Gecodeerd
 Gesplitst voor
 Gesplitst na
 Woordenboek
-CRC
+
 Type
 Anti
 Methode
@@ -124,7 +127,7 @@ Bestandssysteem
 Gebruiker
 Groep
 Blok
-Opmerking
+Commentaar
 Positie
 Pad Prefix
 Mappen
@@ -150,7 +153,7 @@ Korte Naam
 Aanmaak Applicatie
 Sector Grootte
 Modus
-Link
+Symbolische Kpoppeling
 Fout
 Capaciteit
 Beschikbaar
@@ -158,6 +161,38 @@ Clustergrootte
 Label
 Lokale naam
 Provider
+NT Beveiliging
+Alternate Stream
+Aux
+Verwijderd
+Is Structuur
+
+
+Error Type
+Errors
+Errors
+Waarschuwingen
+Waarschuwing
+Streams
+Alternate Streams
+Alternate Streams Grootte
+Virtuele Grootte
+Uitgepakte Grootte
+Totale Fysieke Grootte
+Volume Index
+SubType
+Kort Commentaar
+Tekstcodering
+
+
+
+Tail Grootte
+Embedded Stub Grootte
+Koppeling
+Harde Koppeling
+iNode
+
+Alleen-lezen
 2100
 Opties
 Taal
@@ -168,19 +203,21 @@ Editor
 2200
 Systeem
 Associeer 7-Zip met:
+All users
 2301
 7-Zip in het contextmenu integreren.
 Trapsgewijs contextmenu
 Contextmenu items:
+Pictogrammen in contexmenu
 2320
 <Map>
 <Archief>
 Open archief
 Bestanden uitpakken...
 Toevoegen aan archief...
-Archief testen
-Pak hier uit
-Pak uit naar {0}
+Testen archief
+Uitpakken (hier)
+Uitpakken naar {0}
 Toevoegen aan {0}
 Comprimeer en verstuur...
 Comprimeer naar {0} en verstuur
@@ -223,20 +260,35 @@ De actie kan niet worden uitgevoerd vanuit een folder met een dermate lang pad.
 U moet 1 bestand selecteren
 U moet 1 of meerdere bestanden selecteren
 Te veel items
+Kan het bestand niet openen als {0} archief
+Het bestand is geopend als {0} archief
+Het archiefis geopend met een offset
 3300
-Bezig met uitpakken...
-Bezig met comprimeren...
-Bezig met testen...
-Bezig met openen...
-Bezig met scannen...
+Uitpakken
+Comprimeren
+Testen
+Openen...
+Scannen...
+Verwijderen
+3320
+Toevoegen
+Bijwerken
+Analyseren
+Repliceren
+Opnieuw inpakken
+Overslaan
+Verwijderen
+Kop aanmaken
 3400
 &Uitpakken
 U&itpakken naar:
-Geef een locatie op voor de uitgepakte bestanden.
+Specificeer een locatie voor de uitgepakte bestanden.
 3410
 Padmethode
 Volledige padnamen
 Geen padnamen
+Absolute padnamen
+Relatieve padnamen
 3420
 Overschrijfmethode
 Vraag voor overschrijven
@@ -244,6 +296,9 @@ Overschrijven zonder bevestiging
 Bestaande bestanden overslaan
 Automatisch hernoemen
 Automatisch hernoemen van bestaande bestanden
+3430
+Verwijder duplicaat van de hoofdmap 
+Herstellen bestandsbeveiliging
 3500
 Bevestig vervangen bestand
 Doelmap bevat reeds het verwerkte bestand.
@@ -257,13 +312,32 @@ Gegevensfout in '{0}'. Bestand is beschadigd.
 CRC mislukt in '{0}'. Bestand is beschadigd.
 Gegevensfout in het gecodeerde bestand '{0}'. Verkeerd wachtwoord?
 CRC mislukt in het gecodeerde bestand '{0}'. Verkeerd wachtwoord?
+3710
+Verkeerd wachtwoord?
+3721
+Niet ondersteunde compresssiemethode
+Gegevens fout
+CRC mislukt
+Data niet beschikbaar
+Data eindigd onverwachts
+Er is nog wat data na het einde van de payload data
+Is geen archief
+Kop Error
+Verkeerd wachtwoord
+3763
+Start van archief is niet beschikbaar
+Start van archief is niet bevestigd
+
+
+
+Niet ondersteunde functie
 3800
 Wachtwoord ingeven
 Wachtwoord &ingeven:
 Wachtwoord bevestigen:
 Wachtwoord &tonen
 Wachtwoorden komen niet overeen.
-Gebruik alleen alfanumerieke en speciale karakters (!, #, $, ...) voor het wachtwoord.
+Gebruik alleen alfanumerieke en speciale karakters (!, #, $, ...) voor het wachtwoord
 Wachtwoord is te lang.
 &Wachtwoord
 3900
@@ -295,6 +369,12 @@ Cod&eermethode:
 Codee&r bestandsnamen
 Geheugengebruik bij het inpakken:
 Geheugengebruik bij het uitpakken:
+Verwijder bestanden na inpakken
+4040
+Symboische koppelingen opslaan
+Harde koppelingen opslaan
+Alternate data streams opslaan
+Bestandsbeveiliging opslaan
 4050
 Opslaan
 Snelst
@@ -402,3 +482,14 @@ Resultaat
 CPU-gebruik
 Waarde / gebruik
 Doorgangen:
+7700
+Koppeling
+Koppeling
+Koppeling van:
+Koppeling naar:
+7710
+Koppeling Type
+Harde Koppeling
+Bestand Symbolische Koppeling
+Map Symbolische Koppeling
+Mapsplitsing

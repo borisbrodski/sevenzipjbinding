@@ -42,7 +42,7 @@ Möchten Sie wirklich abbrechen?
 &Ansicht
 &Favoriten
 &Extras
-&?
+&Hilfe
 540
 Ö&ffnen
 I&ntern öffnen
@@ -62,6 +62,8 @@ Ver&gleichen
 Ordner erstellen
 Datei erstellen
 Be&enden
+Verknüpfung...
+&Alternative Datenströme
 600
 Alles &markieren
 Alles abwählen
@@ -84,6 +86,7 @@ Wurzelverzeichnis
 Übergeordneter Ordner
 Ordnerverlauf...
 &Aktualisieren
+Auto-Aktualisierung
 750
 Archivfunktionen
 Standardfunktionen
@@ -158,6 +161,38 @@ Cluster-Größe
 Name
 Lokaler Name
 Provider
+NT-Sicherheit
+Alternativer Datenstrom
+Aux
+Gelöscht
+Ist Baum
+
+
+Fehlertyp
+Fehler
+Fehler
+Warnungen
+Warnung
+Datenströme
+Alternative Datenströme
+Größe der alternativen Datenströme
+Virtuelle Größe
+Entpackte Größe
+Gesamte physikalische Größe
+Teilstück Index
+Untertyp
+Kurzkommentar
+Code-Seite
+
+
+
+Endungsgröße
+integrierte Stub-Größe
+Verknüpfung
+Harte Verknüpfung
+iNode
+
+Schreibgeschützt
 2100
 Optionen
 Sprache
@@ -168,10 +203,12 @@ Programm zum &Vergleichen:
 2200
 System
 7-Zip verknüpfen mit:
+alle Benutzer
 2301
 7-Zip in Kontextmenü integrieren
 Kontextmenü kaskadieren
 Einträge im Kontextmenü:
+Symbole im Kontextmenü
 2320
 <Verzeichnis>
 <Archiv>
@@ -223,12 +260,25 @@ Die Operation kann nicht aus einem Ordner mit langem Pfad aufgerufen werden.
 Bitte genau eine Datei auswählen.
 Bitte mindestens eine Datei auswählen.
 Zu viele Objekte
+Die Datei kann nicht als {0}-Archiv geöffnet werden.
+Die Datei wurde als {0}-Archiv geöffnet.
+Die Datei wurde mit einem Offset geöffnet.
 3300
 Entpacken
 Komprimiere
 Überprüfen
 Öffne...
 Durchsuche...
+Entferne
+3320
+Hinzufügen
+Aktualisieren
+Analysieren
+Replizieren
+Neu Packen
+Überspringen
+Löschen
+Header erstellen
 3400
 Entpacken
 &Entpacken nach:
@@ -237,6 +287,8 @@ Wählen Sie einen Ordner für die entpackten Dateien:
 Verzeichnisstruktur wiederherstellen
 Komplette Pfadangaben
 Keine Pfadangaben
+Absolute Pfadangaben
+Relative Pfadangaben
 3420
 Dateien überschreiben
 Nur mit Bestätigung
@@ -244,6 +296,9 @@ Ohne Bestätigung
 Vorhandene Dateien überspringen
 Automatisch umbenennen
 Vorhandene Dateien umbenennen
+3430
+Verdoppelung des Wurzelordners vermeiden
+Dateirechte wiederherstellen
 3500
 Überschreiben bestätigen
 Der Zielordner beinhaltet bereits eine Datei diesen Namens.
@@ -257,6 +312,25 @@ Datenfehler in "{0}". Die Datei ist beschädigt.
 CRC-Prüfsummenfehler. Die Datei "{0}" ist beschädigt.
 Datenfehler in der verschlüsselten Datei "{0}". Falsches Passwort?
 CRC-Prüfsummenfehler bei verschlüsselter Datei "{0}". Falsches Passwort?
+3710
+Falsches Passwort?
+3721
+Nicht unterstützte Kompressionsmethode
+Datenfehler
+CRC-Fehler
+Daten stehen nicht zur Verfügung
+Unerwartetes Datenende
+Es gibt noch Daten hinter den Hauptdaten
+Ist kein Archiv
+Headers-Fehler
+Falsches Passwort
+3763
+Anfang des Archivs fehlt
+Anfang des Archivs nicht bestätigt
+
+
+
+Nicht unterstützte Funktion
 3800
 Kennworteingabe
 Passwort eingeben:
@@ -295,6 +369,12 @@ Verfahren:
 Datei&namen verschlüsseln
 Speicherbedarf beim Komprimieren:
 Speicherbedarf beim Entpacken:
+Dateien nach Komprimierung löschen
+4040
+Symbolische Verknüpfungen speichern
+Harte Verknüpfungen speichern
+Alternative Datenströme speichern
+Dateirechte speichern
 4050
 Speichern
 Schnellste
@@ -402,3 +482,14 @@ Ergebnis
 CPU-Nutzung
 Bewert./Nutzung
 Durchläufe:
+7700
+Verknüpfung
+Verknüpfung
+Verknüpfung von:
+Verknüpfung zu:
+7710
+Verknüpfungsart
+Harte Verknüpfung
+Datei Symbolische Verknüpfung
+Ordner Symbolische Verknüpfung
+Ordner Verbindung

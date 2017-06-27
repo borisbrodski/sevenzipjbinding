@@ -331,6 +331,7 @@ bool GetLongPaths(CFSTR s1, CFSTR s2, UString &d1, UString &d2)
 #endif
 
 static int convert_to_symlink(const char * name) {
+  TRACEN(printf("LINK(%s)\n",name))
   FILE *file = fopen(name,"rb");
   if (file) {
     char buf[MAX_PATHNAME_LEN+1];
@@ -340,6 +341,7 @@ static int convert_to_symlink(const char * name) {
       int ir = unlink(name);
       if (ir == 0) {
         ir = symlink(buf,name);
+        TRACEN(printf("TO(%s)\n",buf))
       }
       return ir;
     }
@@ -347,7 +349,7 @@ static int convert_to_symlink(const char * name) {
   return -1;
 }
 
-bool SetFileAttrib(CFSTR fileName, DWORD fileAttributes)
+bool SetFileAttrib(CFSTR fileName, DWORD fileAttributes,CObjectVector<CDelayedSymLink> *delayedSymLinks)
 {
   if (!fileName) {
     SetLastError(ERROR_PATH_NOT_FOUND);
@@ -379,7 +381,9 @@ bool SetFileAttrib(CFSTR fileName, DWORD fileAttributes)
      stat_info.st_mode = fileAttributes >> 16;
 #ifdef ENV_HAVE_LSTAT
      if (S_ISLNK(stat_info.st_mode)) {
-        if ( convert_to_symlink(name) != 0) {
+         if (delayedSymLinks) {
+           delayedSymLinks->Add(CDelayedSymLink(name));
+         } else if ( convert_to_symlink(name) != 0) {
           TRACEN((printf("SetFileAttrib(%s,%d) : false-3\n",(const char *)name,fileAttributes)))
           return false;
         }
@@ -813,6 +817,43 @@ bool CTempDir::Remove()
   _mustBeDeleted = !RemoveDirectoryWithSubItems(_path);
   return !_mustBeDeleted;
 }
+
+#ifdef ENV_UNIX
+
+CDelayedSymLink::CDelayedSymLink(const char * source)
+  : _source(source)
+{
+  struct stat st;
+
+  if (lstat(_source, &st) == 0) {
+    _dev = st.st_dev;
+    _ino = st.st_ino;
+  } else {
+    _dev = 0;
+  }
+}
+
+bool CDelayedSymLink::Create()
+{
+  struct stat st;
+
+  if (_dev == 0) {
+    errno = EPERM;
+    return false;
+  }
+  if (lstat(_source, &st) != 0)
+    return false;
+  if (_dev != st.st_dev || _ino != st.st_ino) {
+    // Placeholder file has been overwritten or moved by another
+    // symbolic link creation
+    errno = EPERM;
+    return false;
+  }
+
+  return convert_to_symlink(_source) == 0;
+}
+
+#endif // ENV_UNIX
 
 }}}
 

@@ -172,7 +172,7 @@ AString UnicodeStringToMultiByte(const UString &src, UINT /* codePage */ )
   UString srcString(src);
   for (int i = 0; i < srcString.Len(); i++) {
     if ((0xd800 <= srcString[i] && srcString[i] <= 0xdbff) && ((i + 1) < srcString.Len()) &&
-        (0xdc00 <= srcString[i + 1] && srcString[i + 1] <= 0xdf00)) {
+        (0xdc00 <= srcString[i + 1] && srcString[i + 1] < 0xE000)) {
       wchar_t c = (((srcString[i] - 0xd800) << 10) | (srcString[i + 1] - 0xdc00)) + 0x10000;
       srcString.Delete(i, 2);
       srcString.Insert(i, c);
@@ -192,6 +192,8 @@ AString UnicodeStringToMultiByte(const UString &src, UINT /* codePage */ )
       return resultString;
     }
   }
+#else
+  const UString &srcString = src;
 #endif
 
   AString resultString;

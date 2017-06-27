@@ -1,5 +1,5 @@
 ﻿;!@Lang2@!UTF-8!
-;  9.34 : 2014-08-05 : Xabier Aramendi
+;  15.12 : 2015-12-04 : Xabier Aramendi
 ;
 ;
 ;
@@ -63,6 +63,7 @@ Sortu Agiritegia
 S&ortu Agiria
 I&rten
 Lotura
+&Aldikatu Jarioak
 600
 Hautatu &Guztiak
 Deshatutau G&uztiak
@@ -190,16 +191,19 @@ Barneratutako Stub Neurria
 Lotura
 Lotura Gogorra
 iNode
+
+Irakurtzeko-bakarrik
 2100
 Aukerak
 Hizkuntza
 Hizkuntza:
 Editatzailea
 &Editatzailea:
-E&zber:
+E&zberdintasunak:
 2200
 Sistema
 Elkartu 7-Zip hauekin:
+Erabiltzaile guztiak
 2301
 &Bateratu 7-Zip shell hitzinguru menura
 &Urjauzi hitzinguru menua
@@ -256,12 +260,25 @@ Eragiketa ezin da helburu luze bat duen agiritegi batetik deitu
 Agiri bat hautatu behar duzu
 Agiri bat edo gehiago hautatu behar dituzu
 Gai gehiegi
+Ezin da agiria {0} artxibo bezala ireki
+Agiria {0} artxibo bezala dago irekita
+Artxiboa orekaz irekita dago
 3300
 Ateratzen
 Konprimitzen
 Aztertzen
 Atzeratzen...
 Mihatzen...
+Kentzen
+3320
+Gehitzen
+Eguneratzen
+Aztertzen
+Erreplikatzen
+Berpaketatzen
+Jauzten
+Ezabatzen
+Idazburua sortzen
 3400
 &Atera
 Atera &hona:
@@ -306,6 +323,7 @@ Ustekabeko datu amaiera
 Zenbait akats daude gertaketa amaieraren ondoren
 Ez da artxiboa
 Idazburu Akatsa
+Sarhitz okerra
 3763
 Artxibo hasiera eskuraezina
 Artxibo hasiera baieztatugabe

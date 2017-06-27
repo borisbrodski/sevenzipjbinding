@@ -1565,7 +1565,7 @@ FString us2fs(const wchar_t *s)
 
 
 
-#if defined(ENV_BEOS) && !defined(ENV_HAIKU)
+#ifndef ENV_HAVE_WCTYPE_H
 // FIXME
 
 wchar_t *wmemcpy(wchar_t * d, const wchar_t * s, size_t n)
@@ -1712,5 +1712,21 @@ wchar_t *wcsstr(const wchar_t * h, const wchar_t * n)
 
 	return twoway_wcsstr(h, n);
 }
+
+#if defined(__DJGPP__)
+wchar_t *wcscpy(wchar_t * d, const wchar_t * s)
+{
+	wchar_t *a = d;
+	while ((*d++ = *s++));
+	return a;
+}
+
+wchar_t *wcscat(wchar_t *dest, const wchar_t * src)
+{
+	wcscpy(dest + wcslen(dest), src);
+	return dest;
+}
+
+#endif
 
 #endif

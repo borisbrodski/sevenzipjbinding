@@ -380,29 +380,33 @@ static inline bool IsExeFilter(CMethodId m)
   return false;
 }
 
-static unsigned Get_FilterGroup_for_Folder(CRecordVector<CFilterMode2> &filters, const CFolderEx &f)
+static unsigned Get_FilterGroup_for_Folder(
+    CRecordVector<CFilterMode2> &filters, const CFolderEx &f, bool extractFilter)
 {
   CFilterMode2 m;
   m.Id = 0;
   m.Delta = 0;
   m.Encrypted = f.IsEncrypted();
 
-  const CCoderInfo &coder = f.Coders[f.UnpackCoder];
+  if (extractFilter)
+  {
+    const CCoderInfo &coder = f.Coders[f.UnpackCoder];
   
-  if (coder.MethodID == k_Delta)
-  {
-    if (coder.Props.Size() == 1)
+    if (coder.MethodID == k_Delta)
     {
-      m.Delta = (unsigned)coder.Props[0] + 1;
-      m.Id = k_Delta;
+      if (coder.Props.Size() == 1)
+      {
+        m.Delta = (unsigned)coder.Props[0] + 1;
+        m.Id = k_Delta;
+      }
     }
-  }
-  else if (IsExeFilter(coder.MethodID))
-  {
-    m.Id = (UInt32)coder.MethodID;
-    if (m.Id == k_BCJ2)
-      m.Id = k_BCJ;
-    m.SetDelta();
+    else if (IsExeFilter(coder.MethodID))
+    {
+      m.Id = (UInt32)coder.MethodID;
+      if (m.Id == k_BCJ2)
+        m.Id = k_BCJ;
+      m.SetDelta();
+    }
   }
   
   return GetGroup(filters, m);
@@ -567,14 +571,17 @@ static const char *g_Exts =
   " iso bin nrg mdf img pdi tar cpio xpi"
   " vfd vhd vud vmc vsv"
   " vmdk dsk nvram vmem vmsd vmsn vmss vmtm"
-  " inl inc idl acf asa h hpp hxx c cpp cxx rc java cs pas bas vb cls ctl frm dlg def"
+  " inl inc idl acf asa"
+  " h hpp hxx c cpp cxx m mm go swift"
+  " rc java cs rs pas bas vb cls ctl frm dlg def"
   " f77 f f90 f95"
-  " asm sql manifest dep"
+  " asm s"
+  " sql manifest dep"
   " mak clw csproj vcproj sln dsp dsw"
   " class"
-  " bat cmd"
+  " bat cmd bash sh"
   " xml xsd xsl xslt hxk hxc htm html xhtml xht mht mhtml htw asp aspx css cgi jsp shtml"
-  " awk sed hta js php php3 php4 php5 phptml pl pm py pyo rb sh tcl vbs"
+  " awk sed hta js json php php3 php4 php5 phptml pl pm py pyo rb tcl ts vbs"
   " text txt tex ans asc srt reg ini doc docx mcw dot rtf hlp xls xlr xlt xlw ppt pdf"
   " sxc sxd sxi sxg sxw stc sti stw stm odt ott odg otg odp otp ods ots odf"
   " abw afp cwk lwp wpd wps wpt wrf wri"
@@ -1574,7 +1581,7 @@ HRESULT Update(
     return E_NOTIMPL;
   */
 
-  UInt64 startBlockSize = db != 0 ? db->ArcInfo.StartPosition: 0;
+  UInt64 startBlockSize = db ? db->ArcInfo.StartPosition: 0;
   if (startBlockSize > 0 && !options.RemoveSfxBlock)
   {
     RINOK(WriteRange(inStream, seqOutStream, 0, startBlockSize, NULL));
@@ -1588,8 +1595,21 @@ HRESULT Update(
   CRecordVector<CFilterMode2> filters;
   CObjectVector<CSolidGroup> groups;
   bool thereAreRepacks = false;
+
+  bool useFilters = options.UseFilters;
+  if (useFilters)
+  {
+    const CCompressionMethodMode &method = *options.Method;
+
+    FOR_VECTOR (i, method.Methods)
+      if (IsFilterMethod(method.Methods[i].Id))
+      {
+        useFilters = false;
+        break;
+      }
+  }
   
-  if (db != 0)
+  if (db)
   {
     fileIndexToUpdateIndexMap.Alloc(db->Files.Size());
     unsigned i;
@@ -1635,16 +1655,18 @@ HRESULT Update(
       CFolderEx f;
       db->ParseFolderEx(i, f);
 
-      bool isEncrypted = f.IsEncrypted();
-      
-      unsigned groupIndex = Get_FilterGroup_for_Folder(filters, f);
+      const bool isEncrypted = f.IsEncrypted();
+      const bool needCopy = (numCopyItems == numUnpackStreams);
+      const bool extractFilter = (useFilters || needCopy);
+
+      unsigned groupIndex = Get_FilterGroup_for_Folder(filters, f, extractFilter);
       
       while (groupIndex >= groups.Size())
         groups.AddNew();
 
       groups[groupIndex].folderRefs.Add(rep);
       
-      if (numCopyItems == numUnpackStreams)
+      if (needCopy)
         complexity += db->GetFolderFullPackSize(i);
       else
       {
@@ -1659,17 +1681,18 @@ HRESULT Update(
   }
 
   UInt64 inSizeForReduce = 0;
-  unsigned i;
-  for (i = 0; i < updateItems.Size(); i++)
   {
-    const CUpdateItem &ui = updateItems[i];
-    if (ui.NewData)
+    FOR_VECTOR (i, updateItems)
     {
-      complexity += ui.Size;
-      if (numSolidFiles != 1)
-        inSizeForReduce += ui.Size;
-      else if (inSizeForReduce < ui.Size)
-        inSizeForReduce = ui.Size;
+      const CUpdateItem &ui = updateItems[i];
+      if (ui.NewData)
+      {
+        complexity += ui.Size;
+        if (numSolidFiles != 1)
+          inSizeForReduce += ui.Size;
+        else if (inSizeForReduce < ui.Size)
+          inSizeForReduce = ui.Size;
+      }
     }
   }
 
@@ -1729,23 +1752,9 @@ HRESULT Update(
 
     // ---------- Split files to groups ----------
 
-    bool useFilters = options.UseFilters;
     const CCompressionMethodMode &method = *options.Method;
     
-    if (useFilters)
-      for (i = 0; i < method.Methods.Size(); i++)
-        if (IsFilterMethod(method.Methods[i].Id))
-        {
-          useFilters = false;
-          break;
-        }
-
-    /*
-    if (!method.Bonds.IsEmpty())
-      useFilters = false;
-    */
-    
-    for (i = 0; i < updateItems.Size(); i++)
+    FOR_VECTOR (i, updateItems)
     {
       const CUpdateItem &ui = updateItems[i];
       if (!ui.NewData || !ui.HasStream())
@@ -1849,6 +1858,8 @@ HRESULT Update(
     /* ---------- Write non-AUX dirs and Empty files ---------- */
     CUIntVector emptyRefs;
     
+    unsigned i;
+
     for (i = 0; i < updateItems.Size(); i++)
     {
       const CUpdateItem &ui = updateItems[i];
@@ -1911,7 +1922,8 @@ HRESULT Update(
     const CFilterMode2 &filterMode = filters[groupIndex];
 
     CCompressionMethodMode method = *options.Method;
-    HRESULT res = MakeExeMethod(method, filterMode,
+    {
+      HRESULT res = MakeExeMethod(method, filterMode,
         #ifdef _7ZIP_ST
           false
         #else
@@ -1919,7 +1931,8 @@ HRESULT Update(
         #endif
         );
 
-    RINOK(res);
+      RINOK(res);
+    }
 
     if (filterMode.Encrypted)
     {
@@ -2153,7 +2166,13 @@ HRESULT Update(
           #ifndef _7ZIP_ST
           if (options.MultiThreadMixer)
           {
+            // 16.00: hang was fixed : for case if decoding was not finished.
+            // We close CBinderInStream and it calls CStreamBinder::CloseRead()
+            inStreamSizeCount.Release();
+            sbInStream.Release();
+            
             threadDecoder.WaitExecuteFinish();
+            
             HRESULT decodeRes = threadDecoder.Result;
             // if (res == k_My_HRESULT_CRC_ERROR)
             if (decodeRes == S_FALSE)
@@ -2252,8 +2271,12 @@ HRESULT Update(
     CRecordVector<CRefItem> refItems;
     refItems.ClearAndSetSize(numFiles);
     bool sortByType = (options.UseTypeSorting && numSolidFiles > 1);
+    
+    unsigned i;
+
     for (i = 0; i < numFiles; i++)
       refItems[i] = CRefItem(group.Indices[i], updateItems[group.Indices[i]], sortByType);
+
     CSortParam sortParam;
     // sortParam.TreeFolders = &treeFolders;
     sortParam.SortByType = sortByType;
