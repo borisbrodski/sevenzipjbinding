@@ -127,7 +127,7 @@ public abstract class CompressMultipleFileAbstractTest
         outArchive.close();
         removeCloseable(outArchive);
 
-        byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/x.7z"), true);
+        // byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/x.7z"), true);
         byteArrayStream.rewind();
         if (context().useHeaderEncryption) {
             assertHeaderCrypted(byteArrayStream, archiveFormat);

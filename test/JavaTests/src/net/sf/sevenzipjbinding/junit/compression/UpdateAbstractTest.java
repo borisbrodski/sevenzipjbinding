@@ -406,7 +406,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase>
         updateVirtualContent(virtualContent, changeLog);
 
         if (context.useEncryption && !context.useEncryptionNoPassword) {
-            byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/u.7z"), true);
+            // byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/u.7z"), true);
             assertAllItemsCrypted(inArchive);
         }
         virtualContent.verifyInArchive(updatedInArchive, password);

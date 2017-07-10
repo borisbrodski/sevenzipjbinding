@@ -7,7 +7,7 @@ Release - 16.02-2.01beta (Release candidate, cross-platform, based on zip/p7zip 
         - DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib 
         - PropID.LINK renamed to PropID.SYM_LINK
         
-    * Create password archives 
+    * Create password protected archives 
         - Support 7z and zip
         - Encrypted archive items
         - Encrypt archive header (7z only)

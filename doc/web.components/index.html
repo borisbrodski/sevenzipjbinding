@@ -99,12 +99,12 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <h2>News</h2>
 <div class="infobox">
 
-1 Match 2016: <b>7-Zip-JBinding Release: 15.09-2.01beta</b>
+28 June 2017: <b>7-Zip-JBinding Release: 16.02-2.01beta</b>
 <br/><br/>
-Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p7zip 15.09
+Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p7zip 16.02
 <ul>
     <li>
-	   New feature: Bind 7-Zip 15.09
+	   New feature: Bind 7-Zip 16.02
 	   <ul>
 	       <li>DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib</li>
            <li><a href="javadoc/index.html?net/sf/sevenzipjbinding/PropID.html">PropID</a>.LINK
@@ -116,14 +116,18 @@ Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p
         <li>password protected archives</li> 
         <li>archives with encrypted headers</li>
         <li>archives splitted in volumes</li>
-        <li>251 new tests</li>
       </ul>
     </li>
+    <li>Temporary remove support for HFS and UDF due to the security gap in 7-zip</li>
+    <li>Create/Update password proteted 7z &amp; Zip archives (with header encryption for 7z)</li>
     <li>Support for FAT (file system)</li>
     <li>Support for NTFS (file system)</li>
-    <li>Support for SYM_LINK & HARD_LINK properties</li>
+    <li>Support for SYM_LINK &amp; HARD_LINK properties</li>
     <li>Improving performance by using GCC 5.3 for Windows builds</li>
     <li>Bugfix: Bug #18 (null as password causes JVM crash)</li>
+    <li>Bugfix: Bug #21 (7z-archive in Tar)</li>
+	<li>Complete rewrite of the test framework</li>
+	<li>Add travis-build</li>
 </ul>
 
 <br/>
