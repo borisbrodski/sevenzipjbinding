@@ -7,7 +7,7 @@ BINARY_DIR=$(readlink -f $1)
 SOURCE_DIR=`cat $BINARY_DIR/DartConfiguration.tcl | grep SourceDirectory | sed 's$SourceDirectory: \(.*\)$\1$g'`
 SCRIPT_HOME=`readlink -f $0 | sed 's|\(.*/\)\?[^/]*|\1|g'`
 
-SEVENZIP_VERSION_PATTERN='^SET(SEVENZIPJBINDING_VERSON \([^)]\+\)) *$'
+SEVENZIP_VERSION_PATTERN='^SET(SEVENZIPJBINDING_VERSON \([^)]\+\)) *'
 VERSION=`cat $SOURCE_DIR/CMakeLists.txt | grep "$SEVENZIP_VERSION_PATTERN" |  sed "s/$SEVENZIP_VERSION_PATTERN/\1/"`
 
 ITTEST_PACKAGE=sevenzipjbinding-it-test-$VERSION
@@ -20,6 +20,8 @@ fi
 mkdir $WORKING_DIR
 cd $WORKING_DIR
 
+echo "Source dir: $SOURCE_DIR"
+echo "Version   : $VERSION"
 echo Fetching 7-Zip-JBinding test information from $1
 
 
