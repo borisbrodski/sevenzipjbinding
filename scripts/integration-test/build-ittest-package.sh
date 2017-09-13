@@ -15,9 +15,11 @@ ITTEST_PACKAGE_ZIP=sevenzipjbinding-it-test-pack.zip
 WORKING_DIR=/tmp/$ITTEST_PACKAGE
 
 if [ -d $WORKING_DIR ] ; then
+     echo "Cleaning working directory: $WORKING_DIR"
      rm -rf $WORKING_DIR
 fi
 mkdir $WORKING_DIR
+echo "Using working directory: $WORKING_DIR"
 cd $WORKING_DIR
 
 echo "Source dir: $SOURCE_DIR"
@@ -66,6 +68,7 @@ done
 
 echo Compressing it tests into $ITTEST_PACKAGE_ZIP
 cd - > /dev/null
+rm -f "$ITTEST_PACKAGE_ZIP" 
 7z -bd -mx=9 a "$ITTEST_PACKAGE_ZIP" "$WORKING_DIR/" > /dev/null
 
 read -p "Upload to the sourceforge web space (y/n)? "
