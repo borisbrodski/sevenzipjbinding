@@ -800,7 +800,6 @@ public class SevenZip {
 
     private static void ensureLibraryIsInitialized() {
         if (autoInitializationWillOccur) {
-            autoInitializationWillOccur = false;
             try {
                 initSevenZipFromPlatformJAR();
             } catch (SevenZipNativeInitializationException exception) {
