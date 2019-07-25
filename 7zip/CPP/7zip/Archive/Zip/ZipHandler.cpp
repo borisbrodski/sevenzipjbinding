@@ -185,7 +185,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
   switch(propID)
   {
     case kpidPath:  prop = NItemName::GetOSName2(item.GetUnicodeString(item.Name)); break;
-    case kpidPathBytes:  prop = item.Name; prop.vt = VT_BYTEBUFFER; break;
+    case kpidPathBytes:  prop = item.Name; prop.vt = 26; break;
     case kpidIsDir:  prop = item.IsDir(); break;
     case kpidSize:  prop = item.UnPackSize; break;
     case kpidPackSize:  prop = item.PackSize; break;
