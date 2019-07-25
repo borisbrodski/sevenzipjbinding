@@ -61,6 +61,7 @@ enum
   kpidPosixAttrib,
   kpidLink,
   kpidError,
+  kpidPathBytes = 100,
 
   kpidTotalSize = 0x1100,
   kpidFreeSpace,
