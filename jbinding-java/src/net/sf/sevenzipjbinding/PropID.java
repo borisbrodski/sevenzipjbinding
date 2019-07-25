@@ -176,6 +176,8 @@ public enum PropID {
     POSIX_ATTRIB, //
     LINK, //
 
+    PATH_BYTES(100),
+
     // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
 
     TOTAL_SIZE(0x1100), //
