@@ -207,8 +207,14 @@ jobject ByteBufferToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
     CMyComBSTR str(value);
-    jbyteArray ret = env->NewByteArray(str.Length() * 4);
-    env->SetByteArrayRegion(ret, 0, str.Length() * 4, (jbyte*) str.m_str);
+    int size = sizeof(str.m_str[0]);
+    jbyte* jbytes = (jbyte*) str.m_str;
+    jbyte retBytes[str.Length()];
+    for (int i = 0; i < str.Length(); i++) {
+        retBytes[i] = jbytes[i * size];
+    }
+    jbyteArray ret = env->NewByteArray(str.Length());
+    env->SetByteArrayRegion(ret, 0, str.Length(), retBytes);
     return ret;
 }
 
