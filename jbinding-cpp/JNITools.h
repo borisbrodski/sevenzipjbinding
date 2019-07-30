@@ -81,7 +81,7 @@ jobject BSTRToObject(JNIEnv * env, BSTR value);
 /**
  * Get java.nio.ByteBuffer from BSTR string
  */
-jobject ByteBufferToObject(JNIEnv * env, BSTR value);
+jobject ByteArrayToObject(JNIEnv * env, BSTR value);
 
 /**
  * Get java.util.Date object from date in FILETIME format

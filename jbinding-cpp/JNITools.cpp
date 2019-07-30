@@ -26,7 +26,7 @@ static jmethodID g_BooleanBooleanValue;
 
 static jclass g_StringClass;
 
-static jclass g_ByteBufferClass;
+static jclass g_ByteArrayClass;
 
 static jclass g_DateClass;
 static jmethodID g_DateConstructor;
@@ -83,9 +83,9 @@ static void localinit(JNIEnv * env) {
     FATALIF(g_StringClass == NULL, "Can't find String class");
     g_StringClass = (jclass) env->NewGlobalRef(g_StringClass);
 
-    g_ByteBufferClass = env->FindClass(JAVA_BYTEBUFFER);
-    FATALIF(g_ByteBufferClass == NULL, "Can't find ByteBuffer class");
-    g_ByteBufferClass = (jclass) env->NewGlobalRef(g_ByteBufferClass);
+    g_ByteArrayClass = env->FindClass(JAVA_BYTEARRAY);
+    FATALIF(g_ByteArrayClass == NULL, "Can't find byte array class");
+    g_ByteArrayClass = (jclass) env->NewGlobalRef(g_ByteArrayClass);
 
     g_DateClass = env->FindClass("java/util/Date");
     FATALIF(g_DateClass == NULL, "Can't find java.util.Date class");
@@ -203,7 +203,7 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 /**
  * Get java.nio.ByteBuffer from BSTR string
  */
-jobject ByteBufferToObject(JNIEnv * env, BSTR value) {
+jobject ByteArrayToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
     CMyComBSTR str(value);
@@ -270,7 +270,7 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
             //			cPropVariant = bstr;
             cPropVariant = UString(UnicodeHelper(jChars));
             jniEnvInstance->ReleaseStringChars((jstring) object, jChars);
-        } else if (jniEnvInstance->IsInstanceOf(object, g_ByteBufferClass)) {
+        } else if (jniEnvInstance->IsInstanceOf(object, g_ByteArrayClass)) {
             const jbyte * value = jniEnvInstance->GetByteArrayElements((jbyteArray) object, NULL);
             cPropVariant = (jbyteArray) value;
             //jniEnvInstance->ReleaseByteArrayElements((jbyteArray) object, jBytes, JNI_ABORT); TODO fix
@@ -338,7 +338,7 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
         return BSTRToObject(jniEnvInstance, propVariant->bstrVal);
 
     case 26:
-        return ByteBufferToObject(jniEnvInstance, propVariant->bstrVal);
+        return ByteArrayToObject(jniEnvInstance, propVariant->bstrVal);
 
     case VT_DATE:
     case VT_FILETIME:
@@ -401,7 +401,7 @@ jclass VarTypeToJavaType(JNIEnvInstance & jniEnvInstance, VARTYPE vt) {
         return g_StringClass;
 
     case 26:
-        return g_ByteBufferClass;
+        return g_ByteArrayClass;
 
     case VT_DATE:
     case VT_FILETIME:
