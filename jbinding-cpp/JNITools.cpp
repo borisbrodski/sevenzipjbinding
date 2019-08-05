@@ -271,9 +271,9 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
             cPropVariant = UString(UnicodeHelper(jChars));
             jniEnvInstance->ReleaseStringChars((jstring) object, jChars);
         } else if (jniEnvInstance->IsInstanceOf(object, g_ByteArrayClass)) {
-            const jbyte * value = jniEnvInstance->GetByteArrayElements((jbyteArray) object, NULL);
+            jbyte* value = jniEnvInstance->GetByteArrayElements((jbyteArray) object, NULL);
             cPropVariant = (jbyteArray) value;
-            //jniEnvInstance->ReleaseByteArrayElements((jbyteArray) object, jBytes, JNI_ABORT); TODO fix
+            jniEnvInstance->ReleaseByteArrayElements((jbyteArray) object, value, JNI_ABORT);
         } else if (jniEnvInstance->IsInstanceOf(object, g_BooleanClass)) {
             jboolean value = jniEnvInstance->CallBooleanMethod(object, g_BooleanBooleanValue);
             cPropVariant = (bool) value;
