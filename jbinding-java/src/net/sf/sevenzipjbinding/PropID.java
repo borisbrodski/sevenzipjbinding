@@ -176,8 +176,6 @@ public enum PropID {
     POSIX_ATTRIB, //
     LINK, //
 
-    PATH_BYTES(100),
-
     // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
 
     TOTAL_SIZE(0x1100), //
@@ -187,6 +185,13 @@ public enum PropID {
 
     LOCAL_NAME(0x1200), //
     PROVIDER(0x1201), //
+
+    /**
+     * The path of the file in bytes
+     * <br>
+     * Type: byte[] <code>null</code> will be returned, if current archive type doesn't support this property.
+     */
+    PATH_BYTES,
 
     USER_DEFINED(0x10000), //
 

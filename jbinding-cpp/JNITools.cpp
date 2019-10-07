@@ -337,7 +337,7 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_BSTR:
         return BSTRToObject(jniEnvInstance, propVariant->bstrVal);
 
-    case 26:
+    case VT_BYTEBUFFER:
         return ByteArrayToObject(jniEnvInstance, propVariant->bstrVal);
 
     case VT_DATE:
@@ -400,7 +400,7 @@ jclass VarTypeToJavaType(JNIEnvInstance & jniEnvInstance, VARTYPE vt) {
     case VT_BSTR:
         return g_StringClass;
 
-    case 26:
+    case VT_BYTEBUFFER:
         return g_ByteArrayClass;
 
     case VT_DATE:
