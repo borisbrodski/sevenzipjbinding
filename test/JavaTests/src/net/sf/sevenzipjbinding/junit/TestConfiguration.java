@@ -71,6 +71,11 @@ public class TestConfiguration {
      */
     public static String TEST_PARAM__TRACE = "TEST_TRACE";
 
+    /**
+     * If enable, configure test suite to run on low memory machine. Default: OFF.
+     */
+    public static String TEST_PARAM__ON_LOW_MEMORY = "TEST_ON_LOW_MEMORY";
+
     // @formatter:off
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
         /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
@@ -89,6 +94,7 @@ public class TestConfiguration {
     private boolean longRunning;
     private boolean trace;
     private String traceFile;
+    private boolean onLowMemory;
 
     TestConfiguration(String name, int multiThreadedThreads, int repeatSingleThreadedTest, int repeatMultiThreadedTest,
             int singleTestTimeout,
@@ -110,6 +116,7 @@ public class TestConfiguration {
         longRunning = getBoolean(TEST_PARAM__LONG_RUNNING, longRunning);
         trace = getBoolean(TEST_PARAM__TRACE, trace);
         traceFile = getString(TEST_PARAM__TRACE, traceFile);
+        onLowMemory = getBoolean(TEST_PARAM__ON_LOW_MEMORY, false);
     }
 
     private static int getInt(String name, int defaultValue) {
@@ -128,7 +135,7 @@ public class TestConfiguration {
         String stringValue = System.getProperty(name.trim());
         if (stringValue != null) {
             stringValue = stringValue.trim();
-            return stringValue.equalsIgnoreCase("f") && !stringValue.equalsIgnoreCase("false")
+            return !stringValue.equalsIgnoreCase("f") && !stringValue.equalsIgnoreCase("false")
                     && !stringValue.equalsIgnoreCase("no") && !stringValue.equalsIgnoreCase("n")
                     && !stringValue.equalsIgnoreCase("off") && !stringValue.equalsIgnoreCase("disable");
         }
@@ -180,6 +187,10 @@ public class TestConfiguration {
         return trace;
     }
 
+    public boolean isOnLowMemory() {
+        return onLowMemory;
+    }
+
     public static TestConfiguration getCurrent() {
         return currentProfile;
     }
@@ -210,6 +221,7 @@ public class TestConfiguration {
         params.add(new ParamInfo(TEST_PARAM__TIMEOUT, singleTestTimeout + " seconds"));
         params.add(new ParamInfo(TEST_PARAM__LONG_RUNNING, longRunning));
         params.add(new ParamInfo(TEST_PARAM__TRACE, trace));
+        params.add(new ParamInfo(TEST_PARAM__ON_LOW_MEMORY, onLowMemory));
         int padding = 0;
         for (ParamInfo paramInfo : params) {
             if (padding < paramInfo.name.length()) {

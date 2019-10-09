@@ -17,6 +17,7 @@ import net.sf.sevenzipjbinding.IOutFeatureSetMultithreading;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
@@ -62,6 +63,14 @@ public class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingle
 
     private static final int ENTROPY = 100;
     private static final int DATA_SIZE = 1000000;
+    private static final int DATA_SIZE_LOW_MEMORY = 10000;
+
+    private int getDataSize() {
+        if (TestConfiguration.getCurrent().isOnLowMemory()) {
+            return DATA_SIZE_LOW_MEMORY;
+        }
+        return DATA_SIZE;
+    }
 
     @Override
     protected ArchiveFormat getArchiveFormat() {
@@ -93,8 +102,8 @@ public class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingle
         featureOutArchive.setThreadCount(-1); // Set default
         featureOutArchive.setThreadCount(threadCount);
 
-        RandomContext randomContext = new RandomContext(DATA_SIZE, ENTROPY);
-        ByteArrayStream outputByteArrayStream = new ByteArrayStream(DATA_SIZE * 2);
+        RandomContext randomContext = new RandomContext(getDataSize(), ENTROPY);
+        ByteArrayStream outputByteArrayStream = new ByteArrayStream(getDataSize() * 2);
         ThreadCountingCreateArchiveCallback callback = new ThreadCountingCreateArchiveCallback(randomContext);
         outArchive.createArchive(outputByteArrayStream, 1, callback);
         verifySingleFileArchive(randomContext, outputByteArrayStream);

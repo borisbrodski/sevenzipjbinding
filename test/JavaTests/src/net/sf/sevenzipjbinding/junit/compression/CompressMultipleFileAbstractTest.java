@@ -2,7 +2,6 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -17,8 +16,10 @@ import net.sf.sevenzipjbinding.IOutFeatureSetEncryptHeader;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.compression.CompressMultipleFileAbstractTest.CompressMultipleFileAbstractTestContext;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterIgnores;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.ParameterNames;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
@@ -81,6 +82,15 @@ public abstract class CompressMultipleFileAbstractTest
                 { 10, 1, 2, OUTARCHIVE_MAX_SIZE / 11, 5000, false }, //
                 { 50, 1, 2, 80000, 5000, false }//
         });
+    }
+
+    @ParameterIgnores
+    public static boolean isParameterIgnores(int countOfFiles, int directoriesDepth, int maxSubdirectories,
+            int averageFileLength, int deltaFileLength, boolean forbiddenRootDirectory) {
+        if (TestConfiguration.getCurrent().isOnLowMemory()) {
+            return averageFileLength <= 10000;
+        }
+        return false;
     }
 
     @ParameterNames
