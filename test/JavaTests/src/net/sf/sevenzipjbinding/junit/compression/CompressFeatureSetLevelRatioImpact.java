@@ -26,7 +26,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 public class CompressFeatureSetLevelRatioImpact extends CompressFeatureAbstractSingleFile<VoidContext> {
 
     private static final int ENTROPY = 100;
-    private static final int DATA_SIZE = 300000;
+    private static final int DATA_SIZE = 200000;
     private final ArchiveFormat archiveFormat;
     private final List<Integer> levels;
 

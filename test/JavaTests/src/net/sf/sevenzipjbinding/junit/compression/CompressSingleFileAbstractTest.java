@@ -359,7 +359,7 @@ public abstract class CompressSingleFileAbstractTest<C extends AbstractTestConte
     @ParameterIgnores
     public static boolean isParameterIgnores(int size, int entropy) {
         if (TestConfiguration.getCurrent().isOnLowMemory()) {
-            return size <= 500000;
+            return size >= 100000;
         }
         if (size >= 20000000) {
             return !TestConfiguration.getCurrent().isLongRunning();

@@ -157,6 +157,9 @@ e) After make succeeds you can either run tests by typing
 f) You can build a binary package by typing
     $ make package
     
+g) Running tests on a machine with low memory (like 256M on ARM armel):
+   - Add "-DJAVA_PARAMS=-DTEST_ON_LOW_MEMORY=1" to the cmake parameters
+     to skip most memory intensive tests (executed later by the ctest tool see (e) ).
 
 6.2 Compile on Windows
     Both MinGW and Cygwin environments can be used to compile 7-Zip-JBinding. Using MinGW to compile 7-Zip-JBinding 

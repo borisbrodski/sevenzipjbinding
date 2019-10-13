@@ -48,28 +48,28 @@ public abstract class UpdateMultipleFilesAbstractTest<T extends IOutItemBase> ex
         }
     }
 
-    private static final DirectoryTreeConfiguration CONF_FLATX = //
+    private static final DirectoryTreeConfiguration CONF_FLAT = //
             new DirectoryTreeConfiguration(10, 0, 0, 100000, 50000);
     private static final DirectoryTreeConfiguration CONF_FLAT_LOW_MEMORY = //
             new DirectoryTreeConfiguration(10, 0, 0, 10000, 5000);
 
-    private static final DirectoryTreeConfiguration CONF_DEEPX = //
+    private static final DirectoryTreeConfiguration CONF_DEEP = //
             new DirectoryTreeConfiguration(64, 5, 2, 10000, 5000);
     private static final DirectoryTreeConfiguration CONF_DEEP_LOW_MEMORY = //
-            new DirectoryTreeConfiguration(64, 5, 2, 10000, 5000);
+            new DirectoryTreeConfiguration(64, 5, 2, 1000, 500);
 
     DirectoryTreeConfiguration getConfDeep() {
         if (TestConfiguration.getCurrent().isOnLowMemory()) {
             return CONF_DEEP_LOW_MEMORY;
         }
-        return CONF_DEEPX;
+        return CONF_DEEP;
     }
 
     DirectoryTreeConfiguration getConfFlat() {
         if (TestConfiguration.getCurrent().isOnLowMemory()) {
             return CONF_FLAT_LOW_MEMORY;
         }
-        return CONF_FLATX;
+        return CONF_FLAT;
     }
 
     protected final ArchiveUpdater updaterAddNewItem = new ArchiveUpdater() {
