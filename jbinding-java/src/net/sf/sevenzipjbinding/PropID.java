@@ -191,7 +191,7 @@ public enum PropID {
      * <br>
      * Type: byte[] <code>null</code> will be returned, if current archive type doesn't support this property.
      */
-    PATH_BYTES,
+    PATH_BYTES(100),
 
     USER_DEFINED(0x10000), //
 

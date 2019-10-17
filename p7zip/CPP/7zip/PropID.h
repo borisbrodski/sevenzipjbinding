@@ -70,7 +70,7 @@ enum
   kpidLocalName = 0x1200,
   kpidProvider,
 
-  kpidPathBytes,
+  kpidPathBytes = 100,
 
   kpidUserDefined = 0x10000
 };
