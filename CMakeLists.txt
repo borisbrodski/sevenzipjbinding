@@ -391,6 +391,8 @@ IF(BUILD_TESTING)
        FILE(APPEND ${JUNIT_TEST_RUNNER} "${JAVA_PARAMS} ")
     ENDIF()
 
+    FILE(APPEND ${JUNIT_TEST_RUNNER} "\${RUNTIME_JAVA_OPTS} ")
+
     IF(NOT(CMAKE_BUILD_TYPE STREQUAL "Debug"))
        FILE(APPEND ${JUNIT_TEST_RUNNER} "\"-Dskip-debug-mode-tests=true\" ")
     ENDIF()
@@ -402,29 +404,29 @@ IF(BUILD_TESTING)
                                          MESSAGE(SEND_ERROR \"Error during JUnit Tests. Return code: \${RESULT}\")
                                      ENDIF(RESULT)
                                      ")
-    add_test(JUnit-common                       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Common tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-common-no-privileged-init    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Common tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
-    
-    add_test(JUnit-init-std-1                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Std) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-init-std-2                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Std) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+    SET(RUNTIME_PARAMS -D "RUNTIME_JAVA_OPTS=\$ENV{RUNTIME_JAVA_OPTS}")
+    add_test(JUnit-common                       ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Common tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-common-no-privileged-init    ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Common tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
 
-    add_test(JUnit-init-verify-1                ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Verify) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-init-verify-2                ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Init tests (Verify) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-std-1                   ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Init tests (Std) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-std-2                   ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Init tests (Std) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+
+    add_test(JUnit-init-verify-1                ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Init tests (Verify) 1" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D1" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-init-verify-2                ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Init tests (Verify) 2" -D "JAVA_OPT=-Dsevenziptest.standard_initialization_test_phase%3D2" -P ${JUNIT_TEST_RUNNER})
+
+    add_test(JUnit-tools                        ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Tools tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets                     ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Snippets tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-snippets-no-privileged-init  ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Snippets tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
     
-    add_test(JUnit-tools                        ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Tools tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-snippets                     ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Snippets tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-snippets-no-privileged-init  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Snippets tests" -D "JAVA_OPT=-Dsevenzip.no_doprivileged_initialization%3D1" -P ${JUNIT_TEST_RUNNER})
-    
-    add_test(JUnit-encoding-utf-8               ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 1" -D "JAVA_OPT=-Dfile.encoding%3DUTF8" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-encoding-cp1252              ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 2" -D "JAVA_OPT=-Dfile.encoding%3DCP1252" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-encoding-cp1251              ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Encoding tests 3" -D "JAVA_OPT=-Dfile.encoding%3DCP1251" -P ${JUNIT_TEST_RUNNER})
-    
-    add_test(JUnit-bug-reports                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bug report tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Single file tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Multiple files tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-compression                  ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Compression tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Bad archive tests" -P ${JUNIT_TEST_RUNNER})
-    add_test(JUnit-misc                         ${CMAKE_COMMAND} -D "SINGLEBUNDLE=Misc tests" -P ${JUNIT_TEST_RUNNER})
-#                                         org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite) JUnitInitializationTest
+    add_test(JUnit-encoding-utf-8               ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Encoding tests 1" -D "JAVA_OPT=-Dfile.encoding%3DUTF8" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-encoding-cp1252              ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Encoding tests 2" -D "JAVA_OPT=-Dfile.encoding%3DCP1252" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-encoding-cp1251              ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Encoding tests 3" -D "JAVA_OPT=-Dfile.encoding%3DCP1251" -P ${JUNIT_TEST_RUNNER})
+
+    add_test(JUnit-bug-reports                  ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Bug report tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-single-file-extraction       ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Single file tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-multiple-files-extraction    ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Multiple files tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-compression                  ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Compression tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-badarchive                   ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Bad archive tests" -P ${JUNIT_TEST_RUNNER})
+    add_test(JUnit-misc                         ${CMAKE_COMMAND} ${RUNTIME_PARAMS} -D "SINGLEBUNDLE=Misc tests" -P ${JUNIT_TEST_RUNNER})
 ENDIF(BUILD_TESTING)
 

@@ -148,13 +148,24 @@ c) The next step is to run CMake. Both in-source and out-of-source methods are s
 d) Now type to compile 7-Zip-JBinding
 	$ make
 	
-e) After make succeeds you can either run tests by typing
+e) After make succeeds either run tests by typing
 	$ ctest
 	or
 	$ ctest -D Experimental
 	to submit test results to the dashboard (http://my.cdash.org/index.php?project=7-Zip-JBinding)
-   
-f) You can build a binary package by typing
+	
+	RUNTIME_JAVA_OPTS environment variable passes options to the test java process.
+    
+    Run tests in Verbose-Mode:
+        $ RUNTIME_JAVA_OPTS="-DTEST_TRACE=1" ctest
+    
+    Run tests in specified profile
+        $ RUNTIME_JAVA_OPTS="-DTEST_PROFILE=MINIMAL" ctest
+
+    For example, run tests on armel 256MB RAM architecture:
+        $ RUNTIME_JAVA_OPTS="-DTEST_ON_LOW_MEMORY=1" ctest
+	
+f) Build a binary package by typing
     $ make package
     
 g) Running tests on a machine with low memory (like 256M on ARM armel):

@@ -24,6 +24,7 @@ ENDFOREACH()
 EXECUTE_PROCESS(COMMAND
                     "${JAVA}" -cp "${TEST_LIBS_STR}"
                     ${JAVA_PARAMS}
+                    ${RUNTIME_JAVA_OPTS}
                     "-DSINGLEBUNDLE=${SINGLEBUNDLE}"
                     "-Dskip-debug-mode-tests=true"
                     org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite
