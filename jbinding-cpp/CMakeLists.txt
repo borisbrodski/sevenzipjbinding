@@ -206,6 +206,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/FatHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HandlerCont.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HfsHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/NtfsHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp
