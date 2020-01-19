@@ -142,6 +142,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVo
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVolumePassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileTarTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileUdfTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileWimTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileXarTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipPassTest;
@@ -192,6 +193,7 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeP
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumePassTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileTarTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileUdfTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileWimTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileXarTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZTest;
@@ -285,8 +287,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileSevenZipVolumePassTest.class, //
             ExtractMultipleFileSevenZipVolumeTest.class, //
             ExtractMultipleFileTarTest.class, //
-            // TODO Uncomment after resolving security problems in 7-zip
-            //            ExtractMultipleFileUdfTest.class, //
+            ExtractMultipleFileUdfTest.class, //
             ExtractMultipleFileWimTest.class, //
             ExtractMultipleFileXarTest.class, //
             ExtractMultipleFileZipPassTest.class, //
@@ -339,8 +340,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileSevenZipVolumePassTest.class, //
             ExtractSingleFileSevenZipVolumeTest.class, //
             ExtractSingleFileTarTest.class, //
-            // TODO Uncomment after resolving security problems in 7-zip
-            //            ExtractSingleFileUdfTest.class, //
+            ExtractSingleFileUdfTest.class, //
             ExtractSingleFileWimTest.class, //
             ExtractSingleFileXarTest.class, //
             ExtractSingleFileZTest.class, //

@@ -1,16 +1,15 @@
-// TODO Uncomment after resolving security problems in 7-zip
-//package net.sf.sevenzipjbinding.junit.singlefile;
-//
-//import net.sf.sevenzipjbinding.ArchiveFormat;
-//
-//public class ExtractSingleFileUdfTest extends ExtractSingleFileAbstractTest {
-//
-//    public ExtractSingleFileUdfTest() {
-//        super(ArchiveFormat.UDF, 102, 150, 150);
-//    }
-//
-//    @Override
-//    protected boolean usingZippedTestArchive() {
-//        return true;
-//    }
-//}
+package net.sf.sevenzipjbinding.junit.singlefile;
+
+import net.sf.sevenzipjbinding.ArchiveFormat;
+
+public class ExtractSingleFileUdfTest extends ExtractSingleFileAbstractTest {
+
+    public ExtractSingleFileUdfTest() {
+        super(ArchiveFormat.UDF, 102, 150, 150);
+    }
+
+    @Override
+    protected boolean usingZippedTestArchive() {
+        return true;
+    }
+}
