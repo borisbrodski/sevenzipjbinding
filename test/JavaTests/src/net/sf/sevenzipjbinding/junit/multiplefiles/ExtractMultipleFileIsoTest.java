@@ -5,7 +5,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 public class ExtractMultipleFileIsoTest extends ExtractMultipleFileAbstractTest {
 
     public ExtractMultipleFileIsoTest() {
-        super(ArchiveFormat.ISO, 0, 0, 0);
+        super(ArchiveFormat.ISO, 0, 1, 2);
     }
 
     @Override
