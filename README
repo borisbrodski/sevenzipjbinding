@@ -101,7 +101,7 @@ Examples:
      4.66-1.01beta      - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
      4.66-2.3-extr-only - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
                           without compression features.
-     4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
+     4.66-2.3           - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
 6. Compile
