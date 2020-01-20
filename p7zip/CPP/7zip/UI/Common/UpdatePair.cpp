@@ -92,7 +92,8 @@ void GetUpdatePairInfoList(
 
   {
     arcIndices.ClearAndSetSize(numArcItems);
-    if (numArcItems > 0) { // FIXED for -fsanitize=address
+    if (numArcItems != 0)
+    {
       unsigned *vals = &arcIndices[0];
       for (unsigned i = 0; i < numArcItems; i++)
         vals[i] = i;

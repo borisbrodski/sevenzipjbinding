@@ -71,7 +71,6 @@ SOURCES +=  \
   ../../../../CPP/7zip/Archive/7z/7zEncode.cpp \
   ../../../../CPP/7zip/Archive/7z/7zExtract.cpp \
   ../../../../CPP/7zip/Archive/7z/7zFolderInStream.cpp \
-  ../../../../CPP/7zip/Archive/7z/7zFolderOutStream.cpp \
   ../../../../CPP/7zip/Archive/7z/7zHandler.cpp \
   ../../../../CPP/7zip/Archive/7z/7zHandlerOut.cpp \
   ../../../../CPP/7zip/Archive/7z/7zHeader.cpp \
@@ -88,7 +87,6 @@ SOURCES +=  \
   ../../../../CPP/7zip/Archive/Cab/CabIn.cpp \
   ../../../../CPP/7zip/Archive/Cab/CabRegister.cpp \
   ../../../../CPP/7zip/Archive/Common/CoderMixer2.cpp \
-  ../../../../CPP/7zip/Archive/Common/CrossThreadProgress.cpp \
   ../../../../CPP/7zip/Archive/Common/DummyOutStream.cpp \
   ../../../../CPP/7zip/Archive/Common/FindSignature.cpp \
   ../../../../CPP/7zip/Archive/Common/HandlerOut.cpp \

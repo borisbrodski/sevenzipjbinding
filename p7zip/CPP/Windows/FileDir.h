@@ -4,18 +4,25 @@
 #define __WINDOWS_FILE_DIR_H
 
 #include "../Common/MyString.h"
+#include "../Common/MyVector.h"
 
 #include "FileIO.h"
+
+#ifdef ENV_UNIX
+#include <sys/stat.h> // ino_t
+#endif
 
 namespace NWindows {
 namespace NFile {
 namespace NDir {
 
+class CDelayedSymLink;
+
 bool GetWindowsDir(FString &path);
 bool GetSystemDir(FString &path);
 
 bool SetDirTime(CFSTR path, const FILETIME *cTime, const FILETIME *aTime, const FILETIME *mTime);
-bool SetFileAttrib(CFSTR path, DWORD attrib);
+bool SetFileAttrib(CFSTR path, DWORD attrib, CObjectVector<CDelayedSymLink> *delayedSymLinks = 0);
 bool MyMoveFile(CFSTR existFileName, CFSTR newFileName);
 
 #ifndef UNDER_CE
@@ -75,6 +82,32 @@ public:
   bool Create(CFSTR namePrefix) ;
   bool Remove();
 };
+
+// Symbolic links must be created last so that they can't be used to
+// create or overwrite files above the extraction directory.
+class CDelayedSymLink
+{
+#ifdef ENV_UNIX
+  // Where the symlink should be created.  The target is specified in
+  // the placeholder file.
+  AString _source;
+
+  // Device and inode of the placeholder file.  Before creating the
+  // symlink, we must check that these haven't been changed by creation
+  // of another symlink.
+  dev_t _dev;
+  ino_t _ino;
+
+public:
+  explicit CDelayedSymLink(const char * source);
+  bool Create();
+#else // !ENV_UNIX
+public:
+  CDelayedSymLink(const char * source) {}
+  bool Create() { return true; }
+#endif // ENV_UNIX
+};
+
 
 #if !defined(UNDER_CE)
 class CCurrentDirRestorer

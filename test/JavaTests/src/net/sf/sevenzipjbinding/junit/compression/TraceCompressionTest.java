@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -26,11 +28,10 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Test 7-Zip-JBinding compression/update tracing.
@@ -38,7 +39,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class TraceCompressionTest extends JUnitNativeTestBase {
+public class TraceCompressionTest extends JUnitNativeTestBase<VoidContext> {
     private class OutCreateArchive implements IOutCreateCallback<IOutItemAllFormats> {
         public void setTotal(long total) throws SevenZipException {
         }

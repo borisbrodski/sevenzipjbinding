@@ -12,6 +12,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  */
 public class CompressGenericSingleFileZipPassNullTest extends CompressGenericSingleFileAbstractTest {
 
+    public CompressGenericSingleFileZipPassNullTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Before
     public void configureEncryption() {
         setUseEncryption(true);

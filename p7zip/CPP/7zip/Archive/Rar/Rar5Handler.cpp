@@ -189,8 +189,8 @@ bool CItem::FindExtra_Version(UInt64 &version) const
     return false;
   const Byte *p = Extra + (unsigned)offset;
 
-  UInt64 Flags;
-  unsigned num = ReadVarInt(p, size, &Flags);
+  UInt64 flags;
+  unsigned num = ReadVarInt(p, size, &flags);
   if (num == 0) return false; p += num; size -= num;
   
   num = ReadVarInt(p, size, &version);
@@ -1292,6 +1292,18 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
       break;
     }
     
+    case kpidError:
+    {
+      if (/* &_missingVol || */ !_missingVolName.IsEmpty())
+      {
+        UString s;
+        s.SetFromAscii("Missing volume : ");
+        s += _missingVolName;
+        prop = s;
+      }
+      break;
+    }
+
     case kpidErrorFlags:
     {
       UInt32 v = _errorFlags;
@@ -1813,6 +1825,8 @@ HRESULT CHandler::Open2(IInStream *stream,
   int prevSplitFile = -1;
   int prevMainFile = -1;
   
+  bool nextVol_is_Required = false;
+
   CInArchive arch;
   
   for (;;)
@@ -1840,13 +1854,19 @@ HRESULT CHandler::Open2(IInStream *stream,
           break;
       }
       
-      HRESULT result = openVolumeCallback->GetStream(seqName.GetNextName(), &inStream);
-      if (result == S_FALSE)
-        break;
-      if (result != S_OK)
+      const UString volName = seqName.GetNextName();
+      
+      HRESULT result = openVolumeCallback->GetStream(volName, &inStream);
+      
+      if (result != S_OK && result != S_FALSE)
         return result;
-      if (!inStream)
+
+      if (!inStream || result != S_OK)
+      {
+        if (nextVol_is_Required)
+          _missingVolName = volName;
         break;
+      }
     }
     
     UInt64 endPos = 0;
@@ -1861,6 +1881,7 @@ HRESULT CHandler::Open2(IInStream *stream,
     }
     
     CInArcInfo arcInfoOpen;
+    {
     HRESULT res = arch.Open(inStream, maxCheckStartPosition, getTextPassword, arcInfoOpen);
     if (arch.IsArc && arch.UnexpectedEnd)
       _errorFlags |= kpv_ErrorFlags_UnexpectedEnd;
@@ -1876,6 +1897,7 @@ HRESULT CHandler::Open2(IInStream *stream,
       if (_arcs.IsEmpty())
         return res;
       break;
+    }
     }
     
     CArc &arc = _arcs.AddNew();
@@ -2048,12 +2070,12 @@ HRESULT CHandler::Open2(IInStream *stream,
           {
             if (prevSplitFile >= 0)
             {
-              CRefItem &ref = _refs[prevSplitFile];
-              CItem &prevItem = _items[ref.Last];
+              CRefItem &ref2 = _refs[prevSplitFile];
+              CItem &prevItem = _items[ref2.Last];
               if (item.IsNextForItem(prevItem))
               {
-                ref.Last = _items.Size();
-                prevItem.NextItem = ref.Last;
+                ref2.Last = _items.Size();
+                prevItem.NextItem = ref2.Last;
                 needAdd = false;
               }
             }
@@ -2094,11 +2116,18 @@ HRESULT CHandler::Open2(IInStream *stream,
     }
       
     curBytes += endPos;
+
+    nextVol_is_Required = false;
+
     if (!arcInfo.IsVolume())
       break;
-    if (arcInfo.EndOfArchive_was_Read
-        && !arcInfo.AreMoreVolumes())
-      break;
+
+    if (arcInfo.EndOfArchive_was_Read)
+    {
+      if (!arcInfo.AreMoreVolumes())
+        break;
+      nextVol_is_Required = true;
+    }
   }
 
   FillLinks();
@@ -2120,6 +2149,7 @@ STDMETHODIMP CHandler::Open(IInStream *stream,
 STDMETHODIMP CHandler::Close()
 {
   COM_TRY_BEGIN
+  _missingVolName.Empty();
   _errorFlags = 0;
   // _warningFlags = 0;
   _isArc = false;
@@ -2305,6 +2335,7 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
 
   {
     UInt64 total = 0;
+    bool isThereUndefinedSize = false;
     bool thereAreLinks = false;
 
     {
@@ -2314,9 +2345,14 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
         unsigned index = allFilesMode ? t : indices[t];
         const CRefItem &ref = _refs[index];
         const CItem &item = _items[ref.Item];
+        const CItem &lastItem = _items[ref.Last];
         
         extractStatuses[index] |= kStatus_Extract;
-        total += item.Size;
+
+        if (!lastItem.Is_UnknownSize())
+          total += lastItem.Size;
+        else
+          isThereUndefinedSize = true;
         
         if (ref.Link >= 0)
         {
@@ -2324,11 +2360,18 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
           {
             if ((unsigned)ref.Link < index)
             {
-              const CItem &linkItem = _items[_refs[(unsigned)ref.Link].Item];
+              const CRefItem &linkRef = _refs[(unsigned)ref.Link];
+              const CItem &linkItem = _items[linkRef.Item];
               if (linkItem.IsSolid() && linkItem.Size <= k_CopyLinkFile_MaxSize)
               {
                 if (extractStatuses[(unsigned)ref.Link] == 0)
-                  total += linkItem.Size;
+                {
+                  const CItem &lastLinkItem = _items[linkRef.Last];
+                  if (!lastLinkItem.Is_UnknownSize())
+                    total += lastLinkItem.Size;
+                  else
+                    isThereUndefinedSize = true;
+                }
                 extractStatuses[(unsigned)ref.Link] |= kStatus_Link;
                 thereAreLinks = true;
               }
@@ -2347,11 +2390,18 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
           while (j > solidLimit)
           {
             j--;
-            const CItem &item2 = _items[_refs[j].Item];
+            const CRefItem &ref2 = _refs[j];
+            const CItem &item2 = _items[ref2.Item];
             if (!item2.IsService())
             {
               if (extractStatuses[j] == 0)
-                total += item2.Size;
+              {
+                const CItem &lastItem2 = _items[ref2.Last];
+                if (!lastItem2.Is_UnknownSize())
+                  total += lastItem2.Size;
+                else
+                  isThereUndefinedSize = true;
+              }
               extractStatuses[j] |= kStatus_Skip;
               if (!item2.IsSolid())
                 break;
@@ -2387,13 +2437,20 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
           while (j > solidLimit)
           {
             j--;
-            const CItem &item2 = _items[_refs[j].Item];
+            const CRefItem &ref2 = _refs[j];
+            const CItem &item2 = _items[ref2.Item];
             if (!item2.IsService())
             {
               if (extractStatuses[j] != 0)
                 break;
               extractStatuses[j] = kStatus_Skip;
-              total += item2.Size;
+              {
+                const CItem &lastItem2 = _items[ref2.Last];
+                if (!lastItem2.Is_UnknownSize())
+                  total += lastItem2.Size;
+                else
+                  isThereUndefinedSize = true;
+              }
               if (!item2.IsSolid())
                 break;
             }
@@ -2421,7 +2478,10 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       }
     }
     
-    RINOK(extractCallback->SetTotal(total));
+    if (total != 0 || !isThereUndefinedSize)
+    {
+      RINOK(extractCallback->SetTotal(total));
+    }
   }
 
 
@@ -2474,8 +2534,12 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
 
     const CRefItem *ref = &_refs[index];
     const CItem *item = &_items[ref->Item];
+    const CItem &lastItem = _items[ref->Last];
 
-    curUnpackSize = item->Size;
+    curUnpackSize = 0;
+    if (!lastItem.Is_UnknownSize())
+      curUnpackSize = lastItem.Size;
+
     curPackSize = GetPackSize(index);
 
     RINOK(extractCallback->GetStream(index, &realOutStream, askMode));
@@ -2504,11 +2568,15 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
     {
       const CRefItem &ref2 = _refs[index2];
       const CItem &item2 = _items[ref2.Item];
+      const CItem &lastItem2 = _items[ref2.Last];
       if (!item2.IsSolid())
       {
         item = &item2;
         ref = &ref2;
-        curUnpackSize = item->Size;
+        if (!lastItem2.Is_UnknownSize())
+          curUnpackSize = lastItem2.Size;
+        else
+          curUnpackSize = 0;
         curPackSize = GetPackSize(index2);
       }
       else if ((unsigned)index2 < index)

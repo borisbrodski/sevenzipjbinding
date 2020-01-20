@@ -1,5 +1,5 @@
-    p7zip 15.09 beta
-    ================
+    p7zip 16.02
+    ===========
 
 Homepage : http://p7zip.sourceforge.net/
 
@@ -9,13 +9,12 @@ p7zip is a port of the Windows programs 7z.exe and 7za.exe provided by 7-zip.
 Homepage : www.7-zip.org
 
   7z uses plugins (7z.so and Codecs/Rar.so) to handle archives.
-  7za is a stand-alone executable.
-  7za handles less archive formats than 7z.exe.
+  7za is a stand-alone executable (7za handles less archive formats than 7z).
   7zr is a light stand-alone executable that supports only 7z/LZMA/BCJ/BCJ2.
 
   Some GUI :
-  7zG  : alpha stage
-  7zFM : alpha stage
+    7zG  : beta  stage
+    7zFM : alpha stage
 
 CAUTION :
 ---------
@@ -33,16 +32,14 @@ CAUTION :
   example : 7za a directory.7z  directory
 
   do not use "-r" because this flag does not do what you think
-  do not use directory/* because of ".*" files
+  do not use "directory/*" because of ".*" files
    (example : "directory/*" does not match "directory/.profile")
-
 
 BUILD :
 -------
 
   If you have downloaded the "bin" package,
-    use directly the program bin/7za.
-    (tested on Redhat 9.0, Fedora 2, Mandrake 10.0, Debian 3.0)
+    use directly the program bin/7za.   (tested on Debian 3, Ubuntu 14.10)
     As the program is statically linked, its should run on many x86 or amd64 linux.
 
   If you have downloaded the "source" package,
@@ -85,10 +82,12 @@ BUILD :
    - x86 CPU :
     Linux - Debian 3.0 Stable
     Linux - Ubuntu 14.10
+    Linux - Ubuntu 15.10    
     MacOS 10.6.6
 
    - AMD64 CPU :
     Linux - Ubuntu 14.10
+    Linux - Ubuntu 15.10     
     MacOS 10.6.6
 
    - powerpc CPU :
@@ -159,13 +158,20 @@ BUILD with cmake
 
   cd CPP/7zip/CMAKE
 
-  edit generate.sh to choose your target
-
-  ./generate.sh
-
-  the cmake project for the target is in "CPP/7zip/CMAKE/Alone".
-
-  For the target "Unix Makefiles", use "make" to compile
+  ./generate.sh  (or ./generate_xcode.sh for MacOSX)
+  
+  In CPP/7zip, you now have directories like :
+   - P7ZIP.codeblocks/
+   - P7ZIP.EclipseCDT4/
+   - P7ZIP.Unix/
+   (or P7ZIP.Xcode/  for MacOSX)
+   
+   
+  For the target "Unix Makefiles" :
+	- cd CPP/7zip/P7ZIP.Unix
+	- make
+	
+  Remark : these targets use only C/C++ code. To build targets with ASM code you must read the previous paragraph.	
 
   For others target, use the IDE (CodeBlocks, KDevelop3, Eclipse CDT4)
 
@@ -205,8 +211,7 @@ USAGE:
 
   CAUTION : do not use the flag "-r" unless you know what you are doing ...
 
-  7za a -sfx archive.exe dir1 : add all files from directory "dir1" to SFX archive archive.exe
-  (Remark : SFX archive MUST end with ".exe")
+  7za a -sfx archive.x dir1 : add all files from directory "dir1" to SFX archive archive.x
 
   You can also add or extract files to/from .zip or .tar archives.
   You can also compress/uncompress .gz or .bz2 files.
@@ -245,8 +250,8 @@ BENCHMARKS :
 
 
 
-hugetlbfs (large pages)
-------------
+hugetlbfs (large pages) :
+-------------------------
 
   Using huges pages in Linux requires some preparations.
   First, make sure your running kernel has support for hugetlbfs compiled in:
@@ -359,10 +364,12 @@ DEVELOPPER CORNER:
     make cppcheck
 
   - static analysis with clang
-    scan-build make all3
+    scan-build make all4 2>&1 | tee -i scan-build.out
 
   - dynamic analysis : valgrind
-
+    cp makefile.linux_valgrind makefile.machine
+    make test
+    
   - dynamic analysis : gcc sanitize
     cp makefile.linux_amd64_sanitizer makefile.machine
     make test

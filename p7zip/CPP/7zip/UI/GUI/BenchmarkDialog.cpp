@@ -71,11 +71,13 @@ static const LPCTSTR kMB = TEXT(" MB");
 static const LPCTSTR kMIPS = TEXT(" MIPS");
 static const LPCTSTR kKBs = TEXT(" KB/s");
 
-#ifdef UNDER_CE
-static const int kMinDicLogSize = 20;
-#else
-static const int kMinDicLogSize = 21;
-#endif
+static const unsigned kMinDicLogSize =
+  #ifdef UNDER_CE
+    20;
+  #else
+    21;
+  #endif
+
 static const UInt32 kMinDicSize = (1 << kMinDicLogSize);
 static const UInt32 kMaxDicSize =
     #ifdef MY_CPU_64BIT
@@ -177,7 +179,9 @@ bool CBenchmarkDialog::OnInit()
 
   m_Dictionary.Attach(GetItem(IDC_BENCH_DICTIONARY));
   cur = 0;
-  UInt64 ramSize = NSystem::GetRamSize();
+  
+  UInt64 ramSize = (UInt64)(sizeof(size_t)) << 29;
+  bool ramSize_Defined = NSystem::GetRamSize(ramSize);
   
   #ifdef UNDER_CE
   const UInt32 kNormalizedCeSize = (16 << 20);
@@ -187,29 +191,34 @@ bool CBenchmarkDialog::OnInit()
 
   if (Sync.DictionarySize == (UInt32)(Int32)-1)
   {
-    int dicSizeLog;
-    for (dicSizeLog = 25; dicSizeLog > kBenchMinDicLogSize; dicSizeLog--)
+    unsigned dicSizeLog = 25;
+
+    #ifdef UNDER_CE
+    dicSizeLog = 20;
+    #endif
+
+    if (ramSize_Defined)
+    for (; dicSizeLog > kBenchMinDicLogSize; dicSizeLog--)
       if (GetBenchMemoryUsage(Sync.NumThreads, ((UInt32)1 << dicSizeLog)) + (8 << 20) <= ramSize)
         break;
     Sync.DictionarySize = (1 << dicSizeLog);
   }
-  if (Sync.DictionarySize < kMinDicSize)
-    Sync.DictionarySize = kMinDicSize;
-  if (Sync.DictionarySize > kMaxDicSize)
-    Sync.DictionarySize = kMaxDicSize;
+  
+  if (Sync.DictionarySize < kMinDicSize) Sync.DictionarySize = kMinDicSize;
+  if (Sync.DictionarySize > kMaxDicSize) Sync.DictionarySize = kMaxDicSize;
 
-  for (int i = kMinDicLogSize; i <= 30; i++)
-    for (int j = 0; j < 2; j++)
+  for (unsigned i = kMinDicLogSize; i <= 30; i++)
+    for (unsigned j = 0; j < 2; j++)
     {
-      UInt32 dictionary = (1 << i) + (j << (i - 1));
-      if (dictionary > kMaxDicSize)
+      UInt32 dict = (1 << i) + (j << (i - 1));
+      if (dict > kMaxDicSize)
         continue;
       TCHAR s[16];
-      ConvertUInt32ToString((dictionary >> 20), s);
+      ConvertUInt32ToString((dict >> 20), s);
       lstrcat(s, kMB);
       int index = (int)m_Dictionary.AddString(s);
-      m_Dictionary.SetItemData(index, dictionary);
-      if (dictionary <= Sync.DictionarySize)
+      m_Dictionary.SetItemData(index, dict);
+      if (dict <= Sync.DictionarySize)
         cur = index;
     }
   m_Dictionary.SetCurSel(cur);
@@ -236,13 +245,17 @@ bool CBenchmarkDialog::OnSize(WPARAM /* wParam */, int xSize, int ySize)
   int bx1, bx2, by;
   GetItemSizes(IDCANCEL, bx1, by);
   GetItemSizes(IDHELP, bx2, by);
-  int y = ySize - my - by;
-  int x = xSize - mx - bx1;
 
-  InvalidateRect(NULL);
+  {
+    int y = ySize - my - by;
+    int x = xSize - mx - bx1;
+    
+    InvalidateRect(NULL);
+    
+    MoveItem(IDCANCEL, x, y, bx1, by);
+    MoveItem(IDHELP, x - mx - bx2, y, bx2, by);
+  }
 
-  MoveItem(IDCANCEL, x, y, bx1, by);
-  MoveItem(IDHELP, x - mx - bx2, y, bx2, by);
   if (_consoleEdit)
   {
     int yPos = ySize - my - by;
@@ -269,14 +282,14 @@ UInt32 CBenchmarkDialog::GetNumberOfThreads()
 
 UInt32 CBenchmarkDialog::OnChangeDictionary()
 {
-  UInt32 dictionary = (UInt32)m_Dictionary.GetItemData_of_CurSel();
-  UInt64 memUsage = GetBenchMemoryUsage(GetNumberOfThreads(), dictionary);
+  UInt32 dict = (UInt32)m_Dictionary.GetItemData_of_CurSel();
+  UInt64 memUsage = GetBenchMemoryUsage(GetNumberOfThreads(), dict);
   memUsage = (memUsage + (1 << 20) - 1) >> 20;
   TCHAR s[40];
   ConvertUInt64ToString(memUsage, s);
   lstrcat(s, kMB);
   SetItemText(IDT_BENCH_MEMORY_VAL, s);
-  return dictionary;
+  return dict;
 }
 
 static const UInt32 g_IDs[] =
@@ -307,7 +320,7 @@ static const UInt32 g_IDs[] =
 void CBenchmarkDialog::OnChangeSettings()
 {
   EnableItem(IDB_STOP, true);
-  UInt32 dictionary = OnChangeDictionary();
+  UInt32 dict = OnChangeDictionary();
   
   for (int i = 0; i < ARRAY_SIZE(g_IDs); i++)
     SetItemText(g_IDs[i], kProcessingString);
@@ -315,7 +328,7 @@ void CBenchmarkDialog::OnChangeSettings()
   PrintTime();
   NWindows::NSynchronization::CCriticalSectionLock lock(Sync.CS);
   Sync.Init();
-  Sync.DictionarySize = dictionary;
+  Sync.DictionarySize = dict;
   Sync.Changed = true;
   Sync.NumThreads = GetNumberOfThreads();
 }

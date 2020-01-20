@@ -6,7 +6,7 @@ MY_WINDOWS=
 include ../../../../makefile.crc32
 include ../../../../makefile.machine
 
-LOCAL_SHARED=$(LINK_SHARED)
+LOCAL_LINK=$(LINK_SHARED)
 LIBS=$(LOCAL_LIBS)
 
 COMPRESS_OBJS = \

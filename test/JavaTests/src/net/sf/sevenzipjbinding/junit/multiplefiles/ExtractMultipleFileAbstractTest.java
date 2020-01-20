@@ -88,44 +88,52 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 		String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
+		closeLater(extractionInArchiveTestHelper);
 		IInArchive inArchive = extractionInArchiveTestHelper.openArchiveFileWithSevenZip(fileIndex,
 				compressionIndex, autodetectFormat, "archive", "zip");
+        closeLater(inArchive);
 
         checkArchiveGeneric(inArchive);
 
-		ZipFile zipFile = null;
-		try {
-			zipFile = new ZipFile(new File(sollFullFilename));
+        ZipFile zipFile = null;
+        boolean ok = false;
+        try {
+            zipFile = new ZipFile(new File(sollFullFilename));
 			assertTrue(inArchive.getNumberOfItems() > 0);
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-					false, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+                    false, context().usingPassword ? context().passwordToUse : null,
+                    context().exceptionToBeExpected != null);
+            zipContentComparator1.setRemoveFilenamePrefix(getRemoveFilenamePrefix());
             addFilesToIgnore(inArchive, zipContentComparator1);
 			assertTrue(zipContentComparator1.getErrorMessage(), zipContentComparator1.isEqual());
 
 			ZipContentComparator zipContentComparator2 = new ZipContentComparator(archiveFormat, inArchive, zipFile,
-					true, usingPassword ? passwordToUse : null, exceptionToBeExpected != null);
+                    true, context().usingPassword ? context().passwordToUse : null,
+                    context().exceptionToBeExpected != null);
             addFilesToIgnore(inArchive, zipContentComparator2);
+            zipContentComparator2.setRemoveFilenamePrefix(getRemoveFilenamePrefix());
 
             if (archiveFormat == ArchiveFormat.WIM) {
                 zipContentComparator2.addToIgnoreList("1.xml");
             }
 
             assertTrue(zipContentComparator2.getErrorMessage(), zipContentComparator2.isEqual());
-		} catch (IOException exception) {
-			throw new RuntimeException(exception);
-		} finally {
-			inArchive.close();
-			if (zipFile != null) {
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-			extractionInArchiveTestHelper.closeAllStreams();
-		}
+            ok = true;
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    if (ok) {
+                        throw new RuntimeException(e);
+                    }
+                    log(e, "Error closing zip file");
+                }
+            }
+        }
 	}
 
     private void addFilesToIgnore(IInArchive inArchive, ZipContentComparator zipContentComparator1)
@@ -142,5 +150,9 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
                 }
             }
         }
+    }
+
+    public String getRemoveFilenamePrefix() {
+        return null;
     }
 }

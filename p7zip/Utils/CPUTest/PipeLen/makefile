@@ -5,6 +5,8 @@ LOCAL_FLAGS=-I.
 
 include ../../../makefile.machine
 
+TARGET_FLAGS=$(CC_EXE)
+LOCAL_LINK=$(LINK_EXE)
 LIBS=$(LOCAL_LIBS)
 
 # pl.o

@@ -16,8 +16,9 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 
-public class CallMethodsOnClosedOutStreamTest extends JUnitNativeTestBase {
+public class CallMethodsOnClosedOutStreamTest extends JUnitNativeTestBase<VoidContext> {
     public interface OutArchiveMethodCall {
         void callMethod(IOutCreateArchive<IOutItemAllFormats> outArchive) throws SevenZipException;
     }

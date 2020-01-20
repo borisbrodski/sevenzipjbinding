@@ -1,7 +1,7 @@
-﻿;!@Lang2@!UTF-8!
+;!@Lang2@!UTF-8!
 ;       : Jakob Schmidt
 ;  9.07 : Kian Andersen, Jørgen Rasmussen
-; 15.00 : 2015-07-05 : scootergrisen
+; 15.00 : 2016-04-08 : scootergrisen
 ;
 ;
 ;
@@ -37,7 +37,7 @@ Genstart
 Pauset
 Er du sikker på du vil annullere?
 500
-&Fil
+&Filer
 R&ediger
 &Vis
 F&avoritter
@@ -45,8 +45,8 @@ Funk&tioner
 &Hjælp
 540
 &Åbn
-Åbn &indeni
-Åbn &udenfor
+Åbn &inden i
+Åbn &uden for
 &Vis
 &Rediger
 O&mdøb
@@ -197,12 +197,12 @@ Skrivebeskyttet
 Indstillinger
 Sprog
 Sprog:
-Editor
-&Editor-program:
-&Sammenligningsprogram (Diff):
+Redigering
+&Rediger:
+&Sammenlign (Diff):
 2200
 System
-Tilknyt 7-Zip til:
+Knyt 7-Zip til:
 Alle brugere
 2301
 Vis i Windows genvejsmenu
@@ -254,7 +254,7 @@ Arkivtypen er ikke understøttet
 Filen {0} findes allerede
 Filen '{0}' er blevet ændret.\nVil du opdatere den i arkivet?
 Kan ikke opdatere filen\n'{0}'
-Kan ikke starte editor.
+Kan ikke starte redigering.
 Filen ligner en virus (filnavnet indeholder lange mellemrum i navn).
 Handlingen kan ikke kaldes fra en mappe med lang sti.
 Du skal vælge en fil
@@ -334,7 +334,7 @@ Funktionen understøttes ikke
 3800
 Indtast adgangskode
 Indtast adgangskode:
-Indtast adgangskoden igen:
+Indtast adgangskode igen:
 &Vis adgangskode
 Adgangskoderne er ikke ens
 Brug kun engelske bogstaver, numre og specialtegn (!, #, $, ...) til adgangskoden
@@ -369,7 +369,7 @@ Krypteringsmetode:
 Kr&ypter filnavne
 Hukommelsesforbrug ved nedpakning:
 Hukommelsesforbrug ved udpakning:
-Slet filer efter kompression
+Slet filer efter komprimering
 4040
 Gem symbolsk links
 Gem hard links
@@ -429,12 +429,12 @@ Kommentar
 &Kommentar:
 Vælg
 Fravælg
-Masker:
+Maske:
 6600
 Egenskaber
 Mappehistorik
-Diagnostiske beskeder
-Besked
+Diagnostiske meddelelser
+Meddelelse
 7100
 Computer
 Netværk
@@ -473,14 +473,14 @@ CRC checksum for data og navne:
 7600
 Benchmark
 Hukommelsesforbrug:
-Komprimering
-Dekomprimering
+Nedpakning
+Udpakning
 Vurdering
 Samlet vurdering
 Aktuelt
 Resultat
 CPU forbrug
-Vurdering / Forbrug
+Vurdering/forbrug
 Gennemløb:
 7700
 Opret/rediger genvej

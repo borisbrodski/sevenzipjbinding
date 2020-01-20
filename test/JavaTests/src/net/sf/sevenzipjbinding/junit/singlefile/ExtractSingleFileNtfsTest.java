@@ -1,9 +1,9 @@
 package net.sf.sevenzipjbinding.junit.singlefile;
 
-import net.sf.sevenzipjbinding.ArchiveFormat;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
 
@@ -25,19 +25,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test4Compression2Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test4Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test4Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -49,19 +37,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test4Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test4Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test4Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -73,19 +49,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test5Compression1Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test5Compression1FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test5Compression1FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -97,19 +61,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test5Compression2Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test5Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test5Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -121,19 +73,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test5Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test5Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test5Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -145,19 +85,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test1Compression2Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test1Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test1Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -169,19 +97,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test1Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test1Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test1Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -193,19 +109,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test2Compression2Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test2Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test2Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -217,19 +121,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test2Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test2Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test2Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -241,19 +133,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test3Compression2Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test3Compression2FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test3Compression2FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -265,19 +145,7 @@ public class ExtractSingleFileNtfsTest extends ExtractSingleFileAbstractTest {
     @Override
     @Ignore
     @Test
-    public void test3Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
     public void test3Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Ignore
-    @Test
-    public void test3Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
 }

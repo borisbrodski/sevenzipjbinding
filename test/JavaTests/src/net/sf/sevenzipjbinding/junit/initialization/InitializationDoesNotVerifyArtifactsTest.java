@@ -8,13 +8,18 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 
-import org.junit.Test;
-
 /**
- * Tests, that 7-Zip-JBinding initialization procedure doesn't verify or overwrite temporary artifacts.
+ * Tests, that 7-Zip-JBinding initialization procedure doesn't verify or overwrite temporary artifacts. This test
+ * contains two phases and should be started with:
+ * <ul>
+ * <li>-Dsevenziptest.standard_initialization_test_phase=1
+ * <li>-Dsevenziptest.standard_initialization_test_phase=2
+ * </ul>
  *
  * @author Boris Brodski
  * @since 4.65-1

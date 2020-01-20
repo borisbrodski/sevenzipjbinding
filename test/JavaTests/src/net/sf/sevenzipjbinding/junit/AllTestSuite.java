@@ -14,9 +14,14 @@ import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
 import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
+import net.sf.sevenzipjbinding.junit.common.ArchiveFormatTest;
+import net.sf.sevenzipjbinding.junit.common.DeclareThrowsSevenZipExceptionTest;
+import net.sf.sevenzipjbinding.junit.common.JUnitInitializationTest;
+import net.sf.sevenzipjbinding.junit.common.TestBaseTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevelRatioImpact;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
@@ -68,63 +73,46 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesGenericZipTe
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateMultipleFilesNonGenericZipTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGeneric7zTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericBZip2Test;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericGZipTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericTarTest;
-import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericZipTest;
+import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileGenericTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericBZip2Test;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
-import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchive7z;
-import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive.UnicodeFilenamesInArchiveZip;
+import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.CHeadCacheInStreamTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.EnumTest;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth0MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth1MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width1Depth2MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth0MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth1MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width2Depth2MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth0MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth1MtWidth3;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth0;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth1;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth2;
-import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest.Width3Depth2MtWidth3;
+import net.sf.sevenzipjbinding.junit.jbindingtools.ExceptionHandlingTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
-import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswords;
+import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength3;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength4;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength5;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength6;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength7;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength8;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength9;
+import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithEmptyBuffer;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.NoReadLimitSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekSet;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekCur;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekEnd;
+import net.sf.sevenzipjbinding.junit.misc.VolumedArchiveInStreamTest.ReadSingleBytesSeekSet;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileArjTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileCabVolumeTest;
@@ -154,6 +142,7 @@ import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVo
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVolumePassTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileTarTest;
+import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileUdfTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileWimTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileXarTest;
 import net.sf.sevenzipjbinding.junit.multiplefiles.ExtractMultipleFileZipPassTest;
@@ -204,6 +193,7 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeP
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumePassTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileSevenZipVolumeTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileTarTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileUdfTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileWimTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileXarTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZTest;
@@ -229,29 +219,7 @@ import net.sf.sevenzipjbinding.junit.snippets.PrintCountOfItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.SevenZipJBindingInitCheckTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAddRemoveItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.UpdateAlterItemsTest;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength3;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength4;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength5;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength6;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength7;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength8;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength9;
-import net.sf.sevenzipjbinding.junit.tools.ByteArrayStreamTest.ByteArrayStreamTestWithEmptyBuffer;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.NoReadLimitSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxThreeBytesSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadMaxTwoBytesSeekSet;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekCur;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekEnd;
-import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingleBytesSeekSet;
+import net.sf.sevenzipjbinding.junit.tools.TypeVariableResolverTest;
 
 
 /**
@@ -262,13 +230,14 @@ import net.sf.sevenzipjbinding.junit.tools.VolumedArchiveInStreamTest.ReadSingle
  */
 public class AllTestSuite extends TestSuite {
     static Class<?>[] commonTests = { //
-    /*    */JUnitInitializationTest.class, //
             ArchiveFormatTest.class, //
-            DeclareThrowsSevenZipExceptionTest.class, //
-            PTest.class, //
-            VersionTest.class, //
             CHeadCacheInStreamTest.class, //
+            DeclareThrowsSevenZipExceptionTest.class, //
+            ExceptionHandlingTest.class, //
             HeadCacheOnAutodetectionTest.class, //
+            JUnitInitializationTest.class, //
+            TestBaseTest.class, //
+            VersionTest.class, //
     };
 
     static Class<?>[] badArchiveTests = { //
@@ -276,8 +245,7 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] encodingArchiveTests = { //
-    /*    */UnicodeFilenamesInArchive7z.class, //
-            UnicodeFilenamesInArchiveZip.class, //
+            /*    */UnicodeFilenamesInArchive.class, //
     };
 
     static Class<?>[] bugArchiveTests = { //
@@ -319,8 +287,7 @@ public class AllTestSuite extends TestSuite {
             ExtractMultipleFileSevenZipVolumePassTest.class, //
             ExtractMultipleFileSevenZipVolumeTest.class, //
             ExtractMultipleFileTarTest.class, //
-            // TODO Uncomment after resolving security problems in 7-zip
-            //            ExtractMultipleFileUdfTest.class, //
+            ExtractMultipleFileUdfTest.class, //
             ExtractMultipleFileWimTest.class, //
             ExtractMultipleFileXarTest.class, //
             ExtractMultipleFileZipPassTest.class, //
@@ -373,8 +340,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileSevenZipVolumePassTest.class, //
             ExtractSingleFileSevenZipVolumeTest.class, //
             ExtractSingleFileTarTest.class, //
-            // TODO Uncomment after resolving security problems in 7-zip
-            //            ExtractSingleFileUdfTest.class, //
+            ExtractSingleFileUdfTest.class, //
             ExtractSingleFileWimTest.class, //
             ExtractSingleFileXarTest.class, //
             ExtractSingleFileZTest.class, //
@@ -406,20 +372,8 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] toolsTests = { //
-    /*    */NoReadLimitSeekSet.class, //
-            NoReadLimitSeekCur.class, //
-            NoReadLimitSeekEnd.class, //
-            ReadSingleBytesSeekSet.class, //
-            ReadSingleBytesSeekCur.class, //
-            ReadSingleBytesSeekEnd.class, //
-            ReadMaxTwoBytesSeekSet.class, //
-            ReadMaxTwoBytesSeekCur.class, //
-            ReadMaxTwoBytesSeekEnd.class, //
-            ReadMaxThreeBytesSeekSet.class, //
-            ReadMaxThreeBytesSeekCur.class, //
-            ReadMaxThreeBytesSeekEnd.class, //
-            ByteArrayStreamTestWithEmptyBuffer.class, //
             ByteArrayStreamTestWithBufferLength1.class, //
+            ByteArrayStreamTestWithBufferLength100.class, //
             ByteArrayStreamTestWithBufferLength2.class, //
             ByteArrayStreamTestWithBufferLength3.class, //
             ByteArrayStreamTestWithBufferLength4.class, //
@@ -428,54 +382,27 @@ public class AllTestSuite extends TestSuite {
             ByteArrayStreamTestWithBufferLength7.class, //
             ByteArrayStreamTestWithBufferLength8.class, //
             ByteArrayStreamTestWithBufferLength9.class, //
-            ByteArrayStreamTestWithBufferLength100.class, //
-            JBindingTest.class, //
-            Width1Depth0MtWidth0.class, //
-            Width1Depth1MtWidth0.class, //
-            Width1Depth2MtWidth0.class, //
-            Width2Depth0MtWidth0.class, //
-            Width2Depth1MtWidth0.class, //
-            Width2Depth2MtWidth0.class, //
-            Width3Depth0MtWidth0.class, //
-            Width3Depth1MtWidth0.class, //
-            Width3Depth2MtWidth0.class, //
-            Width1Depth0MtWidth1.class, //
-            Width1Depth1MtWidth1.class, //
-            Width1Depth2MtWidth1.class, //
-            Width2Depth0MtWidth1.class, //
-            Width2Depth1MtWidth1.class, //
-            Width2Depth2MtWidth1.class, //
-            Width3Depth0MtWidth1.class, //
-            Width3Depth1MtWidth1.class, //
-            Width3Depth2MtWidth1.class, //
-            Width1Depth0MtWidth2.class, //
-            Width1Depth1MtWidth2.class, //
-            Width1Depth2MtWidth2.class, //
-            Width2Depth0MtWidth2.class, //
-            Width2Depth1MtWidth2.class, //
-            Width2Depth2MtWidth2.class, //
-            Width3Depth0MtWidth2.class, //
-            Width3Depth1MtWidth2.class, //
-            Width3Depth2MtWidth2.class, //
-            Width1Depth0MtWidth3.class, //
-            Width1Depth1MtWidth3.class, //
-            Width1Depth2MtWidth3.class, //
-            Width2Depth0MtWidth3.class, //
-            Width2Depth1MtWidth3.class, //
-            Width2Depth2MtWidth3.class, //
-            Width3Depth0MtWidth3.class, //
-            Width3Depth1MtWidth3.class, //
-            Width3Depth2MtWidth3.class, //
-            JNIToolsTest.class, //
-            ParamSpecTest.class, //
+            ByteArrayStreamTestWithEmptyBuffer.class, //
             EnumTest.class, //
+            JBindingTest.class, //
+            JNIToolsTest.class, //
+            NoReadLimitSeekCur.class, //
+            NoReadLimitSeekEnd.class, //
+            NoReadLimitSeekSet.class, //
+            ParamSpecTest.class, //
+            ReadMaxThreeBytesSeekCur.class, //
+            ReadMaxThreeBytesSeekEnd.class, //
+            ReadMaxThreeBytesSeekSet.class, //
+            ReadMaxTwoBytesSeekCur.class, //
+            ReadMaxTwoBytesSeekEnd.class, //
+            ReadMaxTwoBytesSeekSet.class, //
+            ReadSingleBytesSeekCur.class, //
+            ReadSingleBytesSeekEnd.class, //
+            ReadSingleBytesSeekSet.class, //
+            TypeVariableResolverTest.class, //
     };
     static Class<?>[] compressionTests = { //
-    /*    */CompressExceptionGetItemInformationTest.CompressException7zTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionBZip2Test.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionGZipTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionTarTest.class, //
-            CompressExceptionGetItemInformationTest.CompressExceptionZipTest.class, //
+            CompressExceptionGetItemInformationTest.class, //
             CompressExceptionGetConnectedArchiveTest.class, //
 
             TraceCompressionTest.class, //
@@ -494,12 +421,10 @@ public class AllTestSuite extends TestSuite {
             StandaloneUpdateNonGenericBZip2Test.class, //
             StandaloneUpdateNonGenericGZipTest.class, //
 
-            CompressFeatureSetLevel.CompressionFeatureSetLevelBZip2.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelGZip.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelSevenZip.class, //
-            CompressFeatureSetLevel.CompressionFeatureSetLevelZip.class, //
-            CompressFeatureSetSolid.CompressionFeatureSetSolidSevenZip.class, //
-            CompressFeatureSetThreadCount.CompressionFeatureSetLevelSevenZip.class, //
+            CompressFeatureSetLevel.class, //
+            CompressFeatureSetLevelRatioImpact.class, //
+            CompressFeatureSetSolid.class, //
+            CompressFeatureSetThreadCount.class, //
 
             CompressGenericSingleFile7zPassHeaderTest.class, //
             CompressGenericSingleFile7zPassNullTest.class, //
@@ -537,11 +462,7 @@ public class AllTestSuite extends TestSuite {
             UpdateMultipleFilesNonGeneric7zTest.class, //
             UpdateMultipleFilesNonGenericTarTest.class, //
             UpdateMultipleFilesNonGenericZipTest.class, //
-            UpdateSingleFileGeneric7zTest.class, //
-            UpdateSingleFileGenericBZip2Test.class, //
-            UpdateSingleFileGenericGZipTest.class, //
-            UpdateSingleFileGenericTarTest.class, //
-            UpdateSingleFileGenericZipTest.class, //
+            UpdateSingleFileGenericTest.class, //
             UpdateSingleFileNonGeneric7zTest.class, //
             UpdateSingleFileNonGenericBZip2Test.class, //
             UpdateSingleFileNonGenericGZipTest.class, //
@@ -550,7 +471,7 @@ public class AllTestSuite extends TestSuite {
 
     };
     static Class<?>[] miscTests = { //
-            ArchiveWithTwoPasswords.class, //
+            ArchiveWithTwoPasswordsTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
@@ -576,6 +497,8 @@ public class AllTestSuite extends TestSuite {
     }
 
     public static Test suite() throws Exception {
+        setSystemPropretyIfNotAlready(TestConfiguration.TEST_PARAM__TRACE, "false");
+
         String singleBundle = System.getProperty("SINGLEBUNDLE");
         if (singleBundle != null) {
             singleBundle = singleBundle.replaceAll("[-0-9]|  +", "").trim();
@@ -600,5 +523,11 @@ public class AllTestSuite extends TestSuite {
         }
 
         return allTestSuite;
+    }
+
+    static void setSystemPropretyIfNotAlready(String name, String value) {
+        if (System.getProperty(name) == null) {
+            System.setProperty(name, value);
+        }
     }
 }

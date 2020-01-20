@@ -22,13 +22,11 @@ LOCAL_FLAGS=$(TARGET_FLAGS) \
 SRCS=\
   ../../../../CPP/7zip/Archive/7z/7zDecode.cpp \
   ../../../../CPP/7zip/Archive/7z/7zExtract.cpp \
-  ../../../../CPP/7zip/Archive/7z/7zFolderOutStream.cpp \
   ../../../../CPP/7zip/Archive/7z/7zHandler.cpp \
   ../../../../CPP/7zip/Archive/7z/7zHeader.cpp \
   ../../../../CPP/7zip/Archive/7z/7zIn.cpp \
   ../../../../CPP/7zip/Archive/7z/7zRegister.cpp \
   ../../../../CPP/7zip/Archive/Common/CoderMixer2.cpp \
-  ../../../../CPP/7zip/Archive/Common/CrossThreadProgress.cpp \
   ../../../../CPP/7zip/Archive/Common/ItemNameUtils.cpp \
   ../../../../CPP/7zip/Archive/Common/OutStreamWithCRC.cpp \
   ../../../../CPP/7zip/Bundles/SFXCon/SfxCon.cpp \
@@ -158,8 +156,6 @@ Threads.o : ../../../../C/Threads.c
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/7z/7zDecode.cpp
 7zExtract.o : ../../../../CPP/7zip/Archive/7z/7zExtract.cpp
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/7z/7zExtract.cpp
-7zFolderOutStream.o : ../../../../CPP/7zip/Archive/7z/7zFolderOutStream.cpp
-	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/7z/7zFolderOutStream.cpp
 7zHandler.o : ../../../../CPP/7zip/Archive/7z/7zHandler.cpp
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/7z/7zHandler.cpp
 7zHeader.o : ../../../../CPP/7zip/Archive/7z/7zHeader.cpp
@@ -170,8 +166,6 @@ Threads.o : ../../../../C/Threads.c
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/7z/7zRegister.cpp
 CoderMixer2.o : ../../../../CPP/7zip/Archive/Common/CoderMixer2.cpp
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/Common/CoderMixer2.cpp
-CrossThreadProgress.o : ../../../../CPP/7zip/Archive/Common/CrossThreadProgress.cpp
-	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/Common/CrossThreadProgress.cpp
 ItemNameUtils.o : ../../../../CPP/7zip/Archive/Common/ItemNameUtils.cpp
 	$(CXX) $(CXXFLAGS) ../../../../CPP/7zip/Archive/Common/ItemNameUtils.cpp
 OutStreamWithCRC.o : ../../../../CPP/7zip/Archive/Common/OutStreamWithCRC.cpp
@@ -334,13 +328,11 @@ OBJS=\
  Threads.o \
  7zDecode.o \
  7zExtract.o \
- 7zFolderOutStream.o \
  7zHandler.o \
  7zHeader.o \
  7zIn.o \
  7zRegister.o \
  CoderMixer2.o \
- CrossThreadProgress.o \
  ItemNameUtils.o \
  OutStreamWithCRC.o \
  SfxCon.o \

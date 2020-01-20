@@ -1,5 +1,5 @@
-
 package net.sf.sevenzipjbinding.junit.compression;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -30,6 +30,8 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.compression.UpdateAbstractTest.UpdateAbstractTestContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
@@ -44,7 +46,16 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class UpdateAbstractTest<T extends IOutItemBase> extends CompressAbstractTest {
+public abstract class UpdateAbstractTest<T extends IOutItemBase>
+        extends CompressAbstractTest<UpdateAbstractTestContext> {
+    public static class UpdateAbstractTestContext extends AbstractTestContext {
+        VirtualContentConfiguration virtualContentConfiguration = new VirtualContentConfiguration();
+
+        boolean useEncryption;
+        boolean useEncryptionNoPassword;
+        boolean useHeaderEncryption;
+    }
+
     protected static abstract class ArchiveUpdater {
         abstract void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception;
     }
@@ -272,34 +283,17 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
     private static final int OUTARCHIVE_MAX_SIZE = 10000000;
     private static final String DEFAULT_PASSWORD = "test-pass-321";
-    private VirtualContentConfiguration virtualContentConfiguration = new VirtualContentConfiguration();
 
-    private boolean useEncryption;
-    private boolean useEncryptionNoPassword;
-    private boolean useHeaderEncryption;
-
-    public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
-        this.useEncryptionNoPassword = useEncryptionNoPassword;
-    }
-
-    public void setUseEncryption(boolean useEncryption) {
-        this.useEncryption = useEncryption;
-    }
-
-    public void setUseHeaderEncryption(boolean useHeaderEncryption) {
-        this.useHeaderEncryption = useHeaderEncryption;
-    }
-
-    protected ArchiveUpdater updaterContent = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterContent = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);
             change.newContent = new byte[100];
-            random.get().nextBytes(change.newContent);
+            getRandom().nextBytes(change.newContent);
         }
     };
 
-    protected ArchiveUpdater updaterLastModificationTime = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterLastModificationTime = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);
@@ -308,7 +302,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
     };
 
-    protected ArchiveUpdater updaterUserGroup = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterUserGroup = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);
@@ -317,7 +311,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
     };
 
-    protected ArchiveUpdater updaterPath = new ArchiveUpdater() {
+    protected final ArchiveUpdater updaterPath = new ArchiveUpdater() {
         @Override
         public void prepareArchiveUpdate(IInArchive inArchive, ChangeLog changeLog, int index) throws Exception {
             Change change = changeLog.updateItem(index);
@@ -325,9 +319,22 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
     };
 
+    public void setUseEncryptionNoPassword(boolean useEncryptionNoPassword) {
+        context().useEncryptionNoPassword = useEncryptionNoPassword;
+    }
+
+    public void setUseEncryption(boolean useEncryption) {
+        context().useEncryption = useEncryption;
+    }
+
+    public void setUseHeaderEncryption(boolean useHeaderEncryption) {
+        context().useHeaderEncryption = useHeaderEncryption;
+    }
+
     protected void testUpdate(final int countOfFiles, final int directoriesDepth, final int maxSubdirectories,
             final int averageFileLength, final int deltaFileLength, ArchiveUpdater... archiveUpdaters) throws Exception {
-        VirtualContent virtualContent = new VirtualContent(virtualContentConfiguration);
+        UpdateAbstractTestContext context = context();
+        VirtualContent virtualContent = new VirtualContent(context.virtualContentConfiguration);
         ArchiveFormat archiveFormat = getArchiveFormat();
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
@@ -336,11 +343,11 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         }
 
         String password = null;
-        if (useEncryption && !useEncryptionNoPassword) {
+        if (context.useEncryption && !context.useEncryptionNoPassword) {
             password = DEFAULT_PASSWORD;
         }
         IOutCreateArchive<IOutItemAllFormats> outArchive = SevenZip.openOutArchive(archiveFormat);
-        if (useHeaderEncryption) {
+        if (context.useHeaderEncryption) {
             assertTrue(outArchive instanceof IOutFeatureSetEncryptHeader);
             ((IOutFeatureSetEncryptHeader) outArchive).setHeaderEncryption(true);
         }
@@ -349,7 +356,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         try {
             byteArrayStream = new ByteArrayStream(OUTARCHIVE_MAX_SIZE);
 
-            virtualContent.createOutArchive(outArchive, byteArrayStream, useEncryption, password);
+            virtualContent.createOutArchive(outArchive, byteArrayStream, context.useEncryption, password);
             ok = true;
         } finally {
             try {
@@ -377,7 +384,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
         int newCount = changeLog.reindex(inArchive);
         IOutCreateCallback<IOutItemAllFormats> updateCallbackBase = getOutUpdateCallbackBase(inArchive, changeLog);
 
-        if (useEncryption) {
+        if (context.useEncryption) {
             updateCallbackBase = new OutCreateCallbackWithPasswordWrapper<IOutItemAllFormats>(updateCallbackBase,
                     password);
         }
@@ -385,7 +392,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
         byteArrayStreamUpdated.rewind();
 
-        if (useHeaderEncryption) {
+        if (context.useHeaderEncryption) {
             assertHeaderCrypted(byteArrayStream, archiveFormat);
         }
 
@@ -398,8 +405,8 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase> extends Compres
 
         updateVirtualContent(virtualContent, changeLog);
 
-        if (useEncryption && !useEncryptionNoPassword) {
-            byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/u.7z"), true);
+        if (context.useEncryption && !context.useEncryptionNoPassword) {
+            // byteArrayStream.writeToOutputStream(new FileOutputStream("/tmp/u.7z"), true);
             assertAllItemsCrypted(inArchive);
         }
         virtualContent.verifyInArchive(updatedInArchive, password);

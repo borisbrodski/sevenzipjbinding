@@ -13,6 +13,9 @@ import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
 /**
  * Test head caching.
@@ -20,31 +23,25 @@ import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
  * @author Boris Brodski
  * @since 15.09
  */
-public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase {
+public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase<VoidContext> {
     private static final int BAD_ARCHIVE_SIZE = 1 * 1024 * 1024;
 
-    long headReadingCounter;
-    long bytesRead;
+    private static ThreadLocal<Long> headReadingCounter = newThreadLocalLongInit0();
+    private static ThreadLocal<Long> bytesRead = newThreadLocalLongInit0();
+
     @Test
+    @Repeat
+    @Multithreaded
     public void openBadArchiveWithAutodetection() throws Exception {
         try {
             doOpenBadArchive(null);
             fail("Managed to open a broken archive");
         } catch (Exception e) {
         }
-        Assert.assertTrue(headReadingCounter <= 4);
-        //        System.out.println();
-        //        System.out.println("Reads     : " + headReadingCounter);
-        //        System.out.println("Read bytes: " + bytesRead + " bytes");
-    }
-
-    @Test
-    public void openBadArchiveWithAutodetectionMultithreaded() throws Throwable {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                openBadArchiveWithAutodetection();
-            }
-        }, null);
+        Assert.assertTrue(headReadingCounter.get() <= 4);
+        log();
+        log("Reads     : " + headReadingCounter.get());
+        log("Read bytes: " + bytesRead.get() + " bytes");
     }
 
     public void doOpenBadArchive(ArchiveFormat archiveFormat) throws Exception {
@@ -57,14 +54,14 @@ public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase {
 
             public int read(byte[] data) throws SevenZipException {
                 if (offset < 4096) {
-                    headReadingCounter++;
+                    headReadingCounter.set(headReadingCounter.get() + 1);
                 }
                 int result = 0;
                 for (int i = 0; i < data.length && offset < archive.length; i++) {
                     data[i] = archive[offset++];
                     result++;
                 }
-                bytesRead += result;
+                bytesRead.set(bytesRead.get() + result);
                 return result;
             }
 

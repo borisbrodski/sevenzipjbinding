@@ -1,5 +1,5 @@
 ;!@Lang2@!UTF-8!
-; 15.07 : 2015-09-24 : Stefán Örvar Sigmundsson
+; 15.14 : 2016-04-23 : Stefán Örvar Sigmundsson
 ;
 ;
 ;
@@ -16,7 +16,7 @@ Icelandic
 Íslenska
 401
 Í lagi
-Hætta við
+Viðhætta
 
 
 
@@ -35,7 +35,7 @@ Endurræsa
 &Forgrunnur
 &Gera hlé
 Í hléi
-Ert þú viss um að þú viljir hætta við?
+Ert þú viss um að þú viljir viðhætta?
 500
 &Skrá
 &Breyta
@@ -148,21 +148,21 @@ Höfðastærð
 Samtala
 Einkenni
 Sýndarvistfang
-Kenni
+Auðkenni
 Stutt nafn
-Skaparaforrit
+Skaparahugbúnaður
 Geirastærð
 Hamur
 Mjúktengill
 Villa
 Heildarstærð
-Laus stærð
+Laust pláss
 Klasastærð
 Merki
 Staðarnafn
 Veitandi
 NT-öryggi
-Víxilstraumur
+Víxlstraumur
 Aðstoðar-
 Eytt
 Er tré
@@ -174,8 +174,8 @@ Villur
 Viðvaranir
 Viðvörun
 Straumar
-Víxilstraumar
-Víxilstraumastærð
+Víxlstraumar
+Víxlstraumastærð
 Sýndarstærð
 Afþjöppuð stærð
 Efnisleg heildarstærð
@@ -249,7 +249,7 @@ Kerfið getur ekki ráðstafað nauðsynlega magninu af minninu
 Getur ekki skapað möppuna „{0}“
 Uppfærsluaðgerðir eru ekki studdar fyrir þetta safn.
 Getur ekki opnað skrána „{0}“ sem safn
-Getur ekki opnað dulkóðaða safnið „{0}“. Rangt lykilorð?
+Getur ekki opnað dulkóðaða safnið „{0}“. Rangt aðgangsorð?
 Óstudd safntegund
 Skráin „{0}“ er nú þegar til
 Skránni „{0}“ var breytt.\nVilt þú uppfæra hana í safninu?
@@ -290,9 +290,9 @@ Engin slóðarnöfn
 Algild slóðarnöfn
 Afstæð slóðarnöfn
 3420
-Yfirskriftarhamur:
-Spyrja áður en yfirskrifað er
-Yfirskrifa án kvaðningar
+Yfirritunarhamur:
+Spyrja áður en yfirritað er
+Yfirrita án kvaðningar
 Sleppa gildandi skrám
 Sjálfendurnefnun
 Sjálfendurnefnun gildandi skráa
@@ -300,8 +300,8 @@ Sjálfendurnefnun gildandi skráa
 Útrýma afritinu af rótarmöppunni
 Endurheimta skráaröryggi
 3500
-Staðfesta skráaryfiritun
-Móttökumappan inniheldur nú þegar meðhöndluðu skrána.
+Staðfesta skráaryfirritun
+Áfangastaðsmappan inniheldur nú þegar meðhöndluðu skrána.
 Vilt þú yfirrita gildandi skrána
 með þessari?
 {0} bæti
@@ -310,10 +310,10 @@ Sjálfendurnefnun
 Óstudd þjöppunaraðferð fyrir „{0}“.
 Gagnavilla í „{0}“. Skráin er brotin
 CRC mistókst í „{0}“. Skráin er brotin.
-Gagnavilla í dulkóðuðu „{0}“. Rangt lykilorð?
-CRC mistókst í dulkóðuðu skránni „{0}“. Rangt lykilorð?
+Gagnavilla í dulkóðuðu „{0}“. Rangt aðgangsorð?
+CRC mistókst í dulkóðuðu skránni „{0}“. Rangt aðgangsorð?
 3710
-Rangt lykilorð?
+Rangt aðgangsorð?
 3721
 Óstudd þjöppunaraðferð
 Gagnavilla
@@ -322,8 +322,8 @@ CRC mistókst
 Óvæntur endir gagna
 Það eru gögn eftir endanum á aðalgögnunum
 Er ekki safn
-Höfuðvillur
-Rangt lykilorð
+Höfðavillur
+Rangt aðgangsorð
 3763
 Ótiltækt upphaf safns
 Óstaðfest upphaf safns
@@ -332,14 +332,14 @@ Rangt lykilorð
 
 Óstuddur eiginleiki
 3800
-Ritaðu lykilorðið
-Ritaðu lykilorðið:
-Endurritaðu lykilorðið:
-Sýna lykilorðið
-Lykilorðin samsvarast ekki
-Notaðu einungis enska stafi, tölur og sérstök rittákn (!, #, $, o.s.frv.) í lykilorðunum
-Lykilorðið er of langt
-Lykilorð
+Ritaðu aðgangsorðið
+Ritaðu aðgangsorðið:
+Endurritaðu aðgangsorðið:
+Sýna aðgangsorðið
+Aðgangsorðin samsvarast ekki
+Notaðu einungis enska stafi, tölur og sérstök rittákn (!, #, $, o.s.frv.) í aðgangsorðunum
+Aðgangsorðið er of langt
+Aðgangsorð
 3900
 Liðinn tími:
 Tími eftir:
@@ -491,5 +491,5 @@ Tengill til:
 Tengiltegund
 Harðtengill
 Skráarmjúktengill
-Möppumjúktengill
-Möpputenging
+Skráasafnsmjúktengill
+Skráasafnstenging

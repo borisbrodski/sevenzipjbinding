@@ -20,8 +20,8 @@ import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
@@ -57,6 +57,7 @@ public class ZipContentComparator {
     private final boolean expectFailure;
     private String corruptDataErrorMessage;
     private List<String> ignoreList = new ArrayList<String>();
+    private String removeFilenamePrefix;
 
     public ZipContentComparator(ArchiveFormat archiveFormat, IInArchive sevenZipArchive, ZipFile zipFile,
             boolean useSimpleInterface, String password, boolean expectFailure) {
@@ -294,6 +295,13 @@ public class ZipContentComparator {
                 }
             }
         }
+        if (removeFilenamePrefix != null && removeFilenamePrefix.length() > 0) {
+            for (UniversalFileEntryInfo info : fileNames) {
+                if (info.filename != null && info.filename.startsWith(removeFilenamePrefix)) {
+                    info.filename = info.filename.substring(removeFilenamePrefix.length());
+                }
+            }
+        }
         return fileNames;
     }
 
@@ -509,5 +517,9 @@ public class ZipContentComparator {
         int getExtractedIndicesCount() {
             return extractedIndices.size();
         }
+    }
+
+    public void setRemoveFilenamePrefix(String removeFilenamePrefix) {
+        this.removeFilenamePrefix = removeFilenamePrefix;
     }
 }

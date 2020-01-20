@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
@@ -15,10 +17,12 @@ import net.sf.sevenzipjbinding.IOutFeatureSetMultithreading;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Tests compression feature: thread count.
@@ -26,13 +30,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingleFile {
-    public static class CompressionFeatureSetLevelSevenZip extends CompressFeatureSetThreadCount {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.SEVEN_ZIP;
-        }
-    }
+public class CompressFeatureSetThreadCount extends CompressFeatureAbstractSingleFile<VoidContext> {
 
     private class ThreadCountingCreateArchiveCallback extends FeatureSingleFileCreateArchiveCallback {
         private Set<Long> threadIdSet = Collections.synchronizedSet(new HashSet<Long>());
@@ -65,45 +63,37 @@ public abstract class CompressFeatureSetThreadCount extends CompressFeatureAbstr
 
     private static final int ENTROPY = 100;
     private static final int DATA_SIZE = 1000000;
+    private static final int DATA_SIZE_LOW_MEMORY = 10000;
+
+    private int getDataSize() {
+        if (TestConfiguration.getCurrent().isOnLowMemory()) {
+            return DATA_SIZE_LOW_MEMORY;
+        }
+        return DATA_SIZE;
+    }
+
+    @Override
+    protected ArchiveFormat getArchiveFormat() {
+        return ArchiveFormat.SEVEN_ZIP;
+    }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testThreadCount1() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetMultithreading(1);
-            }
-        });
+        doTestCompressionFeatureSetMultithreading(1);
     }
 
     @Test
-    public void testThreadCount1Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetMultithreading(1);
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testThreadCount2() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetMultithreading(2);
-            }
-        });
-    }
-
-    @Test
-    public void testThreadCount2Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetMultithreading(2);
-            }
-        });
+        doTestCompressionFeatureSetMultithreading(2);
     }
 
     private void doTestCompressionFeatureSetMultithreading(int threadCount) throws Exception {
         IOutCreateArchive<IOutItemAllFormats> outArchive = createArchive();
+        addCloseable(outArchive);
 
         assertTrue(outArchive instanceof IOutFeatureSetLevel);
         IOutFeatureSetMultithreading featureOutArchive = (IOutFeatureSetMultithreading) outArchive;
@@ -112,14 +102,12 @@ public abstract class CompressFeatureSetThreadCount extends CompressFeatureAbstr
         featureOutArchive.setThreadCount(-1); // Set default
         featureOutArchive.setThreadCount(threadCount);
 
-        RandomContext randomContext = new RandomContext(DATA_SIZE, ENTROPY);
-        ByteArrayStream outputByteArrayStream = new ByteArrayStream(DATA_SIZE * 2);
+        RandomContext randomContext = new RandomContext(getDataSize(), ENTROPY);
+        ByteArrayStream outputByteArrayStream = new ByteArrayStream(getDataSize() * 2);
         ThreadCountingCreateArchiveCallback callback = new ThreadCountingCreateArchiveCallback(randomContext);
         outArchive.createArchive(outputByteArrayStream, 1, callback);
         verifySingleFileArchive(randomContext, outputByteArrayStream);
 
         assertEquals(threadCount, callback.getInvolvedThreadCount());
-
-        closeArchive(outArchive);
     }
 }

@@ -16,6 +16,7 @@
 
 #include "../Common/ArchiveName.h"
 #include "../Common/CompressCall.h"
+#include "../Common/ExtractingFilePath.h"
 
 #include "MessagesDialog.h"
 
@@ -209,7 +210,23 @@ STDMETHODIMP CDropSource::QueryContinueDrag(BOOL escapePressed, DWORD keyState)
     {
       CCopyToOptions options;
       options.folder = Folder;
+
+      // 15.13: fixed problem with mouse cursor for password window.
+      // DoDragDrop() probably calls SetCapture() to some hidden window.
+      // But it's problem, if we show some modal window, like MessageBox.
+      // So we return capture to our window.
+      // If you know better way to solve the problem, please notify 7-Zip developer.
+      
+      // MessageBoxW(*Panel, L"test", L"test", 0);
+
+      /* HWND oldHwnd = */ SetCapture(*Panel);
+
       Result = Panel->CopyTo(options, Indices, &Messages);
+
+      // do we need to restore capture?
+      // ReleaseCapture();
+      // oldHwnd = SetCapture(oldHwnd);
+
       if (Result != S_OK || !Messages.IsEmpty())
         return DRAGDROP_S_CANCEL;
     }
@@ -334,7 +351,10 @@ void CPanel::OnDrag(LPNMLISTVIEW /* nmListView */)
       if (isFSFolder)
         s = GetItemRelPath(index);
       else
+      {
         s = GetItemName(index);
+        s = Get_Correct_FsFile_Name(s);
+      }
       names.Add(fs2us(dirPrefix) + s);
     }
     if (!CopyNamesToHGlobal(dataObjectSpec->hGlobal, names))
@@ -357,10 +377,14 @@ void CPanel::OnDrag(LPNMLISTVIEW /* nmListView */)
     effectsOK |= DROPEFFECT_MOVE;
   DWORD effect;
   _panelCallback->DragBegin();
+  
   HRESULT res = DoDragDrop(dataObject, dropSource, effectsOK, &effect);
+  
   _panelCallback->DragEnd();
   bool canceled = (res == DRAGDROP_S_CANCEL);
+  
   CDisableNotify disableNotify(*this);
+  
   if (res == DRAGDROP_S_DROP)
   {
     res = dropSourceSpec->Result;
@@ -450,7 +474,7 @@ void CDropTarget::PositionCursor(POINTL ptl)
   {
     POINT pt2 = pt;
     App->_window.ScreenToClient(&pt2);
-    for (int i = 0; i < kNumPanelsMax; i++)
+    for (unsigned i = 0; i < kNumPanelsMax; i++)
       if (App->IsPanelVisible(i))
         if (App->Panels[i].IsEnabled())
           if (ChildWindowFromPointEx(App->_window, pt2,
@@ -458,7 +482,7 @@ void CDropTarget::PositionCursor(POINTL ptl)
           {
             m_Panel = &App->Panels[i];
             m_IsAppTarget = false;
-            if (i == SrcPanelIndex)
+            if ((int)i == SrcPanelIndex)
             {
               m_PanelDropIsAllowed = false;
               return;

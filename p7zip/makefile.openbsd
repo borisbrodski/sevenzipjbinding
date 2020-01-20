@@ -9,9 +9,12 @@ ALLFLAGS=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE \
         -DNDEBUG -D_REENTRANT -DENV_UNIX -fPIC \
         $(LOCAL_FLAGS)
 
+ALLFLAGS_CPP=-DENV_HAVE_GCCVISIBILITYPATCH -fvisibility=hidden -fvisibility-inlines-hidden
+
 CXX=$(MYCXX) $(MYCXXFLAGS)
 CC=$(MYCC)  $(MYCFLAGS)
-LINK_SHARED=-shared
+CC_SHARED=-fPIC
+LINK_SHARED=-fPIC -shared
                                                                                                       
 LOCAL_LIBS=-lpthread
 LOCAL_LIBS_DLL=$(LOCAL_LIBS)

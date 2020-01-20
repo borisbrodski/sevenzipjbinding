@@ -1,16 +1,13 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Main features of 15.09-2.01beta (Release candidate, extraction/compression/update, cross-platform, based on zip/p7zip 15.09)
+Main features of 16.02-2.01 (Release, extraction/compression/update, cross-platform, based on zip/p7zip 16.02)
 
-    * Bind 7-Zip 15.09 (beta), In-memory archive extraction/creation/update
+    * Bind 7-Zip 16.02, In-memory archive extraction/creation/update
 
     * Extraction of
-        - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, Iso,
-          Lzh, Lzma, Nsis, Ntfs, Rar, Rpm, Split, Tar, Wim, Xar, Z, Zip
-
-	- HFS, Udf removed
-	  (Temporary removed due to a security issue in 7-zip prior to 16.x)
+        - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, HFS, Iso,
+          Lzh, Lzma, Nsis, Ntfs, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
 
         - Archive format auto detection
         - Support for password protected and in volumes splitted archives
@@ -26,18 +23,21 @@ Main features of 15.09-2.01beta (Release candidate, extraction/compression/updat
     * Cross-platform. Binaries available for
         - Windows 32/64
         - Linux 32/64
-        - Mac OS X 32/64
-        - ARM (ASMv4+, small endian)
+        - Mac OS X 64
+        - ARM (WARNING: Not a part of -AllPlatform or -AllLinux !!!)
+			* ARMv5 (armel)
+			* ARMv6 (RaspberryPi 2)
+			* ARMv7 (armhf)
+			* ARM64
 
     * Multi-platform distributions (with platform auto-detection):
         - AllWindows - includes Win32 and Win64
         - AllLinux - includes Linux32 and Linux64 (ARM not included)
-        - AllMax - includes Mac OS X 32 and Mac OS X 64
-        - AllPlatforms - includes AllWindows, AllLinux and AllMac + build optimized for RaspberryPI
+        - AllPlatforms - includes AllWindows, AllLinux and Mac
 
     * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
 
-        * Over 8350 JUnit tests:
+        * Over 8599 JUnit tests:
             - Initialization
             - All extraction methods
             - Compression
@@ -47,10 +47,11 @@ Main features of 15.09-2.01beta (Release candidate, extraction/compression/updat
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>
-            <version>15.09-2.01beta</version>
+            <version>16.02-2.01</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
-            <version>15.09-2.01beta</version>
+            <version>16.02-2.01</version>
         </dependency>
+

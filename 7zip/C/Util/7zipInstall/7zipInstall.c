@@ -1,5 +1,5 @@
 /* 7zipInstall.c - 7-Zip Installer
-2015-09-28 : Igor Pavlov : Public domain */
+2015-12-09 : Igor Pavlov : Public domain */
 
 #include "Precomp.h"
 
@@ -261,7 +261,7 @@ static LONG MyRegistry_CreateKeyAndVal(HKEY parentKey, LPCWSTR keyName, LPCWSTR 
   if (res == ERROR_SUCCESS)
   {
     res = MyRegistry_SetString(destKey, valName, val);
-    res = RegCloseKey(destKey);
+    /* res = */ RegCloseKey(destKey);
   }
   return res;
 }
@@ -284,7 +284,7 @@ static LONG MyRegistry_CreateKeyAndVal_32(HKEY parentKey, LPCWSTR keyName, LPCWS
   if (res == ERROR_SUCCESS)
   {
     res = MyRegistry_SetString(destKey, valName, val);
-    res = RegCloseKey(destKey);
+    /* res = */ RegCloseKey(destKey);
   }
   return res;
 }
@@ -322,7 +322,7 @@ static Bool FindSignature(CSzFile *stream, UInt64 *resPos)
     processed -= k7zStartHeaderSize;
     for (pos = 0; pos <= processed; pos++)
     {
-      for (; buf[pos] != '7' && pos <= processed; pos++);
+      for (; pos <= processed && buf[pos] != '7'; pos++);
       if (pos > processed)
         break;
       if (memcmp(buf + pos, k7zSignature, k7zSignatureSize) == 0)
@@ -571,6 +571,8 @@ static INT_PTR CALLBACK MyDlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM
           #endif
           break;
         }
+        
+        default: return FALSE;
       }
       break;
     
@@ -598,8 +600,8 @@ static LONG SetRegKey_Path2(HKEY parentKey)
   if (res == ERROR_SUCCESS)
   {
     res = MyRegistry_SetString(destKey, k_Reg_Path32, path);
-    res = MyRegistry_SetString(destKey, k_Reg_Path, path);
-    res = RegCloseKey(destKey);
+    /* res = */ MyRegistry_SetString(destKey, k_Reg_Path, path);
+    /* res = */ RegCloseKey(destKey);
   }
   return res;
 }
@@ -718,10 +720,10 @@ static void WriteCLSID()
     WCHAR destPath[MAX_PATH + 10];
     wcscpy(destPath, path);
     wcscat(destPath, L"7-zip32.dll");
-    res = MyRegistry_SetString(destKey, NULL, destPath);
-    res = MyRegistry_SetString(destKey, L"ThreadingModel", L"Apartment");
+    /* res = */ MyRegistry_SetString(destKey, NULL, destPath);
+    /* res = */ MyRegistry_SetString(destKey, L"ThreadingModel", L"Apartment");
     // DeleteRegValue(destKey, L"InprocServer32");
-    res = RegCloseKey(destKey);
+    /* res = */ RegCloseKey(destKey);
   }
 
   #endif
@@ -737,10 +739,10 @@ static void WriteCLSID()
     WCHAR destPath[MAX_PATH + 10];
     wcscpy(destPath, path);
     wcscat(destPath, L"7-zip.dll");
-    res = MyRegistry_SetString(destKey, NULL, destPath);
-    res = MyRegistry_SetString(destKey, L"ThreadingModel", L"Apartment");
+    /* res = */ MyRegistry_SetString(destKey, NULL, destPath);
+    /* res = */ MyRegistry_SetString(destKey, L"ThreadingModel", L"Apartment");
     // DeleteRegValue(destKey, L"InprocServer32");
-    res = RegCloseKey(destKey);
+    /* res = */ RegCloseKey(destKey);
   }
 }
 
@@ -1011,7 +1013,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
       BOOL bRet;
       MSG msg;
       
-      while ((bRet = GetMessage(&msg, g_HWND, 0, 0)) != 0)
+      // we need messages for all thread windows (including EDITTEXT window in dialog)
+      while ((bRet = GetMessage(&msg, NULL, 0, 0)) != 0)
       {
         if (bRet == -1)
           return retCode;
@@ -1083,7 +1086,6 @@ static int Install()
   WCHAR sfxPath[MAX_PATH + 2];
 
   Bool needReboot = False;
-  size_t pathLen;
 
   allocImp.Alloc = SzAlloc;
   allocImp.Free = SzFree;
@@ -1116,6 +1118,7 @@ static int Install()
 
 if (res == SZ_OK)
 {
+  size_t pathLen;
   if (!g_SilentMode)
   {
     GetDlgItemTextW(g_HWND, IDE_EXTRACT_PATH, path, MAX_PATH);

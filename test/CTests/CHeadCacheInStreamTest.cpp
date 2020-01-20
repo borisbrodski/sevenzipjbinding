@@ -285,9 +285,17 @@ const char * testHeadCacheInStream(UInt32 streamSize, UInt32 cacheSize, bool rea
 }
 
 JBINDING_JNIEXPORT jstring JNICALL
-Java_net_sf_sevenzipjbinding_junit_jbindingtools_CHeadCacheInStreamTest_nativeSimpleTests(JNIEnv * env, jobject thiz) {
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_CHeadCacheInStreamTest_nativeSimpleTests(JNIEnv * env, jobject thiz, jboolean printTraceLog) {
 
-#define RUN(caption, test) {printf("Test: " caption "\n"); const char * msg = (test); if (msg) {printf("FAILED TEST: " caption "\n"); return env->NewStringUTF(msg);}}
+#define RUN(caption, test) {								\
+        if (printTraceLog) 									\
+            printf("Test: " caption "\n");					\
+        const char * msg = (test);							\
+        if (msg) {											\
+            printf("FAILED TEST: " caption "\n");			\
+            return env->NewStringUTF(msg);					\
+        }													\
+    }
 
     RUN("CGeneratorInStream, empty", testInStream(CMyComPtr<IInStream>(new CGeneratorInStream(0)), 0));
     RUN("CGeneratorInStream, size 1", testInStream(CMyComPtr<IInStream>(new CGeneratorInStream(1)), 1));

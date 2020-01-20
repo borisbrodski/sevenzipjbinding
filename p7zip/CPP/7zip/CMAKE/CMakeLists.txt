@@ -27,11 +27,21 @@ add_subdirectory(7za)
 
 add_subdirectory(7z_)
 
-add_subdirectory(7zG)
-
-add_subdirectory(7zFM)
-
 add_subdirectory(7zr)
 
 add_subdirectory(Format7zFree  bin)
+
+find_package(wxWidgets COMPONENTS core base adv)
+
+if(wxWidgets_FOUND)
+
+	add_subdirectory(7zG)
+
+	add_subdirectory(7zFM)
+
+else(wxWidgets_FOUND)
+	message("Warning : wxWidgets not found")
+endif(wxWidgets_FOUND)
+
+
 

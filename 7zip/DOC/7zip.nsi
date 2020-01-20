@@ -1,9 +1,9 @@
 ;--------------------------------
 ;Defines
 
-!define VERSION_MAJOR 15
-!define VERSION_MINOR 09
-!define VERSION_POSTFIX_FULL " beta"
+!define VERSION_MAJOR 16
+!define VERSION_MINOR 02
+!define VERSION_POSTFIX_FULL ""
 !ifdef WIN64
 !ifdef IA64
 !define VERSION_SYS_POSTFIX_FULL " for Windows IA-64"
@@ -262,6 +262,7 @@ Section
   File uz.txt
   File va.txt
   File vi.txt
+  File yo.txt
   File zh-cn.txt
   File zh-tw.txt
 
@@ -464,6 +465,7 @@ Section Uninstall
   Delete $INSTDIR\Lang\va.txt
   Delete $INSTDIR\Lang\vi.txt
   Delete $INSTDIR\Lang\vr.txt
+  Delete $INSTDIR\Lang\yo.txt
   Delete $INSTDIR\Lang\zh-cn.txt
   Delete $INSTDIR\Lang\zh-tw.txt
 

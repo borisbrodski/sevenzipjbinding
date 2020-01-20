@@ -5,5 +5,6 @@ SUBDIRS = 7za \
           7z_ \
           Format7zFree \
           Rar \
-          test_emul
+          Lzham \
+          test_lib
 

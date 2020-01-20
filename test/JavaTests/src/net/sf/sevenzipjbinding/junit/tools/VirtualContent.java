@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
-import static net.sf.sevenzipjbinding.junit.JUnitTestBase.WEEK;
+import static net.sf.sevenzipjbinding.junit.tools.DateTools.WEEK;
+import static net.sf.sevenzipjbinding.junit.tools.RandomTools.getRandom;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,8 +40,6 @@ import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.PropID.AttributesBitMask;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
-import net.sf.sevenzipjbinding.junit.JUnitTestBase;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
 /**
@@ -388,8 +387,6 @@ public class VirtualContent {
     /**
      * Constant seed used here. Tests should be deterministic in order to ensure easy debugging.
      */
-    private final Random random = new Random(JUnitTestBase.RANDOM_GLOBAL_SEED);
-
     private List<Item> itemList = new ArrayList<Item>();
     private Map<String, Integer> usedNames = new HashMap<String, Integer>();
     private VirtualContentConfiguration configuration;
@@ -461,23 +458,22 @@ public class VirtualContent {
     }
 
     private void addSymLink(Item item) {
-        item.symLink = JUnitNativeTestBase.getRandomName(random);
+        item.symLink = RandomTools.getRandomName();
         item.symLinkSet = true;
     }
 
     private void addHardLink(Item item) {
-        item.hardLink = JUnitNativeTestBase.getRandomName(random);
+        item.hardLink = RandomTools.getRandomName();
         item.hardLinkSet = true;
     }
     private void fillWithRandomData(Item item) {
-        item.creationTime = JUnitNativeTestBase.getDate(3 * WEEK);
-        item.modificationTime = JUnitNativeTestBase.getDate(2 * WEEK);
-        item.lastAccessTime = JUnitNativeTestBase.getDate(WEEK);
-        item.user = JUnitNativeTestBase.getRandomName(random);
-        item.group = JUnitNativeTestBase.getRandomName(random);
-        item.attributes = random.nextInt(17) & ~(AttributesBitMask.FILE_ATTRIBUTE_DIRECTORY);
+        item.creationTime = DateTools.getDate(3 * WEEK);
+        item.modificationTime = DateTools.getDate(2 * WEEK);
+        item.lastAccessTime = DateTools.getDate(WEEK);
+        item.user = RandomTools.getRandomName();
+        item.group = RandomTools.getRandomName();
+        item.attributes = getRandom().nextInt(17) & ~(AttributesBitMask.FILE_ATTRIBUTE_DIRECTORY);
     }
-
 
     private void reindexUsedNames() {
         usedNames.clear();
@@ -524,18 +520,18 @@ public class VirtualContent {
         itemList.clear();
         List<String> directoryList = getRandomDirectory(directoriesDepth, maxSubdirectories, countOfFiles);
         for (int i = 0; i < countOfFiles; i++) {
-            int fileLength = averageFileLength + random.nextInt(deltaFileLength + 1);
-            if (configuration.isAllowEmptyFiles() && random.nextInt(3) == 0) {
+            int fileLength = averageFileLength + getRandom().nextInt(deltaFileLength + 1);
+            if (configuration.isAllowEmptyFiles() && getRandom().nextInt(3) == 0) {
                 fileLength = 0;
             }
             byte[] fileContent = getRandomFileContent(fileLength);
 
-            String directory = directoryList.get(random.nextInt(directoryList.size()));
+            String directory = directoryList.get(getRandom().nextInt(directoryList.size()));
 
             Item item;
-            if (addLinks && random.nextInt(5) == 3) {
+            if (addLinks && getRandom().nextInt(5) == 3) {
                 item = new Item(null);
-                if (random.nextInt(2) == 0) {
+                if (getRandom().nextInt(2) == 0) {
                     addSymLink(item);
                 } else {
                     addHardLink(item);
@@ -545,7 +541,7 @@ public class VirtualContent {
             }
             fillWithRandomData(item);
             for (int j = 0; j < 50; j++) {
-                String filename = filenameGenerator == null ? JUnitNativeTestBase.getRandomFilename(random)
+                String filename = filenameGenerator == null ? RandomTools.getRandomFilename()
                         : filenameGenerator.nextFilename();
                 if (!usedNames.containsKey((directory + filename).toUpperCase())) {
                     item.path = directory + filename;
@@ -564,6 +560,7 @@ public class VirtualContent {
 
     private byte[] getRandomFileContent(int length) {
         byte[] content = new byte[length];
+        Random random = getRandom();
         switch (random.nextInt(3)) {
         case 0:
             // Random content
@@ -613,7 +610,7 @@ public class VirtualContent {
         for (int i = 0; i < maxSubdirectories; i++) {
             String name = null;
             for (int j = 0; j < 50; j++) {
-                name = JUnitNativeTestBase.getRandomFilename(random);
+                name = RandomTools.getRandomFilename();
                 if (usedNames.containsKey(name)) {
                     name = null;
                 } else {

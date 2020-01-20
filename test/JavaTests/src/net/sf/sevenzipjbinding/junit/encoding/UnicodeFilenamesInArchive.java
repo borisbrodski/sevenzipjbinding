@@ -4,40 +4,35 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
+
+import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
-import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 
-import org.junit.Test;
+public class UnicodeFilenamesInArchive extends JUnitNativeTestBase<VoidContext> {
 
-public abstract class UnicodeFilenamesInArchive extends JUnitNativeTestBase {
+    private final ArchiveFormat archiveFormat;
 
-    public static class UnicodeFilenamesInArchive7z extends UnicodeFilenamesInArchive {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.SEVEN_ZIP;
-        }
-
+    public UnicodeFilenamesInArchive(ArchiveFormat archiveFormat) {
+        this.archiveFormat = archiveFormat;
     }
 
-    public static class UnicodeFilenamesInArchiveZip extends UnicodeFilenamesInArchive {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.ZIP;
-        }
-
+    @Parameters
+    public static Collection<Object> data() {
+        return Arrays.asList(new Object[] { ArchiveFormat.SEVEN_ZIP, ArchiveFormat.ZIP });
     }
-
-    protected abstract ArchiveFormat getArchiveFormat();
 
     @Test
     public void testUpperLowerCaseUnicode() throws Throwable {
@@ -45,10 +40,11 @@ public abstract class UnicodeFilenamesInArchive extends JUnitNativeTestBase {
         IInArchive inArchive = null;
         Throwable throwable = null;
 
+        log("Testing for " + archiveFormat);
         try {
             randomAccessFile = new RandomAccessFile("testdata/encoding/unicode_file_names."
-                    + getArchiveFormat().getMethodName().toLowerCase(), "r");
-            inArchive = SevenZip.openInArchive(getArchiveFormat(), new RandomAccessFileInStream(randomAccessFile));
+                    + archiveFormat.getMethodName().toLowerCase(), "r");
+            inArchive = SevenZip.openInArchive(archiveFormat, new RandomAccessFileInStream(randomAccessFile));
             ISimpleInArchive simpleInterface = inArchive.getSimpleInterface();
             assertEquals(2, simpleInterface.getNumberOfItems());
 

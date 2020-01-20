@@ -1,7 +1,7 @@
 ﻿;!@Lang2@!UTF-8!
 ;  4.07 : Nicolas Sierro
 ;  9.07 : Philippe Berthault
-; 15.05 : Sylvain St-Amand (SSTSylvain)
+; 15.14 : Sylvain St-Amand (SSTSylvain)
 ;
 ;
 ;
@@ -262,7 +262,7 @@ Vous devez sélectionner un ou plusieurs fichiers
 Trop d'objets
 Ne peut ouvrir les fichiers {0} comme une archive
 Le fichier {0} est ouvert comme une archive
-L'archive est ouvert avec un décalage
+L'archive est ouverte avec un décalage
 3300
 Extraction
 Compression
@@ -326,7 +326,7 @@ Erreur en-têtes
 Mauvais mot de passe
 3763
 Démarrage non disponible d'une archive
-Démarrage non confirmer d'une archive
+Démarrage non confirmé d'une archive
 
 
 
@@ -371,8 +371,8 @@ Mémoire pour la compression :
 Mémoire pour la décompression :
 Effacer les fichiers après compression
 4040
-Emmagasine liens symbolique
-Emmagasine liens solide
+Emmagasine liens symboliques
+Emmagasine liens solides
 Emmagasine flux de données alternatifs
 Emmagasine fichier de sécurité
 4050

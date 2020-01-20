@@ -14,16 +14,24 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  * @since 9.20-2.00
  */
 public class CompressNonGenericSingleFileBZip2Test extends CompressNonGenericSingleFileAbstractTest<IOutItemBZip2> {
-    private class SingleFileCreateArchiveCallbackBZip2 extends SingleFileCreateArchiveCallback {
+    private static class SingleFileCreateArchiveCallbackBZip2 extends SingleFileCreateArchiveCallback<IOutItemBZip2> {
+        protected SingleFileCreateArchiveCallbackBZip2(TestContext testContext) {
+            super(testContext);
+        }
+
         public IOutItemBZip2 getItemInformation(int index, OutItemFactory<IOutItemBZip2> outItemFactory)
                 throws SevenZipException {
             IOutItemBZip2 outItem = outItemFactory.createOutItem();
 
             setBaseProperties(outItem);
-            setPropertiesForBZip2(outItem, getTestContext());
+            setPropertiesForBZip2(outItem, testContext);
 
             return outItem;
         }
+    }
+
+    public CompressNonGenericSingleFileBZip2Test(int size, int entropy) {
+        super(size, entropy);
     }
 
     @Override
@@ -32,8 +40,8 @@ public class CompressNonGenericSingleFileBZip2Test extends CompressNonGenericSin
     }
 
     @Override
-    protected SingleFileCreateArchiveCallback getSingleFileCreateArchiveCallback() {
-        return new SingleFileCreateArchiveCallbackBZip2();
+    protected SingleFileCreateArchiveCallback<IOutItemBZip2> getSingleFileCreateArchiveCallback() {
+        return new SingleFileCreateArchiveCallbackBZip2(getTestContext());
     }
 
     @Override

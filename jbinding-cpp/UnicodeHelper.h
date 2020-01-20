@@ -60,7 +60,7 @@ public:
         _unicodeString(str),
         _unicodeLength(wcslen(str))
     {
-        TRACE("Converting BSTR=>jchar: \"" << bstr <<"\"")
+        TRACE("Converting BSTR=>jchar: \"" << str <<"\"")
     }
 
     ToJChar(CMyComBSTR & myComBSTR) :

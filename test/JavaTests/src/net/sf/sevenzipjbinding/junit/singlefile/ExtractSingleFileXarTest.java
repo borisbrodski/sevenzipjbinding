@@ -1,9 +1,9 @@
 package net.sf.sevenzipjbinding.junit.singlefile;
 
-import net.sf.sevenzipjbinding.ArchiveFormat;
-
 import org.junit.Ignore;
 import org.junit.Test;
+
+import net.sf.sevenzipjbinding.ArchiveFormat;
 
 public class ExtractSingleFileXarTest extends ExtractSingleFileAbstractTest {
 
@@ -20,19 +20,7 @@ public class ExtractSingleFileXarTest extends ExtractSingleFileAbstractTest {
     @Override
     @Test
     @Ignore
-    public void test4Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
     public void test4Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
-    public void test4Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -44,19 +32,7 @@ public class ExtractSingleFileXarTest extends ExtractSingleFileAbstractTest {
     @Override
     @Test
     @Ignore
-    public void test5Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
     public void test5Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
-    public void test5Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -68,19 +44,7 @@ public class ExtractSingleFileXarTest extends ExtractSingleFileAbstractTest {
     @Override
     @Test
     @Ignore
-    public void test1Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
     public void test1Compression3FormatAutodetect() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
-    public void test1Compression3FormatAutodetectMultithreaded() throws Exception {
     }
 
     @Override
@@ -92,18 +56,7 @@ public class ExtractSingleFileXarTest extends ExtractSingleFileAbstractTest {
     @Override
     @Test
     @Ignore
-    public void test2Compression3Multithreaded() throws Exception {
-    }
-
-    @Override
-    @Test
-    @Ignore
     public void test2Compression3FormatAutodetect() throws Exception {
     }
 
-    @Override
-    @Test
-    @Ignore
-    public void test2Compression3FormatAutodetectMultithreaded() throws Exception {
-    }
 }

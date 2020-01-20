@@ -206,6 +206,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/GzHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/FatHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HandlerCont.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/HfsHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/LzmaHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/NtfsHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/PpmdHandler.cpp
@@ -213,7 +214,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/XzHandler.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CoderMixer2.cpp
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
+    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/CrossThreadProgress.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/DummyOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/FindSignature.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Common/HandlerOut.cpp
@@ -229,7 +230,7 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zEncode.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zExtract.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderInStream.cpp
-    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
+    #${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zFolderOutStream.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHandlerOut.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/7z/7zHeader.cpp
@@ -253,9 +254,8 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
 
-    # TODO 7-ZIP 9.x uncomment
-    #    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
-    #    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfHandler.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Udf/UdfIn.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Wim/WimHandlerOut.cpp
@@ -526,7 +526,7 @@ IF(MINGW)
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(MINGW)
     IF(NOT APPLE)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,-z,defs -Wl,--no-undefined") # Check for missing symbols
+        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-static-libstdc++ -static-libgcc -Wl,-z,defs -Wl,--no-undefined") # Check for missing symbols
     ENDIF()
 ENDIF(MINGW)
 

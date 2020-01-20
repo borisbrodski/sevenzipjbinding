@@ -229,10 +229,14 @@ private:
 
   COutFileStream *_outFileStreamSpec;
   CMyComPtr<ISequentialOutStream> _outFileStream;
+  
+  CObjectVector<NWindows::NFile::NDir::CDelayedSymLink> _delayedSymLinks;
 
 public:
   void Init(IInArchive *archiveHandler, const FString &directoryPath);
 
+  HRESULT SetFinalAttribs();
+  
   UInt64 NumErrors;
   bool PasswordIsDefined;
   UString Password;
@@ -449,11 +453,23 @@ STDMETHODIMP CArchiveExtractCallback::SetOperationResult(Int32 operationResult)
   }
   _outFileStream.Release();
   if (_extractMode && _processedFileInfo.AttribDefined)
-    SetFileAttrib(_diskFilePath, _processedFileInfo.Attrib);
+    SetFileAttrib(_diskFilePath, _processedFileInfo.Attrib, &_delayedSymLinks);
   PrintNewLine();
   return S_OK;
 }
 
+HRESULT CArchiveExtractCallback::SetFinalAttribs()
+{
+  HRESULT result = S_OK;
+
+  for (int i = 0; i != _delayedSymLinks.Size(); ++i)
+    if (!_delayedSymLinks[i].Create())
+      result = E_FAIL;
+
+  _delayedSymLinks.Clear();
+
+  return result;
+}
 
 STDMETHODIMP CArchiveExtractCallback::CryptoGetTextPassword(BSTR *password)
 {
@@ -693,7 +709,7 @@ STDMETHODIMP CArchiveUpdateCallback::CryptoGetTextPassword2(Int32 *passwordIsDef
   return StringToBstr(Password, password);
 }
 
-//////////////////////////////////////////////////////////////////////////
+
 // Main function
 
 #define NT_CHECK_FAIL_ACTION PrintError("Unsupported Windows version"); return 1;
@@ -709,12 +725,14 @@ int MY_CDECL main(int numArgs, const char *args[])
     PrintStringLn(kHelpString);
     return 1;
   }
+  
   NDLL::CLibrary lib;
   if (!lib.Load(NDLL::GetModuleDirPrefix() + FTEXT(kDllName)))
   {
     PrintError("Can not load 7-zip library");
     return 1;
   }
+
   Func_CreateObject createObjectFunc = (Func_CreateObject)lib.GetProc("CreateObject");
   if (!createObjectFunc)
   {
@@ -732,7 +750,9 @@ int MY_CDECL main(int numArgs, const char *args[])
     }
     c = (char)MyCharLower_Ascii(command[0]);
   }
+
   FString archiveName = CmdStringToFString(args[2]);
+  
   if (c == 'a')
   {
     // create archive command
@@ -766,6 +786,7 @@ int MY_CDECL main(int numArgs, const char *args[])
         dirItems.Add(di);
       }
     }
+
     COutFileStream *outFileStreamSpec = new COutFileStream;
     CMyComPtr<IOutStream> outFileStream = outFileStreamSpec;
     if (!outFileStreamSpec->Create(archiveName, false))
@@ -812,17 +833,21 @@ int MY_CDECL main(int numArgs, const char *args[])
     */
     
     HRESULT result = outArchive->UpdateItems(outFileStream, dirItems.Size(), updateCallback);
+    
     updateCallbackSpec->Finilize();
+    
     if (result != S_OK)
     {
       PrintError("Update Error");
       return 1;
     }
+    
     FOR_VECTOR (i, updateCallbackSpec->FailedFiles)
     {
       PrintNewLine();
       PrintError("Error for file", updateCallbackSpec->FailedFiles[i]);
     }
+    
     if (updateCallbackSpec->FailedFiles.Size() != 0)
       return 1;
   }
@@ -835,6 +860,7 @@ int MY_CDECL main(int numArgs, const char *args[])
     }
 
     bool listCommand;
+    
     if (c == 'l')
       listCommand = true;
     else if (c == 'x')
@@ -913,7 +939,28 @@ int MY_CDECL main(int numArgs, const char *args[])
       extractCallbackSpec->PasswordIsDefined = false;
       // extractCallbackSpec->PasswordIsDefined = true;
       // extractCallbackSpec->Password = L"1";
+
+      /*
+      const wchar_t *names[] =
+      {
+        L"mt",
+        L"mtf"
+      };
+      const unsigned kNumProps = sizeof(names) / sizeof(names[0]);
+      NCOM::CPropVariant values[kNumProps] =
+      {
+        (UInt32)1,
+        false
+      };
+      CMyComPtr<ISetProperties> setProperties;
+      archive->QueryInterface(IID_ISetProperties, (void **)&setProperties);
+      if (setProperties)
+        setProperties->SetProperties(names, values, kNumProps);
+      */
+
       HRESULT result = archive->Extract(NULL, (UInt32)(Int32)(-1), false, extractCallback);
+      if (result == S_OK)
+        result = extractCallbackSpec->SetFinalAttribs();  
       if (result != S_OK)
       {
         PrintError("Extract Error");
@@ -921,5 +968,6 @@ int MY_CDECL main(int numArgs, const char *args[])
       }
     }
   }
+
   return 0;
 }

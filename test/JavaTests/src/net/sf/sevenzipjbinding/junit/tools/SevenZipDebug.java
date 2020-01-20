@@ -11,6 +11,7 @@ public class SevenZipDebug {
         return nativeGetObjectCount();
     }
 
+    // TODO return String and print it using the TestLogger
     public static void printCPPObjects() {
         nativePrintObjects();
     }

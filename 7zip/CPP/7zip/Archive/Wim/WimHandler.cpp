@@ -130,9 +130,9 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
         int index = -1;
         FOR_VECTOR (i, xml.Images)
         {
-          const CImageInfo &image = xml.Images[i];
-          if (image.CTimeDefined)
-            if (index < 0 || ::CompareFileTime(&image.CTime, &xml.Images[index].CTime) < 0)
+          const CImageInfo &image2 = xml.Images[i];
+          if (image2.CTimeDefined)
+            if (index < 0 || ::CompareFileTime(&image2.CTime, &xml.Images[index].CTime) < 0)
               index = i;
         }
         if (index >= 0)
@@ -147,9 +147,9 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
         int index = -1;
         FOR_VECTOR (i, xml.Images)
         {
-          const CImageInfo &image = xml.Images[i];
-          if (image.MTimeDefined)
-            if (index < 0 || ::CompareFileTime(&image.MTime, &xml.Images[index].MTime) > 0)
+          const CImageInfo &image2 = xml.Images[i];
+          if (image2.MTimeDefined)
+            if (index < 0 || ::CompareFileTime(&image2.MTime, &xml.Images[index].MTime) > 0)
               index = i;
         }
         if (index >= 0)
@@ -158,7 +158,7 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
       break;
 
     case kpidComment:
-      if (image != NULL)
+      if (image)
       {
         if (_xmlInComments)
         {
@@ -388,7 +388,7 @@ static void MethodToProp(int method, int chunksSizeBits, NCOM::CPropVariant &pro
     char temp[32];
     
     if ((unsigned)method < ARRAY_SIZE(k_Methods))
-      strcpy(temp, k_Methods[method]);
+      strcpy(temp, k_Methods[(unsigned)method]);
     else
       ConvertUInt32ToString((unsigned)method, temp);
     
@@ -475,14 +475,10 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
 
       case kpidPackSize:
       {
-        UInt64 size = 0;
         if (si)
         {
           if (!si->Resource.IsSolidSmall())
-          {
-            size = si->Resource.PackSize;
-            prop = size;
-          }
+            prop = si->Resource.PackSize;
           else
           {
             if (si->Resource.SolidIndex >= 0)
@@ -492,17 +488,15 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
                 prop = _db.DataStreams[ss.StreamIndex].Resource.PackSize;
             }
           }
-        } else {
-            if (!item.IsDir) {
-                prop = size;
-            }
         }
+        else if (!item.IsDir)
+          prop = (UInt64)0;
+
         break;
       }
 
       case kpidSize:
       {
-        UInt64 size = 0;
         if (si)
         {
           if (si->Resource.IsSolid())
@@ -511,26 +505,19 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
             {
               if (si->Resource.SolidIndex >= 0)
               {
-                CSolid &ss = _db.Solids[(unsigned)si->Resource.SolidIndex];
+                const CSolid &ss = _db.Solids[(unsigned)si->Resource.SolidIndex];
                 prop = ss.UnpackSize;
               }
             }
             else
-            {
-              size = si->Resource.PackSize;
-              prop = size;
-            }
+              prop = si->Resource.PackSize;
           }
           else
-          {
-            size = si->Resource.UnpackSize;
-            prop = size;
-          }
-        } else {
-            if (!item.IsDir) {
-                prop = size;
-            }
+            prop = si->Resource.UnpackSize;
         }
+        else if (!item.IsDir)
+          prop = (UInt64)0;
+
         break;
       }
       
@@ -1036,6 +1023,7 @@ STDMETHODIMP CHandler::Open(IInStream *inStream, const UInt64 *, IArchiveOpenCal
   COM_TRY_END
 }
 
+
 STDMETHODIMP CHandler::Close()
 {
   _firstVolumeIndex = -1;
@@ -1101,7 +1089,7 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
   CMyComPtr<ICompressProgressInfo> progress = lps;
   lps->Init(extractCallback, false);
 
-  for (i = 0; i < numItems;
+  for (i = 0;; i++,
       currentTotalUnPacked += currentItemUnPacked)
   {
     currentItemUnPacked = 0;
@@ -1110,14 +1098,18 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
     lps->OutSize = currentTotalUnPacked;
 
     RINOK(lps->SetCur());
+
+    if (i >= numItems)
+      break;
+
     UInt32 index = allFilesMode ? i : indices[i];
-    i++;
     Int32 askMode = testMode ?
         NExtract::NAskMode::kTest :
         NExtract::NAskMode::kExtract;
 
     CMyComPtr<ISequentialOutStream> realOutStream;
     RINOK(extractCallback->GetStream(index, &realOutStream, askMode));
+
     if (index >= _db.SortedItems.Size())
     {
       if (!testMode && !realOutStream)
@@ -1161,13 +1153,16 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       continue;
     RINOK(extractCallback->PrepareOperation(askMode));
     Int32 opRes = NExtract::NOperationResult::kOK;
+    
     if (streamIndex != prevSuccessStreamIndex || realOutStream)
     {
       Byte digest[kHashSize];
       const CVolume &vol = _volumes[si.PartNumber];
       bool needDigest = !si.IsEmptyHash();
+      
       HRESULT res = unpacker.Unpack(vol.Stream, si.Resource, vol.Header, &_db,
           realOutStream, progress, needDigest ? digest : NULL);
+      
       if (res == S_OK)
       {
         if (!needDigest || memcmp(digest, si.Hash, kHashSize) == 0)
@@ -1182,12 +1177,15 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       else
         return res;
     }
+    
     realOutStream.Release();
     RINOK(extractCallback->SetOperationResult(opRes));
   }
+  
   return S_OK;
   COM_TRY_END
 }
+
 
 STDMETHODIMP CHandler::GetNumberOfItems(UInt32 *numItems)
 {

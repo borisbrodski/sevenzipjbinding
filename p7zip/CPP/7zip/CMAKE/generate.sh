@@ -24,6 +24,6 @@ doit "codeblocks" "CodeBlocks - Unix Makefiles"
 cd $CURDIR
 doit "EclipseCDT4" "Eclipse CDT4 - Unix Makefiles"
 
-#cd $CURDIR
-#doit "ninja" "Ninja"
+cd $CURDIR
+doit "ninja" "Ninja"
 

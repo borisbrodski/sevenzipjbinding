@@ -144,7 +144,7 @@ struct CStringTable
 
 struct CDialogInfo
 {
-	unsigned int id;
+	int id;
 	NWindows::NControl::CModalDialogImpl * (*createDialog)(NWindows::NControl::CModalDialog * dialog, HWND parentWindow);
 	CStringTable * stringTable;
 };

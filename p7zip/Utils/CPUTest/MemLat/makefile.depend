@@ -1,1 +1,0 @@
-MemLat.o: MemLat.cpp ../Benchmark.h ../MyVersion.h Walk.h

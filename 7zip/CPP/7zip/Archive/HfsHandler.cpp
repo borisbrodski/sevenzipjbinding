@@ -876,7 +876,7 @@ HRESULT CDatabase::LoadCatalog(const CFork &fork, const CObjectVector<CIdExtents
   // CNodeDescriptor nodeDesc;
   // nodeDesc.Parse(p);
   CHeaderRec hr;
-  hr.Parse(p + kNodeDescriptor_Size);
+  RINOK(hr.Parse(p + kNodeDescriptor_Size));
   
   // CaseSensetive = (Header.IsHfsX() && hr.KeyCompareType == 0xBC);
 
@@ -987,7 +987,9 @@ HRESULT CDatabase::LoadCatalog(const CFork &fork, const CObjectVector<CIdExtents
       item.GroupID = Get32(r + 0x24);
       item.AdminFlags = r[0x28];
       item.OwnerFlags = r[0x29];
+      */
       item.FileMode = Get16(r + 0x2A);
+      /*
       item.special.iNodeNum = Get16(r + 0x2C); // or .linkCount
       item.FileType = Get32(r + 0x30);
       item.FileCreator = Get32(r + 0x34);
@@ -1572,6 +1574,9 @@ HRESULT CHandler::ExtractZlibFile(
 
     UInt32 size = GetUi32(tableBuf + i * 8 + 4);
 
+    if (size > buf.Size() || size > kCompressionBlockSize + 1)
+      return S_FALSE;
+
     RINOK(ReadStream_FALSE(inStream, buf, size));
 
     if ((buf[0] & 0xF) == 0xF)
@@ -1759,7 +1764,7 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
             if (rem == 0)
             {
               // Here we check that there are no extra (empty) blocks in last extent.
-              if (extentRem >= (UInt64)((UInt32)1 << Header.BlockSizeLog))
+              if (extentRem >= ((UInt64)1 << Header.BlockSizeLog))
                 res = NExtract::NOperationResult::kDataError;
               break;
             }

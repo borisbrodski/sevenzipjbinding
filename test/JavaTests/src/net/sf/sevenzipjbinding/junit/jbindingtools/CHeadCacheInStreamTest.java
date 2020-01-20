@@ -2,23 +2,22 @@ package net.sf.sevenzipjbinding.junit.jbindingtools;
 
 import static org.junit.Assert.assertNull;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
-public class CHeadCacheInStreamTest extends JUnitNativeTestBase {
-    @Rule
-    public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
-
-    private native String nativeSimpleTests();
+public class CHeadCacheInStreamTest extends JUnitNativeTestBase<VoidContext> {
+    private native String nativeSimpleTests(boolean printLog);
 
     @Test
+    @Repeat
     @DebugModeOnly
     public void simpleTests() {
-        String errors = nativeSimpleTests();
+        String errors = nativeSimpleTests(TestConfiguration.getCurrent().isTrace());
         assertNull(errors, errors);
     }
 }

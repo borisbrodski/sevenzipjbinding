@@ -389,7 +389,10 @@ HRESULT CInArchive::ReadFileItem(int volIndex, int fsIndex, const CLongAllocDesc
     return S_FALSE;
   CFile &file = Files.Back();
   const CLogVol &vol = LogVols[volIndex];
-  CPartition &partition = Partitions[vol.PartitionMaps[lad.Location.PartitionRef].PartitionIndex];
+  unsigned partitionRef = lad.Location.PartitionRef;
+  if (partitionRef >= vol.PartitionMaps.Size())
+    return S_FALSE;
+  CPartition &partition = Partitions[vol.PartitionMaps[partitionRef].PartitionIndex];
 
   UInt32 key = lad.Location.Pos;
   UInt32 value;
@@ -425,7 +428,7 @@ HRESULT CInArchive::ReadItem(int volIndex, int fsIndex, const CLongAllocDesc &la
   if (lad.GetLen() != vol.BlockSize)
     return S_FALSE;
 
-  size_t size = lad.GetLen();
+  const size_t size = lad.GetLen();
   CByteBuffer buf(size);
   RINOK(Read(volIndex, lad, buf));
 
@@ -515,20 +518,20 @@ HRESULT CInArchive::ReadItem(int volIndex, int fsIndex, const CLongAllocDesc &la
   {
     if (!item.CheckChunkSizes() || !CheckItemExtents(volIndex, item))
       return S_FALSE;
-    CByteBuffer buf;
-    RINOK(ReadFromFile(volIndex, item, buf));
+    CByteBuffer buf2;
+    RINOK(ReadFromFile(volIndex, item, buf2));
     item.Size = 0;
     item.Extents.ClearAndFree();
     item.InlineData.Free();
 
-    const Byte *p = buf;
-    size = buf.Size();
+    const Byte *p2 = buf2;
+    const size_t size2 = buf2.Size();
     size_t processedTotal = 0;
-    for (; processedTotal < size;)
+    for (; processedTotal < size2;)
     {
       size_t processedCur;
       CFileId fileId;
-      RINOK(fileId.Parse(p + processedTotal, size - processedTotal, processedCur));
+      RINOK(fileId.Parse(p2 + processedTotal, size2 - processedTotal, processedCur));
       if (!fileId.IsItLinkParent())
       {
         CFile file;
@@ -596,8 +599,8 @@ API_FUNC_IsArc IsArc_Udf(const Byte *p, size_t size)
   {
     if (SecLogSize < 8)
       return res;
-    UInt32 offset = (UInt32)256 << SecLogSize;
-    size_t bufSize = (UInt32)1 << SecLogSize;
+    const UInt32 offset = (UInt32)256 << SecLogSize;
+    const UInt32 bufSize = (UInt32)1 << SecLogSize;
     if (offset + bufSize > size)
       res = k_IsArc_Res_NEED_MORE;
     else
@@ -609,6 +612,7 @@ API_FUNC_IsArc IsArc_Udf(const Byte *p, size_t size)
     }
   }
 }
+
 
 HRESULT CInArchive::Open2()
 {
@@ -644,8 +648,10 @@ HRESULT CInArchive::Open2()
   CExtent extentVDS;
   extentVDS.Parse(buf + i + 16);
   */
+
   const size_t kBufSize = 1 << 11;
   Byte buf[kBufSize];
+  
   for (SecLogSize = 11;; SecLogSize -= 3)
   {
     if (SecLogSize < 8)
@@ -654,7 +660,7 @@ HRESULT CInArchive::Open2()
     if (offset >= fileSize)
       continue;
     RINOK(_stream->Seek(offset, STREAM_SEEK_SET, NULL));
-    size_t bufSize = (UInt32)1 << SecLogSize;
+    const size_t bufSize = (size_t)1 << SecLogSize;
     size_t readSize = bufSize;
     RINOK(ReadStream(_stream, buf, &readSize));
     if (readSize == bufSize)
@@ -665,6 +671,7 @@ HRESULT CInArchive::Open2()
           break;
     }
   }
+  
   PhySize = (UInt32)(256 + 1) << SecLogSize;
   IsArc = true;
 
@@ -679,8 +686,7 @@ HRESULT CInArchive::Open2()
 
   for (UInt32 location = 0; ; location++)
   {
-    size_t bufSize = (UInt32)1 << SecLogSize;
-    size_t pos = 0;
+    const size_t bufSize = (size_t)1 << SecLogSize;
     if (((UInt64)(location + 1) << SecLogSize) > extentVDS.Len)
       return S_FALSE;
 
@@ -693,7 +699,10 @@ HRESULT CInArchive::Open2()
 
 
     CTag tag;
-    RINOK(tag.Parse(buf + pos, bufSize - pos));
+    {
+      const size_t pos = 0;
+      RINOK(tag.Parse(buf + pos, bufSize - pos));
+    }
     if (tag.Id == DESC_TYPE_Terminating)
       break;
     
@@ -855,9 +864,9 @@ HRESULT CInArchive::Open2()
     {
       if (nextExtent.GetLen() < 512)
         return S_FALSE;
-      CByteBuffer buf(nextExtent.GetLen());
-      RINOK(Read(volIndex, nextExtent, buf));
-      const Byte *p = buf;
+      CByteBuffer buf2(nextExtent.GetLen());
+      RINOK(Read(volIndex, nextExtent, buf2));
+      const Byte *p = buf2;
       size_t size = nextExtent.GetLen();
 
       CTag tag;
@@ -946,27 +955,62 @@ HRESULT CInArchive::Open2()
   }
 
   {
-    UInt32 secMask = ((UInt32)1 << SecLogSize) - 1;
+    const UInt32 secMask = ((UInt32)1 << SecLogSize) - 1;
     PhySize = (PhySize + secMask) & ~(UInt64)secMask;
   }
+  
+  NoEndAnchor = true;
+
   if (PhySize < fileSize)
   {
+    UInt64 rem = fileSize - PhySize;
+    const size_t secSize = (size_t)1 << SecLogSize;
+
     RINOK(_stream->Seek(PhySize, STREAM_SEEK_SET, NULL));
-    size_t bufSize = (UInt32)1 << SecLogSize;
-    size_t readSize = bufSize;
-    RINOK(ReadStream(_stream, buf, &readSize));
-    if (readSize == bufSize)
+
+    // some UDF images contain ZEROs before "Anchor Volume Descriptor Pointer" at the end
+
+    for (unsigned sec = 0; sec < 1024; sec++)
     {
-      CTag tag;
-      if (tag.Parse(buf, readSize) == S_OK)
-        if (tag.Id == DESC_TYPE_AnchorVolPtr)
+      if (rem == 0)
+        break;
+      
+      size_t readSize = secSize;
+      if (readSize > rem)
+        readSize = (size_t)rem;
+      
+      RINOK(ReadStream(_stream, buf, &readSize));
+      
+      if (readSize == 0)
+        break;
+      
+      if (readSize == secSize && NoEndAnchor)
+      {
+        CTag tag;
+        if (tag.Parse(buf, readSize) == S_OK &&
+            tag.Id == DESC_TYPE_AnchorVolPtr)
         {
-          PhySize += bufSize;
+          NoEndAnchor = false;
+          rem -= readSize;
+          PhySize = fileSize - rem;
+          continue;
         }
+      }
+      
+      size_t i;
+      for (i = 0; i < readSize && buf[i] == 0; i++);
+      if (i != readSize)
+        break;
+      rem -= readSize;
     }
+
+    if (rem == 0)
+      PhySize = fileSize;
   }
+
   return S_OK;
 }
+
 
 HRESULT CInArchive::Open(IInStream *inStream, CProgressVirt *progress)
 {
@@ -1000,6 +1044,7 @@ void CInArchive::Clear()
   IsArc = false;
   Unsupported = false;
   UnexpectedEnd = false;
+  NoEndAnchor = false;
 
   PhySize = 0;
   FileSize = 0;

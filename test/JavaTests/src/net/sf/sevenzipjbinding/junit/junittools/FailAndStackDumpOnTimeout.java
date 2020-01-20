@@ -15,6 +15,13 @@ public class FailAndStackDumpOnTimeout extends Statement {
     private Statement next;
     private final long timeout;
 
+    /**
+     *
+     * @param next
+     *            statement to execute
+     * @param timeout
+     *            timeout in milliseconds
+     */
     public FailAndStackDumpOnTimeout(Statement next, long timeout) {
         this.next = next;
         this.timeout = timeout;

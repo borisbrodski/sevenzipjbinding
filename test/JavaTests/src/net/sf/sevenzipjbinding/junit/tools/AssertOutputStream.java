@@ -1,10 +1,10 @@
 package net.sf.sevenzipjbinding.junit.tools;
 
+import org.junit.Assert;
+
 import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
-
-import org.junit.Assert;
 
 public class AssertOutputStream implements ISequentialOutStream {
 
@@ -21,4 +21,9 @@ public class AssertOutputStream implements ISequentialOutStream {
         return data.length;
     }
 
+    public boolean readEnitireStream() throws SevenZipException {
+        byte[] data = new byte[1];
+        int size = inStream.read(data);
+        return size == 0;
+    }
 }

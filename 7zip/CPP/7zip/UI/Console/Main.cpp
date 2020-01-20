@@ -4,11 +4,13 @@
 
 #include "../../../Common/MyWindows.h"
 
+#ifdef _WIN32
 #include <Psapi.h>
+#endif
 
 #include "../../../../C/CpuArch.h"
 
-#if defined( _WIN32) && defined( _7ZIP_LARGE_PAGES)
+#if defined( _7ZIP_LARGE_PAGES)
 #include "../../../../C/Alloc.h"
 #endif
 
@@ -158,7 +160,7 @@ static const char *kHelpString =
     "  -u[-][p#][q#][r#][x#][y#][z#][!newArchiveName] : Update options\n"
     "  -v{Size}[b|k|m|g] : Create volumes\n"
     "  -w[{path}] : assign Work directory. Empty path means a temporary directory\n"
-    "  -x[r[-|0]]]{@listfile|!wildcard} : eXclude filenames\n"
+    "  -x[r[-|0]]{@listfile|!wildcard} : eXclude filenames\n"
     "  -y : assume Yes on all queries\n";
 
 // ---------------------------
@@ -470,7 +472,7 @@ static void PrintHexId(CStdOutStream &so, UInt64 id)
 
 int Main2(
   #ifndef _WIN32
-  int numArgs, const char *args[]
+  int numArgs, char *args[]
   #endif
 )
 {

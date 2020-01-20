@@ -17,6 +17,7 @@ CREATE_SIMPLE_UDF=n
 CREATE_SIMPLE_WIM=n
 CREATE_SIMPLE_FAT=n
 CREATE_SIMPLE_NTFS=n
+CREATE_SIMPLE_HFS=n
 
 
 TMP=/tmp
@@ -260,3 +261,40 @@ if test $CREATE_SIMPLE_NTFS = y -o $CREATE_ALL = y ;then
     done
     rm -rf __tmp_volume
 fi
+
+if test $CREATE_SIMPLE_HFS = y -o $CREATE_ALL = y ;then
+    mkdir -p hfs
+    rm -rf __tmp_volume
+    mkdir -p __tmp_volume
+    rm -f hfs/*.hfs
+    rm -f hfs/*.zip
+
+    # -h Creates a legacy HFS format filesystem. This option is not recommended for file
+    #    systems that will be primarily used with Mac OS X or Darwin.
+    # -w Adds an HFS wrapper around the HFS Plus file system.  This wrapper is required
+    #    if the file system will be used to boot natively into Mac OS 9.
+    for params in 1: # 2:-h 3:-w TODO not supported in 7-zip 16.02.  Test with later 7-zip
+    do
+      for i in 1:5000 2:5000 3:5000
+      do
+        FILE="hfs/archive${i:0:1}.zip.${params:0:1}.hfs"
+        echo ""
+        echo "----------------> Creating $FILE"
+        echo ""
+        echo "CMD: mkfs.hfsplus -v 7-zip-test ${params:2} '$FILE'"
+        dd if=/dev/zero "of=$FILE" count=${i:2} bs=1024 \
+          && mkfs.hfsplus -v 7-zip-test ${params:2} "$FILE" \
+          && sudo mount "$FILE" __tmp_volume \
+          && sudo unzip -q archive${i:0:1}.zip -d __tmp_volume/ \
+          && ls -l __tmp_volume \
+          && echo "COPIED SUCCESSFULLY"
+        sync
+        sudo umount "$PWD/__tmp_volume"
+        zip -9 --junk-paths $FILE.zip $FILE
+        rm $FILE
+      done
+    done
+    rm -rf __tmp_volume
+fi
+
+# vim: set ts=2 sts=2 sw=2 expandtab:

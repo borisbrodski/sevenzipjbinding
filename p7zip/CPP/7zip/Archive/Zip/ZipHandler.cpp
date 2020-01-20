@@ -4,6 +4,7 @@
 
 #include "../../../Common/ComTry.h"
 #include "../../../Common/IntToString.h"
+#include "../../../Common/StringConvert.h"
 
 #include "../../../Windows/PropVariant.h"
 #include "../../../Windows/TimeUtils.h"
@@ -11,6 +12,7 @@
 #include "../../IPassword.h"
 
 #include "../../Common/FilterCoder.h"
+#include "../../Common/LimitedStreams.h"
 #include "../../Common/ProgressUtils.h"
 #include "../../Common/StreamObjects.h"
 #include "../../Common/StreamUtils.h"
@@ -141,14 +143,19 @@ static const Byte kProps[] =
   kpidCRC,
   kpidMethod,
   kpidHostOS,
-  kpidUnpackVer
+  kpidUnpackVer,
+  kpidVolumeIndex
 };
 
 static const Byte kArcProps[] =
 {
   kpidEmbeddedStubSize,
   kpidBit64,
-  kpidComment
+  kpidComment,
+  kpidTotalPhySize,
+  kpidIsVolume,
+  kpidVolumeIndex,
+  kpidNumVolumes
 };
 
 CHandler::CHandler()
@@ -174,17 +181,22 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
   {
     case kpidBit64:  if (m_Archive.IsZip64) prop = m_Archive.IsZip64; break;
     case kpidComment:  if (m_Archive.ArcInfo.Comment.Size() != 0) prop = MultiByteToUnicodeString(BytesToString(m_Archive.ArcInfo.Comment), CP_ACP); break;
-    case kpidPhySize:  prop = m_Archive.ArcInfo.GetPhySize(); break;
-    case kpidOffset:  /* if (m_Archive.ArcInfo.Base != 0) */
-        prop = m_Archive.ArcInfo.Base; break;
+
+    case kpidPhySize:  prop = m_Archive.GetPhySize(); break;
+    case kpidOffset:  prop = m_Archive.GetOffset(); break;
 
     case kpidEmbeddedStubSize:
     {
-      UInt64 stubSize = m_Archive.ArcInfo.GetEmbeddedStubSize();
+      UInt64 stubSize = m_Archive.GetEmbeddedStubSize();
       if (stubSize != 0)
         prop = stubSize;
       break;
     }
+
+    case kpidTotalPhySize: if (m_Archive.IsMultiVol) prop = m_Archive.Vols.GetTotalSize(); break;
+    case kpidVolumeIndex: if (m_Archive.IsMultiVol) prop = (UInt32)m_Archive.Vols.StartVolIndex; break;
+    case kpidIsVolume: if (m_Archive.IsMultiVol) prop = true; break;
+    case kpidNumVolumes: if (m_Archive.IsMultiVol) prop = (UInt32)m_Archive.Vols.Streams.Size(); break;
 
     case kpidWarningFlags:
     {
@@ -193,6 +205,18 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
       if (m_Archive.HeadersWarning) v |= kpv_ErrorFlags_HeadersError;
       if (v != 0)
         prop = v;
+      break;
+    }
+
+    case kpidError:
+    {
+      if (!m_Archive.Vols.MissingName.IsEmpty())
+      {
+        UString s;
+        s.SetFromAscii("Missing volume : ");
+        s += m_Archive.Vols.MissingName;
+        prop = s;
+      }
       break;
     }
 
@@ -208,7 +232,7 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
            but the stream has access only to zip part.
            In that case we ignore UnavailableStart error.
            maybe we must show warning in that case. */
-        UInt64 stubSize = m_Archive.ArcInfo.GetEmbeddedStubSize();
+        UInt64 stubSize = m_Archive.GetEmbeddedStubSize();
         if (stubSize < (UInt64)-m_Archive.ArcInfo.Base)
           v |= kpv_ErrorFlags_UnavailableStart;
       }
@@ -241,12 +265,14 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
   COM_TRY_BEGIN
   NWindows::NCOM::CPropVariant prop;
   const CItemEx &item = m_Items[index];
+  const CExtraBlock &extra = item.GetMainExtra();
+  
   switch (propID)
   {
     case kpidPath:
     {
       UString res;
-      item.GetUnicodeString(item.Name, res, _forceCodePage, _specifiedCodePage);
+      item.GetUnicodeString(res, item.Name, false, _forceCodePage, _specifiedCodePage);
       NItemName::ConvertToOSName2(res);
       prop = res;
       break;
@@ -261,9 +287,9 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
       FILETIME ft;
       UInt32 unixTime;
       UInt32 type;
-      if (item.CentralExtra.GetNtfsTime(NFileHeader::NNtfsExtra::kMTime, ft))
+      if (extra.GetNtfsTime(NFileHeader::NNtfsExtra::kMTime, ft))
         type = NFileTimeType::kWindows;
-      else if (item.CentralExtra.GetUnixTime(true, NFileHeader::NUnixTime::kMTime, unixTime))
+      else if (extra.GetUnixTime(true, NFileHeader::NUnixTime::kMTime, unixTime))
         type = NFileTimeType::kUnix;
       else
         type = NFileTimeType::kDOS;
@@ -274,7 +300,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
     case kpidCTime:
     {
       FILETIME ft;
-      if (item.CentralExtra.GetNtfsTime(NFileHeader::NNtfsExtra::kCTime, ft))
+      if (extra.GetNtfsTime(NFileHeader::NNtfsExtra::kCTime, ft))
         prop = ft;
       break;
     }
@@ -282,7 +308,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
     case kpidATime:
     {
       FILETIME ft;
-      if (item.CentralExtra.GetNtfsTime(NFileHeader::NNtfsExtra::kATime, ft))
+      if (extra.GetNtfsTime(NFileHeader::NNtfsExtra::kATime, ft))
         prop = ft;
       break;
     }
@@ -291,10 +317,10 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
     {
       FILETIME utc;
       bool defined = true;
-      if (!item.CentralExtra.GetNtfsTime(NFileHeader::NNtfsExtra::kMTime, utc))
+      if (!extra.GetNtfsTime(NFileHeader::NNtfsExtra::kMTime, utc))
       {
         UInt32 unixTime = 0;
-        if (item.CentralExtra.GetUnixTime(true, NFileHeader::NUnixTime::kMTime, unixTime))
+        if (extra.GetUnixTime(true, NFileHeader::NUnixTime::kMTime, unixTime))
           NTime::UnixTimeToFileTime(unixTime, utc);
         else
         {
@@ -328,7 +354,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
       if (item.Comment.Size() != 0)
       {
         UString res;
-        item.GetUnicodeString(BytesToString(item.Comment), res, _forceCodePage, _specifiedCodePage);
+        item.GetUnicodeString(res, BytesToString(item.Comment), true, _forceCodePage, _specifiedCodePage);
         prop = res;
       }
       break;
@@ -347,7 +373,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
         {
           m += kMethod_AES;
           CWzAesExtra aesField;
-          if (item.CentralExtra.GetWzAes(aesField))
+          if (extra.GetWzAes(aesField))
           {
             char s[16];
             s[0] = '-';
@@ -360,7 +386,7 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
         {
           CStrongCryptoExtra f;
           f.AlgId = 0;
-          if (item.CentralExtra.GetStrongCrypto(f))
+          if (extra.GetStrongCrypto(f))
           {
             const char *s = FindNameForId(k_StrongCryptoPairs, ARRAY_SIZE(k_StrongCryptoPairs), f.AlgId);
             if (s)
@@ -373,6 +399,8 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
               ConvertUInt32ToString(f.AlgId, temp + 1);
               m += temp;
             }
+            if (f.CertificateIsUsed())
+              m += "-Cert";
           }
           else
             m += kMethod_StrongCrypto;
@@ -424,36 +452,17 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
     case kpidUnpackVer:
       prop = (UInt32)item.ExtractVersion.Version;
       break;
+
+    case kpidVolumeIndex:
+      prop = item.Disk;
+      break;
   }
+  
   prop.Detach(value);
   return S_OK;
   COM_TRY_END
 }
 
-class CProgressImp: public CProgressVirt
-{
-  CMyComPtr<IArchiveOpenCallback> _callback;
-public:
-  virtual HRESULT SetCompletedLocal(UInt64 numFiles, UInt64 numBytes);
-  virtual HRESULT SetTotalCD(UInt64 numFiles);
-  virtual HRESULT SetCompletedCD(UInt64 numFiles);
-  CProgressImp(IArchiveOpenCallback *callback): _callback(callback) {}
-};
-
-HRESULT CProgressImp::SetCompletedLocal(UInt64 numFiles, UInt64 numBytes)
-{
-  return _callback->SetCompleted(&numFiles, &numBytes);
-}
-
-HRESULT CProgressImp::SetTotalCD(UInt64 numFiles)
-{
-  return _callback->SetTotal(&numFiles, NULL);
-}
-
-HRESULT CProgressImp::SetCompletedCD(UInt64 numFiles)
-{
-  return _callback->SetCompleted(&numFiles, NULL);
-}
 
 STDMETHODIMP CHandler::Open(IInStream *inStream,
     const UInt64 *maxCheckStartPosition, IArchiveOpenCallback *callback)
@@ -462,9 +471,13 @@ STDMETHODIMP CHandler::Open(IInStream *inStream,
   try
   {
     Close();
-    RINOK(m_Archive.Open(inStream, maxCheckStartPosition));
-    CProgressImp progressImp(callback);
-    return m_Archive.ReadHeaders(m_Items, callback ? &progressImp : NULL);
+    HRESULT res = m_Archive.Open(inStream, maxCheckStartPosition, callback, m_Items);
+    if (res != S_OK)
+    {
+      m_Items.Clear();
+      m_Archive.ClearRefs();
+    }
+    return res;
   }
   catch(...) { Close(); throw; }
   COM_TRY_END
@@ -477,8 +490,6 @@ STDMETHODIMP CHandler::Close()
   return S_OK;
 }
 
-//////////////////////////////////////
-// CHandler::DecompressItems
 
 class CLzmaDecoder:
   public ICompressCoder,
@@ -544,6 +555,8 @@ struct CMethodItem
   CMyComPtr<ICompressCoder> Coder;
 };
 
+
+
 class CZipDecoder
 {
   NCrypto::NZip::CDecoder *_zipCryptoDecoderSpec;
@@ -577,6 +590,24 @@ public:
     #endif
     Int32 &res);
 };
+
+
+static HRESULT SkipStreamData(ISequentialInStream *stream, UInt64 size)
+{
+  const size_t kBufSize = 1 << 12;
+  Byte buf[kBufSize];
+  for (;;)
+  {
+    if (size == 0)
+      return S_OK;
+    size_t curSize = kBufSize;
+    if (curSize > size)
+      curSize = (size_t)size;
+    RINOK(ReadStream_FALSE(stream, buf, curSize));
+    size -= curSize;
+  }
+}
+
 
 HRESULT CZipDecoder::Decode(
     DECL_EXTERNAL_CODECS_LOC_VARS
@@ -615,7 +646,7 @@ HRESULT CZipDecoder::Decode(
     if (!pkAesMode && id == NFileHeader::NCompressionMethod::kWzAES)
     {
       CWzAesExtra aesField;
-      if (item.CentralExtra.GetWzAes(aesField))
+      if (item.GetMainExtra().GetWzAes(aesField))
       {
         wzAesMode = true;
         needCRC = aesField.NeedCrc();
@@ -628,9 +659,11 @@ HRESULT CZipDecoder::Decode(
   outStreamSpec->SetStream(realOutStream);
   outStreamSpec->Init(needCRC);
   
-  UInt64 authenticationPos;
-  
-  CMyComPtr<ISequentialInStream> inStream;
+  CMyComPtr<ISequentialInStream> packStream;
+
+  CLimitedSequentialInStream *limitedStreamSpec = new CLimitedSequentialInStream;
+  CMyComPtr<ISequentialInStream> inStream(limitedStreamSpec);
+
   {
     UInt64 packSize = item.PackSize;
     if (wzAesMode)
@@ -639,9 +672,14 @@ HRESULT CZipDecoder::Decode(
         return S_OK;
       packSize -= NCrypto::NWzAes::kMacSize;
     }
-    UInt64 dataPos = item.GetDataPosition();
-    inStream.Attach(archive.CreateLimitedStream(dataPos, packSize));
-    authenticationPos = dataPos + packSize;
+    RINOK(archive.GetItemStream(item, true, packStream));
+    if (!packStream)
+    {
+      res = NExtract::NOperationResult::kUnavailable;
+      return S_OK;
+    }
+    limitedStreamSpec->SetStream(packStream);
+    limitedStreamSpec->Init(packSize);
   }
   
   CMyComPtr<ICompressFilter> cryptoFilter;
@@ -651,7 +689,7 @@ HRESULT CZipDecoder::Decode(
     if (wzAesMode)
     {
       CWzAesExtra aesField;
-      if (!item.CentralExtra.GetWzAes(aesField))
+      if (!item.GetMainExtra().GetWzAes(aesField))
         return S_OK;
       id = aesField.Method;
       if (!_wzAesDecoder)
@@ -906,9 +944,15 @@ HRESULT CZipDecoder::Decode(
   bool authOk = true;
   if (needCRC)
     crcOK = (outStreamSpec->GetCRC() == item.Crc);
+  
   if (wzAesMode)
   {
-    inStream.Attach(archive.CreateLimitedStream(authenticationPos, NCrypto::NWzAes::kMacSize));
+    const UInt64 rem = limitedStreamSpec->GetRem();
+    if (rem != 0)
+      if (SkipStreamData(inStream, rem) != S_OK)
+        authOk = false;
+
+    limitedStreamSpec->Init(NCrypto::NWzAes::kMacSize);
     if (_wzAesDecoderSpec->CheckMac(inStream, authOk) != S_OK)
       authOk = false;
   }
@@ -982,16 +1026,21 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kUnavailable));
       continue;
     }
+    
     if (!item.FromLocal)
     {
-      HRESULT res = m_Archive.ReadLocalItemAfterCdItem(item);
+      bool isAvail = true;
+      HRESULT res = m_Archive.ReadLocalItemAfterCdItem(item, isAvail);
       if (res == S_FALSE)
       {
         if (item.IsDir() || realOutStream || testMode)
         {
           RINOK(extractCallback->PrepareOperation(askMode));
           realOutStream.Release();
-          RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kHeadersError));
+          RINOK(extractCallback->SetOperationResult(
+              isAvail ?
+                NExtract::NOperationResult::kHeadersError :
+                NExtract::NOperationResult::kUnavailable));
         }
         continue;
       }
@@ -1028,6 +1077,7 @@ STDMETHODIMP CHandler::Extract(const UInt32 *indices, UInt32 numItems,
     
     RINOK(extractCallback->SetOperationResult(res))
   }
+  
   lps->InSize = currentTotalPacked;
   lps->OutSize = currentTotalUnPacked;
   return lps->SetCur();

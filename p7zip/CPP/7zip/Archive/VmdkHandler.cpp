@@ -450,6 +450,8 @@ class CHandler: public CHandlerImg
 
   CByteBuffer _descriptorBuf;
   CDescriptor _descriptor;
+
+  UString _missingVolName;
   
   void InitAndSeekMain()
   {
@@ -882,6 +884,19 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
 
     case kpidNumVolumes: if (_isMultiVol) prop = (UInt32)_extents.Size(); break;
 
+    case kpidError:
+    {
+      if (_missingVol || !_missingVolName.IsEmpty())
+      {
+        UString s;
+        s.SetFromAscii("Missing volume : ");
+        if (!_missingVolName.IsEmpty())
+          s += _missingVolName;
+        prop = s;
+      }
+      break;
+    }
+
     case kpidErrorFlags:
     {
       UInt32 v = 0;
@@ -889,7 +904,7 @@ STDMETHODIMP CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value)
       if (_unsupported) v |= kpv_ErrorFlags_UnsupportedMethod;
       if (_unsupportedSome) v |= kpv_ErrorFlags_UnsupportedMethod;
       if (_headerError) v |= kpv_ErrorFlags_HeadersError;
-      if (_missingVol)  v |= kpv_ErrorFlags_UnexpectedEnd;
+      // if (_missingVol)  v |= kpv_ErrorFlags_UnexpectedEnd;
       if (v != 0)
         prop = v;
       break;
@@ -1081,15 +1096,14 @@ HRESULT CHandler::Open2(IInStream *stream, IArchiveOpenCallback *openCallback)
       }
 
       HRESULT result = volumeCallback->GetStream(u, &nextStream);
-      if (result == S_FALSE)
-      {
-        _missingVol = true;
-        continue;
-      }
-      if (result != S_OK)
+
+      if (result != S_OK && result != S_FALSE)
         return result;
-      if (!nextStream)
+      
+      if (!nextStream || result != S_OK)
       {
+        if (_missingVolName.IsEmpty())
+          _missingVolName = u;
         _missingVol = true;
         continue;
       }
@@ -1335,43 +1349,45 @@ HRESULT CExtent::Open3(IInStream *stream, IArchiveOpenCallback *openCallback,
 
   for (size_t i = 0; i < numGdeEntries; i++)
   {
-    UInt32 v = Get32((const Byte *)table + (size_t)i * 4);
-    CByteBuffer &buf = Tables.AddNew();
-    if (v == 0 || v == ZeroSector)
-      continue;
-    if (openCallback && (i - numProcessed_Prev) >= 1024)
-    {
-      const UInt64 comp = complexityStart + ((UInt64)i << (k_NumMidBits + 2));
-      const UInt64 volIndex2 = volIndex;
-      RINOK(openCallback->SetCompleted(numVols == 1 ? NULL : &volIndex2, &comp));
-      numProcessed_Prev = i;
-    }
-
     const size_t k_NumSectors = (size_t)1 << (k_NumMidBits - 9 + 2);
-    
-    if (h.Is_Marker())
-    {
-      Byte buf2[1 << 9];
-      if (ReadForHeader(stream, v - 1, buf2, 1) != S_OK)
-        return S_FALSE;
-      {
-        CMarker m;
-        m.Parse(buf2);
-        if (m.Type != k_Marker_GRAIN_TABLE
-            || m.NumSectors != k_NumSectors
-            || m.SpecSize != 0)
-          return S_FALSE;
-      }
-    }
-
     const size_t k_NumMidItems = (size_t)1 << k_NumMidBits;
 
-    buf.Alloc(k_NumMidItems * 4);
-    RINOK(ReadForHeader(stream, v, buf, k_NumSectors));
+    CByteBuffer &buf = Tables.AddNew();
+
+    {
+      const UInt32 v = Get32((const Byte *)table + (size_t)i * 4);
+      if (v == 0 || v == ZeroSector)
+        continue;
+      if (openCallback && (i - numProcessed_Prev) >= 1024)
+      {
+        const UInt64 comp = complexityStart + ((UInt64)i << (k_NumMidBits + 2));
+        const UInt64 volIndex2 = volIndex;
+        RINOK(openCallback->SetCompleted(numVols == 1 ? NULL : &volIndex2, &comp));
+        numProcessed_Prev = i;
+      }
+      
+      if (h.Is_Marker())
+      {
+        Byte buf2[1 << 9];
+        if (ReadForHeader(stream, v - 1, buf2, 1) != S_OK)
+          return S_FALSE;
+        {
+          CMarker m;
+          m.Parse(buf2);
+          if (m.Type != k_Marker_GRAIN_TABLE
+            || m.NumSectors != k_NumSectors
+            || m.SpecSize != 0)
+            return S_FALSE;
+        }
+      }
+      
+      buf.Alloc(k_NumMidItems * 4);
+      RINOK(ReadForHeader(stream, v, buf, k_NumSectors));
+    }
 
     for (size_t k = 0; k < k_NumMidItems; k++)
     {
-      UInt32 v = Get32((const Byte *)buf + (size_t)k * 4);
+      const UInt32 v = Get32((const Byte *)buf + (size_t)k * 4);
       if (v == 0 || v == ZeroSector)
         continue;
       if (v < h.overHead)
@@ -1430,6 +1446,8 @@ STDMETHODIMP CHandler::Close()
   _missingVol = false;
   _isMultiVol = false;
   _needDeflate = false;
+
+  _missingVolName.Empty();
 
   _descriptorBuf.Free();
   _descriptor.Clear();

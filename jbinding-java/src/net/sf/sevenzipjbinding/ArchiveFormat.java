@@ -48,6 +48,12 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #CHM}</td>
  * </tr>
  * <tr align="center">
+ * <td>Compound</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
  * <td>Cpio</td>
  * <td>X</td>
  * <td>-</td>
@@ -60,10 +66,28 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #AR}</td>
  * </tr>
  * <tr align="center">
+ * <td>Dmg</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
+ * <td>Elf</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
  * <td>GZip</td>
  * <td>X</td>
  * <td>X</td>
  * <td>{@link #GZIP}</td>
+ * </tr>
+ * <tr align="center">
+ * <td>Hfs</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
  * </tr>
  * <tr align="center">
  * <td>Iso</td>
@@ -84,10 +108,28 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #LZMA}</td>
  * </tr>
  * <tr align="center">
+ * <td>Macho</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
+ * <td>Mub</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
  * <td>Nsis</td>
  * <td>X</td>
  * <td>-</td>
  * <td>{@link #NSIS}</td>
+ * </tr>
+ * <tr align="center">
+ * <td>Pa</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
  * </tr>
  * <tr align="center">
  * <td>Rar</td>
@@ -108,10 +150,22 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #RPM}</td>
  * </tr>
  * <tr align="center">
+ * <td>Split</td>
+ * <td>-</td>
+ * <td>-</td>
+ * <td>-</td>
+ * </tr>
+ * <tr align="center">
  * <td>Tar</td>
  * <td>X</td>
  * <td>X</td>
  * <td>{@link #TAR}</td>
+ * </tr>
+ * <tr align="center">
+ * <td>Udf</td>
+ * <td>X</td>
+ * <td>-</td>
+ * <td>{@link #UDF}</td>
  * </tr>
  * <tr align="center">
  * <td>Wim</td>
@@ -179,6 +233,11 @@ public enum ArchiveFormat {
     ISO("Iso", true),
 
     /**
+     * Hfs format
+     */
+    HFS("HFS", true),
+
+    /**
      * Gzip format
      */
     GZIP("GZip", OutArchiveGZipImpl.class, false),
@@ -238,11 +297,10 @@ public enum ArchiveFormat {
      */
     RPM("Rpm", true),
 
-    // TODO Uncomment after resolving security problems in 7-zip
-    //    /**
-    //     * Udf
-    //     */
-    //    UDF("Udf", true),
+    /**
+     * Udf
+     */
+    UDF("Udf", true),
 
     /**
      * Wim
