@@ -164,6 +164,14 @@ e) After make succeeds either run tests by typing
 
     For example, run tests on armel 256MB RAM architecture:
         $ RUNTIME_JAVA_OPTS="-DTEST_ON_LOW_MEMORY=1" ctest
+
+    To directly see the standard output of the running tests, use
+        $ RUNTIME_JAVA_OPTS=-DTEST_TRACE=true ctest -VV
+
+    To Run specified test first list all available tests with
+        $ ctest -N
+    then specify a range of tests to execute. The following will execute tests #2, #3, #4 and #5
+        $ ctest -I 2,5
     
 f) Build a binary package by typing
     $ make package
