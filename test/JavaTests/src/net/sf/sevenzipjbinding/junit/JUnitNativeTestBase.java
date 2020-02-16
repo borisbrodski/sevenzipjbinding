@@ -58,12 +58,4 @@ public class JUnitNativeTestBase<C extends AbstractTestContext> extends TestBase
                 + e.getMessage());
     }
 
-    protected static ThreadLocal<Long> newThreadLocalLongInit0() {
-        return new ThreadLocal<Long>() {
-            @Override
-            protected Long initialValue() {
-                return Long.valueOf(0);
-            }
-        };
-    }
 }

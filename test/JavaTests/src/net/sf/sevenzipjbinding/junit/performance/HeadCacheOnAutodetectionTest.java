@@ -26,22 +26,24 @@ import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 public class HeadCacheOnAutodetectionTest extends JUnitNativeTestBase<VoidContext> {
     private static final int BAD_ARCHIVE_SIZE = 1 * 1024 * 1024;
 
-    private static ThreadLocal<Long> headReadingCounter = newThreadLocalLongInit0();
-    private static ThreadLocal<Long> bytesRead = newThreadLocalLongInit0();
+    private static ThreadLocal<Long> headReadingCounter = new ThreadLocal<Long>();
+    private static ThreadLocal<Long> bytesRead = new ThreadLocal<Long>();
 
     @Test
     @Repeat
     @Multithreaded
     public void openBadArchiveWithAutodetection() throws Exception {
+        headReadingCounter.set(Long.valueOf(0));
+        bytesRead.set(Long.valueOf(0));
         try {
             doOpenBadArchive(null);
             fail("Managed to open a broken archive");
         } catch (Exception e) {
         }
-        Assert.assertTrue(headReadingCounter.get() <= 4);
         log();
         log("Reads     : " + headReadingCounter.get());
         log("Read bytes: " + bytesRead.get() + " bytes");
+        Assert.assertTrue(headReadingCounter.get() <= 4);
     }
 
     public void doOpenBadArchive(ArchiveFormat archiveFormat) throws Exception {
