@@ -7,4 +7,5 @@ if [ "$REPLY" != "y" ] ; then
 fi
 
 #cmake $OPT "-DPACKAGES=Linux-i386;AllLinux;AllPlatforms" -P SevenZipJBinding/scripts/integration-test/doITTests.cmake
-cmake $OPT "-DPACKAGES=Linux-amd64;AllLinux;AllPlatforms" "-DJAVA_PARAMS:STRING=-DTEST_PROFILE=STRESS" -P SevenZipJBinding/scripts/integration-test/doITTests.cmake
+#cmake $OPT "-DPACKAGES=Linux-amd64;AllLinux;AllPlatforms" "-DJAVA_PARAMS:STRING=-DTEST_PROFILE=STRESS" -P SevenZipJBinding/scripts/integration-test/doITTests.cmake
+cmake $OPT "-DPACKAGES=Linux-amd64;AllLinux;AllPlatforms" -P SevenZipJBinding/scripts/integration-test/doITTests.cmake

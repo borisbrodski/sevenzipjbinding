@@ -6,7 +6,7 @@ ELSE()
 ENDIF()
 
 FILE(READ "java-executable" JAVA)
-FILE(READ "java-executable-params" JAVA_PARAMS)
+FILE(STRINGS "java-executable-params" JAVA_PARAMS)
 
 IF(NOT JAVA)
     MESSAGE(FATAL_ERROR "Internal error. Can't read 'java-executable' file with the java execuable name.")
