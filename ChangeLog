@@ -46,6 +46,9 @@ Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 
 	* Complete rewrite of the test framework
 
+	* Drop support for the Mac 32bit and consequently for the AllMac packages
+	  (use Mac-x86_64 or AllPlatform instead)
+
 Release - 9.20-2.00beta (Release candidate, cross-platform, based on zip/p7zip 9.20 beta)
 
 	* Bind 7-Zip 9.20 (beta)
