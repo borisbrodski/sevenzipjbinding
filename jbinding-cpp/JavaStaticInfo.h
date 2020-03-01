@@ -739,6 +739,7 @@ T & JavaClass<T>::_instance = *(new T());
 template<typename T>
 inline std::ostream & operator<<(std::ostream & stream, JavaClass<T> & javaClass) {
     stream << T::getName();
+    return stream;
 }
 #endif // TRACE_ON
 
@@ -825,6 +826,7 @@ PlatformCriticalSection JInterface<T>::_criticalSection;
 template<typename T>
 inline std::ostream & operator<<(std::ostream & stream, JInterface<T> & jinterface) {
     stream << T::_getName(); // TODO Also output the class of the implementation here
+    return stream;
 }
 #endif // TRACE_ON
 
