@@ -47,6 +47,8 @@ Major TODOs:
 - Support ICompressProgressInfo
 - Add Xz compression/decompression
 - Test .ar, .a, .lib extension (DEB already tested) (from ArHandler.cpp)
+- Add "file to file" example (see https://github.com/borisbrodski/sevenzipjbinding/issues/32)
+- Add "closeOnEOF" feature to RandomAccessFileInStream/RandomAccessFileOutStream
 
 Checklists
  - Bind new version of 7-zip
