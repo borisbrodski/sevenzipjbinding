@@ -35,3 +35,6 @@ tags
 *.tmp
 Session.vim
 
+/compile_commands.json
+/.cache/
+/.clangd/

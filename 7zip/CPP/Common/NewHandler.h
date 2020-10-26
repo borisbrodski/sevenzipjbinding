@@ -35,7 +35,7 @@ void my_delete(void *p) throw();
 #endif
 
 #ifdef _WIN32
-
+/*
 void *
 #ifdef _MSC_VER
 __cdecl
@@ -47,7 +47,7 @@ void
 __cdecl
 #endif
 operator delete(void *p) throw();
-
+*/
 #endif
 
 /*
