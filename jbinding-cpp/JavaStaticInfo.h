@@ -624,6 +624,10 @@
 
 namespace jni {
 
+extern jobject sevenZipClassLoader;
+
+jclass findClass(JNIEnv * env, const char * className);
+
 inline void expectExceptionCheck(JNIEnv * env) {
 #ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
     TRACE("Expect exception check")
@@ -689,9 +693,9 @@ private:
         _initCriticalSection.Leave();
     }
     void init(JNIEnv * env) {
-        TRACE ("env->FindClass() for " << T::getName())
-        jclass clazz = env->FindClass(T::getName());
-        FATALIF1(!clazz, "Error finding class '%s'", T::getName())
+        const char * className = T::getName();
+
+        jclass clazz = findClass(env, className);
         _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
         env->DeleteLocalRef(clazz);
         MY_ASSERT(_jclass);
@@ -766,8 +770,7 @@ public:
     }
     static jclass _getClassObject(JNIEnv * env) {
         if (_classObject == NULL) {
-            jclass objectClass = env->FindClass(T::_getName());
-            FATALIF1(!objectClass, "Error finding class '%s'", T::_getName());
+            jclass objectClass = jni::findClass(env, T::_getName());
             _classObject = (jclass) env->NewGlobalRef(objectClass);
             env->DeleteLocalRef(objectClass);
         }

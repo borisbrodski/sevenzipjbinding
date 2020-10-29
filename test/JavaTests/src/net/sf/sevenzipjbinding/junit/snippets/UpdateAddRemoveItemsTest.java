@@ -31,7 +31,8 @@ public class UpdateAddRemoveItemsTest extends SnippetTest {
         File archiveFile = new File(tmpDir, "updated-add-remove-items.7z");
 
         beginSnippetTest();
-        UpdateAddRemoveItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
+        UpdateAddRemoveItems.main(new String[] { getRootDir() + "/testdata/snippets/to-update.7z", //
+                        archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(expected7z), output);
     }

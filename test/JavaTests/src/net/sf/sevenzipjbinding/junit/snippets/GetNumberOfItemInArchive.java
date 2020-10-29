@@ -11,10 +11,10 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
-public class GetNumberOfItemInArchive {
+public class GetNumberOfItemInArchive extends SnippetTest {
     @Test
     public void snippetRunner() throws Exception {
-        assertEquals(4, getNumberOfItemsInArchive("testdata/snippets/simple.zip"));
+        assertEquals(4, getNumberOfItemsInArchive(getRootDir() + "/testdata/snippets/simple.zip"));
     }
 
     /* BEGIN_SNIPPET(GetNumberOfItemsInArchive) */

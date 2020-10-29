@@ -40,6 +40,8 @@ Minor TODOs:
 - Fix ZIP compression test modification time check ("TODO This breaks for unknown reason in multithreaded ZIP-test.")
 - Add file extension field to the ArchiveFormat enum (+JavaDoc)
 - Web: create favicon.ico
+- Terminating Java threads, that are running 7-Zip-JBinding, is not supported. Fix or document.
+  Note: Terminating threads in Java is in general not recommended.
 
 Major TODOs:
 - Support more archive formats

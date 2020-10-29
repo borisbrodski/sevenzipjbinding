@@ -8,6 +8,7 @@
 #include "7zip/UI/Common/ArchiveExtractCallback.h"
 #include "7zip/UI/Common/PropIDUtils.h"
 #include "7zip/Common/FileStreams.h"
+#include "7zip/Common/InBuffer.h"
 #include "Windows/PropVariant.h"
 #include "7zip/Archive/IArchive.h"
 
@@ -22,6 +23,9 @@
 #define SEVENZIPJBINDING_VERSION_MINOR 5
 
 #define SEVENZIPJBINDING_LIBRARY_NAME_FILENAME "./7z.dll"
+
+#define SEVEN_ZIP_PACKAGE      "net/sf/sevenzipjbinding"
+#define SEVEN_ZIP_PACKAGE_IMPL "net/sf/sevenzipjbinding/impl"
 
 
 #define SEVEN_ZIP_EXCEPTION "net/sf/sevenzipjbinding/SevenZipException"
@@ -69,18 +73,34 @@
 #define FATALIF3(cond, fmt, p1, p2, p3) { if (cond) fatal(fmt, p1, p2, p3); }
 #define FATALIF4(cond, fmt, p1, p2, p3, p4) { if (cond) fatal(fmt, p1, p2, p3, p4); }
 
+#define TRY try
+#define CATCH_ALL_AND_RETURN(nativeMethodContext, returnvalue)                            \
+    catch (const CInBufferException & e) {                                                \
+        TRACE("CInBufferException catched: " << &e)                                       \
+        if (!jniNativeCallContext.willExceptionBeThrown()) {                              \
+            jniNativeCallContext.reportError("Error reading from stream.");               \
+        }                                                                                 \
+        return (returnvalue);                                                             \
+    } catch (...) {                                                                       \
+        TRACE("Unexpeted exception catched")                                              \
+        if (!jniNativeCallContext.willExceptionBeThrown()) {                              \
+            jniNativeCallContext.reportError("Unexpected exception in the native code."); \
+        }                                                                                 \
+        return (returnvalue);                                                             \
+    }
 
-#define TRY try {
-#define CATCH_SEVEN_ZIP_EXCEPTION(nativeMethodContext, returnvalue)             \
-    } catch(SevenZipException & sevenZipException)                              \
-    {TRACE("Exception catched: " << &sevenZipException);                        \
-    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}          \
-    return returnvalue;
-
-#define CATCH_SEVEN_ZIP_EXCEPTION_WITHOUT_RETURN(nativeMethodContext)    		\
-    } catch(SevenZipException & sevenZipException)                              \
-    {TRACE1("Exception catched: " << &sevenZipException);                       \
-    (nativeMethodContext).ThrowSevenZipException(&sevenZipException);}
+#define CATCH_ALL(nativeMethodContext)                                                    \
+    catch (const CInBufferException & e) {                                                \
+        TRACE("CInBufferException catched: " << &e)                                       \
+        if (!jniNativeCallContext.willExceptionBeThrown()) {                              \
+            jniNativeCallContext.reportError("Error reading from stream.");               \
+        }                                                                                 \
+    } catch (...) {                                                                       \
+        TRACE("Unexpeted exception catched")                                              \
+        if (!jniNativeCallContext.willExceptionBeThrown()) {                              \
+            jniNativeCallContext.reportError("Unexpected exception in the native code."); \
+        }                                                                                 \
+    }
 
 
 #define MIN(a,b) ((a) > (b) ? (b) : (a))

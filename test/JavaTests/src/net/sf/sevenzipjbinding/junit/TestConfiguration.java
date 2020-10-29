@@ -1,5 +1,8 @@
 package net.sf.sevenzipjbinding.junit;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,6 +79,11 @@ public class TestConfiguration {
      */
     public static String TEST_PARAM__ON_LOW_MEMORY = "TEST_ON_LOW_MEMORY";
 
+    /**
+     * Root directory for the test data. Default: .
+     */
+    public static String TEST_PARAM__ROOT_DIR = "TEST_ROOT_DIR";
+
     // @formatter:off
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
         /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
@@ -95,6 +103,9 @@ public class TestConfiguration {
     private boolean trace;
     private String traceFile;
     private boolean onLowMemory;
+
+    private String rootDir;
+    private File cacheRootDirFile;
 
     TestConfiguration(String name, int multiThreadedThreads, int repeatSingleThreadedTest, int repeatMultiThreadedTest,
             int singleTestTimeout,
@@ -117,6 +128,14 @@ public class TestConfiguration {
         trace = getBoolean(TEST_PARAM__TRACE, trace);
         traceFile = getString(TEST_PARAM__TRACE, traceFile);
         onLowMemory = getBoolean(TEST_PARAM__ON_LOW_MEMORY, false);
+        rootDir = getString(TEST_PARAM__ROOT_DIR, ".");
+
+        cacheRootDirFile = new File(rootDir);
+
+        assertTrue("Test root dir not found: '" + cacheRootDirFile.getAbsolutePath() + "'. Set -D" + TEST_PARAM__ROOT_DIR + "=<path-to-test-root>",
+                cacheRootDirFile.isDirectory());
+        assertTrue("'testdata/' not found in the Test root dir: '" + cacheRootDirFile.getAbsolutePath() + "'. Set -D" + TEST_PARAM__ROOT_DIR + "=<path-to-test-root>",
+                new File(cacheRootDirFile, "testdata").isDirectory());
     }
 
     private static int getInt(String name, int defaultValue) {
@@ -191,6 +210,14 @@ public class TestConfiguration {
         return onLowMemory;
     }
 
+    public String getRootDir() {
+        return rootDir;
+    }
+
+    public File getRootDirFile() {
+        return cacheRootDirFile;
+    }
+
     public static TestConfiguration getCurrent() {
         return currentProfile;
     }
@@ -222,6 +249,7 @@ public class TestConfiguration {
         params.add(new ParamInfo(TEST_PARAM__LONG_RUNNING, longRunning));
         params.add(new ParamInfo(TEST_PARAM__TRACE, trace));
         params.add(new ParamInfo(TEST_PARAM__ON_LOW_MEMORY, onLowMemory));
+        params.add(new ParamInfo(TEST_PARAM__ROOT_DIR, rootDir));
         int padding = 0;
         for (ParamInfo paramInfo : params) {
             if (padding < paramInfo.name.length()) {

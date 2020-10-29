@@ -389,8 +389,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
 
     if (inStreamImpl) {
 
-        jclass inStreamInterface = jniEnvInstance->FindClass(INSTREAM_CLASS);
-        FATALIF(!inStreamInterface, "Class " INSTREAM_CLASS " not found");
+        jclass inStreamInterface = jni::findClass(jniEnvInstance, INSTREAM_CLASS);
 
         if (jniEnvInstance->IsInstanceOf(inStreamImpl, inStreamInterface)) {
             CPPToJavaInStream * newInStream = new CPPToJavaInStream(_jbindingSession, jniEnvInstance, inStreamImpl);

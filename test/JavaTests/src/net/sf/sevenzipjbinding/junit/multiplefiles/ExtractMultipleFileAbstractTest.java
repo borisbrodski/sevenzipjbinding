@@ -11,6 +11,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
 
 /**
@@ -98,7 +99,7 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
         ZipFile zipFile = null;
         boolean ok = false;
         try {
-            zipFile = new ZipFile(new File(sollFullFilename));
+            zipFile = new ZipFile(new File(TestConfiguration.getCurrent().getRootDirFile(), sollFullFilename));
 			assertTrue(inArchive.getNumberOfItems() > 0);
 
 			ZipContentComparator zipContentComparator1 = new ZipContentComparator(archiveFormat, inArchive, zipFile,

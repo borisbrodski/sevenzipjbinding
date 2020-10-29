@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit.bug;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
@@ -18,6 +19,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 
 public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestBase<VoidContext> {
@@ -29,7 +31,8 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
         public IInStream getStream(String filename) throws SevenZipException {
             RandomAccessFile randomAccessFile;
             try {
-                randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + filename, "r");
+                File path = new File(TestConfiguration.getCurrent().getRootDirFile(), PATH_TO_ARCHIVES + filename);
+                randomAccessFile = new RandomAccessFile(path, "r");
                 assertNotNull(randomAccessFile);
             } catch (FileNotFoundException e) {
                 throw new SevenZipException(e);
@@ -72,7 +75,8 @@ public class OpenMultipartCabWithNonVolumedCallbackTest extends JUnitNativeTestB
         IInArchive inArchive = null;
         Throwable throwable = null;
         try {
-            RandomAccessFile randomAccessFile = new RandomAccessFile(PATH_TO_ARCHIVES + DISK1_FILE, "r");
+            File path = new File(TestConfiguration.getCurrent().getRootDirFile(), PATH_TO_ARCHIVES + DISK1_FILE);
+            RandomAccessFile randomAccessFile = new RandomAccessFile(path, "r");
             assertNotNull(randomAccessFile);
             try {
                 inArchive = SevenZip.openInArchive(archiveType, new RandomAccessFileInStream(randomAccessFile),

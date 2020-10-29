@@ -675,11 +675,12 @@ public class SevenZip {
         String doPrivileged = System.getProperty(SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION);
         final String errorMessage[] = new String[1];
         final Throwable throwable[] = new Throwable[1];
+        final ClassLoader classloader = SevenZip.class.getClassLoader();
         if (doPrivileged == null || doPrivileged.trim().equals("0")) {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
                 public Void run() {
                     try {
-                        errorMessage[0] = nativeInitSevenZipLibrary();
+                        errorMessage[0] = nativeInitSevenZipLibrary(classloader);
                     } catch (Throwable e) {
                         throwable[0] = e;
                     }
@@ -687,7 +688,7 @@ public class SevenZip {
                 }
             });
         } else {
-            errorMessage[0] = nativeInitSevenZipLibrary();
+            errorMessage[0] = nativeInitSevenZipLibrary(classloader);
         }
         if (errorMessage[0] != null || throwable[0] != null) {
             String message = errorMessage[0];
@@ -910,7 +911,8 @@ public class SevenZip {
     private static native void nativeCreateArchive(OutArchiveImpl<?> outArchiveImpl, ArchiveFormat archiveFormat)
             throws SevenZipException;
 
-    private static native String nativeInitSevenZipLibrary() throws SevenZipNativeInitializationException;
+    private static native String nativeInitSevenZipLibrary(ClassLoader classLoader)
+            throws SevenZipNativeInitializationException;
 
     private static native int nativeGetVersionMajor();
 

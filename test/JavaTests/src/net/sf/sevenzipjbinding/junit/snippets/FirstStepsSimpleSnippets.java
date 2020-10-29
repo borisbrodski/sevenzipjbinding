@@ -5,22 +5,22 @@ import static org.junit.Assert.assertNotNull;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
-import org.junit.Test;
+public class FirstStepsSimpleSnippets extends SnippetTest {
 
-public class FirstStepsSimpleSnippets {
-
-    private static final String TEST_ARCHIVE_SIMPLE = "testdata/snippets/simple.zip";
+    private static final String TEST_ARCHIVE_SIMPLE = "/testdata/snippets/simple.zip";
     private IInArchive inArchive;
     private RandomAccessFile randomAccessFile;
 
     @Test
     public void testOpenArchiveSnippet() throws Exception {
-        openArchive(TEST_ARCHIVE_SIMPLE);
+        openArchive(getRootDir() + TEST_ARCHIVE_SIMPLE);
         assertNotNull(inArchive);
         inArchive.close();
         randomAccessFile.close();

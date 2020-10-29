@@ -11,9 +11,7 @@
 
  _cryptoGetTextPasswordImpl = NULL;
 
- jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
- FATALIF(cryptoGetTextPasswordClass == NULL,
- "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
+ jclass cryptoGetTextPasswordClass = jni::findClass(initEnv, CRYPTOGETTEXTPASSWORD_CLASS);
 
  if (initEnv->IsInstanceOf(_javaImplementation, cryptoGetTextPasswordClass))
  {

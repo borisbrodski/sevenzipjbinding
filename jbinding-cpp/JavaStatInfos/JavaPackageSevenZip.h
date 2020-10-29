@@ -4,9 +4,6 @@
 #include "JavaStaticInfo.h"
 #include "JavaStandardLibrary.h"
 
-#define SEVEN_ZIP_PACKAGE								"net/sf/sevenzipjbinding"
-#define SEVEN_ZIP_PACKAGE_IMPL							"net/sf/sevenzipjbinding/impl"
-
 #define JAVA_PROP_ID 									SEVEN_ZIP_PACKAGE "/PropID"
 #define JAVA_PROP_ID_T 									JAVA_MAKE_SIGNATURE_TYPE(JAVA_PROP_ID)
 

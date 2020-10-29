@@ -16,13 +16,9 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
 
     _simulateArchiveOpenVolumeCallback = false;
 
-    jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
-    FATALIF(cryptoGetTextPasswordClass == NULL,
-            "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
+    jclass cryptoGetTextPasswordClass = jni::findClass(initEnv, CRYPTOGETTEXTPASSWORD_CLASS);
 
-    jclass archiveOpenVolumeCallbackClass = initEnv->FindClass(ARCHIVEOPENVOLUMECALLBACK_CLASS);
-    FATALIF(cryptoGetTextPasswordClass == NULL,
-            "Can't find class " ARCHIVEOPENVOLUMECALLBACK_CLASS);
+    jclass archiveOpenVolumeCallbackClass = jni::findClass(initEnv, ARCHIVEOPENVOLUMECALLBACK_CLASS);
 
     if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
     {

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link ListItemsSimple} and {@link ListItemsStandard} snippets
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -33,7 +33,7 @@ public class ListItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ListItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
+        ListItemsStandard.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }
@@ -43,7 +43,7 @@ public class ListItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ListItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
+        ListItemsStandard.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link OpenMultipartArchiveRar} snippet
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -33,7 +33,7 @@ public class OpenMultipartArchiveRarTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        OpenMultipartArchiveRar.main(new String[] { "testdata/snippets/multipart-rar.part1.rar" });
+        OpenMultipartArchiveRar.main(new String[] { getRootDir() + "/testdata/snippets/multipart-rar.part1.rar" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }

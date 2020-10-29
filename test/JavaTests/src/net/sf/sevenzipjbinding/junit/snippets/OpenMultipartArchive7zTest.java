@@ -8,7 +8,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link OpenMultipartArchive7z} snippet
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -33,7 +33,7 @@ public class OpenMultipartArchive7zTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        OpenMultipartArchive7z.main(new String[] { "testdata/snippets/multipart-7z.7z.001" });
+        OpenMultipartArchive7z.main(new String[] { getRootDir() + "/testdata/snippets/multipart-7z.7z.001" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }

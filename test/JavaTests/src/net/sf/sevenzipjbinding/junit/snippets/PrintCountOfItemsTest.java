@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link PrintCountOfItems} snippet
- * 
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */
@@ -21,7 +21,7 @@ public class PrintCountOfItemsTest extends SnippetTest {
         expected = expected.replace("\n", NEW_LINE);
 
         beginSnippetTest();
-        PrintCountOfItems.main(new String[] { "testdata/snippets/simple.zip" });
+        PrintCountOfItems.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }

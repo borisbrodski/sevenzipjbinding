@@ -13,6 +13,7 @@ import org.junit.Test;
  * @since 4.65-1
  */
 public class ExtractItemsTest extends SnippetTest {
+
     private String getExpectedOutput() {
         /* BEGIN_OUTPUT(ExtractItems) */
         String expected = "   Hash   |    Size    | Filename\n";
@@ -32,7 +33,7 @@ public class ExtractItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ExtractItemsSimple.main(new String[] { "testdata/snippets/simple.zip" });
+        ExtractItemsSimple.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }
@@ -42,7 +43,7 @@ public class ExtractItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ExtractItemsStandard.main(new String[] { "testdata/snippets/simple.zip" });
+        ExtractItemsStandard.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }
@@ -52,7 +53,7 @@ public class ExtractItemsTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        ExtractItemsStandardCallback.main(new String[] { "testdata/snippets/simple.zip" });
+        ExtractItemsStandardCallback.main(new String[] { getRootDir() + "/testdata/snippets/simple.zip" });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }

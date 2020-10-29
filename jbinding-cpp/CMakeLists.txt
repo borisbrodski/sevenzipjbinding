@@ -72,6 +72,7 @@ ENDIF(MINGW)
 include_directories(${PROJECT_BINARY_DIR}/javah)
 include_directories(.)
 
+add_definitions(-std=c++98)
 IF(MINGW32)
     add_definitions(-DMINGW -mthreads -D_JNI_IMPLEMENTATION_)
 ENDIF()

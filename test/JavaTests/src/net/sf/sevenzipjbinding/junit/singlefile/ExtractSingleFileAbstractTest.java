@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -22,10 +24,9 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
-
-import org.junit.Test;
 
 /**
  * This test tests extraction of archives with a single file. Test data: <code>testdata/simple</code>.<br>
@@ -265,7 +266,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		Boolean isEncrypted1 = (Boolean) inArchive.getProperty(index, PropID.ENCRYPTED);
 		Boolean isEncrypted2 = inArchive.getSimpleInterface().getArchiveItem(index).isEncrypted();
 
-		long unpackedSize = Long.valueOf(new File(uncommpressedFilename).length());
+        File file = new File(TestConfiguration.getCurrent().getRootDirFile(), uncommpressedFilename);
+        long unpackedSize = file.length();
 		if (unpackedSize == 0) {
 			// ENCRYPTED flag doesn't really meaningful for zero length files
 			return;
@@ -299,7 +301,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		Long size1 = (Long) inArchive.getProperty(index, PropID.SIZE);
 		Long size2 = inArchive.getSimpleInterface().getArchiveItem(index).getSize();
 
-		Long actual = Long.valueOf(new File(uncommpressedFilename).length());
+        Long actual = Long
+                .valueOf(new File(TestConfiguration.getCurrent().getRootDirFile(), uncommpressedFilename).length());
 		assertNotNull(size1);
 		assertNotNull(size2);
 		if (!skipSizeCheck()) {
@@ -313,7 +316,10 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		Long size1 = (Long) inArchive.getProperty(index, PropID.PACKED_SIZE);
 		Long size2 = inArchive.getSimpleInterface().getArchiveItem(index).getPackedSize();
 
-		long unpackedSize = Long.valueOf(new File(uncommpressedFilename).length());
+        File uncommpressedFile = new File(TestConfiguration.getCurrent().getRootDir(), uncommpressedFilename);
+        assertTrue(uncommpressedFile.canRead());
+
+        long unpackedSize = Long.valueOf(uncommpressedFile.length());
 		long expectedPackedSize;
 		if (unpackedSize < 1024) {
             if (inArchive.getArchiveFormat() == ArchiveFormat.FAT) {
@@ -327,7 +333,8 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 		assertNotNull(size1);
 		assertNotNull(size2);
 		assertTrue("Packed size == 0 (PropID.PACKED_SIZE)", unpackedSize == 0 || size1 != 0);
-        assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected >= " + expectedPackedSize + ", actual="
+        assertTrue("Wrong size of the file (PropID.PACKED_SIZE): expected < actual. expected=" + expectedPackedSize
+                + ", actual="
                 + size1,
 				expectedPackedSize >= size1);
 		assertEquals("Simple interface problem: wrong size of the file", size1, size2);
@@ -365,7 +372,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 				String expectedFilename) throws FileNotFoundException {
 			this.inArchive = inArchive;
 			this.sizes = sizes;
-			File file = new File(expectedFilename);
+            File file = new File(TestConfiguration.getCurrent().getRootDirFile(), expectedFilename);
 			assertTrue("Expect-File " + expectedFilename + " doesn't exists", file.exists());
 
 			fileInputStream = new FileInputStream(file);

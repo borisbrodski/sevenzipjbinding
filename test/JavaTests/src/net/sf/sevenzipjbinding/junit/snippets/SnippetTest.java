@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import org.junit.Before;
+
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
+
 public abstract class SnippetTest {
     public static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -14,6 +18,17 @@ public abstract class SnippetTest {
     private PrintStream printStream;
     private PrintStream printStreamErr;
     private String snippetErrOutput;
+    private String rootDir;
+
+    @Before
+    public void init() {
+        TestConfiguration.init();
+        rootDir = TestConfiguration.getCurrent().getRootDirFile().getAbsolutePath();
+    }
+
+    public String getRootDir() {
+        return rootDir;
+    }
 
     protected void beginSnippetTest() {
         oldSystemOut = System.out;

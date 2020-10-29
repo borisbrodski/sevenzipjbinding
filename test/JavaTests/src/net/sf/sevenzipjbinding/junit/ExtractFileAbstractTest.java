@@ -305,14 +305,15 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
                     + testFileExt
                     + "." + compressionIndex + "." + extention + context.volumeArchivePostfix;
 
-            if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
+            File rootDir = TestConfiguration.getCurrent().getRootDirFile();
+            if (!new File(rootDir, archiveFilename).exists() && extention.contains("part1.rar")) {
                 archiveFilename = archiveFilename.replace("part1.rar", "part01.rar");
-                if (!new File(archiveFilename).exists()) {
+                if (!new File(rootDir, archiveFilename).exists()) {
                     archiveFilename = archiveFilename.replace("part01.rar", "rar");
                 }
             }
 
-            return openArchiveFileWithSevenZip(archiveFilename, autodetectFormat);
+            return openArchiveFileWithSevenZip(new File(rootDir, archiveFilename).getAbsolutePath(), autodetectFormat);
         }
 
         private IInArchive openArchiveFileWithSevenZip(String archiveFilename, boolean autodetectFormat)
@@ -569,7 +570,8 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
 
         public IInStream getStream(String filename) {
             try {
-				String fullfilename = new File(currentDir, new File(filename).getName()).getCanonicalPath();
+                File currentDirFile = new File(TestConfiguration.getCurrent().getRootDirFile(), currentDir);
+                String fullfilename = new File(currentDirFile, new File(filename).getName()).getCanonicalPath();
 				currentFilename = fullfilename;
 				randomAccessFile = randomAccessFileMap.get(fullfilename);
                 if (randomAccessFile != null) {

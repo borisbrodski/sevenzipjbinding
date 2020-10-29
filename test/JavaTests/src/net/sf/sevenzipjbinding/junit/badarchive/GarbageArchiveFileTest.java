@@ -61,7 +61,7 @@ public class GarbageArchiveFileTest extends JUnitNativeTestBase<VoidContext> {
             }
         }
         if (pass > count / 50) {
-            fail("Expected exception wasn't thrown oft enough. ");
+            fail("Expected exception wasn't thrown oft enough. (pass: " + pass + ", count: " + count + ")");
         } else {
             if (pass > 0) {
                 log("Got some false positives: " + pass + " of " + count + " (expected, no error)");

@@ -114,6 +114,7 @@ public class UpdateAlterItems {
             e.printStackTraceExtended();
         } catch (Exception e) {
             System.err.println("Error occurs: " + e);
+            e.printStackTrace();
         } finally {
             for (int i = closeables.size() - 1; i >= 0; i--) {
                 try {
