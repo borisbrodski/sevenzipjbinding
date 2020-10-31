@@ -629,7 +629,7 @@ public class SevenZip {
     private static String byteArrayToHex(byte[] byteArray) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < byteArray.length; i++) {
-            stringBuilder.append(Integer.toHexString(0xFF & byteArray[i]));
+            stringBuilder.append(String.format("%1$02x", 0xFF & byteArray[i]));
         }
         return stringBuilder.toString();
     }
