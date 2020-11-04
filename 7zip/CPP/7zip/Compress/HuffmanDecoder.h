@@ -130,7 +130,7 @@ public:
   }
 
   template <class TBitDecoder>
-  UInt32 Decode(TBitDecoder *bitStream) const throw()
+  UInt32 Decode(TBitDecoder *bitStream) const
   {
     UInt32 val = bitStream->GetValue(kNumBitsMax);
     

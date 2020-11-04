@@ -3,6 +3,12 @@
 
 Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 
+	* Bugfix: Fix crash on read errors caused by wrong throw()
+		RAR and maybe other archive formats were affected by the bug.
+		Java exception from a data reading method could have caused a JVM crash.
+
+Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
+
 	* First official stable release
 
 	* Bind 7-Zip 16.02
