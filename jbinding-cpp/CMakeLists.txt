@@ -100,6 +100,8 @@ ENDIF()
 
 add_definitions(
 #    -DTRACE_ON
+    -fPIC
+    -fexceptions
 )
 
 IF(MINGW)
@@ -496,11 +498,8 @@ add_library(7-Zip-JBinding
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
-IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux")
-    # TODO Get status to work on Linux64
-    IF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "i686") 
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS -static)
-    ENDIF()
+IF(STATIC_BUILD) 
+    SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -fPIC -static -static-libgcc -static-libstdc++ ")
 ENDIF()
 
 IF(MINGW)
@@ -513,7 +512,7 @@ ENDIF(MINGW)
 
 IF(MINGW)
 
-    SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wall -Wl,--kill-at -static -mthreads")
+    SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wall -Wl,--kill-at -mthreads ")
 
     # Remove default libraries 
     #SET(CMAKE_CXX_STANDARD_LIBRARIES "-g") #-luser32 -loleaut32 -lole32 -lshell32 -lgdi32 -lwinspool -luuid -lcomdlg32 -ladvapi32 -lkernel32 
@@ -526,7 +525,7 @@ IF(MINGW)
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(MINGW)
     IF(NOT APPLE)
-        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-static-libstdc++ -static-libgcc -Wl,-z,defs -Wl,--no-undefined") # Check for missing symbols
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wl,-z,defs -Wl,--no-undefined ") # Check for missing symbols
     ENDIF()
 ENDIF(MINGW)
 

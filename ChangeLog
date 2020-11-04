@@ -7,6 +7,11 @@ Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 		RAR and maybe other archive formats were affected by the bug.
 		Java exception from a data reading method could have caused a JVM crash.
 
+	* CMake: new option: STATIC_BUILD
+		STATIC_BUILD - links the dynamic library statically.
+		Such library will not require dependencies on dynamic
+		libraries at runtime
+
 Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 
 	* First official stable release
