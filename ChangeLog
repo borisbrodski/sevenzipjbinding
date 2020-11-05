@@ -11,6 +11,9 @@ Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 		STATIC_BUILD - links the dynamic library statically.
 		Such library will not require dependencies on dynamic
 		libraries at runtime
+	
+	* CMake: Enable build on NetBSD
+		Add NetBSD specific include path
 
 Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 
