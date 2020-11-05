@@ -9,8 +9,10 @@ template <typename T>
 class WithStackBuffer {
 private:
     unsigned char _bufferOnStack[BUFFER_ON_STACK_SIZE];
-    T* ptr = NULL;
+    T* ptr;
 
+public:
+    WithStackBuffer() : ptr(NULL) {}
 protected:
     ~WithStackBuffer() {
         if (ptr && (void *)ptr != (void *)&_bufferOnStack) {
