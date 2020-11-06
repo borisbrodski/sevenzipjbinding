@@ -499,7 +499,7 @@ add_library(7-Zip-JBinding
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
 IF(STATIC_BUILD) 
-    SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -fPIC -static -static-libgcc -static-libstdc++ ")
+    SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -static-libgcc -static-libstdc++ ")
 ENDIF()
 
 IF(MINGW)
