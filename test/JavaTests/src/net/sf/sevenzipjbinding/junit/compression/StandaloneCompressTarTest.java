@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveTar;
@@ -17,12 +19,11 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 
 /**
@@ -31,7 +32,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class StandaloneCompressTarTest extends JUnitNativeTestBase {
+public class StandaloneCompressTarTest extends JUnitNativeTestBase<VoidContext>{
     private class OutCreateArchiveTar implements IOutCreateCallback<IOutItemTar> {
         public void setTotal(long total) throws SevenZipException {
         }
@@ -45,16 +46,22 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
 
         public IOutItemTar getItemInformation(int index, OutItemFactory<IOutItemTar> outItemFactory)
                 throws SevenZipException {
-            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
-            byteArrayStream.rewind();
-
             IOutItemTar outItem = outItemFactory.createOutItem();
 
-            outItem.setDataSize((long) byteArrayStream.getSize());
+            ByteArrayStream byteArrayStream = virtualContent.getItemStream(index);
+            if (byteArrayStream != null) {
+                byteArrayStream.rewind();
+                outItem.setDataSize((long) byteArrayStream.getSize());
+            } else {
+                outItem.setDataSize(0L);
+            }
+
             outItem.setPropertyUser("me");
             outItem.setPropertyGroup("developers");
             outItem.setPropertyLastModificationTime(new Date());
             outItem.setPropertyPath(virtualContent.getItemPath(index));
+            outItem.setPropertySymLink(virtualContent.getItemSymLink(index));
+            outItem.setPropertyHardLink(virtualContent.getItemHardLink(index));
 
             return outItem;
         }
@@ -73,7 +80,7 @@ public class StandaloneCompressTarTest extends JUnitNativeTestBase {
     @Test
     public void testCompressionTar() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(100, 3, 3, 100, 50, null);
+        virtualContent.fillRandomly(100, 3, 3, 100, 50, null, true);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 

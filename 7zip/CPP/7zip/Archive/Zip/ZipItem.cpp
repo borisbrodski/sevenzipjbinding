@@ -2,29 +2,26 @@
 
 #include "StdAfx.h"
 
-#include "ZipHeader.h"
-#include "ZipItem.h"
-#include "../Common/ItemNameUtils.h"
 #include "../../../../C/CpuArch.h"
+#include "../../../../C/7zCrc.h"
+
+#include "../../../Common/MyLinux.h"
+#include "../../../Common/StringConvert.h"
+
+#include "../Common/ItemNameUtils.h"
+
+#include "ZipItem.h"
 
 namespace NArchive {
 namespace NZip {
 
-bool operator==(const CVersion &v1, const CVersion &v2)
-{
-  return (v1.Version == v2.Version) && (v1.HostOS == v2.HostOS);
-}
+using namespace NFileHeader;
 
-bool operator!=(const CVersion &v1, const CVersion &v2)
-{
-  return !(v1 == v2);
-}
-
-bool CExtraSubBlock::ExtractNtfsTime(int index, FILETIME &ft) const
+bool CExtraSubBlock::ExtractNtfsTime(unsigned index, FILETIME &ft) const
 {
   ft.dwHighDateTime = ft.dwLowDateTime = 0;
-  UInt32 size = (UInt32)Data.GetCapacity();
-  if (ID != NFileHeader::NExtraID::kNTFS || size < 32)
+  UInt32 size = (UInt32)Data.Size();
+  if (ID != NExtraID::kNTFS || size < 32)
     return false;
   const Byte *p = (const Byte *)Data;
   p += 4; // for reserved
@@ -32,13 +29,13 @@ bool CExtraSubBlock::ExtractNtfsTime(int index, FILETIME &ft) const
   while (size > 4)
   {
     UInt16 tag = GetUi16(p);
-    UInt32 attrSize = GetUi16(p + 2);
+    unsigned attrSize = GetUi16(p + 2);
     p += 4;
     size -= 4;
     if (attrSize > size)
       attrSize = size;
     
-    if (tag == NFileHeader::NNtfsExtra::kTagTime && attrSize >= 24)
+    if (tag == NNtfsExtra::kTagTime && attrSize >= 24)
     {
       p += 8 * index;
       ft.dwLowDateTime = GetUi32(p);
@@ -51,16 +48,25 @@ bool CExtraSubBlock::ExtractNtfsTime(int index, FILETIME &ft) const
   return false;
 }
 
-bool CExtraSubBlock::ExtractUnixTime(int index, UInt32 &res) const
+bool CExtraSubBlock::ExtractUnixTime(bool isCentral, unsigned index, UInt32 &res) const
 {
   res = 0;
-  UInt32 size = (UInt32)Data.GetCapacity();
-  if (ID != NFileHeader::NExtraID::kUnixTime || size < 5)
+  UInt32 size = (UInt32)Data.Size();
+  if (ID != NExtraID::kUnixTime || size < 5)
     return false;
   const Byte *p = (const Byte *)Data;
   Byte flags = *p++;
   size--;
-  for (int i = 0; i < 3; i++)
+  if (isCentral)
+  {
+    if (index != NUnixTime::kMTime ||
+        (flags & (1 << NUnixTime::kMTime)) == 0 ||
+        size < 4)
+      return false;
+    res = GetUi32(p);
+    return true;
+  }
+  for (unsigned i = 0; i < 3; i++)
     if ((flags & (1 << i)) != 0)
     {
       if (size < 4)
@@ -76,6 +82,30 @@ bool CExtraSubBlock::ExtractUnixTime(int index, UInt32 &res) const
   return false;
 }
 
+
+bool CExtraBlock::GetNtfsTime(unsigned index, FILETIME &ft) const
+{
+  FOR_VECTOR (i, SubBlocks)
+  {
+    const CExtraSubBlock &sb = SubBlocks[i];
+    if (sb.ID == NFileHeader::NExtraID::kNTFS)
+      return sb.ExtractNtfsTime(index, ft);
+  }
+  return false;
+}
+
+bool CExtraBlock::GetUnixTime(bool isCentral, unsigned index, UInt32 &res) const
+{
+  FOR_VECTOR (i, SubBlocks)
+  {
+    const CExtraSubBlock &sb = SubBlocks[i];
+    if (sb.ID == NFileHeader::NExtraID::kUnixTime)
+      return sb.ExtractUnixTime(isCentral, index, res);
+  }
+  return false;
+}
+
+
 bool CLocalItem::IsDir() const
 {
   return NItemName::HasTailSlash(Name, GetCodePage());
@@ -85,88 +115,139 @@ bool CItem::IsDir() const
 {
   if (NItemName::HasTailSlash(Name, GetCodePage()))
     return true;
+  
+  Byte hostOS = GetHostOS();
+
+  if (Size == 0 && PackSize == 0 && !Name.IsEmpty() && Name.Back() == '\\')
+  {
+    // do we need to use CharPrevExA?
+    // .NET Framework 4.5 : System.IO.Compression::CreateFromDirectory() probably writes backslashes to headers?
+    // so we support that case
+    switch (hostOS)
+    {
+      case NHostOS::kFAT:
+      case NHostOS::kNTFS:
+      case NHostOS::kHPFS:
+      case NHostOS::kVFAT:
+        return true;
+    }
+  }
+
   if (!FromCentral)
     return false;
-  WORD highAttributes = WORD((ExternalAttributes >> 16 ) & 0xFFFF);
-  switch(MadeByVersion.HostOS)
+  
+  UInt16 highAttrib = (UInt16)((ExternalAttrib >> 16 ) & 0xFFFF);
+
+  switch (hostOS)
   {
-    case NFileHeader::NHostOS::kAMIGA:
-      switch (highAttributes & NFileHeader::NAmigaAttribute::kIFMT)
+    case NHostOS::kAMIGA:
+      switch (highAttrib & NAmigaAttrib::kIFMT)
       {
-        case NFileHeader::NAmigaAttribute::kIFDIR: return true;
-        case NFileHeader::NAmigaAttribute::kIFREG: return false;
+        case NAmigaAttrib::kIFDIR: return true;
+        case NAmigaAttrib::kIFREG: return false;
         default: return false; // change it throw kUnknownAttributes;
       }
-    case NFileHeader::NHostOS::kFAT:
-    case NFileHeader::NHostOS::kNTFS:
-    case NFileHeader::NHostOS::kHPFS:
-    case NFileHeader::NHostOS::kVFAT:
-      return ((ExternalAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0);
-    case NFileHeader::NHostOS::kAtari:
-    case NFileHeader::NHostOS::kMac:
-    case NFileHeader::NHostOS::kVMS:
-    case NFileHeader::NHostOS::kVM_CMS:
-    case NFileHeader::NHostOS::kAcorn:
-    case NFileHeader::NHostOS::kMVS:
+    case NHostOS::kFAT:
+    case NHostOS::kNTFS:
+    case NHostOS::kHPFS:
+    case NHostOS::kVFAT:
+      return ((ExternalAttrib & FILE_ATTRIBUTE_DIRECTORY) != 0);
+    case NHostOS::kAtari:
+    case NHostOS::kMac:
+    case NHostOS::kVMS:
+    case NHostOS::kVM_CMS:
+    case NHostOS::kAcorn:
+    case NHostOS::kMVS:
       return false; // change it throw kUnknownAttributes;
+    case NHostOS::kUnix:
+      return MY_LIN_S_ISDIR(highAttrib);
     default:
-      /*
-      switch (highAttributes & NFileHeader::NUnixAttribute::kIFMT)
-      {
-        case NFileHeader::NUnixAttribute::kIFDIR:
-          return true;
-        default:
-          return false;
-      }
-      */
       return false;
   }
 }
 
-UInt32 CLocalItem::GetWinAttributes() const
+UInt32 CItem::GetWinAttrib() const
 {
-  DWORD winAttributes = 0;
-  if (IsDir())
-    winAttributes |= FILE_ATTRIBUTE_DIRECTORY;
-  return winAttributes;
-}
-
-UInt32 CItem::GetWinAttributes() const
-{
-  DWORD winAttributes = 0;
-  switch(MadeByVersion.HostOS)
+  UInt32 winAttrib = 0;
+  switch (GetHostOS())
   {
-    case NFileHeader::NHostOS::kFAT:
-    case NFileHeader::NHostOS::kNTFS:
+    case NHostOS::kFAT:
+    case NHostOS::kNTFS:
       if (FromCentral)
-        winAttributes = ExternalAttributes;
+        winAttrib = ExternalAttrib;
       break;
-    default:
-      winAttributes = 0; // must be converted from unix value;
+    case NHostOS::kUnix:
+      // do we need to clear 16 low bits in this case?
+      if (FromCentral)
+        winAttrib = ExternalAttrib & 0xFFFF0000;
+      break;
   }
-  if (IsDir())       // test it;
-    winAttributes |= FILE_ATTRIBUTE_DIRECTORY;
-  return winAttributes;
+  if (IsDir()) // test it;
+    winAttrib |= FILE_ATTRIBUTE_DIRECTORY;
+  return winAttrib;
 }
 
-void CLocalItem::SetFlagBits(int startBitNumber, int numBits, int value)
+bool CItem::GetPosixAttrib(UInt32 &attrib) const
 {
-  UInt16 mask = (UInt16)(((1 << numBits) - 1) << startBitNumber);
-  Flags &= ~mask;
-  Flags |= value << startBitNumber;
+  // some archivers can store PosixAttrib in high 16 bits even with HostOS=FAT.
+  if (FromCentral && GetHostOS() == NHostOS::kUnix)
+  {
+    attrib = ExternalAttrib >> 16;
+    return (attrib != 0);
+  }
+  attrib = 0;
+  if (IsDir())
+    attrib = MY_LIN_S_IFDIR;
+  return false;
 }
 
-void CLocalItem::SetBitMask(int bitMask, bool enable)
+void CItem::GetUnicodeString(UString &res, const AString &s, bool isComment, bool useSpecifiedCodePage, UINT codePage) const
 {
-  if(enable)
-    Flags |= bitMask;
-  else
-    Flags &= ~bitMask;
+  bool isUtf8 = IsUtf8();
+  bool ignore_Utf8_Errors = true;
+  
+  if (!isUtf8)
+  {
+    {
+      const unsigned id = isComment ?
+          NFileHeader::NExtraID::kIzUnicodeComment:
+          NFileHeader::NExtraID::kIzUnicodeName;
+      const CObjectVector<CExtraSubBlock> &subBlocks = GetMainExtra().SubBlocks;
+      
+      FOR_VECTOR (i, subBlocks)
+      {
+        const CExtraSubBlock &sb = subBlocks[i];
+        if (sb.ID == id)
+        {
+          AString utf;
+          if (sb.ExtractIzUnicode(CrcCalc(s, s.Len()), utf))
+            if (ConvertUTF8ToUnicode(utf, res))
+              return;
+          break;
+        }
+      }
+    }
+    
+    if (useSpecifiedCodePage)
+      isUtf8 = (codePage == CP_UTF8);
+    #ifdef _WIN32
+    else if (GetHostOS() == NFileHeader::NHostOS::kUnix)
+    {
+      /* Some ZIP archives in Unix use UTF-8 encoding without Utf8 flag in header.
+         We try to get name as UTF-8.
+         Do we need to do it in POSIX version also? */
+      isUtf8 = true;
+      ignore_Utf8_Errors = false;
+    }
+    #endif
+  }
+  
+  
+  if (isUtf8)
+    if (ConvertUTF8ToUnicode(s, res) || ignore_Utf8_Errors)
+      return;
+  
+  MultiByteToUnicodeString2(res, s, useSpecifiedCodePage ? codePage : GetCodePage());
 }
-
-void CLocalItem::SetEncrypted(bool encrypted)
-  { SetBitMask(NFileHeader::NFlags::kEncrypted, encrypted); }
-void CLocalItem::SetUtf8(bool isUtf8)
-  { SetBitMask(NFileHeader::NFlags::kUtf8, isUtf8); }
 
 }}

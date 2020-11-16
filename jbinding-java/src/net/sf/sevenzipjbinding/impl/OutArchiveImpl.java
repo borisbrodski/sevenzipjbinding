@@ -13,20 +13,20 @@ import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
  * Common archive create and update class.
- * 
+ *
  * @param <T>
  *            the type of the item callback implementation
- * 
+ *
  * @see OutArchive7zImpl
  * @see OutArchiveZipImpl
  * @see OutArchiveGZipImpl
  * @see OutArchiveBZip2Impl
  * @see OutArchiveTarImpl
- * 
+ *
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-// TODO null check all parameters: If null slips through into native code there will be no NPE :( 
+// TODO null check all parameters: If null slips through into native code there will be no NPE :(
 public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
 
     private long jbindingSession;
@@ -42,13 +42,19 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     private ArchiveFormat archiveFormat;
 
+    private Boolean headerEncryption;
     private int compressionLevel = -1;
     private int threadCount = -1;
     private PrintStream tracePrintStream;
     private boolean trace; // Read by native code
+    private boolean closed;
 
     protected void setInArchive(IInArchive inArchive) {
         this.inArchive = inArchive;
+    }
+
+    protected void featureSetHeaderEncryption(boolean enabled) {
+        this.headerEncryption = Boolean.valueOf(enabled);
     }
 
     protected void featureSetLevel(int compressionLevel) {
@@ -60,8 +66,12 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     }
 
     protected void applyFeatures() throws SevenZipException {
+        ensureOpened();
         if (compressionLevel != -1) {
             nativeSetLevel(compressionLevel);
+        }
+        if (headerEncryption != null) {
+            nativeSetHeaderEncryption(headerEncryption.booleanValue());
         }
 
         if (threadCount >= 0) {
@@ -80,11 +90,13 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         this.archiveFormat = archiveFormat;
     }
 
+    protected native void nativeSetHeaderEncryption(boolean encryptHeader) throws SevenZipException;
+
     protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
 
     /**
      * Set solid features.
-     * 
+     *
      * @param solidBlockSpec
      *            <code>null</code> - turn solid off
      * @throws SevenZipException
@@ -102,8 +114,12 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      * {@inheritDoc}
      */
     public void close() throws IOException {
+        if (closed) {
+            return;
+        }
+        closed = true;
         if (inArchive != null) {
-            return; // In case of connected OutArchive no explicit closing necessary. 
+            return; // In case of connected OutArchive no explicit closing necessary.
         }
         nativeClose();
     }
@@ -115,6 +131,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outUpdateCallback)
             throws SevenZipException {
+        ensureOpened();
         doUpdateItems(outStream, numberOfItems, outUpdateCallback);
     }
 
@@ -129,6 +146,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends T> outCreateCallback) throws SevenZipException {
+        ensureOpened();
         doUpdateItems(outStream, numberOfItems, outCreateCallback);
     }
 
@@ -176,5 +194,14 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public boolean isTrace() {
         return trace;
+    }
+
+    private void ensureOpened() throws SevenZipException {
+        if (closed) {
+            throw new SevenZipException("OutArchive closed");
+        }
+        if (inArchive != null) {
+            ((InArchiveImpl) inArchive).ensureOpened();
+        }
     }
 }

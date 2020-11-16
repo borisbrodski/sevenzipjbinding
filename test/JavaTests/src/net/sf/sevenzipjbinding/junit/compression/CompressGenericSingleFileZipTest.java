@@ -10,6 +10,10 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
  */
 public class CompressGenericSingleFileZipTest extends CompressGenericSingleFileAbstractTest {
 
+    public CompressGenericSingleFileZipTest(int size, int entropy) {
+        super(size, entropy);
+    }
+
     @Override
     protected ArchiveFormat getArchiveFormat() {
         return ArchiveFormat.ZIP;

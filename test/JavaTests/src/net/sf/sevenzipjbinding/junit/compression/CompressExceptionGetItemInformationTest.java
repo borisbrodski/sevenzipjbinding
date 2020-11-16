@@ -4,7 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+
+import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -16,9 +21,10 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Tests exceptions during archive compression.
@@ -26,320 +32,136 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressExceptionGetItemInformationTest extends CompressAbstractTest {
+public class CompressExceptionGetItemInformationTest extends CompressAbstractTest<VoidContext> {
     public interface IOutItemModifier {
         public IOutItemAllFormats modify(IOutItemAllFormats outItem);
-
         public void verifyException(Exception e);
     }
-    public static class CompressException7zTest extends CompressExceptionGetItemInformationTest {
 
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.SEVEN_ZIP;
-        }
+    private final ArchiveFormat archiveFormat;
+
+    @Parameters
+    public static Collection<ArchiveFormat> getLevels() {
+        return Arrays.asList(//
+                ArchiveFormat.SEVEN_ZIP, //
+                ArchiveFormat.ZIP, //
+                ArchiveFormat.BZIP2, //
+                ArchiveFormat.GZIP,
+                ArchiveFormat.TAR);
     }
 
-    public static class CompressExceptionZipTest extends CompressExceptionGetItemInformationTest {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.ZIP;
-        }
+    public CompressExceptionGetItemInformationTest(ArchiveFormat archiveFormat) {
+        this.archiveFormat = archiveFormat;
     }
 
-    public static class CompressExceptionGZipTest extends CompressExceptionGetItemInformationTest {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.GZIP;
-        }
-    }
-
-    public static class CompressExceptionBZip2Test extends CompressExceptionGetItemInformationTest {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.BZIP2;
-        }
-    }
-
-    public static class CompressExceptionTarTest extends CompressExceptionGetItemInformationTest {
-
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.TAR;
-        }
+    @Override
+    protected ArchiveFormat getArchiveFormat() {
+        return archiveFormat;
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testCompressionOk() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionOk();
-            }
-        });
+        doTestCompressionOk();
     }
 
     @Test
-    public void testCompressionOkMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionOk();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testUpdateOk() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestUpdateOk();
-            }
-        });
+        doTestUpdateOk();
     }
 
     @Test
-    public void testUpdateOkMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestUpdateOk();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testNullAs() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestNullAs();
-            }
-        });
+        doTestNullAs();
     }
 
     @Test
-    public void testNullAsMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestNullAs();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testIsNewDataIsNullCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewDataIsNullCompression();
-            }
-        });
+        doIsNewDataIsNullCompression();
     }
 
     @Test
-    public void testIsNewDataIsNullCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewDataIsNullCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testIsNewDataIsNullUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewDataIsNullUpdate();
-            }
-        });
+        doIsNewDataIsNullUpdate();
     }
 
     @Test
-    public void testIsNewDataIsNullUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewDataIsNullUpdate();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testIsNewPropertiesIsNullCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewPropertiesIsNullCompression();
-            }
-        });
+        doIsNewPropertiesIsNullCompression();
     }
 
     @Test
-    public void testIsNewPropertiesIsNullCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewPropertiesIsNullCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testIsNewPropertiesIsNullUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewPropertiesIsNullUpdate();
-            }
-        });
+        doIsNewPropertiesIsNullUpdate();
     }
 
     @Test
-    public void testIsNewPropertiesIsNullUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doIsNewPropertiesIsNullUpdate();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexIsNullCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexIsNullCompression();
-            }
-        });
+        doOldArchiveItemIndexIsNullCompression();
     }
 
     @Test
-    public void testOldArchiveItemIndexIsNullCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexIsNullCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexIsNullUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexIsNullUpdate();
-            }
-        });
+        doOldArchiveItemIndexIsNullUpdate();
     }
 
     @Test
-    public void testOldArchiveItemIndexIsNullUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexIsNullUpdate();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexNotSetButIsNewDataIsFalseCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewDataIsFalseCompression();
-            }
-        });
+        doOldArchiveItemIndexNotSetButIsNewDataIsFalseCompression();
     }
 
     @Test
-    public void testOldArchiveItemIndexNotSetButIsNewDataIsFalseCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewDataIsFalseCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexNotSetButIsNewDataIsFalseUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewDataIsFalseUpdate();
-            }
-        });
+        doOldArchiveItemIndexNotSetButIsNewDataIsFalseUpdate();
     }
 
     @Test
-    public void testOldArchiveItemIndexNotSetButIsNewDataIsFalseUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewDataIsFalseUpdate();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseCompression();
-            }
-        });
+        doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseCompression();
     }
 
     @Test
-    public void testOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseUpdate();
-            }
-        });
+        doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseUpdate();
     }
 
     @Test
-    public void testOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doOldArchiveItemIndexNotSetButIsNewPropertiesIsFalseUpdate();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testNewDataWithoutNewPropretiesCompression() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doNewDataWithoutNewPropretiesCompression();
-            }
-        });
+        doNewDataWithoutNewPropretiesCompression();
     }
 
     @Test
-    public void testNewDataWithoutNewPropretiesCompressionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doNewDataWithoutNewPropretiesCompression();
-            }
-        });
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     public void testNewDataWithoutNewPropretiesUpdate() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doNewDataWithoutNewPropretiesUpdate();
-            }
-        });
-    }
-
-    @Test
-    public void testNewDataWithoutNewPropretiesUpdateMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doNewDataWithoutNewPropretiesUpdate();
-            }
-        });
+        doNewDataWithoutNewPropretiesUpdate();
     }
 
     private void doTestCompressionOk() throws Exception {
@@ -404,8 +226,7 @@ public abstract class CompressExceptionGetItemInformationTest extends CompressAb
             assertEquals(IOutCreateCallback.class.getSimpleName() + ".getItemInformation() should return "
                     + "a non-null reference to an item information object. Use outItemFactory "
                     + "to create an instance. Fill the new object with all necessary information about "
-                    + "the archive item being processed.",
-                    sevenZipException.getMessage());
+                    + "the archive item being processed.", sevenZipException.getMessage());
         }
     }
 
@@ -495,6 +316,7 @@ public abstract class CompressExceptionGetItemInformationTest extends CompressAb
             }
         });
     }
+
     private void doOldArchiveItemIndexNotSetButIsNewDataIsFalseCompression() throws Exception {
         compress(new IOutItemModifier() {
             public IOutItemAllFormats modify(IOutItemAllFormats outItem) {
@@ -565,6 +387,7 @@ public abstract class CompressExceptionGetItemInformationTest extends CompressAb
             }
         });
     }
+
     private void doNewDataWithoutNewPropretiesCompression() throws Exception {
         compress(new IOutItemModifier() {
             public IOutItemAllFormats modify(IOutItemAllFormats outItem) {
@@ -661,8 +484,7 @@ public abstract class CompressExceptionGetItemInformationTest extends CompressAb
             IInArchive inArchive = SevenZip.openInArchive(getArchiveFormat(), simpleArchiveByteArrayStream);
             addCloseable(inArchive);
 
-            IOutUpdateArchive<IOutItemAllFormats> outArchive = inArchive
-                    .getConnectedOutArchive();
+            IOutUpdateArchive<IOutItemAllFormats> outArchive = inArchive.getConnectedOutArchive();
             ByteArrayStream byteArrayStream = new ByteArrayStream(10000);
             outArchive.updateItems(byteArrayStream, 1, new IOutCreateCallback<IOutItemAllFormats>() {
                 public void setOperationResult(boolean operationResultOk) throws SevenZipException {
@@ -730,4 +552,3 @@ public abstract class CompressExceptionGetItemInformationTest extends CompressAb
         return byteArrayStream;
     }
 }
-

@@ -46,6 +46,7 @@ IF(NOT JAVA_INCLUDE_PATH)
             PATHS
                 "${JAVA_JDK}/include"
                 "$ENV{JAVA_HOME}/include"
+            NO_CMAKE_FIND_ROOT_PATH
     )
     
     IF(NOT JAVA_JNI_H)
@@ -81,6 +82,8 @@ IF(NOT JAVA_INCLUDE_PATH2)
                 "${JAVA_INCLUDE_PATH}/win32"
                 "${JAVA_INCLUDE_PATH}/linux"
                 "${JAVA_INCLUDE_PATH}/freebsd"
+                "${JAVA_INCLUDE_PATH}/netbsd"
+            NO_CMAKE_FIND_ROOT_PATH
     )
 
     IF(JAVA_JNI_MD_H)

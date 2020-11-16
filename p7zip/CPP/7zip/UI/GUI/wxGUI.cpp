@@ -38,6 +38,18 @@
 #include "Windows/Window.h"
 #include "Windows/Control/DialogImpl.h"
 
+#include "Common/StringConvert.h"
+
+bool GetProgramFolderPath(UString &folder)
+{
+  const char *p7zip_home_dir = getenv("P7ZIP_HOME_DIR");
+  if (p7zip_home_dir == 0) p7zip_home_dir="./";
+
+  folder = MultiByteToUnicodeString(p7zip_home_dir);
+
+  return true;
+}
+
 
 // FIXME
 
@@ -523,7 +535,7 @@ TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
     static char p7zip_home_dir[MAX_PATH];
 
     UString fullPath;
-    NDirectory::MyGetFullPathName(wxApp::argv[0], fullPath);
+    NDir::MyGetFullPathName(wxApp::argv[0], fullPath);
     AString afullPath = GetAnsiString(fullPath);
 
     AString dir,name;
@@ -568,47 +580,201 @@ TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
 	return false;
 }
 
-DWORD WINAPI GetTickCount(VOID) {
-	static wxStopWatch sw;
-	return sw.Time();
-}
-
 //////////////////////////////////////////
 
 #include "resource2.h"
+#include "resource3.h"
 #include "ExtractRes.h"
+// #include "resourceGui.h"
+#include "../FileManager/PropertyNameRes.h"
+
 
 static CStringTable g_stringTable[] =
 {
-  /* resource.rc */	  
-  /***************/
+  /* GUI/resource2.rc */	  
 
-	{ IDS_PROGRESS_COMPRESSING, L"Compressing" },
-	{ IDS_PROGRESS_TESTING, L"Testing" },
-	{ IDS_MESSAGE_NO_ERRORS, L"There are no errors" },
-	{ IDS_FILES_COLON, L"Files:" },
-	{ IDS_FOLDERS_COLON, L"Folders:" },
-	{ IDS_SIZE_COLON, L"Size:" },
-	{ IDS_COMPRESSED_COLON, L"Compressed size:" },
-	{ IDS_ARCHIVES_COLON, L"Archives:" },
+
+    { IDS_PROGRESS_COMPRESSING  ,L"Compressing" },
+    { IDS_ARCHIVES_COLON  ,L"Archives:" },
+
+  /* ../FileManager/resourceGui.rc */
+  { IDS_MESSAGE_NO_ERRORS     ,L"There are no errors" },
+
+  { IDS_PROGRESS_TESTING      ,L"Testing" },
+
+  { IDS_CHECKSUM_CALCULATING    ,L"Checksum calculating..." },
+  { IDS_CHECKSUM_INFORMATION    ,L"Checksum information" },
+  { IDS_CHECKSUM_CRC_DATA       ,L"CRC checksum for data:" },
+  { IDS_CHECKSUM_CRC_DATA_NAMES ,L"CRC checksum for data and names:" },
+  { IDS_CHECKSUM_CRC_STREAMS_NAMES ,L"CRC checksum for streams and names:" },
+
+  { IDS_INCORRECT_VOLUME_SIZE ,L"Incorrect volume size" },
+
+  { IDS_OPENNING  ,L"Opening..." },
+  { IDS_SCANNING  ,L"Scanning..." },
+
+  /* ../FileManager/PropertyName.rc */
+  { IDS_PROP_PATH         ,L"Path" },
+  { IDS_PROP_NAME         ,L"Name" },
+  { IDS_PROP_EXTENSION    ,L"Extension" },
+  { IDS_PROP_IS_FOLDER    ,L"Folder" },
+  { IDS_PROP_SIZE         ,L"Size" },
+  { IDS_PROP_PACKED_SIZE  ,L"Packed Size" },
+  { IDS_PROP_ATTRIBUTES   ,L"Attributes" },
+  { IDS_PROP_CTIME        ,L"Created" },
+  { IDS_PROP_ATIME        ,L"Accessed" },
+  { IDS_PROP_MTIME        ,L"Modified" },
+  { IDS_PROP_SOLID        ,L"Solid" },
+  { IDS_PROP_C0MMENTED    ,L"Commented" },
+  { IDS_PROP_ENCRYPTED    ,L"Encrypted" },
+  { IDS_PROP_SPLIT_BEFORE ,L"Split Before" },
+  { IDS_PROP_SPLIT_AFTER  ,L"Split After" },
+  { IDS_PROP_DICTIONARY_SIZE ,L"Dictionary" },
+  { IDS_PROP_CRC          ,L"CRC" },
+  { IDS_PROP_FILE_TYPE    ,L"Type" },
+  { IDS_PROP_ANTI         ,L"Anti" },
+  { IDS_PROP_METHOD       ,L"Method" },
+  { IDS_PROP_HOST_OS      ,L"Host OS" },
+  { IDS_PROP_FILE_SYSTEM  ,L"File System" },
+  { IDS_PROP_USER         ,L"User" },
+  { IDS_PROP_GROUP        ,L"Group" },
+  { IDS_PROP_BLOCK        ,L"Block" },
+  { IDS_PROP_COMMENT      ,L"Comment" },
+  { IDS_PROP_POSITION     ,L"Position" },
+  { IDS_PROP_PREFIX       ,L"Path Prefix" },
+  { IDS_PROP_FOLDERS      ,L"Folders" },
+  { IDS_PROP_FILES        ,L"Files" },
+  { IDS_PROP_VERSION      ,L"Version" },
+  { IDS_PROP_VOLUME       ,L"Volume" },
+  { IDS_PROP_IS_VOLUME    ,L"Multivolume" },
+  { IDS_PROP_OFFSET       ,L"Offset" },
+  { IDS_PROP_LINKS        ,L"Links" },
+  { IDS_PROP_NUM_BLOCKS   ,L"Blocks" },
+  { IDS_PROP_NUM_VOLUMES  ,L"Volumes" },
+
+  { IDS_PROP_BIT64        ,L"64-bit" },
+  { IDS_PROP_BIG_ENDIAN   ,L"Big-endian" },
+  { IDS_PROP_CPU          ,L"CPU" },
+  { IDS_PROP_PHY_SIZE     ,L"Physical Size" },
+  { IDS_PROP_HEADERS_SIZE ,L"Headers Size" },
+  { IDS_PROP_CHECKSUM     ,L"Checksum" },
+  { IDS_PROP_CHARACTS     ,L"Characteristics" },
+  { IDS_PROP_VA           ,L"Virtual Address" },
+  { IDS_PROP_ID           ,L"ID" },
+  { IDS_PROP_SHORT_NAME   ,L"Short Name" },
+  { IDS_PROP_CREATOR_APP  ,L"Creator Application" },
+  { IDS_PROP_SECTOR_SIZE  ,L"Sector Size" },
+  { IDS_PROP_POSIX_ATTRIB ,L"Mode" },
+  { IDS_PROP_SYM_LINK     ,L"Symbolic Link" },
+  { IDS_PROP_ERROR        ,L"Error" },
+  { IDS_PROP_TOTAL_SIZE   ,L"Total Size" },
+  { IDS_PROP_FREE_SPACE   ,L"Free Space" },
+  { IDS_PROP_CLUSTER_SIZE ,L"Cluster Size" },
+  { IDS_PROP_VOLUME_NAME  ,L"Label" },
+  { IDS_PROP_LOCAL_NAME   ,L"Local Name" },
+  { IDS_PROP_PROVIDER     ,L"Provider" },
+  { IDS_PROP_NT_SECURITY  ,L"NT Security" },
+  { IDS_PROP_ALT_STREAM   ,L"Alternate Stream" },
+  { IDS_PROP_AUX          ,L"Aux" },
+  { IDS_PROP_DELETED      ,L"Deleted" },
+  { IDS_PROP_IS_TREE      ,L"Is Tree" },
+  { IDS_PROP_SHA1         ,L"SHA-1" },
+  { IDS_PROP_SHA256       ,L"SHA-256" },
+  { IDS_PROP_ERROR_TYPE   ,L"Error Type" },
+  { IDS_PROP_NUM_ERRORS   ,L"Errors" },
+  { IDS_PROP_ERROR_FLAGS  ,L"Errors" },
+  { IDS_PROP_WARNING_FLAGS ,L"Warnings" },
+  { IDS_PROP_WARNING      ,L"Warning" },
+  { IDS_PROP_NUM_STREAMS  ,L"Streams" },
+  { IDS_PROP_NUM_ALT_STREAMS ,L"Alternate Streams" },
+  { IDS_PROP_ALT_STREAMS_SIZE ,L"Alternate Streams Size" },
+  { IDS_PROP_VIRTUAL_SIZE ,L"Virtual Size" },
+  { IDS_PROP_UNPACK_SIZE  ,L"Unpack Size" },
+  { IDS_PROP_TOTAL_PHY_SIZE ,L"Total Physical Size" },
+  { IDS_PROP_VOLUME_INDEX ,L"Volume Index" },
+  { IDS_PROP_SUBTYPE      ,L"SubType" },
+  { IDS_PROP_SHORT_COMMENT ,L"Short Comment" },
+  { IDS_PROP_CODE_PAGE    ,L"Code Page" },
+  { IDS_PROP_IS_NOT_ARC_TYPE  ,L"Is not archive type" },
+  { IDS_PROP_PHY_SIZE_CANT_BE_DETECTED ,L"Physical Size can't be detected" },
+  { IDS_PROP_ZEROS_TAIL_IS_ALLOWED ,L"Zeros Tail Is Allowed" },
+  { IDS_PROP_TAIL_SIZE ,L"Tail Size" },
+  { IDS_PROP_EMB_STUB_SIZE ,L"Embedded Stub Size" },
+  { IDS_PROP_NT_REPARSE   ,L"Link" },
+  { IDS_PROP_HARD_LINK    ,L"Hard Link" },
+  { IDS_PROP_INODE        ,L"iNode" },
+  { IDS_PROP_STREAM_ID    ,L"Stream ID" },
+
+
 
   /* Extract.rc */	  
   /**************/
-	{ IDS_CANNOT_CREATE_FOLDER , L"Cannot create folder '{0}'"},
-	{ IDS_OPEN_IS_NOT_SUPORTED_ARCHIVE, L"File is not supported archive."},
+  { IDS_MEM_ERROR  ,L"The system cannot allocate the required amount of memory" },
+  { IDS_CANNOT_CREATE_FOLDER  ,L"Cannot create folder '{0}'" },
+  { IDS_UPDATE_NOT_SUPPORTED  ,L"Update operations are not supported for this archive." },
+  { IDS_CANT_OPEN_ARCHIVE  ,L"Can not open file '{0}' as archive" },
+  { IDS_CANT_OPEN_ENCRYPTED_ARCHIVE  ,L"Can not open encrypted archive '{0}'. Wrong password?" },
+  { IDS_UNSUPPORTED_ARCHIVE_TYPE  ,L"Unsupported archive type" },
 
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_CRC , L"CRC failed in '{0}'. File is broken."},
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_DATA_ERROR , L"Data error in '{0}'. File is broken"},
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_UNSUPPORTED_METHOD , L"Unsupported compression method for '{0}'."},
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_CRC_ENCRYPTED , L"CRC failed in encrypted file '{0}'. Wrong password?"},
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_DATA_ERROR_ENCRYPTED , L"Data error in encrypted file '{0}'. Wrong password?"},
+  { IDS_CANT_OPEN_AS_TYPE   ,L"Can not open the file as {0} archive" },
+  { IDS_IS_OPEN_AS_TYPE     ,L"The file is open as {0} archive" },
+  { IDS_IS_OPEN_WITH_OFFSET ,L"The archive is open with offset" },
 
-	{ IDS_EXTRACT_SET_FOLDER , L"Specify a location for extracted files."},
-	{ IDS_MESSAGES_DIALOG_EXTRACT_MESSAGE_CANNOT_OPEN_FILE, L"Can not open output file '{0}'."},
-	{ IDS_PROGRESS_EXTRACTING, L"Extracting" },
+  { IDS_PROGRESS_EXTRACTING ,L"Extracting" },
 
-	{ IDS_CANT_OPEN_ARCHIVE , L"Can not open file '{0}' as archive"},
-	{ IDS_CANT_OPEN_ENCRYPTED_ARCHIVE , L"Can not open encrypted archive '{0}'. Wrong password?"},
+  { IDS_PROGRESS_SKIPPING ,L"Skipping" },
+
+  { IDS_EXTRACT_SET_FOLDER  ,L"Specify a location for extracted files." },
+
+  { IDS_EXTRACT_PATHS_FULL    ,L"Full pathnames" },
+  { IDS_EXTRACT_PATHS_NO      ,L"No pathnames" },
+  { IDS_EXTRACT_PATHS_ABS     ,L"Absolute pathnames" },
+  { IDS_PATH_MODE_RELAT       ,L"Relative pathnames" },
+
+  { IDS_EXTRACT_OVERWRITE_ASK             ,L"Ask before overwrite" },
+  { IDS_EXTRACT_OVERWRITE_WITHOUT_PROMPT  ,L"Overwrite without prompt" },
+  { IDS_EXTRACT_OVERWRITE_SKIP_EXISTING   ,L"Skip existing files" },
+  { IDS_EXTRACT_OVERWRITE_RENAME          ,L"Auto rename" },
+  { IDS_EXTRACT_OVERWRITE_RENAME_EXISTING ,L"Auto rename existing files" },
+
+  { IDS_EXTRACT_MESSAGE_UNSUPPORTED_METHOD   ,L"Unsupported compression method for '{0}'." },
+  { IDS_EXTRACT_MESSAGE_DATA_ERROR           ,L"Data error in '{0}'. File is broken" },
+  { IDS_EXTRACT_MESSAGE_CRC_ERROR            ,L"CRC failed in '{0}'. File is broken." },
+  { IDS_EXTRACT_MESSAGE_DATA_ERROR_ENCRYPTED ,L"Data error in encrypted file '{0}'. Wrong password?" },
+  { IDS_EXTRACT_MESSAGE_CRC_ERROR_ENCRYPTED  ,L"CRC failed in encrypted file '{0}'. Wrong password?" },
+
+  { IDS_EXTRACT_MSG_WRONG_PSW_GUESS          ,L"Wrong password?" },
+  // { IDS_EXTRACT_MSG_ENCRYPTED            ,L"Encrypted file" },
+
+  { IDS_EXTRACT_MSG_UNSUPPORTED_METHOD   ,L"Unsupported compression method" },
+  { IDS_EXTRACT_MSG_DATA_ERROR           ,L"Data error" },
+  { IDS_EXTRACT_MSG_CRC_ERROR            ,L"CRC failed" },
+  { IDS_EXTRACT_MSG_UNAVAILABLE_DATA     ,L"Unavailable data" },
+  { IDS_EXTRACT_MSG_UEXPECTED_END        ,L"Unexpected end of data" },
+  { IDS_EXTRACT_MSG_DATA_AFTER_END       ,L"There are some data after the end of the payload data" },
+  { IDS_EXTRACT_MSG_IS_NOT_ARC           ,L"Is not archive" },
+  { IDS_EXTRACT_MSG_HEADERS_ERROR        ,L"Headers Error" },
+  { IDS_EXTRACT_MSG_WRONG_PSW_CLAIM      ,L"Wrong password" },
+
+  { IDS_OPEN_MSG_UNAVAILABLE_START  ,L"Unavailable start of archive" },
+  { IDS_OPEN_MSG_UNCONFIRMED_START  ,L"Unconfirmed start of archive" },
+  // { IDS_OPEN_MSG_ERROR_FLAGS + 5  ,L"Unexpected end of archive" },
+  // { IDS_OPEN_MSG_ERROR_FLAGS + 6  ,L"There are data after the end of archive" },
+  { IDS_OPEN_MSG_UNSUPPORTED_FEATURE  ,L"Unsupported feature" },
+
+
+  // resource3.rc
+  { IDS_PROGRESS_REMOVE     ,L"Removing" },
+
+  { IDS_PROGRESS_ADD        ,L"Adding" },
+  { IDS_PROGRESS_UPDATE     ,L"Updating" },
+  { IDS_PROGRESS_ANALYZE    ,L"Analyzing" },
+  { IDS_PROGRESS_REPLICATE  ,L"Replicating" },
+  { IDS_PROGRESS_REPACK     ,L"Repacking" },
+
+  { IDS_PROGRESS_DELETE     ,L"Deleting" },
+  { IDS_PROGRESS_HEADER     ,L"Header creating" },
+
 
 	{ 0 , 0 }
 };

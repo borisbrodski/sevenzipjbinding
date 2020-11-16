@@ -432,3 +432,37 @@ BOOL WINAPI SystemTimeToFileTime( const SYSTEMTIME *syst, FILETIME * ft ) {
   return TRUE;
 }
 
+/***********************************************************************
+ *              GetSystemTimeAsFileTime  (KERNEL32.@)
+ *
+ *  Get the current time in utc format.
+ *
+ *  RETURNS
+ *   Nothing.
+ */
+VOID WINAPI GetSystemTimeAsFileTime(
+    FILETIME * time) /* [out] Destination for the current utc time */
+{
+    LARGE_INTEGER t;
+/*
+    NtQuerySystemTime( &t );
+*/
+    struct timeval now;
+
+    gettimeofday( &now, 0 );
+    t.QuadPart  = now.tv_sec * (ULONGLONG)TICKSPERSEC + TICKS_1601_TO_1970;
+    t.QuadPart += now.tv_usec * 10;
+
+    time->dwLowDateTime  = (DWORD)(t.QuadPart);
+    time->dwHighDateTime = (DWORD)(t.QuadPart >> 32);
+}
+
+DWORD WINAPI GetTickCount(VOID) { // Retrieves the number of milliseconds
+  timeval v;
+  if (gettimeofday(&v, 0) == 0)
+  {
+    return (DWORD)(v.tv_sec * (UInt64)1000 + v.tv_usec / 1000);
+  }  
+  return (DWORD)time(0)*1000; 
+}
+

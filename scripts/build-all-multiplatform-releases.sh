@@ -8,8 +8,9 @@ $SCRIPT_HOME/build-multiplatform-release.sh --name AllWindows \
 $SCRIPT_HOME/build-multiplatform-release.sh --name AllLinux \
     sevenzipjbinding-*-Linux-*
 
-$SCRIPT_HOME/build-multiplatform-release.sh --name AllMac \
-    sevenzipjbinding-*-Mac-* \
+# Support only x64 Mac build from 7-Zip-JBinding 16.02-2.01
+#$SCRIPT_HOME/build-multiplatform-release.sh --name AllMac \
+#    sevenzipjbinding-*-Mac-* \
 
 $SCRIPT_HOME/build-multiplatform-release.sh \
     sevenzipjbinding-*-*

@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <version>9.20-2.00beta</version>
+        <version>16.02-2.01</version>
     </properties>
 
 	<dependencies>
@@ -30,14 +30,19 @@
 
 	<repositories>
 		<repository>
-			<id>nexus-releases</id>
+			<id>nexus-snapshot</id>
 			<name>Nexus snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-			<id>nexus-releases</id>
+			<id>nexus-group-repository</id>
 			<name>Nexus group repository</name>
 			<url>https://oss.sonatype.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>nexus-releases</id>
+			<name>Nexus group repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 	</repositories>
 </project>

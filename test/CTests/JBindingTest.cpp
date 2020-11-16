@@ -17,7 +17,7 @@
 
 #ifdef NATIVE_JUNIT_TEST_SUPPORT
 
-JT_BEGIN_INTERFACE(Callback1)
+JT_BEGIN_INTERFACE("net/sf/sevenzipjbinding/junit/jbindingtools", Callback1)
 /*    */JT_INTERFACE_METHOD(String, test, JT_INT(i, _))
 JT_END_INTERFACE
 

@@ -1,7 +1,7 @@
 /* Alloc.c -- Memory allocation functions
-2008-09-24
-Igor Pavlov
-Public domain */
+2015-02-21 : Igor Pavlov : Public domain */
+
+#include "Precomp.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -34,18 +34,52 @@ int g_allocCountMid = 0;
 int g_allocCountBig = 0;
 #endif
 
+#ifdef _7ZIP_ASM
+// #include <emmintrin.h>
+extern int posix_memalign (void **, size_t, size_t);
+void *align_alloc(size_t size)
+{
+  // return _mm_malloc(size,16);
+  void * ptr = 0;
+
+  if (posix_memalign (&ptr, 16, size) == 0)
+    return ptr;
+  else
+    return NULL;
+}
+
+void align_free(void * ptr)
+{
+  // _mm_free(ptr);
+  free(ptr);
+}
+
+
+#else
+void *align_alloc(size_t size)
+{
+    return malloc(size);
+}
+
+void align_free(void * ptr)
+{
+  free(ptr);
+}
+
+#endif
+
 void *MyAlloc(size_t size)
 {
   if (size == 0)
     return 0;
   #ifdef _SZ_ALLOC_DEBUG
   {
-    void *p = malloc(size);
+    void *p = align_alloc(size);
     fprintf(stderr, "\nAlloc %10d bytes, count = %10d,  addr = %8X", size, g_allocCount++, (unsigned)p);
     return p;
   }
   #else
-  return malloc(size);
+  return align_alloc(size);
   #endif
 }
 
@@ -55,7 +89,7 @@ void MyFree(void *address)
   if (address != 0)
     fprintf(stderr, "\nFree; count = %10d,  addr = %8X", --g_allocCount, (unsigned)address);
   #endif
-  free(address);
+  align_free(address);
 }
 
 #ifndef _WIN32
@@ -71,9 +105,9 @@ static char *g_HugetlbPath;
 
 #endif
 
+#ifdef _7ZIP_LARGE_PAGES
 static void *VirtualAlloc(size_t size, int memLargePages)
 {
-  #ifdef _7ZIP_LARGE_PAGES
   if (memLargePages)
   {
     #ifdef __linux__
@@ -122,9 +156,14 @@ static void *VirtualAlloc(size_t size, int memLargePages)
     return address;
     #endif
   }
-  #endif
-  return malloc(size);
+  return align_alloc(size);
 }
+#else
+static void *VirtualAlloc(size_t size, int memLargePages )
+{
+  return align_alloc(size);
+}
+#endif
 
 static int VirtualFree(void *address)
 {
@@ -143,7 +182,7 @@ static int VirtualFree(void *address)
   }
   #endif
   #endif
-  free(address);
+  align_free(address);
   return 1;
 }
 
@@ -255,7 +294,7 @@ void *BigAlloc(size_t size)
   #ifdef _SZ_ALLOC_DEBUG
   fprintf(stderr, "\nAlloc_Big %10d bytes;  count = %10d", size, g_allocCountBig++);
   #endif
-  
+
   #ifdef _7ZIP_LARGE_PAGES
   if (g_LargePageSize != 0 && g_LargePageSize <= (1 << 30) && size >= (1 << 18))
   {
@@ -273,8 +312,17 @@ void BigFree(void *address)
   if (address != 0)
     fprintf(stderr, "\nFree_Big; count = %10d", --g_allocCountBig);
   #endif
-  
+
   if (address == 0)
     return;
   VirtualFree(address);
 }
+
+static void *SzAlloc(void *p, size_t size) { UNUSED_VAR(p); return MyAlloc(size); }
+static void SzFree(void *p, void *address) { UNUSED_VAR(p); MyFree(address); }
+ISzAlloc g_Alloc = { SzAlloc, SzFree };
+
+static void *SzBigAlloc(void *p, size_t size) { UNUSED_VAR(p); return BigAlloc(size); }
+static void SzBigFree(void *p, void *address) { UNUSED_VAR(p); BigFree(address); }
+ISzAlloc g_BigAlloc = { SzBigAlloc, SzBigFree };
+

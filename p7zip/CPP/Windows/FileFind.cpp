@@ -3,19 +3,18 @@
 #include "StdAfx.h"
 
 #include "FileFind.h"
+#include "FileIO.h"
+
 #include "../Common/StringConvert.h"
+
+
+#ifndef _UNICODE
+extern bool g_IsNT;
+#endif
 
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
-
-#ifdef ENV_HAVE_LSTAT
-extern "C"
-{
-
-int global_use_lstat=1; // default behaviour : p7zip stores symlinks instead of dumping the files they point to
-}
-#endif
 
 #define NEED_NAME_WINDOWS_TO_UNIX
 #include "myPrivate.h"
@@ -32,9 +31,9 @@ void my_windows_split_path(const AString &p_path, AString &dir , AString &base) 
       base = ".";
     else
       base = p_path;
-  } else if ((pos+1) < p_path.Length()) {
+  } else if ((pos+1) < p_path.Len()) {
     // true separator
-    base = p_path.Mid(pos+1);
+    base = p_path.Ptr(pos+1);
     while ((pos >= 1) && (p_path[pos-1] == '/'))
       pos--;
     if (pos == 0)
@@ -69,9 +68,9 @@ static void my_windows_split_path(const UString &p_path, UString &dir , UString 
       base = L".";
     else
       base = p_path;
-  } else if ((pos+1) < p_path.Length()) {
+  } else if ((pos+1) < p_path.Len()) {
     // true separator
-    base = p_path.Mid(pos+1);
+    base = p_path.Ptr(pos+1);
     while ((pos >= 1) && (p_path[pos-1] == L'/'))
       pos--;
     if (pos == 0)
@@ -128,30 +127,71 @@ static int filter_pattern(const char *string , const char *pattern , int flags_n
   return 0;
 }
 
-
 namespace NWindows {
 namespace NFile {
+
+#ifdef SUPPORT_DEVICE_FILE
+bool IsDeviceName(CFSTR n);
+#endif
+
+#if defined(WIN_LONG_PATH)
+bool GetLongPath(CFSTR fileName, UString &res);
+#endif
+
 namespace NFind {
 
-static const TCHAR kDot = TEXT('.');
-
-bool CFileInfo::IsDots() const
-{ 
+bool CFileInfo::IsDots() const throw()
+{
   if (!IsDir() || Name.IsEmpty())
     return false;
-  if (Name[0] != kDot)
+  if (Name[0] != FTEXT('.'))
     return false;
-  return Name.Length() == 1 || (Name[1] == kDot && Name.Length() == 2);
+  return Name.Len() == 1 || (Name.Len() == 2 && Name[1] == FTEXT('.'));
 }
 
-bool CFileInfoW::IsDots() const
-{ 
-  if (!IsDir() || Name.IsEmpty())
-    return false;
-  if (Name[0] != kDot)
-    return false;
-  return Name.Length() == 1 || (Name[1] == kDot && Name.Length() == 2);
+#define WIN_FD_TO_MY_FI(fi, fd) \
+  fi.Attrib = fd.dwFileAttributes; \
+  fi.CTime = fd.ftCreationTime; \
+  fi.ATime = fd.ftLastAccessTime; \
+  fi.MTime = fd.ftLastWriteTime; \
+  fi.Size = (((UInt64)fd.nFileSizeHigh) << 32) + fd.nFileSizeLow; \
+  fi.IsDevice = false;
+
+  /*
+  #ifdef UNDER_CE
+  fi.ObjectID = fd.dwOID;
+  #else
+  fi.ReparseTag = fd.dwReserved0;
+  #endif
+  */
+
+#ifndef _UNICODE
+
+static inline UINT GetCurrentCodePage() { return ::AreFileApisANSI() ? CP_ACP : CP_OEMCP; }
+
+static void ConvertWIN32_FIND_DATA_To_FileInfo(const WIN32_FIND_DATA &fd, CFileInfo &fi)
+{
+  WIN_FD_TO_MY_FI(fi, fd);
+  fi.Name = fas2fs(fd.cFileName);
 }
+#endif
+  
+////////////////////////////////
+// CFindFile
+
+bool CFindFile::Close()
+{
+  if(_dirp == 0)
+    return true;
+  int ret = closedir(_dirp);
+  if (ret == 0)
+  {
+    _dirp = 0;
+    return true;
+  }
+  return false;
+}
+
 
 static bool originalFilename(const UString & src, AString & res)
 {
@@ -170,21 +210,22 @@ static bool originalFilename(const UString & src, AString & res)
   return true;
 }
 
-
-
 // Warning this function cannot update "fileInfo.Name"
-static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename) {
+static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename,bool ignoreLink) {
   struct stat stat_info;
 
   int ret;
 #ifdef ENV_HAVE_LSTAT
-  if (global_use_lstat) {
+  if ( (global_use_lstat) && (ignoreLink == false)) {
     ret = lstat(filename,&stat_info);
   } else
 #endif
   {
      ret = stat(filename,&stat_info);
   }
+
+  // printf("fillin_CFileInfo(%s,%d)=%d  mode=%o\n",filename,(int)ignoreLink,ret,(unsigned)stat_info.st_mode);
+
 
   if (ret != 0) return ret;
 
@@ -214,7 +255,7 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *filename) {
   return 0;
 }
 
-static int fillin_CFileInfo(CFileInfo &fileInfo,const char *dir,const char *name) {
+static int fillin_CFileInfo(CFileInfo &fi,const char *dir,const char *name,bool ignoreLink) {
   char filename[MAX_PATHNAME_LEN];
   size_t dir_len = strlen(dir);
   size_t name_len = strlen(name);
@@ -231,9 +272,13 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *dir,const char *name
   filename[dir_len] = CHAR_PATH_SEPARATOR;
   memcpy(filename+(dir_len+1),name,name_len+1); // copy also final '\0'
 
-  fileInfo.Name = name;
+#ifdef _UNICODE
+  fi.Name = GetUnicodeString(name, CP_ACP);
+#else
+  fi.Name = name;
+#endif
 
-  int ret = fillin_CFileInfo(fileInfo,filename);
+  int ret = fillin_CFileInfo(fi,filename,ignoreLink);
   if (ret != 0) {
 	AString err_msg = "stat error for ";
         err_msg += filename;
@@ -245,28 +290,14 @@ static int fillin_CFileInfo(CFileInfo &fileInfo,const char *dir,const char *name
   return ret;
 }
 
-////////////////////////////////
-// CFindFile
-
-bool CFindFile::Close()
-{
-
-  if(_dirp == 0)
-    return true;
-  int ret = closedir(_dirp);
-  if (ret == 0)
-  {
-    _dirp = 0;
-    return true;
-  }
-  return false;
-}
-           
-// bool CFindFile::FindFirst(LPCTSTR wildcard, CFileInfo &fileInfo)
-bool CFindFile::FindFirst(LPCSTR wildcard, CFileInfo &fileInfo)
+bool CFindFile::FindFirst(CFSTR cfWildcard, CFileInfo &fi, bool ignoreLink)
 {
   if (!Close())
     return false;
+
+  AString Awildcard = UnicodeStringToMultiByte(cfWildcard, CP_ACP);
+  const char * wildcard = (const char *)Awildcard;
+
 
   if ((!wildcard) || (wildcard[0]==0)) {
     SetLastError(ERROR_PATH_NOT_FOUND);
@@ -296,7 +327,7 @@ bool CFindFile::FindFirst(LPCSTR wildcard, CFileInfo &fileInfo)
   struct dirent *dp;
   while ((dp = readdir(_dirp)) != NULL) {
     if (filter_pattern(dp->d_name,(const char *)_pattern,0) == 1) {
-      int retf = fillin_CFileInfo(fileInfo,(const char *)_directory,dp->d_name);
+      int retf = fillin_CFileInfo(fi,(const char *)_directory,dp->d_name,ignoreLink);
       if (retf)
       {
          TRACEN((printf("CFindFile::FindFirst : closedir-1(dirp=%p)\n",_dirp)))
@@ -315,29 +346,10 @@ bool CFindFile::FindFirst(LPCSTR wildcard, CFileInfo &fileInfo)
   _dirp = 0;
   SetLastError( ERROR_NO_MORE_FILES );
   return false;
+
 }
 
-bool CFindFile::FindFirst(LPCWSTR wildcard, CFileInfoW &fileInfo)
-{
-  if (!Close())
-    return false;
-  CFileInfo fileInfo0;
-  AString Awildcard = UnicodeStringToMultiByte(wildcard, CP_ACP);
-  bool bret = FindFirst((LPCSTR)Awildcard, fileInfo0);
-  if (bret)
-  {
-     fileInfo.Attrib = fileInfo0.Attrib;
-     fileInfo.CTime = fileInfo0.CTime;
-     fileInfo.ATime = fileInfo0.ATime;
-     fileInfo.MTime = fileInfo0.MTime;
-     fileInfo.Size = fileInfo0.Size;
-     fileInfo.IsDevice = fileInfo0.IsDevice;
-     fileInfo.Name = GetUnicodeString(fileInfo0.Name, CP_ACP);
-  }
-  return bret;
-}
-
-bool CFindFile::FindNext(CFileInfo &fileInfo)
+bool CFindFile::FindNext(CFileInfo &fi)
 {
   if (_dirp == 0)
   {
@@ -348,7 +360,7 @@ bool CFindFile::FindNext(CFileInfo &fileInfo)
   struct dirent *dp;
   while ((dp = readdir(_dirp)) != NULL) {
       if (filter_pattern(dp->d_name,(const char *)_pattern,0) == 1) {
-        int retf = fillin_CFileInfo(fileInfo,(const char *)_directory,dp->d_name);
+        int retf = fillin_CFileInfo(fi,(const char *)_directory,dp->d_name,false);
         if (retf)
         {
            TRACEN((printf("FindNextFileA -%s- ret_handle=FALSE (errno=%d)\n",dp->d_name,errno)))
@@ -364,24 +376,20 @@ bool CFindFile::FindNext(CFileInfo &fileInfo)
   return false;
 }
 
-bool CFindFile::FindNext(CFileInfoW &fileInfo)
-{
-  CFileInfo fileInfo0;
-  bool bret = FindNext(fileInfo0);
-  if (bret)
-  {
-     fileInfo.Attrib = fileInfo0.Attrib;
-     fileInfo.CTime = fileInfo0.CTime;
-     fileInfo.ATime = fileInfo0.ATime;
-     fileInfo.MTime = fileInfo0.MTime;
-     fileInfo.Size = fileInfo0.Size;
-     fileInfo.IsDevice = fileInfo0.IsDevice;
-     fileInfo.Name = GetUnicodeString(fileInfo0.Name, CP_ACP);
-  }
-  return bret;
-}
+#define MY_CLEAR_FILETIME(ft) ft.dwLowDateTime = ft.dwHighDateTime = 0;
 
-bool CFileInfo::Find(LPCSTR wildcard)
+void CFileInfoBase::ClearBase() throw()
+{
+  Size = 0;
+  MY_CLEAR_FILETIME(CTime);
+  MY_CLEAR_FILETIME(ATime);
+  MY_CLEAR_FILETIME(MTime);
+  Attrib = 0;
+  IsAltStream = false;
+  IsDevice = false;
+}
+  
+bool CFileInfo::Find(CFSTR wildcard, bool ignoreLink)
 {
   #ifdef SUPPORT_DEVICE_FILE
   if (IsDeviceName(wildcard))
@@ -398,170 +406,88 @@ bool CFileInfo::Find(LPCSTR wildcard)
   }
   #endif
   CFindFile finder;
-  return finder.FindFirst(wildcard, *this);
-}
-
-
-// #ifndef _UNICODE
-bool CFileInfoW::Find(LPCWSTR wildcard)
-{
-  #ifdef SUPPORT_DEVICE_FILE
-  if (IsDeviceName(wildcard))
-  {
-    Clear();
-    IsDevice = true;
-    NIO::CInFile inFile;
-    if (!inFile.Open(wildcard))
-      return false;
-    Name = wildcard + 4;
-    if (inFile.LengthDefined)
-      Size = inFile.Length;
+  if (finder.FindFirst(wildcard, *this,ignoreLink))
     return true;
-  }
-  #endif
-  CFindFile finder;
-  return finder.FindFirst(wildcard, *this);
-}
-// #endif
-
-bool FindFile(LPCSTR wildcard, CFileInfo &fileInfo)
-{
-  // CFindFile finder;
-  // return finder.FindFirst(wildcard, fileInfo);
-  AString dir,base;
-  my_windows_split_path(wildcard, dir , base);
-  int ret = fillin_CFileInfo(fileInfo,nameWindowToUnix(wildcard));
-  fileInfo.Name = base;
-  TRACEN((printf("FindFile(%s,CFileInfo) ret=%d\n",wildcard,ret)))
-  return (ret == 0);
-}
-
-bool FindFile(LPCWSTR wildcard, CFileInfoW &fileInfo)
-{
-  // CFindFile finder;
-  // return finder.FindFirst(wildcard, fileInfo);
-  AString name = UnicodeStringToMultiByte(wildcard, CP_ACP); 
-  CFileInfo fileInfo0;
-  int ret = fillin_CFileInfo(fileInfo0,nameWindowToUnix((const char *)name));
-  TRACEN((printf("FindFile-1(%s,CFileInfo) ret=%d\n",(const char *)name,ret)))
-  if (ret != 0)
+  #ifdef _WIN32
   {
-    // Try to recover the original filename
-    AString resultString;
-    bool is_good = originalFilename(wildcard, resultString);
-    if (is_good) {
-       ret = fillin_CFileInfo(fileInfo0,nameWindowToUnix((const char *)resultString));
-       TRACEN((printf("FindFile-2(%s,CFileInfo) ret=%d\n",(const char *)resultString,ret)))
+    DWORD lastError = GetLastError();
+    if (lastError == ERROR_BAD_NETPATH || lastError == ERROR_FILE_NOT_FOUND)
+    {
+      int len = MyStringLen(wildcard);
+      if (len > 2 && wildcard[0] == '\\' && wildcard[1] == '\\')
+      {
+        int pos = FindCharPosInString(wildcard + 2, FTEXT('\\'));
+        if (pos >= 0)
+        {
+          pos += 2 + 1;
+          len -= pos;
+          CFSTR remString = wildcard + pos;
+          int pos2 = FindCharPosInString(remString, FTEXT('\\'));
+          FString s = wildcard;
+          if (pos2 < 0 || pos2 == len - 1)
+          {
+            FString s = wildcard;
+            if (pos2 < 0)
+            {
+              pos2 = len;
+              s += FTEXT('\\');
+            }
+            s += FCHAR_ANY_MASK;
+            if (finder.FindFirst(s, *this))
+              if (Name == FTEXT("."))
+              {
+		Name.SetFrom(s.Ptr(pos), pos2);
+                return true;
+              }
+            ::SetLastError(lastError);
+          }
+        }
+      }
     }
   }
-  if (ret == 0)
-  {
-     UString dir,base;
-     my_windows_split_path(wildcard, dir , base);
-     fileInfo.Attrib = fileInfo0.Attrib;
-     fileInfo.CTime = fileInfo0.CTime;
-     fileInfo.ATime = fileInfo0.ATime;
-     fileInfo.MTime = fileInfo0.MTime;
-     fileInfo.Size = fileInfo0.Size;
-     fileInfo.Name = base;
-  }
-  return (ret == 0);
+  #endif
+  return false;
 }
 
-bool DoesFileExist(LPCSTR name) // FIXME
+bool DoesFileExist(CFSTR name)
 {
   CFileInfo fi;
-  int ret = fillin_CFileInfo(fi,nameWindowToUnix(name));
-  TRACEN((printf("DoesFileExist(%s) ret=%d\n",name,ret)))
-  return (ret == 0) && !fi.IsDir();;
+  return fi.Find(name) && !fi.IsDir();
 }
 
-bool DoesDirExist(LPCSTR name) // FIXME
+bool DoesDirExist(CFSTR name)
 {
   CFileInfo fi;
-  int ret = fillin_CFileInfo(fi,nameWindowToUnix(name));
-  TRACEN((printf("DoesDirExist(%s) ret=%d\n",name,ret)))
-  return (ret == 0) && fi.IsDir();;
+  return fi.Find(name) && fi.IsDir();
+}
+bool DoesFileOrDirExist(CFSTR name)
+{
+  CFileInfo fi;
+  return fi.Find(name);
 }
 
-bool DoesFileOrDirExist(LPCSTR name)
+bool CEnumerator::NextAny(CFileInfo &fi)
 {
-  CFileInfo fileInfo;
-  int ret = fillin_CFileInfo(fileInfo,nameWindowToUnix(name));
-  TRACEN((printf("DoesFileOrDirExist(%s) ret=%d\n",name,ret)))
-  return (ret == 0);
-}
-
-bool DoesFileExist(LPCWSTR name)
-{
-  AString Aname = UnicodeStringToMultiByte(name, CP_ACP); 
-  bool bret = DoesFileExist((LPCSTR)Aname);
-  if (bret) return bret;
-
-  // Try to recover the original filename
-  AString resultString;
-  bool is_good = originalFilename(name, resultString);
-  if (is_good) {
-     bret = DoesFileExist((const char *)resultString);
-  }
-  return bret;
-}
-
-bool DoesDirExist(LPCWSTR name)
-{
-  AString Aname = UnicodeStringToMultiByte(name, CP_ACP); 
-  bool bret = DoesDirExist((LPCSTR)Aname);
-  if (bret) return bret;
-
-  // Try to recover the original filename
-  AString resultString;
-  bool is_good = originalFilename(name, resultString);
-  if (is_good) {
-     bret = DoesDirExist((const char *)resultString);
-  }
-  return bret;
-}
-
-bool DoesFileOrDirExist(LPCWSTR name)
-{
-  AString Aname = UnicodeStringToMultiByte(name, CP_ACP); 
-  bool bret = DoesFileOrDirExist((LPCSTR)Aname);
-  if (bret) return bret;
-
-  // Try to recover the original filename
-  AString resultString;
-  bool is_good = originalFilename(name, resultString);
-  if (is_good) {
-     bret = DoesFileOrDirExist((const char *)resultString);
-  }
-  return bret;
-}
-
-/////////////////////////////////////
-// CEnumerator
-
-bool CEnumerator::NextAny(CFileInfo &fileInfo)
-{
-  if(_findFile.IsHandleAllocated())
-    return _findFile.FindNext(fileInfo);
+  if (_findFile.IsHandleAllocated())
+    return _findFile.FindNext(fi);
   else
-    return _findFile.FindFirst(_wildcard, fileInfo);
+    return _findFile.FindFirst(_wildcard, fi);
 }
 
-bool CEnumerator::Next(CFileInfo &fileInfo)
+bool CEnumerator::Next(CFileInfo &fi)
 {
-  while(true)
+  for (;;)
   {
-    if(!NextAny(fileInfo))
+    if (!NextAny(fi))
       return false;
-    if(!fileInfo.IsDots())
+    if (!fi.IsDots())
       return true;
   }
 }
 
-bool CEnumerator::Next(CFileInfo &fileInfo, bool &found)
+bool CEnumerator::Next(CFileInfo &fi, bool &found)
 {
-  if (Next(fileInfo))
+  if (Next(fi))
   {
     found = true;
     return true;
@@ -570,35 +496,100 @@ bool CEnumerator::Next(CFileInfo &fileInfo, bool &found)
   return (::GetLastError() == ERROR_NO_MORE_FILES);
 }
 
-bool CEnumeratorW::NextAny(CFileInfoW &fileInfo)
-{
-  if(_findFile.IsHandleAllocated())
-    return _findFile.FindNext(fileInfo);
-  else
-    return _findFile.FindFirst(_wildcard, fileInfo);
-}
+////////////////////////////////
+// CFindChangeNotification
+// FindFirstChangeNotification can return 0. MSDN doesn't tell about it.
 
-bool CEnumeratorW::Next(CFileInfoW &fileInfo)
+#ifdef _WIN32
+bool CFindChangeNotification::Close()
 {
-  while(true)
-  {
-    if(!NextAny(fileInfo))
-      return false;
-    if(!fileInfo.IsDots())
-      return true;
-  }
-}
-
-bool CEnumeratorW::Next(CFileInfoW &fileInfo, bool &found)
-{
-  if (Next(fileInfo))
-  {
-    found = true;
+  if (!IsHandleAllocated())
     return true;
+  if (!::FindCloseChangeNotification(_handle))
+    return false;
+  _handle = INVALID_HANDLE_VALUE;
+  return true;
+}
+           
+HANDLE CFindChangeNotification::FindFirst(CFSTR pathName, bool watchSubtree, DWORD notifyFilter)
+{
+  #ifndef _UNICODE
+  if (!g_IsNT)
+    _handle = ::FindFirstChangeNotification(fs2fas(pathName), BoolToBOOL(watchSubtree), notifyFilter);
+  else
+  #endif
+  {
+    _handle = ::FindFirstChangeNotificationW(fs2us(pathName), BoolToBOOL(watchSubtree), notifyFilter);
+    #ifdef WIN_LONG_PATH
+    if (!IsHandleAllocated())
+    {
+      UString longPath;
+      if (GetLongPath(pathName, longPath))
+        _handle = ::FindFirstChangeNotificationW(longPath, BoolToBOOL(watchSubtree), notifyFilter);
+    }
+    #endif
   }
-  found = false;
-  return (::GetLastError() == ERROR_NO_MORE_FILES);
+  return _handle;
 }
 
+#ifndef UNDER_CE
+
+bool MyGetLogicalDriveStrings(CObjectVector<FString> &driveStrings)
+{
+  driveStrings.Clear();
+  #ifndef _UNICODE
+  if (!g_IsNT)
+  {
+    driveStrings.Clear();
+    UINT32 size = GetLogicalDriveStrings(0, NULL);
+    if (size == 0)
+      return false;
+    AString buf;
+    UINT32 newSize = GetLogicalDriveStrings(size, buf.GetBuffer(size));
+    if (newSize == 0 || newSize > size)
+      return false;
+    AString s;
+    for (UINT32 i = 0; i < newSize; i++)
+    {
+      char c = buf[i];
+      if (c == '\0')
+      {
+        driveStrings.Add(fas2fs(s));
+        s.Empty();
+      }
+      else
+        s += c;
+    }
+    return s.IsEmpty();
+  }
+  else
+  #endif
+  {
+    UINT32 size = GetLogicalDriveStringsW(0, NULL);
+    if (size == 0)
+      return false;
+    UString buf;
+    UINT32 newSize = GetLogicalDriveStringsW(size, buf.GetBuffer(size));
+    if (newSize == 0 || newSize > size)
+      return false;
+    UString s;
+    for (UINT32 i = 0; i < newSize; i++)
+    {
+      WCHAR c = buf[i];
+      if (c == L'\0')
+      {
+        driveStrings.Add(us2fs(s));
+        s.Empty();
+      }
+      else
+        s += c;
+    }
+    return s.IsEmpty();
+  }
+}
+
+#endif
+
+#endif // _WIN32
 
 }}}

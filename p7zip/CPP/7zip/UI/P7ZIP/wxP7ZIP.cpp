@@ -36,7 +36,6 @@
 using namespace NWindows;
 using namespace NFile;
 
-
 ///////////////////////////////////////////
 
 static LPCWSTR kArchiveNoNameSwitch = L" -an";
@@ -325,7 +324,7 @@ TransformProcessType(&PSN,kProcessTransformToForegroundApplication);
     static char p7zip_home_dir[MAX_PATH];
 
     UString fullPath;
-    NDirectory::MyGetFullPathName(wxApp::argv[0], fullPath);
+    NDir::MyGetFullPathName(wxApp::argv[0], fullPath);
     AString afullPath = GetAnsiString(fullPath);
 
     AString dir,name;

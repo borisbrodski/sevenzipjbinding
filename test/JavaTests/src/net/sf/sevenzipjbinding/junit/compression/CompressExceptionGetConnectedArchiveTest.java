@@ -2,6 +2,9 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -9,13 +12,12 @@ import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Test;
-
-public class CompressExceptionGetConnectedArchiveTest extends JUnitNativeTestBase {
+public class CompressExceptionGetConnectedArchiveTest extends JUnitNativeTestBase<VoidContext> {
 
     @Test
     public void testGetConnectedOutArchive7z() throws Exception {
@@ -94,14 +96,14 @@ public class CompressExceptionGetConnectedArchiveTest extends JUnitNativeTestBas
 
     private IInArchive getInArchive(ArchiveFormat archiveFormat) throws SevenZipException {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(10, 1, 1, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent, archiveFormat);
         byteArrayStream.rewind();
 
         IInArchive inArchive = closeLater(SevenZip.openInArchive(archiveFormat, byteArrayStream));
-        byte[] newContent = new byte[random.get().nextInt(1024) + 1024];
-        random.get().nextBytes(newContent);
+        byte[] newContent = new byte[getRandom().nextInt(1024) + 1024];
+        getRandom().nextBytes(newContent);
         return inArchive;
     }
 

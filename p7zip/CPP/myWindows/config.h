@@ -5,7 +5,7 @@
   #define FILESYSTEM_IS_CASE_SENSITIVE 1
 #endif
 
-  #if !defined(ENV_MACOSX) && !defined(ENV_BEOS)
+  #if !defined(ENV_BEOS)
 
     /* <wchar.h> */
     /* ENV_HAVE_WCHAR__H and not ENV_HAVE_WCHAR_H to avoid warning with wxWidgets */
@@ -22,15 +22,29 @@
     /* towupper */
     #define ENV_HAVE_TOWUPPER
 
-  #endif /* !ENV_MACOSX && !ENV_BEOS */
+  #endif /* !ENV_BEOS */
 
-  #if !defined(ENV_BEOS)
+  #ifdef ENV_HAIKU  /* AFTER !defined(ENV_BEOS) because ENV_HAIKU and ENV_BEOS are defined */
+    /* <wchar.h> */
+    /* ENV_HAVE_WCHAR__H and not ENV_HAVE_WCHAR_H to avoid warning with wxWidgets */
+    #define ENV_HAVE_WCHAR__H
+
+    /* <wctype.h> */
+    #define ENV_HAVE_WCTYPE_H
+
+    /* towupper */
+    #define ENV_HAVE_TOWUPPER
+  #endif
+		
+  
+  
+  #if !defined(ENV_BEOS) && !defined(ANDROID_NDK)
+
     #define ENV_HAVE_GETPASS
 
     #if !defined(sun)
       #define ENV_HAVE_TIMEGM
     #endif
-
 
   #endif
 
@@ -52,7 +66,8 @@
 #define ENV_HAVE_PTHREAD
 #endif
 
-#if defined(ENV_MACOSX)
+/* ANDROID don't have wcstombs or mbstowcs ? */
+#if defined(ENV_MACOSX) || defined(ANDROID_NDK)
 #define LOCALE_IS_UTF8
 #endif
 

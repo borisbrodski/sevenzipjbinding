@@ -196,8 +196,7 @@ jobject DoubleToObject(JNIEnv * env, double value) {
 jobject BSTRToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
-    CMyComBSTR str(value);
-    return env->NewString(UnicodeHelper(str), str.Length());
+    return ToJChar(value).toNewString(env);
 }
 
 /**
@@ -206,15 +205,15 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 jobject ByteArrayToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
-    CMyComBSTR str(value);
-    int size = sizeof(str.m_str[0]);
-    jbyte* jbytes = (jbyte*) str.m_str;
-    jbyte retBytes[str.Length()];
-    for (int i = 0; i < str.Length(); i++) {
+    int size = sizeof(value);
+    int length = SysStringLen(value);
+    jbyte* jbytes = (jbyte*)value;
+    jbyte retBytes[length];
+    for (int i = 0; i < length; i++) {
         retBytes[i] = jbytes[i * size];
     }
-    jbyteArray ret = env->NewByteArray(str.Length());
-    env->SetByteArrayRegion(ret, 0, str.Length(), retBytes);
+    jbyteArray ret = env->NewByteArray(length);
+    env->SetByteArrayRegion(ret, 0, length, retBytes);
     return ret;
 }
 
@@ -251,8 +250,9 @@ bool ObjectToFILETIME(JNIEnvInstance & jniEnvInstance, jobject obj, FILETIME & f
  */
 jstring PropVariantToString(JNIEnv * env, PROPID propID, const PROPVARIANT &propVariant) {
 
-    UString string = ConvertPropertyToString(propVariant, propID, true);
-    return env->NewString(UnicodeHelper(string), string.Length());
+    UString string;
+    ConvertPropertyToString(string, propVariant, propID, true);
+    return ToJChar(string).toNewString(env);
 }
 
 void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVARIANT * propVariant) {
@@ -264,12 +264,7 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
             jint value = jniEnvInstance->CallIntMethod(object, g_IntegerIntValue);
             cPropVariant = (Int32) value;
         } else if (jniEnvInstance->IsInstanceOf(object, g_StringClass)) {
-            const jchar * jChars = jniEnvInstance->GetStringChars((jstring) object, NULL);
-            //			BSTR bstr;
-            //	        StringToBstr(UnicodeHelper(jChars), &bstr);
-            //			cPropVariant = bstr;
-            cPropVariant = UString(UnicodeHelper(jChars));
-            jniEnvInstance->ReleaseStringChars((jstring) object, jChars);
+            cPropVariant = UString(FromJChar(jniEnvInstance, (jstring)object));
         } else if (jniEnvInstance->IsInstanceOf(object, g_ByteArrayClass)) {
             jbyte* value = jniEnvInstance->GetByteArrayElements((jbyteArray) object, NULL);
             cPropVariant = (jbyteArray) value;
@@ -318,6 +313,9 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_I8:
         return LongToObject(jniEnvInstance, propVariant->hVal.QuadPart);
 
+    case VT_UI8:
+        return LongToObject(jniEnvInstance, propVariant->uhVal.QuadPart);
+
     case VT_UI1:
         return IntToObject(jniEnvInstance, propVariant->bVal);
 
@@ -327,9 +325,6 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_UINT: // TODO Check this: Variant 'VT_UINT'
     case VT_UI4:
         return IntToObject(jniEnvInstance, propVariant->ulVal);
-
-    case VT_UI8:
-        return LongToObject(jniEnvInstance, propVariant->uhVal.QuadPart);
 
     case VT_BOOL:
         return BooleanToObject(jniEnvInstance, propVariant->boolVal);

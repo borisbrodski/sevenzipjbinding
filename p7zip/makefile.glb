@@ -1,32 +1,39 @@
 
 RM=rm -f
+
 CFLAGS=-c -I. \
 -I../../../../C \
--I../../../myWindows \
--I../../../include_windows \
--I../../..
+-I../../../../CPP/myWindows \
+-I../../../../CPP/include_windows \
+-I../../../../CPP \
+$(ALLFLAGS) $(ALLFLAGS_C)
 
 CXXFLAGS=-c -I. \
--I../../../myWindows \
--I../../../ \
--I../../../include_windows
+-I../../../../C \
+-I../../../../CPP/myWindows \
+-I../../../../CPP/include_windows \
+-I../../../../CPP \
+$(ALLFLAGS) $(ALLFLAGS_CPP)
 
-DFLAGS=-MM -I. \
--I../../../myWindows \
--I../../../ \
--I../../../include_windows
 
-all: $(PCH_NAME) $(PROG)
+PCH_NAME=$(PRE_COMPILED_HEADER)
 
-$(PROG): $(OBJS)
-	$(CXX) $(LOCAL_SHARED) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIBS)
 
 include makefile.list
 include makefile.depend
 
+$(PROG): $(OBJS)
+	$(CXX) $(ALLFLAGS) $(ALLFLAGS_CPP) $(LOCAL_LINK) -o $(PROG) $(LDFLAGS) $(OBJS) $(LIBS)
+
+debug:
+	@echo "LOCAL_FLAGS=$(LOCAL_FLAGS)"
+	@echo "ALLFLAGS=$(ALLFLAGS)"
+	
 depend:
 	rm -f makefile.depend
-	$(CXX) $(DFLAGS) $(SRCS) > makefile.depend
+	$(CXX) -MM $(CXXFLAGS) $(SRCS)   > makefile.depend
+
+#	$(CC)  $(DFLAGS) $(SRCS_C) >> makefile.depend
 
 clean:
 	-@$(RM) $(PROG) core *.exe *.o *~ .*.swp *.orig *.gch $(PROGS)
@@ -35,5 +42,7 @@ clean:
 	-@$(RM) make.log tags 1 2
 
 # CRC32, ASM version
-7zCrcT8U.o : ../../../../Asm/$(CPU)/7zCrcT8U.asm
-	$(ASM) ../../../../Asm/$(CPU)/7zCrcT8U.asm -o 7zCrcT8U.o
+7zCrcOpt_asm.o : ../../../../Asm/x86/7zCrcOpt_asm.asm
+	$(ASM) -I ../../../../Asm/x86/  ../../../../Asm/x86/7zCrcOpt_asm.asm -o 7zCrcOpt_asm.o
+AesOpt.o : ../../../../Asm/x86/AesOpt.asm
+	$(ASM) -I ../../../../Asm/x86/  ../../../../Asm/x86/AesOpt.asm -o AesOpt.o

@@ -7,12 +7,11 @@ installShared()
   then
     echo "- installing ${DEST_DIR}${DEST_BIN}/${prg}"
     cp bin/${prg} "${DEST_DIR}${DEST_SHARE}/${prg}"
-    chmod 777 "${DEST_DIR}${DEST_SHARE}/${prg}"
+    chmod 755 "${DEST_DIR}${DEST_SHARE}/${prg}"
     strip     "${DEST_DIR}${DEST_SHARE}/${prg}"
-    chmod 555 "${DEST_DIR}${DEST_SHARE}/${prg}"
     echo "#! /bin/sh" > "${DEST_DIR}${DEST_BIN}/${prg}"
     echo "\"${DEST_SHARE}/${prg}\" \"\$@\"" >> "${DEST_DIR}${DEST_BIN}/${prg}"
-    chmod 555 "${DEST_DIR}${DEST_BIN}/${prg}"
+    chmod 755 "${DEST_DIR}${DEST_BIN}/${prg}"
   fi
 }
 
@@ -30,6 +29,8 @@ DEST_DIR=
 [ "$3" ] && DEST_MAN="$3"
 [ "$4" ] && DEST_SHARE_DOC="$4"
 [ "$5" ] && DEST_DIR="$5"
+
+umask 0022
 
 use_share="n"
 
@@ -92,23 +93,22 @@ then
   then
     echo "- installing ${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
     cp bin/7zCon.sfx "${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
-    chmod 777 "${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
+    chmod 755 "${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
     strip     "${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
-    chmod 555 "${DEST_DIR}${DEST_SHARE}/7zCon.sfx"
   fi
 
   if [ -x bin/7z.so ]
   then
     echo "- installing ${DEST_DIR}${DEST_SHARE}/7z.so"
     cp bin/7z.so "${DEST_DIR}${DEST_SHARE}/7z.so"
-    chmod 555 "${DEST_DIR}${DEST_SHARE}/7z.so"
+    chmod 755 "${DEST_DIR}${DEST_SHARE}/7z.so"
   fi
 
   if [ -d bin/Codecs ]
   then
     echo "- installing ${DEST_DIR}${DEST_SHARE}/Codecs"
     cp -r bin/Codecs "${DEST_DIR}${DEST_SHARE}/"
-    chmod 555 "${DEST_DIR}${DEST_SHARE}"/*/*
+    chmod 755 "${DEST_DIR}${DEST_SHARE}"/*/*
   fi
 
 else
@@ -117,7 +117,8 @@ else
     echo "- installing ${DEST_DIR}${DEST_BIN}/7za"
     mkdir -p "${DEST_DIR}${DEST_BIN}"
     cp bin/7za "${DEST_DIR}${DEST_BIN}/7za"
-    chmod 555  "${DEST_DIR}${DEST_BIN}/7za"
+    chmod 755  "${DEST_DIR}${DEST_BIN}/7za"
+    strip      "${DEST_DIR}${DEST_BIN}/7za"
   fi
 
   if [ -x bin/7zr ]
@@ -125,36 +126,37 @@ else
     echo "- installing ${DEST_DIR}${DEST_BIN}/7zr"
     mkdir -p "${DEST_DIR}${DEST_BIN}"
     cp bin/7zr "${DEST_DIR}${DEST_BIN}/7zr"
-    chmod 555  "${DEST_DIR}${DEST_BIN}/7zr"
+    chmod 755  "${DEST_DIR}${DEST_BIN}/7zr"
+    strip      "${DEST_DIR}${DEST_BIN}/7zr"
   fi
 fi
 
 mkdir -p "${DEST_DIR}${DEST_MAN}/man1"
-if [ -d DOCS ]
+if [ -d DOC ]
 then
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7z.1"
-   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOCS"?g man1/7z.1 > "${DEST_DIR}${DEST_MAN}/man1/7z.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7z.1"
+   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOC"?g man1/7z.1 > "${DEST_DIR}${DEST_MAN}/man1/7z.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7z.1"
 
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7za.1"
-   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOCS"?g man1/7za.1 > "${DEST_DIR}${DEST_MAN}/man1/7za.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7za.1"
+   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOC"?g man1/7za.1 > "${DEST_DIR}${DEST_MAN}/man1/7za.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7za.1"
 
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7zr.1"
-   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOCS"?g man1/7zr.1 > "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
+   sed -e s?"{DEST_SHARE_DOC}"?"${DEST_SHARE_DOC}/DOC"?g man1/7zr.1 > "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
 else
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7z.1"
    grep -v "{DEST_SHARE_DOC}" man1/7z.1 > "${DEST_DIR}${DEST_MAN}/man1/7z.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7z.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7z.1"
 
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7za.1"
    grep -v "{DEST_SHARE_DOC}" man1/7za.1 > "${DEST_DIR}${DEST_MAN}/man1/7za.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7za.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7za.1"
 
    echo "- installing ${DEST_DIR}${DEST_MAN}/man1/7zr.1"
    grep -v "{DEST_SHARE_DOC}" man1/7zr.1 > "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
-   chmod 444 "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
+   chmod 644 "${DEST_DIR}${DEST_MAN}/man1/7zr.1"
 fi
 
 if [ -f README ]
@@ -162,7 +164,7 @@ then
   echo "- installing ${DEST_DIR}${DEST_SHARE_DOC}/README"
   mkdir -p  "${DEST_DIR}${DEST_SHARE_DOC}"
   cp README "${DEST_DIR}${DEST_SHARE_DOC}/README"
-  chmod 444 "${DEST_DIR}${DEST_SHARE_DOC}/README"
+  chmod 644 "${DEST_DIR}${DEST_SHARE_DOC}/README"
 fi
 
 if [ -f ChangeLog ]
@@ -170,16 +172,16 @@ then
   echo "- installing ${DEST_DIR}${DEST_SHARE_DOC}/ChangeLog"
   mkdir -p     "${DEST_DIR}${DEST_SHARE_DOC}"
   cp ChangeLog "${DEST_DIR}${DEST_SHARE_DOC}/ChangeLog"
-  chmod 444    "${DEST_DIR}${DEST_SHARE_DOC}/ChangeLog"
+  chmod 644    "${DEST_DIR}${DEST_SHARE_DOC}/ChangeLog"
 fi
 
-if [ -d DOCS ]
+if [ -d DOC ]
 then
-  echo "- installing HTML help in ${DEST_DIR}${DEST_SHARE_DOC}/DOCS"
+  echo "- installing HTML help in ${DEST_DIR}${DEST_SHARE_DOC}/DOC"
   mkdir -p "${DEST_DIR}${DEST_SHARE_DOC}"
-  cp -r DOCS "${DEST_DIR}${DEST_SHARE_DOC}/DOCS"
-  find "${DEST_DIR}${DEST_SHARE_DOC}/DOCS" -type d -exec chmod 555 {} \;
-  find "${DEST_DIR}${DEST_SHARE_DOC}/DOCS" -type f -exec chmod 444 {} \;
+  cp -r DOC "${DEST_DIR}${DEST_SHARE_DOC}/DOC"
+  find "${DEST_DIR}${DEST_SHARE_DOC}/DOC" -type d -exec chmod 755 {} \;
+  find "${DEST_DIR}${DEST_SHARE_DOC}/DOC" -type f -exec chmod 644 {} \;
 fi
 
 use_lang="n"
@@ -188,7 +190,7 @@ if [ -x bin/7zG ]
 then
   use_lang="o"
   cp GUI/p7zipForFilemanager "${DEST_DIR}${DEST_BIN}/"
-  chmod 555 "${DEST_DIR}${DEST_BIN}/"
+  chmod 755 "${DEST_DIR}${DEST_BIN}/"
 fi
 
 if [ -x bin/7zFM ]
@@ -200,7 +202,7 @@ if [ "${use_lang}" = "o" ]
 then
   echo "- installing Lang in ${DEST_DIR}${DEST_SHARE}"
   cp -r GUI/Lang "${DEST_DIR}${DEST_SHARE}/"
-  find "${DEST_DIR}${DEST_SHARE}/Lang" -type d -exec chmod 555 {} \;
-  find "${DEST_DIR}${DEST_SHARE}/Lang" -type f -exec chmod 444 {} \;
+  find "${DEST_DIR}${DEST_SHARE}/Lang" -type d -exec chmod 755 {} \;
+  find "${DEST_DIR}${DEST_SHARE}/Lang" -type f -exec chmod 644 {} \;
 fi
 

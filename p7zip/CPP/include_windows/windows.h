@@ -38,6 +38,15 @@
 #undef BOOL
 typedef int BOOL;
 
+
+#define CREATE_NEW	  1
+#define CREATE_ALWAYS	  2
+#define OPEN_EXISTING	  3
+#define OPEN_ALWAYS	  4
+/* #define TRUNCATE_EXISTING 5 */
+
+
+
 /* BEGIN #include <winnt.h> */
 /* BEGIN <winerror.h> */
 #define NO_ERROR                    0L
@@ -46,7 +55,11 @@ typedef int BOOL;
 #define ERROR_INVALID_HANDLE        EBADF
 #define ERROR_PATH_NOT_FOUND        ENOENT
 #define ERROR_DISK_FULL             ENOSPC
-#define ERROR_NO_MORE_FILES         0x100123 // FIXME
+#define ERROR_NO_MORE_FILES         0x100018 // FIXME
+#define ERROR_DIRECTORY             267 // FIXME
+
+// #define ERROR_NEGATIVE_SEEK         0x100131 // FIXME
+
 
 /* see Common/WyWindows.h
 #define S_OK ((HRESULT)0x00000000L)
@@ -149,6 +162,7 @@ BOOL WINAPI FileTimeToSystemTime(CONST FILETIME *,SYSTEMTIME *);
 BOOL WINAPI LocalFileTimeToFileTime(CONST FILETIME *,FILETIME *);
 VOID WINAPI GetSystemTime(SYSTEMTIME *);
 BOOL WINAPI SystemTimeToFileTime(const SYSTEMTIME*,FILETIME *);
+VOID WINAPI GetSystemTimeAsFileTime(FILETIME * time);
 
 DWORD WINAPI GetTickCount(VOID);
 
@@ -165,13 +179,6 @@ DWORD WINAPI GetTickCount(VOID);
 
 /* #include <unknwn.h> */
 #include <basetyps.h>
-struct IEnumSTATPROPSTG;
-
-typedef struct  tagSTATPROPSTG {
-	LPOLESTR lpwstrName;
-	PROPID propid;
-	VARTYPE vt;
-} STATPROPSTG;
 
 #ifdef __cplusplus
 extern "C" const IID IID_ISequentialStream;

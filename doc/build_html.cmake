@@ -83,105 +83,24 @@ macro(PROCESS_OUTPUT_LINE_HTML LINE_VAR)
     SET(${LINE_VAR} "${TMP}")
 endmacro()
 
-macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
-
-    # find net/sf -name "*.html" | sort
-    SET(JAVADOC_HTML_FILES      
-        net/sf/sevenzipjbinding/ArchiveFormat.html
-        net/sf/sevenzipjbinding/ExtractAskMode.html
-        net/sf/sevenzipjbinding/ExtractOperationResult.html
-        net/sf/sevenzipjbinding/IArchiveExtractCallback.html
-        net/sf/sevenzipjbinding/IArchiveOpenCallback.html
-        net/sf/sevenzipjbinding/IArchiveOpenVolumeCallback.html
-        net/sf/sevenzipjbinding/ICryptoGetTextPassword.html
-        net/sf/sevenzipjbinding/IInArchive.html
-        net/sf/sevenzipjbinding/IInStream.html
-        net/sf/sevenzipjbinding/impl/InArchiveImpl.html
-        net/sf/sevenzipjbinding/impl/InputStreamSequentialInStream.html
-        net/sf/sevenzipjbinding/impl/OutArchive7zImpl.html
-        net/sf/sevenzipjbinding/impl/OutArchiveBZip2Impl.html
-        net/sf/sevenzipjbinding/impl/OutArchiveGZipImpl.html
-        net/sf/sevenzipjbinding/impl/OutArchiveImpl.html
-        net/sf/sevenzipjbinding/impl/OutArchiveTarImpl.html
-        net/sf/sevenzipjbinding/impl/OutArchiveZipImpl.html
-        net/sf/sevenzipjbinding/impl/OutItemFactory.html
-        net/sf/sevenzipjbinding/impl/OutItem.html
-        net/sf/sevenzipjbinding/impl/package-frame.html
-        net/sf/sevenzipjbinding/impl/package-summary.html
-        net/sf/sevenzipjbinding/impl/package-tree.html
-        net/sf/sevenzipjbinding/impl/RandomAccessFileInStream.html
-        net/sf/sevenzipjbinding/impl/RandomAccessFileOutStream.html
-        net/sf/sevenzipjbinding/impl/SequentialInStreamImpl.html
-        net/sf/sevenzipjbinding/impl/VolumedArchiveInStream.html
-        net/sf/sevenzipjbinding/IOutArchiveBase.html
-        net/sf/sevenzipjbinding/IOutArchive.html
-        net/sf/sevenzipjbinding/IOutCreateArchive7z.html
-        net/sf/sevenzipjbinding/IOutCreateArchiveBZip2.html
-        net/sf/sevenzipjbinding/IOutCreateArchiveGZip.html
-        net/sf/sevenzipjbinding/IOutCreateArchive.html
-        net/sf/sevenzipjbinding/IOutCreateArchiveTar.html
-        net/sf/sevenzipjbinding/IOutCreateArchiveZip.html
-        net/sf/sevenzipjbinding/IOutCreateCallback.html
-        net/sf/sevenzipjbinding/IOutFeatureSetLevel.html
-        net/sf/sevenzipjbinding/IOutFeatureSetMultithreading.html
-        net/sf/sevenzipjbinding/IOutFeatureSetSolid.html
-        net/sf/sevenzipjbinding/IOutItem7z.html
-        net/sf/sevenzipjbinding/IOutItemAllFormats.html
-        net/sf/sevenzipjbinding/IOutItemBase.html
-        net/sf/sevenzipjbinding/IOutItemBZip2.html
-        net/sf/sevenzipjbinding/IOutItemGZip.html
-        net/sf/sevenzipjbinding/IOutItemTar.html
-        net/sf/sevenzipjbinding/IOutItemZip.html
-        net/sf/sevenzipjbinding/IOutStream.html
-        net/sf/sevenzipjbinding/IOutUpdateArchive7z.html
-        net/sf/sevenzipjbinding/IOutUpdateArchiveBZip2.html
-        net/sf/sevenzipjbinding/IOutUpdateArchiveGZip.html
-        net/sf/sevenzipjbinding/IOutUpdateArchive.html
-        net/sf/sevenzipjbinding/IOutUpdateArchiveTar.html
-        net/sf/sevenzipjbinding/IOutUpdateArchiveZip.html
-        net/sf/sevenzipjbinding/IProgress.html
-        net/sf/sevenzipjbinding/ISeekableStream.html
-        net/sf/sevenzipjbinding/ISequentialInStream.html
-        net/sf/sevenzipjbinding/ISequentialOutStream.html
-        net/sf/sevenzipjbinding/NCoderPropID.html
-        net/sf/sevenzipjbinding/NFileTimeType.html
-        net/sf/sevenzipjbinding/package-frame.html
-        net/sf/sevenzipjbinding/package-summary.html
-        net/sf/sevenzipjbinding/package-tree.html
-        net/sf/sevenzipjbinding/PropertyInfo.html
-        net/sf/sevenzipjbinding/PropID.AttributesBitMask.html
-        net/sf/sevenzipjbinding/PropID.html
-        net/sf/sevenzipjbinding/SevenZipException.html
-        net/sf/sevenzipjbinding/SevenZip.html
-        net/sf/sevenzipjbinding/SevenZipNativeInitializationException.html
-        net/sf/sevenzipjbinding/SevenZip.Version.html
-        net/sf/sevenzipjbinding/simple/impl/package-frame.html
-        net/sf/sevenzipjbinding/simple/impl/package-summary.html
-        net/sf/sevenzipjbinding/simple/impl/package-tree.html
-        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveImpl.html
-        net/sf/sevenzipjbinding/simple/impl/SimpleInArchiveItemImpl.html
-        net/sf/sevenzipjbinding/simple/ISimpleInArchive.html
-        net/sf/sevenzipjbinding/simple/ISimpleInArchiveItem.html
-        net/sf/sevenzipjbinding/simple/package-frame.html
-        net/sf/sevenzipjbinding/simple/package-summary.html
-        net/sf/sevenzipjbinding/simple/package-tree.html
-        net/sf/sevenzipjbinding/util/ByteArrayStream.html
-        net/sf/sevenzipjbinding/util/package-frame.html
-        net/sf/sevenzipjbinding/util/package-summary.html
-        net/sf/sevenzipjbinding/util/package-tree.html
-    )
-    SET(TMP "${${LINE_VAR}}")
+macro(INIT_JAVADOC_CLASSES)
+    FILE(GLOB_RECURSE JAVADOC_HTML_FILES LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/web/javadoc ${CMAKE_CURRENT_SOURCE_DIR}/web/javadoc/net/*.html)
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
         IF(NOT EXISTS "web/javadoc/${JD_PATH}${HTML_FILE}")
-            MESSAGE(FATAL_ERROR "HTML file not found: 'javadoc/${JD_PATH}${HTML_FILE}'. Copy extracted java-docs into <git-root>/doc/web/javadoc/, then update the list of the classes above.")
+            MESSAGE(FATAL_ERROR "HTML file not found: 'web/javadoc/${JD_PATH}${HTML_FILE}'. Copy extracted java-docs into <git-root>/doc/web/javadoc/, then update the list of the classes above.")
         ENDIF()
+        MESSAGE("FOUND: ${HTML_FILE}")
     ENDFOREACH()
+endmacro()
+
+macro(PROCESS_JAVADOC_CLASSES LINE_VAR)
+    SET(TMP "${${LINE_VAR}}")
     FOREACH(HTML_FILE ${JAVADOC_HTML_FILES})
         STRING(REGEX REPLACE ".*/([^/]+)\\.html" "\\1" CLASS_NAME "${HTML_FILE}")
-        STRING(REGEX REPLACE "([^a-zA-Z0-9>/]|^)(${CLASS_NAME})([^a-zA-Z0-9]|$)" 
+        IF (CLASS_NAME MATCHES "[A-Z][a-z0-9_]*")
+            STRING(REGEX REPLACE "([^a-zA-Z0-9>/]|^)(${CLASS_NAME})([^a-zA-Z0-9]|$)" 
                 "\\1<a href=\"javadoc/${JD_PATH}${HTML_FILE}\">\\2</a>\\3" TMP "${TMP}")
-#        STRING(REGEX REPLACE "${CLASS_NAME}" 
-#                "XXXXX" TMP "${TMP}")
+        ENDIF()
     ENDFOREACH()
     SET(${LINE_VAR} "${TMP}")
 endmacro()
@@ -209,7 +128,7 @@ macro(ADJUST_PADDING SNIPPET_FILE)
                 SET(I 0)
                 SET(C1 "x")
                 SET(C2 "x")
-                WHILE("${C1}" STREQUAL "${C2}" )
+                WHILE(C1 STREQUAL C2)
                     #MESSAGE("LINE: ${FIRST_LINE}  ${I}")
                     # if ERROR here: verify, that the line after the BEGIN_SNIPPET is not an empty line
                     STRING(SUBSTRING "${FIRST_LINE}" ${I} 1 C1)
@@ -351,6 +270,10 @@ macro(PROCESS_HTML FILENAME)
             STRING(REGEX REPLACE "^[ \t]*##INCLUDE_RAW_OUTPUT\\(([a-zA-Z0-9]+)\\)[ \t]*$" "\\1" OUTPUT_NAME ${LINE})
             MESSAGE("- including raw output: ${OUTPUT_NAME}")
             APPEND_FILE("${OUTPUT_HTML_FILE}" "${OUTPUT_DIRECTORY_HTML}/${OUTPUT_NAME}.html")
+        ELSEIF(LINE MATCHES "^[ \t]*##INCLUDE_FILE\\([^)]+\\)[ \t]*$")
+            STRING(REGEX REPLACE "^[ \t]*##INCLUDE_FILE\\(([^)]+)\\)[ \t]*$" "\\1" OUTPUT_NAME ${LINE})
+            MESSAGE("- including file: ${OUTPUT_NAME}")
+            APPEND_FILE("${OUTPUT_HTML_FILE}" "${CMAKE_CURRENT_SOURCE_DIR}/../${OUTPUT_NAME}")
         ELSE()
             PROCESS_JAVADOC_CLASSES(LINE)
             FILE(APPEND "${OUTPUT_HTML_FILE}" "${LINE}\n")
@@ -368,6 +291,7 @@ macro(COPY_PATTERN PATTERN)
     ENDFOREACH()
 endmacro()
 
+INIT_JAVADOC_CLASSES()
 COPY_PATTERN("web.components/*.png")
 COPY_PATTERN("web.components/*.css")
 
@@ -381,4 +305,6 @@ PROCESS_HTML("index.html")
 PROCESS_HTML("compression_snippets.html")
 PROCESS_HTML("extraction_snippets.html")
 PROCESS_HTML("first_steps.html")
+PROCESS_HTML("acknowledgements.html")
 
+# vim: set ts=4 sts=4 sw=4 expandtab:

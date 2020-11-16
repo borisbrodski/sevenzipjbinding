@@ -3,59 +3,77 @@
 <p>7-Zip-JBinding is a java wrapper for <a href="http://www.7-zip.org/">7-Zip</a> C++ library. It allows extraction of
 many archive formats using a very fast native library directly from java through JNI. Features: </p>
 <ul class="Features">
-	<li> Extract 
-		<table border="0" class="ArchiveTypeEnum"><tr>
-		<td>7-Zip</td>
-		<td>Zip</td>
-		<td>Rar</td>
-		<td>Tar</td>
-		<td>Split</td>
-		<td>Lzma</td>
-		<td>Iso</td>
-		<td>HFS</td>
-		<td>GZip</td></tr>
-		<tr>
-		<td>Cpio</td>
-		<td>BZip2</td>
-		<td>Z</td>
-		<td>Arj</td>
-		<td>Chm</td>
-		<td>Lhz</td>
-		<td>Cab</td>
-		<td>Nsis</td></tr>
-		<tr>
-		<td>Deb</td>
-		<td>Rpm</td>
-		<td>Wim</td>
-		<td>Udf</td></tr>
-		</table></li>
-	<li> Create/update 
-		<table border="0" class="ArchiveTypeEnum"><tr>
-		<td>7-Zip</td>
-		<td>Zip</td>
-		<td>GZip</td>
-		<td>Tar</td>
-		<td>BZip2</td>
-		</table></li>
-	<li> It's cross-platform. Binaries are available for 
-		<table border="0" class="ArchiveTypeEnum">
-		<tr><td>&rsaquo; MS-Windows 32/64</td>
-		    <td>&rsaquo; Linux 32/64</td>
-		    <td>&rsaquo; Darwin Mac OS X</td>
-		    <td>&rsaquo; ARM</td>
-	    </tr>
-		</table></li>
-	<li> Full support for extraction of password protected and volumed archives</li>
-	<li> In-memory archive creation/update/extraction</li>
-	<li> <a href="first_steps.html#maven">Artifacts on Maven central</a> (groupId: <a href="http://repo1.maven.org/maven2/net/sf/sevenzipjbinding/">net.sf.sevenzipjbinding</a>)</li>
-	<li> ##INCLUDE_SNIPPET_COUNT example code snippets</li>
-	<li> Over 6700 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
-	<li> Planned: Creation/update of password protected and volumed archives</li>
-	<li> Planned: Extraction of more archive formats supported by 7-Zip</li>
-	<li>
-	   Known bug: JVM crash in case of OutOfMemory exception.<br>
-	   Workaround: Increase heap using -Xmx parameter.
-	</li>
+    <li> Extract 
+        <table border="0" class="ArchiveTypeEnum"><tr>
+        <td>7-Zip</td>
+        <td>Zip</td>
+        <td>Rar</td>
+        <td>Tar</td>
+        <td>Split</td>
+        <td>Lzma</td>
+        <td>Iso</td>
+        <td>HFS</td>
+        <td>GZip</td>
+        </tr><tr>
+        <td>Cpio</td>
+        <td>BZip2</td>
+        <td>Z</td>
+        <td>Arj</td>
+        <td>Chm</td>
+        <td>Lhz</td>
+        <td>Cab</td>
+        <td>Nsis</td>
+        </tr><tr>
+        <td>Ar/A/Lib/Deb</td>
+        <td>Rpm</td>
+        <td>Wim</td>
+        <td>Udf</td>
+        <td>Fat</td>
+        <td>Ntfs</td>
+        </tr></table>
+    </li>
+    <li> Create/update 
+        <table border="0" class="ArchiveTypeEnum"><tr>
+        <td>7-Zip</td>
+        <td>Zip</td>
+        <td>GZip</td>
+        <td>Tar</td>
+        <td>BZip2</td>
+        </table></li>
+    <li> It's cross-platform. Binaries are available for 
+        <table border="0" class="ArchiveTypeEnum">
+        <tr><td>&rsaquo; MS-Windows 32/64</td>
+            <td>&rsaquo; Darwin Mac OS X</td>
+        </tr>
+        <tr>
+            <td>&rsaquo; Linux:</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="padding-left: 2mm">
+                <ul>
+                    <li>Intel 32/64</li>
+                    <li>ARMv5 (armel) *</li>
+                    <li>ARMv6 (RaspberryPi 2) *</li>
+                    <li>ARMv7 (armhf) *</li>
+                    <li>ARM64 *</li>
+                </ul>
+            </td>
+        </tr>
+        </table>
+        * <b>WARNING</b>: not part of '-AllPlatforms' or '-AllLinux' packages
+    </li>
+    <li> In-memory archive extraction/creation/update</li>
+    <li> Full support for extraction of password protected and in volumes splitted archives</li>
+    <li> Full support for creation of password protected archives</li>
+    <li> <a href="first_steps.html#maven">Artifacts on Maven central</a> (groupId: <a href="http://repo1.maven.org/maven2/net/sf/sevenzipjbinding/">net.sf.sevenzipjbinding</a>)</li>
+    <li> 23 example code snippets</li>
+    <li> Over 8599 JUnit tests: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">Dashboard</a></li>
+    <li> Planned: Create volumed archives</li>
+    <li> Planned: Create/Extract more archive formats supported by 7-Zip</li>
+    <li>
+       Known bug: JVM crash in case of OutOfMemory exception.<br>
+       Workaround: Increase heap using -Xmx parameter.
+    </li>
 </ul>
 
 <br/>
@@ -90,22 +108,77 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 <br/>
 <h2>News</h2>
 <div class="infobox">
+    19 February 2020: 
+        <span class="birthday">
+            <img style="width: 30px" src="birthday.png"/> 
+            <span class="tooltip">
+                <center>
+                    <div>This release is a small present to you for my 40th birthday :)</div>
+                    <div>Want to give something back? ;)</div>
+                    <div><a href="https://flattr.com/submit/auto?user_id=BorisBrodski&url=http%3A%2F%2Fsevenzipjbind.sourceforge.net%2F&title=7-Zip-JBinding" target="_blank"><img src="http://button.flattr.com/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a></div>
+                    <div><a href="http://sourceforge.net/donate/index.php?group_id=210915"><img src="http://images.sourceforge.net/images/project-support.jpg" width="88" height="32" border="0" alt="Support This Project" /></a></div>
+                </center>
+            </span>
+        </span>
+    <b>7-Zip-JBinding Release: 16.02-2.01</b>
+<br/><br/>
+Release, extraction &amp; compression, cross-platform, based on 7zip/p7zip 16.02
+<ul>
+    <li>First official release</li>
+    <li>
+       New feature: Bind 7-Zip 16.02
+       <ul>
+           <li>DEB archive renamed to AR supporting archive extension: .ar, .a, .deb, .lib</li>
+           <li><a href="javadoc/index.html?net/sf/sevenzipjbinding/PropID.html">PropID</a>.LINK
+                renamed to <a href="javadoc/index.html?net/sf/sevenzipjbinding/PropID.html">PropID</a>.SYM_LINK</li>
+       </ul>
+    </li>
+    <li>Full RAR5 extraction support (format name: <a href="javadoc/index.html?net/sf/sevenzipjbinding/ArchiveFormat.html">ArchiveFormat</a>.RAR5)
+      <ul>
+        <li>password protected archives</li> 
+        <li>archives with encrypted headers</li>
+        <li>archives splitted in volumes</li>
+      </ul>
+    </li>
+    <li>Create/Update password protected 7z &amp; Zip archives (with header encryption for 7z)</li>
+    <li>
+        ARM builds<br/>
+        (<b>WARNING</b>: not part of '-AllPlatforms' or '-AllLinux' packages)
+        <ul>
+            <li>ARMv5 (armel)</li>
+            <li>ARMv6 (RaspberryPi 2)</li>
+            <li>ARMv7 (armhf)</li>
+            <li>ARM64</li>
+        </ul>
+        
+    </li>
+    <li>Support for FAT (file system)</li>
+    <li>Support for NTFS (file system)</li>
+    <li>Support for HFS (file system)</li>
+    <li>Support for SYM_LINK &amp; HARD_LINK properties</li>
+    <li>Improving performance by using GCC 5.3 for Windows builds</li>
+    <li>Improved archive type auto-detection (algorithm + performance)</li>
+    <li>Bugfix: Bug #18 (null as password causes JVM crash)</li>
+    <li>Bugfix: Bug #21 (7z-archive in Tar)</li>
+    <li>Complete rewrite of the test framework</li>
+</ul>
+<br/>
 
 6 Oktober 2015: <b>7-Zip-JBinding Release: 9.20-2.00beta</b>
 <br/><br/>
 Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p7zip 9.20
 <ul>
     <li>
-	   New feature: Create/update archives
-	   <ul>
-	       <li>Supported archives: 7z, Zip, Tar, GZip, BZip2</li>
+       New feature: Create/update archives
+       <ul>
+           <li>Supported archives: 7z, Zip, Tar, GZip, BZip2</li>
            <li>Archive format specific or generic compression APIs</li>
            <li><a href="javadoc/index.html?net/sf/sevenzipjbinding/IOutArchive.html">JavaDoc</a>
                +
                <a href="compression_snippets.html">Snippets</a>
-	       </li>
-	       <li>More than 1500 additional JUnit tests</li>
-	   </ul>
+           </li>
+           <li>More than 1500 additional JUnit tests</li>
+       </ul>
     </li>
     <li>New feature: Get 7-Zip-JBinding and 7-Zip version information
         <ul>
@@ -134,21 +207,21 @@ Release candidate, extraction &amp; compression, cross-platform, based on 7zip/p
 <br/><br/>
 Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <ul>
-	<li>Feature: WIM format support + tests</li> 
+    <li>Feature: WIM format support + tests</li> 
 
-	<li>Feature: Initialization performance boost. Don't delete extracted native libraries
-	  in the temporary directory (specified by -Djava.io.tmpdir=&lt;dir&gt;) and use those later during
-	  subsequent 7-Zip-JBinding initializations.</li>
+    <li>Feature: Initialization performance boost. Don't delete extracted native libraries
+      in the temporary directory (specified by -Djava.io.tmpdir=&lt;dir&gt;) and use those later during
+      subsequent 7-Zip-JBinding initializations.</li>
 
-	<li>Test: Test cross-platform encoding functionality</li>
-	
-	<li>Bugfix: Get ride of the dependency to USER32.DLL improving performance and robustness</li>
-	 
-	<li>Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)<br/>
-	  Special thanks to Daniel Santos for the provided patch!</li>
+    <li>Test: Test cross-platform encoding functionality</li>
+    
+    <li>Bugfix: Get ride of the dependency to USER32.DLL improving performance and robustness</li>
+     
+    <li>Bugfix: 7-Zip-JBinding compiles now with gcc 4.7 (Bug ID: 3593757)<br/>
+      Special thanks to Daniel Santos for the provided patch!</li>
 
-	<li>Bugfix: Simple Interface returns wrong CRC (Bug ID: 3535546)<br/>
-	  Special thanks to M. Hamer</li>
+    <li>Bugfix: Simple Interface returns wrong CRC (Bug ID: 3535546)<br/>
+      Special thanks to M. Hamer</li>
 </ul>
 
 <br/>
@@ -157,9 +230,9 @@ Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <br/><br/>
 Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <ul>
-	<li>Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback</li>
-	<li>Bugfix: A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters.</li>
-	<li>Feature: Initialize native module within a AccessController#doPrivileged block</li>
+    <li>Bugfix: Multipart CAB-archive extraction without implementing IArchiveOpenVolumeCallback</li>
+    <li>Bugfix: A general protection fault raises when trying to list files in passworded RAR archive. The password length is 30+ characters.</li>
+    <li>Feature: Initialize native module within a AccessController#doPrivileged block</li>
 </ul>
 
 <br/>
@@ -168,8 +241,8 @@ Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <br/><br/>
 Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <ul>
-	<li> Bugfix: it was not possible to open some archives over 4GB<br/>
-	  Special thanks for IKVM developer Jeroen Frijters for finding this bug!</li>
+    <li> Bugfix: it was not possible to open some archives over 4GB<br/>
+      Special thanks for IKVM developer Jeroen Frijters for finding this bug!</li>
 </ul>
 
 <br/>
@@ -178,23 +251,23 @@ Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <br/><br/>
 Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <ul>
-	<li> Binary version for MacOS 64 bit (java 6)</li>
-	<li> Support for multi-platform jars. Multi-platform releases:
-	  <ul>
-	  	<li>AllPlatforms - all available native libraries in a single jar</li>
-	  	<li>AllWindows - native libraries for Windows 32 and 64</li>
-	  	<li>AllLinux - native libraries for Linux 32 and 64</li>
-	  	<li>AllMac - native libraries for Mac 32 and 64</li>
-	  </ul>
-	</li>
-	<li> Initialization reworked. See JavaDoc for SevenZip for more information.</li>
-	<li> Integration test for all platforms for single and multiple platform distributions</li>
-	<li> Improved ISevenZipInArchive.extract(): Sort indices, if not already sorted, bug fixes.</li>
-	<li> DEB format support + tests</li>
-	<li> RPM format support + tests</li>
-	<li> UDF format support + tests</li>
-	<li> New <a href="basic_snippets.html#open-multipart-archives">Code snippets</a>: opening multi-part 7z and RAR archives</li>
-	<li> Source code repository: moved from svn to <a href="http://git-scm.com/">git</a></li>
+    <li> Binary version for MacOS 64 bit (java 6)</li>
+    <li> Support for multi-platform jars. Multi-platform releases:
+      <ul>
+        <li>AllPlatforms - all available native libraries in a single jar</li>
+        <li>AllWindows - native libraries for Windows 32 and 64</li>
+        <li>AllLinux - native libraries for Linux 32 and 64</li>
+        <li>AllMac - native libraries for Mac 32 and 64</li>
+      </ul>
+    </li>
+    <li> Initialization reworked. See JavaDoc for SevenZip for more information.</li>
+    <li> Integration test for all platforms for single and multiple platform distributions</li>
+    <li> Improved ISevenZipInArchive.extract(): Sort indices, if not already sorted, bug fixes.</li>
+    <li> DEB format support + tests</li>
+    <li> RPM format support + tests</li>
+    <li> UDF format support + tests</li>
+    <li> New <a href="basic_snippets.html#open-multipart-archives">Code snippets</a>: opening multi-part 7z and RAR archives</li>
+    <li> Source code repository: moved from svn to <a href="http://git-scm.com/">git</a></li>
 </ul>
 
 <br/>
@@ -203,11 +276,11 @@ Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65
 <br/><br/>
 Bugfix release (Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65)
 <ul>
-	<li> Binary version for Windows 64 XP and above (amd64)</li>
-	<li> NSIS format support + tests</li>
-	<li> New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 
-	     even if archive format auto-detection was used.</li>
-	<li> Better performance for archive format auto-detection</li>
+    <li> Binary version for Windows 64 XP and above (amd64)</li>
+    <li> NSIS format support + tests</li>
+    <li> New method ISevenZipInArchive.getArchiveFormat() returns format of the opened archive, 
+         even if archive format auto-detection was used.</li>
+    <li> Better performance for archive format auto-detection</li>
 </ul>
 
 <br/>
@@ -217,29 +290,29 @@ Bugfix release (Release candidate, extraction only, cross-platform, based on 7zi
 Bugfix release (Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65)
 <ul>
 
-	<li> API change was necessary to fix a bug:</li>
-	<li><ul>
-		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.prepareOperation(ExtractAskMode) is void now.</li>
-		
-		<li> net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream(int, ExtractAskMode) accepts null return values now.
-		  null return values can be used to skip on the fly extraction/testing of archive items.</li> 
-	</ul></li>
-	<li> net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, IArchiveExtractCallback):</li>
-	<li><ul>
-		<li> the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
-		  It if possible to exclude particular items later on using IArchiveExtractCallback call back. Returning null
-		  out of net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream method will skip extraction/testing.</li> 
-	</ul></li>
+    <li> API change was necessary to fix a bug:</li>
+    <li><ul>
+        <li> net.sf.sevenzipjbinding.IArchiveExtractCallback.prepareOperation(ExtractAskMode) is void now.</li>
+        
+        <li> net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream(int, ExtractAskMode) accepts null return values now.
+          null return values can be used to skip on the fly extraction/testing of archive items.</li> 
+    </ul></li>
+    <li> net.sf.sevenzipjbinding.ISevenZipInArchive.extract(int[], boolean, IArchiveExtractCallback):</li>
+    <li><ul>
+        <li> the first parameter "int[]" is optional now. If null value passed all archive items will be extracted.
+          It if possible to exclude particular items later on using IArchiveExtractCallback call back. Returning null
+          out of net.sf.sevenzipjbinding.IArchiveExtractCallback.getStream method will skip extraction/testing.</li> 
+    </ul></li>
 
-	<li> CAB format support + tests</li>
+    <li> CAB format support + tests</li>
 
-	<li> LZH format support + tests</li>
+    <li> LZH format support + tests</li>
 
-	<li> CHM format support + tests</li>
+    <li> CHM format support + tests</li>
 
-	<li> Dashboard project added: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">http://my.cdash.org/index.php?project=7-Zip-JBinding</a></li>
+    <li> Dashboard project added: <a href="http://my.cdash.org/index.php?project=7-Zip-JBinding">http://my.cdash.org/index.php?project=7-Zip-JBinding</a></li>
 
-	<li> Bugfix: crash, if access archive object out of a call back method</li>
+    <li> Bugfix: crash, if access archive object out of a call back method</li>
 </ul>
 
 <br/>
@@ -249,18 +322,18 @@ Bugfix release (Release candidate, extraction only, cross-platform, based on 7zi
 The first cross-platform release of Java wrapper for 7-Zip library was build!<br/>
 Main features of 4.65-1.0rc-extr-only (Release candidate, extraction only, cross-platform, based on 7zip/p7zip 4.65)
 <ul>
-	<li>  Extraction of 7z, Zip, Tar, Split, Rar, Lzma, Iso, HFS, GZip, Cpio, BZIP2, Z, Arj</li>
-	<li>  Support for password protected and volumed archives</li>
-	<li>  Compression method auto detection</li>
-	<li>  Simple extraction interface</li>
-	<li>  Cross-platform. Binaries available for</li>
-	<li><ul>
-			<li> Windows 32</li>
-			<li> Linux 32/64</li>
-			<li> Mac OS X</li>
-	</ul></li>
-	<li>  Over 3000 JUnit tests extraction of archive formats: 7z, Arj, BZip2, Cpio, GZip, ISO, Lzma, Rar, Tar, Z, Zip</li> 
-	<li>  7-Zip-JBinding requires Java 1.5 or higher</li>
+    <li>  Extraction of 7z, Zip, Tar, Split, Rar, Lzma, Iso, HFS, GZip, Cpio, BZIP2, Z, Arj</li>
+    <li>  Support for password protected and volumed archives</li>
+    <li>  Compression method auto detection</li>
+    <li>  Simple extraction interface</li>
+    <li>  Cross-platform. Binaries available for</li>
+    <li><ul>
+            <li> Windows 32</li>
+            <li> Linux 32/64</li>
+            <li> Mac OS X</li>
+    </ul></li>
+    <li>  Over 3000 JUnit tests extraction of archive formats: 7z, Arj, BZip2, Cpio, GZip, ISO, Lzma, Rar, Tar, Z, Zip</li> 
+    <li>  7-Zip-JBinding requires Java 1.5 or higher</li>
 </ul>
 
 <br/>
@@ -293,3 +366,4 @@ Main features of 4.65-1.0rc-extr-only (Release candidate, extraction only, cross
 </ul>
 
 <!--<img class="h1image" src="first_steps.png"/></a><br/>-->
+<!-- vim: set ts=4 sts=4 sw=4 expandtab: -->

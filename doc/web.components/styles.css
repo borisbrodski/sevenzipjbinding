@@ -208,3 +208,12 @@ td.votingdescr  {
 	padding: 5px;
 }
 
+.acknowledgement {
+	margin: 15px 0;
+}
+
+.THANKS {
+  white-space: pre-wrap;
+  word-break: keep-all;
+}
+

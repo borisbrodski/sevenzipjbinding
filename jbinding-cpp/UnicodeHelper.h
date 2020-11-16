@@ -3,108 +3,131 @@
 
 #include "SevenZipJBinding.h"
 
-/**
- * Helper class to convert between wchar_t and jchar.
- * On some machines sizeof(wchar_t) != sizeof(jchar)
- *
- * TODO Write a C++ test for this class
- */
-class UnicodeHelper {
-private:
-	const wchar_t * _unicodeString;
-	wchar_t * _unicodeBuffer;
+#define BUFFER_ON_STACK_SIZE 1024
 
-	const jchar * _jcharString;
-	jchar * _jcharBuffer;
+template <typename T>
+class WithStackBuffer {
+private:
+    unsigned char _bufferOnStack[BUFFER_ON_STACK_SIZE];
+    T* ptr;
 
 public:
-	UnicodeHelper(const wchar_t * unicodeString) {
-		_unicodeString = unicodeString;
-		_jcharString = NULL;
-		_jcharBuffer = NULL;
-		_unicodeBuffer = NULL;
-	}
+    WithStackBuffer() : ptr(NULL) {}
+protected:
+    ~WithStackBuffer() {
+        if (ptr && (void *)ptr != (void *)&_bufferOnStack) {
+            free(ptr);
+#ifdef _DEBUG
+            ptr = NULL;
+#endif
+        }
+    }
+    T* buffer_alloc(size_t bytes) {
+        if (bytes <= BUFFER_ON_STACK_SIZE) {
+            ptr = (T*)(void*)&_bufferOnStack;
+        } else {
+            ptr = (T*)malloc(bytes);
 
-	UnicodeHelper(const jchar * jcharString) {
-		_jcharString = jcharString;
-		_unicodeString = NULL;
-		_jcharBuffer = NULL;
-		_unicodeBuffer = NULL;
-	}
+        }
+        return ptr;
+    }
 
-	~UnicodeHelper() {
-//		TRACE("~UnicodeHelper()");
-		if (_jcharBuffer) {
-//			TRACE("Freeing jchar string");
-#ifndef _DEBUG
-			size_t len = wcslen(_unicodeString);
-			memset(_jcharBuffer, 0, sizeof(jchar) * (len + 1));
-#endif // _DEBUG
-			delete[] _jcharBuffer;
-		}
+    T* buffer() {
+        return ptr;
+    }
+};
 
-		if (_unicodeBuffer) {
-//			TRACE("Freeing unicode string");
-#ifndef _DEBUG
-			size_t len = jcharlen(_jcharString);
-			memset(_unicodeBuffer, 0, sizeof(wchar_t) * (len + 1));
-#endif // _DEBUG
-			delete[] _unicodeBuffer;
-		}
-
-	}
-
-	operator const jchar *() {
-		if (_jcharString) {
-			return _jcharString;
-		}
-
-		TRACE("Converting wchar_t=>jchar: \"" << _unicodeString <<"\"")
-		if (sizeof(wchar_t) == sizeof(jchar)) {
-			_jcharString = (const jchar *)( _unicodeString);
-			return _jcharString;
-		}
-		size_t len = wcslen(_unicodeString);
-		_jcharBuffer = new jchar[len + 1];
-		for (size_t i = 0; i < len; i++) {
-			_jcharBuffer[i] = (jchar) _unicodeString[i];
-		}
-		_jcharBuffer[len] = 0;
-
-		return _jcharString = _jcharBuffer;
-	}
-
-	operator const wchar_t *() {
-		if (_unicodeString) {
-			return _unicodeString;
-		}
-//		TRACE("Converting jchar=>wchar_t ...")
-		if (sizeof(wchar_t) == sizeof(jchar)) {
-			_unicodeString = (wchar_t*) (_jcharString);
-			return _unicodeString;
-		}
-		size_t len = jcharlen(_jcharString);
-//		TRACE1("len: %i" , len)
-		_unicodeBuffer = new wchar_t[len + 1];
-		for (size_t i = 0; i < len; i++) {
-			_unicodeBuffer[i] = (wchar_t) _jcharString[i];
-		}
-		_unicodeBuffer[len] = 0;
-
-		TRACE("Converting jchar=>wchar_t done: \"" << _unicodeBuffer << "\"");
-		return _unicodeString = _unicodeBuffer;
-	}
-
+class ToJChar : WithStackBuffer<jchar> {
 private:
-	static size_t jcharlen(const jchar * jcharString) {
-		size_t len = 0;
-		const jchar * ptr = jcharString;
-		while (*ptr++) {
-			len++;
-		}
-		return len;
-	}
+
+    const wchar_t * _unicodeString;
+    size_t _unicodeLength;
+
+public:
+    ToJChar(UString & ustring) :
+        _unicodeString(ustring),
+        _unicodeLength(ustring.Len())
+    {
+        TRACE("Converting UString=>jchar: \"" << ustring << "\"")
+    }
+
+    ToJChar(BSTR bstr) :
+        _unicodeString(bstr),
+        _unicodeLength(SysStringLen(bstr))
+    {
+        TRACE("Converting BSTR=>jchar: \"" << bstr <<"\"")
+    }
+
+    ToJChar(const wchar_t * str) :
+        _unicodeString(str),
+        _unicodeLength(wcslen(str))
+    {
+        TRACE("Converting BSTR=>jchar: \"" << str <<"\"")
+    }
+
+    ToJChar(CMyComBSTR & myComBSTR) :
+        _unicodeString(myComBSTR),
+        _unicodeLength(SysStringLen(*&myComBSTR))
+    {
+        TRACE("Converting MyComBSTR=>jchar: \"" << myComBSTR <<"\"")
+    }
+
+    jstring toNewString(JNIEnv * env) {
+        return env->NewString((const jchar *)*this, _unicodeLength);
+    }
+
+    ~ToJChar() {
+#ifdef _DEBUG
+        _unicodeString = NULL;
+        _unicodeLength = -1;
+#endif
+    }
+    operator const jchar *() {
+        if (buffer()) {
+            return buffer();
+        }
+
+        buffer_alloc((_unicodeLength + 1) * sizeof(jchar));
+        for (size_t i = 0; i < _unicodeLength; i++) {
+            buffer()[i] = (jchar) _unicodeString[i];
+        }
+        buffer()[_unicodeLength] = 0;
+
+        return buffer();
+    }
+};
+
+class FromJChar : WithStackBuffer<wchar_t> {
+private:
+    size_t _jcharLength;
+    const jchar * _jchars;
+    JNIEnv * _env;
+    jstring _string;
+public:
+    FromJChar(JNIEnv * env, jstring string) : _env(env), _string(string) {
+        _jcharLength = env->GetStringLength(string);
+        _jchars = env->GetStringChars(string, NULL);
+        // TODO Check for NULL (OutOfMemory?)
+    }
+    ~FromJChar() {
+        _env->ReleaseStringChars(_string, _jchars);
+    }
+    operator wchar_t *() {
+        if (buffer()) {
+            return buffer();
+        }
+
+        buffer_alloc((_jcharLength + 1) * sizeof(wchar_t));
+        for (size_t i = 0; i < _jcharLength; i++) {
+            buffer()[i] = (wchar_t)_jchars[i];
+        }
+        buffer()[_jcharLength] = 0;
+
+        TRACE("Converting jchar=>wchar_t done: \"" << buffer() << "\"");
+        return buffer();
+    }
 
 };
+
 
 #endif // UNICODEHELPER_

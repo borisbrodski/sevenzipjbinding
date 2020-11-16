@@ -5,6 +5,8 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -17,13 +19,12 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Test;
-
-public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTestBase {
+public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTestBase<VoidContext>{
     private String newPath;
     private Date newModificationTime;
 
@@ -69,7 +70,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
     @Test
     public void updatePropreties() throws Exception {
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(10, 1, 1, 100, 50, null, false);
 
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
@@ -85,7 +86,7 @@ public class StandaloneUpdateArchiveUpdatePropertiesTest extends JUnitNativeTest
         IOutUpdateArchive<IOutItemAllFormats> outArchiveConnected = inArchive.getConnectedOutArchive();
 
         newPath = inArchive.getProperty(itemToUpdate, PropID.PATH) + "_changed";
-        newModificationTime = new Date(System.currentTimeMillis() + random.get().nextInt(100000) + 100000);
+        newModificationTime = new Date(System.currentTimeMillis() + getRandom().nextInt(100000) + 100000);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
                 new UpdateItemContentArchiveUpdateCallback(itemToUpdate));

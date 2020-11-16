@@ -42,7 +42,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
         *inStream = NULL;
     }
 
-    jstring nameString = jniEnvInstance->NewString(UnicodeHelper(name), (jsize) wcslen(name));
+    jstring nameString = ToJChar(name).toNewString(jniEnvInstance);
 
     jobject inStreamImpl = _iArchiveOpenVolumeCallback->getStream(jniEnvInstance,
             _javaImplementation, nameString);

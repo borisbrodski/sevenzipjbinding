@@ -2,6 +2,9 @@ package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -9,12 +12,14 @@ import net.sf.sevenzipjbinding.IOutFeatureSetSolid;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid.CompressFeatureSetSolidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.FilenameGenerator;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Tests setting solid.
@@ -22,25 +27,20 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles {
+public class CompressFeatureSetSolid extends CompressFeatureAbstractMultpleFiles<CompressFeatureSetSolidContext> {
+    public static class CompressFeatureSetSolidContext extends AbstractTestContext {
+        VirtualContent virtualContent;
+    }
     private static final int DELTA_FILE_LENGTH = 100;
     private static final int AVERAGE_FILE_LENGTH = 100;
     private static final int MAX_SUBDIRECTORIES = 5;
     private static final int DIRECTORIES_DEPTH = 1;
     private static final int COUNT_OF_FILES = 30;
 
-    public static class CompressionFeatureSetSolidSevenZip extends CompressFeatureSetSolid {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.SEVEN_ZIP;
-        }
-    }
-
     private interface FeatureSetSolidTester {
         public void applyFeatures(IOutFeatureSetSolid outArchive) throws SevenZipException;
     }
 
-    private static ThreadLocal<VirtualContent> virtualContentThreadLocal = new ThreadLocal<VirtualContent>();
 
     public void initVirtualContentForThread() {
         FilenameGenerator filenameGenerator = new FilenameGenerator() {
@@ -52,28 +52,22 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
             }
         };
 
-        VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContentThreadLocal.set(virtualContent);
-        virtualContent.fillRandomly(COUNT_OF_FILES, DIRECTORIES_DEPTH, MAX_SUBDIRECTORIES, AVERAGE_FILE_LENGTH,
-                DELTA_FILE_LENGTH, filenameGenerator);
+        context().virtualContent = new VirtualContent(new VirtualContentConfiguration());
+        context().virtualContent.fillRandomly(COUNT_OF_FILES, DIRECTORIES_DEPTH, MAX_SUBDIRECTORIES,
+                AVERAGE_FILE_LENGTH,
+                DELTA_FILE_LENGTH, filenameGenerator, false);
+    }
+
+    @Override
+    protected ArchiveFormat getArchiveFormat() {
+        return ArchiveFormat.SEVEN_ZIP;
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testCompressionFeatureSetSolid() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolid();
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetSolidMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolid();
-            }
-        });
+        doTestCompressionFeatureSetSolid();
     }
 
     private void doTestCompressionFeatureSetSolid() throws Exception {
@@ -116,24 +110,9 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testCompressionFeatureSetSolidFiles() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidFiles();
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetSolidFilesMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidFiles();
-            }
-        });
-    }
-
-    private void doTestCompressionFeatureSetSolidFiles() throws Exception {
         initVirtualContentForThread();
 
         int solidFilesSingle1 = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
@@ -194,24 +173,9 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testCompressionFeatureSetSolidSize() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidSize();
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetSolidSizeMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidSize();
-            }
-        });
-    }
-
-    private void doTestCompressionFeatureSetSolidSize() throws Exception {
         initVirtualContentForThread();
 
         final int averageSize = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
@@ -277,24 +241,9 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     public void testCompressionFeatureSetSolidExtension() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidExtension();
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetSolidExtensionMultithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetSolidExtension();
-            }
-        });
-    }
-
-    private void doTestCompressionFeatureSetSolidExtension() throws Exception {
         initVirtualContentForThread();
 
         int solidExtensionDefault = testCompressionFeatureSetSolid(new FeatureSetSolidTester() {
@@ -333,7 +282,7 @@ public abstract class CompressFeatureSetSolid extends CompressFeatureAbstractMul
 
         tester.applyFeatures(featureOutArchive);
 
-        VirtualContent virtualContent = virtualContentThreadLocal.get();
+        VirtualContent virtualContent = context().virtualContent;
         virtualContent.createOutArchive(outArchive, outputByteArrayStream);
         closeArchive(outArchive);
 

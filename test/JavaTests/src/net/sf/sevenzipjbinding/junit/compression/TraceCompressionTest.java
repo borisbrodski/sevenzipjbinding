@@ -6,6 +6,15 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.junit.Test;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -19,11 +28,10 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Test 7-Zip-JBinding compression/update tracing.
@@ -31,7 +39,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class TraceCompressionTest extends JUnitNativeTestBase {
+public class TraceCompressionTest extends JUnitNativeTestBase<VoidContext> {
     private class OutCreateArchive implements IOutCreateCallback<IOutItemAllFormats> {
         public void setTotal(long total) throws SevenZipException {
         }
@@ -103,6 +111,7 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyIsDir' (index: 0)\n" + //
                 "Get property 'propertyIsAnti' (index: 0)\n" + //
                 "Get property 'dataSize' (index: 0)\n" + //
+                "Get stream (index: 0)\n" + //
                 "Get update info (new data: true) (new props: true) (old index: -1) (index: 1)\n" + //
                 "Get property 'propertyAttributes' (index: 1)\n" + //
                 "Get property 'propertyLastModificationTime' (index: 1)\n" + //
@@ -110,27 +119,30 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyIsDir' (index: 1)\n" + //
                 "Get property 'propertyIsAnti' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
-                "Get stream (index: 0)\n" + //
                 "Get stream (index: 1)\n");
     }
 
     @Test
     public void testCompressionZip() throws Exception {
-        testCompression(ArchiveFormat.ZIP, "Compressing 2 items\n"
-                + "Get update info (new data: true) (new props: true) (old index: -1) (index: 0)\n"
-                + "Get property 'propertyAttributes' (index: 0)\n" + "Get property 'propertyPath' (index: 0)\n"
-                + "Get property 'propertyIsDir' (index: 0)\n"
-                + "Get property 'propertyLastModificationTime' (index: 0)\n"
-                + "Get property 'propertyLastAccessTime' (index: 0)\n"
-                + "Get property 'propertyCreationTime' (index: 0)\n" + "Get property 'dataSize' (index: 0)\n"
-                + "Get update info (new data: true) (new props: true) (old index: -1) (index: 1)\n"
-                + "Get property 'propertyAttributes' (index: 1)\n" + "Get property 'propertyPath' (index: 1)\n"
-                + "Get property 'propertyIsDir' (index: 1)\n"
-                + "Get property 'propertyLastModificationTime' (index: 1)\n"
-                + "Get property 'propertyLastAccessTime' (index: 1)\n"
-                + "Get property 'propertyCreationTime' (index: 1)\n" + "Get property 'dataSize' (index: 1)\n"
-                + "Get stream (index: 0)\n" +
-                "Get stream (index: 1)\n");
+        testCompression(ArchiveFormat.ZIP, "Compressing 2 items\n" //
+                + "Get update info (new data: true) (new props: true) (old index: -1) (index: 0)\n" //
+                + "Get property 'propertyAttributes' (index: 0)\n" //
+                + "Get property 'propertyPath' (index: 0)\n" //
+                + "Get property 'propertyIsDir' (index: 0)\n" //
+                + "Get property 'propertyLastModificationTime' (index: 0)\n" //
+                + "Get property 'propertyLastAccessTime' (index: 0)\n" //
+                + "Get property 'propertyCreationTime' (index: 0)\n" //
+                + "Get property 'dataSize' (index: 0)\n" //
+                + "Get stream (index: 0)\n" //
+                + "Get update info (new data: true) (new props: true) (old index: -1) (index: 1)\n" //
+                + "Get property 'propertyAttributes' (index: 1)\n" //
+                + "Get property 'propertyPath' (index: 1)\n" //
+                + "Get property 'propertyIsDir' (index: 1)\n" //
+                + "Get property 'propertyLastModificationTime' (index: 1)\n" //
+                + "Get property 'propertyLastAccessTime' (index: 1)\n" //
+                + "Get property 'propertyCreationTime' (index: 1)\n" //
+                + "Get property 'dataSize' (index: 1)\n" //
+                + "Get stream (index: 1)\n");
     }
 
     @Test
@@ -144,6 +156,9 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyUser' (index: 0)\n" + //
                 "Get property 'propertyGroup' (index: 0)\n" + //
                 "Get property 'dataSize' (index: 0)\n" + //
+                "Get property 'propertySymLink' (index: 0)\n" + //
+                "Get stream (index: 0)\n" + //
+                "Get property 'propertyHardLink' (index: 0)\n" + //
                 "Get update info (new data: true) (new props: true) (old index: -1) (index: 1)\n" + //
                 "Get property 'propertyIsDir' (index: 1)\n" + //
                 "Get property 'propertyPosixAttributes' (index: 1)\n" + //
@@ -152,8 +167,9 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyUser' (index: 1)\n" + //
                 "Get property 'propertyGroup' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
-                "Get stream (index: 0)\n" + //
-                "Get stream (index: 1)\n");
+                "Get property 'propertySymLink' (index: 1)\n" + //
+                "Get stream (index: 1)\n" + //
+                "Get property 'propertyHardLink' (index: 1)\n");
     }
 
     @Test
@@ -215,7 +231,9 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
                 "Get property 'propertyUser' (index: 1)\n" + //
                 "Get property 'propertyGroup' (index: 1)\n" + //
                 "Get property 'dataSize' (index: 1)\n" + //
-                "Get stream (index: 1)\n");
+                "Get property 'propertySymLink' (index: 1)\n" + //
+                "Get stream (index: 1)\n" + //
+                "Get property 'propertyHardLink' (index: 1)\n");
     }
 
     @Test
@@ -233,7 +251,7 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
     @Test
     public void testCompression7zNoTrace() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(2, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(2, 0, 0, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
 
@@ -260,19 +278,60 @@ public class TraceCompressionTest extends JUnitNativeTestBase {
         outArchive.setTracePrintStream(new PrintStream(traceLogOutputStream));
 
         outArchive.updateItems(new ByteArrayStream(10000), inArchive.getNumberOfItems(), new OutUpdateArchive());
-        assertEquals(log.replace("\n", NEW_LINE), new String(traceLogOutputStream.toByteArray()));
+        assertEquals(log.replace("\n", NEW_LINE), sortLinesByIndex(new String(traceLogOutputStream.toByteArray())));
     }
 
     private void testCompression(ArchiveFormat format, String log) throws Exception {
         ByteArrayOutputStream traceLog = new ByteArrayOutputStream();
         compress(format, traceLog);
-        assertEquals(log.replace("\n", NEW_LINE), new String(traceLog.toByteArray()));
+        assertEquals(log.replace("\n", NEW_LINE), sortLinesByIndex(new String(traceLog.toByteArray())));
+    }
+
+    private String sortLinesByIndex(String string) {
+        Map<Integer, StringBuilder> lineMap = new HashMap<Integer, StringBuilder>();
+        String[] lines = string.split("\\u000D\\u000A|[\\u000A\\u000B\\u000C\\u000D\\u0085\\u2028\\u2029]");
+        Pattern lineIndexMatcher = Pattern.compile("\\(index: (\\d+)\\)");
+        for (String line : lines) {
+            Matcher matcher = lineIndexMatcher.matcher(line);
+            Integer index = null;
+            if (matcher.find()) {
+                index = Integer.parseInt(matcher.group(1));
+            }
+            StringBuilder stringBuilder = lineMap.get(index);
+            if (stringBuilder == null) {
+                stringBuilder = new StringBuilder();
+                lineMap.put(index, stringBuilder);
+            }
+            stringBuilder.append(line);
+            stringBuilder.append(NEW_LINE);
+        }
+        ArrayList<Integer> indexList = new ArrayList<Integer>(lineMap.keySet());
+        Collections.sort(indexList, new Comparator<Integer>() {
+            public int compare(Integer o1, Integer o2) {
+                if (o1 == o2) {
+                    return 0;
+                }
+                if (o1 == null) {
+                    return -1;
+                }
+                if (o2 == null) {
+                    return 1;
+                }
+                return o1.compareTo(o2);
+            }
+        });
+        StringBuilder result = new StringBuilder();
+        for (Integer index : indexList) {
+            result.append(lineMap.get(index));
+        }
+
+        return result.toString();
     }
 
     private ByteArrayStream compress(ArchiveFormat format, OutputStream traceLog) throws SevenZipException {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
         int countOfFiles = format.supportMultipleFiles() ? 2 : 1;
-        virtualContent.fillRandomly(countOfFiles, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(countOfFiles, 0, 0, 100, 50, null, format == ArchiveFormat.TAR);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(100000);
         IOutCreateArchive<IOutItemAllFormats> outNewArchive = closeLater(SevenZip.openOutArchive(format));

@@ -1,14 +1,25 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
 import net.sf.sevenzipjbinding.IOutFeatureSetLevel;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 /**
  * Tests setting compression level.
@@ -16,177 +27,61 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile {
-    public static class CompressionFeatureSetLevelSevenZip extends CompressFeatureSetLevel {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.SEVEN_ZIP;
-        }
-
-        @Override
-        protected int[] getCompressionLevels() {
-            return new int[] { 1, 3, 5, 7 };
-        }
-    }
-
-    public static class CompressionFeatureSetLevelZip extends CompressFeatureSetLevel {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.ZIP;
-        }
-
-        @Override
-        protected int[] getCompressionLevels() {
-            return new int[] { 1, 5, 9 };
-        }
-    }
-
-    public static class CompressionFeatureSetLevelBZip2 extends CompressFeatureSetLevel {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.BZIP2;
-        }
-
-        @Override
-        protected int[] getCompressionLevels() {
-            return new int[] { 1, 4, 7 };
-        }
-    }
-
-    public static class CompressionFeatureSetLevelGZip extends CompressFeatureSetLevel {
-        @Override
-        protected ArchiveFormat getArchiveFormat() {
-            return ArchiveFormat.GZIP;
-        }
-
-        @Override
-        protected int[] getCompressionLevels() {
-            return new int[] { 1, 5, 9 };
-        }
-    }
-
+public class CompressFeatureSetLevel extends CompressFeatureAbstractSingleFile<VoidContext> {
     private static final int ENTROPY = 100;
     private static final int DATA_SIZE = 300000;
+    private static final int DATA_SIZE_LOW_MEMORY = 30000;
+    private final ArchiveFormat archiveFormat;
+    private final int level;
 
-    @Test
-    public void testCompressionFeatureSetLevel0() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(0);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel0Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(0);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel3() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(3);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel3Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(3);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel5() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(5);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel5Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(5);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel7() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(7);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel7Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(7);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel9() throws Exception {
-        testSingleOrMultithreaded(false, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(9);
-            }
-        });
-    }
-
-    @Test
-    public void testCompressionFeatureSetLevel9Multithreaded() throws Exception {
-        testSingleOrMultithreaded(true, new RunnableThrowsException() {
-            public void run() throws Exception {
-                doTestCompressionFeatureSetLevel(9);
-            }
-        });
-    }
-
-    protected abstract int[] getCompressionLevels();
-
-    @Test
-    public void testCompressionRationImpact() throws Exception {
-        double ration = 0;
-        for (int level : getCompressionLevels()) {
-            double newRation = calcCompressionRation(level);
-            assertTrue("Level " + level + ", ration: " + ration + ", newRation: " + newRation, newRation > ration);
-            ration = newRation;
+    private int getDataSize() {
+        if (TestConfiguration.getCurrent().isOnLowMemory()) {
+            return DATA_SIZE_LOW_MEMORY;
         }
+        return DATA_SIZE;
     }
 
-    protected void doTestCompressionFeatureSetLevel(int compressionLevel) throws Exception {
-        calcCompressionRation(compressionLevel);
+    @Parameters
+    public static Collection<Object> getLevels() {
+        List<Object> result = new ArrayList<Object>();
+        ArchiveFormat[] formats = new ArchiveFormat[] {//
+                ArchiveFormat.SEVEN_ZIP, //
+                ArchiveFormat.ZIP, //
+                ArchiveFormat.BZIP2, //
+                ArchiveFormat.GZIP};
+        for (ArchiveFormat archiveFormat : formats) {
+            for (int level : Arrays.asList(0, 3, 5, 7, 9)) {
+                result.add(new Object[] { archiveFormat, level });
+            }
+        }
+
+        return result;
     }
 
-    private double calcCompressionRation(int compressionLevel) throws Exception {
+    public CompressFeatureSetLevel(ArchiveFormat archiveFormat, int level) {
+        this.archiveFormat = archiveFormat;
+        this.level = level;
+    }
+
+    @Override
+    protected ArchiveFormat getArchiveFormat() {
+        return archiveFormat;
+    }
+
+    @Test
+    @Multithreaded
+    @Repeat
+    public void testCompressionFeatureSetLevel() throws Exception {
         IOutCreateArchive<IOutItemAllFormats> outArchive = createArchive();
+        addCloseable(outArchive);
 
         assertTrue(outArchive instanceof IOutFeatureSetLevel);
         IOutFeatureSetLevel featureOutArchive = (IOutFeatureSetLevel) outArchive;
-        featureOutArchive.setLevel(compressionLevel);
+        featureOutArchive.setLevel(level);
 
-        RandomContext randomContext = new RandomContext(DATA_SIZE, ENTROPY);
-        ByteArrayStream outputByteArrayStream = new ByteArrayStream(DATA_SIZE * 2);
+        RandomContext randomContext = new RandomContext(getDataSize(), ENTROPY);
+        ByteArrayStream outputByteArrayStream = new ByteArrayStream(getDataSize() * 2);
         outArchive.createArchive(outputByteArrayStream, 1, new FeatureSingleFileCreateArchiveCallback(randomContext));
         verifySingleFileArchive(randomContext, outputByteArrayStream);
-
-        closeArchive(outArchive);
-        return ((double) randomContext.getSize()) / outputByteArrayStream.getSize();
     }
 }

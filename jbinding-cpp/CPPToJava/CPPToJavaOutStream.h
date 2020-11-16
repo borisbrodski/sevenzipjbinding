@@ -26,7 +26,7 @@ public:
         return result;
     }
 
-    STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject) {
+    STDMETHOD(QueryInterface)(REFGUID iid, void ** outObject) throw() {
         if (iid == IID_IOutStream) {
             *outObject = (void *) (IOutStream *) this;
             AddRef();
@@ -36,7 +36,7 @@ public:
         return CPPToJavaSequentialOutStream::QueryInterface(iid, outObject);
     }
 
-    STDMETHOD_(ULONG, AddRef)() {
+    STDMETHOD_(ULONG, AddRef)() throw() {
         return CPPToJavaSequentialOutStream::AddRef();
     }
 

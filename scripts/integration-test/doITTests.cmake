@@ -13,6 +13,7 @@ IF(NOT PACKAGES)
     MESSAGE(FATAL_ERROR "Use cmake \"-DPACKAGES=Linux-i386;AllLinux;AllPlatforms\" -P path/doITTests.cmake")
 ENDIF()
 
+MESSAGE("Using java params: ${JAVA_PARAMS}")
 
 FIND_PROGRAM(SEVEN_ZIP
         7z
@@ -139,12 +140,13 @@ MACRO(TEST_PACKAGE PLATFORMS)
     FOREACH(PLATFORM ${PLATFORMS})
         SET(RELEASE_NAME "sevenzipjbinding-${VERSION}-${PLATFORM}")
         IF(NOT EXISTS "${ITTEST_DIR}/${RELEASE_NAME}.zip")
+            MESSAGE("Prepare not existing file for download: ${ITTEST_DIR}/${RELEASE_NAME}.zip")
             LIST(APPEND FILES_TO_DOWNLOAD "${URL}${RELEASE_NAME}.zip")
         ENDIF()
     ENDFOREACH()
     
     IF(NOT ("${FILES_TO_DOWNLOAD}" STREQUAL ""))
-	    MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
+    MESSAGE("Download: ${FILES_TO_DOWNLOAD}")
         execute_process(COMMAND "${SCP}" ${FILES_TO_DOWNLOAD} ${ITTEST_DIR}/
                         RESULT_VARIABLE RESULT)
         if(RESULT)
@@ -202,4 +204,6 @@ TEST_PACKAGE("${PACKAGES}")
 #TEST_PACKAGE("AllWindows")
 #TEST_PACKAGE("AllMac")
 #TEST_PACKAGE("AllPlatforms")
+
+# vim: set ts=4 sts=4 sw=4 expandtab:
 

@@ -1,48 +1,57 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Main features of 9.20-2.00beta (Release candidate, extraction/compression/update, cross-platform, based on zip/p7zip 9.20)
+Main features of 16.02-2.01 (Release, extraction/compression/update, cross-platform, based on zip/p7zip 16.02)
+
+    * Bind 7-Zip 16.02, In-memory archive extraction/creation/update
 
     * Extraction of
-        - 7z, Arj, BZip2, Cab, Chm, Cpio, Deb, GZip, HFS, Iso, Lzh,
-          Lzma, Nsis, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
+        - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, HFS, Iso,
+          Lzh, Lzma, Nsis, Ntfs, Rar, Rpm, Split, Tar, Udf, Wim, Xar, Z, Zip
 
         - Archive format auto detection
-        - Support for password protected and volumed archives
-        - Simple extraction interface
+        - Support for password protected and in volumes splitted archives
+        - Full featured and simplified extraction interfaces
 
     * Compression & update of
         - 7z, Zip, Tar, GZip, BZip2
-        - Archive format specific or generic compression API
+        - Convenient archive format specific and generic compression APIs
+        - Password protected archives (7z, zip) with encrypted archive headers (7z only)
         
-        * 7-Zip-JBinding requires Java 1.5 or higher
+    * 7-Zip-JBinding requires Java 1.5 or higher
 
-        * Cross-platform. Binaries available for
-            - Windows 32/64
-            - Linux 32/64
-            - Mac OS X 32/64
-            - ARM (ASMv4+, small endian)
+    * Cross-platform. Binaries available for
+        - Windows 32/64
+        - Linux 32/64
+        - Mac OS X 64
+        - ARM (WARNING: Not a part of -AllPlatform or -AllLinux !!!)
+			* ARMv5 (armel)
+			* ARMv6 (RaspberryPi 2)
+			* ARMv7 (armhf)
+			* ARM64
 
-        * Multi-platform distributions (with platform auto-detection):
-            - AllWindows - includes Win32 and Win64
-            - AllLinux - includes Linux32 and Linux64 (ARM not included)
-            - AllMax - includes Mac OS X 32 and Mac OS X 64
-            - AllPlatforms - includes AllWindows, AllLinux and AllMac + build optimized for RaspberryPI
+    * Multi-platform distributions (with platform auto-detection):
+        - AllWindows - includes Win32 and Win64
+        - AllLinux - includes Linux32 and Linux64 (ARM not included)
+        - AllPlatforms - includes AllWindows, AllLinux and Mac
 
     * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
 
-        * Over 6900 JUnit tests:
-            - 7z, Zip, Tar, Rar, Lzma, Iso, GZip, Cpio, BZIP2,
-              Z, Arj, Lzh, Cab, Chm, Nsis, DEB, RPM, UDF
+        * Over 8599 JUnit tests:
+            - Initialization
+            - All extraction methods
+            - Compression
+            - Unicode support
 
     * Available on the Maven Central (a week after the official release)
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>
-            <version>9.20-2.00beta</version>
+            <version>16.02-2.01</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
-            <version>9.20-2.00beta</version>
+            <version>16.02-2.01</version>
         </dependency>
+

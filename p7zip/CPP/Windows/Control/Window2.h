@@ -6,63 +6,25 @@
 #include "Windows/Window.h"
 #include "Windows/Defs.h"
 
-#ifndef _WIN32
-typedef void * WNDPROC;
-typedef void * CREATESTRUCT;
-typedef struct
-{
-	HWND  hwndFrom;
-
-	UINT  code;
-#define NM_DBLCLK       1
-#define LVN_ITEMCHANGED 2
-#define LVN_COLUMNCLICK 3	
-#define CBEN_BEGINEDIT  10
-#define CBEN_ENDEDITW   11
-	
-	
-} NMHDR;
-typedef NMHDR * LPNMHDR;
-
-typedef struct tagNMLISTVIEW
-{
-    NMHDR hdr;
-    INT iItem;
-    INT iSubItem;
-    UINT uNewState;
-    UINT uOldState;
-    // UINT uChanged;
-    // POINT ptAction;
-    LPARAM  lParam;
-} NMLISTVIEW, *LPNMLISTVIEW;
-
-typedef void * LPNMITEMACTIVATE;
-
-#define NM_RCLICK 1234 /* FIXME */
-
-// FIXME
-#define WM_CREATE 1
-#define WM_COMMAND 2
-#define WM_NOTIFY 3
-#define WM_DESTROY 4
-#define WM_CLOSE 5
-
-#define HIWORD(l)              ((WORD)((DWORD_PTR)(l) >> 16))
-#define LOWORD(l)              ((WORD)((DWORD_PTR)(l) & 0xFFFF))
-
-
-#endif
-
 namespace NWindows {
 namespace NControl {
 
 class CWindow2 // : public CWindow
 {
   // LRESULT DefProc(UINT message, WPARAM wParam, LPARAM lParam);
+  HWND _window;
 public:
-  // CWindow2(HWND newWindow = NULL): CWindow(newWindow){};
-  CWindow2() {}
+  CWindow2(HWND newWindow = NULL): _window(newWindow){};
+  CWindow2& operator=(HWND newWindow)
+  {
+    _window = newWindow;
+    return *this;
+  }
+
   virtual ~CWindow2() {}
+
+  operator HWND() const { return 0; } // FIXME { return _window; }
+
 
 #ifdef _WIN32
   bool CreateEx(DWORD exStyle, LPCTSTR className,

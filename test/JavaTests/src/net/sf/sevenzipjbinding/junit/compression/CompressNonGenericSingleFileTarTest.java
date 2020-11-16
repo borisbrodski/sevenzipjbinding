@@ -14,16 +14,24 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
  * @since 9.20-2.00
  */
 public class CompressNonGenericSingleFileTarTest extends CompressNonGenericSingleFileAbstractTest<IOutItemTar> {
-    private class SingleFileCreateArchiveCallbackTar extends SingleFileCreateArchiveCallback {
+    private static class SingleFileCreateArchiveCallbackTar extends SingleFileCreateArchiveCallback<IOutItemTar> {
+        protected SingleFileCreateArchiveCallbackTar(TestContext testContext) {
+            super(testContext);
+        }
+
         public IOutItemTar getItemInformation(int index, OutItemFactory<IOutItemTar> outItemFactory)
                 throws SevenZipException {
             IOutItemTar outItem = outItemFactory.createOutItem();
 
             setBaseProperties(outItem);
-            setPropertiesForTar(outItem, getTestContext());
+            setPropertiesForTar(outItem, testContext);
 
             return outItem;
         }
+    }
+
+    public CompressNonGenericSingleFileTarTest(int size, int entropy) {
+        super(size, entropy);
     }
 
     @Override
@@ -32,8 +40,8 @@ public class CompressNonGenericSingleFileTarTest extends CompressNonGenericSingl
     }
 
     @Override
-    protected SingleFileCreateArchiveCallback getSingleFileCreateArchiveCallback() {
-        return new SingleFileCreateArchiveCallbackTar();
+    protected SingleFileCreateArchiveCallback<IOutItemTar> getSingleFileCreateArchiveCallback() {
+        return new SingleFileCreateArchiveCallbackTar(getTestContext());
     }
 
     @Override

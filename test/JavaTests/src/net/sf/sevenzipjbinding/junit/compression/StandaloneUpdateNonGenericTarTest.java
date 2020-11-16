@@ -3,6 +3,9 @@ package net.sf.sevenzipjbinding.junit.compression;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -16,13 +19,12 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Test;
-
-public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
+public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase<VoidContext>{
     private static class UpdateItemContentArchiveUpdateCallback implements IOutCreateCallback<IOutItemTar> {
         private int itemToUpdate;
         private byte[] newContent;
@@ -62,8 +64,9 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
 
     @Test
     public void updateContent() throws Exception {
+        // No SymLink/HardLink, since we only update content in this test
         VirtualContent virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(10, 1, 1, 100, 50, null);
+        virtualContent.fillRandomly(10, 1, 1, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = compressVirtualContext(virtualContent);
         byteArrayStream.rewind();
@@ -72,14 +75,14 @@ public class StandaloneUpdateNonGenericTarTest extends JUnitNativeTestBase {
 
         IInArchive inArchive = closeLater(SevenZip.openInArchive(ArchiveFormat.TAR, byteArrayStream));
         int itemToUpdate = virtualContent.getItemCount() / 2;
-        byte[] newContent = new byte[random.get().nextInt(1024) + 1024];
-        random.get().nextBytes(newContent);
+        byte[] newContent = new byte[getRandom().nextInt(1024) + 1024];
+        getRandom().nextBytes(newContent);
 
         String itemToRemovePath = (String) inArchive.getProperty(itemToUpdate, PropID.PATH);
 
         IOutUpdateArchiveTar outArchiveConnected = inArchive.getConnectedOutArchiveTar();
 
-        outArchiveConnected.setTrace(true);
+        //        outArchiveConnected.setTrace(true);
 
         outArchiveConnected.updateItems(byteArrayStream2, inArchive.getNumberOfItems(),
                 new UpdateItemContentArchiveUpdateCallback(itemToUpdate, newContent));

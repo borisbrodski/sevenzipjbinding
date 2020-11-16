@@ -20,7 +20,7 @@
 #endif
 
 
-#include "Common/Types.h"
+#include "Common/MyTypes.h"
 
 namespace NWindows
 {
@@ -95,8 +95,9 @@ namespace NWindows
 		#endif
 
 		/************************ GetRamSize ************************/
-	UInt64 GetRamSize() {
-			UInt64 ullTotalPhys = 128 * 1024 * 1024; // default : 128MB
+	    bool GetRamSize(UInt64 &size) {
+			size = (UInt64)(sizeof(size_t)) << 29;
+			bool isDefined = true;
 
 #ifdef linux
 	 		FILE * f = fopen( "/proc/meminfo", "r" );
@@ -105,26 +106,29 @@ namespace NWindows
 				char buffer[256];
 				unsigned long total;
 
-				ullTotalPhys = 0;
+				size = 0;
 
 		  		while (fgets( buffer, sizeof(buffer), f ))
 		  		{
 		 		/* old style /proc/meminfo ... */
 					if (sscanf( buffer, "Mem: %lu", &total))
 					{
-					 	ullTotalPhys += total;
+					 	size += total;
 					}
 
 					/* new style /proc/meminfo ... */
 					if (sscanf(buffer, "MemTotal: %lu", &total))
-					 	ullTotalPhys = ((UInt64)total)*1024;
+					 	size = ((UInt64)total)*1024;
 		  		}
 		  		fclose( f );
 			}
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__APPLE__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__APPLE__) || defined(__OpenBSD__)
 #ifdef HW_MEMSIZE
 			uint64_t val = 0; // support 2Gb+ RAM
 			int mib[2] = { CTL_HW, HW_MEMSIZE };
+#elif defined(HW_PHYSMEM64)
+			uint64_t val = 0; // support 2Gb+ RAM
+			int mib[2] = { CTL_HW, HW_PHYSMEM64 };
 #else // HW_MEMSIZE
 			unsigned int val = 0; // For old system
 			int mib[2] = { CTL_HW, HW_PHYSMEM };
@@ -132,33 +136,34 @@ namespace NWindows
 			size_t size_sys = sizeof(val);
 
 			sysctl(mib, 2, &val, &size_sys, NULL, 0);
-			if (val) ullTotalPhys = val;
+			if (val) size = val;
 #elif defined(__CYGWIN__)
-			unsigned long pagesize=4096; // FIXME - sysconf(_SC_PAGESIZE) returns 65536 !?
+			unsigned long pagesize=sysconf(_SC_PAGESIZE); // returns 65536 => OK
 					// see http://readlist.com/lists/cygwin.com/cygwin/0/3313.html
 			unsigned long maxpages=sysconf(_SC_PHYS_PAGES);
-			ullTotalPhys = ((UInt64)pagesize)*maxpages;
+			size = ((UInt64)pagesize)*maxpages;
 #elif defined ( sun ) || defined(__NETWARE__)
 			unsigned long pagesize=sysconf(_SC_PAGESIZE);
 			unsigned long maxpages=sysconf(_SC_PHYS_PAGES);
-			ullTotalPhys = ((UInt64)pagesize)*maxpages;
+			size = ((UInt64)pagesize)*maxpages;
 #elif defined(hpux) || defined(__hpux)
 			struct pst_static pst;
 			union pstun pu;
 						
 			pu.pst_static = &pst;
 			if ( pstat( PSTAT_STATIC, pu, (size_t)sizeof(pst), (size_t)0, 0 ) != -1 ) {
-				ullTotalPhys = ((UInt64)pst.physical_memory)*pst.page_size;
+				size = ((UInt64)pst.physical_memory)*pst.page_size;
 			}
 #elif defined(ENV_BEOS)
 			system_info info;
 			get_system_info(&info);
-			ullTotalPhys = info.max_pages;
-			ullTotalPhys *= 4096;
+			size = info.max_pages;
+			size *= 4096;
 #else
 #warning Generic GetRamSize
+			isDefined = false;
 #endif
-			return ullTotalPhys;
+			return isDefined;
 		}
 
 	}

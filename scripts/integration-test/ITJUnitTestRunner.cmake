@@ -6,7 +6,7 @@ ELSE()
 ENDIF()
 
 FILE(READ "java-executable" JAVA)
-FILE(READ "java-executable-params" JAVA_PARAMS)
+FILE(STRINGS "java-executable-params" JAVA_PARAMS)
 
 IF(NOT JAVA)
     MESSAGE(FATAL_ERROR "Internal error. Can't read 'java-executable' file with the java execuable name.")
@@ -24,6 +24,7 @@ ENDFOREACH()
 EXECUTE_PROCESS(COMMAND
                     "${JAVA}" -cp "${TEST_LIBS_STR}"
                     ${JAVA_PARAMS}
+                    ${RUNTIME_JAVA_OPTS}
                     "-DSINGLEBUNDLE=${SINGLEBUNDLE}"
                     "-Dskip-debug-mode-tests=true"
                     org.junit.runner.JUnitCore net.sf.sevenzipjbinding.junit.AllTestSuite

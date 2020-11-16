@@ -5,14 +5,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-public class JNIToolsTest extends JUnitNativeTestBase {
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
+
+public class JNIToolsTest extends JUnitNativeTestBase<VoidContext> {
     private static final int TEST_REPEAT_COUNT = 100;
     private static final int THREAD_COUNT = 40;
     private static final int THREAD_TIMEOUT = 200 * TEST_REPEAT_COUNT;
@@ -26,6 +28,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
 
     private native String nativeInterface1(Interface1 interface1Impl, int offset, boolean fromClass);
 
+    private native boolean nativeInterfaceIsInstance(Object object);
+
     private native JTestFinalClass nativeJTestFinalClassNewInstance();
 
     private native boolean abstractClassIsInstance(Object obj);
@@ -35,9 +39,6 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     private native boolean abstractClassIsAssignableFromInstanceOf(Class<?> clazz);
 
     private native boolean finalClassIsAssignableFromInstanceOf(Class<?> clazz);
-
-    @Rule
-    public DebugModeOnlyTestRule debugModeOnlyTestRule = new DebugModeOnlyTestRule();
 
     @Test
     @DebugModeOnly
@@ -56,6 +57,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -76,16 +79,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl1() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -99,15 +94,15 @@ public class JNIToolsTest extends JUnitNativeTestBase {
 
     @Test
     @DebugModeOnly
-    public void testInterface1Impl1Multithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl1();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
+    public void testInterfaceInstanceOf() {
+        assertFalse(nativeInterfaceIsInstance("test"));
+        assertTrue(nativeInterfaceIsInstance(new Interface2Impl1()));
+        assertFalse(nativeInterfaceIsInstance(null));
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface2Impl1() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -120,18 +115,9 @@ public class JNIToolsTest extends JUnitNativeTestBase {
         }
     }
 
-    // TODO Fix it
     @Test
-    @DebugModeOnly
-    public void testInterface2Impl1Multithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface2Impl1();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl1FromClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -144,16 +130,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testInterface1Impl1FromClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl1FromClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl12() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -169,16 +147,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testInterface1Impl12Multithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl12();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl12FromClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -194,16 +164,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testInterface1Impl12FromClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl12FromClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl2() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -216,16 +178,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testInterface1Impl2Multithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl2();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testInterface1Impl2FromClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -238,16 +192,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testInterface1Impl2FromClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testInterface1Impl2FromClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testJTestFinalClassNewInstance1() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -260,16 +206,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testJTestFinalClassNewInstance1Multithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testJTestFinalClassNewInstance1();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassFields() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -285,16 +223,6 @@ public class JNIToolsTest extends JUnitNativeTestBase {
         }
     }
 
-    @Test
-    @DebugModeOnly
-    public void testFinalClassFieldsMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassFields();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
     private void checkErrorMessage(String errorMessage) {
         if (errorMessage != null) {
             fail(errorMessage);
@@ -302,6 +230,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsInstanceAbstractClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -310,16 +240,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsInstanceAbstractClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsInstanceAbstractClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsInstanceFinalClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -328,16 +250,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsInstanceFinalClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsInstanceFinalClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsInstanceString() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -346,16 +260,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsInstanceStringMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsInstanceString();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsInstanceAbstractClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -364,16 +270,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testFinalClassIsInstanceAbstractClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsInstanceAbstractClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsInstanceFinalClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -382,16 +280,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testFinalClassIsInstanceFinalClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsInstanceFinalClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsInstanceString() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -400,16 +290,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testFinalClassIsInstanceStringMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsInstanceString();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsAssignableFromInstanceOfAbstractClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -418,16 +300,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsAssignableFromInstanceOfAbstractClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsAssignableFromInstanceOfAbstractClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsAssignableFromInstanceOfFinalClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -436,16 +310,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsAssignableFromInstanceOfFinalClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsAssignableFromInstanceOfFinalClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testAbstractClassIsAssignableFromInstanceOfString() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -454,16 +320,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testAbstractClassIsAssignableFromInstanceOfStringMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testAbstractClassIsAssignableFromInstanceOfString();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsAssignableFromInstanceOfAbstractClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -472,16 +330,8 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testFinalClassIsAssignableFromInstanceOfAbstractClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsAssignableFromInstanceOfAbstractClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsAssignableFromInstanceOfFinalClass() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
@@ -490,31 +340,13 @@ public class JNIToolsTest extends JUnitNativeTestBase {
     }
 
     @Test
-    @DebugModeOnly
-    public void testFinalClassIsAssignableFromInstanceOfFinalClassMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsAssignableFromInstanceOfFinalClass();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
-    }
-
-    @Test
+    @Multithreaded
+    @Repeat
     @DebugModeOnly
     public void testFinalClassIsAssignableFromInstanceOfString() {
         for (int i = 0; i < TEST_REPEAT_COUNT; i++) {
             assertFalse(finalClassIsAssignableFromInstanceOf(String.class));
         }
-    }
-
-    @Test
-    @DebugModeOnly
-    public void testFinalClassIsAssignableFromInstanceOfStringMultithreaded() throws Exception {
-        runMultithreaded(new RunnableThrowsException() {
-            public void run() throws Exception {
-                testFinalClassIsAssignableFromInstanceOfString();
-            }
-        }, null, THREAD_COUNT, THREAD_TIMEOUT);
     }
 
     private JTestAbstractClass getOtherJTestAbstractInstance() {

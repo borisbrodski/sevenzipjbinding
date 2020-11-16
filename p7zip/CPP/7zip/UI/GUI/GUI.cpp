@@ -2,30 +2,31 @@
 
 #include "StdAfx.h"
 
-#include <initguid.h>
-
 #include "../../../../C/Alloc.h"
 
-#include "Common/CommandLineParser.h"
-#include "Common/MyException.h"
-#include "Common/NewHandler.h"
-#include "Common/StringConvert.h"
+#include "../../../Common/MyInitGuid.h"
 
-#include "Windows/Error.h"
+#include "../../../Common/CommandLineParser.h"
+#include "../../../Common/IntToString.h"
+#include "../../../Common/MyException.h"
+#include "../../../Common/StringConvert.h"
+
+#include "../../../Windows/FileDir.h"
+#include "../../../Windows/NtCheck.h"
 #ifdef _WIN32
-#include "Windows/MemoryLock.h"
+#include "../../../Windows/MemoryLock.h"
 #endif
 
 #include "../Common/ArchiveCommandLine.h"
 #include "../Common/ExitCode.h"
 
 #include "../FileManager/StringUtils.h"
+#include "../FileManager/MyWindowsNew.h"
 
 #include "BenchmarkDialog.h"
 #include "ExtractGUI.h"
+#include "HashGUI.h"
 #include "UpdateGUI.h"
-
-#include "Windows/FileDir.h" // FIXME
 
 #include "ExtractRes.h"
 
@@ -33,24 +34,52 @@ using namespace NWindows;
 
 HINSTANCE g_hInstance;
 #ifndef _UNICODE
-bool g_IsNT = false;
 #endif
+
+#if 0 // #ifndef UNDER_CE
+
+DWORD g_ComCtl32Version;
+
+static DWORD GetDllVersion(LPCTSTR dllName)
+{
+  DWORD dwVersion = 0;
+  HINSTANCE hinstDll = LoadLibrary(dllName);
+  if (hinstDll)
+  {
+    DLLGETVERSIONPROC pDllGetVersion = (DLLGETVERSIONPROC)GetProcAddress(hinstDll, "DllGetVersion");
+    if (pDllGetVersion)
+    {
+      DLLVERSIONINFO dvi;
+      ZeroMemory(&dvi, sizeof(dvi));
+      dvi.cbSize = sizeof(dvi);
+      HRESULT hr = (*pDllGetVersion)(&dvi);
+      if (SUCCEEDED(hr))
+        dwVersion = MAKELONG(dvi.dwMinorVersion, dvi.dwMajorVersion);
+    }
+    FreeLibrary(hinstDll);
+  }
+  return dwVersion;
+}
+
+#endif
+
+bool g_LVN_ITEMACTIVATE_Support = true;
 
 static void ErrorMessage(LPCWSTR message)
 {
   MessageBoxW(NULL, message, L"7-Zip", MB_ICONERROR | MB_OK);
 }
 
-static void ErrorLangMessage(UINT resourceID, UInt32 langID)
+static void ErrorLangMessage(UINT resourceID)
 {
-  ErrorMessage(LangString(resourceID, langID));
+  ErrorMessage(LangString(resourceID));
 }
 
 static const char *kNoFormats = "7-Zip cannot find the code that works with archives.";
 
 static int ShowMemErrorMessage()
 {
-  ErrorLangMessage(IDS_MEM_ERROR, 0x0200060B);
+  ErrorLangMessage(IDS_MEM_ERROR);
   return NExitCode::kMemoryError;
 }
 
@@ -62,16 +91,21 @@ static int ShowSysErrorMessage(DWORD errorCode)
   return NExitCode::kFatalError;
 }
 
-int Main2(int argc,TCHAR **argv)
+static void ThrowException_if_Error(HRESULT res)
+{
+  if (res != S_OK)
+    throw CSystemException(res);
+}
+
+static int Main2(int argc,TCHAR **argv)
 {
   UStringVector commandStrings;
-  #ifdef _WIN32  
+#ifdef _WIN32
   NCommandLineParser::SplitCommandLine(GetCommandLineW(), commandStrings);
-  #else
+#else
   extern void mySplitCommandLineW(int numArguments,TCHAR  **arguments,UStringVector &parts);
   mySplitCommandLineW(argc,argv,commandStrings);
-  #endif
-
+#endif
   #ifndef UNDER_CE
   if (commandStrings.Size() > 0)
     commandStrings.Delete(0);
@@ -81,65 +115,90 @@ int Main2(int argc,TCHAR **argv)
     MessageBoxW(0, L"Specify command", L"7-Zip", 0);
     return 0;
   }
-	
-/*	
-  {
-    CSysString resultPath;
-	NWindows::NFile::NDirectory::MyGetCurrentDirectory(resultPath);
-	
-	::MessageBoxW(0, resultPath, L"7-Zip - curDir", 0);
-  }
-*/
 
-  CArchiveCommandLineOptions options;
-  CArchiveCommandLineParser parser;
+  CArcCmdLineOptions options;
+  CArcCmdLineParser parser;
 
   parser.Parse1(commandStrings, options);
   parser.Parse2(options);
 
-  #if defined(_WIN32) && defined(_7ZIP_LARGE_PAGES)
+  #if defined(_WIN32) && !defined(UNDER_CE)
+  NSecurity::EnablePrivilege_SymLink();
+  #ifdef _7ZIP_LARGE_PAGES
   if (options.LargePages)
-    NSecurity::EnableLockMemoryPrivilege();
+    NSecurity::EnablePrivilege_LockMemory();
+  #endif
   #endif
 
-  CCodecs *codecs = new CCodecs;
-  CMyComPtr<IUnknown> compressCodecsInfo = codecs;
-  HRESULT result = codecs->Load();
-  if (result != S_OK)
-    throw CSystemException(result);
+  CREATE_CODECS_OBJECT
+
+  codecs->CaseSensitiveChange = options.CaseSensitiveChange;
+  codecs->CaseSensitive = options.CaseSensitive;
+  ThrowException_if_Error(codecs->Load());
   
   bool isExtractGroupCommand = options.Command.IsFromExtractGroup();
+  
   if (codecs->Formats.Size() == 0 &&
-        (isExtractGroupCommand ||
-        options.Command.IsFromUpdateGroup()))
-    throw kNoFormats;
-
-  CIntVector formatIndices;
-  if (!codecs->FindFormatForArchiveType(options.ArcType, formatIndices))
+        (isExtractGroupCommand
+        
+        || options.Command.IsFromUpdateGroup()))
   {
-    ErrorLangMessage(IDS_UNSUPPORTED_ARCHIVE_TYPE, 0x0200060D);
+    #ifdef EXTERNAL_CODECS
+    if (!codecs->MainDll_ErrorPath.IsEmpty())
+    {
+      UString s = L"7-Zip cannot load module ";
+      s += fs2us(codecs->MainDll_ErrorPath);
+      throw s;
+    }
+    #endif
+    throw kNoFormats;
+  }
+  
+  CObjectVector<COpenType> formatIndices;
+  if (!ParseOpenTypes(*codecs, options.ArcType, formatIndices))
+  {
+    ErrorLangMessage(IDS_UNSUPPORTED_ARCHIVE_TYPE);
     return NExitCode::kFatalError;
   }
 
+  CIntVector excludedFormatIndices;
+  FOR_VECTOR (k, options.ExcludedArcTypes)
+  {
+    CIntVector tempIndices;
+    if (!codecs->FindFormatForArchiveType(options.ExcludedArcTypes[k], tempIndices)
+        || tempIndices.Size() != 1)
+    {
+      ErrorLangMessage(IDS_UNSUPPORTED_ARCHIVE_TYPE);
+      return NExitCode::kFatalError;
+    }
+    excludedFormatIndices.AddToUniqueSorted(tempIndices[0]);
+    // excludedFormatIndices.Sort();
+  }
+
+  #ifdef EXTERNAL_CODECS
+  if (isExtractGroupCommand
+      || options.Command.CommandType == NCommandType::kHash
+      || options.Command.CommandType == NCommandType::kBenchmark)
+    ThrowException_if_Error(__externalCodecs.Load());
+  #endif
+  
   if (options.Command.CommandType == NCommandType::kBenchmark)
   {
-    HRESULT res;
-    #ifdef EXTERNAL_CODECS
-    CObjectVector<CCodecInfoEx> externalCodecs;
-    res = LoadExternalCodecs(codecs, externalCodecs);
-    if (res != S_OK)
-      throw CSystemException(res);
-    #endif
-    res = Benchmark(
-      #ifdef EXTERNAL_CODECS
-      codecs, &externalCodecs,
-      #endif
-      options.NumThreads, options.DictionarySize);
-    if (res != S_OK)
-      throw CSystemException(res);
+    HRESULT res = Benchmark(EXTERNAL_CODECS_VARS_L options.Properties);
+    /*
+    if (res == S_FALSE)
+    {
+      stdStream << "\nDecoding Error\n";
+      return NExitCode::kFatalError;
+    }
+    */
+    ThrowException_if_Error(res);
   }
   else if (isExtractGroupCommand)
   {
+    UStringVector ArchivePathsSorted;
+    UStringVector ArchivePathsFullSorted;
+
     CExtractCallbackImp *ecs = new CExtractCallbackImp;
     CMyComPtr<IFolderArchiveExtractCallback> extractCallback = ecs;
 
@@ -151,23 +210,62 @@ int Main2(int argc,TCHAR **argv)
     ecs->Init();
 
     CExtractOptions eo;
+    (CExtractOptionsBase &)eo = options.ExtractOptions;
+    eo.StdInMode = options.StdInMode;
     eo.StdOutMode = options.StdOutMode;
-    eo.OutputDir = options.OutputDir;
     eo.YesToAll = options.YesToAll;
-    eo.OverwriteMode = options.OverwriteMode;
-    eo.PathMode = options.Command.GetPathMode();
-    eo.TestMode = options.Command.IsTestMode();
-    eo.CalcCrc = options.CalcCrc;
-    #if !defined(_7ZIP_ST) && !defined(_SFX)
-    eo.Properties = options.ExtractProperties;
+    eo.TestMode = options.Command.IsTestCommand();
+
+    #ifndef _SFX
+    eo.Properties = options.Properties;
     #endif
 
     bool messageWasDisplayed = false;
-    HRESULT result = ExtractGUI(codecs, formatIndices,
-          options.ArchivePathsSorted,
-          options.ArchivePathsFullSorted,
-          options.WildcardCensor.Pairs.Front().Head,
-          eo, options.ShowDialog, messageWasDisplayed, ecs);
+
+    #ifndef _SFX
+    CHashBundle hb;
+    CHashBundle *hb_ptr = NULL;
+    
+    if (!options.HashMethods.IsEmpty())
+    {
+      hb_ptr = &hb;
+      ThrowException_if_Error(hb.SetMethods(EXTERNAL_CODECS_VARS_L options.HashMethods));
+    }
+    #endif
+
+    {
+      CDirItemsStat st;
+      HRESULT hresultMain = EnumerateDirItemsAndSort(
+          options.arcCensor,
+          NWildcard::k_RelatPath,
+          UString(), // addPathPrefix
+          ArchivePathsSorted,
+          ArchivePathsFullSorted,
+          st,
+          NULL // &scan: change it!!!!
+          );
+      if (hresultMain != S_OK)
+      {
+        /*
+        if (hresultMain != E_ABORT && messageWasDisplayed)
+          return NExitCode::kFatalError;
+        */
+        throw CSystemException(hresultMain);
+      }
+    }
+
+    ecs->MultiArcMode = (ArchivePathsSorted.Size() > 1);
+
+    HRESULT result = ExtractGUI(codecs,
+          formatIndices, excludedFormatIndices,
+          ArchivePathsSorted,
+          ArchivePathsFullSorted,
+          options.Censor.Pairs.Front().Head,
+          eo,
+          #ifndef _SFX
+          hb_ptr,
+          #endif
+          options.ShowDialog, messageWasDisplayed, ecs);
     if (result != S_OK)
     {
       if (result != E_ABORT && messageWasDisplayed)
@@ -195,17 +293,21 @@ int Main2(int argc,TCHAR **argv)
     // callback.StdOutMode = options.UpdateOptions.StdOutMode;
     callback.Init();
 
-    if (!options.UpdateOptions.Init(codecs, formatIndices, options.ArchiveName))
+    if (!options.UpdateOptions.InitFormatIndex(codecs, formatIndices, options.ArchiveName) ||
+        !options.UpdateOptions.SetArcPath(codecs, options.ArchiveName))
     {
-      ErrorLangMessage(IDS_UPDATE_NOT_SUPPORTED, 0x02000601);
+      ErrorLangMessage(IDS_UPDATE_NOT_SUPPORTED);
       return NExitCode::kFatalError;
     }
     bool messageWasDisplayed = false;
     HRESULT result = UpdateGUI(
-        codecs,
-        options.WildcardCensor, options.UpdateOptions,
+        codecs, formatIndices,
+        options.ArchiveName,
+        options.Censor,
+        options.UpdateOptions,
         options.ShowDialog,
-        messageWasDisplayed, &callback);
+        messageWasDisplayed,
+        &callback);
 
     if (result != S_OK)
     {
@@ -219,6 +321,27 @@ int Main2(int argc,TCHAR **argv)
         throw CSystemException(E_FAIL);
       return NExitCode::kWarning;
     }
+  }
+  else if (options.Command.CommandType == NCommandType::kHash)
+  {
+    bool messageWasDisplayed = false;
+    HRESULT result = HashCalcGUI(EXTERNAL_CODECS_VARS_L
+        options.Censor, options.HashOptions, messageWasDisplayed);
+
+    if (result != S_OK)
+    {
+      if (result != E_ABORT && messageWasDisplayed)
+        return NExitCode::kFatalError;
+      throw CSystemException(result);
+    }
+    /*
+    if (callback.FailedFiles.Size() > 0)
+    {
+      if (!messageWasDisplayed)
+        throw CSystemException(E_FAIL);
+      return NExitCode::kWarning;
+    }
+    */
   }
   else
   {
@@ -240,12 +363,23 @@ int APIENTRY WinMain(HINSTANCE  hInstance, HINSTANCE /* hPrevInstance */,
 {
   g_hInstance = hInstance;
   #ifdef _WIN32
+  NT_CHECK
   SetLargePageSize();
   #endif
 
   InitCommonControls();
 
-  ReloadLang();
+  #ifndef UNDER_CE
+  g_ComCtl32Version = ::GetDllVersion(TEXT("comctl32.dll"));
+  g_LVN_ITEMACTIVATE_Support = (g_ComCtl32Version >= MAKELONG(71, 4));
+  #endif
+
+  // OleInitialize is required for ProgressBar in TaskBar.
+  #ifndef UNDER_CE
+  OleInitialize(NULL);
+  #endif
+
+  LoadLangOneTime();
 
   // setlocale(LC_COLLATE, ".ACP");
   try
@@ -255,8 +389,7 @@ int APIENTRY WinMain(HINSTANCE  hInstance, HINSTANCE /* hPrevInstance */,
 #else
 int Main1(int argc,TCHAR **argv)
 {
-  ReloadLangSmart(); // ReloadLang();
-	
+  LoadLangOneTime();
 	
   // under MacOSX, a bundle does not keep the current directory
   // between 7zFM and 7zG ...
@@ -267,7 +400,7 @@ int Main1(int argc,TCHAR **argv)
   {
     UString currentDir = MultiByteToUnicodeString(p7zip_current_dir);
 		
-    NWindows::NFile::NDirectory::MySetCurrentDirectory(currentDir);
+    NWindows::NFile::NDir::SetCurrentDir(currentDir);
   }
 
 
@@ -281,9 +414,9 @@ int Main1(int argc,TCHAR **argv)
   {
     return ShowMemErrorMessage();
   }
-  catch(const CArchiveCommandLineException &e)
+  catch(const CArcCmdLineException &e)
   {
-    ErrorMessage(GetUnicodeString(e));
+    ErrorMessage(e);
     return NExitCode::kUserError;
   }
   catch(const CSystemException &systemError)
@@ -312,10 +445,16 @@ int Main1(int argc,TCHAR **argv)
     ErrorMessage(GetUnicodeString(s));
     return NExitCode::kFatalError;
   }
+  catch(int v)
+  {
+    wchar_t s[32];
+    ConvertUInt32ToString(v, s);
+    ErrorMessage(UString(L"Error: ") + s);
+    return NExitCode::kFatalError;
+  }
   catch(...)
   {
-    ErrorLangMessage(IDS_UNKNOWN_ERROR, 0x0200060C);
+    ErrorMessage(L"Unknown error");
     return NExitCode::kFatalError;
   }
 }
-

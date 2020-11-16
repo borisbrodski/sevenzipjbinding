@@ -79,7 +79,7 @@ The documentation provided in multiple ways:
 
 The scheme for the 7-Zip-JBinding version numbers is:
 
-	<7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage><impl. stage>
+    <7-Zip/p7zip version> - <7-Zip-JBinding major version>.<7-Zip-JBinding minor version><release stage><impl. stage>
 
 7-Zip/p7zip version - version of the underlying 7-Zip and p7zip libraries.
 
@@ -87,21 +87,21 @@ The scheme for the 7-Zip-JBinding version numbers is:
 7-Zip-JBinding minor version - major version of 7-Zip-JBinding base on the specified 7-Zip/p7zip version, beginning from 0
 
 release stage:
-	- 'alpha'       - alpha release: substantial part of the functionality included, not stable. For testing purposes only.
-	- 'rc' / 'beta' - release candidate: all functionality included, not tested enough to be considered stable. Use with care.
-	- ''            - release considered stable. For generally use.
-	
+    - 'alpha'       - alpha release: substantial part of the functionality included, not stable. For testing purposes only.
+    - 'rc' / 'beta' - release candidate: all functionality included, not tested enough to be considered stable. Use with care.
+    - ''            - release considered stable. For generally use.
+    
 impl stage: (implementation stage)
-	Optional. Information about implemented and not implemented features.
-	- '-extr-only' - compression features are not included. 
+    Optional. Information about implemented and not implemented features.
+    - '-extr-only' - compression features are not included. 
 
 Examples:
-	 4.65-1.0alpha      - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
-	 4.66-1.01rc        - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
-	 4.66-1.01beta      - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
-	 4.66-2.3-extr-only - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
-	 				      without compression features.
-	 4.66-2.3 - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
+     4.65-1.0alpha      - Alpha release of 7-Zip-JBinding version 1.0 based on 7-Zip/p7zip version 4.65
+     4.66-1.01rc        - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+     4.66-1.01beta      - Release candidate of 7-Zip-JBinding version 1.1 based on 7-Zip/p7zip version 4.66
+     4.66-2.3-extr-only - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
+                          without compression features.
+     4.66-2.3           - Stable release of 7-Zip-JBinding version 2.3 based on 7-Zip/p7zip version 4.66
 
 
 6. Compile
@@ -117,16 +117,16 @@ a) Download source package from http://sourceforge.net/projects/sevenzipjbind/fi
    and extract it into some <srcdir> directory. Try to avoid directory names with spaces in your path.
 
    Optionally you can checkout a master (current development version) from GIT repository 
-	$ git clone git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind SevenZipJBinding
-	or
-	$ git clone https://github.com/borisbrodski/sevenzipjbinding.git SevenZipJBinding
+    $ git clone git://sevenzipjbind.git.sourceforge.net/gitroot/sevenzipjbind/sevenzipjbind SevenZipJBinding
+    or
+    $ git clone https://github.com/borisbrodski/sevenzipjbinding.git SevenZipJBinding
 
-	$ cd SevenZipJBinding
-	$ git checkout Release-4.65-1.02rc-extr-only
+    $ cd SevenZipJBinding
+    $ git checkout Release-4.65-1.02rc-extr-only
 
 b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your system.
    You can check the version of your CMake by typing:
-	$ cmake --version
+    $ cmake --version
 
    If you don't have cmake installed or cmake version isn't sufficient you can download and install CMake from official
    web site: http://www.cmake.org/
@@ -135,28 +135,50 @@ b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your 
     $ sudo apt-get install cmake
 
 c) The next step is to run CMake. Both in-source and out-of-source methods are supported. Here is example of in-source build:
-	$ cmake .
+    $ cmake .
 
-   Where <srcdir> is a directory, where you extracted or checked out the source code.	
+   Where <srcdir> is a directory, where you extracted or checked out the source code.   
    On some Linux distributions you will need to set JAVA_JDK cmake option to your Java JDK 1.5 or higher. You can use a GUI CMake
    tool 'cmake-gui', edit 'CMakeCache.txt' file with your favorite text editor or just delete 'CMakeCache.txt' file
    and restart CMake with a -DJAVA_JDK parameter:
-	$ cmake . -DJAVA_JDK=<path-to-jdk>
+    $ cmake . -DJAVA_JDK=<path-to-jdk>
    
    If everything goes right, you will get an overview of chosen tools and build options.
 
 d) Now type to compile 7-Zip-JBinding
-	$ make
-	
-e) After make succeeds you can either run tests by typing
-	$ ctest
-	or
-	$ ctest -D Experimental
-	to submit test results to the dashboard (http://my.cdash.org/index.php?project=7-Zip-JBinding)
-   
-f) You can build a binary package by typing
+    $ make
+    
+e) After make succeeds either run tests by typing
+    $ ctest
+    or
+    $ ctest -D Experimental
+    to submit test results to the dashboard (http://my.cdash.org/index.php?project=7-Zip-JBinding)
+    
+    RUNTIME_JAVA_OPTS environment variable passes options to the test java process.
+    
+    Run tests in Verbose-Mode:
+        $ RUNTIME_JAVA_OPTS="-DTEST_TRACE=1" ctest
+    
+    Run tests in specified profile
+        $ RUNTIME_JAVA_OPTS="-DTEST_PROFILE=MINIMAL" ctest
+
+    For example, run tests on armel 256MB RAM architecture:
+        $ RUNTIME_JAVA_OPTS="-DTEST_ON_LOW_MEMORY=1" ctest
+
+    To directly see the standard output of the running tests, use
+        $ RUNTIME_JAVA_OPTS=-DTEST_TRACE=true ctest -VV
+
+    To Run specified test first list all available tests with
+        $ ctest -N
+    then specify a range of tests to execute. The following will execute tests #2, #3, #4 and #5
+        $ ctest -I 2,5
+    
+f) Build a binary package by typing
     $ make package
     
+g) Running tests on a machine with low memory (like 256M on ARM armel):
+   - Add "-DJAVA_PARAMS=-DTEST_ON_LOW_MEMORY=1" to the cmake parameters
+     to skip most memory intensive tests (executed later by the ctest tool see (e) ).
 
 6.2 Compile on Windows
     Both MinGW and Cygwin environments can be used to compile 7-Zip-JBinding. Using MinGW to compile 7-Zip-JBinding 
@@ -166,10 +188,36 @@ a) Download and install MinGW from the official web site: http://www.mingw.org/
 b) Download and install CMake from the official web site: http://www.cmake.org/
 c) Download and extract 7-Zip-Binding source package from http://sourceforge.net/projects/sevenzipjbind/files/
 d) Open cmd console, go into the directory with extracted 7-Zip-Binding source and type  
-	D:\...> cmake -G"MinGW Makefiles" .
+    D:\...> cmake -G"MinGW Makefiles" .
 e) Type
-	D:\...> mingw32-make.exe
+    D:\...> mingw32-make.exe
 f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary package
+
+6.3 Compile with DockCross
+
+DockCross - cross compiling toolchains in Docker images: https://github.com/dockcross/dockcross
+
+DockCross allows easy cross-platform compilation for different Linux/Windows architectures, line Linux ARMv5 (armel), ARMv5 (armhf), ...
+To compile 7-Zip-JBinding on Linux with DockCross:
+
+a) Install DockCross according to installation instructions on the home page (https://github.com/dockcross/dockcross)
+b) Check out or copy 7-Zip-JBinding source code to your build directory
+    $ git clone https://github.com/borisbrodski/sevenzipjbinding.git SevenZipJBinding
+c) Copy JDK to your build directory to make it visible to the container.
+    $ cp -r <my-JDKs>/jdk1.5.0_22 ./jdk1.5.0_22
+    (Mostly for jni.h and stuff. JDK must not match the target platform.)
+d) Define build command sequence, like this one:
+    $ CMD='
+        mkdir build ;
+        cd build ;
+        cmake ../SevenZipJBinding -DJAVA_SYSTEM=arm -DJAVA_ARCH=v6 -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK=../jdk1.5.0_22/
+        make
+        make package
+    '
+c) Run build:
+    $ dockcross-linux-armv6 bash -c "$CMD"
+d) Unfortunately it's not possible to run the tests in the same way, unless your
+   host platform is compatible with the target platform.
 
 
 If you have any troubles with 7-Zip-JBinding please, ask for help. Use forum or issue tracker on sourceforge:
@@ -194,4 +242,4 @@ TODO describe this
 
 
 
-Have fun!	 
+Have fun!    

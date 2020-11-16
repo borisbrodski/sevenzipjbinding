@@ -1,13 +1,22 @@
 7-Zip-JBinding THANKS file
 
-7-Zip-JBinding has originally been written by Boris Brodski.
+7-Zip-JBinding had originally been written by Boris Brodski.
 Many people have further contributed to it by reporting problems, 
-suggesting various improvements, or submitting actual code. Here is
-a list of these people. Help me keep it complete and exempt of errors.
+suggesting various improvements, submitting actual code or supporting
+the project financially. Here is the list of all these people.
+
+Please, help me keep it complete and exempt of errors.
 
 
 Special thanks to
-- Reinhard Pointner and the FileBot user community (for testing and donations)
+
+- Theo Linder for kind donation
+
+- Daniel Wilhelm, Appwork GmbH and JDownloader for fully sponsoring the 16.02-2.01 release with RAR5 support!
+
+- Daniel Wilhelm, Appwork GmbH and JDownloader for fully sponsoring the 15.09-2.01beta release with RAR5 support!
+
+- Reinhard Pointner and the FileBot user community (for testing and valuable donations)
 
 - Masoud (for pointing me to the most weird error in the C++ <-> Java exception handling)
 
@@ -22,3 +31,7 @@ Special thanks to
 - M. Hamer (for reporting bug "Simple Interface returns wrong CRC", bug-id: 3535546)
 
 - Gert Hulselmans for reporting Bug #17 (WIM archive format contains Udf comment)
+
+- seven332 <seven332@163.com> for
+  * amazing Android-integration (not yet integrated in the official release, but available at https://github.com/seven332/sevenzipjbinding/)
+  * finding some forgotten DeleteLocalRefs

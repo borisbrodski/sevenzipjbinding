@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.junit.Test;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchiveGZip;
@@ -17,12 +19,11 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.junit.tools.CallbackTester;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent;
 import net.sf.sevenzipjbinding.junit.tools.VirtualContent.VirtualContentConfiguration;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-
-import org.junit.Test;
 
 
 /**
@@ -31,7 +32,7 @@ import org.junit.Test;
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
+public class StandaloneCompressGZipTest extends JUnitNativeTestBase<VoidContext> {
     private class OutCreateArchiveGZip implements IOutCreateCallback<IOutItemGZip> {
 
 
@@ -73,7 +74,7 @@ public class StandaloneCompressGZipTest extends JUnitNativeTestBase {
     @Test
     public void testCompressionGZip() throws Exception {
         virtualContent = new VirtualContent(new VirtualContentConfiguration());
-        virtualContent.fillRandomly(1, 0, 0, 100, 50, null);
+        virtualContent.fillRandomly(1, 0, 0, 100, 50, null, false);
 
         ByteArrayStream byteArrayStream = new ByteArrayStream(1000000);
 

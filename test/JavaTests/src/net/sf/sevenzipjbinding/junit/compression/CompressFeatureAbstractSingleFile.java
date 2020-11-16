@@ -1,7 +1,11 @@
 package net.sf.sevenzipjbinding.junit.compression;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.Closeable;
 import java.util.Date;
+
+import org.junit.Assert;
 
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutCreateArchive;
@@ -11,21 +15,22 @@ import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.OutItemFactory;
+import net.sf.sevenzipjbinding.junit.AbstractTestContext;
 import net.sf.sevenzipjbinding.junit.tools.AssertOutputStream;
 import net.sf.sevenzipjbinding.junit.tools.RandomContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
-import org.junit.Assert;
-
 /**
  * Tests setting compression level.
  *
+ * @param <C>
+ *            TestContext class
  * @author Boris Brodski
  * @since 9.20-2.00
  */
-public abstract class CompressFeatureAbstractSingleFile extends CompressAbstractTest {
+public abstract class CompressFeatureAbstractSingleFile<C extends AbstractTestContext> extends CompressAbstractTest<C> {
 
-    public class FeatureSingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemAllFormats> {
+    public static class FeatureSingleFileCreateArchiveCallback implements IOutCreateCallback<IOutItemAllFormats> {
 
         private RandomContext randomContext;
 
@@ -79,7 +84,10 @@ public abstract class CompressFeatureAbstractSingleFile extends CompressAbstract
         addCloseable(inArchive);
 
         Assert.assertEquals(getArchiveFormat(), inArchive.getArchiveFormat());
-        inArchive.extractSlow(0, new AssertOutputStream(randomContext));
+        AssertOutputStream assertOutputStream = new AssertOutputStream(randomContext);
+        inArchive.extractSlow(0, assertOutputStream);
         closeArchive(inArchive);
+
+        assertTrue(assertOutputStream.readEnitireStream());
     }
 }

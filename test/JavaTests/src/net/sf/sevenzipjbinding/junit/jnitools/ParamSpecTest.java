@@ -10,14 +10,15 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.sevenzipjbinding.junit.DebugModeOnly;
-import net.sf.sevenzipjbinding.junit.DebugModeOnlyTestRule;
-import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
-
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ParamSpecTest extends JUnitNativeTestBase {
+import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.VoidContext;
+import net.sf.sevenzipjbinding.junit.junittools.annotations.DebugModeOnly;
+import net.sf.sevenzipjbinding.junit.junittools.rules.DebugModeOnlyTestRule;
+
+public class ParamSpecTest extends JUnitNativeTestBase<VoidContext> {
     private static class MyClass {
         public int value;
 
@@ -30,9 +31,6 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         public String toString() {
             return "MyClass(" + value + ")";
         }
-    }
-
-    private static class ParamSpecTestInherited extends ParamSpecTest {
     }
 
     @Rule
@@ -643,15 +641,15 @@ public class ParamSpecTest extends JUnitNativeTestBase {
         int i = 0;
         for (Class<?> parameterClass : method.getParameterTypes()) {
             if (parameterClass == int.class) {
-                parameter[i] = RANDOM.nextInt();
+                parameter[i] = getRandom().nextInt();
             } else if (parameterClass == long.class) {
-                parameter[i] = RANDOM.nextLong();
+                parameter[i] = getRandom().nextLong();
             } else if (parameterClass == boolean.class) {
-                parameter[i] = RANDOM.nextBoolean();
+                parameter[i] = getRandom().nextBoolean();
             } else if (parameterClass == String.class) {
                 parameter[i] = nextRandomString();
             } else if (parameterClass == MyClass.class) {
-                parameter[i] = new MyClass(RANDOM.nextInt());
+                parameter[i] = new MyClass(getRandom().nextInt());
             } else {
                 fail();
             }
@@ -662,9 +660,9 @@ public class ParamSpecTest extends JUnitNativeTestBase {
 
     private String nextRandomString() {
         StringBuilder stringBuilder = new StringBuilder();
-        int n = RANDOM.nextInt(10);
+        int n = getRandom().nextInt(10);
         for (int i = 0; i < n; i++) {
-            stringBuilder.append((char) (RANDOM.nextInt(100) + (byte) ' '));
+            stringBuilder.append((char) (getRandom().nextInt(100) + (byte) ' '));
         }
         return stringBuilder.toString();
     }
