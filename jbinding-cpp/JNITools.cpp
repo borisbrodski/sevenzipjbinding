@@ -205,8 +205,8 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 jobject ByteArrayToObject(JNIEnv * env, BSTR value) {
     localinit(env);
 
-    int size = sizeof(value);
-    int length = SysStringLen(value);
+    int size = sizeof(value[0]);
+    unsigned int length = SysStringLen(value);
     jbyte* jbytes = (jbyte*)value;
     jbyte retBytes[length];
     for (int i = 0; i < length; i++) {
