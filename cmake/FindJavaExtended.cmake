@@ -83,6 +83,7 @@ IF(NOT JAVA_INCLUDE_PATH2)
                 "${JAVA_INCLUDE_PATH}/linux"
                 "${JAVA_INCLUDE_PATH}/freebsd"
                 "${JAVA_INCLUDE_PATH}/netbsd"
+                "${JAVA_INCLUDE_PATH}/darwin"
             NO_CMAKE_FIND_ROOT_PATH
     )
 
