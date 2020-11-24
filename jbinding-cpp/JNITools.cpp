@@ -26,6 +26,8 @@ static jmethodID g_BooleanBooleanValue;
 
 static jclass g_StringClass;
 
+static jclass g_ByteArrayClass;
+
 static jclass g_DateClass;
 static jmethodID g_DateConstructor;
 
@@ -80,6 +82,10 @@ static void localinit(JNIEnv * env) {
     g_StringClass = env->FindClass(JAVA_STRING);
     FATALIF(g_StringClass == NULL, "Can't find String class");
     g_StringClass = (jclass) env->NewGlobalRef(g_StringClass);
+
+    g_ByteArrayClass = env->FindClass(JAVA_BYTEARRAY);
+    FATALIF(g_ByteArrayClass == NULL, "Can't find byte array class");
+    g_ByteArrayClass = (jclass) env->NewGlobalRef(g_ByteArrayClass);
 
     g_DateClass = env->FindClass("java/util/Date");
     FATALIF(g_DateClass == NULL, "Can't find java.util.Date class");
@@ -194,6 +200,24 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
 }
 
 /**
+ * Get java.nio.ByteBuffer from BSTR string
+ */
+jobject ByteArrayToObject(JNIEnv * env, BSTR value) {
+    localinit(env);
+
+    int size = sizeof(value[0]);
+    unsigned int length = SysStringLen(value);
+    jbyte* jbytes = (jbyte*)value;
+    jbyte retBytes[length];
+    for (int i = 0; i < length; i++) {
+        retBytes[i] = jbytes[i * size];
+    }
+    jbyteArray ret = env->NewByteArray(length);
+    env->SetByteArrayRegion(ret, 0, length, retBytes);
+    return ret;
+}
+
+/**
  * Get java.util.Date object from date in FILETIME format
  */
 jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime) {
@@ -241,6 +265,10 @@ void ObjectToPropVariant(JNIEnvInstance & jniEnvInstance, jobject object, PROPVA
             cPropVariant = (Int32) value;
         } else if (jniEnvInstance->IsInstanceOf(object, g_StringClass)) {
             cPropVariant = UString(FromJChar(jniEnvInstance, (jstring)object));
+        } else if (jniEnvInstance->IsInstanceOf(object, g_ByteArrayClass)) {
+            jbyte* value = jniEnvInstance->GetByteArrayElements((jbyteArray) object, NULL);
+            cPropVariant = (jbyteArray) value;
+            jniEnvInstance->ReleaseByteArrayElements((jbyteArray) object, value, JNI_ABORT);
         } else if (jniEnvInstance->IsInstanceOf(object, g_BooleanClass)) {
             jboolean value = jniEnvInstance->CallBooleanMethod(object, g_BooleanBooleanValue);
             cPropVariant = (bool) value;
@@ -304,6 +332,9 @@ jobject PropVariantToObject(JNIEnvInstance & jniEnvInstance, NWindows::NCOM::CPr
     case VT_BSTR:
         return BSTRToObject(jniEnvInstance, propVariant->bstrVal);
 
+    case VT_ARRAY:
+        return ByteArrayToObject(jniEnvInstance, propVariant->bstrVal);
+
     case VT_DATE:
     case VT_FILETIME:
         return FILETIMEToObject(jniEnvInstance, propVariant->filetime);
@@ -363,6 +394,9 @@ jclass VarTypeToJavaType(JNIEnvInstance & jniEnvInstance, VARTYPE vt) {
 
     case VT_BSTR:
         return g_StringClass;
+
+    case VT_ARRAY:
+        return g_ByteArrayClass;
 
     case VT_DATE:
     case VT_FILETIME:

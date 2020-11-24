@@ -79,6 +79,11 @@ jobject DoubleToObject(JNIEnv * env, double value);
 jobject BSTRToObject(JNIEnv * env, BSTR value);
 
 /**
+ * Get java.nio.ByteBuffer from BSTR string
+ */
+jobject ByteArrayToObject(JNIEnv * env, BSTR value);
+
+/**
  * Get java.util.Date object from date in FILETIME format
  */
 jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime);
