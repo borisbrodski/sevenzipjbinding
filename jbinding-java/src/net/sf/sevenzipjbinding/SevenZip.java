@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -202,6 +203,21 @@ public class SevenZip {
     private static final String SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME = "sevenzipjbinding-lib.properties";
     private static final String SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME = "/sevenzipjbinding-platforms.properties";
 
+    private static final String SEVENZIPJBINDING_LIB_PROPERTIES = "build.ref=000000000000\n" +
+            "\n" +
+            "lib.1.name=lib7-Zip-JBinding.so\n" +
+            "lib.1.hash=0000000000000000000000000000000000000000\n";
+    private static final String SEVENZIPJBINDING_PLATFORM_PROPERTIES = "platform.1=Linux-arm";
+    public static final String SEVENZIPJBINDING_MANIFEST_MF =
+                    "Manifest-Version: 1.0\n" +
+                    "Implementation-Vendor: sevenzipjbind.sf.net\n" +
+                    "Implementation-Title: 7-Zip-JBinding native lib (Linux-arm)\n" +
+                    "Implementation-Version: 16.02-2.01\n" +
+                    "Built-By: Boris Brodski\n" +
+                    "CMake: 3.3.2\n" +
+                    "Created-By: 1.6.0_33-b03 (Sun Microsystems Inc.)\n" +
+                    "Built-Date: 2020-01-20 21:44:51Z\n";
+
     private static boolean autoInitializationWillOccur = true;
     private static boolean initializationSuccessful = false;
     private static SevenZipNativeInitializationException lastInitializationException = null;
@@ -278,8 +294,13 @@ public class SevenZip {
             return availablePlatforms;
         }
 
-        InputStream propertiesInputStream = SevenZip.class
-                .getResourceAsStream(SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME);
+        InputStream propertiesInputStream;
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            propertiesInputStream = new ByteArrayInputStream(SEVENZIPJBINDING_PLATFORM_PROPERTIES.getBytes());
+        } else {
+            propertiesInputStream = SevenZip.class
+                    .getResourceAsStream(SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME);
+        }
         if (propertiesInputStream == null) {
             throw new SevenZipNativeInitializationException("Can not find 7-Zip-JBinding platform property file "
                     + SEVENZIPJBINDING_PLATFORMS_PROPRETIES_FILENAME
@@ -473,8 +494,13 @@ public class SevenZip {
         String pathInJAR = "/" + usedPlatform + "/";
 
         // Load 'sevenzipjbinding-lib.properties'
-        InputStream sevenZipJBindingLibProperties = SevenZip.class
+        InputStream sevenZipJBindingLibProperties;
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            sevenZipJBindingLibProperties = new ByteArrayInputStream(SEVENZIPJBINDING_LIB_PROPERTIES.getBytes());
+        } else {
+            sevenZipJBindingLibProperties = SevenZip.class
                 .getResourceAsStream(pathInJAR + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME);
+        }
         if (sevenZipJBindingLibProperties == null) {
             throwInitException("error loading property file '" + pathInJAR + SEVENZIPJBINDING_LIB_PROPERTIES_FILENAME
                     + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'. Is the platform jar-file not on the class path?");
@@ -492,7 +518,9 @@ public class SevenZip {
 
     private static File createOrVerifyTmpDir(File tmpDirectory) throws SevenZipNativeInitializationException {
         File tmpDirFile;
-        if (tmpDirectory != null) {
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            return null;
+        } else if (tmpDirectory != null) {
             tmpDirFile = tmpDirectory;
         } else {
             String systemPropertyTmp = System.getProperty(SYSTEM_PROPERTY_TMP);
@@ -516,6 +544,9 @@ public class SevenZip {
     private static File getOrCreateSevenZipJBindingTmpDir(File tmpDirFile, Properties properties)
             throws SevenZipNativeInitializationException {
         String buildRef = getOrGenerateBuildRef(properties);
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            return null;
+        }
         File tmpSubdirFile = new File(tmpDirFile.getAbsolutePath() + File.separator + "SevenZipJBinding-" + buildRef);
         if (!tmpSubdirFile.exists()) {
             if (!tmpSubdirFile.mkdir()) {
@@ -554,16 +585,21 @@ public class SevenZip {
                         + "' from 'sevenzipjbinding-<Platform>.jar' missing property " + propertyHash
                         + " containing the hash for the library '" + libName + "'");
             }
-            File libTmpFile = new File(sevenZipJBindingTmpDir.getAbsolutePath() + File.separatorChar + libName);
+            File libTmpFile;
+            if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+                libTmpFile = new File(libName.replaceAll("lib|.so", ""));
+            } else {
+                libTmpFile = new File(sevenZipJBindingTmpDir.getAbsolutePath() + File.separatorChar + libName);
 
-            if (!libTmpFile.exists() || !hashMatched(libTmpFile, libHash)) {
-                InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + usedPlatform + "/" + libName);
-                if (libInputStream == null) {
-                    throwInitException("error loading native library '" + libName
-                            + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
+                if (!libTmpFile.exists() || !hashMatched(libTmpFile, libHash)) {
+                    InputStream libInputStream = SevenZip.class.getResourceAsStream("/" + usedPlatform + "/" + libName);
+                    if (libInputStream == null) {
+                        throwInitException("error loading native library '" + libName
+                                + "' from a jar-file 'sevenzipjbinding-<Platform>.jar'.");
+                    }
+
+                    copyLibraryToFS(libTmpFile, libInputStream);
                 }
-
-                copyLibraryToFS(libTmpFile, libInputStream);
             }
             nativeLibraries.add(libTmpFile);
         }
@@ -643,9 +679,15 @@ public class SevenZip {
     private static void loadNativeLibraries(List<File> libraryList) throws SevenZipNativeInitializationException {
         // Load native libraries in to reverse order
         for (int i = libraryList.size() - 1; i != -1; i--) {
-            String libraryFileName = libraryList.get(i).getAbsolutePath();
+            String libraryFileName = null;
             try {
-                System.load(libraryFileName);
+                if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+                    libraryFileName = libraryList.get(i).getName();
+                    System.loadLibrary(libraryFileName);
+                } else {
+                    libraryFileName = libraryList.get(i).getAbsolutePath();
+                    System.load(libraryFileName);
+                }
             } catch (Throwable t) {
                 throw new SevenZipNativeInitializationException(
                         "7-Zip-JBinding initialization failed: Error loading native library: '" + libraryFileName + "'",
