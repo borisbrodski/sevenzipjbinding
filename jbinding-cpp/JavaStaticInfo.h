@@ -41,6 +41,10 @@
 #include <stdarg.h>
 #include "JObjectList.h"
 
+#ifdef __ANDROID_API__
+#include "JBindingTools.h"
+#endif
+
 // TODO Remove from here
 #define JBINDING_JNIEXPORT extern "C" JNIEXPORT
 
@@ -661,6 +665,7 @@ protected:
 #ifdef USE_MY_ASSERTS
     void checkObjectClass(JNIEnv * env, jobject object) {
         jclass expectedClass = getJClass(env);
+#ifndef __ANDROID_API__
         if (!env->IsInstanceOf(object, expectedClass)) {
             jclass objectClass = env->GetObjectClass(object);
 
@@ -675,6 +680,7 @@ protected:
             fatal("Passed object (instance of %s) doesn't match expected class %s (%s)\n",
                     objectClassName, expectedClassName, T::getName());
         }
+#endif
     }
 #endif // USE_MY_ASSERTS
 private:
@@ -691,6 +697,11 @@ private:
     void init(JNIEnv * env) {
         TRACE ("env->FindClass() for " << T::getName())
         jclass clazz = env->FindClass(T::getName());
+#ifdef __ANDROID_API__
+        if (clazz == nullptr) {
+            clazz = findClass(env, T::getName());
+        }
+#endif
         FATALIF1(!clazz, "Error finding class '%s'", T::getName())
         _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
         env->DeleteLocalRef(clazz);
@@ -755,9 +766,11 @@ protected:
     }
 #ifdef USE_MY_ASSERTS
     void checkObjectClass(JNIEnv * env, jobject object) {
+#ifndef __ANDROID_API__
         jclass clazz = env->GetObjectClass(object);
         FATALIF(!clazz, "JInterface::checkObject(): GetObjectClass() failed")
         MY_ASSERT(env->IsSameObject(_jclass, clazz))
+#endif
     }
 #endif // USE_MY_ASSERTS
 public:
@@ -767,6 +780,11 @@ public:
     static jclass _getClassObject(JNIEnv * env) {
         if (_classObject == NULL) {
             jclass objectClass = env->FindClass(T::_getName());
+#ifdef __ANDROID_API__
+            if (objectClass == nullptr) {
+                objectClass = findClass(env, T::_getName());
+            }
+#endif
             FATALIF1(!objectClass, "Error finding class '%s'", T::_getName());
             _classObject = (jclass) env->NewGlobalRef(objectClass);
             env->DeleteLocalRef(objectClass);
@@ -786,7 +804,11 @@ public:
     static T * _getInstanceFromObject(JNIEnv * env, jobject jobject) {
         FATALIF(!jobject, "_getInstanceFromObject(): 'jobject' can't be null")
         FATALIF(!env, "_getInstanceFromObject(): 'env' can't be null")
+#ifdef __ANDROID_API__
+        jclass jobjectClass = findClass(env, T::_getName());
+#else
         jclass jobjectClass = env->GetObjectClass(jobject);
+#endif
         FATALIF(!jobjectClass, "Error determining object class");
         T * instance = _getInstance(env, jobjectClass);
         env->DeleteLocalRef(jobjectClass);
@@ -851,6 +873,7 @@ public:
         if (!_jmethodID) {
             char const * javaClassName = "(error getting ObjectClass)";
             env->ExceptionClear();
+#ifndef __ANDROID_API__
             jclass classClass = env->GetObjectClass(jclazz);
             if (classClass) {
                 javaClassName = "(error getting Class.getName() method)";
@@ -864,6 +887,7 @@ public:
                     }
                 }
             }
+#endif
             FATALIF4(!_jmethodID, "Method not found: %s() signature '%s'%s, java-class: %s", _name, _signature,
                     _isStatic ? " (static)" : "", javaClassName);
         }

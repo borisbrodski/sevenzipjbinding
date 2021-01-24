@@ -54,6 +54,9 @@ static int getIndexByName(JNIEnv * env, UString & formatNameString) {
 void CodecTools::getArchiveFormatName(JNIEnv * env, jobject archiveFormat, UString & formatNameString) {
     jstring formatName = jni::ArchiveFormat::methodName_Get(env, archiveFormat);
     formatNameString = FromJChar(env, formatName);
+#ifdef __ANDROID_API__
+	env->DeleteLocalRef(formatName);
+#endif
 }
 
 int CodecTools::getArchiveFormatIndex(JNIEnv * env, jobject archiveFormat) {

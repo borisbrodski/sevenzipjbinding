@@ -186,7 +186,10 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
     JBindingSession jbindingSession(env);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
+#ifdef __ANDROID_API__
+    jstring _path = (jstring) jniEnvInstance->NewGlobalRef(path);
 
+#endif
     std::stringstream sstream;
 
     bool error = false;
@@ -195,8 +198,13 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
         sstream << "(";
     }
     for (int i = 0; i < width; i++) {
+#ifdef __ANDROID_API__
+        jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, _path, depth,
+                width, mtwidth, useException, customErrorMessage, i, -1);
+#else
         jstring value = jni::ExceptionHandlingTest::recursiveCallbackMethod(jniEnvInstance, path, depth,
                 width, mtwidth, useException, customErrorMessage, i, -1);
+#endif
         error |= jniEnvInstance.exceptionCheck();
 
         if (i) {
@@ -219,7 +227,11 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
             parameters[i]._threadHelper = &threadHelper;
             parameters[i]._jbindingSession = &jbindingSession;
             parameters[i]._thiz = thiz;
+#ifdef __ANDROID_API__
+            parameters[i]._path = _path;
+#else
             parameters[i]._path = path;
+#endif
             parameters[i]._depth = depth;
             parameters[i]._width = width;
             parameters[i]._mtwidth = mtwidth;
@@ -269,9 +281,15 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_ExceptionHandlingTest_callRecur
                 jniEnvInstance.reportError("Following error reports should be ignored!");
             }
         }
+#ifdef __ANDROID_API__
+        jniEnvInstance->DeleteGlobalRef(_path);
+#endif
         return NULL;
     }
 
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteGlobalRef(_path);
+#endif
     return env->NewStringUTF(sstream.str().c_str());
 }
 

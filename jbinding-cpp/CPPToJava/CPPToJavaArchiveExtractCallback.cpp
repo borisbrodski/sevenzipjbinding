@@ -12,6 +12,11 @@
  _cryptoGetTextPasswordImpl = NULL;
 
  jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
+ #ifdef __ANDROID_API__
+ if (cryptoGetTextPasswordClass == nullptr) {
+ cryptoGetTextPasswordClass = findClass(initEnv, CRYPTOGETTEXTPASSWORD_CLASS);
+ }
+ #endif
  FATALIF(cryptoGetTextPasswordClass == NULL,
  "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
 
@@ -71,6 +76,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
     // public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
     jobject result = _iArchiveExtractCallback->getStream(jniEnvInstance, _javaImplementation,
             (jint) index, askExtractModeObject);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(askExtractModeObject);
+#endif
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
@@ -82,6 +90,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
 
     CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(
             _jbindingSession, jniEnvInstance, result);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(result);
+#endif
     *outStream = outStreamComPtr.Detach();
 
     return S_OK;
@@ -101,6 +112,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
     // public void prepareOperation(ExtractAskMode extractAskMode);
     _iArchiveExtractCallback->prepareOperation(jniEnvInstance, _javaImplementation,
             askExtractModeObject);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(askExtractModeObject);
+#endif
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
@@ -120,6 +134,9 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOp
     // public void setOperationResult(ExtractOperationResult extractOperationResult);
     _iArchiveExtractCallback->setOperationResult(jniEnvInstance, _javaImplementation,
             resultEOperationResultObject);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(resultEOperationResultObject);
+#endif
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
