@@ -16,6 +16,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -37,7 +38,7 @@ public class ExtractMultipleFileCabVolumeWithoutVolumedTest extends JUnitNativeT
 		IInArchive inArchive = null;
 		boolean ok = false;
 		try {
-			randomAccessFile = new RandomAccessFile("testdata/multiple-files/cab/vol-archive1.zip.0.disk1.cab", "r");
+			randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/multiple-files/cab/vol-archive1.zip.0.disk1.cab"), "r");
 			inArchive = SevenZip.openInArchive(useAutodetect ? null : ArchiveFormat.CAB, new RandomAccessFileInStream(
 					randomAccessFile));
 

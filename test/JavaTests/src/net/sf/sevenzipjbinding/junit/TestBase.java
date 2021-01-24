@@ -1,9 +1,23 @@
 package net.sf.sevenzipjbinding.junit;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.junit.After;
@@ -30,6 +44,7 @@ public class TestBase<C extends AbstractTestContext> {
     public static final int WEEK = 1000 * 60 * 60 * 24 * 7; // Milliseconds in a week
 
     private static final ThreadLocal<Object> CONTEXT_THREAD_LOCAL = new ThreadLocal<Object>();
+    private static HashMap<String, String> filesMap = new HashMap<>();
 
     @Rule
     public RandomRule randomRule = new RandomRule();
@@ -61,6 +76,16 @@ public class TestBase<C extends AbstractTestContext> {
     }
     @After
     public void clearContext() {
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            closeableRule.closeAll();
+            for (String name : filesMap.values()) {
+                File file = new File(name);
+                if (file != null && file.exists()) {
+                    file.delete();
+                }
+            }
+            filesMap.clear();
+        }
         CONTEXT_THREAD_LOCAL.set(null);
     }
 
@@ -140,5 +165,56 @@ public class TestBase<C extends AbstractTestContext> {
                     + ". Context class: " + contextClass.getName()
                     + ". Verify, that a public constructor without parameters are present.", e);
         }
+    }
+
+    public static String getFile(String fileName) {
+        String name = fileName;
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            name = filesMap.get(fileName);
+            if (name != null && new File(name).exists()) {
+                return name;
+            }
+            Context context = InstrumentationRegistry.getInstrumentation().getContext();
+            AssetManager assetManager = context.getAssets();
+            try {
+                InputStream is = assetManager.open(fileName);
+                int size = is.available();
+                byte[] buffer = new byte[size];
+                int num = is.read(buffer);
+                assertEquals(size, num);
+                is.close();
+                File f = File.createTempFile(new File(fileName).getName(), null);
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(buffer);
+                fos.close();
+                if (f != null) {
+                    name = f.getAbsolutePath();
+                }
+                filesMap.put(fileName, name);
+            } catch (NullPointerException e) {
+                fail("NullPointerException: " + e.getMessage());
+            } catch (IllegalArgumentException e) {
+                fail("IllegalArgumentException: " + e.getMessage());
+            } catch (SecurityException e) {
+                fail("SecurityException: " + e.getMessage());
+            } catch (FileNotFoundException e) {
+                fail("FileNotFoundException: " + e.getMessage());
+            } catch (IOException e) {
+                fail("IOException: " + e.getMessage());
+            }
+        }
+        return name;
+    }
+
+    public static String getTempDir() {
+        String name = System.getProperty("java.io.tmpdir");;
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            Context context = InstrumentationRegistry.getInstrumentation().getContext();
+            File f = context.getCacheDir();
+            if (f != null) {
+                name = f.getAbsolutePath();
+            }
+        }
+        return name;
     }
 }
