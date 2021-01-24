@@ -116,6 +116,9 @@ inline std::ostream & operator<<(JOut jout, jobject object) {
     jclass objectClass = jout._env->GetObjectClass(object);
     MY_ASSERT(objectClass)
     jmethodID id = jout._env->GetMethodID(objectClass, "toString", "()Ljava/lang/String;");
+#ifdef __ANDROID_API__
+    jout._env->DeleteLocalRef(objectClass);
+#endif
     jstring string = (jstring) jout._env->CallObjectMethod(object, id);
     MY_ASSERT(string)//FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
 
@@ -137,6 +140,9 @@ inline std::ostream & operator<<(JOut jout, jclass clazz) {
 
     jstring string = (jstring) jout._env->CallNonvirtualObjectMethod(clazz, classClass, id);
     MY_ASSERT(string)//FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
+#ifdef __ANDROID_API__
+    jout._env->DeleteLocalRef(classClass);
+#endif
 
     std::ostream & stream = jout << string;
     jout._env->DeleteLocalRef(string);

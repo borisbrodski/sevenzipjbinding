@@ -35,11 +35,21 @@ static void localinit(JNIEnv * env) {
     }
 
     //	g_NumberClass = env->FindClass(JAVA_NUMBER);
+    //	#ifdef __ANDROID_API__
+    //	if (g_NumberClass == nullptr) {
+    //	g_NumberClass = findClass(env, JAVA_NUMBER);
+    //	}
+    //	#endif
     //	FATALIF(g_NumberClass == NULL, "Can't find Number class");
     //	g_NumberClass = (jclass) env->NewGlobalRef(g_NumberClass);
 
     // class: Integer
     g_IntegerClass = env->FindClass(JAVA_INTEGER);
+#ifdef __ANDROID_API__
+    if (g_IntegerClass == nullptr) {
+        g_IntegerClass = findClass(env, JAVA_INTEGER);
+    }
+#endif
     FATALIF(g_IntegerClass == NULL, "Can't find Integer class");
     g_IntegerClass = (jclass) env->NewGlobalRef(g_IntegerClass);
 
@@ -51,6 +61,11 @@ static void localinit(JNIEnv * env) {
 
     // class: Long
     g_LongClass = env->FindClass(JAVA_LONG);
+#ifdef __ANDROID_API__
+    if (g_LongClass == nullptr) {
+        g_LongClass = findClass(env, JAVA_LONG);
+    }
+#endif
     FATALIF(g_LongClass == NULL, "Can't find Long class");
     g_LongClass = (jclass) env->NewGlobalRef(g_LongClass);
     g_LongValueOf = env->GetStaticMethodID(g_LongClass, "valueOf", "(J)L" JAVA_LONG ";");
@@ -61,12 +76,22 @@ static void localinit(JNIEnv * env) {
 
     // class: Double
     g_DoubleClass = env->FindClass(JAVA_DOUBLE);
+#ifdef __ANDROID_API__
+    if (g_DoubleClass == nullptr) {
+        g_DoubleClass = findClass(env, JAVA_DOUBLE);
+    }
+#endif
     FATALIF(g_DoubleClass == NULL, "Can't find Double class");
     g_DoubleClass = (jclass) env->NewGlobalRef(g_DoubleClass);
     g_DoubleValueOf = env->GetStaticMethodID(g_DoubleClass, "valueOf", "(D)Ljava/lang/Double;");
     FATALIF(g_DoubleValueOf == NULL, "Can't find Double.valueOf() method");
 
     g_BooleanClass = env->FindClass(JAVA_BOOLEAN);
+#ifdef __ANDROID_API__
+    if (g_BooleanClass == nullptr) {
+        g_BooleanClass = findClass(env, JAVA_BOOLEAN);
+    }
+#endif
     FATALIF(g_BooleanClass == NULL, "Can't find Boolean class");
 
     g_BooleanClass = (jclass) env->NewGlobalRef(g_BooleanClass);
@@ -78,10 +103,20 @@ static void localinit(JNIEnv * env) {
 
     // class: String
     g_StringClass = env->FindClass(JAVA_STRING);
+#ifdef __ANDROID_API__
+    if (g_StringClass == nullptr) {
+        g_StringClass = findClass(env, JAVA_STRING);
+    }
+#endif
     FATALIF(g_StringClass == NULL, "Can't find String class");
     g_StringClass = (jclass) env->NewGlobalRef(g_StringClass);
 
     g_DateClass = env->FindClass("java/util/Date");
+#ifdef __ANDROID_API__
+    if (g_DateClass == nullptr) {
+        g_DateClass = findClass(env, "java/util/Date");
+    }
+#endif
     FATALIF(g_DateClass == NULL, "Can't find java.util.Date class");
     g_DateClass = (jclass) env->NewGlobalRef(g_DateClass);
 
@@ -100,12 +135,18 @@ char * GetJavaClassName(JNIEnv * env, jclass clazz, char * buffer, size_t size) 
     jmethodID id = env->GetMethodID(reflectionClass, "getName", "()Ljava/lang/String;");
     FATALIF(id == NULL, "Method Class.getName() can't be found");
 
-    jstring string = (jstring) env->CallNonvirtualObjectMethod(clazz, reflectionClass, id);
+    jobject string = env->CallNonvirtualObjectMethod(clazz, reflectionClass, id);
     FATALIF(string == NULL, "CallNonvirtualObjectMethod() returns NULL");
+#ifdef __ANDROID_API__
+    env->DeleteLocalRef(reflectionClass);
+#endif
 
-    const char * cstr = env->GetStringUTFChars(string, NULL);
+    const char * cstr = env->GetStringUTFChars((jstring) string, NULL);
     strncpy(buffer, cstr, size);
-    env->ReleaseStringUTFChars(string, cstr);
+    env->ReleaseStringUTFChars((jstring) string, cstr);
+#ifdef __ANDROID_API__
+    env->DeleteLocalRef(string);
+#endif
 
     return buffer;
 }
@@ -135,6 +176,9 @@ void SetLongAttribute(JNIEnv * env, jobject object, const char * attribute, jlon
     jfieldID fieldID = env->GetFieldID(clazz, attribute, "J");
     FATALIF2(fieldID == NULL, "Field '%s' in the class '%s' was not found", attribute,
             GetJavaClassName(env, clazz, classname, sizeof(classname)));
+#ifdef __ANDROID_API__
+    env->DeleteLocalRef(clazz);
+#endif
 
     env->SetLongField(object, fieldID, value);
 }

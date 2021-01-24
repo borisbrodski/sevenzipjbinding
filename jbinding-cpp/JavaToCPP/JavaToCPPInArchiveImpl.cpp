@@ -266,6 +266,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+#ifdef __ANDROID_API__
+    env->DeleteLocalRef(javaName);
+#endif
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
     return propertInfo;
@@ -471,6 +474,9 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
     jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+#ifdef __ANDROID_API__
+    env->DeleteLocalRef(javaName);
+#endif
     jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
     return propertInfo;

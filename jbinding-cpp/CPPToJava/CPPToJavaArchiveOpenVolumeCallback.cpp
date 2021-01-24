@@ -23,11 +23,17 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
 
     jobject result = _iArchiveOpenVolumeCallback->getProperty(jniEnvInstance, _javaImplementation,
             propIDObject);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(propIDObject);
+#endif
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
 
     ObjectToPropVariant(jniEnvInstance, result, value);
+#ifdef __ANDROID_API__
+    jniEnvInstance->DeleteLocalRef(result);
+#endif
 
     return S_OK;
 }
@@ -56,6 +62,9 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
         if (inStreamImpl) {
             CPPToJavaInStream * newInStream = new CPPToJavaInStream(_jbindingSession, jniEnvInstance,
                     inStreamImpl);
+#ifdef __ANDROID_API__
+            jniEnvInstance->DeleteLocalRef(inStreamImpl);
+#endif
 
             CMyComPtr<IInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
