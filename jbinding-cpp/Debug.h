@@ -3,7 +3,8 @@
 
 // Use CMakeLists.txt to activate debug mode: uncomment "SET(CMAKE_BUILD_TYPE Debug)"
 // #define _DEBUG
-//#define TRACE_ON
+//
+/* #define TRACE_ON */
 //#define TRACE_OBJECTS_ON
 
 //#define TRACE_ON
@@ -27,7 +28,7 @@
 // (using expectExceptionCheck()). The env should be repaired before
 // consequent use by calling prepareExceptionCheck().
 //
-// #define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
+/* #define JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR */
 // WARNING: Not reentrant!!
 
 // Define NATIVE_JUNIT_TEST_SUPPORT

@@ -52,71 +52,72 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return;
+        }
 
-    jint * indices = NULL;
-    UInt32 indicesCount = (UInt32) -1;
-    UInt32 numberOfItems;
-    HRESULT result = archive->GetNumberOfItems((UInt32*) &numberOfItems);
-    if (result != S_OK) {
-        TRACE("Error getting number of items from archive. Result: 0x" << std::hex << result)
-        jniNativeCallContext.reportError(result, "Error getting number of items from archive");
-        return;
-    }
-    if (indicesArray) {
-        indices = env->GetIntArrayElements(indicesArray, NULL);
+        jint * indices = NULL;
+        UInt32 indicesCount = (UInt32) -1;
+        UInt32 numberOfItems;
+        HRESULT result = archive->GetNumberOfItems((UInt32*) &numberOfItems);
+        if (result != S_OK) {
+            TRACE("Error getting number of items from archive. Result: 0x" << std::hex << result)
+            jniNativeCallContext.reportError(result, "Error getting number of items from archive");
+            return;
+        }
+        if (indicesArray) {
+            indices = env->GetIntArrayElements(indicesArray, NULL);
 
-        indicesCount = env->GetArrayLength(indicesArray);
+            indicesCount = env->GetArrayLength(indicesArray);
 
-        jint lastIndex = -1;
-        int sortNeeded = false;
-        for (UInt32 i = 0; i < indicesCount; i++) {
-            if (indices[i] < 0 || indices[i] >= numberOfItems) {
-                TRACE("Passed index for the extraction is incorrect: " << indices[i] << " (Count of items in archive: " << numberOfItems << ")")
-                jniNativeCallContext.reportError(
-                        result,
-                        "Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
-                        indices[i], numberOfItems);
-                return;
+            jint lastIndex = -1;
+            int sortNeeded = false;
+            for (UInt32 i = 0; i < indicesCount; i++) {
+                if (indices[i] < 0 || indices[i] >= numberOfItems) {
+                    TRACE("Passed index for the extraction is incorrect: " << indices[i] << " (Count of items in archive: " << numberOfItems << ")")
+                    jniNativeCallContext.reportError(
+                            result,
+                            "Passed index for the extraction is incorrect: %i (Count of items in archive: %i)",
+                            indices[i], numberOfItems);
+                    return;
+                }
+                if (lastIndex > indices[i])
+                    sortNeeded = true;
+                lastIndex = indices[i];
             }
-            if (lastIndex > indices[i])
-                sortNeeded = true;
-            lastIndex = indices[i];
+            if (sortNeeded)
+                qsort(indices, indicesCount, 4, &CompareIndicies);
         }
-        if (sortNeeded)
-            qsort(indices, indicesCount, 4, &CompareIndicies);
-    }
 
-    CMyComPtr<IArchiveExtractCallback> archiveExtractCallback =
-            new CPPToJavaArchiveExtractCallback(jbindingSession, env, archiveExtractCallbackObject);
+        CMyComPtr<IArchiveExtractCallback> archiveExtractCallback =
+                new CPPToJavaArchiveExtractCallback(jbindingSession, env, archiveExtractCallbackObject);
 
-    TRACE("Extracting " << indicesCount << " items")
-    result = archive->Extract((UInt32*) indices, indicesCount, (Int32) testMode,
-            archiveExtractCallback);
+        TRACE("Extracting " << indicesCount << " items")
+        result = archive->Extract((UInt32*) indices, indicesCount, (Int32) testMode,
+                archiveExtractCallback);
 
-    archiveExtractCallback.Release();
+        archiveExtractCallback.Release();
 
-    if (indicesArray)
-        env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
-    else
-        delete[] indices;
+        if (indicesArray)
+            env->ReleaseIntArrayElements(indicesArray, indices, JNI_ABORT);
+        else
+            delete[] indices;
 
-    if (result) {
-        TRACE("Extraction error. Result: 0x" << std::hex << result);
-        if (indicesCount == -1) {
-            jniNativeCallContext.reportError(result, "Error extracting all items");
+        if (result) {
+            TRACE("Extraction error. Result: 0x" << std::hex << result);
+            if (indicesCount == -1) {
+                jniNativeCallContext.reportError(result, "Error extracting all items");
+            } else {
+                jniNativeCallContext.reportError(result, "Error extracting %i item(s)", indicesCount);
+            }
         } else {
-            jniNativeCallContext.reportError(result, "Error extracting %i item(s)", indicesCount);
+            TRACE("Extraction succeeded")
         }
-    } else {
-        TRACE("Extraction succeeded")
-    }
-
+    } CATCH_ALL(nativeMethodContext)
 }
 
 /*
@@ -133,21 +134,23 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return 0;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return 0;
+        }
 
-    UInt32 result;
+        UInt32 result;
 
-    CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfItems(&result), "Error getting number of items from archive");
+        CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfItems(&result), "Error getting number of items from archive");
 
-    TRACE("Returning: " << result)
+        TRACE("Returning: " << result)
 
-    return result;
+        return result;
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, 0)
 }
 
 /*
@@ -165,28 +168,29 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
         JNINativeCallContext jniNativeCallContext(jbindingSession, env);
         JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
-        CMyComPtr<IInStream> inStream(GetInStream(env, thiz));
+        TRY {
+            CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+            CMyComPtr<IInStream> inStream(GetInStream(env, thiz));
 
-        if (archive == NULL) {
-            TRACE("Archive==NULL. Do nothing...");
-            return;
-        }
+            if (archive == NULL) {
+                TRACE("Archive==NULL. Do nothing...");
+                return;
+            }
 
-        CHECK_HRESULT(jniNativeCallContext, archive->Close(), "Error closing archive");
+            CHECK_HRESULT(jniNativeCallContext, archive->Close(), "Error closing archive");
 
-        archive->Release();
-        inStream->Release();
+            archive->Release();
+            inStream->Release();
 
-        jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
-        jni::InArchiveImpl::jbindingSession_Set(env, thiz, 0);
-        jni::InArchiveImpl::sevenZipInStreamInstance_Set(env, thiz, 0);
+            jni::InArchiveImpl::sevenZipArchiveInstance_Set(env, thiz, 0);
+            jni::InArchiveImpl::jbindingSession_Set(env, thiz, 0);
+            jni::InArchiveImpl::sevenZipInStreamInstance_Set(env, thiz, 0);
 
+            TRACE("InArchive closed")
+        } CATCH_ALL(nativeMethodContext)
     }
 
     delete &jbindingSession;
-
-    TRACE("InArchive closed")
 }
 
 /*
@@ -203,19 +207,21 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return 0;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return 0;
+        }
 
-    UInt32 result;
+        UInt32 result;
 
-    CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfArchiveProperties(&result), "Error getting number of archive properties");
+        CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfArchiveProperties(&result), "Error getting number of archive properties");
 
-    return result;
+        return result;
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, 0)
 }
 
 /*
@@ -233,43 +239,46 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...")
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...")
+            return NULL;
+        }
 
-    VARTYPE type;
-    CMyComBSTR name;
-    PROPID propID;
+        VARTYPE type;
+        CMyComBSTR name;
+        PROPID propID;
 
-    CHECK_HRESULT1(jniNativeCallContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type), "Error getting archive property info with index %i", index);
+        CHECK_HRESULT1(jniNativeCallContext, archive->GetArchivePropertyInfo(index, &name, &propID, &type),
+                "Error getting archive property info with index %i", index);
 
-    jobject propertInfo = jni::PropertyInfo::_newInstance(env);
-    if (jniEnvInstance.exceptionCheck()) {
-        return NULL;
-    }
+        jobject propertInfo = jni::PropertyInfo::_newInstance(env);
+        if (jniEnvInstance.exceptionCheck()) {
+            return NULL;
+        }
 
-    jstring javaName;
-    if (((const wchar_t *)name) == NULL) {
-        javaName = env->NewStringUTF("");
-    } else {
-        javaName = ToJChar(name).toNewString(env);
-    }
-    jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
+        jstring javaName;
+        if (((const wchar_t *)name) == NULL) {
+            javaName = env->NewStringUTF("");
+        } else {
+            javaName = ToJChar(name).toNewString(env);
+        }
+        jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
-    jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
-    if (jniEnvInstance.exceptionCheck()) {
-        return NULL;
-    }
+        jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
+        if (jniEnvInstance.exceptionCheck()) {
+            return NULL;
+        }
 
-    jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
-    jni::PropertyInfo::name_Set(env, propertInfo, javaName);
-    jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
+        jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+        jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+        jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
-    return propertInfo;
+        return propertInfo;
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -287,19 +296,21 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...")
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...")
+            return NULL;
+        }
 
-    NWindows::NCOM::CPropVariant PropVariant;
+        NWindows::NCOM::CPropVariant PropVariant;
 
-    CHECK_HRESULT1(jniNativeCallContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
+        CHECK_HRESULT1(jniNativeCallContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
-    return PropVariantToObject(jniEnvInstance, &PropVariant);
+        return PropVariantToObject(jniEnvInstance, &PropVariant);
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -317,19 +328,21 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return NULL;
+        }
 
-    NWindows::NCOM::CPropVariant PropVariant;
+        NWindows::NCOM::CPropVariant PropVariant;
 
-    CHECK_HRESULT1(jniNativeCallContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
+        CHECK_HRESULT1(jniNativeCallContext, archive->GetArchiveProperty(propID, &PropVariant), "Error getting property mit Id: %lu", propID);
 
-    return PropVariantToString(env, propID, PropVariant);
+        return PropVariantToString(env, propID, PropVariant);
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -346,19 +359,21 @@ JBINDING_JNIEXPORT jint JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return 0;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return 0;
+        }
 
-    UInt32 result;
+        UInt32 result;
 
-    CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfProperties(&result), "Error getting number of properties");
+        CHECK_HRESULT(jniNativeCallContext, archive->GetNumberOfProperties(&result), "Error getting number of properties");
 
-    return result;
+        return result;
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, 0)
 }
 
 /*
@@ -377,19 +392,21 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return NULL;
+        }
 
-    NWindows::NCOM::CPropVariant propVariant;
+        NWindows::NCOM::CPropVariant propVariant;
 
-    CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+        CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
-    return PropVariantToObject(jniEnvInstance, &propVariant);
+        return PropVariantToObject(jniEnvInstance, &propVariant);
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -408,19 +425,21 @@ JBINDING_JNIEXPORT jstring JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return NULL;
+        }
 
-    NWindows::NCOM::CPropVariant propVariant;
+        NWindows::NCOM::CPropVariant propVariant;
 
-    CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
+        CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
-    return PropVariantToString(env, propID, propVariant);
+        return PropVariantToString(env, propID, propVariant);
 
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -438,42 +457,44 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    if (archive == NULL) {
-        TRACE("Archive==NULL. Do nothing...");
-        return NULL;
-    }
+        if (archive == NULL) {
+            TRACE("Archive==NULL. Do nothing...");
+            return NULL;
+        }
 
-    VARTYPE type;
-    CMyComBSTR name;
-    PROPID propID;
+        VARTYPE type;
+        CMyComBSTR name;
+        PROPID propID;
 
-    CHECK_HRESULT1(jniNativeCallContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
+        CHECK_HRESULT1(jniNativeCallContext, archive->GetPropertyInfo(index, &name, &propID, &type), "Error getting property info with index %i", index);
 
-    jobject propertInfo = jni::PropertyInfo::_newInstance(env);
-    if (jniEnvInstance.exceptionCheck()) {
-        return NULL;
-    }
+        jobject propertInfo = jni::PropertyInfo::_newInstance(env);
+        if (jniEnvInstance.exceptionCheck()) {
+            return NULL;
+        }
 
-    jstring javaName;
-    if (((const wchar_t *)name) == NULL) {
-        javaName = env->NewStringUTF("");
-    } else {
-        javaName = ToJChar(name).toNewString(env);
-    }
-    jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
+        jstring javaName;
+        if (((const wchar_t *)name) == NULL) {
+            javaName = env->NewStringUTF("");
+        } else {
+            javaName = ToJChar(name).toNewString(env);
+        }
+        jclass javaType = VarTypeToJavaType(jniEnvInstance, type);
 
-    jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
-    if (jniEnvInstance.exceptionCheck()) {
-        return NULL;
-    }
+        jobject propIDObject = jni::PropID::getPropIDByIndex(env, propID);
+        if (jniEnvInstance.exceptionCheck()) {
+            return NULL;
+        }
 
-    jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
-    jni::PropertyInfo::name_Set(env, propertInfo, javaName);
-    jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
+        jni::PropertyInfo::propID_Set(env, propertInfo, propIDObject);
+        jni::PropertyInfo::name_Set(env, propertInfo, javaName);
+        jni::PropertyInfo::varType_Set(env, propertInfo, javaType);
 
-    return propertInfo;
+        return propertInfo;
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -490,28 +511,30 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_nativeCon
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
-    CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
+    TRY {
+        CMyComPtr<IInArchive> archive(GetArchive(env, thiz));
 
-    int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
+        int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
 
-    if (archiveFormatIndex < 0 || codecTools.codecs.Formats[archiveFormatIndex].CreateOutArchive == NULL) {
-        jniEnvInstance.reportError("Internal error during creating OutArchive. Archive format index: %i",
-        		archiveFormatIndex);
-        return;
-    }
+        if (archiveFormatIndex < 0 || codecTools.codecs.Formats[archiveFormatIndex].CreateOutArchive == NULL) {
+            jniEnvInstance.reportError("Internal error during creating OutArchive. Archive format index: %i",
+                    archiveFormatIndex);
+            return;
+        }
 
-    CMyComPtr<IOutArchive> outArchive;
+        CMyComPtr<IOutArchive> outArchive;
 
-    HRESULT hresult = archive->QueryInterface(IID_IOutArchive, (void**)&outArchive);
-    if (hresult) {
-        jniEnvInstance.reportError(hresult, "Error connecting OutArchive to the InArchive for archive format %S",
-                (const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name);
-        return;
-    }
+        HRESULT hresult = archive->QueryInterface(IID_IOutArchive, (void**)&outArchive);
+        if (hresult) {
+            jniEnvInstance.reportError(hresult, "Error connecting OutArchive to the InArchive for archive format %S",
+                    (const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name);
+            return;
+        }
 
-    jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
-            (jlong) (size_t) (void*) (outArchive.Detach()));
+        jni::OutArchiveImpl::sevenZipArchiveInstance_Set(env, outArchiveImpl, //
+                (jlong) (size_t) (void*) (outArchive.Detach()));
 
-    jni::OutArchiveImpl::jbindingSession_Set(env, outArchiveImpl, //
-            (jlong) (size_t) (void*) (&jbindingSession));
+        jni::OutArchiveImpl::jbindingSession_Set(env, outArchiveImpl, //
+                (jlong) (size_t) (void*) (&jbindingSession));
+    } CATCH_ALL(nativeMethodContext)
 }

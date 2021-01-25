@@ -154,6 +154,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
+    TRY {
     int index = -1;
     UString formatNameString;
     if (archiveFormat) {
@@ -315,6 +316,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
             (jlong) (size_t) (void*) ((IInStream *) stream.Detach()));
 
     return inArchiveImplObject;
+    } CATCH_ALL_AND_RETURN(nativeMethodContext, NULL)
 }
 
 /*
@@ -335,6 +337,7 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
+    TRY {
     int archiveFormatIndex = codecTools.getArchiveFormatIndex(jniEnvInstance, archiveFormat);
 
     if (archiveFormatIndex < 0 || codecTools.codecs.Formats[archiveFormatIndex].CreateOutArchive == NULL) {
@@ -360,4 +363,5 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeCreateArchive
             (jlong) (size_t) (void*) (&jbindingSession));
 
     jni::OutArchiveImpl::archiveFormat_Set(env, outArchiveImpl, archiveFormat);
+    } CATCH_ALL(nativeMethodContext)
 }
