@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.impl;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -12,7 +13,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @author Boris Brodski
  * @since 4.65-1
  */
-public class RandomAccessFileOutStream implements IOutStream {
+public class RandomAccessFileOutStream implements IOutStream, Closeable {
     private final RandomAccessFile randomAccessFile;
 
     /**

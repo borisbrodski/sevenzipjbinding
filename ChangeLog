@@ -1,6 +1,12 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 16.02-2.02 (Release, cross-platform, based on zip/p7zip 16.02)
+
+	* Bugfix #5 RandomAccessFileOutStream should implement Closeable
+		(https://github.com/borisbrodski/sevenzipjbinding/issues/5)
+
+
 Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 
 	* Bugfix: Fix crash on read errors caused by wrong throw()
