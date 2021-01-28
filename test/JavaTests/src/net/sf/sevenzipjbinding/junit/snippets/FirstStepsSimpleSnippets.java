@@ -9,12 +9,13 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 import org.junit.Test;
 
 public class FirstStepsSimpleSnippets {
 
-    private static final String TEST_ARCHIVE_SIMPLE = "testdata/snippets/simple.zip";
+    private static final String TEST_ARCHIVE_SIMPLE = TestBase.getFile("testdata/snippets/simple.zip");
     private IInArchive inArchive;
     private RandomAccessFile randomAccessFile;
 

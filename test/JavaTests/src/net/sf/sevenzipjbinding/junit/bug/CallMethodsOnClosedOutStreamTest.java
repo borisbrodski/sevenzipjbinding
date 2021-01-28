@@ -16,6 +16,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 
 public class CallMethodsOnClosedOutStreamTest extends JUnitNativeTestBase<VoidContext> {
@@ -60,7 +61,7 @@ public class CallMethodsOnClosedOutStreamTest extends JUnitNativeTestBase<VoidCo
     private void testUpdateWithMethod(OutUpdateArchiveMethodCall call) throws Exception {
         RandomAccessFile randomAccessFile = null;
 
-        randomAccessFile = new RandomAccessFile("testdata/bug/TarArchiveWith7zInside.tar", "r");
+        randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/TarArchiveWith7zInside.tar"), "r");
         addCloseable(randomAccessFile);
 
         final IInArchive inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile));

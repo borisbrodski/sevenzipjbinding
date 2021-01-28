@@ -17,6 +17,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
@@ -42,8 +43,8 @@ public class UnicodeFilenamesInArchive extends JUnitNativeTestBase<VoidContext> 
 
         log("Testing for " + archiveFormat);
         try {
-            randomAccessFile = new RandomAccessFile("testdata/encoding/unicode_file_names."
-                    + archiveFormat.getMethodName().toLowerCase(), "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/encoding/unicode_file_names."
+                    + archiveFormat.getMethodName().toLowerCase()), "r");
             inArchive = SevenZip.openInArchive(archiveFormat, new RandomAccessFileInStream(randomAccessFile));
             ISimpleInArchive simpleInterface = inArchive.getSimpleInterface();
             assertEquals(2, simpleInterface.getNumberOfItems());

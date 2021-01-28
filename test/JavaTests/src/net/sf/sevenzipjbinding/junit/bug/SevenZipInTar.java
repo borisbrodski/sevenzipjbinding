@@ -10,6 +10,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 public class SevenZipInTar {
 
@@ -20,7 +21,7 @@ public class SevenZipInTar {
 
         Throwable throwable = null;
         try {
-            randomAccessFile = new RandomAccessFile("testdata/bug/TarArchiveWith7zInside.tar", "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/TarArchiveWith7zInside.tar"), "r");
             inArchive = SevenZip.openInArchive(null, new RandomAccessFileInStream(randomAccessFile));
             assertEquals(ArchiveFormat.TAR, inArchive.getArchiveFormat());
             assertEquals(1, inArchive.getNumberOfItems());

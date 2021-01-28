@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.jar.Manifest;
 
 import org.junit.Test;
@@ -49,6 +50,23 @@ public class VersionTest extends JUnitNativeTestBase<VoidContext> {
     }
 
     private String getVersionFromJarMANIFEST() throws Exception {
+        if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+            String[] mf = SevenZip.SEVENZIPJBINDING_MANIFEST_MF.split(System.getProperty("line.separator", "\\n"));
+            HashMap<String, String> attributes = new HashMap<>();
+            for (String attr : mf) {
+                int index = attr.indexOf(": ");
+                String key = attr.substring(0, index);
+                String value = attr.substring(index + 2);
+                attributes.put(key, value);
+            }
+            String title = attributes.get("Implementation-Title");
+            if (title != null && title.startsWith("7-Zip-JBinding native lib")) {
+                String version = attributes.get("Implementation-Version");
+                if (version != null) {
+                    return version;
+                }
+            }
+        }
         Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
         while (resources.hasMoreElements()) {
             Manifest manifest = new Manifest(resources.nextElement().openStream());

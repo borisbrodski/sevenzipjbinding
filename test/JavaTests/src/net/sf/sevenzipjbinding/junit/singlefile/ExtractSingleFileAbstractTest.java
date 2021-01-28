@@ -22,6 +22,7 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Multithreaded;
 import net.sf.sevenzipjbinding.junit.junittools.annotations.Repeat;
 
@@ -178,7 +179,7 @@ public abstract class ExtractSingleFileAbstractTest extends ExtractFileAbstractT
 	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
             throws Exception {
         String uncompressedFilename = getUncompressedFilename(fileIndex);
-        String expectedFilename = SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename;
+        String expectedFilename = TestBase.getFile(SINGLE_FILE_TEST_DATA_PATH + File.separatorChar + uncompressedFilename);
 
         ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
         closeLater(extractionInArchiveTestHelper);
