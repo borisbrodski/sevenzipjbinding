@@ -29,7 +29,7 @@ jclass findSevenZipClass(JNIEnv * env, const char * className) {
     prepareExceptionCheck(env);
     jobject exception = env->ExceptionOccurred();
     env->ExceptionClear();
-    TRACE("Exception: " << clazz)
+    TRACE("Exception: " << exception)
 
     if (exception) {
         Throwable::printStackTrace(env, exception);
