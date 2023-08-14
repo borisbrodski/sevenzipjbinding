@@ -1,0 +1,4 @@
+.gradle/
+sevenzipjbinding/build/
+sevenzipjbinding/.cxx/
+/local.properties
