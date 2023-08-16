@@ -106,6 +106,8 @@ enum
 
   kpid_NUM_DEFINED,
 
+  kpidPathBytes = 100,
+
   kpidUserDefined = 0x10000
 };
 

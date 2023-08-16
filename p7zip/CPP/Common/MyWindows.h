@@ -151,6 +151,7 @@ enum VARENUM
   VT_UINT = 23,
   VT_VOID = 24,
   VT_HRESULT = 25,
+  VT_ARRAY = 26,
   VT_FILETIME = 64
 };
 
