@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 import org.junit.Test;
 
@@ -64,7 +65,7 @@ public class CompressGenericTest extends SnippetTest {
     @Test
     public void testCompress7z() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed-generic.7z");
 
         beginSnippetTest();
@@ -77,7 +78,7 @@ public class CompressGenericTest extends SnippetTest {
     @Test
     public void testCompressZip() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed-generic.zip");
 
         beginSnippetTest();
@@ -90,7 +91,7 @@ public class CompressGenericTest extends SnippetTest {
     @Test
     public void testCompressTar() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed-generic.tar");
 
         beginSnippetTest();
@@ -103,7 +104,7 @@ public class CompressGenericTest extends SnippetTest {
     @Test
     public void testCompressGZip() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed-generic.gz");
 
         beginSnippetTest();
@@ -115,7 +116,7 @@ public class CompressGenericTest extends SnippetTest {
     @Test
     public void testCompressBZip2() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed-generic.bz2");
 
         beginSnippetTest();

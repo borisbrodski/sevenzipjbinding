@@ -305,9 +305,9 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
                     + testFileExt
                     + "." + compressionIndex + "." + extention + context.volumeArchivePostfix;
 
-            if (!new File(archiveFilename).exists() && extention.contains("part1.rar")) {
+            if ((TestBase.getFile(archiveFilename + (usingZippedTestArchive() ? ".zip" : "")) == null || !new File(TestBase.getFile(archiveFilename + (usingZippedTestArchive() ? ".zip" : ""))).exists()) && extention.contains("part1.rar")) {
                 archiveFilename = archiveFilename.replace("part1.rar", "part01.rar");
-                if (!new File(archiveFilename).exists()) {
+                if (TestBase.getFile(archiveFilename + (usingZippedTestArchive() ? ".zip" : "")) == null || !new File(TestBase.getFile(archiveFilename + (usingZippedTestArchive() ? ".zip" : ""))).exists()) {
                     archiveFilename = archiveFilename.replace("part01.rar", "rar");
                 }
             }
@@ -322,10 +322,10 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
             RandomAccessFile randomAccessFile = null;
             try {
                 if (usingZippedTestArchive()) {
-                    ZipFile zipFile = new ZipFile(new File(archiveFilename + ".zip"));
+                    ZipFile zipFile = new ZipFile(new File(TestBase.getFile(archiveFilename + ".zip")));
                     randomAccessFileInStream = new ZipInStream(zipFile, zipFile.entries().nextElement());
                 } else {
-                    randomAccessFile = new RandomAccessFile(archiveFilename, "r");
+                    randomAccessFile = new RandomAccessFile(TestBase.getFile(archiveFilename), "r");
                     randomAccessFileInStream = new RandomAccessFileInStream(randomAccessFile);
                 }
                 volumeArchiveOpenCallback = null;
@@ -569,14 +569,19 @@ public abstract class ExtractFileAbstractTest extends JUnitNativeTestBase<Extrac
 
         public IInStream getStream(String filename) {
             try {
-				String fullfilename = new File(currentDir, new File(filename).getName()).getCanonicalPath();
+				String fullfilename;
+				if (System.getProperty("java.vendor", "unknown").equals("The Android Project")) {
+					fullfilename = currentDir + File.separatorChar + new File(filename).getName();
+				} else {
+					fullfilename = new File(currentDir, new File(filename).getName()).getCanonicalPath();
+				}
 				currentFilename = fullfilename;
 				randomAccessFile = randomAccessFileMap.get(fullfilename);
                 if (randomAccessFile != null) {
                     randomAccessFile.seek(0);
                     return new RandomAccessFileInStream(randomAccessFile);
                 }
-				randomAccessFile = new RandomAccessFile(fullfilename, "r");
+				randomAccessFile = new RandomAccessFile(TestBase.getFile(fullfilename), "r");
 				randomAccessFileMap.put(fullfilename, randomAccessFile);
                 return new RandomAccessFileInStream(randomAccessFile);
             } catch (FileNotFoundException fileNotFoundException) {

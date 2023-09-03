@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.snippets;
 
+import net.sf.sevenzipjbinding.junit.TestBase;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -26,11 +28,11 @@ public class UpdateAlterItemsTest extends SnippetTest {
 
     @Test
     public void testCompress7z() {
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "updated-alter-items.7z");
 
         beginSnippetTest();
-        UpdateAlterItems.main(new String[] { "testdata/snippets/to-update.7z", archiveFile.getAbsolutePath() });
+        UpdateAlterItems.main(new String[] { TestBase.getFile("testdata/snippets/to-update.7z"), archiveFile.getAbsolutePath() });
         String output = endSnippetTest();
         assertEquals(getExpectedOutput(expected7z), output);
     }

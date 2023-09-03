@@ -15,6 +15,7 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 import org.junit.Test;
 
@@ -128,7 +129,7 @@ public class Ticket18NullAsPassword {
 
         Throwable throwable = null;
         try {
-            randomAccessFile = new RandomAccessFile("testdata/bug/Ticket19-passh.rar", "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/Ticket19-passh.rar"), "r");
             if (withCallback) {
                 inArchive = SevenZip.openInArchive(ArchiveFormat.RAR, new RandomAccessFileInStream(randomAccessFile),
                         new ArchiveOpenCryptoCallback(password));
@@ -168,7 +169,7 @@ public class Ticket18NullAsPassword {
 
         Throwable throwable = null;
         try {
-            randomAccessFile = new RandomAccessFile("testdata/bug/Ticket19-pass.rar", "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/Ticket19-pass.rar"), "r");
             inArchive = SevenZip.openInArchive(ArchiveFormat.RAR, new RandomAccessFileInStream(randomAccessFile));
 
             ExtractOperationResult extractOperationResult;

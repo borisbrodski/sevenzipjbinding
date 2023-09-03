@@ -9,6 +9,7 @@ import java.io.FileFilter;
 
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ import org.junit.Test;
  */
 public class StandardInitializationTest {
     private static final String SYSTEM_PROPERTY_PHASE = "sevenziptest.standard_initialization_test_phase";
-    private static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String TEMP_DIR = TestBase.getTempDir();
 
     @Test
     public void test() throws SevenZipNativeInitializationException {

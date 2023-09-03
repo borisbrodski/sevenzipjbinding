@@ -25,6 +25,7 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.junit.JUnitNativeTestBase;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.VoidContext;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 
@@ -78,7 +79,7 @@ public class ArchiveWithTwoPasswordsTest extends JUnitNativeTestBase<VoidContext
             TEST_DATA_PATH + "data2" //
     };
     private static final String[] DATA_PASSWORDS = { "data1", "data2" };
-    private static final String PASSWORD_PROTECTED_ARHCIVE = TEST_DATA_PATH + "two-passwords.7z";
+    private static final String PASSWORD_PROTECTED_ARHCIVE = TestBase.getFile(TEST_DATA_PATH + "two-passwords.7z");
     private static final ArchiveFormat ARCHIVE_FORMAT = ArchiveFormat.SEVEN_ZIP;
 
     @Test
