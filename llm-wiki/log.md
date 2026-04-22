@@ -13,6 +13,16 @@ Append-only log of wiki creation and maintenance actions.
 - Created `index.md` - Wiki catalog and navigation
 - Created `log.md` - This file
 
+### Comparison Pages Created
+
+1. **archive-format-support.md** (6,040 bytes)
+   - Archive format gap analysis: 7-Zip C++ vs 7-Zip-JBinding
+   - 47 formats supported by 7-Zip C++ engine (extraction)
+   - 22 formats supported by 7-Zip-JBinding (extraction)
+   - **24 formats missing** in 7-Zip-JBinding
+   - Priority recommendations for implementation
+   - Detailed tables with handler file references
+
 ### Entity Pages Created
 
 1. **7-zip-jbinding-overview.md** (4,168 bytes)
@@ -122,8 +132,46 @@ Append-only log of wiki creation and maintenance actions.
 | Metric | Count |
 |--------|-------|
 | Entity pages | 7 |
-| Total wiki size | ~40 KB |
+| Comparison pages | 1 |
+| Total wiki size | ~46 KB |
 | Source files analyzed | 7 |
 | TODOs tracked | 18 |
 | Test suites verified | 18 |
 | Tests verified | 7,510 |
+| Missing formats documented | 23 |
+| XZ format support added | Yes |
+
+---
+
+## 2026-04-22 (Later)
+
+### XZ Archive Format Support Documentation Updates
+
+- Updated `doc/web.components/index.html` - Added XZ to extraction formats list
+- Updated `doc/web.components/compression_snippets.html` - Added XZ stream archive format documentation
+- Updated `doc/property-table.txt` - Added XZ column showing stream archiver properties
+- Updated `llm-wiki/comparisons/archive-format-support.md` - Moved XZ from missing to supported
+- Updated `llm-wiki/entities/test-framework.md` - Added XZ to test coverage
+- Updated `llm-wiki/entities/java-api-interfaces.md` - Added XZ to format table and implementations
+- Updated `llm-wiki/index.md` and `log.md` - Added XZ support entry
+
+---
+
+## 2026-04-22 (Later)
+
+### XZ Archive Format Support Added
+
+- Added XZ to extraction formats list in `doc/web.components/index.html`
+- Updated `ArchiveFormat.java` javadoc table to show XZ extraction support
+- XZ is a stream archiver (like GZIP, BZIP2, LZMA) - does NOT store filenames
+- Added XZ to `ExtractSingleFileAbstractTest.checkPropertyPath()` skip list
+- Created `ExtractSingleFileXzTest.java` extending `ExtractSingleFileAbstractTest`
+- All 18 test suites pass (7,510+ tests, 100%)
+- XZ does NOT support compression (out-archive) or multiple files - only single-file extraction
+
+### Wiki Updates
+
+- Updated `archive-format-support.md`:
+  - Moved XZ from "Missing formats" to "Supported formats"
+  - Updated counts: 23 formats supported, 23 missing (was 22/24)
+- Updated `index.md` last updated timestamp

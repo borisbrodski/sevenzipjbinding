@@ -42,6 +42,7 @@ sources: [jbinding-java/src/net/sf/sevenzipjbinding/ArchiveFormat.java, jbinding
 | UDF | ✓ | ✗ | `UDF` |
 | WIM | ✓ | ✗ | `WIM` |
 | XAR | ✓ | ✗ | `XAR` |
+| XZ | ✓ | ✗ | `XZ` | Stream archiver (single file only) |
 | Z | ✓ | ✗ | `Z` |
 | FAT | ✓ | ✗ | `FAT` |
 | NTFS | ✓ | ✗ | `NTFS` |
@@ -81,6 +82,7 @@ Interface for creating archives. Format-specific implementations:
 - `IOutCreateArchiveTar` - TAR format
 - `IOutCreateArchiveGZip` - GZip format
 - `IOutCreateArchiveBZip2` - BZip2 format
+- `IOutCreateArchiveXZ` - XZ format (stream archiver, single file only)
 
 **Configuration methods:**
 - `setLevel(int)` - Compression level (0-9)
