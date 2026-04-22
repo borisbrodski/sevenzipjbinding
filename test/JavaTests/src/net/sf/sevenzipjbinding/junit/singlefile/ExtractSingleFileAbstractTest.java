@@ -424,8 +424,8 @@ private void checkPropertyAttributes(IInArchive inArchive, int index, String unc
 			throws SevenZipException {
 		if (archiveFormat != ArchiveFormat.BZIP2 && archiveFormat != ArchiveFormat.GZIP
 				&& archiveFormat != ArchiveFormat.LZMA && archiveFormat != ArchiveFormat.RPM
-				&& archiveFormat != ArchiveFormat.Z) {
-			// Skip name test for Bzip2 and GZip.
+				&& archiveFormat != ArchiveFormat.XZ && archiveFormat != ArchiveFormat.Z) {
+			// Skip name test for Bzip2, GZip, XZ and LZMA.
 			// File name are not supported by this stream compression methods
 			Object nameInArchive = inArchive.getProperty(index, PropID.PATH);
 			String nameInArchiveUsingStringProperty = inArchive.getStringProperty(index, PropID.PATH);
