@@ -11,8 +11,9 @@
     		<li><a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a></li>
     		<li><a href="#create-specific-api-7z">Creating 7-Zip archive using archive format specific API</a></li>
     		<li><a href="#create-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
-    		<li><a href="#create-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
-    		<li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+       <li><a href="#create-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
+        <li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+        <li><a href="#create-specific-api-xz">Creating XZ archive using archive format specific API</a></li>
     	</ul>
         <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
         <li><a href="#create-encrypted">Creating password protected archives</a></li>
@@ -184,6 +185,22 @@ For instructions on how to running the snippet and check the results see <a href
 </p>
 
 
+<h3><a name="create-specific-api-xz">Creating XZ archive using archive format specific API</h3>
+
+<p>
+XZ is like GZip and BZip2 a stream archive format. It compresses single archive item supporting no additional
+archive item properties at all. XZ is a modern compression format offering better compression ratios than GZip
+and BZip2.
+</p>
+
+##INCLUDE_SNIPPET(CompressNonGenericXZ)
+
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
+
+
+
 <h2><a name="create-generic">Creating archives with the generic API</h2>
 
 <p>
@@ -205,7 +222,7 @@ The key steps to write a generic compression code are
 <p>
 Now you can run the snippet with different parameters creating archives with different formats. The last parameter
 specifies, how many archive items from the <a href="#archive-test-structure">CompressArchiveStructure</a> should be
-compressed. This number should be between 1 and 5 for 7z, Zip and Tar, and must be 1 for the stream formats GZip and BZip2.
+compressed. This number should be between 1 and 5 for 7z, Zip and Tar, and must be 1 for the stream formats GZip, BZip2 and XZ.
 </p>
 
 <ul class="list-with-pre-s">
@@ -237,6 +254,12 @@ C:\Test&gt; java -cp ... CompressGeneric GZIP      compressed_generic.zip 1
 <div class="fragment"><pre class="fragment">
 C:\Test&gt; java -cp ... CompressGeneric BZIP2     compressed_generic.bz2 1
 ##INCLUDE_RAW_OUTPUT(CompressGenericBZip2)
+</pre></div>
+</li>
+<li>To create an XZ archive with 1 item:
+<div class="fragment"><pre class="fragment">
+C:\Test&gt; java -cp ... CompressGeneric XZ        compressed_generic.xz 1
+##INCLUDE_RAW_OUTPUT(CompressGenericXZ)
 </pre></div>
 </li>
 </ul>

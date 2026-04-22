@@ -179,6 +179,12 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>-</td>
  * <td>{@link #XAR}</td>
  * </tr>
+* <tr align="center">
+ * <td>XZ</td>
+ * <td>X</td>
+ * <td>-</td>
+ * <td>{@link #XZ}</td>
+ * </tr>
  * <tr align="center">
  * <td>Z</td>
  * <td>X</td>
@@ -307,10 +313,15 @@ public enum ArchiveFormat {
      */
     WIM("Wim", true),
 
-    /**
+   /**
      * Xar
      */
     XAR("Xar", true),
+
+    /**
+     * XZ format.
+     */
+    XZ("Xz", false),
 
     /**
      * FAT - (vfat file system);
