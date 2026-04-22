@@ -196,6 +196,7 @@ import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileTarTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileUdfTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileWimTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileXarTest;
+import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileXzTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipPassCallbackTest;
 import net.sf.sevenzipjbinding.junit.singlefile.ExtractSingleFileZipPassTest;
@@ -343,6 +344,7 @@ public class AllTestSuite extends TestSuite {
             ExtractSingleFileUdfTest.class, //
             ExtractSingleFileWimTest.class, //
             ExtractSingleFileXarTest.class, //
+            ExtractSingleFileXzTest.class, //
             ExtractSingleFileZTest.class, //
             ExtractSingleFileZipPassCallbackTest.class, //
             ExtractSingleFileZipPassTest.class, //
