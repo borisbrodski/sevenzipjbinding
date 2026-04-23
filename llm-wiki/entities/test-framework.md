@@ -136,7 +136,7 @@ The `AllTestSuite` class organizes all tests into logical groups using static ar
 - NSIS (solid, standard), NTFS
 - RAR, RAR5 (with/without headers, passwords, volumes)
 - RPM, 7z (with/without headers, passwords, volumes)
-- TAR, UDF, VHD, WIM, XAR, Z, ZIP
+- TAR, UDF, VHD, WIM, XAR, XZ, Z, ZIP
 
 **Variants:**
 - Standard extraction

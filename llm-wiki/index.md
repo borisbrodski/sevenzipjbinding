@@ -23,7 +23,10 @@ llm-wiki/
 │   ├── build-system.md
 │   ├── test-framework.md
 │   └── known-issues-todos.md
+├── comparisons/          # Comparative analysis
+│   └── archive-format-support.md
 └── raw/                  # Raw source analysis (if needed)
+    └── sources/
 ```
 
 ## Entity Pages
@@ -37,6 +40,12 @@ llm-wiki/
 | [[test-framework]] | JUnit test suite structure, coverage | quality, testing |
 | [[known-issues-todos]] | Bugs, TODOs, code quality issues | quality, bugs, maintenance |
 
+## Comparison Pages
+
+| Page | Description | Tags |
+|------|-------------|------|
+| [[archive-format-support]] | 7-Zip C++ vs 7-Zip-JBinding format coverage gap | components, architecture, comparison |
+
 ## Quick Links
 
 ### Core Concepts
@@ -48,6 +57,7 @@ llm-wiki/
 - [[build-system#testing]] - Running tests
 - [[known-issues-todos]] - Known bugs and TODOs
 - [[build-system#platform-detection]] - Platform support
+- [[archive-format-support]] - Missing format implementations
 
 ### Testing
 - [[test-framework#test-categories]] - Test suite organization
@@ -59,10 +69,12 @@ llm-wiki/
 - [[java-api-interfaces]]
 - [[jni-interface-architecture]]
 - [[build-system]]
+- [[archive-format-support]]
 
 ### Architecture
 - [[7-zip-jbinding-overview]]
 - [[jni-interface-architecture]]
+- [[archive-format-support]]
 
 ### Quality
 - [[known-issues-todos]]
@@ -70,6 +82,9 @@ llm-wiki/
 
 ### Platforms
 - [[build-system#platform-detection]]
+
+### Comparison
+- [[archive-format-support]]
 
 ## Operations
 
@@ -84,3 +99,6 @@ See [[SCHEMA.md]] for detailed conventions.
 ## Last Updated
 
 2026-04-22 - Initial wiki creation with 7 core entity pages
+2026-04-22 - Added archive-format-support.md comparison page (23 missing formats identified)
+2026-04-22 - XZ format extraction support verified and documented
+2026-04-22 - XZ documentation updates across all documentation files
