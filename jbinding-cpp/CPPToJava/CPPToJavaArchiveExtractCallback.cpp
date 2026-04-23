@@ -82,6 +82,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
 
     CMyComPtr<ISequentialOutStream> outStreamComPtr = new CPPToJavaSequentialOutStream(
             _jbindingSession, jniEnvInstance, result);
+    jniEnvInstance->DeleteLocalRef(result);
     *outStream = outStreamComPtr.Detach();
 
     return S_OK;
