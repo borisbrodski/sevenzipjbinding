@@ -79,6 +79,7 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericBZip2
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
+import net.sf.sevenzipjbinding.junit.encoding.JapaneseFilenamesInArchive;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
@@ -245,7 +246,8 @@ public class AllTestSuite extends TestSuite {
     };
 
     static Class<?>[] encodingArchiveTests = { //
-            /*    */UnicodeFilenamesInArchive.class, //
+            /*    */JapaneseFilenamesInArchive.class, //
+                    UnicodeFilenamesInArchive.class, //
     };
 
     static Class<?>[] bugArchiveTests = { //

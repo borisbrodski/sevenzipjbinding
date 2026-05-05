@@ -277,7 +277,9 @@ STDMETHODIMP CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
       prop = res;
       break;
     }
-    
+
+    case kpidPathBytes:  prop = item.Name; prop.vt = VT_ARRAY; break;
+
     case kpidIsDir:  prop = item.IsDir(); break;
     case kpidSize:  prop = item.Size; break;
     case kpidPackSize:  prop = item.PackSize; break;

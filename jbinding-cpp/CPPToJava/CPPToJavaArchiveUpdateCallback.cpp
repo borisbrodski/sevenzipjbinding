@@ -247,6 +247,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
     case kpidAttrib:             GET_ATTRIBUTE(UINTEGER, propertyAttributes)
     case kpidPosixAttrib:        GET_ATTRIBUTE(UINTEGER, propertyPosixAttributes)
     case kpidPath:               GET_ATTRIBUTE(STRING,   propertyPath)
+    case kpidPathBytes:          GET_ATTRIBUTE(STRING,   propertyPath)
     case kpidIsDir:              GET_ATTRIBUTE(BOOLEAN,  propertyIsDir)
     case kpidIsAnti:             GET_ATTRIBUTE(BOOLEAN,  propertyIsAnti)
     case kpidMTime:              GET_ATTRIBUTE(DATE,     propertyLastModificationTime)

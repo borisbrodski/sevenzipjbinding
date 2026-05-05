@@ -546,6 +546,7 @@ STDMETHODIMP CArchiveUpdateCallback::GetProperty(UInt32 index, PROPID propID, PR
     switch(propID)
     {
       case kpidPath:  prop = dirItem.Name; break;
+      case kpidPathBytes:  prop = dirItem.Name; break;
       case kpidIsDir:  prop = dirItem.isDir(); break;
       case kpidSize:  prop = dirItem.Size; break;
       case kpidAttrib:  prop = dirItem.Attrib; break;
