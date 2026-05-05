@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.snippets;
 
+import net.sf.sevenzipjbinding.junit.TestBase;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -28,7 +30,7 @@ public class CompressMessageTest extends SnippetTest {
     @Test
     public void testCompressMessage() {
 
-        String tmpDir = System.getProperty(SYSTEM_PROPERTY_TMP);
+        String tmpDir = TestBase.getTempDir();
         File archiveFile = new File(tmpDir, "compressed_message.zip");
 
         beginSnippetTest();

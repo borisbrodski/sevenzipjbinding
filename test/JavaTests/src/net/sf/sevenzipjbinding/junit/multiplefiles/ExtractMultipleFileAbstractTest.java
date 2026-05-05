@@ -11,6 +11,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.PropID;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.junit.ExtractFileAbstractTest;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.junit.tools.ZipContentComparator;
 
 /**
@@ -85,7 +86,7 @@ public abstract class ExtractMultipleFileAbstractTest extends ExtractFileAbstrac
 	protected void doTestArchiveExtraction(int fileIndex, int compressionIndex, boolean autodetectFormat)
 			throws Exception {
 		String sollArchiveFilename = "archive" + fileIndex + ".zip";
-		String sollFullFilename = MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename;
+		String sollFullFilename = TestBase.getFile(MULTIPLE_FILES_TEST_DATA_PATH + File.separatorChar + sollArchiveFilename);
 
 		ExtractionInArchiveTestHelper extractionInArchiveTestHelper = new ExtractionInArchiveTestHelper();
 		closeLater(extractionInArchiveTestHelper);

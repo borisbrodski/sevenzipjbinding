@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.junit.TestBase;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class WrongCRCGetterInSimpleInterface {
 
         Throwable throwable = null;
         try {
-            randomAccessFile = new RandomAccessFile("testdata/bug/wrong_crc_getter_in_simple_interface.7z", "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/wrong_crc_getter_in_simple_interface.7z"), "r");
             inArchive = SevenZip.openInArchive(ArchiveFormat.SEVEN_ZIP, new RandomAccessFileInStream(randomAccessFile));
             ISimpleInArchiveItem[] archiveItems = inArchive.getSimpleInterface().getArchiveItems();
             assertEquals(2, archiveItems.length);

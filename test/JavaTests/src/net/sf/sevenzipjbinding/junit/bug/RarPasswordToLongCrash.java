@@ -6,6 +6,7 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.junit.TestBase;
 
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class RarPasswordToLongCrash {
 
         Throwable throwable = null;
         try {
-            randomAccessFile = new RandomAccessFile("testdata/bug/RAR archive Crash (over 30 char password).rar", "r");
+            randomAccessFile = new RandomAccessFile(TestBase.getFile("testdata/bug/RAR archive Crash (over 30 char password).rar"), "r");
             inArchive = SevenZip.openInArchive(ArchiveFormat.RAR, new RandomAccessFileInStream(randomAccessFile),
                     PASSWORD);
         } catch (Throwable e) {

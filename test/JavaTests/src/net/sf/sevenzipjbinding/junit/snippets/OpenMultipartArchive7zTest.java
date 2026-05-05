@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.junit.snippets;
 
+import net.sf.sevenzipjbinding.junit.TestBase;
+
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -33,7 +35,7 @@ public class OpenMultipartArchive7zTest extends SnippetTest {
         String expected = getExpectedOutput();
 
         beginSnippetTest();
-        OpenMultipartArchive7z.main(new String[] { "testdata/snippets/multipart-7z.7z.001" });
+        OpenMultipartArchive7z.main(new String[] { TestBase.getFile("testdata/snippets/multipart-7z.7z.001") });
         String output = endSnippetTest();
         assertEquals(expected, output);
     }
