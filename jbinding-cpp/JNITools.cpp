@@ -2,6 +2,8 @@
 #include "JNITools.h"
 #include "UnicodeHelper.h"
 
+#include <cstring>
+
 // TODO Refactor to use java static info
 
 // TODO Synchronize access to this variable or call the init method from the global initialization routing (better)

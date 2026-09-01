@@ -3,7 +3,8 @@
 #include "StdAfx.h"
 //#include "MyWindows.h"
 #include "7zTypes.h"
-//#include <stdlib.h> /* FIXED <malloc.h> */
+#include <cstdlib>
+#include <cstring>
 
 
 

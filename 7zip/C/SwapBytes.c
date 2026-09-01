@@ -330,8 +330,13 @@ ShufBytes_256(void *items8, const void *lim8, const void *mask128_ptr)
 
 
 // compile message "NEON intrinsics not available with the soft-float ABI"
-#elif defined(MY_CPU_ARM_OR_ARM64) || \
-    (defined(__ARM_ARCH) && (__ARM_ARCH >= 7))
+// 7-Zip-JBinding: was MY_CPU_ARM_OR_ARM64, which also matched NEON-less 32-bit ARM (armv5/armv6)
+// and then unconditionally #include <arm_neon.h> -> "You must enable NEON" on those soft-float
+// targets. ARM64 always has ASIMD; for 32-bit ARM require NEON to be actually enabled at compile
+// time (__ARM_NEON), otherwise vrev16q_u8 etc. fail "target specific option mismatch" on armv7
+// toolchains that default to VFP-without-NEON (e.g. Bootlin/Alpine armhf) -> fall back to generic.
+#elif defined(MY_CPU_ARM64) || \
+    (defined(__ARM_ARCH) && (__ARM_ARCH >= 7) && defined(__ARM_NEON))
 // #elif defined(MY_CPU_ARM64)
 
   #if defined(__clang__) && (__clang_major__ >= 8) \

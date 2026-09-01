@@ -8,6 +8,8 @@
 #ifndef JBINDINGTOOLS_H_
 #define JBINDINGTOOLS_H_
 
+#include <cstdlib>
+
 #include "Debug.h"
 #include "BaseSystem.h"
 #include "JObjectList.h"
@@ -54,7 +56,6 @@ class JBindingSession {
     typedef std::map<ThreadId, ThreadContext> ThreadContextMap;
 
     std::list<CMyComPtrWrapper<IUnknown> > _objectList; // TODO REMOVE unused list
-    std::list<JNINativeCallContext> _jniNativeCallContextList;
     ThreadContextMap _threadContextMap;
     PlatformCriticalSection _threadContextMapCriticalSection;
     static JavaVM * _vm;

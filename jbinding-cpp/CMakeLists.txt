@@ -199,6 +199,13 @@ SET(SEVEN_ZIP_SOURCE_FILES
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/LoadCodecs.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/PropIDUtils.cpp
+    # 7-Zip 23.01: the core open/property path references NHash::CHandler (hash-archive handler).
+    # Newer GCC dead-code-eliminated it; older toolchains (old-glibc compat) need it linked.
+    # These provide its vtable + deps; --gc-sections drops what stays unreachable at link time.
+    ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/HashCalc.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/EnumDirItems.cpp
+    ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Common/SortUtils.cpp
+    ${SEVEN_ZIP_SRC}/CPP/Common/DynLimBuf.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/UI/Console/ConsoleClose.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/ZHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Bz2Handler.cpp
@@ -462,11 +469,28 @@ SET(JBINDING_JAVAH_H_FILES
 
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
 IF(CMAKE_COMPILER_IS_GNUCC)
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+    # -ffunction-sections/-fdata-sections + --gc-sections lets the linker drop unreferenced
+    # code/data (e.g. 7-Zip 23.01 hash-on-extract paths that this binding never calls). Newer
+    # GCC removed them via -O DCE; older toolchains (old-glibc compat) need explicit section GC
+    # so -Wl,--no-undefined does not trip over their unused symbols. Also shrinks the binary.
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0 -ffunction-sections -fdata-sections")
 ENDIF(CMAKE_COMPILER_IS_GNUCC)
 IF(CMAKE_COMPILER_IS_GNUCXX)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0 -ffunction-sections -fdata-sections")
+    # Old cross toolchains (e.g. ARMv5 dockcross = GCC 4.9) default to C++98, but the binding uses
+    # C++11 (noexcept / Z7_override). Newer toolchains already default to >= C++14, so only bump the
+    # old ones (set here, in CMakeLists, so it survives the dockcross toolchain file's flag override).
+    IF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+    ENDIF()
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+# Same for old Clang (e.g. the macOS cross toolchain multiarch/crossbuild = Clang 3.8, which defaults
+# to C++03): the binding needs C++11 (noexcept / Z7_override), else "expected ';'" on those keywords.
+IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
+    # -stdlib=libc++: macOS's C++ library (has C++11 <chrono> etc.); the osxcross default otherwise
+    # can't find them ("'chrono' file not found").
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+ENDIF()
 
 #ADD_EXECUTABLE(Client7z Client7z.cpp ${P7ZIP_SOURCE_FILES})
 #TARGET_LINK_LIBRARIES(Client7z dl)
@@ -535,7 +559,7 @@ IF(MINGW)
     #        SET_TARGET_PROPERTIES(7-Zip-JBinding PROPERTIES LINK_FLAGS "-Wl,--add-stdcall-alias -mthreads") # -lpthread -lstdc++ -lws2_32") #-Wl,--add-stdcall-alias
 ELSE(MINGW)
     IF(NOT APPLE)
-        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wl,-z,defs -Wl,--no-undefined ") # Check for missing symbols
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--gc-sections -Wl,-z,defs -Wl,--no-undefined ") # GC dead sections, then check for missing symbols
     ENDIF()
 ENDIF(MINGW)
 

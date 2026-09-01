@@ -17,7 +17,11 @@
 #include "../../../Windows/FileIO.h"
 #include "../../../Windows/FileName.h"
 
-#if defined(_WIN32) && !defined(UNDER_CE)
+// 7-Zip-JBinding: Z7_JB_NO_SECURITY_CODE opts out of the NTFS security/privilege code (InitLocalPrivileges,
+// SACL reading). jbinding doesn't expose security-descriptor preservation and doesn't link 7-Zip's
+// ArchiveExtractCallback.cpp (which defines InitLocalPrivileges) - it has its own. On Linux this code
+// was never compiled (no _WIN32); this makes the Windows/MinGW build match, avoiding an undefined ref.
+#if defined(_WIN32) && !defined(UNDER_CE) && !defined(Z7_JB_NO_SECURITY_CODE)
 #define Z7_USE_SECURITY_CODE
 #include "../../../Windows/SecurityUtils.h"
 #endif

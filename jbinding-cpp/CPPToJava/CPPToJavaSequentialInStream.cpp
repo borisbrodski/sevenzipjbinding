@@ -1,5 +1,7 @@
 #include "SevenZipJBinding.h"
 
+#include <cstring>
+
 #include "JBindingTools.h"
 #include "CPPToJavaSequentialInStream.h"
 

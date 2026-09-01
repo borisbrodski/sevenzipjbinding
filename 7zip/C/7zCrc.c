@@ -86,7 +86,11 @@ UInt32 Z7_FASTCALL CrcUpdateT1(UInt32 v, const void *data, size_t size, const UI
     #endif
   #elif (defined(__clang__) && (__clang_major__ >= 3)) \
      || (defined(__GNUC__) && (__GNUC__ > 4))
-      #if !defined(__ARM_FEATURE_CRC32)
+      // 7-Zip-JBinding: only force-enable the ARMv8 hardware-CRC path on ARM64.
+      // On 32-bit ARM (armv5/armv6/armv7a) there is no CRC32 instruction, and older
+      // ARM32 GCC toolchains (used for old-glibc compatibility) reject the
+      // __target__("arch=armv8-a+crc") attribute. Fall back to software CRC there.
+      #if !defined(__ARM_FEATURE_CRC32) && defined(MY_CPU_ARM64)
         #define __ARM_FEATURE_CRC32 1
         #if defined(__clang__)
           #if defined(MY_CPU_ARM64)

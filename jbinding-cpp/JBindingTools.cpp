@@ -7,6 +7,9 @@
 
 #include "SevenZipJBinding.h"
 
+#include <cstdlib>
+#include <cstring>
+
 #include "JBindingTools.h"
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding", SevenZipException)

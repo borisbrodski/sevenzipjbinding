@@ -1,6 +1,9 @@
 #include "SevenZipJBinding.h"
 #include "CHeadCacheInStream.h"
 
+#include <cstdlib>
+#include <cstring>
+
 STDMETHODIMP CHeadCacheInStream::ReadIntoCache(UInt64 newCacheInitializedSize) {
 	HRESULT res;
 	if (newCacheInitializedSize <= _cacheInitializedSize) {

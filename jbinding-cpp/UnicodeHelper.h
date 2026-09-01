@@ -3,6 +3,8 @@
 
 #include "SevenZipJBinding.h"
 
+#include <cstdlib>
+
 #define BUFFER_ON_STACK_SIZE 1024
 
 template <typename T>

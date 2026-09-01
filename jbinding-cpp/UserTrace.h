@@ -8,6 +8,8 @@
 #ifndef USERTRACE_H_
 #define USERTRACE_H_
 
+#include <cstring>
+
 #include "Common/IntToString.h"
 #include "JNITools.h"
 #include "SevenZipJBinding.h"

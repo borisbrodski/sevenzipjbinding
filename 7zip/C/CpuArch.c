@@ -760,9 +760,29 @@ BoolInt CPU_IsSupported_AES (void) { return APPLE_CRYPTO_SUPPORT_VAL; }
 
 #else // __APPLE__
 
+// 7-Zip-JBinding: on glibc, <sys/auxv.h> (getauxval) requires glibc >= 2.16. Old cross sysroots
+// used for old-OS compatibility (e.g. the ARMv6 GCC 4.8 / Linaro toolchain) predate it. When it is
+// absent, leaving USE_HWCAP undefined makes the CPU_IsSupported_* checks fall back to "unsupported"
+// (return 0) below - correct for ARM targets that have no crypto/CRC hardware anyway.
+// NOTE: decide availability WITHOUT referencing __GLIBC_PREREQ on libcs that don't define it (musl
+// has no __GLIBC__/__GLIBC_PREREQ but DOES provide getauxval). Evaluating __GLIBC_PREREQ(2,16) on
+// musl trips the preprocessor ("missing binary operator before token '('"), so it must be guarded.
+#include <features.h>
+#if !defined(__GLIBC__)
+  #define SZ_JB_USE_AUXV        // non-glibc (musl, ...) provides getauxval
+#elif defined(__GLIBC_PREREQ)
+  #if __GLIBC_PREREQ(2, 16)
+    #define SZ_JB_USE_AUXV
+  #endif
+#endif
+
+#ifdef SZ_JB_USE_AUXV
+
 #include <sys/auxv.h>
 
 #define USE_HWCAP
+
+#endif
 
 #ifdef USE_HWCAP
 
