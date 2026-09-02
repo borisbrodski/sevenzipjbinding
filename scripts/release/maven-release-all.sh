@@ -19,7 +19,7 @@ $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-amd64.zip    "$
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-arm64.zip    "$REPO" -linux-arm64
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-armv5.zip    "$REPO" -linux-armv5
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-armv6.zip    "$REPO" -linux-armv6
-$SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-armv71.zip   "$REPO" -linux-armv71
+$SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Linux-armv7.zip   "$REPO" -linux-armv7
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Mac-x86_64.zip     "$REPO" -mac-x86_64
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Windows-amd64.zip  "$REPO" -windows-amd64
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Windows-x86.zip    "$REPO" -windows-x86

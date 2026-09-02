@@ -861,12 +861,31 @@ public class SevenZip {
     }
 
     /**
-     * Return best match for the current platform out of available platforms <code>availablePlatform</code>
+     * Choose the platform whose native library best matches the current runtime, out of the platforms
+     * available in the platform jar(s) on the class path (see {@link #getPlatformList()}).
+     * <p>
+     * The choice is made as follows:
+     * <ol>
+     * <li>If only one platform is available, it is returned.</li>
+     * <li>An exact match of <code>&lt;os.name&gt;-&lt;os.arch&gt;</code> is tried first (this covers e.g.
+     * <code>Linux-amd64</code>, <code>Linux-i386</code>, <code>Windows-amd64</code>).</li>
+     * <li>Otherwise the runtime architecture is resolved to an ordered list of candidate arch suffixes
+     * (see {@link PlatformArchDetector}). This normalizes {@code os.arch} spellings
+     * (<code>aarch64</code>&nbsp;&rarr;&nbsp;<code>arm64</code>, <code>x86_64</code>&nbsp;&rarr;&nbsp;<code>amd64</code>,
+     * <code>i686</code>&nbsp;&rarr;&nbsp;<code>i386</code>) and, in particular, resolves the <b>32-bit ARM
+     * sub-architecture</b>: the JVM reports <code>os.arch=arm</code> for all of armv5/armv6/armv7, so the
+     * CPU architecture level and the float ABI (soft = <i>armel</i>, hard = <i>armhf</i>) are detected
+     * (via <code>uname</code>, the ELF auxiliary vector, the ELF float-ABI flags and the dynamic loader).
+     * The first candidate that is actually available is returned.</li>
+     * </ol>
+     * If nothing matches, a {@link SevenZipNativeInitializationException} is thrown with a detailed message
+     * that includes the detected candidates, the available platforms and the full detection trail.
      *
      * @see #getPlatformList()
-     * @return platform
+     * @see PlatformArchDetector
+     * @return the chosen platform name (e.g. <code>Linux-armv7</code>)
      * @throws SevenZipNativeInitializationException
-     *             is no platform could be chosen
+     *             if no suitable platform could be chosen
      */
     public static String getPlatformBestMatch() throws SevenZipNativeInitializationException {
         List<String> availablePlatform = getPlatformList();
@@ -876,22 +895,39 @@ public class SevenZip {
 
         String arch = System.getProperty("os.arch");
         String system = System.getProperty("os.name").split(" ")[0];
+
+        // 1) Exact os.arch match. Covers platforms whose name equals os.arch verbatim
+        //    (e.g. Linux-amd64, Linux-i386, Windows-amd64).
         if (availablePlatform.contains(system + "-" + arch)) {
             return system + "-" + arch;
         }
 
-        // TODO allow fuzzy matches
-        StringBuilder stringBuilder = new StringBuilder("Can't find suited platform for os.arch=");
-        stringBuilder.append(arch);
-        stringBuilder.append(", os.name=");
-        stringBuilder.append(system);
-        stringBuilder.append("... Available list of platforms: ");
-
-        for (String platform : availablePlatform) {
-            stringBuilder.append(platform);
-            stringBuilder.append(", ");
+        // 2) Detected candidates. Normalizes os.arch spellings (aarch64 -> arm64, x86_64 -> amd64,
+        //    i686 -> i386) and, crucially, resolves the 32-bit ARM sub-architecture (armv5 / armv6 /
+        //    armv7) since the JVM reports os.arch=arm for all of them. Candidates are ordered
+        //    best-first; the first one that both exists AND is float-ABI compatible is chosen.
+        List<String> diagnostics = new ArrayList<String>();
+        List<String> candidates = PlatformArchDetector.getArchCandidates(arch, diagnostics);
+        for (String candidate : candidates) {
+            String platform = system + "-" + candidate;
+            if (availablePlatform.contains(platform)) {
+                return platform;
+            }
         }
-        stringBuilder.setLength(stringBuilder.length() - 2);
+
+        // 3) Nothing matched: fail with a detailed, actionable message including the detection trail.
+        StringBuilder stringBuilder = new StringBuilder(
+                "7-Zip-JBinding: could not choose a native platform for this runtime.\n");
+        stringBuilder.append("  os.name  = ").append(System.getProperty("os.name")).append('\n');
+        stringBuilder.append("  os.arch  = ").append(arch).append('\n');
+        stringBuilder.append("  detected arch candidates (best first): ").append(candidates).append('\n');
+        stringBuilder.append("  available platforms in the jar: ").append(availablePlatform).append('\n');
+        stringBuilder.append("  arch-detection trail:\n");
+        for (String line : diagnostics) {
+            stringBuilder.append("    - ").append(line).append('\n');
+        }
+        stringBuilder.append("  Hint: ensure the platform jar for this architecture is on the class path");
+        stringBuilder.append(" (see SevenZip.getPlatformList()).");
         throwInitException(stringBuilder.toString());
         return null; // Will never happen
     }

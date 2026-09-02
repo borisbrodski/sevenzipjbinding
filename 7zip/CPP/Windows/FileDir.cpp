@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <utime.h>
+#include <sys/time.h> // 7-Zip-JBinding: utimes()/timeval for the glibc<2.6 SetDirTime fallback
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
