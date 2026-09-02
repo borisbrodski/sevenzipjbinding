@@ -92,9 +92,17 @@ jobs:
   assemble-both-arch-jar:
     name: single jar with both architectures
     needs: build-test
-    runs-on: macos-14
+    # Runs on Linux on purpose: build-multiplatform-release.sh uses GNU-sed BRE extensions
+    # (\+ \? \|) that BSD sed (macOS) does not support -- on macOS every input filename fails to
+    # parse and the script emits an empty jar. The step is pure zip/jar assembly, so Linux is fine.
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up JDK 8 (for jar)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
@@ -105,7 +113,15 @@ jobs:
           ls -1 sevenzipjbinding-*-Mac-*.zip
           bash scripts/build-multiplatform-release.sh --name AllMac \
             sevenzipjbinding-*-Mac-x86_64.zip sevenzipjbinding-*-Mac-arm64.zip
-          echo "== assembled artifacts =="; find . -name 'sevenzipjbinding-*AllMac*' -o -name 'sevenzipjbinding-AllMac*'
+          echo "== assembled artifacts =="
+          allmac_zip=$(find "$PWD" -name 'sevenzipjbinding-*AllMac*.zip' | head -1)
+          ls -l "$allmac_zip"
+          # Sanity: the assembled jar must contain BOTH platform dylibs, not be an empty shell.
+          rm -rf _verify && mkdir _verify && cd _verify
+          unzip -q "$allmac_zip"
+          jar tf */lib/sevenzipjbinding-AllMac.jar | tee /tmp/allmac.list | grep -E 'Mac-x86_64/.*\.dylib'
+          jar tf */lib/sevenzipjbinding-AllMac.jar | grep -E 'Mac-arm64/.*\.dylib'
+          echo "== both dylibs present in the single AllMac jar =="
       - name: Upload single both-arch jar
         uses: actions/upload-artifact@v4
         with:
