@@ -1101,8 +1101,18 @@ bool SetDirTime(CFSTR path, const CFiTime *cTime, const CFiTime *aTime, const CF
 
   if (!needChange)
     return true;
-#if defined(__GLIBC__) && defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2, 6)
-  // 7-Zip-JBinding: glibc < 2.6 (e.g. CentOS 5 / manylinux1 = glibc 2.5) has no utimensat() (and no
+  // 7-Zip-JBinding: decide whether utimensat() is available. Compute it with a NESTED #if so that
+  // __GLIBC_PREREQ(2, 6) is only referenced when __GLIBC_PREREQ is actually a defined macro. Writing
+  // `defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2, 6)` on one line fails on non-glibc toolchains
+  // (e.g. macOS/AppleClang: "token is not a valid binary operator") because the preprocessor still
+  // parses the whole expression, and there __GLIBC_PREREQ is an undefined identifier -> 0(2, 6).
+#if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
+#  if !__GLIBC_PREREQ(2, 6)
+#    define Z7_JB_NO_UTIMENSAT
+#  endif
+#endif
+#if defined(Z7_JB_NO_UTIMENSAT)
+  // glibc < 2.6 (e.g. CentOS 5 / manylinux1 = glibc 2.5) has no utimensat() (and no
   // UTIME_OMIT). Fall back to utimes() (microsecond precision). utimes() sets both a/m time at once
   // and has no per-field "omit", so preserve an omitted field by reading the file's current time.
   {
