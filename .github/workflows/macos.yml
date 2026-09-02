@@ -24,7 +24,7 @@ jobs:
       - name: Set up JDK 8 (needs javah)
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: zulu
           java-version: '8'
 
       - name: Toolchain info
