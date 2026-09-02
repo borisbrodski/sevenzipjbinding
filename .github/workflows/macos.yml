@@ -1,7 +1,16 @@
 name: macOS build & test
 
-# Build + run the full test suite on real Apple hardware (Intel + Apple Silicon) and assemble a
-# single Mac jar containing both architectures. Free for public repos.
+# Build + run the full test suite for BOTH macOS architectures and assemble a single Mac jar
+# containing both. Free for public repos.
+#
+# Runner note: GitHub's Intel macOS runners (macos-13) are the ONLY Intel label (macos-14/15 are
+# Apple Silicon only) and are heavily capacity-constrained (jobs can queue for over an hour). So we
+# run EVERYTHING on macos-14 (Apple Silicon), which is readily available:
+#   * arm64  -> built and tested natively.
+#   * x86_64 -> cross-built natively (Apple clang targets x86_64 from the universal macOS SDK), and
+#     tested through an x86_64 JDK under Rosetta 2. Rosetta transparently executes the x86_64 JVM,
+#     which loads the x86_64 lib7-Zip-JBinding.dylib and runs the full suite -- a real functional
+#     test of the Intel artifact (translated x86_64 execution, just not on physical Intel silicon).
 on:
   push:
     branches: [ "7z-23.01" ]
@@ -10,22 +19,27 @@ on:
 
 jobs:
   build-test:
-    name: build+test ${{ matrix.arch }} (${{ matrix.os }})
+    name: build+test ${{ matrix.arch }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { os: macos-13, arch: x86_64 }   # Intel
-          - { os: macos-14, arch: arm64 }    # Apple Silicon
-    runs-on: ${{ matrix.os }}
+          - { arch: arm64,  jdk_arch: aarch64, rosetta: false }   # native Apple Silicon
+          - { arch: x86_64, jdk_arch: x64,     rosetta: true  }   # Intel artifact, tested via Rosetta
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 8 (needs javah)
+      - name: Install Rosetta 2 (x86_64 job only)
+        if: matrix.rosetta
+        run: sudo softwareupdate --install-rosetta --agree-to-license || true
+
+      - name: Set up JDK 8 (${{ matrix.jdk_arch }}, needs javah)
         uses: actions/setup-java@v4
         with:
           distribution: zulu
           java-version: '8'
+          architecture: ${{ matrix.jdk_arch }}
 
       - name: Toolchain info
         run: |
@@ -33,7 +47,10 @@ jobs:
           sw_vers || true
           clang --version | head -1
           cmake --version | head -1
-          echo "JAVA_HOME=$JAVA_HOME"; "$JAVA_HOME/bin/javac" -version; ls "$JAVA_HOME/bin/javah"
+          echo "JAVA_HOME=$JAVA_HOME"
+          file "$JAVA_HOME/bin/java"
+          "$JAVA_HOME/bin/javac" -version
+          ls "$JAVA_HOME/bin/javah"
 
       - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
         uses: jwlawson/actions-setup-cmake@v2
@@ -53,7 +70,15 @@ jobs:
           echo "== built =="; ls -1 sevenzipjbinding-*-Mac-*.zip
           file jbinding-cpp/lib7-Zip-JBinding.dylib
 
+      - name: Verify built dylib architecture
+        run: |
+          set -eux
+          # Fail loudly if the produced lib is not the arch we asked for.
+          file build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q "${{ matrix.arch }}"
+
       - name: Run tests (ctest)
+        # For x86_64 the test JVM ($JAVA_HOME is the x64 JDK) is executed by Rosetta and loads the
+        # x86_64 dylib; for arm64 everything is native.
         run: cd build && ctest --output-on-failure
 
       - name: Upload platform zip
