@@ -40,7 +40,7 @@ jobs:
           set -eux
           mkdir build && cd build
           cmake .. \
-            -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
             -DJAVA_SYSTEM=Mac -DJAVA_ARCH=${{ matrix.arch }} \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
           make
