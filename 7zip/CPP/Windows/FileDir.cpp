@@ -1100,9 +1100,40 @@ bool SetDirTime(CFSTR path, const CFiTime *cTime, const CFiTime *aTime, const CF
 
   if (!needChange)
     return true;
+#if defined(__GLIBC__) && defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2, 6)
+  // 7-Zip-JBinding: glibc < 2.6 (e.g. CentOS 5 / manylinux1 = glibc 2.5) has no utimensat() (and no
+  // UTIME_OMIT). Fall back to utimes() (microsecond precision). utimes() sets both a/m time at once
+  // and has no per-field "omit", so preserve an omitted field by reading the file's current time.
+  {
+    struct timeval tv[2];
+    struct stat st;
+    const bool haveStat = (stat(path, &st) == 0);
+    for (int i = 0; i < 2; i++)
+    {
+      const bool omit =
+        #ifdef UTIME_OMIT
+          (times[i].tv_nsec == UTIME_OMIT);
+        #else
+          (times[i].tv_sec == 0 && times[i].tv_nsec == 0);
+        #endif
+      if (omit)
+      {
+        tv[i].tv_sec = haveStat ? (i == 0 ? st.st_atime : st.st_mtime) : time(NULL);
+        tv[i].tv_usec = 0;
+      }
+      else
+      {
+        tv[i].tv_sec = times[i].tv_sec;
+        tv[i].tv_usec = (long)(times[i].tv_nsec / 1000);
+      }
+    }
+    return utimes(path, tv) == 0;
+  }
+#else
   const int flags = 0; // follow link
     // = AT_SYMLINK_NOFOLLOW; // don't follow link
   return utimensat(AT_FDCWD, path, times, flags) == 0;
+#endif
 }
 
 
