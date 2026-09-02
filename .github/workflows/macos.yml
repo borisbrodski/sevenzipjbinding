@@ -1,0 +1,86 @@
+name: macOS build & test
+
+# Build + run the full test suite on real Apple hardware (Intel + Apple Silicon) and assemble a
+# single Mac jar containing both architectures. Free for public repos.
+on:
+  push:
+    branches: [ "7z-23.01" ]
+    paths-ignore: [ "**/*.md", "Vault-7ZipJBinding/**" ]
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    name: build+test ${{ matrix.arch }} (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-13, arch: x86_64 }   # Intel
+          - { os: macos-14, arch: arm64 }    # Apple Silicon
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 8 (needs javah)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Toolchain info
+        run: |
+          uname -a
+          sw_vers || true
+          clang --version | head -1
+          cmake --version | head -1
+          echo "JAVA_HOME=$JAVA_HOME"; "$JAVA_HOME/bin/javac" -version; ls "$JAVA_HOME/bin/javah"
+
+      - name: Configure + build (Mac-${{ matrix.arch }})
+        run: |
+          set -eux
+          mkdir build && cd build
+          cmake .. \
+            -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
+            -DJAVA_SYSTEM=Mac -DJAVA_ARCH=${{ matrix.arch }} \
+            -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
+          make
+          make package
+          echo "== built =="; ls -1 sevenzipjbinding-*-Mac-*.zip
+          file jbinding-cpp/lib7-Zip-JBinding.dylib
+
+      - name: Run tests (ctest)
+        run: cd build && ctest --output-on-failure
+
+      - name: Upload platform zip
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-${{ matrix.arch }}
+          path: build/sevenzipjbinding-*-Mac-${{ matrix.arch }}.zip
+          if-no-files-found: warn
+
+  assemble-both-arch-jar:
+    name: single jar with both architectures
+    needs: build-test
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Assemble AllMac (x86_64 + arm64) release
+        run: |
+          set -eux
+          cp artifacts/mac-*/sevenzipjbinding-*-Mac-*.zip .
+          ls -1 sevenzipjbinding-*-Mac-*.zip
+          bash scripts/build-multiplatform-release.sh --name AllMac \
+            sevenzipjbinding-*-Mac-x86_64.zip sevenzipjbinding-*-Mac-arm64.zip
+          echo "== assembled artifacts =="; find . -name 'sevenzipjbinding-*AllMac*' -o -name 'sevenzipjbinding-AllMac*'
+      - name: Upload single both-arch jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: sevenzipjbinding-AllMac
+          path: |
+            sevenzipjbinding-*AllMac*.zip
+            **/sevenzipjbinding-*AllMac*
+          if-no-files-found: warn
