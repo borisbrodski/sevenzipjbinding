@@ -35,6 +35,11 @@ jobs:
           cmake --version | head -1
           echo "JAVA_HOME=$JAVA_HOME"; "$JAVA_HOME/bin/javac" -version; ls "$JAVA_HOME/bin/javah"
 
+      - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.6'
+
       - name: Configure + build (Mac-${{ matrix.arch }})
         run: |
           set -eux
