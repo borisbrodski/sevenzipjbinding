@@ -486,10 +486,18 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 # Same for old Clang (e.g. the macOS cross toolchain multiarch/crossbuild = Clang 3.8, which defaults
 # to C++03): the binding needs C++11 (noexcept / Z7_override), else "expected ';'" on those keywords.
-IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
-    # -stdlib=libc++: macOS's C++ library (has C++11 <chrono> etc.); the osxcross default otherwise
-    # can't find them ("'chrono' file not found").
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+IF(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # The binding uses C++11 (noexcept / Z7_override). Clang can default to an older standard:
+    #  - AppleClang notably defaults to gnu++98 (so "expected ';'" on noexcept/override) on ALL
+    #    versions, including AppleClang 15 -> set -std explicitly for every Apple build;
+    #  - old non-Apple Clang (< 6.0) also defaults pre-C++11.
+    # On macOS also select libc++ (has C++11 <chrono> etc.; the osxcross default otherwise can't
+    # find them: "'chrono' file not found").
+    IF(APPLE)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+    ELSEIF(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "6.0")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    ENDIF()
 ENDIF()
 
 #ADD_EXECUTABLE(Client7z Client7z.cpp ${P7ZIP_SOURCE_FILES})
