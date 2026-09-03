@@ -338,7 +338,9 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase>
         ArchiveFormat archiveFormat = getArchiveFormat();
         virtualContent.fillRandomly(countOfFiles, directoriesDepth, maxSubdirectories, averageFileLength,
                 deltaFileLength, null, archiveFormat == ArchiveFormat.TAR);
-        if (archiveFormat == ArchiveFormat.BZIP2) {
+        if (archiveFormat == ArchiveFormat.BZIP2 || archiveFormat == ArchiveFormat.XZ) {
+            // BZip2 and Xz are single-stream formats that store no filename, so after
+            // create + reopen the item path is empty.
             virtualContent.updateItemPathByPath(virtualContent.getItemPath(0), "");
         }
 
@@ -440,7 +442,7 @@ public abstract class UpdateAbstractTest<T extends IOutItemBase>
                     virtualContent.updateItemLastModificationTimeByPath(pathToSearch, (Date) propertyMap.get(propID));
                     break;
                 case PATH:
-                    if (getArchiveFormat() != ArchiveFormat.BZIP2) {
+                    if (getArchiveFormat() != ArchiveFormat.BZIP2 && getArchiveFormat() != ArchiveFormat.XZ) {
                         newPath = (String) propertyMap.get(propID);
                     }
                     break;

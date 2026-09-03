@@ -227,7 +227,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetProperty(UInt32 index, PROPID pr
 
     if (propID == kpidIsDir
             && (codecTools.isGZipArchive(_archiveFormatIndex)
-                    || codecTools.isBZip2Archive(_archiveFormatIndex))) {
+                    || codecTools.isBZip2Archive(_archiveFormatIndex)
+                    || codecTools.isXzArchive(_archiveFormatIndex))) {
         cPropVariant = false;
         cPropVariant.Detach(value);
         return S_OK;

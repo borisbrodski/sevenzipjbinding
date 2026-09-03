@@ -19,6 +19,7 @@ import net.sf.sevenzipjbinding.IOutCreateCallback;
 import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBZip2;
+import net.sf.sevenzipjbinding.IOutItemXz;
 import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.IOutItemTar;
@@ -69,6 +70,7 @@ public abstract class CompressSingleFileAbstractTest<C extends AbstractTestConte
             setPropertiesForZip(outItem, testContext);
             setPropertiesForGZip(outItem, testContext);
             setPropertiesForBZip2(outItem, testContext);
+            setPropertiesForXz(outItem, testContext);
             setPropertiesForTar(outItem, testContext);
         }
 
@@ -88,6 +90,10 @@ public abstract class CompressSingleFileAbstractTest<C extends AbstractTestConte
 
             case BZIP2:
                 setPropertiesForBZip2(outItem, testContext);
+                break;
+
+            case XZ:
+                setPropertiesForXz(outItem, testContext);
                 break;
 
             case TAR:
@@ -142,6 +148,9 @@ public abstract class CompressSingleFileAbstractTest<C extends AbstractTestConte
         }
 
         protected void setPropertiesForBZip2(IOutItemBZip2 outItem, TestContext testContext) {
+        }
+
+        protected void setPropertiesForXz(IOutItemXz outItem, TestContext testContext) {
         }
 
         protected void setPropertiesForTar(IOutItemTar outItem, TestContext testContext) {

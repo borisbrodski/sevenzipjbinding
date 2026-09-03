@@ -310,4 +310,20 @@ public interface IInArchive extends Closeable {
      *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
      */
     public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException;
+
+    /**
+     * Get an instance of {@link IOutUpdateArchiveXz} connected to the current archive. This is a part of the archive
+     * format specific API. The new instance only allows modification of the currently opened Xz archive. Multiple
+     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveXz}
+     * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
+     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * be ignored.
+     *
+     * @return an instance of the {@link IOutUpdateArchive} interface
+     *
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     */
+    public IOutUpdateArchiveXz getConnectedOutArchiveXz() throws SevenZipException;
 }

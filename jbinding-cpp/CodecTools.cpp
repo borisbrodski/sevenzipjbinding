@@ -29,6 +29,7 @@ void CodecTools::init() {
 
 	gzipIndex = -1;
 	bzip2Index = -1;
+	xzIndex = -1;
 	for (int i = 0; i < CodecTools::codecs.Formats.Size(); i++) {
         const wchar_t * name = CodecTools::codecs.Formats[i].Name.Ptr();
         if (wcscmp(name, L"Cab") == 0) {
@@ -37,6 +38,8 @@ void CodecTools::init() {
             gzipIndex = i;
         } else if (wcscmp(name, L"bzip2") == 0) {
             bzip2Index = i;
+        } else if (wcscmp(name, L"xz") == 0) {
+            xzIndex = i;
         }
 	}
 }

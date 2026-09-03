@@ -17,6 +17,11 @@ class CodecTools {
 	 */
 	int bzip2Index;
 
+	/**
+	 * Index of the Xz archive format.
+	 */
+	int xzIndex;
+
 public:
 	CCodecs codecs;
 
@@ -37,6 +42,9 @@ public:
 	}
 	bool isBZip2Archive(int index) {
 		return bzip2Index == index;
+	}
+	bool isXzArchive(int index) {
+		return xzIndex == index;
 	}
 };
 

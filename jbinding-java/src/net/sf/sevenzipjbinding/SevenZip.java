@@ -1065,6 +1065,19 @@ public class SevenZip {
     }
 
     /**
+     * Create a new Xz archive.
+     *
+     * @see IOutCreateArchiveXz
+     * @return an out-archive object initialized to create the new Xz archive
+     * @throws SevenZipException
+     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     */
+    public static IOutCreateArchiveXz openOutArchiveXz() throws SevenZipException {
+        return (IOutCreateArchiveXz) openOutArchiveIntern(ArchiveFormat.XZ);
+    }
+
+    /**
      * Create a new archive of type <code>archiveFormat</code>.
      *
      * @see IOutCreateArchiveZip

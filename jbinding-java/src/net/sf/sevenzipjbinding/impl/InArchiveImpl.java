@@ -9,6 +9,7 @@ import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IOutItem7z;
 import net.sf.sevenzipjbinding.IOutItemAllFormats;
 import net.sf.sevenzipjbinding.IOutItemBZip2;
+import net.sf.sevenzipjbinding.IOutItemXz;
 import net.sf.sevenzipjbinding.IOutItemBase;
 import net.sf.sevenzipjbinding.IOutItemGZip;
 import net.sf.sevenzipjbinding.IOutItemTar;
@@ -16,6 +17,7 @@ import net.sf.sevenzipjbinding.IOutItemZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchive;
 import net.sf.sevenzipjbinding.IOutUpdateArchive7z;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveBZip2;
+import net.sf.sevenzipjbinding.IOutUpdateArchiveXz;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveGZip;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveTar;
 import net.sf.sevenzipjbinding.IOutUpdateArchiveZip;
@@ -378,6 +380,15 @@ public final class InArchiveImpl implements IInArchive {
         ensureOpened();
         ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.BZIP2);
         return (IOutUpdateArchiveBZip2) (this.<IOutItemBZip2> getConnectedOutArchiveIntern());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IOutUpdateArchiveXz getConnectedOutArchiveXz() throws SevenZipException {
+        ensureOpened();
+        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.XZ);
+        return (IOutUpdateArchiveXz) (this.<IOutItemXz> getConnectedOutArchiveIntern());
     }
 
     private void ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat archiveFormat)

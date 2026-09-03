@@ -183,6 +183,9 @@ public class VirtualContent {
             case BZIP2:
                 break;
 
+            case XZ:
+                break;
+
             case TAR:
                 IOutItemTar outItemTar = outItem;
 

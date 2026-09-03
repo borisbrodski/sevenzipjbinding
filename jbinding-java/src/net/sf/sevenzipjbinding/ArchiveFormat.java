@@ -5,6 +5,7 @@ import net.sf.sevenzipjbinding.impl.OutArchiveBZip2Impl;
 import net.sf.sevenzipjbinding.impl.OutArchiveGZipImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveTarImpl;
+import net.sf.sevenzipjbinding.impl.OutArchiveXzImpl;
 import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
 
 /**
@@ -269,10 +270,10 @@ public enum ArchiveFormat {
     Z("Z", false),
 
     /**
-     * Xz format. Single-file stream archive (like GZip/BZip2/Lzma): extraction only; stores no
-     * filename inside the archive.
+     * Xz format. Single-file stream archive (like GZip/BZip2/Lzma). Supports extraction and
+     * compression; stores no filename inside the archive.
      */
-    XZ("Xz", false),
+    XZ("Xz", OutArchiveXzImpl.class, false),
 
     /**
      * Arj format
