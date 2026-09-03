@@ -800,7 +800,11 @@ public class SevenZip {
         return callNativeOpenArchive(archiveFormat, inStream, new DummyOpenArchiveCallback());
     }
 
-    private static void ensureLibraryIsInitialized() {
+    // synchronized: serialize the auto-initialization check-then-act so concurrent first-time
+    // openInArchive() calls in the SAME JVM don't race (issue #24, in-process part). NOTE: this does
+    // NOT address the separate cross-JVM race, where multiple processes initialize/extract the native
+    // library into a shared temp dir at once -- that needs inter-process synchronization (future work).
+    private static synchronized void ensureLibraryIsInitialized() {
         if (autoInitializationWillOccur) {
             autoInitializationWillOccur = false;
             try {
