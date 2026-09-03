@@ -11,10 +11,10 @@ name: macOS build & test
 #     tested through an x86_64 JDK under Rosetta 2. Rosetta transparently executes the x86_64 JVM,
 #     which loads the x86_64 lib7-Zip-JBinding.dylib and runs the full suite -- a real functional
 #     test of the Intel artifact (translated x86_64 execution, just not on physical Intel silicon).
+# Manual-only: the x86_64 test runs under Rosetta (~22 min), so this is intentionally NOT run on
+# every push. Trigger it from the Actions tab ("Run workflow") or with:
+#   gh workflow run macos.yml --ref 7z-23.01
 on:
-  push:
-    branches: [ "7z-23.01" ]
-    paths-ignore: [ "**/*.md", "Vault-7ZipJBinding/**" ]
   workflow_dispatch:
 
 jobs:
