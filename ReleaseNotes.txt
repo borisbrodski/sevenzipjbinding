@@ -1,6 +1,17 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Known issues
+------------
+
+    * CVE-2024-11477 (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8)
+        The bundled 7-Zip engine (23.01) predates the upstream fix, released in 7-Zip 24.07.
+        Processing untrusted Zstandard-compressed data may be affected. Mitigation: do not
+        open/extract untrusted Zstandard input. Planned to be addressed in a later release by
+        upgrading the bundled engine to 24.07 or newer.
+        Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
+
+
 Main features of 16.02-2.01 (Release, extraction/compression/update, cross-platform, based on zip/p7zip 16.02)
 
     * Bind 7-Zip 16.02, In-memory archive extraction/creation/update
