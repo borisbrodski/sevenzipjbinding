@@ -504,7 +504,13 @@ public class SevenZip {
         }
 
         if (!tmpDirFile.exists() || !tmpDirFile.isDirectory()) {
-            throwInitException("invalid tmp directory '" + tmpDirectory + "'");
+            // Report the directory that was actually resolved and checked (issue #43): when the path
+            // comes from the java.io.tmpdir system property, the 'tmpDirectory' parameter is null, so
+            // the old message printed "invalid tmp directory 'null'" instead of the real path.
+            String source = tmpDirectory != null ? "specified tmp directory"
+                    : "tmp directory from the '" + SYSTEM_PROPERTY_TMP + "' system property";
+            String reason = tmpDirFile.exists() ? "not a directory" : "doesn't exist";
+            throwInitException(source + " '" + tmpDirFile.getAbsolutePath() + "' " + reason);
         }
 
         if (!tmpDirFile.canWrite()) {
