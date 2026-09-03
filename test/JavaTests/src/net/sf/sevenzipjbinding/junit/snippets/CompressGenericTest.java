@@ -22,7 +22,8 @@ public class CompressGenericTest extends SnippetTest {
             + "Supported formats: TAR\n" //
             + "Supported formats: GZIP\n" //
             + "Supported formats: BZIP2\n" //
-            + "Supported formats: SEVEN_ZIP\n";
+            + "Supported formats: SEVEN_ZIP\n" //
+            + "Supported formats: XZ\n";
 
     /* END_OUTPUT */
 
