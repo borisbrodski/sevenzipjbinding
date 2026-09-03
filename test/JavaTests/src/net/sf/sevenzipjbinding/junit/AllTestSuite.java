@@ -474,6 +474,7 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] miscTests = { //
             ArchiveWithTwoPasswordsTest.class, //
+            net.sf.sevenzipjbinding.PlatformArchDetectorTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
