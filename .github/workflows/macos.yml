@@ -89,44 +89,6 @@ jobs:
           path: build/sevenzipjbinding-*-Mac-${{ matrix.arch }}.zip
           if-no-files-found: warn
 
-  assemble-both-arch-jar:
-    name: single jar with both architectures
-    needs: build-test
-    # Runs on Linux on purpose: build-multiplatform-release.sh uses GNU-sed BRE extensions
-    # (\+ \? \|) that BSD sed (macOS) does not support -- on macOS every input filename fails to
-    # parse and the script emits an empty jar. The step is pure zip/jar assembly, so Linux is fine.
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 8 (for jar)
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '8'
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-      - name: Assemble AllMac (x86_64 + arm64) release
-        run: |
-          set -eux
-          cp artifacts/mac-*/sevenzipjbinding-*-Mac-*.zip .
-          ls -1 sevenzipjbinding-*-Mac-*.zip
-          bash scripts/build-multiplatform-release.sh --name AllMac \
-            sevenzipjbinding-*-Mac-x86_64.zip sevenzipjbinding-*-Mac-arm64.zip
-          echo "== assembled artifacts =="
-          allmac_zip=$(find "$PWD" -name 'sevenzipjbinding-*AllMac*.zip' | head -1)
-          ls -l "$allmac_zip"
-          # Sanity: the assembled jar must contain BOTH platform dylibs, not be an empty shell.
-          rm -rf _verify && mkdir _verify && cd _verify
-          unzip -q "$allmac_zip"
-          jar tf */lib/sevenzipjbinding-AllMac.jar | tee /tmp/allmac.list | grep -E 'Mac-x86_64/.*\.dylib'
-          jar tf */lib/sevenzipjbinding-AllMac.jar | grep -E 'Mac-arm64/.*\.dylib'
-          echo "== both dylibs present in the single AllMac jar =="
-      - name: Upload single both-arch jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: sevenzipjbinding-AllMac
-          path: |
-            sevenzipjbinding-*AllMac*.zip
-            **/sevenzipjbinding-*AllMac*
-          if-no-files-found: warn
+  # NOTE: no separate "AllMac" jar any more. This workflow only builds + tests the two Mac platform
+  # zips (mac-x86_64, mac-arm64) and uploads them as artifacts; the Mac natives are folded into the
+  # single cross-platform AllPlatform jar assembled together with Linux + Windows.
