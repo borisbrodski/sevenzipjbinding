@@ -180,6 +180,12 @@ import net.sf.sevenzipjbinding.impl.OutArchiveZipImpl;
  * <td>{@link #XAR}</td>
  * </tr>
  * <tr align="center">
+ * <td>XZ</td>
+ * <td>X</td>
+ * <td>-</td>
+ * <td>{@link #XZ}</td>
+ * </tr>
+ * <tr align="center">
  * <td>Z</td>
  * <td>X</td>
  * <td>-</td>
@@ -261,6 +267,12 @@ public enum ArchiveFormat {
      * Z format.
      */
     Z("Z", false),
+
+    /**
+     * Xz format. Single-file stream archive (like GZip/BZip2/Lzma): extraction only; stores no
+     * filename inside the archive.
+     */
+    XZ("Xz", false),
 
     /**
      * Arj format
