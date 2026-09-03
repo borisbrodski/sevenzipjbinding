@@ -13,6 +13,7 @@
     		<li><a href="#create-specific-api-tar">Creating Tar archive using archive format specific API</a></li>
     		<li><a href="#create-specific-api-gzip">Creating GZip archive using archive format specific API</a></li>
     		<li><a href="#create-specific-api-bzip2">Creating BZip2 archive using archive format specific API</a></li>
+    		<li><a href="#create-specific-api-xz">Creating Xz archive using archive format specific API</a></li>
     	</ul>
         <li><a href="#create-generic">Creating archives with the archive format specific API</a></li>
         <li><a href="#create-encrypted">Creating password protected archives</a></li>
@@ -178,6 +179,21 @@ archive item properties at all.
 </p>
 
 ##INCLUDE_SNIPPET(CompressNonGenericBZip2)
+
+<p>
+For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.
+</p>
+
+
+<h3><a name="create-specific-api-xz">Creating Xz archive using archive format specific API</h3>
+
+<p>
+Xz is like GZip and BZip2 a stream archive format. It compresses a single archive item supporting no additional
+archive item properties at all. Xz uses the LZMA2 algorithm and typically achieves a better compression ratio
+than GZip or BZip2.
+</p>
+
+##INCLUDE_SNIPPET(CompressNonGenericXz)
 
 <p>
 For instructions on how to running the snippet and check the results see <a href="#create-specific-api-zip">Creating Zip archive using archive format specific API</a>.

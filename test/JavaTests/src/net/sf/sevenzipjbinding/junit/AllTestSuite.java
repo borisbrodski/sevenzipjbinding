@@ -210,6 +210,7 @@ import net.sf.sevenzipjbinding.junit.snippets.CompressGenericTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressMessageTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGeneric7zTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericBZip2Test;
+import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericXzTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericZipTest;
@@ -370,6 +371,7 @@ public class AllTestSuite extends TestSuite {
             CompressNonGeneric7zTest.class, //
             CompressGenericTest.class, //
             CompressNonGenericBZip2Test.class, //
+            CompressNonGenericXzTest.class, //
             CompressNonGenericGZipTest.class, //
             CompressNonGenericTarTest.class, //
             CompressWithErrorTest.class, //
