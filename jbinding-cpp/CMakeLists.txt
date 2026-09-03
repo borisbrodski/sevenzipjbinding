@@ -149,6 +149,10 @@ ENDIF(MINGW)
 SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/Common/CommandLineParser.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/CRC.cpp
+    # Static initializer that calls Crc64GenerateTable() at library load. Without it, the CRC64
+    # function pointer (g_Crc64Update in XzCrc64.c) stays NULL and extracting an Xz archive (whose
+    # default integrity check is CRC64) calls through NULL -> SIGSEGV. CRC.cpp is the CRC32 equivalent.
+    ${SEVEN_ZIP_SRC}/CPP/Common/XzCrc64Init.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/IntToString.cpp
     ${SEVEN_ZIP_SRC}/CPP/Common/ListFileUtils.cpp
     ####${SEVEN_ZIP_SRC}/CPP/Common/StdInStream.cpp TODO check on Linux, remove it not needed
