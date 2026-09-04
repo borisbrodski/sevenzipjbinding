@@ -906,25 +906,13 @@ public class SevenZip {
         String arch = System.getProperty("os.arch");
         String system = System.getProperty("os.name").split(" ")[0];
 
-        // 1) Exact os.arch match. Covers platforms whose name equals os.arch verbatim
-        //    (e.g. Linux-amd64, Linux-i386, Windows-amd64).
-        if (availablePlatform.contains(system + "-" + arch)) {
-            return system + "-" + arch;
-        }
-
-        // 1b) Bare system-name match. A system that ships a single universal library for every CPU
-        //     publishes it as a platform named just <system> (no arch suffix). This is how macOS works:
-        //     one fat "Mac" dylib (x86_64 + arm64) serves both Intel and Apple Silicon, so no arch
-        //     differentiation is needed. Harmless for Linux/Windows, which never define a bare-<system>
-        //     platform (they are always <system>-<arch>).
-        if (availablePlatform.contains(system)) {
-            return system;
-        }
-
-        // 2) Detected candidates. Normalizes os.arch spellings (aarch64 -> arm64, x86_64 -> amd64,
-        //    i686 -> i386) and, crucially, resolves the 32-bit ARM sub-architecture (armv5 / armv6 /
-        //    armv7) since the JVM reports os.arch=arm for all of them. Candidates are ordered
-        //    best-first; the first one that both exists AND is float-ABI compatible is chosen.
+        // 1) Detected candidates FIRST. getArchCandidates normalizes os.arch spellings (aarch64 ->
+        //    arm64, x86_64 -> amd64, i686 -> i386), resolves the 32-bit ARM sub-architecture
+        //    (armv5/armv6/armv7 all report os.arch=arm), AND is libc-aware: on a musl userspace it
+        //    returns the "-musl" variants only. This MUST run before any raw os.arch match: a musl
+        //    x86_64 system reports os.arch=amd64 and would otherwise match the glibc "Linux-amd64"
+        //    verbatim and load a glibc lib that cannot run on musl. Candidates are best-first; the
+        //    first that exists (and is float-ABI / libc compatible) wins.
         List<String> diagnostics = new ArrayList<String>();
         List<String> candidates = PlatformArchDetector.getArchCandidates(arch, diagnostics);
         for (String candidate : candidates) {
@@ -932,6 +920,14 @@ public class SevenZip {
             if (availablePlatform.contains(platform)) {
                 return platform;
             }
+        }
+
+        // 2) Bare system-name match. A system that ships a single universal library for every CPU
+        //    publishes it as a platform named just <system> (no arch suffix). This is how macOS works:
+        //    one fat "Mac" dylib (x86_64 + arm64) serves both Intel and Apple Silicon. Harmless for
+        //    Linux/Windows, which never define a bare-<system> platform (always <system>-<arch>).
+        if (availablePlatform.contains(system)) {
+            return system;
         }
 
         // 3) Nothing matched: fail with a detailed, actionable message including the detection trail.
