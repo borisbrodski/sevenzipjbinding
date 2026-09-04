@@ -6,6 +6,7 @@ ELSE()
 ENDIF()
 
 FILE(READ "java-executable" JAVA)
+STRING(STRIP "${JAVA}" JAVA)   # FILE(READ) keeps a trailing newline; an embedded '\n' in the exec path fails EXECUTE_PROCESS
 FILE(STRINGS "java-executable-params" JAVA_PARAMS)
 
 IF(NOT JAVA)
