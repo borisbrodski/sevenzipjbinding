@@ -1,36 +1,31 @@
 name: macOS build & test
 
-# Build + run the full test suite for BOTH macOS architectures and assemble a single Mac jar
-# containing both. Free for public repos.
+# Build ONE universal (fat: x86_64 + arm64) macOS dylib -> a single "Mac" platform that runs on every
+# 64-bit Mac (Intel + Apple Silicon). To prove the one binary works on both, the full test suite runs
+# twice on macos-14 (Apple Silicon): once with a native arm64 JVM (loads the arm64 slice) and once
+# with an x86_64 JVM under Rosetta 2 (loads the x86_64 slice of the SAME universal lib).
 #
-# Runner note: GitHub's Intel macOS runners (macos-13) are the ONLY Intel label (macos-14/15 are
-# Apple Silicon only) and are heavily capacity-constrained (jobs can queue for over an hour). So we
-# run EVERYTHING on macos-14 (Apple Silicon), which is readily available:
-#   * arm64  -> built and tested natively.
-#   * x86_64 -> cross-built natively (Apple clang targets x86_64 from the universal macOS SDK), and
-#     tested through an x86_64 JDK under Rosetta 2. Rosetta transparently executes the x86_64 JVM,
-#     which loads the x86_64 lib7-Zip-JBinding.dylib and runs the full suite -- a real functional
-#     test of the Intel artifact (translated x86_64 execution, just not on physical Intel silicon).
-# Manual-only: the x86_64 test runs under Rosetta (~22 min), so this is intentionally NOT run on
-# every push. Trigger it from the Actions tab ("Run workflow") or with:
+# Everything runs on macos-14 because GitHub's Intel macos-13 runners are the only Intel label and are
+# heavily queue-constrained.
+# Manual-only (workflow_dispatch): trigger from the Actions tab or:
 #   gh workflow run macos.yml --ref 7z-23.01
 on:
   workflow_dispatch:
 
 jobs:
   build-test:
-    name: build+test ${{ matrix.arch }}
+    name: universal build + test with ${{ matrix.test_arch }} JVM
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { arch: arm64,  jdk_arch: aarch64, rosetta: false }   # native Apple Silicon
-          - { arch: x86_64, jdk_arch: x64,     rosetta: true  }   # Intel artifact, tested via Rosetta
+          - { test_arch: arm64,  jdk_arch: aarch64, rosetta: false, upload: true  }  # native
+          - { test_arch: x86_64, jdk_arch: x64,     rosetta: true,  upload: false }  # via Rosetta
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rosetta 2 (x86_64 job only)
+      - name: Install Rosetta 2 (x86_64 test only)
         if: matrix.rosetta
         run: sudo softwareupdate --install-rosetta --agree-to-license || true
 
@@ -43,52 +38,46 @@ jobs:
 
       - name: Toolchain info
         run: |
-          uname -a
-          sw_vers || true
+          uname -a; sw_vers || true
           clang --version | head -1
           cmake --version | head -1
-          echo "JAVA_HOME=$JAVA_HOME"
-          file "$JAVA_HOME/bin/java"
-          "$JAVA_HOME/bin/javac" -version
-          ls "$JAVA_HOME/bin/javah"
+          echo "JAVA_HOME=$JAVA_HOME"; file "$JAVA_HOME/bin/java"
+          "$JAVA_HOME/bin/javac" -version; ls "$JAVA_HOME/bin/javah"
 
       - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
         uses: jwlawson/actions-setup-cmake@v2
         with:
           cmake-version: '3.28.6'
 
-      - name: Configure + build (Mac-${{ matrix.arch }})
+      - name: Configure + build universal Mac dylib (x86_64 + arm64)
         run: |
           set -eux
           mkdir build && cd build
           cmake .. \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
-            -DJAVA_SYSTEM=Mac -DJAVA_ARCH=${{ matrix.arch }} \
+            -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
           make
           make package
-          echo "== built =="; ls -1 sevenzipjbinding-*-Mac-*.zip
+          echo "== built =="; ls -1 sevenzipjbinding-*-Mac.zip
           file jbinding-cpp/lib7-Zip-JBinding.dylib
 
-      - name: Verify built dylib architecture
+      - name: Verify the dylib is universal (contains both arches)
         run: |
           set -eux
-          # Fail loudly if the produced lib is not the arch we asked for.
-          file build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q "${{ matrix.arch }}"
+          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib
+          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q x86_64
+          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q arm64
 
-      - name: Run tests (ctest)
-        # For x86_64 the test JVM ($JAVA_HOME is the x64 JDK) is executed by Rosetta and loads the
-        # x86_64 dylib; for arm64 everything is native.
+      - name: Run tests (ctest) with the ${{ matrix.test_arch }} JVM
+        # arm64: native. x86_64: the x64 JVM runs under Rosetta; both load their slice of the SAME
+        # universal lib -> proves the single Mac binary works on both architectures.
         run: cd build && ctest --output-on-failure
 
-      - name: Upload platform zip
-        if: always()
+      - name: Upload single Mac platform zip
+        if: always() && matrix.upload
         uses: actions/upload-artifact@v4
         with:
-          name: mac-${{ matrix.arch }}
-          path: build/sevenzipjbinding-*-Mac-${{ matrix.arch }}.zip
+          name: mac
+          path: build/sevenzipjbinding-*-Mac.zip
           if-no-files-found: warn
-
-  # NOTE: no separate "AllMac" jar any more. This workflow only builds + tests the two Mac platform
-  # zips (mac-x86_64, mac-arm64) and uploads them as artifacts; the Mac natives are folded into the
-  # single cross-platform AllPlatform jar assembled together with Linux + Windows.

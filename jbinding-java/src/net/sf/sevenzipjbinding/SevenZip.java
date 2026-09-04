@@ -912,6 +912,15 @@ public class SevenZip {
             return system + "-" + arch;
         }
 
+        // 1b) Bare system-name match. A system that ships a single universal library for every CPU
+        //     publishes it as a platform named just <system> (no arch suffix). This is how macOS works:
+        //     one fat "Mac" dylib (x86_64 + arm64) serves both Intel and Apple Silicon, so no arch
+        //     differentiation is needed. Harmless for Linux/Windows, which never define a bare-<system>
+        //     platform (they are always <system>-<arch>).
+        if (availablePlatform.contains(system)) {
+            return system;
+        }
+
         // 2) Detected candidates. Normalizes os.arch spellings (aarch64 -> arm64, x86_64 -> amd64,
         //    i686 -> i386) and, crucially, resolves the 32-bit ARM sub-architecture (armv5 / armv6 /
         //    armv7) since the JVM reports os.arch=arm for all of them. Candidates are ordered

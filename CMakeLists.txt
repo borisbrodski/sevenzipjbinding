@@ -52,11 +52,22 @@ ENDIF(SEVENZIPJBINDING_VERSON)
 
 IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin") # TODO Switch to JAVA_SYSTEM
     MESSAGE("---- Mac OS X ----")
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${JAVA_ARCH}")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch ${JAVA_ARCH}")
+    # JAVA_ARCH may be a list (e.g. "x86_64;arm64") to build a single universal (fat) dylib that runs
+    # on both Intel and Apple Silicon Macs. Emit one -arch flag per architecture.
+    FOREACH(_JAVA_ARCH ${JAVA_ARCH})
+        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -arch ${_JAVA_ARCH}")
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -arch ${_JAVA_ARCH}")
+    ENDFOREACH()
 ENDIF()
 
-SET(PLATFORM ${JAVA_SYSTEM}-${JAVA_ARCH})
+# On Mac the single universal library is published as one platform named just "Mac" (no arch
+# suffix): one fat dylib serves every 64-bit Mac, so both the standalone Mac platform jar and the
+# Mac entry inside AllPlatform work on Intel and Apple Silicon alike. Other systems keep <sys>-<arch>.
+IF("${JAVA_SYSTEM}" STREQUAL "Mac")
+    SET(PLATFORM ${JAVA_SYSTEM})
+ELSE()
+    SET(PLATFORM ${JAVA_SYSTEM}-${JAVA_ARCH})
+ENDIF()
 
 SET(SEVENZIPJBINDING_LIB_JAR ${PROJECT_BINARY_DIR}/sevenzipjbinding-${PLATFORM}.jar)
 SET(SEVENZIPJBINDING_LIB_MANIFEST ${PROJECT_BINARY_DIR}/MANIFEST.MF)
