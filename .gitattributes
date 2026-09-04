@@ -1,0 +1,38 @@
+# Normalize line endings. Source is stored and checked out with LF everywhere; this fixes the
+# historical mix of CRLF/LF across the hand-written sources (jbinding-cpp/java/test/scripts).
+* text=auto eol=lf
+
+# Windows-only scripts stay CRLF.
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# Binary assets: never touch line endings (test archives, images, prebuilt libs, jars).
+*.zip  binary
+*.jar  binary
+*.7z   binary
+*.rar  binary
+*.xz   binary
+*.gz   binary
+*.tgz  binary
+*.bz2  binary
+*.lzma binary
+*.z    binary
+*.cab  binary
+*.arj  binary
+*.chm  binary
+*.rpm  binary
+*.deb  binary
+*.wim  binary
+*.iso  binary
+*.dat  binary
+*.png  binary
+*.gif  binary
+*.jpg  binary
+*.ico  binary
+*.so   binary
+*.dll  binary
+*.dylib binary
+*.a    binary
+*.lib  binary
+*.o    binary
+*.obj  binary
