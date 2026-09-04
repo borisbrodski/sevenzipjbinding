@@ -123,7 +123,14 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
         </span>
     <b>7-Zip-JBinding Release: 23.01-2.2</b>
 <br/><br/>
-Release, extraction &amp; compression, cross-platform, based on 7zip/p7zip 16.02
+<div style="border:1px solid #cc0000; background:#fff4f4; padding:8px; margin:8px 0;">
+    <b>Known issue &ndash; CVE-2024-11477 (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8):</b>
+    the bundled 7-Zip engine (23.01) predates the upstream fix, released in 7-Zip 24.07. Processing
+    untrusted Zstandard-compressed data may be affected &ndash; do not open/extract untrusted Zstandard
+    input. Planned to be addressed in a later release by upgrading the bundled engine to 24.07 or newer.
+    Tracking: <a href="https://github.com/borisbrodski/sevenzipjbinding/issues/72">issue #72</a>.
+</div>
+Release, extraction &amp; compression, cross-platform, based on 7-Zip 23.01
 <ul>
     <li>First official release</li>
     <li>
