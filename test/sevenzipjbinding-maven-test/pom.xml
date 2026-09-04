@@ -6,7 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
     <properties>
-        <version>16.02-2.01</version>
+        <version>23.01-2.2</version>
     </properties>
 
 	<dependencies>

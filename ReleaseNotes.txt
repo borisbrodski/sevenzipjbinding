@@ -12,9 +12,9 @@ Known issues
         Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
 
 
-Main features of 16.02-2.01 (Release, extraction/compression/update, cross-platform, based on zip/p7zip 16.02)
+Main features of 23.01-2.2 (Release, extraction/compression/update, cross-platform, based on 7-Zip 23.01)
 
-    * Bind 7-Zip 16.02, In-memory archive extraction/creation/update
+    * Bind 7-Zip 23.01, In-memory archive extraction/creation/update
 
     * Extraction of
         - 7z, Arj, BZip2, Cab, Chm, Cpio, Ar/A/Lib/Deb, Fat, GZip, HFS, Iso,
@@ -58,11 +58,11 @@ Main features of 16.02-2.01 (Release, extraction/compression/update, cross-platf
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding</artifactId>
-            <version>16.02-2.01</version>
+            <version>23.01-2.2</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
-            <version>16.02-2.01</version>
+            <version>23.01-2.2</version>
         </dependency>
 
