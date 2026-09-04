@@ -81,3 +81,69 @@ jobs:
           name: mac
           path: build/sevenzipjbinding-*-Mac.zip
           if-no-files-found: warn
+
+  # -----------------------------------------------------------------------------------------------
+  # AllPlatforms autodetection test: prove the single cross-platform AllPlatforms jar (11 platform
+  # libs incl. the universal Mac fat dylib) autodetects + loads the Mac lib on BOTH Mac architectures
+  # (arm64 native + x86_64 via Rosetta). Runs the full ctest suite with ONLY the AllPlatforms jar on
+  # the classpath (no standalone Mac jar). The AllPlatforms jar is built locally and published as the
+  # 'ci-allplatforms-fixture' prerelease (it needs Linux/Windows/ARM natives not produced in CI).
+  allplatforms-autodetect:
+    name: AllPlatforms autodetect + test (${{ matrix.test_arch }} JVM)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { test_arch: arm64,  jdk_arch: aarch64, rosetta: false }
+          - { test_arch: x86_64, jdk_arch: x64,     rosetta: true  }
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rosetta 2 (x86_64 test only)
+        if: matrix.rosetta
+        run: sudo softwareupdate --install-rosetta --agree-to-license || true
+
+      - name: Set up JDK 8 (${{ matrix.jdk_arch }})
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '8'
+          architecture: ${{ matrix.jdk_arch }}
+
+      - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.6'
+
+      - name: Download the AllPlatforms jar (CI fixture prerelease)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eux
+          mkdir -p allplatforms && cd allplatforms
+          gh release download ci-allplatforms-fixture -R "$GITHUB_REPOSITORY" -p '*AllPlatforms.zip'
+          unzip -q *AllPlatforms.zip
+          find "$PWD" -name 'sevenzipjbinding-AllPlatforms.jar'
+
+      - name: Configure + build (produces the test harness; the built Mac lib is unused)
+        run: |
+          set -eux
+          mkdir build && cd build
+          cmake .. \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
+            -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
+            -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
+          make
+
+      - name: Swap the native jar -> AllPlatforms (force autodetection)
+        run: |
+          set -eux
+          APJAR="$(find "$PWD/allplatforms" -name 'sevenzipjbinding-AllPlatforms.jar' | head -1)"
+          test -n "$APJAR"
+          sed -i.bak -E "s#[^:\"]*/sevenzipjbinding-Mac\.jar#${APJAR}#g" build/JUnitRunner.cmake
+          echo "== runner classpath now references: =="
+          grep -o "sevenzipjbinding-[A-Za-z]*\.jar" build/JUnitRunner.cmake | sort -u
+
+      - name: Run full suite via AllPlatforms autodetection (${{ matrix.test_arch }} JVM)
+        run: cd build && ctest --output-on-failure
