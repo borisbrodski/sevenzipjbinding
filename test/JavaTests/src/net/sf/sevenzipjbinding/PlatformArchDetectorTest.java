@@ -30,7 +30,22 @@ public class PlatformArchDetectorTest {
 
     private static final List<String> ARM_32 = Arrays.asList("armv7", "armv6", "armv5");
 
+    /**
+     * Candidates with the libc suffix normalized away. On a musl host (e.g. the Alpine QEMU VMs) the
+     * detector appends "-musl" to every candidate; the arch-identity assertions below only care about
+     * the architecture, so strip it here to stay host-independent. The musl behaviour itself is
+     * covered by the dedicated musl tests.
+     */
     private static List<String> candidates(String osArch) {
+        List<String> result = new ArrayList<String>();
+        for (String c : rawCandidates(osArch)) {
+            result.add(c.endsWith("-musl") ? c.substring(0, c.length() - "-musl".length()) : c);
+        }
+        return result;
+    }
+
+    /** Raw candidates exactly as returned (keeps any "-musl" suffix). */
+    private static List<String> rawCandidates(String osArch) {
         List<String> result = PlatformArchDetector.getArchCandidates(osArch, null);
         assertNotNull("getArchCandidates must never return null (os.arch=" + osArch + ")", result);
         return result;
@@ -115,6 +130,37 @@ public class PlatformArchDetectorTest {
         List<String> v6 = candidates("armv6l");
         assertTrue("v7 candidates " + v7 + " must contain all v6 candidates " + v6,
                 v7.containsAll(v6));
+    }
+
+    // ---- musl / libc detection -----------------------------------------------------------------
+
+    @Test
+    public void muslVariantsAppendsMuslSuffix() {
+        assertEquals(Arrays.asList("arm64-musl", "aarch64-musl"),
+                PlatformArchDetector.muslVariants(Arrays.asList("arm64", "aarch64")));
+        assertEquals(Arrays.asList("armv7-musl", "armv6-musl"),
+                PlatformArchDetector.muslVariants(Arrays.asList("armv7", "armv6")));
+        assertTrue(PlatformArchDetector.muslVariants(new ArrayList<String>()).isEmpty());
+    }
+
+    @Test
+    public void candidatesAreConsistentlyMuslOrGlibc() {
+        // Host-independent invariant: on any host every candidate is either the musl variant or the
+        // glibc one, never a mix (a musl userspace can't load a glibc lib or vice-versa). Holds on
+        // glibc hosts (0 musl) and musl hosts (all musl).
+        for (String osArch : new String[] { "amd64", "aarch64", "arm", "armv7l", "armv6l", "i686" }) {
+            List<String> raw = rawCandidates(osArch);
+            if (raw.isEmpty()) {
+                continue;
+            }
+            int musl = 0;
+            for (String c : raw) {
+                if (c.endsWith("-musl")) {
+                    musl++;
+                }
+            }
+            assertTrue("candidates must be all-musl or all-glibc, got " + raw, musl == 0 || musl == raw.size());
+        }
     }
 
     // ---- helpers -------------------------------------------------------------------------------

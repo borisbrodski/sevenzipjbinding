@@ -44,6 +44,11 @@ final class PlatformArchDetector {
         HARD, SOFT, UNKNOWN
     }
 
+    /** C library flavour of the Linux userspace. musl (e.g. Alpine) is ABI-incompatible with glibc. */
+    enum LibC {
+        GNU, MUSL, UNKNOWN
+    }
+
     /** Diagnostic trail of what each detection method saw; folded into error messages. */
     private final List<String> diagnostics = new ArrayList<String>();
 
@@ -61,10 +66,33 @@ final class PlatformArchDetector {
     static List<String> getArchCandidates(String osArch, List<String> diagnosticsOut) {
         PlatformArchDetector d = new PlatformArchDetector();
         List<String> result = d.detect(osArch);
+        // On a musl userspace (e.g. Alpine) a glibc-built .so cannot be loaded (and vice-versa), so
+        // map the candidates to the musl-specific platform variants (e.g. arm64 -> arm64-musl). This
+        // only fires when a musl libc is actually detected; on glibc / non-Linux the candidates are
+        // returned unchanged. We deliberately do NOT keep the glibc names as a fallback on musl:
+        // loading the wrong-libc library would crash the JVM rather than fail gracefully.
+        LibC libc = d.detectLibC();
+        diagnostics_addLibc(d, libc);
+        if (libc == LibC.MUSL) {
+            result = muslVariants(result);
+        }
         if (diagnosticsOut != null) {
             diagnosticsOut.addAll(d.diagnostics);
         }
         return result;
+    }
+
+    private static void diagnostics_addLibc(PlatformArchDetector d, LibC libc) {
+        d.diagnostics.add("libc=" + libc);
+    }
+
+    /** Map each arch candidate to its musl-specific platform variant, e.g. {@code arm64 -> arm64-musl}. */
+    static List<String> muslVariants(List<String> candidates) {
+        List<String> out = new ArrayList<String>(candidates.size());
+        for (String candidate : candidates) {
+            out.add(candidate + "-musl");
+        }
+        return out;
     }
 
     private List<String> detect(String osArch) {
@@ -313,6 +341,67 @@ final class PlatformArchDetector {
         }
         diagnostics.add("no known ld-linux -> float ABI unknown");
         return FloatAbi.UNKNOWN;
+    }
+
+    // ------------------------------------------------------------------------- libc detection ----
+
+    /**
+     * Detect the C library flavour (glibc vs musl). musl systems (e.g. Alpine) need musl-built
+     * libraries; a glibc {@code .so} won't load there and vice-versa. All methods are pure Java so
+     * they work in stripped containers.
+     */
+    private LibC detectLibC() {
+        LibC libc = detectLibCViaMaps();
+        if (libc != LibC.UNKNOWN) {
+            return libc;
+        }
+        return detectLibCViaLoaderFile();
+    }
+
+    /**
+     * Primary: read {@code /proc/self/maps} and look at the dynamic loader / libc actually mapped into
+     * this JVM. musl maps {@code ld-musl-<arch>.so.1}; glibc maps {@code ld-linux*.so*} / {@code libc.so.6}.
+     * This reflects the real runtime libc even in a stripped container.
+     */
+    private LibC detectLibCViaMaps() {
+        try {
+            for (String line : readLines(new File("/proc/self/maps"))) {
+                String l = line.toLowerCase(Locale.ROOT);
+                if (l.contains("ld-musl") || l.contains("libc.musl")) {
+                    diagnostics.add("/proc/self/maps: musl loader mapped -> musl");
+                    return LibC.MUSL;
+                }
+                if (l.contains("ld-linux") || l.contains("/libc.so.6") || l.contains("/libc-2.")) {
+                    diagnostics.add("/proc/self/maps: glibc loader/libc mapped -> glibc");
+                    return LibC.GNU;
+                }
+            }
+            diagnostics.add("/proc/self/maps: no libc marker");
+        } catch (Throwable t) {
+            diagnostics.add("libc-via-maps failed: " + t.getClass().getSimpleName() + ": " + t.getMessage());
+        }
+        return LibC.UNKNOWN;
+    }
+
+    /** Backup: presence of the musl vs glibc dynamic loader on disk ({@code /lib/ld-musl-*.so.1}). */
+    private LibC detectLibCViaLoaderFile() {
+        String[] libNames = new File("/lib").list();
+        if (libNames != null) {
+            for (String name : libNames) {
+                if (name.startsWith("ld-musl-")) {
+                    diagnostics.add("/lib/" + name + " present -> musl");
+                    return LibC.MUSL;
+                }
+            }
+            for (String name : libNames) {
+                if (name.startsWith("ld-linux") || name.startsWith("ld-2.")) {
+                    diagnostics.add("/lib/" + name + " present -> glibc");
+                    return LibC.GNU;
+                }
+            }
+        }
+        diagnostics.add("no ld-musl/ld-linux loader on disk -> libc unknown");
+        return LibC.UNKNOWN;
     }
 
     // ------------------------------------------------------------------------------- helpers -----
