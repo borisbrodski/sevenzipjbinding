@@ -109,11 +109,21 @@ mv $TMPPLATFORMSFILE $PLATFORMSFILE
 
 cd "$JARASSEMBLEDIR"
 find . \( -name "META-INF" -or -name "MANIFEST.MF" \) -delete
-mkdir META-INF
-echo "Manifest-Version: 1.0" > META-INF/MANIFEST.MF 
-echo "Created-By: 1.5.0" >> META-INF/MANIFEST.MF 
+# Carry the version into the merged manifest. The per-platform manifests (with Implementation-Title
+# "7-Zip-JBinding native lib (...)" + Implementation-Version) were just deleted above to avoid
+# META-INF collisions when merging; re-add the version info so provenance is kept and VersionTest's
+# manifest cross-check works for multi-platform jars too. Version is derived from the release name
+# prefix (e.g. "sevenzipjbinding-16.02-2.01-" -> "16.02-2.01"). NOTE: use "jar cfm" with an explicit
+# manifest file -- "jar cf" ignores any META-INF/MANIFEST.MF among the input files and writes its own.
+RELEASE_VERSION=$(echo "$release" | sed -e 's/^[a-z]*-//' -e 's/-$//')
+MULTIPLATFORM_MANIFEST="$JARASSEMBLEDIR.manifest.mf"
+echo "Manifest-Version: 1.0" > "$MULTIPLATFORM_MANIFEST"
+echo "Created-By: 1.5.0" >> "$MULTIPLATFORM_MANIFEST"
+echo "Implementation-Title: 7-Zip-JBinding native lib ($multiplatformname)" >> "$MULTIPLATFORM_MANIFEST"
+echo "Implementation-Version: $RELEASE_VERSION" >> "$MULTIPLATFORM_MANIFEST"
 
-jar cf $ASSEMBLEDIR/lib/$MULTIPLATFORMJAR *
+jar cfm $ASSEMBLEDIR/lib/$MULTIPLATFORMJAR "$MULTIPLATFORM_MANIFEST" *
+rm -f "$MULTIPLATFORM_MANIFEST"
 cd ..
 rm -r "$JARASSEMBLEDIR"
 if [ -f $release$multiplatformname.zip ] ; then
