@@ -155,9 +155,17 @@ void SetLastError(DWORD dw)
 static LONG TIME_GetBias()
 {
   time_t utc = time(NULL);
-  struct tm *ptm = localtime(&utc);
-  int localdaylight = ptm->tm_isdst; /* daylight for local timezone */
-  ptm = gmtime(&utc);
+  /* Use the reentrant localtime_r/gmtime_r: the non-reentrant localtime()/gmtime() both return a
+     pointer to one shared static struct tm, so concurrent callers (e.g. multithreaded extraction)
+     corrupt each other's tm and compute a wrong bias -> file times come out off by the TZ/DST
+     offset. Invisible on UTC hosts (bias==0) but a real data-integrity bug on any other timezone. */
+  struct tm tmLocal;
+  struct tm tmUtc;
+  struct tm *ptmLocal = localtime_r(&utc, &tmLocal);
+  int localdaylight = ptmLocal ? ptmLocal->tm_isdst : 0; /* daylight for local timezone */
+  struct tm *ptm = gmtime_r(&utc, &tmUtc);
+  if (ptm == NULL)
+    return 0;
   ptm->tm_isdst = localdaylight; /* use local daylight, not that of Greenwich */
   LONG bias = (int)(mktime(ptm)-utc);
   return bias;
