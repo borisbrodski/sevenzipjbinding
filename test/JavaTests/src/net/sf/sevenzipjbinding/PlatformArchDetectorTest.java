@@ -110,9 +110,16 @@ public class PlatformArchDetectorTest {
 
     @Test
     public void armLevelEncodedInOsArchYieldsOnlyArmBuildsInDescendingOrder() {
+        // armv7l/armv6l yield >=1 build on EVERY host: hard-float -> that level (and lower),
+        // soft-float -> armv5, unknown-abi -> all. So non-empty is a host-independent invariant here.
         assertArmCandidates(candidates("armv7l"));
         assertArmCandidates(candidates("armv6l"));
-        assertArmCandidates(candidates("armv5tejl"));
+        // armv5 (level 5) is the exception: on a HARD-float host there is NO compatible build (ARMv5
+        // has no VFP), so an armv5 os.arch legitimately yields an EMPTY list. (This only arises for the
+        // synthetic "v5 os.arch on a hard-float host" combination the test feeds; a real armv5 device
+        // is soft-float and yields armv5.) Assert only the host-independent invariants: ARM-only and
+        // descending order; empty is acceptable.
+        assertArmOrderedSubset(candidates("armv5tejl"));
     }
 
     @Test
@@ -167,8 +174,16 @@ public class PlatformArchDetectorTest {
 
     /** Assert: only ARM builds, no duplicates, and strictly descending architecture level. */
     private static void assertArmCandidates(List<String> result) {
-        assertArmSubset(result);
         assertFalse("expected at least one ARM build", result.isEmpty());
+        assertArmOrderedSubset(result);
+    }
+
+    /**
+     * Assert: only ARM builds and strictly descending architecture level. Tolerates an EMPTY list,
+     * which is valid for an armv5 os.arch on a hard-float host (no hard-float ARMv5 build exists).
+     */
+    private static void assertArmOrderedSubset(List<String> result) {
+        assertArmSubset(result);
         int prevLevel = Integer.MAX_VALUE;
         for (String c : result) {
             int level = c.charAt(4) - '0'; // "armvN"
