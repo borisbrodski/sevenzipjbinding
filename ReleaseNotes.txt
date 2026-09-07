@@ -33,22 +33,25 @@ Main features of 23.01-2.2 (Release, extraction/compression/update, cross-platfo
 
     * Cross-platform. Binaries available for
         - Windows 32/64
-        - Linux 32/64
-        - Mac OS X 64
-        - ARM (WARNING: Not a part of -AllPlatform or -AllLinux !!!)
-			* ARMv5 (armel)
-			* ARMv6 (RaspberryPi 2)
+        - Linux 32/64 (glibc)
+        - Linux ARM (glibc):
+			* ARMv5 (armel, soft-float)
+			* ARMv6 (Raspberry Pi 1/Zero, hard-float)
 			* ARMv7 (armhf)
 			* ARM64
+        - Linux musl (Alpine): amd64, ARM64, ARMv7
+        - macOS: single universal binary for Intel (x86_64) and
+          Apple Silicon (arm64)
 
-    * Multi-platform distributions (with platform auto-detection):
-        - AllWindows - includes Win32 and Win64
-        - AllLinux - includes Linux32 and Linux64 (ARM not included)
-        - AllPlatforms - includes AllWindows, AllLinux and Mac
+    * Multi-platform distributions (with runtime platform auto-detection:
+      OS/architecture, ARM level + float ABI, glibc vs musl):
+        - AllWindows   - Win32 + Win64
+        - AllPlatforms - ALL 12 platforms in one jar (Windows, Linux glibc
+                         including ARM, Linux musl, macOS universal)
 
     * JavaDoc + Snippets (see documentation on the web: sevenzipjbind.sf.net)
 
-        * Over 8599 JUnit tests:
+        * 8845 JUnit tests:
             - Initialization
             - All extraction methods
             - Compression

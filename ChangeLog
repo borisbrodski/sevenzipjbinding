@@ -1,12 +1,46 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 23.01-2.2 (Release, cross-platform, based on zip/p7zip 23.01)
+Release - 23.01-2.2 (Release, cross-platform, based on 7-Zip 23.01)
 
-	* Bind 7-zip 23.01
+	* Bind 7-zip 23.01 (previously 16.02)
 	  Add ReportExtractResult callback
-	  
+
 	* 7-Zip-JBinding requires Java 8 or higher (previously - Java 1.5)
+
+	* New feature: XZ compression & update support (IOutCreateArchiveXz,
+	  IOutUpdateArchiveXz, ArchiveFormat.XZ out-archive); XZ extraction
+	  crash fixed (missing CRC64 table initialization)
+
+	* New platform: macOS universal binary - one dylib for Intel (x86_64)
+	  and Apple Silicon (arm64), platform 'Mac'
+
+	* New platforms: musl/Alpine Linux - Linux-amd64-musl, Linux-arm64-musl,
+	  Linux-armv7-musl
+
+	* Runtime platform auto-detection reworked:
+	  - ARM architecture level (v5/v6/v7) + float ABI via /proc/self/auxv
+	    and ELF e_flags (container-safe)
+	  - glibc vs musl detection via /proc/self/maps + /lib/ld-musl-*
+	  - ARM, musl and macOS builds now included in -AllPlatforms
+	    (12 platforms in one jar)
+
+	* Bugfix: wrong file modification times under multi-threaded extraction
+	  on non-UTC systems (thread-unsafe localtime/gmtime in the POSIX
+	  compatibility layer; affected all previous Linux/macOS releases)
+
+	* Bugfix #66 JNI local reference leak during extraction
+		(https://github.com/borisbrodski/sevenzipjbinding/pull/66)
+
+	* Bugfix #24 initialization race on concurrent first use in one JVM
+		(https://github.com/borisbrodski/sevenzipjbinding/issues/24)
+
+	* Bugfix #43 misleading error message when java.io.tmpdir is invalid
+		(https://github.com/borisbrodski/sevenzipjbinding/issues/43)
+
+	* Known issue: CVE-2024-11477 (7-Zip Zstandard decompression) - the
+	  bundled 23.01 engine predates the upstream fix (7-Zip 24.07); see
+	  ReleaseNotes and issue #72
 
 Release - 16.02-2.02 (Release, cross-platform, based on zip/p7zip 16.02)
 

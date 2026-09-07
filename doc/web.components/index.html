@@ -132,6 +132,39 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 </div>
 Release, extraction &amp; compression, cross-platform, based on 7-Zip 23.01
 <ul>
+    <li>New engine: <b>7-Zip 23.01</b> (previously 16.02) &ndash; many upstream format/bug fixes</li>
+    <li>7-Zip-JBinding now requires <b>Java 8</b> or higher (previously Java 1.5)</li>
+    <li>New feature: <b>XZ compression &amp; update</b> support
+        (<a href="javadoc/index.html?net/sf/sevenzipjbinding/IOutCreateArchiveXz.html">API</a> +
+         <a href="compression_snippets.html">Snippets</a>); XZ extraction crash fixed (CRC64 init)</li>
+    <li>New platform: <b>macOS universal</b> &ndash; one binary for Intel (x86_64) and
+        Apple Silicon (arm64)</li>
+    <li>New platforms: <b>musl / Alpine Linux</b> &ndash; amd64, ARM64 and ARMv7</li>
+    <li>Runtime platform auto-detection reworked:
+        <ul>
+            <li>ARM level detection (ARMv5/v6/v7, soft/hard-float) via /proc + ELF headers</li>
+            <li>glibc vs musl detection</li>
+            <li>ARM, musl and macOS builds are now <b>included in the -AllPlatforms package</b>
+                (12 platforms in one jar)</li>
+        </ul>
+    </li>
+    <li>Fixed: wrong file modification times under multi-threaded extraction on non-UTC systems
+        (long-standing thread-safety bug in the POSIX compatibility layer)</li>
+    <li>Bugfix: JNI local reference leak during extraction
+        (<a href="https://github.com/borisbrodski/sevenzipjbinding/pull/66">PR #66</a>)</li>
+    <li>Bugfix: initialization race on concurrent first use in one JVM
+        (<a href="https://github.com/borisbrodski/sevenzipjbinding/issues/24">issue #24</a>)</li>
+    <li>Bugfix: misleading error message when java.io.tmpdir is invalid
+        (<a href="https://github.com/borisbrodski/sevenzipjbinding/issues/43">issue #43</a>)</li>
+    <li>8845 JUnit tests, run per platform with the platform jar AND the AllPlatforms jar
+        (12 platforms: QEMU VM farm, Alpine containers, real ARM hardware, macOS CI)</li>
+</ul>
+<br/>
+
+<b>7-Zip-JBinding Release: 16.02-2.01</b>
+<br/><br/>
+Release, extraction &amp; compression, cross-platform, based on 7zip/p7zip 16.02
+<ul>
     <li>First official release</li>
     <li>
        New feature: Bind 7-Zip 16.02
