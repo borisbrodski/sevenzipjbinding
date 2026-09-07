@@ -23,11 +23,16 @@ fi
 ARTIFACT_FILE_NAME="sevenzipjbinding$NAME_POSTFIX"
 TARGET_REPO="$2"
 
+# oss.sonatype.org (OSSRH) was shut down 2025-06-30. Publishing goes through the Central Portal
+# (central.sonatype.com); these URLs are its OSSRH-staging-API compatibility service, which keeps
+# this gpg:sign-and-deploy-file flow working. Credentials in ~/.m2/settings.xml must be a Portal
+# USER TOKEN (central.sonatype.com -> Account -> Generate User Token), not the old password.
+# After deploying: Portal -> Deployments -> Publish (replaces the old Close+Release).
 if [[ "$2" == "sonatype-nexus-snapshots" ]] ; then
-  URL="https://oss.sonatype.org/content/repositories/snapshots/"
+  URL="https://central.sonatype.com/repository/maven-snapshots/"
   VERSION=$VERSION-SNAPSHOT
 elif [[ "$2" == "nexus-releases" ]] ; then
-  URL="https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+  URL="https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
 else
   echo "Unknown repo: '$2'"
   exit 1
