@@ -1,0 +1,71 @@
+---
+// "How it works" diagram: Your code -> JBinding API | JNI | binding layer -> 7-Zip engine.
+// Inline SVG driven by the CSS custom properties, so it adapts to light/dark automatically.
+---
+<div class="arch">
+  <svg viewBox="0 0 980 300" role="img" aria-label="Architecture: your Java code calls the 7-Zip-JBinding API inside the JVM; over JNI it reaches the native library, which contains the C++ binding layer and the 7-Zip engine.">
+    <defs>
+      <linearGradient id="brand" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--cyan)"/><stop offset=".5" stop-color="var(--blue)"/><stop offset="1" stop-color="var(--violet)"/>
+      </linearGradient>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 0 L10 5 L0 10 z" fill="var(--text-3)"/>
+      </marker>
+    </defs>
+
+    <!-- JVM super-box -->
+    <rect x="14" y="30" width="400" height="212" rx="16" fill="var(--surface)" stroke="var(--blue)" stroke-opacity=".55" stroke-width="1.6"/>
+    <text x="34" y="62" class="t-title">Java Virtual Machine</text>
+    <text x="34" y="82" class="t-sub">any JVM language · Java 8+</text>
+
+    <rect x="34" y="100" width="170" height="112" rx="11" fill="var(--surface-2)" stroke="var(--border-strong)"/>
+    <text x="119" y="146" text-anchor="middle" class="t-box">Your</text>
+    <text x="119" y="168" text-anchor="middle" class="t-box">application</text>
+
+    <line x1="204" y1="156" x2="234" y2="156" stroke="var(--text-3)" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="238" y="100" width="156" height="112" rx="11" fill="var(--surface-2)" stroke="url(#brand)" stroke-width="1.4"/>
+    <text x="316" y="140" text-anchor="middle" class="t-box grad">7-Zip-JBinding</text>
+    <text x="316" y="160" text-anchor="middle" class="t-box grad">API</text>
+    <text x="316" y="186" text-anchor="middle" class="t-mono">sevenzipjbinding.jar</text>
+
+    <!-- JNI bridge -->
+    <line x1="414" y1="156" x2="500" y2="156" stroke="var(--text-3)" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+    <rect x="428" y="118" width="58" height="26" rx="13" fill="var(--bg-2)" stroke="var(--border-strong)"/>
+    <text x="457" y="136" text-anchor="middle" class="t-jni">JNI</text>
+
+    <!-- native super-box -->
+    <rect x="504" y="30" width="462" height="212" rx="16" fill="var(--surface)" stroke="var(--amber)" stroke-opacity=".6" stroke-width="1.6"/>
+    <text x="524" y="62" class="t-title">Native library</text>
+    <text x="524" y="82" class="t-mono">lib7-Zip-JBinding.so · .dylib · .dll</text>
+
+    <rect x="524" y="100" width="190" height="112" rx="11" fill="var(--surface-2)" stroke="var(--border-strong)"/>
+    <text x="619" y="146" text-anchor="middle" class="t-box">JNI binding layer</text>
+    <text x="619" y="168" text-anchor="middle" class="t-sub2">C++</text>
+
+    <line x1="714" y1="156" x2="744" y2="156" stroke="var(--text-3)" stroke-width="1.6" marker-end="url(#arr)"/>
+
+    <rect x="748" y="100" width="198" height="112" rx="11" fill="var(--surface-2)" stroke="var(--amber)" stroke-opacity=".7" stroke-width="1.4"/>
+    <text x="847" y="140" text-anchor="middle" class="t-box warm">7-Zip engine</text>
+    <text x="847" y="162" text-anchor="middle" class="t-sub2">23.01 · C/C++</text>
+    <text x="847" y="186" text-anchor="middle" class="t-sub2">the real thing, in-process</text>
+
+    <!-- captions under the boxes -->
+    <text x="214" y="276" text-anchor="middle" class="t-cap">one small jar on your classpath</text>
+    <text x="735" y="276" text-anchor="middle" class="t-cap">auto-detected &amp; loaded at runtime — 12 platform builds</text>
+  </svg>
+</div>
+
+<style>
+  .arch { max-width: 980px; }
+  .arch svg { width: 100%; height: auto; display: block; }
+  .t-title { font: 700 17px var(--font-sans); fill: var(--text); letter-spacing: -.01em; }
+  .t-sub   { font: 400 12.5px var(--font-sans); fill: var(--text-3); }
+  .t-sub2  { font: 400 12.5px var(--font-sans); fill: var(--text-3); }
+  .t-box   { font: 600 15px var(--font-sans); fill: var(--text); }
+  .t-box.grad { fill: var(--blue); }
+  .t-box.warm { fill: var(--amber-soft); }
+  .t-mono  { font: 400 11.5px var(--font-mono); fill: var(--text-3); }
+  .t-jni   { font: 700 12.5px var(--font-sans); fill: var(--text-2); letter-spacing: .06em; }
+  .t-cap   { font: 400 12.5px var(--font-sans); fill: var(--text-3); font-style: italic; }
+</style>

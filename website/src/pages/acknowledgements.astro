@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+// THANKS is the project's canonical credits file — include it verbatim so it never goes stale.
+const thanks = readFileSync(resolve(import.meta.dirname, '../../..', 'THANKS'), 'utf8').trimEnd();
+---
+<Base title="Acknowledgements — 7-Zip-JBinding">
+  <section class="section">
+    <div class="container narrow">
+      <div class="kicker">Thank you</div>
+      <h1>Acknowledgements</h1>
+      <p class="lead">7-Zip-JBinding is free software, kept alive by the people who report problems,
+        suggest improvements, contribute code, and support the project. Thank you.</p>
+
+      <pre class="thanks">{thanks}</pre>
+
+      <h2>Tools</h2>
+      <div class="ack-cards">
+        <div class="card">
+          <h3>YourKit</h3>
+          <p>YourKit supports open-source projects with innovative and intelligent tools for
+            monitoring and profiling Java and .NET applications. YourKit is the creator of
+            <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a>,
+            <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, and
+            <a href="https://www.yourkit.com/youmonitor/">YourKit YouMonitor</a>.</p>
+        </div>
+        <div class="card">
+          <h3>7-Zip</h3>
+          <p>The archive engine at the heart of this project is
+            <a href="https://www.7-zip.org/">7-Zip</a> by Igor Pavlov.</p>
+        </div>
+      </div>
+
+      <p class="muted-note">
+        Icons made by <a href="https://www.flaticon.com/authors/freepik">Freepik</a> from
+        <a href="https://www.flaticon.com/">www.flaticon.com</a>.
+      </p>
+    </div>
+  </section>
+
+  <style>
+    .narrow { max-width: 820px; }
+    .thanks {
+      background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 22px; overflow-x: auto; white-space: pre-wrap; word-break: break-word;
+      color: var(--text-2); font-size: .9rem; line-height: 1.7; margin: 8px 0 40px;
+    }
+    .ack-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 8px 0 30px; }
+    @media (max-width: 700px) { .ack-cards { grid-template-columns: 1fr; } }
+    .muted-note { font-size: .85rem; color: var(--text-3); }
+  </style>
+</Base>

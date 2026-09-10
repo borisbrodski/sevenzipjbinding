@@ -1,0 +1,14 @@
+<script>
+/* Sync JavaDoc theme with the main site (same-origin localStorage key 'theme').
+   Priority: ?theme= URL override > site's saved choice > OS preference (CSS @media). */
+(function () {
+  try {
+    var url = new URLSearchParams(location.search).get('theme');
+    var saved = localStorage.getItem('theme');
+    var choice = url || saved;
+    if (choice === 'dark' || choice === 'light') {
+      document.documentElement.setAttribute('data-jd-theme', choice);
+    }
+  } catch (e) {}
+})();
+</script>

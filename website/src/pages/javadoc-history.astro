@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import { readdirSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+// Historic JavaDoc: previous releases' original (unstyled) docs, fetched from SourceForge into
+// public/javadoc-history/<version>/ by javadoc-theme/fetch-historic-javadoc.sh. Served in an iframe
+// with a version switcher, so people on older releases can still read the matching API docs.
+const HIST = resolve(import.meta.dirname, '../../public/javadoc-history');
+// newest first; only versions actually present are shown
+const ORDER = [
+  '16.02-2.01', '9.20-2.00beta',
+  '4.65-1.06rc-extr-only', '4.65-1.05rc-extr-only', '4.65-1.04rc-extr-only',
+  '4.65-1.03rc-extr-only', '4.65-1.02rc-extr-only', '4.65-1.01rc-extr-only', '4.65-1.0rc-extr-only',
+];
+const present = existsSync(HIST) ? new Set(readdirSync(HIST)) : new Set<string>();
+const versions = ORDER.filter((v) => present.has(v));
+const CURRENT = '23.01-2.2';
+const first = versions[0];
+---
+<Base title="Older JavaDoc — 7-Zip-JBinding">
+  <div class="jh-wrap">
+    <div class="jh-bar">
+      <div class="jh-left">
+        <span class="jh-warn">⚠ Older version</span>
+        <label class="jh-pick">
+          JavaDoc for release
+          <select id="jh-select">
+            {versions.map((v, i) => <option value={v} selected={i === 0}>{v}</option>)}
+          </select>
+        </label>
+      </div>
+      <div class="jh-right">
+        <a class="btn btn-ghost btn-xs" href="/javadoc/">Current API ({CURRENT}) →</a>
+        <a class="btn btn-ghost btn-xs" href="/">Home</a>
+      </div>
+    </div>
+
+    <p class="jh-note">
+      This is the API documentation for a <b>previous release</b>. It is provided unchanged for users
+      still on an older version. For the current release use the
+      <a href="/javadoc/">latest JavaDoc ({CURRENT})</a>.
+    </p>
+
+    {first ? (
+      <iframe id="jh-frame" title="Historic JavaDoc" src={`/javadoc-history/${first}/index.html`}></iframe>
+    ) : (
+      <p class="jh-empty">No historic JavaDoc is bundled. Run
+        <code>website/javadoc-theme/fetch-historic-javadoc.sh</code>, then rebuild.</p>
+    )}
+  </div>
+
+  <style>
+    .jh-wrap { display: flex; flex-direction: column; height: calc(100vh - 62px); }
+    .jh-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--bg-2);
+    }
+    .jh-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .jh-warn {
+      font-size: .78rem; font-weight: 700; color: var(--amber-soft);
+      border: 1px solid rgba(232,120,40,.4); border-radius: 999px; padding: 3px 11px;
+    }
+    .jh-pick { font-size: .9rem; color: var(--text-2); display: inline-flex; align-items: center; gap: 8px; }
+    #jh-select {
+      background: var(--surface); color: var(--text); border: 1px solid var(--border-strong);
+      border-radius: 6px; padding: 5px 8px; font: inherit;
+    }
+    .jh-right { display: flex; gap: 10px; }
+    .btn-xs { padding: 6px 12px; font-size: .82rem; }
+    .jh-note {
+      margin: 0; padding: 9px 24px; font-size: .84rem; color: var(--text-3);
+      background: linear-gradient(140deg, rgba(232,120,40,.07), transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    #jh-frame { flex: 1 1 auto; width: 100%; border: 0; background: #fff; }
+    .jh-empty { padding: 40px 24px; color: var(--text-2); }
+    /* the header's sticky offset isn't needed here — the viewer fills the viewport */
+  </style>
+
+  <script>
+    const sel = document.getElementById('jh-select') as HTMLSelectElement | null;
+    const frame = document.getElementById('jh-frame') as HTMLIFrameElement | null;
+    // deep-link support: /javadoc-history/?v=<version>
+    const want = new URLSearchParams(location.search).get('v');
+    if (sel && want && [...sel.options].some((o) => o.value === want)) {
+      sel.value = want;
+      if (frame) frame.src = `/javadoc-history/${want}/index.html`;
+    }
+    sel?.addEventListener('change', () => {
+      if (frame) frame.src = `/javadoc-history/${sel.value}/index.html`;
+      history.replaceState(null, '', `?v=${encodeURIComponent(sel.value)}`);
+    });
+  </script>
+</Base>

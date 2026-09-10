@@ -1,0 +1,212 @@
+---
+import Base from '../../layouts/Base.astro';
+import { Code } from 'astro:components';
+import { CATALOGUE, loadSnippet, loadOutput, highlightJava } from '../../lib/snippets';
+
+// Everything below is extracted AT BUILD TIME from the real, tested sources in
+// test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippets/ — the build fails
+// if a snippet vanishes. All snippets are rendered visibly on ONE page, so
+// browser search (Ctrl+F) covers every example. Java is highlighted with Shiki
+// and every API type is auto-linked to its JavaDoc.
+const groups = await Promise.all(CATALOGUE.map(async (g) => ({
+  group: g.group,
+  items: await Promise.all(g.items.map(async (it) => ({
+    ...it,
+    codeHtml: await highlightJava(loadSnippet(it.className)),
+    out: it.output ? loadOutput(it.output) : null,
+  }))),
+})));
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+---
+<Base title="Code snippets — 7-Zip-JBinding">
+  <div class="container snip-layout">
+
+    <!-- ===================== outline (sidebar / mobile drawer) ===================== -->
+    <aside class="outline" id="outline">
+      <div class="outline-head">
+        <span>On this page</span>
+        <button class="outline-close" data-outline-close aria-label="Close outline">✕</button>
+      </div>
+      <nav>
+        {groups.map((g) => (
+          <div class="outline-group">
+            <div class="outline-title">{g.group}</div>
+            {g.items.map((it) => (
+              <a href={`#${it.id}`} data-outline-link>{it.title}</a>
+            ))}
+          </div>
+        ))}
+      </nav>
+    </aside>
+    <div class="outline-overlay" data-outline-close></div>
+
+    <!-- ===================== content ===================== -->
+    <main class="snip-content">
+      <div class="kicker">Documentation</div>
+      <h1 class="snip-h1">Code snippets</h1>
+      <p class="lead">
+        {total} complete, runnable examples. Every snippet is a <b>real program from the test
+        suite</b> — the shown output is <b>verified on every release</b>, on every platform.
+        Use your browser's search (<kbd>Ctrl</kbd>+<kbd>F</kbd>) to find anything on this page.
+      </p>
+
+      {groups.map((g) => (
+        <section class="snip-group">
+          <h2>{g.group}</h2>
+          {g.items.map((it) => (
+            <article class="snip" id={it.id}>
+              <h3>
+                <a class="anchor" href={`#${it.id}`}>#</a>
+                {it.title}
+              </h3>
+              <p class="snip-desc">{it.desc}</p>
+              <div class="codebox">
+                <div class="codebox-head">
+                  <span>{it.className}.java</span>
+                  <span class="head-right">
+                    <span class="badge"><span class="dot"></span> verified by {it.className}Test</span>
+                    <button class="copy-btn" data-copy>Copy</button>
+                  </span>
+                </div>
+                <div class="jd-code" set:html={it.codeHtml} />
+              </div>
+              {it.out && (
+                <div class="codebox outbox">
+                  <div class="codebox-head"><span>Output</span></div>
+                  <Code code={it.out} lang="text" themes={{ light: 'github-light', dark: 'one-dark-pro' }} />
+                </div>
+              )}
+            </article>
+          ))}
+        </section>
+      ))}
+    </main>
+  </div>
+
+  <!-- mobile: floating outline button -->
+  <button class="outline-fab" data-outline-open aria-label="Open outline">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h14"/></svg>
+    Outline
+  </button>
+
+  <style>
+    .snip-layout { display: grid; grid-template-columns: 260px 1fr; gap: 44px; align-items: start; padding-top: 40px; }
+    .snip-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+
+    /* outline */
+    .outline {
+      position: sticky; top: 86px; max-height: calc(100vh - 110px); overflow-y: auto;
+      padding-right: 8px; scrollbar-width: thin;
+    }
+    .outline-head { display: none; }
+    .outline-group { margin-bottom: 18px; }
+    .outline-title {
+      font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-3); margin-bottom: 6px;
+    }
+    .outline a {
+      display: block; color: var(--text-2); font-size: .86rem; padding: 4px 10px;
+      border-left: 2px solid var(--border); border-radius: 0 6px 6px 0; line-height: 1.35;
+    }
+    .outline a:hover { color: var(--text); background: var(--surface); }
+    .outline a.active { color: var(--blue); border-image: var(--brand-grad) 1; border-left: 2px solid; background: var(--surface); }
+
+    /* content */
+    .snip-group h2 {
+      margin: 44px 0 6px; padding-top: 18px; border-top: 1px solid var(--border);
+    }
+    .snip-group:first-of-type h2 { border-top: 0; padding-top: 0; margin-top: 26px; }
+    .snip { margin: 26px 0 38px; scroll-margin-top: 90px; }
+    .snip h3 { font-size: 1.12rem; margin-bottom: 4px; }
+    .snip .anchor { color: var(--text-3); margin-right: 6px; font-weight: 500; }
+    .snip .anchor:hover { color: var(--blue); }
+    .snip-desc { font-size: .93rem; margin-bottom: 12px; }
+    .codebox { margin-bottom: 10px; }
+    .codebox pre, .jd-code pre { max-height: 560px; overflow: auto; margin: 0; padding: 16px 18px; background: transparent !important; font-size: .86rem; }
+    /* auto-linked API types: keep code color, add a subtle underline on hover */
+    .jd-code a.jd-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--border-strong); }
+    .jd-code a.jd-link:hover { border-bottom-color: var(--blue); color: var(--blue) !important; }
+    .jd-code a.jd-link:hover * { color: var(--blue) !important; }
+    .outbox .codebox-head { color: var(--amber-soft); }
+    .head-right { display: inline-flex; align-items: center; gap: 10px; }
+    .head-right .badge { font-size: .7rem; padding: 2px 9px; }
+    kbd {
+      font: 600 .8em var(--font-mono); background: var(--surface-2);
+      border: 1px solid var(--border-strong); border-bottom-width: 2px;
+      border-radius: 5px; padding: 1px 5px;
+    }
+
+    /* mobile drawer */
+    .outline-fab { display: none; }
+    .outline-overlay { display: none; }
+    @media (max-width: 960px) {
+      .snip-layout { grid-template-columns: 1fr; }
+      .outline {
+        position: fixed; inset: 0 auto 0 0; z-index: 100; width: min(300px, 84vw);
+        background: var(--surface); border-right: 1px solid var(--border);
+        padding: 18px 18px 30px; max-height: none;
+        transform: translateX(-102%); transition: transform .25s ease;
+        box-shadow: 12px 0 40px rgba(0,0,0,.35);
+      }
+      .outline.open { transform: translateX(0); }
+      .outline-head {
+        display: flex; align-items: center; justify-content: space-between;
+        font-weight: 700; margin-bottom: 14px; color: var(--text);
+      }
+      .outline-close {
+        background: transparent; border: 0; color: var(--text-3); font-size: 1.1rem; cursor: pointer;
+      }
+      .outline-overlay.open {
+        display: block; position: fixed; inset: 0; z-index: 99;
+        background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
+      }
+      .outline-fab {
+        display: inline-flex; align-items: center; gap: 8px;
+        position: fixed; bottom: 20px; right: 20px; z-index: 60;
+        background: var(--brand-grad); color: #fff; border: 0; border-radius: 999px;
+        padding: 11px 18px; font: 600 .9rem var(--font-sans); cursor: pointer;
+        box-shadow: 0 8px 30px rgba(40,152,248,.4);
+      }
+    }
+  </style>
+
+  <script>
+    // copy buttons
+    document.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const pre = btn.closest('.codebox')?.querySelector('pre');
+        if (!pre) return;
+        navigator.clipboard.writeText(pre.textContent ?? '');
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = 'Copy'), 1600);
+      });
+    });
+
+    // mobile drawer
+    const outline = document.getElementById('outline');
+    const overlay = document.querySelector('.outline-overlay');
+    const setOpen = (open: boolean) => {
+      outline?.classList.toggle('open', open);
+      overlay?.classList.toggle('open', open);
+    };
+    document.querySelectorAll('[data-outline-open]').forEach((b) => b.addEventListener('click', () => setOpen(true)));
+    document.querySelectorAll('[data-outline-close]').forEach((b) => b.addEventListener('click', () => setOpen(false)));
+    document.querySelectorAll('[data-outline-link]').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+    // active-section highlight while scrolling
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-outline-link]')];
+    const byId = new Map(links.map((a) => [a.hash.slice(1), a]));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            links.forEach((l) => l.classList.remove('active'));
+            byId.get(e.target.id)?.classList.add('active');
+          }
+        }
+      },
+      { rootMargin: '-15% 0px -70% 0px' }
+    );
+    document.querySelectorAll('article.snip[id]').forEach((s) => observer.observe(s));
+  </script>
+</Base>
