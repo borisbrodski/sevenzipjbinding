@@ -10,7 +10,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemBase
  *
  * @author Boris Brodski
- * @since 23.01
+ * @since 23.01-2.2
  */
 public interface IOutItemXz extends IOutItemBase {
 

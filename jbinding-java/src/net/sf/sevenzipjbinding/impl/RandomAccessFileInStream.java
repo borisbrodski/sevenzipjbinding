@@ -7,7 +7,9 @@ import net.sf.sevenzipjbinding.IInStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * Implementation of {@link IInStream} using {@link RandomAccessFile}.
+ * Implementation of {@link IInStream} using {@link RandomAccessFile}. This is the usual way to open an archive from a
+ * file: wrap a {@link RandomAccessFile} and pass it to
+ * {@link net.sf.sevenzipjbinding.SevenZip#openInArchive(net.sf.sevenzipjbinding.ArchiveFormat, IInStream)}.
  * 
  * @author Boris Brodski
  * @since 4.65-1
@@ -16,7 +18,7 @@ public class RandomAccessFileInStream implements IInStream {
     private final RandomAccessFile randomAccessFile;
 
     /**
-     * Constructs instance of the class from random access file.
+     * Constructs an instance from the given random access file.
      * 
      * @param randomAccessFile
      *            random access file to use

@@ -31,8 +31,8 @@ public interface IOutCreateArchiveZip extends IOutCreateArchive<IOutItemZip>, //
      * @param outCreateCallback
      *            callback object to exchange information about archive create operation.
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public void createArchive(IOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends IOutItemZip> outCreateCallback) throws SevenZipException;

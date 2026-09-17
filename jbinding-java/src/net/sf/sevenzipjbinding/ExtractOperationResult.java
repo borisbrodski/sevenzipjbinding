@@ -2,10 +2,10 @@ package net.sf.sevenzipjbinding;
 
 /**
  *
- * Enumeration of possible operation results by extracting operations.
+ * Enumeration of possible results of extraction operations.
  *
  * @author Boris Brodski
- * @since 1.0
+ * @since 4.65-1
  */
 public enum ExtractOperationResult {
     /**
@@ -19,7 +19,11 @@ public enum ExtractOperationResult {
     UNSUPPORTEDMETHOD,
 
     /**
-     * Extraction failed: data error
+     * Extraction failed: data error.<br>
+     * <br>
+     * <i>NOTE:</i> for a password-protected <b>7z</b> archive created <b>without</b> header encryption, a wrong
+     * password is reported here (as <code>DATAERROR</code>/{@link #CRCERROR}), not as {@link #WRONG_PASSWORD} -
+     * see {@link #WRONG_PASSWORD}.
      */
     DATAERROR,
 
@@ -29,32 +33,37 @@ public enum ExtractOperationResult {
     CRCERROR,
 
     /**
-     * Archive data is unavailable. Like data can't be read from archive.
+     * Archive data is unavailable, e.g. the data can't be read from the archive.
      */
     UNAVAILABLE,
 
     /**
-     * Archive ends unexpected. Archive may be truncated or the next volume is missing.
+     * Archive ends unexpectedly. The archive may be truncated or the next volume is missing.
      */
     UNEXPECTED_END,
 
     /**
-     * There are some data after the end of the payload data.
+     * There is extra data after the end of the payload data.
      */
     DATA_AFTER_END,
 
     /**
-     *
+     * The data is not a (supported) archive.
      */
     IS_NOT_ARC,
 
     /**
-     * The data doesn't look like an archive.
+     * The archive headers are corrupted.
      */
     HEADERS_ERROR,
 
     /**
-     * Wrong password.
+     * Wrong password.<br>
+     * <br>
+     * <i>NOTE:</i> this result is reliable for formats that carry a password verifier (e.g. Zip). A password-protected
+     * <b>7z</b> archive created <b>without</b> header encryption has no such verifier, so a wrong password cannot be
+     * detected as such and surfaces as {@link #DATAERROR} or {@link #CRCERROR} instead. (With 7z header encryption the
+     * archive already fails to open.) This is a limitation of the archive format, not of 7-Zip-JBinding.
      */
     WRONG_PASSWORD,
 

@@ -4,22 +4,22 @@ package net.sf.sevenzipjbinding;
  * Enumeration of 'Ask Modes' for extract operations
  * 
  * @author Boris Brodski
- * @since 1.0
+ * @since 4.65-1
  */
 public enum ExtractAskMode {
 
     /**
-     * Extract a archive item
+     * Extract an archive item
      */
     EXTRACT,
 
     /**
-     * Test a archive item
+     * Test an archive item
      */
     TEST,
 
     /**
-     * Skip extraction of a archive item
+     * Skip extraction of an archive item
      */
     SKIP,
 

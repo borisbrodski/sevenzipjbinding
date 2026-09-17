@@ -7,7 +7,7 @@ package net.sf.sevenzipjbinding;
  *
  * <pre>
  *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive({@link ArchiveFormat#SEVEN_ZIP}, inStream);
- *  {@link IOutUpdateArchive}{@code <}{@link IOutItem7z}{@code >} outArchive = inArchive.openOutArchive();
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemAllFormats}{@code >} outArchive = inArchive.getConnectedOutArchive();
  *
  *  if (outArchive instanceof {@link IOutFeatureSetLevel}) {
  *      (({@link IOutFeatureSetLevel})outArchive).setLevel(myLevel);
@@ -20,8 +20,8 @@ package net.sf.sevenzipjbinding;
  * </pre>
  *
  * <br>
- * No explicit closing is necessary. Connected out-archive get closed automatically when corresponding in-archive get
- * closed.
+ * No explicit closing is necessary. A connected out-archive gets closed automatically when the corresponding in-archive
+ * gets closed.
  *
  * @param <T>
  *            the type of the corresponding archive item data class (out item), like {@link IOutItem7z} or
@@ -32,7 +32,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemAllFormats
  *
  * @author Boris Brodski
- * @since 9.20-2.0
+ * @since 9.20-2.00
  *
  */
 public interface IOutUpdateArchive<T extends IOutItemBase> extends IOutArchiveBase {
@@ -47,16 +47,16 @@ public interface IOutUpdateArchive<T extends IOutItemBase> extends IOutArchiveBa
      * @param outCreateCallback
      *            create call back object to provide more information for archive update operation.
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outCreateCallback)
             throws SevenZipException;
 
     /**
-     * Return archive format used with this instance of {@link IOutStream}
+     * Return the archive format of this out-archive instance
      *
-     * @return archive format used with this instance of {@link IOutStream}
+     * @return the archive format of this out-archive instance
      */
     public ArchiveFormat getArchiveFormat();
 

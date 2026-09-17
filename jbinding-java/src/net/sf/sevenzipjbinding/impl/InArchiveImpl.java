@@ -300,7 +300,7 @@ public final class InArchiveImpl implements IInArchive {
     }
 
     /**
-     * ${@inheritDoc}
+     * {@inheritDoc}
      */
     public ArchiveFormat getArchiveFormat() {
         return archiveFormat;

@@ -35,21 +35,20 @@ public interface ISeekableStream {
      * @param offset
      *            absolute or relative offset in the stream to move to
      * @param seekOrigin
-     *            on of three possible seek origins:<br>
+     *            one of three possible seek origins:<br>
      *            <ul>
      *            <li>{@link #SEEK_SET} - <code>offset</code> is an absolute offset to move to,
-     *            <li>{@link #SEEK_CUR} - <code>offset</code> is a relative offset to the current position in stream,
+     *            <li>{@link #SEEK_CUR} - <code>offset</code> is a relative offset from the current position in the stream,
      *            <li>{@link #SEEK_END} - <code>offset</code> is an offset from the end of the stream
      *            </ul>
-     *            {@code (offset <= 0)}.
      *
      * @return new absolute position in the stream.
      *
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
-     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             as failed. There is no guarantee that no further callback methods will be called. The
      *             first and last thrown exceptions will be saved and thrown later on from the originally called method
-     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             such as <code>IInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
      *             four exceptions depending on the situation can be saved for further analysis. See
      *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */

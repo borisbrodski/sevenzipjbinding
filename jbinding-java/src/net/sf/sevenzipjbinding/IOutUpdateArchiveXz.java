@@ -8,7 +8,7 @@ package net.sf.sevenzipjbinding;
  *
  * <pre>
  *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(null, inStream);
- *  {@link IOutUpdateArchive}{@code <}{@link IOutItemBase}{@code >} outArchive = inArchive.openOutArchive();
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemAllFormats}{@code >} outArchive = inArchive.getConnectedOutArchive();
  *
  *  if (outArchive instanceof {@link IOutUpdateArchiveXz}) {
  *    {@link IOutUpdateArchiveXz} outUpdateArchiveXz = ({@link IOutUpdateArchiveXz})outArchive;
@@ -28,7 +28,7 @@ package net.sf.sevenzipjbinding;
  * @see IOutItemAllFormats
  *
  * @author Boris Brodski
- * @since 23.01
+ * @since 23.01-2.2
  */
 public interface IOutUpdateArchiveXz extends IOutUpdateArchive<IOutItemXz>, //
         IOutFeatureSetLevel {

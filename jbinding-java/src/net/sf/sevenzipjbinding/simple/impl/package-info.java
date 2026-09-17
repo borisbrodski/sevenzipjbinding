@@ -1,5 +1,5 @@
 /**
- * This package contains implementation of the simplified interface of 7-Zip-JBinding, defined in
+ * This package contains the implementation of the simplified interface of 7-Zip-JBinding, defined in
  * {@link net.sf.sevenzipjbinding.simple}.
  * 
  * @see net.sf.sevenzipjbinding.simple

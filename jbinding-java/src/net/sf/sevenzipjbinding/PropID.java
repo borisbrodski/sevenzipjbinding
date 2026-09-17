@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Date;
 
 /**
- * Enumeration for possible archive and archive item properties
+ * Enumeration of possible archive and archive-item properties.
  * 
  * @author Boris Brodski
  * @since 4.65-1
@@ -26,9 +26,9 @@ public enum PropID {
     HANDLER_ITEM_INDEX, // = 2
 
     /**
-     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Use
-     * {@link File#separator} for better cross-platform compatibility. Please note, that stream archive formats such as
-     * gzip does not support this property, since it is always a single file (or stream) being compressed.<br>
+     * Full path, name and extension of the file inside the archive. Example: <code>'dir/file.ext'</code>. Use
+     * {@link File#separator} for better cross-platform compatibility. Please note that stream archive formats such as
+     * gzip do not support this property, since they always compress a single file (or stream).<br>
      * <br>
      * Type: {@link String}. <code>null</code> will be returned, if current archive type doesn't support this property.
      */
@@ -42,8 +42,8 @@ public enum PropID {
     EXTENSION,
 
     /**
-     * Flag either a item represents a folder or not. Please note, that some archive formats doesn't define special
-     * items for folders. In this case you may get a item with a path <code>'dir/file'</code> without having an item for
+     * Flag indicating whether an item represents a folder or not. Please note that some archive formats do not define special
+     * items for folders. In this case you may get an item with a path <code>'dir/file'</code> without having an item for
      * <code>'dir'</code> at all. <br>
      * <br>
      * Type: {@link Boolean}. <code>true</code> if item is a folder, otherwise <code>false</code>.
@@ -53,17 +53,21 @@ public enum PropID {
     IS_FOLDER,
 
     /**
-     * Size of the original file. <code>-1</code> is returned, if no size known for this item.
+     * Uncompressed size of the item in bytes.
      * 
      * Type: {@link Long} <code>null</code> will be returned, if current archive type doesn't support this property.
      */
     SIZE,
 
     /**
-     * Size of the packed item in archive. Sometimes <code>0</code> will be returned. It means either <i>unknown</i> or
-     * the item shares compressed data with other items and so take no additional space in archive.<br>
+     * Size of the packed (compressed) item in the archive.<br>
      * <br>
-     * Type: {@link Long} <code>null</code> will be returned, if current archive type doesn't support this property.
+     * <i>NOTE:</i> for <b>solid</b> 7z archives, several items share a single compressed stream, so a per-item packed
+     * size is undefined and <code>null</code> is returned for those items (only some items, or the containing block,
+     * report a value). A value of <code>0</code> likewise means the item adds no separate compressed data.<br>
+     * <br>
+     * Type: {@link Long}. <code>null</code> will be returned, if the current archive type doesn't support this property
+     * or if the size is not defined for this item (see the note above).
      */
     PACKED_SIZE, //
 
@@ -102,7 +106,7 @@ public enum PropID {
     COMMENTED,
 
     /**
-     * Flag either a item encrypted or not. <br>
+     * Flag indicating whether an item is encrypted or not. <br>
      * <br>
      * Type: {@link Boolean}. <code>true</code> if item is encrypted, otherwise <code>false</code>.
      * <code>Boolean.FALSE</code> is returned, if archive format doesn't support this property. This property is never

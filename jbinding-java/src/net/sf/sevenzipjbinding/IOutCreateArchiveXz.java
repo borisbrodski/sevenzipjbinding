@@ -11,7 +11,7 @@ package net.sf.sevenzipjbinding;
  * @see ArchiveFormat#XZ
  *
  * @author Boris Brodski
- * @since 23.01
+ * @since 23.01-2.2
  */
 public interface IOutCreateArchiveXz extends IOutCreateArchive<IOutItemXz>, //
         IOutFeatureSetLevel {

@@ -2,7 +2,7 @@ package net.sf.sevenzipjbinding;
 
 /**
  * Interface combining {@link IOutCreateArchive} and {@link IOutUpdateArchive}. Supports creating new archives and
- * updating existing archives. More information see JavaDocs of both interfaces.
+ * updating existing archives. For more information see the JavaDocs of both interfaces.
  *
  * @see IOutCreateArchive
  * @see IOutUpdateArchive

@@ -21,9 +21,9 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
      *            <code>true</code> current archive item was processed successfully, <code>false</code> otherwise.
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
-     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             as failed. There is no guarantee that no further callback methods will be called. The
      *             first and last thrown exceptions will be saved and thrown later on from the originally called method
-     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             such as <code>IInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
      *             four exceptions depending on the situation can be saved for further analysis. See
      *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
@@ -97,9 +97,9 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
      *         current operation
      * @throws SevenZipException
      *             in error case. If this method ends with an exception, the current operation will be reported to 7-Zip
-     *             as failed. There are no guarantee, that there are no further call back methods will get called. The
+     *             as failed. There is no guarantee that no further callback methods will be called. The
      *             first and last thrown exceptions will be saved and thrown later on from the originally called method
-     *             such as <code>ISevenZipInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
+     *             such as <code>IInArchive.extract()</code> or <code>SevenZip.openInArchive()</code>. Up to
      *             four exceptions depending on the situation can be saved for further analysis. See
      *             {@link SevenZipException} and {@link SevenZipException#printStackTraceExtended()} for details.
      */
@@ -107,7 +107,7 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
 
     /**
      * Return sequential in-stream for the archive item with index <code>index</code> to read and compress the content
-     * of the item. Depending on a archive format, this method may be called for any archive item including directories.
+     * of the item. Depending on the archive format, this method may be called for any archive item including directories.
      * <code>null</code> should be returned for archive items without any content.
      * 
      * @param index
@@ -115,8 +115,8 @@ public interface IOutCreateCallback<T extends IOutItemBase> extends IProgress {
      * @return sequential in-stream pointed to the content of the archive item with index <code>index</code>. Return
      *         <code>null</code> for archive items without content (for example, for directories)
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             the stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public ISequentialInStream getStream(int index) throws SevenZipException;
 }

@@ -1,12 +1,13 @@
 /**
- * This package contains basis enumerations, interfaces and classes of main SevenZipJBinding
- * interface. The interface is a mapping of C++ interface and so not much comfortable for java developer.
- * There are another simplified interface, which provides simple but reduced access to 7-Zip library.
- * 
+ * This package contains the basic enumerations, interfaces and classes of the main SevenZipJBinding
+ * interface. This interface is a mapping of the original C++ interface and is therefore not very convenient for Java
+ * developers. There is also a {@link net.sf.sevenzipjbinding.simple simplified interface}, which provides simpler but
+ * reduced access to the 7-Zip library.
+ *
  * <ul>
- * <li> {@link net.sf.sevenzipjbinding.SevenZip} interface entry point.
+ * <li> {@link net.sf.sevenzipjbinding.SevenZip} &mdash; the entry point of the library.
  * </ul>
- * 
+ *
  * @see net.sf.sevenzipjbinding.simple
  * 
  * @author Boris Brodski

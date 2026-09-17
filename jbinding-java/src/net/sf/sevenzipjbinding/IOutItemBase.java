@@ -5,15 +5,15 @@ import net.sf.sevenzipjbinding.impl.OutItem;
 /**
  * Base interface of the archive item data interfaces:
  * <ul>
- * <li>archive format specific interfaces <code>IOutItemXxx</code>, like {@link IOutItem7z}
- * <li>archive format independent interface {@link IOutItemAllFormats}
+ * <li>archive-format-specific interfaces <code>IOutItemXxx</code>, like {@link IOutItem7z}
+ * <li>archive-format-independent interface {@link IOutItemAllFormats}
  * </ul>
  * The single known implementation is {@link OutItem}. This base interface provides access to the getters and setters
  * methods, that are shared by all archive formats.<br>
  * <br>
- * The purpose of the archive format specific interfaces <code>IOutItemXxx</code> is to hide methods unrelated to the
+ * The purpose of the archive-format-specific interfaces <code>IOutItemXxx</code> is to hide methods unrelated to the
  * corresponding archive format. For example, GZip format doesn't support the <code>attributes</code> property and so
- * the {@link IOutItemGZip} interface doesn't contain corresponding getters and setter. The Zip archive format on the
+ * the {@link IOutItemGZip} interface doesn't contain the corresponding getters and setters. The Zip archive format on the
  * other hand does support the <code>attributes</code> property defining the methods:
  * <ul>
  * <li> {@link IOutItemZip#getPropertyAttributes()}
@@ -114,7 +114,7 @@ public interface IOutItemBase {
      * <br>
      * <i>Note:</i> only relevant for archive update operations!
      * 
-     * @return corresponding index of the archive item in alsothe old archive (starting from 0).<br>
+     * @return corresponding index of the archive item in the old archive (starting from 0).<br>
      *         <code>-1</code> if both <code>isNewData</code> and <code>isNewProperties</code> are <code>true</code>.
      */
     public Integer getUpdateOldArchiveItemIndex();

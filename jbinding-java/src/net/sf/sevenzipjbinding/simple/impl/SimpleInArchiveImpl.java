@@ -69,7 +69,7 @@ public class SimpleInArchiveImpl implements ISimpleInArchive {
     }
 
     /**
-     * ${@inheritDoc}
+     * {@inheritDoc}
      */
     public ISimpleInArchiveItem getArchiveItem(int index) throws SevenZipException {
         if (index < 0 || index >= sevenZipInArchive.getNumberOfItems()) {

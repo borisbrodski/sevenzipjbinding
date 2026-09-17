@@ -6,23 +6,23 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * SevenZip core exception. This exception supports multiple 'cause by' exceptions. Use
- * {@link #printStackTraceExtended()} to get stack traces of all available 'cause by's. Multiple 'cause by' can occur,
- * if native code is involved. If in one of the call-back java methods an exception will be thrown, the native code will
- * save this exception and may proceed with the next call-back java method, which can throw a further exception as well.
- * After native code completes, a new SevenZipException will be thrown. This exception will have multiple 'cause by'
+ * SevenZip core exception. This exception supports multiple 'caused by' exceptions. Use
+ * {@link #printStackTraceExtended()} to get stack traces of all available causes. Multiple causes can occur,
+ * if native code is involved. If an exception is thrown in one of the callback Java methods, the native code will
+ * save this exception and may proceed with the next callback Java method, which can throw a further exception as well.
+ * After the native code completes, a new SevenZipException will be thrown. This exception will have multiple 'caused by'
  * exceptions attached:
  * <ul>
- * <li>exception, thrown from the first call-back java method (first 'cause by' exception)
- * <li>exception, thrown from the last call-back java method (last 'cause by' exception)
+ * <li>the exception thrown from the first callback Java method (first 'caused by' exception)
+ * <li>the exception thrown from the last callback Java method (last 'caused by' exception)
  * </ul>
- * If more, then two 'cause by' exception was thrown, only first and last exception will be saved.<br>
+ * If more than two 'caused by' exceptions were thrown, only the first and last exceptions are saved.<br>
  * <br>
  * 
- * In case of multi-threaded native code potential 'cause by' exception could be available in a SevenZipException. A
- * potential 'cause by' exception situation can occur, if during a pending native call, a call-back java method will be
- * called from a new thread. Since an exception thrown in another thread can't be always reliably connected to the
- * operation proceeding (main native call), the exception will be saves as a potential first/last cause.<br>
+ * In case of multi-threaded native code, a potential 'caused by' exception could be available in a SevenZipException. A
+ * potential 'caused by' exception situation can occur if, during a pending native call, a callback Java method is
+ * called from a new thread. Since an exception thrown in another thread can't always be reliably connected to the
+ * operation in progress (the main native call), the exception is saved as a potential first/last cause.<br>
  * <br>
  * The methods
  * <ul>
@@ -30,10 +30,10 @@ import java.io.Writer;
  * <li>{@link #printStackTraceExtended(PrintStream)}
  * <li>{@link #printStackTraceExtended(PrintWriter)}
  * </ul>
- * provide full information about underlying 'cause by' exceptions and nested {@link SevenZipException}. In order to
+ * provide full information about the underlying 'caused by' exceptions and nested {@link SevenZipException}. In order to
  * improve readability of the long extended stack traces, the origin of the current exception being printed can be read
  * vertically on the left of the stack trace. The standard {@link #printStackTrace()} method prints only the stack trace
- * of the first 'cause by' exception.
+ * of the first 'caused by' exception.
  * 
  * @see #printStackTraceExtended()
  * @see #printStackTraceExtended(PrintStream)
@@ -141,9 +141,9 @@ public class SevenZipException extends IOException {
      * @param message
      *            the detail message (which is saved for later retrieval by the {@link #getMessage()} method).
      * @param cause
-     *            the cause (which is saved for later retrieval by the {@link #getCause()} method). (A <tt>null</tt>
+     *            the cause (which is saved for later retrieval by the {@link #getCause()} method). (A <code>null</code>
      *            value is permitted, and indicates that the cause is nonexistent or unknown.)
-     * @since 1.4
+     * @since 4.65-1
      */
     public SevenZipException(String message, Throwable cause) {
         super(message);
@@ -164,14 +164,14 @@ public class SevenZipException extends IOException {
 
     /**
      * Constructs a new exception with the specified cause and a detail message of
-     * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the class and detail message of
-     * <tt>cause</tt>). This constructor is useful for exceptions that are little more than wrappers for other
+     * <code>(cause==null ? null : cause.toString())</code> (which typically contains the class and detail message of
+     * <code>cause</code>). This constructor is useful for exceptions that are little more than wrappers for other
      * throwables (for example, <code>PrivilegedActionException</code>).
      * 
      * @param cause
-     *            the cause (which is saved for later retrieval by the {@link #getCause()} method). (A <tt>null</tt>
+     *            the cause (which is saved for later retrieval by the {@link #getCause()} method). (A <code>null</code>
      *            value is permitted, and indicates that the cause is nonexistent or unknown.)
-     * @since 1.4
+     * @since 4.65-1
      */
     public SevenZipException(Throwable cause) {
         super();
@@ -211,7 +211,7 @@ public class SevenZipException extends IOException {
     }
 
     /**
-     * Get 7-Zip-JBinding exception original error message (without 'cause by' messages)
+     * Get the original 7-Zip-JBinding exception error message (without the 'caused by' messages)
      * 
      * @return original error message
      */
@@ -286,7 +286,7 @@ public class SevenZipException extends IOException {
     }
 
     /**
-     * Prints stack traces of this SevenZipException and of the all thrown 'cause by' exceptions to the specified system
+     * Prints stack traces of this SevenZipException and of all thrown 'caused by' exceptions to the specified system
      * error stream <code>System.err</code>.
      */
     public void printStackTraceExtended() {
@@ -294,7 +294,7 @@ public class SevenZipException extends IOException {
     }
 
     /**
-     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified print
+     * Prints stack trace of this SevenZipException and of all thrown 'caused by' exceptions to the specified print
      * stream.
      * 
      * @param printStream
@@ -307,7 +307,7 @@ public class SevenZipException extends IOException {
     }
 
     /**
-     * Prints stack trace of this SevenZipException and of the all thrown 'cause by' exceptions to the specified print
+     * Prints stack trace of this SevenZipException and of all thrown 'caused by' exceptions to the specified print
      * writer.
      * 
      * @param printWriter

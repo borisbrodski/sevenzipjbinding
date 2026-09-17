@@ -48,14 +48,14 @@ public class VolumedArchiveInStream implements IInStream {
     /**
      * Creates instance of {@link VolumedArchiveInStream} using {@link IArchiveOpenVolumeCallback}. The name of the
      * first archive volume will be asked using {@link IArchiveOpenVolumeCallback#getProperty(PropID)} with the
-     * <code>propID</code>={@link PropID#NAME}. The file name should ends with <code>.7z.001</code> or SevenZipException
+     * <code>propID</code>={@link PropID#NAME}. The file name should end with <code>.7z.001</code> or SevenZipException
      * will be thrown.
      *
      * @param archiveOpenVolumeCallback
      *            call back implementation used to access different volumes of archive.
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public VolumedArchiveInStream(IArchiveOpenVolumeCallback archiveOpenVolumeCallback) throws SevenZipException {
         this((String) archiveOpenVolumeCallback.getProperty(PropID.NAME), archiveOpenVolumeCallback);
@@ -67,11 +67,11 @@ public class VolumedArchiveInStream implements IInStream {
      * @param firstVolumeFilename
      *            the file name of the first volume.
      * @param archiveOpenVolumeCallback
-     *            call back implementation used to access different volumes of archive. The file name should ends with
+     *            call back implementation used to access different volumes of archive. The file name should end with
      *            <code>.7z.001</code> or SevenZipException will be thrown.
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public VolumedArchiveInStream(String firstVolumeFilename, IArchiveOpenVolumeCallback archiveOpenVolumeCallback)
             throws SevenZipException {
@@ -162,7 +162,7 @@ public class VolumedArchiveInStream implements IInStream {
     }
 
     /**
-     * ${@inheritDoc}
+     * {@inheritDoc}
      */
 
     public synchronized long seek(long offset, int seekOrigin) throws SevenZipException {
@@ -208,7 +208,7 @@ public class VolumedArchiveInStream implements IInStream {
     }
 
     /**
-     * ${@inheritDoc}
+     * {@inheritDoc}
      */
 
     public synchronized int read(byte[] data) throws SevenZipException {

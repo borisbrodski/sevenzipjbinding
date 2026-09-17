@@ -7,14 +7,14 @@ import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.SevenZipException;
 
 /**
- * This java interface represents a archive item. There are no corresponding interface in original SevenZip api.<br>
+ * This Java interface represents an archive item. There is no corresponding interface in the original SevenZip API.<br>
  * <br>
- * 
- * This interface is a part of simplified 7-Zip-JBinding interface.
- * 
+ *
+ * This interface is a part of the simplified 7-Zip-JBinding interface.
+ *
  * <br>
  * <br>
- * <i>NOTE:</i> Some properties my only be available after the extraction operation completes.<br>
+ * <i>NOTE:</i> Some properties may only be available after the extraction operation completes.<br>
  * Example: PACKED_SIZE of the LZMA archives.
  * 
  * @see ISimpleInArchive
@@ -24,28 +24,28 @@ import net.sf.sevenzipjbinding.SevenZipException;
 public interface ISimpleInArchiveItem {
 
     /**
-     * Full path, name and extension of the file inside the archive. Example. <code>'dir/file.ext'</code>. Please note,
-     * that stream archive formats such as gzip does not support this property, since it is always a single file (or
-     * stream) being compressed.<br>
+     * Full path, name and extension of the file inside the archive. Example: <code>'dir/file.ext'</code>. Please note
+     * that stream archive formats such as gzip do not support this property, since they always compress a single file
+     * (or stream).<br>
      * 
      * @return full path, name and extension of the item in archive.<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getPath() throws SevenZipException;
 
     /**
-     * Original size of the item. <code>-1</code> is returned, if no size known for this item.
-     * 
-     * @return Original size of the item or <code>-1</code> <br>
-     *         <code>null</code> will be returned, if current archive type doesn't support this property.
+     * Original (uncompressed) size of the item in bytes.
+     *
+     * @return original size of the item in bytes<br>
+     *         <code>null</code> will be returned, if the current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Long getSize() throws SevenZipException;
 
@@ -57,30 +57,30 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Long getPackedSize() throws SevenZipException;
 
     /**
-     * Returns flag either a item represents a folder or not. Please note, that some archive formats doesn't define
-     * special items for folders. In this case you may get a item with a path <code>'dir/file'</code> without having an
-     * item for <code>'dir'</code> at all. <br>
+     * Returns a flag indicating whether the item represents a folder or not. Please note that some archive formats do
+     * not define special items for folders. In this case you may get an item with a path <code>'dir/file'</code>
+     * without having an item for <code>'dir'</code> at all. <br>
      * <br>
      * 
      * @return <code>true</code> if item is a folder, otherwise <code>false</code>. <code>false</code> is returned, if
      *         archive format doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public boolean isFolder() throws SevenZipException;
 
     /**
      * Return item attributes.<br>
      * <br>
-     * Supported by all methods
+     * Supported by the following formats:
      * <ul>
      * <li> <code>Zip</code>
      * <li> <code>7Z</code>
@@ -93,15 +93,15 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Integer getAttributes() throws SevenZipException;
 
     /**
      * Return creation date and time of the item.<br>
      * <br>
-     * Supported by all methods
+     * Supported by the following formats:
      * <ul>
      * <li> <code>7Z</code>
      * <li> <code>Rar</code>
@@ -111,15 +111,15 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Date getCreationTime() throws SevenZipException;
 
     /**
      * Return last access date and time of the item.<br>
      * <br>
-     * Supported by all methods
+     * Supported by the following formats:
      * <ul>
      * <li> <code>7Z</code>
      * <li> <code>Rar</code>
@@ -129,15 +129,15 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Date getLastAccessTime() throws SevenZipException;
 
     /**
      * Return last write date and time of the item.<br>
      * <br>
-     * Supported by all methods, <b>but</b>
+     * Supported by all formats <b>except</b> the following:
      * <ul>
      * <li> <code>BZ2</code>
      * <li> <code>Chm</code>
@@ -150,20 +150,20 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Date getLastWriteTime() throws SevenZipException;
 
     /**
-     * Flag either a item encrypted or not.
+     * Flag indicating whether the item is encrypted or not.
      * 
      * @return <code>true</code> if item is encrypted, otherwise <code>false</code>. <code>false</code> is returned, if
      *         archive format doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public boolean isEncrypted() throws SevenZipException;
 
@@ -174,8 +174,8 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Boolean isCommented() throws SevenZipException;
 
@@ -186,8 +186,8 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Integer getCRC() throws SevenZipException;
 
@@ -198,31 +198,34 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getMethod() throws SevenZipException;
 
     /**
-     * TODO: the purpose of position isn't clear
-     * 
-     * @return TODO
-     * 
+     * Return the value of the item's <code>POSITION</code> property. This is a rarely used, format-specific property; for
+     * most archive formats it is not defined.
+     *
+     * @return value of the <code>POSITION</code> property<br>
+     *         <code>null</code> will be returned, if the current archive type doesn't support this property.
+     *
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Integer getPosition() throws SevenZipException;
 
     /**
-     * Return host OS of item. TODO: The meaning of the hostOS property is unknown
-     * 
-     * @return host OS of item.<br>
+     * Return the host operating system recorded for the item, i.e. the operating system on which the item was added to
+     * the archive. This is mainly relevant for formats such as Zip and RAR.
+     *
+     * @return host OS of the item.<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getHostOS() throws SevenZipException;
 
@@ -233,8 +236,8 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getUser() throws SevenZipException;
 
@@ -245,8 +248,8 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getGroup() throws SevenZipException;
 
@@ -257,30 +260,30 @@ public interface ISimpleInArchiveItem {
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getComment() throws SevenZipException;
 
     /**
      * Extract one archive item. Use <code>sequentialOutStream</code> to output data.<br>
      * <br>
-     * <b>WARNING:</b> this is very slow operation for multiple calls.
+     * <b>WARNING:</b> this is a very slow operation when called repeatedly.
      * 
      * @param sequentialOutStream
      *            output stream to use
      * 
      * @return result of operation
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public ExtractOperationResult extractSlow(ISequentialOutStream sequentialOutStream) throws SevenZipException;
 
     /**
      * Extract one archive item. Use <code>sequentialOutStream</code> to output data.<br>
      * <br>
-     * <b>WARNING:</b> this is very slow operation for multiple calls.
+     * <b>WARNING:</b> this is a very slow operation when called repeatedly.
      * 
      * @param sequentialOutStream
      *            output stream to use
@@ -288,8 +291,8 @@ public interface ISimpleInArchiveItem {
      *            password to use
      * @return result of operation
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public ExtractOperationResult extractSlow(ISequentialOutStream sequentialOutStream, String password)
             throws SevenZipException;

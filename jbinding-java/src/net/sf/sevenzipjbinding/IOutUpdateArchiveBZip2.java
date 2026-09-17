@@ -8,7 +8,7 @@ package net.sf.sevenzipjbinding;
  *
  * <pre>
  *  {@link IInArchive} inArchive = {@link SevenZip}.openInArchive(null, inStream);
- *  {@link IOutUpdateArchive}{@code <}{@link IOutItemBase}{@code >} outArchive = inArchive.openOutArchive();
+ *  {@link IOutUpdateArchive}{@code <}{@link IOutItemAllFormats}{@code >} outArchive = inArchive.getConnectedOutArchive();
  *
  *  if (outArchive instanceof {@link IOutUpdateArchiveBZip2}) {
  *    {@link IOutUpdateArchiveBZip2} outUpdateArchiveBZip2 = ({@link IOutUpdateArchiveBZip2})outArchive;

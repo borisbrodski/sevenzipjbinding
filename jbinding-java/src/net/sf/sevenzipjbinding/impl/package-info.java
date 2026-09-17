@@ -1,6 +1,6 @@
 /**
- * This package contains implementation of some interfaces defined in {@link net.sf.sevenzipjbinding}.
- * It contains also some handy tool classes to with 7-Zip-JBinding.
+ * This package contains the implementation of some interfaces defined in {@link net.sf.sevenzipjbinding}.
+ * It also contains some handy utility classes for working with 7-Zip-JBinding.
  * 
  * @see net.sf.sevenzipjbinding.simple
  * 

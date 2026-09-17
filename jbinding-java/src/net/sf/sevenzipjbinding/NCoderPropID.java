@@ -1,10 +1,9 @@
 package net.sf.sevenzipjbinding;
 
 /**
- * Enumeration for possible NCoder properties
- * 
- * TODO Use it or remove it
- * 
+ * Enumeration of coder (compression method) property identifiers, mirroring 7-Zip's native <code>NCoderPropID</code>
+ * constants. Each constant carries the Java type of its value and the corresponding 7-Zip command-line option name.
+ *
  * @author Boris Brodski
  * @since 9.20-2.00
  */

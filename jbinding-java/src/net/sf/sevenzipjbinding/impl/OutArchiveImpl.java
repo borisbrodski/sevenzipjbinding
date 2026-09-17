@@ -100,8 +100,8 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      * @param solidBlockSpec
      *            <code>null</code> - turn solid off
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     protected native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
 

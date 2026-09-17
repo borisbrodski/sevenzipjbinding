@@ -17,7 +17,7 @@ public class RandomAccessFileOutStream implements IOutStream, Closeable {
     private final RandomAccessFile randomAccessFile;
 
     /**
-     * Constructs instance of the class from random access file.
+     * Constructs an instance from the given random access file.
      * 
      * @param randomAccessFile
      *            random access file to use

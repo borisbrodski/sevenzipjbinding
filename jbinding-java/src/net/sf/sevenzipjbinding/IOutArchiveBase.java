@@ -27,20 +27,20 @@ public interface IOutArchiveBase {
     public PrintStream getTracePrintStream();
 
     /**
-     * If <code>true</code>, print trace message during compress and update operation to the {@link System#out} or
+     * If <code>true</code>, print trace messages during compression and update operations to the {@link System#out} or
      * {@link #getTracePrintStream()}. Default: <code>false</code>
      * 
      * @param trace
-     *            <code>true</code> - output trace messages, <code>false</code> be quite.
+     *            <code>true</code> - output trace messages, <code>false</code> - be quiet.
      * @see #setTracePrintStream(PrintStream)
      */
     public void setTrace(boolean trace);
 
     /**
-     * If <code>true</code>, print trace message during compress and update operation to the {@link System#out} or
+     * If <code>true</code>, print trace messages during compression and update operations to the {@link System#out} or
      * {@link #getTracePrintStream()}. Default: <code>false</code>
      * 
-     * @return <code>true</code> - output trace messages, <code>false</code> be quite.
+     * @return <code>true</code> - output trace messages, <code>false</code> - be quiet.
      * @see #setTracePrintStream(PrintStream)
      */
     public boolean isTrace();

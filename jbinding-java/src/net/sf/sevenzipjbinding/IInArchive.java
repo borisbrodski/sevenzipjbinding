@@ -6,7 +6,7 @@ import java.util.Arrays;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 
 /**
- * The interface provides functionality to query archive and archive item parameters, but also to extract item content. <br>
+ * This interface provides functionality to query archive and archive-item parameters, and to extract item content. <br>
  * <br>
  * Standard way to get implementation is to use {@link SevenZip}.<br>
  * <br>
@@ -23,8 +23,8 @@ public interface IInArchive extends Closeable {
      * no more methods should be called.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public void close() throws SevenZipException;
 
@@ -33,15 +33,15 @@ public interface IInArchive extends Closeable {
      * 
      * @return count of items in archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public int getNumberOfItems() throws SevenZipException;
 
     /**
      * Get value of property <code>propID</code> of the item with the index <code>index</code>.<br>
      * <br>
-     * <i>NOTE:</i> Some properties my only be available after the extraction operation completes.<br>
+     * <i>NOTE:</i> Some properties may only be available after the extraction operation completes.<br>
      * Example: PACKED_SIZE of the LZMA archives.
      * 
      * @param index
@@ -51,8 +51,8 @@ public interface IInArchive extends Closeable {
      * @return value of property <code>propID</code> of item with index <code>index</code>
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Object getProperty(int index, PropID propID) throws SevenZipException;
 
@@ -67,16 +67,16 @@ public interface IInArchive extends Closeable {
      * @return property <code>propID</code> of item with id <code>index</code> in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getStringProperty(int index, PropID propID) throws SevenZipException;
 
     /**
      * Extract archive items with indices <code>indices</code>. <br>
-     * Note: passing sorted <code>indices</code> array is more efficient. But it isn't suggested to manually sort
-     * indices with something like {@link Arrays#sort(int[])}. Sort indices only, if you can do it quicker, that generic
-     * sort algorithms: <code>O(n*log(n))</code>.
+     * Note: passing a sorted <code>indices</code> array is more efficient. However, it is not recommended to manually
+     * sort the indices with something like {@link Arrays#sort(int[])} unless you can do it faster than a generic sort
+     * algorithm: <code>O(n*log(n))</code>.
      * 
      * @param indices
      *            (optional) array of indices of archive items to extract.<br>
@@ -90,8 +90,8 @@ public interface IInArchive extends Closeable {
      *            extraction callback object. Optional implementation of {@link ICryptoGetTextPassword}.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
             throws SevenZipException;
@@ -106,8 +106,8 @@ public interface IInArchive extends Closeable {
      * @return result status of the extraction
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException;
 
@@ -123,8 +123,8 @@ public interface IInArchive extends Closeable {
      * @return result status of the extraction
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
             throws SevenZipException;
@@ -137,8 +137,8 @@ public interface IInArchive extends Closeable {
      * @return value of archive property <code>propID</code>
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -150,8 +150,8 @@ public interface IInArchive extends Closeable {
      * @return property <code>propID</code> of archive in human readable form.
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public String getStringArchiveProperty(PropID propID) throws SevenZipException;
 
@@ -161,8 +161,8 @@ public interface IInArchive extends Closeable {
      * @return count of properties of each archive item
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public int getNumberOfProperties() throws SevenZipException;
 
@@ -175,8 +175,8 @@ public interface IInArchive extends Closeable {
      * @return information about property of archive item
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public PropertyInfo getPropertyInfo(int index) throws SevenZipException;
 
@@ -185,8 +185,8 @@ public interface IInArchive extends Closeable {
      * 
      * @return count of properties of archive
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public int getNumberOfArchiveProperties() throws SevenZipException;
 
@@ -200,8 +200,8 @@ public interface IInArchive extends Closeable {
      * @return information about archive property
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
      */
     public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException;
 
@@ -220,110 +220,110 @@ public interface IInArchive extends Closeable {
     public ArchiveFormat getArchiveFormat();
 
     /**
-     * Get an instance of {@link IOutUpdateArchive} connected to the current archive. This is a part of the archive
-     * format non-specific API. The new instance allows modification of the currently opened archive. Multiple call of
-     * this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchive} isn't
+     * Get an instance of {@link IOutUpdateArchive} connected to the current archive. This is a part of the archive-format-independent API. The new instance allows modification of the currently opened archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchive} isn't
      * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
-     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchive7z} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened 7z archive. Multiple call
-     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchive7z} isn't
+     * Get an instance of {@link IOutUpdateArchive7z} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened 7z archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchive7z} isn't
      * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
-     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchiveZip} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened Zip archive. Multiple call
-     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveZip} isn't
+     * Get an instance of {@link IOutUpdateArchiveZip} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened Zip archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchiveZip} isn't
      * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
-     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchiveTar} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened Tar archive. Multiple call
-     * of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveTar} isn't
+     * Get an instance of {@link IOutUpdateArchiveTar} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened Tar archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchiveTar} isn't
      * necessary, since it will be closed automatically. This happens when the parent instance of the {@link IInArchive}
-     * get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
+     * gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchiveGZip} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened GZip archive. Multiple
-     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveGZip} 
+     * Get an instance of {@link IOutUpdateArchiveGZip} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened GZip archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchiveGZip} 
      * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
-     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * {@link IInArchive} gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
      * be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchiveBZip2} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened BZip2 archive. Multiple
-     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveBZip2}
+     * Get an instance of {@link IOutUpdateArchiveBZip2} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened BZip2 archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchiveBZip2}
      * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
-     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * {@link IInArchive} gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
      * be ignored.
      * 
      * @return an instance of the {@link IOutUpdateArchive} interface
      * 
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 9.20-2.00
      */
     public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException;
 
     /**
-     * Get an instance of {@link IOutUpdateArchiveXz} connected to the current archive. This is a part of the archive
-     * format specific API. The new instance only allows modification of the currently opened Xz archive. Multiple
-     * call of this methods return the same instance. Closing the returned instance of {@link IOutUpdateArchiveXz}
+     * Get an instance of {@link IOutUpdateArchiveXz} connected to the current archive. This is a part of the archive-format-specific API. The new instance only allows modification of the currently opened Xz archive. Multiple calls of this method return the same instance. Closing the returned instance of {@link IOutUpdateArchiveXz}
      * isn't necessary, since it will be closed automatically. This happens when the parent instance of the
-     * {@link IInArchive} get closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
+     * {@link IInArchive} gets closed. Calls to the {@link IOutArchive#close()} methods of such connected instances will
      * be ignored.
      *
      * @return an instance of the {@link IOutUpdateArchive} interface
      *
      * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occur. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of the all thrown 'cause by' exceptions.
+     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
+     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
+     *
+     * @since 23.01-2.2
      */
     public IOutUpdateArchiveXz getConnectedOutArchiveXz() throws SevenZipException;
 }
