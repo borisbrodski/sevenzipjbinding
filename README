@@ -133,7 +133,7 @@ a) Download source package from http://sourceforge.net/projects/sevenzipjbind/fi
     $ git clone https://github.com/borisbrodski/sevenzipjbinding.git SevenZipJBinding
 
     $ cd SevenZipJBinding
-    $ git checkout Release-4.65-1.02rc-extr-only
+    $ git checkout 7z-23.01
 
 b) You will need the CMake (2.6 or higher) to configure 7-Zip-JBinding for your system.
    You can check the version of your CMake by typing:
@@ -208,7 +208,7 @@ f) Type 'ctest' to run tests or 'mingw32-make.exe package' to build a binary pac
 
 DockCross - cross compiling toolchains in Docker images: https://github.com/dockcross/dockcross
 
-DockCross allows easy cross-platform compilation for different Linux/Windows architectures, line Linux ARMv5 (armel), ARMv5 (armhf), ...
+DockCross allows easy cross-platform compilation for different Linux/Windows architectures, like Linux ARMv5 (armel), ARMv7 (armhf), ...
 To compile 7-Zip-JBinding on Linux with DockCross:
 
 a) Install DockCross according to installation instructions on the home page (https://github.com/dockcross/dockcross)
