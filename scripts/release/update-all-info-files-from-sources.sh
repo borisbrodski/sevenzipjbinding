@@ -6,7 +6,7 @@ FILES_TO_UPDATE="
   ChangeLog
   LGPL
   NEWS
-  README
+  README.md
   ReleaseNotes.txt
   THANKS
 "

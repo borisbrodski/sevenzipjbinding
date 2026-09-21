@@ -346,7 +346,7 @@ INSTALL(FILES   AUTHORS
                 ChangeLog
                 COPYING
                 LGPL
-                README
+                README.md
                 ReleaseNotes.txt
                 THANKS
         DESTINATION .)
