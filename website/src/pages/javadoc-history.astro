@@ -6,7 +6,8 @@ import { resolve } from 'node:path';
 // Historic JavaDoc: previous releases' original (unstyled) docs, fetched from SourceForge into
 // public/javadoc-history/<version>/ by javadoc-theme/fetch-historic-javadoc.sh. Served in an iframe
 // with a version switcher, so people on older releases can still read the matching API docs.
-const HIST = resolve(import.meta.dirname, '../../public/javadoc-history');
+// process.cwd() = website/ during build (Astro 7 relocates chunks, so import.meta.dirname is unreliable here).
+const HIST = resolve(process.cwd(), 'public/javadoc-history');
 // newest first; only versions actually present are shown
 const ORDER = [
   '16.02-2.01', '9.20-2.00beta',

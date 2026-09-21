@@ -4,7 +4,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // THANKS is the project's canonical credits file — include it verbatim so it never goes stale.
-const thanks = readFileSync(resolve(import.meta.dirname, '../../..', 'THANKS'), 'utf8').trimEnd();
+// Anchor on process.cwd() (the website/ project root during `astro build`/`dev`); Astro 7 relocates
+// compiled chunks, so import.meta.dirname no longer points at the source dir at build time.
+const thanks = readFileSync(resolve(process.cwd(), '..', 'THANKS'), 'utf8').trimEnd();
 ---
 <Base title="Acknowledgements — 7-Zip-JBinding">
   <section class="section">

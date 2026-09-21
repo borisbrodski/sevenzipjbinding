@@ -15,7 +15,9 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, relative } from 'node:path';
 import { codeToHtml } from 'shiki';
 
-const REPO_ROOT = resolve(import.meta.dirname, '../../..');
+// process.cwd() = website/ during `astro build`/`dev`; its parent is the repo root. (Astro 7 relocates
+// compiled chunks, so import.meta.dirname no longer resolves to the source dir at build time.)
+const REPO_ROOT = resolve(process.cwd(), '..');
 const JAVADOC_DIR = resolve(REPO_ROOT, 'website/public/javadoc');
 const SNIPPET_DIR = resolve(REPO_ROOT, 'test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippets');
 const OUTPUT_DIR = resolve(REPO_ROOT, 'doc/web.components/output');
