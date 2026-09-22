@@ -35,3 +35,14 @@ Special thanks to
 - seven332 <seven332@163.com> for
   * amazing Android-integration (not yet integrated in the official release, but available at https://github.com/seven332/sevenzipjbinding/)
   * finding some forgotten DeleteLocalRefs
+
+
+AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01-2.2 release
+(the 16.02 -> 23.01 engine upgrade, the Java 5 -> Java 8 port, the cross-platform
+build & test farm, and the website and documentation):
+
+- Claude (Anthropic)
+
+- Qwen (running on Hermes)
+
+- Grok Bot

@@ -182,6 +182,21 @@ See [`COPYING`](COPYING), [`LGPL`](LGPL) and [`License.txt`](License.txt).
 ## 🙏 Acknowledgements
 
 Built on [7‑Zip](https://www.7-zip.org/) by Igor Pavlov and [p7zip](https://p7zip.sourceforge.net/).
-Maintained by **Boris Brodski** since 2007. If this library helps you, consider
-[sponsoring the project](https://github.com/sponsors/borisbrodski). ❤
+Maintained by **Boris Brodski** since 2007.
+
+7‑Zip‑JBinding is kept alive by everyone who reports problems, suggests improvements, contributes
+code, or supports the project financially. A few in particular:
+
+- **Daniel Wilhelm, Appwork GmbH & JDownloader** — sponsoring the RAR5 releases
+- **Reinhard Pointner and the FileBot community** — testing and valuable donations
+- **Theo Linder** — kind donation
+- **[seven332](https://github.com/seven332/sevenzipjbinding/)** — Android integration and JNI fixes
+- **AI coding assistants** — Claude (Anthropic), Qwen (on Hermes), and Grok Bot — for help
+  modernizing the project for the 23.01‑2.2 release: the engine upgrade, the Java 8 port, the
+  cross‑platform build & test farm, and the website and docs
+
+The full credits are in [`THANKS`](THANKS), also shown on the
+[website](https://sevenzipjbind.sourceforge.net/acknowledgements/).
+
+If this library helps you, consider [sponsoring the project](https://github.com/sponsors/borisbrodski). ❤
 </content>

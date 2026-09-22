@@ -238,9 +238,12 @@ const mavenDep = `<dependency>
           <p style="margin:0">7-Zip engine 23.01 · Java 8 baseline · XZ compression · Apple Silicon
             · musl/Alpine builds · runtime platform auto-detection</p>
         </div>
-        <div class="release-actions">
-          <a class="btn btn-primary" href="https://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/">Download</a>
-          <a class="btn btn-ghost" href="https://github.com/borisbrodski/sevenzipjbinding/blob/7z-23.01/ChangeLog">Release notes</a>
+        <div class="release-cta">
+          <div class="release-actions">
+            <a class="btn btn-primary" href="https://github.com/borisbrodski/sevenzipjbinding/releases/latest">Download</a>
+            <a class="btn btn-ghost" href="https://github.com/borisbrodski/sevenzipjbinding/blob/7z-23.01/ChangeLog">Release notes</a>
+          </div>
+          <div class="release-alt">Also on <a href="https://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/">SourceForge</a> (mirror)</div>
         </div>
       </div>
       <div class="sec-note">
@@ -352,7 +355,11 @@ const mavenDep = `<dependency>
 
     /* release strip */
     .release-strip { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .release-cta { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
     .release-actions { display: flex; gap: 12px; }
+    .release-alt { font-size: .82rem; color: var(--text-3); }
+    .release-alt a { color: var(--text-2); text-decoration: underline; }
+    @media (max-width: 700px) { .release-cta { align-items: flex-start; } }
     .rel-date { color: var(--text-3); font-weight: 400; font-size: .95rem; }
     .sec-note {
       display: flex; gap: 12px; margin-top: 18px; padding: 14px 16px;
