@@ -2,10 +2,11 @@
 ME=$(readlink -f $0)
 SCRIPT_HOME=`echo $ME | sed 's|\(.*/\)\?[^/]*|\1|g'`
 
-# Multi-platform set since 23.01-2.2: AllWindows + AllPlatforms (12 platforms incl. Linux
-# glibc+musl+ARM and the universal Mac). AllLinux and AllMac are no longer produced:
-# the universal 'Mac' build replaced AllMac, and AllPlatforms covers the AllLinux use case
-# (runtime auto-detection picks arch + ARM level + glibc/musl).
+# Multi-platform set: AllWindows + AllPlatforms (13 platforms incl. Linux glibc+musl+ARM, the
+# universal Mac, and Windows x86/x64/arm64). AllLinux and AllMac are no longer produced: the
+# universal 'Mac' build replaced AllMac, and AllPlatforms covers the AllLinux use case (runtime
+# auto-detection picks OS + arch + ARM level + glibc/musl). The globs below pick up new per-platform
+# zips automatically, so Windows-arm64 folds into AllWindows and AllPlatforms with no change here.
 $SCRIPT_HOME/build-multiplatform-release.sh --name AllWindows \
     sevenzipjbinding-*-Windows-*
 

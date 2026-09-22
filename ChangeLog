@@ -1,6 +1,21 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Unreleased
+----------
+
+	* New platform: Windows on Arm (arm64) - native aarch64 Windows DLL built
+	  with llvm-mingw (clang/LLD + mingw-w64; stock GNU gcc has no Windows-arm64
+	  target and MSVC is avoided). Platform id 'Windows-arm64'. Folds into
+	  AllWindows and AllPlatforms; runtime auto-detection selects it on a native
+	  arm64 Windows JVM (os.arch=aarch64). Built & tested natively on GitHub
+	  Actions windows-11-arm runners.
+
+	* Build: JNI headers are generated with 'javac -h' when 'javah' is absent
+	  (JDK 10+). Required for Windows-arm64, which has no JDK 8. Existing JDK<=9
+	  builds are unchanged; the jar stays Java-8 compatible.
+
+
 Release - 23.01-2.2 (Release, cross-platform, based on 7-Zip 23.01)
 
 	* Bind 7-zip 23.01 (previously 16.02)

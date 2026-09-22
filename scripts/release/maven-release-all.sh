@@ -31,6 +31,7 @@ $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Mac.zip              
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Mac.zip              "$REPO" -mac-x86_64
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Windows-amd64.zip    "$REPO" -windows-amd64
 $SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Windows-x86.zip      "$REPO" -windows-x86
+$SCRIPT_DIR/maven-release-jar.sh sevenzipjbinding-$VERSION-Windows-arm64.zip    "$REPO" -windows-arm64
 
  
 
