@@ -119,6 +119,12 @@ IF(MINGW)
         -D_UNICODE     # since 9.13
         -DBREAK_HANDLER
         -DBENCH_MT
+        # Opt out of 7-Zip's NTFS security-descriptor/privilege code (EnumDirItems.cpp ->
+        # InitLocalPrivileges(), defined only in 7-Zip's ArchiveExtractCallback.cpp/UpdateCallback.cpp
+        # which jbinding does NOT link - it uses its own CPPToJava*Callback). On a *nix build this code
+        # is never compiled (no _WIN32); defining this makes the Windows/MinGW build match and avoids
+        # 'undefined symbol: InitLocalPrivileges()' at link time. jbinding never exposes this feature.
+        -DZ7_JB_NO_SECURITY_CODE
     )
 ELSE(MINGW)
 #  -s 
