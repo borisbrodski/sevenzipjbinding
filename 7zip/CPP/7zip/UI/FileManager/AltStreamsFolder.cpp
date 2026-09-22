@@ -2,27 +2,6 @@
 
 #include "StdAfx.h"
 
-#ifdef __MINGW32_VERSION
-// #if !defined(_MSC_VER) && (__GNUC__) && (__GNUC__ < 10)
-// for old mingw
-#include <ddk/ntddk.h>
-#else
-#ifndef Z7_OLD_WIN_SDK
-  #if !defined(_M_IA64)
-    #include <winternl.h>
-  #endif
-#else
-typedef LONG NTSTATUS;
-typedef struct _IO_STATUS_BLOCK {
-    union {
-        NTSTATUS Status;
-        PVOID Pointer;
-    };
-    ULONG_PTR Information;
-} IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
-#endif
-#endif
-
 #include "../../../Common/ComTry.h"
 #include "../../../Common/StringConvert.h"
 #include "../../../Common/Wildcard.h"
@@ -387,8 +366,8 @@ Z7_COM7F_IMF(CAltStreamsFolder::WasChanged(Int32 *wasChanged))
       return S_OK;
     }
 
-    DWORD waitResult = ::WaitForSingleObject(_findChangeNotification, 0);
-    bool wasChangedLoc = (waitResult == WAIT_OBJECT_0);
+    const DWORD waitResult = ::WaitForSingleObject(_findChangeNotification, 0);
+    const bool wasChangedLoc = (waitResult == WAIT_OBJECT_0);
     if (wasChangedLoc)
     {
       _findChangeNotification.FindNext();
@@ -462,7 +441,7 @@ Z7_COM7F_IMF(CAltStreamsFolder::CreateFile(const wchar_t *name, IProgress * /* p
   FString absPath;
   GetAbsPath(name, absPath);
   NIO::COutFile outFile;
-  if (!outFile.Create(absPath, false))
+  if (!outFile.Create_NEW(absPath))
     return GetLastError_noZero_HRESULT();
   return S_OK;
 }
@@ -511,13 +490,6 @@ static HRESULT UpdateFile(NFsFolder::CCopyStateIO &state, CFSTR inPath, CFSTR ou
 
 EXTERN_C_BEGIN
 
-typedef enum
-{
-  Z7_WIN_FileRenameInformation = 10
-}
-Z7_WIN_FILE_INFORMATION_CLASS;
-
-
 typedef struct
 {
   // #if (_WIN32_WINNT >= _WIN32_WINNT_WIN10_RS1)
@@ -534,54 +506,16 @@ typedef struct
   WCHAR FileName[1];
 } Z7_WIN_FILE_RENAME_INFORMATION;
 
-#if (_WIN32_WINNT >= 0x0500) && !defined(_M_IA64)
-#define Z7_WIN_NTSTATUS  NTSTATUS
-#define Z7_WIN_IO_STATUS_BLOCK  IO_STATUS_BLOCK
-#else
-typedef LONG Z7_WIN_NTSTATUS;
-typedef struct
-{
-  union
-  {
-    Z7_WIN_NTSTATUS Status;
-    PVOID Pointer;
-  } DUMMYUNIONNAME;
-  ULONG_PTR Information;
-} Z7_WIN_IO_STATUS_BLOCK;
-#endif
-
-typedef Z7_WIN_NTSTATUS (WINAPI *Func_NtSetInformationFile)(
-    HANDLE FileHandle,
-    Z7_WIN_IO_STATUS_BLOCK *IoStatusBlock,
-    PVOID FileInformation,
-    ULONG Length,
-    Z7_WIN_FILE_INFORMATION_CLASS FileInformationClass);
-
-// NTAPI
-typedef ULONG (WINAPI *Func_RtlNtStatusToDosError)(Z7_WIN_NTSTATUS Status);
-
-#define MY_STATUS_SUCCESS 0
-
 EXTERN_C_END
 
 // static Func_NtSetInformationFile f_NtSetInformationFile;
 // static bool g_NtSetInformationFile_WasRequested = false;
-
+Z7_DIAGNOSTIC_IGNORE_CAST_FUNCTION
 
 Z7_COM7F_IMF(CAltStreamsFolder::Rename(UInt32 index, const wchar_t *newName, IProgress *progress))
 {
   const CAltStream &ss = Streams[index];
   const FString srcPath = _pathPrefix + us2fs(ss.Name);
-
-  const HMODULE ntdll = ::GetModuleHandleW(L"ntdll.dll");
-  // if (!g_NtSetInformationFile_WasRequested) {
-  // g_NtSetInformationFile_WasRequested = true;
-  const
-   Func_NtSetInformationFile
-      f_NtSetInformationFile = Z7_GET_PROC_ADDRESS(
-   Func_NtSetInformationFile, ntdll,
-       "NtSetInformationFile");
-  if (f_NtSetInformationFile)
   {
     NIO::CInFile inFile;
     if (inFile.Open_for_FileRenameInformation(srcPath))
@@ -599,24 +533,9 @@ Z7_COM7F_IMF(CAltStreamsFolder::Rename(UInt32 index, const wchar_t *newName, IPr
       fri->RootDirectory = NULL;
       fri->FileNameLength = len;
       memcpy(fri->FileName, destPath.Ptr(), len);
-      Z7_WIN_IO_STATUS_BLOCK iosb;
-      const Z7_WIN_NTSTATUS status = f_NtSetInformationFile (inFile.GetHandle(),
-          &iosb, fri, (ULONG)buffer.Size(), Z7_WIN_FileRenameInformation);
-      if (status != MY_STATUS_SUCCESS)
-      {
-        const
-         Func_RtlNtStatusToDosError
-            f_RtlNtStatusToDosError = Z7_GET_PROC_ADDRESS(
-         Func_RtlNtStatusToDosError, ntdll,
-             "RtlNtStatusToDosError");
-        if (f_RtlNtStatusToDosError)
-        {
-          const ULONG res = f_RtlNtStatusToDosError(status);
-          if (res != ERROR_MR_MID_NOT_FOUND)
-            return HRESULT_FROM_WIN32(res);
-        }
-      }
-      return status;
+      const DWORD res = inFile.Call_NtSetInformationFile_return_WinError(
+          fri, (ULONG)buffer.Size(), Z7_WIN_FileRenameInformation);
+      return HRESULT_FROM_WIN32(res);
     }
   }
 
@@ -666,16 +585,10 @@ Z7_COM7F_IMF(CAltStreamsFolder::SetProperty(UInt32 /* index */, PROPID /* propID
 Z7_COM7F_IMF(CAltStreamsFolder::GetSystemIconIndex(UInt32 index, Int32 *iconIndex))
 {
   const CAltStream &ss = Streams[index];
-  *iconIndex = 0;
-  int iconIndexTemp;
-  if (GetRealIconIndex(_pathPrefix + us2fs(ss.Name),
-    0 // fi.Attrib
-    , iconIndexTemp) != 0)
-  {
-    *iconIndex = iconIndexTemp;
-    return S_OK;
-  }
-  return GetLastError_noZero_HRESULT();
+  return Shell_GetFileInfo_SysIconIndex_for_Path_return_HRESULT(
+      _pathPrefix + us2fs(ss.Name),
+      FILE_ATTRIBUTE_ARCHIVE,
+      iconIndex);
 }
 
 /*

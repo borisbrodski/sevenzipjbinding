@@ -1,0 +1,50 @@
+{
+  "name": "am-i-vibing",
+  "version": "0.4.0",
+  "description": "Detect agentic coding environments and AI assistant tools",
+  "type": "module",
+  "main": "dist/index.mjs",
+  "bin": {
+    "am-i-vibing": "dist/cli.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.2",
+    "@types/node": "24.12.4",
+    "publint": "0.3.21",
+    "tsdown": "0.22.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:ascorbic/am-i-vibing.git",
+    "directory": "packages/am-i-vibing"
+  },
+  "homepage": "https://github.com/ascorbic/am-i-vibing",
+  "keywords": [
+    "ai",
+    "agentic",
+    "coding",
+    "detection",
+    "llm",
+    "assistant"
+  ],
+  "author": "Matt Kane",
+  "license": "MIT",
+  "dependencies": {
+    "process-ancestry": "^0.1.0"
+  },
+  "scripts": {
+    "build": "tsdown src/index.ts src/cli.ts --format esm --dts --clean",
+    "dev": "tsdown src/index.ts src/cli.ts --format esm --dts --watch",
+    "check": "publint && attw --pack --ignore-rules=cjs-resolves-to-esm",
+    "test": "vitest run",
+    "whoami": "tsx scripts/whoami.ts"
+  }
+}

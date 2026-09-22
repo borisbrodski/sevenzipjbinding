@@ -5,6 +5,7 @@
 
 #include "../../../../C/Alloc.h"
 
+#include "../../../Common/AutoPtr.h"
 #include "../../../Common/MyBuffer.h"
 #include "../../../Common/MyXml.h"
 
@@ -162,12 +163,16 @@ struct CResource
 
   UInt64 GetEndLimit() const { return Offset + PackSize; }
   void Parse(const Byte *p);
+  void UpdatePhySize(UInt64 &phySize) const
+  {
+    UInt64 v = GetEndLimit();
+    if (phySize < v)
+        phySize = v;
+  }
   void ParseAndUpdatePhySize(const Byte *p, UInt64 &phySize)
   {
     Parse(p);
-    UInt64 v = GetEndLimit();
-    if (phySize < v)
-      phySize = v;
+    UpdatePhySize(phySize);
   }
 
   void WriteTo(Byte *p) const;
@@ -341,16 +346,21 @@ struct CItem
   int ImageIndex; // -1 means that file is unreferenced in Images (deleted item?)
   bool IsDir;
   bool IsAltStream;
+  unsigned DirLevel;
+  size_t SubDirOffset;
 
   bool HasMetadata() const { return ImageIndex >= 0; }
 
-  CItem():
-    IndexInSorted(-1),
-    StreamIndex(-1),
-    Parent(-1),
-    IsDir(false),
-    IsAltStream(false)
-    {}
+  void Construct()
+  {
+    IndexInSorted = -1;
+    StreamIndex = -1;
+    Parent = -1;
+    IsDir = false;
+    IsAltStream = false;
+    DirLevel = 0;
+    SubDirOffset = 0;
+  }
 };
 
 struct CImage
@@ -385,7 +395,13 @@ struct CImageInfo
 
   int ItemIndexInXml;
 
-  UInt64 GetTotalFilesAndDirs() const { return DirCount + FileCount; }
+  UInt64 GetTotalFilesAndDirs() const
+  {
+    UInt64 v = DirCount + FileCount;
+    if (v < DirCount)
+      v = 0;
+    return v;
+  }
   
   CImageInfo(): CTimeDefined(false), MTimeDefined(false), NameDefined(false),
       IndexDefined(false), ItemIndexInXml(-1) {}
@@ -399,16 +415,21 @@ struct CWimXml
   CXml Xml;
 
   UInt16 VolIndex;
+  bool IsEncrypted;
   CObjectVector<CImageInfo> Images;
 
   UString FileName;
-  bool IsEncrypted;
 
   UInt64 GetTotalFilesAndDirs() const
   {
     UInt64 sum = 0;
     FOR_VECTOR (i, Images)
-      sum += Images[i].GetTotalFilesAndDirs();
+    {
+      const UInt64 v = Images[i].GetTotalFilesAndDirs();
+      sum += v;
+      if (sum < v)
+        return 0;
+    }
     return sum;
   }
 
@@ -434,7 +455,7 @@ class CDatabase
   size_t DirStartOffset;
   IArchiveOpenCallback *OpenCallback;
 
-  HRESULT ParseDirItem(size_t pos, int parent);
+  HRESULT ParseDirItem(size_t pos, int parent, unsigned dirLevel);
   HRESULT ParseImageDirs(CByteBuffer &buf, int parent);
 
 public:
@@ -468,6 +489,7 @@ public:
   int ExludedItem;          // -1 : if there are no exclude items
   CUIntVector VirtualRoots; // we use them for old 1.10 WIM archives
 
+  UInt64 PhySize;
   bool ThereIsError() const { return RefCountError || HeadersError; }
 
   unsigned GetNumUserItemsInImage(unsigned imageIndex) const
@@ -524,6 +546,7 @@ public:
 
   void Clear()
   {
+    PhySize = 0;
     DataStreams.Clear();
     MetaStreams.Clear();
     Solids.Clear();
@@ -566,6 +589,7 @@ public:
   */
   HRESULT GenerateSortedItems(int imageIndex, bool showImageNumber);
 
+  bool Check_PartNumber_in_Items(unsigned numVolumes) const;
   HRESULT ExtractReparseStreams(const CObjectVector<CVolume> &volumes, IArchiveOpenCallback *openCallback);
 };
 
@@ -583,27 +607,23 @@ struct CMidBuf
   {
     if (size > _size)
     {
-      ::MidFree(Data);
+      ::z7_AlignedFree(Data);
       _size = 0;
-      Data = (Byte *)::MidAlloc(size);
+      Data = (Byte *)::z7_AlignedAlloc(size);
       if (Data)
         _size = size;
     }
   }
 
-  ~CMidBuf() { ::MidFree(Data); }
+  ~CMidBuf() { ::z7_AlignedFree(Data); }
 };
 
 
 class CUnpacker
 {
-  NCompress::CCopyCoder *copyCoderSpec;
-  CMyComPtr<ICompressCoder> copyCoder;
-
-  NCompress::NLzx::CDecoder *lzxDecoderSpec;
-  CMyComPtr<IUnknown> lzxDecoder;
-
-  NCompress::NLzms::CDecoder *lzmsDecoder;
+  CMyComPtr2<ICompressCoder, NCompress::CCopyCoder> copyCoder;
+  CMyUniquePtr<NCompress::NLzx::CDecoder> lzxDecoder;
+  CMyUniquePtr<NCompress::NLzms::CDecoder> lzmsDecoder;
 
   CByteBuffer sizesBuf;
 
@@ -637,7 +657,6 @@ public:
       _unpackedChunkIndex(0),
       TotalPacked(0)
       {}
-  ~CUnpacker();
 
   HRESULT Unpack(
       IInStream *inStream,

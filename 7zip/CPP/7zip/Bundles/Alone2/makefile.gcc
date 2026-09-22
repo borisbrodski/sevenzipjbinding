@@ -1,10 +1,10 @@
 PROG = 7zz
 
+CONSOLE_VARIANT_FLAGS=-DZ7_PROG_VARIANT_Z
+
 # IS_X64 = 1
 # USE_ASM = 1
 # ST_MODE = 1
-
-CONSOLE_VARIANT_FLAGS=-DZ7_PROG_VARIANT_Z
 
 include ../Format7zF/Arc_gcc.mak
 
@@ -17,11 +17,11 @@ IS_MINGW = 1
 endif
 endif
 
+LOCAL_FLAGS_SYS =
+
 ifdef IS_MINGW
 
 LOCAL_FLAGS_SYS = \
-  -DZ7_LARGE_PAGES \
-  -DZ7_LONG_PATH \
   -DZ7_DEVICE_FILE \
 
 SYS_OBJS = \
@@ -66,7 +66,6 @@ UI_COMMON_OBJS = \
   $O/UpdateCallback.o \
   $O/UpdatePair.o \
   $O/UpdateProduce.o \
-
 
 CONSOLE_OBJS = \
   $O/BenchCon.o \

@@ -1,0 +1,39 @@
+{
+  "name": "find-proc",
+  "version": "0.2.0",
+  "license": "MIT",
+  "author": "gameroman",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gameroman-npm/find-proc.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "u": "bun run --sequential format build lint",
+    "test": "node --test",
+    "test:bun": "bun test --dots",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "build": "tsdown",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@gameroman/config": "0.2.9",
+    "@types/node": "26.4.0",
+    "oxfmt": "0.65.0",
+    "oxlint": "1.80.0",
+    "oxlint-tsgolint": "7.0.2001",
+    "tsdown": "0.22.14",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

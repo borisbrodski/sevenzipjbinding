@@ -295,8 +295,14 @@ static const CHashCommand g_HashCommands[] =
 {
   { CZipContextMenu::kHash_CRC32,  "CRC-32",  "CRC32" },
   { CZipContextMenu::kHash_CRC64,  "CRC-64",  "CRC64" },
+  { CZipContextMenu::kHash_XXH64,  "XXH64",   "XXH64" },
+  { CZipContextMenu::kHash_MD5,    "MD5",     "MD5" },
   { CZipContextMenu::kHash_SHA1,   "SHA-1",   "SHA1" },
   { CZipContextMenu::kHash_SHA256, "SHA-256", "SHA256" },
+  { CZipContextMenu::kHash_SHA384, "SHA-384", "SHA384" },
+  { CZipContextMenu::kHash_SHA512, "SHA-512", "SHA512" },
+  { CZipContextMenu::kHash_SHA3_256, "SHA3-256", "SHA3-256" },
+  { CZipContextMenu::kHash_BLAKE2SP, "BLAKE2sp", "BLAKE2sp" },
   { CZipContextMenu::kHash_All,    "*",       "*" },
   { CZipContextMenu::kHash_Generate_SHA256, "SHA-256 -> file.sha256", "SHA256" },
   { CZipContextMenu::kHash_TestArc, "Checksum : Test", "Hash" }
@@ -505,7 +511,7 @@ static const char * const kExtractExcludeExtensions =
   " sed sh shn shtml sln sql srt swa"
   " tcl tex tiff tta txt"
   " vb vcproj vbs"
-  " wav wma wv"
+  " mkv wav webm wma wv"
   " xml xsd xsl xslt"
   " ";
 
@@ -532,7 +538,8 @@ bool FindExt(const char *p, const UString &name, CStringFinder &finder);
 bool FindExt(const char *p, const UString &name, CStringFinder &finder)
 {
   const int dotPos = name.ReverseFind_Dot();
-  if (dotPos < 0 || dotPos == (int)name.Len() - 1)
+  int len = (int)name.Len() - (dotPos + 1);
+  if (len == 0 || len > 32 || dotPos < 0)
     return false;
   return finder.FindWord_In_LowCaseAsciiList_NoCase(p, name.Ptr(dotPos + 1));
 }
@@ -593,9 +600,11 @@ Z7_COMWF_B CZipContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
   }
   */
 
+  #define MAKE_HRESULT_SUCCESS_FAC0(code)  (HRESULT)(code)
+
   if (_fileNames.Size() == 0)
   {
-    return MAKE_HRESULT(SEVERITY_SUCCESS, 0, 0);
+    return MAKE_HRESULT_SUCCESS_FAC0(0);
     // return E_INVALIDARG;
   }
 
@@ -607,8 +616,8 @@ Z7_COMWF_B CZipContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
   if ((flags & 0x000F) != CMF_NORMAL
       && (flags & CMF_VERBSONLY) == 0
       && (flags & CMF_EXPLORE) == 0)
-    return MAKE_HRESULT(SEVERITY_SUCCESS, 0, currentCommandID - commandIDFirst);
-  // return MAKE_HRESULT(SEVERITY_SUCCESS, 0, currentCommandID);
+    return MAKE_HRESULT_SUCCESS_FAC0(currentCommandID - commandIDFirst);
+  // return MAKE_HRESULT_SUCCESS_FAC0(currentCommandID);
   // 19.01 : we changed from (currentCommandID) to (currentCommandID - commandIDFirst)
   // why it was so before?
 
@@ -1162,7 +1171,7 @@ Z7_COMWF_B CZipContextMenu::QueryContextMenu(HMENU hMenu, UINT indexMenu,
        assigned in multiple menu items from different subhandlers.
        And we must add items to _commandMap before adding to menu.
      */
-  return MAKE_HRESULT(SEVERITY_SUCCESS, 0, _commandMap.Size());
+  return MAKE_HRESULT_SUCCESS_FAC0(_commandMap.Size());
   COM_TRY_END
 }
 
@@ -1332,8 +1341,14 @@ HRESULT CZipContextMenu::InvokeCommandCommon(const CCommandMapItem &cmi)
       
       case kHash_CRC32:
       case kHash_CRC64:
+      case kHash_XXH64:
+      case kHash_MD5:
       case kHash_SHA1:
       case kHash_SHA256:
+      case kHash_SHA384:
+      case kHash_SHA512:
+      case kHash_SHA3_256:
+      case kHash_BLAKE2SP:
       case kHash_All:
       case kHash_Generate_SHA256:
       case kHash_TestArc:

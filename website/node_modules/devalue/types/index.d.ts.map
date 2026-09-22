@@ -1,0 +1,37 @@
+{
+	"version": 3,
+	"file": "index.d.ts",
+	"names": [
+		"StringValueTag",
+		"ViewTag",
+		"StringifyOperations",
+		"DefaultStringifyOperations",
+		"StringifyOptions",
+		"ParseOperations",
+		"DefaultParseOperations",
+		"ParseOptions",
+		"uneval",
+		"TypedArray",
+		"parse",
+		"unflatten",
+		"stringify",
+		"stringifyAsync",
+		"DevalueError"
+	],
+	"sources": [
+		"../src/types.d.ts",
+		"../src/uneval.js",
+		"../src/parse.js",
+		"../src/stringify.js",
+		"../src/utils.js"
+	],
+	"sourcesContent": [
+		null,
+		null,
+		null,
+		null,
+		null
+	],
+	"mappings": ";aAAYA,cAAcA;aAYdC,OAAOA;aAmEFC,mBAAmBA;aAoKnBC,0BAA0BA;aAsB1BC,gBAAgBA;aA+ChBC,eAAeA;aA2GfC,sBAAsBA;aA0BtBC,YAAYA;;;;;iBCvabC,MAAMA;;;;;;;;;;;;;;;;;;;;;;;;;;;;MDKVC,UAAUA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;iBERNC,KAAKA;;;;;iBAULC,SAASA;;;;;iBCVTC,SAASA;;;;;iBAWHC,cAAcA;;;;;;;;;;;;;;;cCfvBC,YAAYA",
+	"ignoreList": []
+}
