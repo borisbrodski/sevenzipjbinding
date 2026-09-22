@@ -5,6 +5,7 @@
 #include "../../../C/CpuArch.h"
 
 #include "../../Common/ComTry.h"
+#include "../../Common/IntToString.h"
 
 #include "../../Windows/PropVariant.h"
 
@@ -156,10 +157,11 @@ struct CDynHeader
   CParentLocatorEntry ParentLocators[8];
 
   bool Parse(const Byte *p);
-  UInt32 NumBitMapSectors() const
+  UInt32 NumBitMapBytes() const
   {
-    UInt32 numSectorsInBlock = (1 << (BlockSizeLog - kSectorSize_Log));
-    return (numSectorsInBlock + kSectorSize * 8 - 1) / (kSectorSize * 8);
+    const UInt32 numSectorsInBlock = (UInt32)1 << (BlockSizeLog - kSectorSize_Log);
+    const UInt32 NumBitMapSectors = (numSectorsInBlock + kSectorSize * 8 - 1) / (kSectorSize * 8);
+    return NumBitMapSectors << kSectorSize_Log;
   }
   void Clear()
   {
@@ -278,9 +280,9 @@ Z7_class_CHandler_final: public CHandlerImg
       if (mainName != anotherName && !anotherName.IsEmpty())
       {
         res.Add_Space();
-        res += '(';
+        res.Add_Char('(');
         res += anotherName;
-        res += ')';
+        res.Add_Char(')');
       }
       p = p->Parent;
     }
@@ -324,7 +326,7 @@ HRESULT CHandler::InitAndSeek()
   }
   _virtPos = _posInArc = 0;
   BitMapTag = kUnusedBlock;
-  BitMap.Alloc(Dyn.NumBitMapSectors() << kSectorSize_Log);
+  BitMap.Alloc(Dyn.NumBitMapBytes());
   return Seek2(0);
 }
 
@@ -462,7 +464,7 @@ HRESULT CHandler::Open3()
 
   Bat.ClearAndReserve(Dyn.NumBlocks);
 
-  UInt32 bitmapSize = Dyn.NumBitMapSectors() << kSectorSize_Log;
+  const UInt32 bitmapSize = Dyn.NumBitMapBytes();
 
   while ((UInt32)Bat.Size() < Dyn.NumBlocks)
   {
@@ -689,16 +691,6 @@ static void StringToAString(char *dest, UInt32 val)
   *dest = 0;
 }
 
-static void ConvertByteToHex(unsigned value, char *s)
-{
-  for (int i = 0; i < 2; i++)
-  {
-    unsigned t = value & 0xF;
-    value >>= 4;
-    s[1 - i] = (char)((t < 10) ? ('0' + t) : ('A' + (t - 10)));
-  }
-}
-
 Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
 {
   COM_TRY_BEGIN
@@ -754,10 +746,8 @@ Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
     }
     case kpidId:
     {
-      char s[32 + 4];
-      for (int i = 0; i < 16; i++)
-        ConvertByteToHex(Footer.Id[i], s + i * 2);
-      s[32] = 0;
+      char s[sizeof(Footer.Id) * 2 + 2];
+      ConvertDataToHex_Upper(s, Footer.Id, sizeof(Footer.Id));
       prop = s;
       break;
     }
@@ -949,13 +939,13 @@ Z7_COM7F_IMF(CHandler::GetStream(UInt32 /* index */, ISequentialInStream **strea
   *stream = NULL;
   if (Footer.IsFixed())
   {
-    CLimitedInStream *streamSpec = new CLimitedInStream;
-    CMyComPtr<ISequentialInStream> streamTemp = streamSpec;
+    CMyComPtr2<ISequentialInStream, CLimitedInStream> streamSpec;
+    streamSpec.Create_if_Empty();
     streamSpec->SetStream(Stream);
     // fixme : check (startOffset = 0)
     streamSpec->InitAndSeek(_startOffset, Footer.CurrentSize);
     RINOK(streamSpec->SeekToStart())
-    *stream = streamTemp.Detach();
+    *stream = streamSpec.Detach();
     return S_OK;
   }
   if (!Footer.ThereIsDynamic() || !AreParentsOK())

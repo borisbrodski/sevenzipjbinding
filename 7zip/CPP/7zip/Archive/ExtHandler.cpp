@@ -20,6 +20,7 @@
 #include "../../../C/CpuArch.h"
 
 #include "../../Common/ComTry.h"
+#include "../../Common/IntToString.h"
 #include "../../Common/MyLinux.h"
 #include "../../Common/StringConvert.h"
 #include "../../Common/UTFConvert.h"
@@ -238,15 +239,6 @@ static const char * const g_NodeFlags[] =
   , NULL
   , "INLINE_DATA" // 28
 };
-
-
-static inline char GetHex(unsigned t) { return (char)(((t < 10) ? ('0' + t) : ('A' + (t - 10)))); }
-
-static inline void PrintHex(unsigned v, char *s)
-{
-  s[0] = GetHex((v >> 4) & 0xF);
-  s[1] = GetHex(v & 0xF);
-}
 
 
 enum
@@ -636,6 +628,8 @@ struct CNode
   UInt32 Gid; // fixed 21.02
   // UInt16 Checksum;
   
+  UInt32 NumLinksCalced;
+
   UInt64 FileSize;
   CExtTime MTime;
   CExtTime ATime;
@@ -647,17 +641,16 @@ struct CNode
   UInt32 NumLinks;
   UInt32 Flags;
 
-  UInt32 NumLinksCalced;
-
   Byte Block[kNodeBlockFieldSize];
   
-  CNode():
-      ParentNode(-1),
-      ItemIndex(-1),
-      SymLinkIndex(-1),
-      DirIndex(-1),
-      NumLinksCalced(0)
-        {}
+  void Construct()
+  {
+    ParentNode = -1;
+    ItemIndex = -1;
+    SymLinkIndex = -1;
+    DirIndex = -1;
+    NumLinksCalced = 0;
+  }
 
   bool IsFlags_HUGE()    const { return (Flags & k_NodeFlags_HUGE) != 0; }
   bool IsFlags_EXTENTS() const { return (Flags & k_NodeFlags_EXTENTS) != 0; }
@@ -1180,21 +1173,19 @@ HRESULT CHandler::Open2(IInStream *inStream)
     {
       // ---------- Read groups ----------
 
-      CByteBuffer gdBuf;
       const size_t gdBufSize = (size_t)numGroups << gdBits;
       if ((gdBufSize >> gdBits) != numGroups)
         return S_FALSE;
+      CByteBuffer gdBuf;
       gdBuf.Alloc(gdBufSize);
       RINOK(SeekAndRead(inStream, (_h.BlockBits <= 10 ? 2 : 1), gdBuf, gdBufSize))
 
-      for (unsigned i = 0; i < numGroups; i++)
+      const unsigned gd_Size = (unsigned)1 << gdBits;
+      const Byte *p = gdBuf;
+      for (unsigned i = 0; i < numGroups; i++, p += gd_Size)
       {
         CGroupDescriptor gd;
-        
-        const Byte *p = gdBuf + ((size_t)i << gdBits);
-        const unsigned gd_Size = (unsigned)1 << gdBits;
         gd.Parse(p, gd_Size);
-        
         if (_h.UseMetadataChecksum())
         {
           // use CRC32c
@@ -1236,7 +1227,10 @@ HRESULT CHandler::Open2(IInStream *inStream)
         if (numNodes > (1 << 24))
           return S_FALSE;
       }
-      
+
+      const size_t blockSize = (size_t)1 << _h.BlockBits;
+      if (numNodes > blockSize * 8)
+        return S_FALSE;
       const UInt32 numReserveInodes = _h.NumInodes - _h.NumFreeInodes + 1;
       // numReserveInodes = _h.NumInodes + 1;
       if (numReserveInodes != 0)
@@ -1249,7 +1243,6 @@ HRESULT CHandler::Open2(IInStream *inStream)
       nodesData.Alloc(nodesDataSize);
       
       CByteBuffer nodesMap;
-      const size_t blockSize = (size_t)1 << _h.BlockBits;
       nodesMap.Alloc(blockSize);
       
       unsigned globalNodeIndex = 0;
@@ -1290,6 +1283,7 @@ HRESULT CHandler::Open2(IInStream *inStream)
           }
 
           CNode node;
+          node.Construct();
               
           PRF(printf("\nnode = %5d ", (unsigned)n));
 
@@ -1860,12 +1854,10 @@ Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
 
     case kpidId:
     {
-      if (!IsEmptyData(_h.Uuid, 16))
+      if (!IsEmptyData(_h.Uuid, sizeof(_h.Uuid)))
       {
-        char s[16 * 2 + 2];
-        for (unsigned i = 0; i < 16; i++)
-          PrintHex(_h.Uuid[i], s + i * 2);
-        s[16 * 2] = 0;
+        char s[sizeof(_h.Uuid) * 2 + 2];
+        ConvertDataToHex_Lower(s, _h.Uuid, sizeof(_h.Uuid));
         prop = s;
       }
       break;
@@ -2175,9 +2167,9 @@ public:
     _curRem = 0;
     _virtPos = 0;
     _physPos = 0;
-    if (Vector.Size() > 0)
+    if (Vector.Size())
     {
-      _physPos = (Vector[0] << BlockBits);
+      _physPos = (UInt64)Vector[0] << BlockBits;
       return SeekToPhys();
     }
     return S_OK;
@@ -2602,7 +2594,7 @@ HRESULT CHandler::GetStream_Node(unsigned nodeIndex, ISequentialInStream **strea
 
   CMyComPtr<IInStream> streamTemp;
   
-  UInt64 numBlocks64 = (node.FileSize + (UInt64)(((UInt32)1 << _h.BlockBits) - 1)) >> _h.BlockBits;
+  const UInt64 numBlocks64 = (node.FileSize + (UInt64)(((UInt32)1 << _h.BlockBits) - 1)) >> _h.BlockBits;
   
   if (node.IsFlags_EXTENTS())
   {
@@ -2729,27 +2721,25 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       totalSize += node.FileSize;
   }
   
-  extractCallback->SetTotal(totalSize);
+  RINOK(extractCallback->SetTotal(totalSize))
 
   UInt64 totalPackSize;
   totalSize = totalPackSize = 0;
   
-  NCompress::CCopyCoder *copyCoderSpec = new NCompress::CCopyCoder();
-  CMyComPtr<ICompressCoder> copyCoder = copyCoderSpec;
-
-  CLocalProgress *lps = new CLocalProgress;
-  CMyComPtr<ICompressProgressInfo> progress = lps;
+  CMyComPtr2_Create<ICompressProgressInfo, CLocalProgress> lps;
   lps->Init(extractCallback, false);
+  CMyComPtr2_Create<ICompressCoder, NCompress::CCopyCoder> copyCoder;
 
   for (i = 0;; i++)
   {
     lps->InSize = totalPackSize;
     lps->OutSize = totalSize;
     RINOK(lps->SetCur())
-
-    if (i == numItems)
+    if (i >= numItems)
       break;
 
+    int opRes;
+   {
     CMyComPtr<ISequentialOutStream> outStream;
     const Int32 askMode = testMode ?
         NExtract::NAskMode::kTest :
@@ -2786,7 +2776,7 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       continue;
     RINOK(extractCallback->PrepareOperation(askMode))
 
-    int res = NExtract::NOperationResult::kDataError;
+    opRes = NExtract::NOperationResult::kDataError;
     {
       CMyComPtr<ISequentialInStream> inSeqStream;
       HRESULT hres = GetStream(index, &inSeqStream);
@@ -2794,21 +2784,21 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       {
         if (hres == E_OUTOFMEMORY)
           return hres;
-        res = NExtract::NOperationResult::kUnsupportedMethod;
+        opRes = NExtract::NOperationResult::kUnsupportedMethod;
       }
       else
       {
         RINOK(hres)
         {
-          hres = copyCoder->Code(inSeqStream, outStream, NULL, NULL, progress);
+          hres = copyCoder.Interface()->Code(inSeqStream, outStream, NULL, NULL, lps);
           if (hres == S_OK)
           {
-            if (copyCoderSpec->TotalSize == unpackSize)
-              res = NExtract::NOperationResult::kOK;
+            if (copyCoder->TotalSize == unpackSize)
+              opRes = NExtract::NOperationResult::kOK;
           }
           else if (hres == E_NOTIMPL)
           {
-            res = NExtract::NOperationResult::kUnsupportedMethod;
+            opRes = NExtract::NOperationResult::kUnsupportedMethod;
           }
           else if (hres != S_FALSE)
           {
@@ -2817,7 +2807,8 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
         }
       }
     }
-    RINOK(extractCallback->SetOperationResult(res))
+   }
+    RINOK(extractCallback->SetOperationResult(opRes))
   }
 
   return S_OK;

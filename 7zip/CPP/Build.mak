@@ -1,7 +1,8 @@
 LIBS = $(LIBS) oleaut32.lib ole32.lib
 
+# CFLAGS = $(CFLAGS) -DZ7_NO_UNICODE
 !IFNDEF MY_NO_UNICODE
-CFLAGS = $(CFLAGS) -DUNICODE -D_UNICODE
+# CFLAGS = $(CFLAGS) -DUNICODE -D_UNICODE
 !ENDIF
 
 !IF "$(CC)" != "clang-cl"
@@ -21,10 +22,14 @@ O=o
 # CFLAGS = $(CFLAGS) -FAsc -Fa$O/asm/
 !ENDIF
 
+# LFLAGS = $(LFLAGS) /guard:cf
+
 
 !IF "$(PLATFORM)" == "x64"
 MY_ML = ml64 -WX
 #-Dx64
+!ELSEIF "$(PLATFORM)" == "arm64"
+MY_ML = armasm64
 !ELSEIF "$(PLATFORM)" == "arm"
 MY_ML = armasm -WX
 !ELSE
@@ -52,30 +57,34 @@ LIBS = $(LIBS) user32.lib advapi32.lib shell32.lib
 
 !IF "$(PLATFORM)" == "arm"
 COMPL_ASM = $(MY_ML) $** $O/$(*B).obj
+!ELSEIF "$(PLATFORM)" == "arm64"
+COMPL_ASM = $(MY_ML) $** $O/$(*B).obj
 !ELSE
 COMPL_ASM = $(MY_ML) -c -Fo$O/ $**
 !ENDIF
 
+CFLAGS_c_switch = -c -Fo$O/
+
 !IFDEF OLD_COMPILER
 CFLAGS_WARN_LEVEL = -W4
 !ELSE
+!IF "$(CC)" != "clang-cl"
+CFLAGS_WARN_LEVEL = -Wall -analyze
+!ELSE
+CFLAGS_WARN_LEVEL = -Wall --analyze -Xclang -analyzer-output=text
+# CFLAGS_c_switch =
+!ENDIF
 CFLAGS_WARN_LEVEL = -Wall
 !ENDIF
 
-CFLAGS = $(CFLAGS) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -WX -EHsc -Gy -GR- -GF
+CFLAGS = $(CFLAGS) -nologo $(CFLAGS_c_switch) $(CFLAGS_WARN_LEVEL) -WX -EHsc -Gy -GR- -GF
 
 !IF "$(CC)" == "clang-cl"
-
-CFLAGS = $(CFLAGS) \
-  -Werror \
-  -Wall \
-  -Wextra \
-  -Weverything \
-  -Wfatal-errors \
-
+CFLAGS = $(CFLAGS) -Werror -Wall -Wextra -Weverything -Wfatal-errors
 !ENDIF
 
-!IFDEF MY_DYNAMIC_LINK
+# !IFDEF MY_DYNAMIC_LINK
+!IF "$(MY_DYNAMIC_LINK)" != ""
 CFLAGS = $(CFLAGS) -MD
 !ELSE
 !IFNDEF MY_SINGLE_THREAD
@@ -103,7 +112,13 @@ CFLAGS = $(CFLAGS) -Zc:forScope
 
 !IFNDEF UNDER_CE
 !IF "$(CC)" != "clang-cl"
-CFLAGS = $(CFLAGS) -MP4
+MP_NPROC = 16
+!IFDEF NUMBER_OF_PROCESSORS
+!IF $(NUMBER_OF_PROCESSORS) < $(MP_NPROC)
+MP_NPROC = $(NUMBER_OF_PROCESSORS)
+!ENDIF
+!ENDIF
+CFLAGS = $(CFLAGS) -MP$(MP_NPROC)
 !ENDIF
 !IFNDEF PLATFORM
 # CFLAGS = $(CFLAGS) -arch:IA32
@@ -152,7 +167,13 @@ LFLAGS = $(LFLAGS) /FIXED:NO
 # LFLAGS = $(LFLAGS) /FILEALIGN:4096
 !ENDIF
 
-
+!IFNDEF DEF_FILE
+!IF "$(PLATFORM)" == "x86" || "$(PLATFORM)" == "arm"
+LFLAGS = $(LFLAGS) /STACK:2097152
+!ELSE IF "$(PLATFORM)" == "x64" || "$(PLATFORM)" == "arm64" || "$(PLATFORM)" == "ia64"
+LFLAGS = $(LFLAGS) /STACK:8388608
+!ENDIF
+!ENDIF
 
 # !IF "$(PLATFORM)" == "x64"
 
@@ -167,6 +188,15 @@ LFLAGS = $(LFLAGS) /SUBSYSTEM:windows,$(MY_SUB_SYS_VER)
 !ENDIF
 
 !ENDIF
+
+
+!IF "$(PLATFORM)" == "arm64"
+CLANG_FLAGS_TARGET = --target=arm64-pc-windows-msvc
+!ENDIF
+
+COMPL_CLANG_SPEC=clang-cl $(CLANG_FLAGS_TARGET)
+COMPL_ASM_CLANG = $(COMPL_CLANG_SPEC) -nologo -c -Fo$O/ $(CFLAGS_WARN_LEVEL) -WX $**
+# COMPL_C_CLANG   = $(COMPL_CLANG_SPEC) $(CFLAGS_O2)
 
 
 PROGPATH = $O\$(PROG)
@@ -224,6 +254,6 @@ predef: empty.c
 predef2: A.cpp
 	$(COMPL)   -EP -Zc:preprocessor -PD
 predef3: A.cpp
-	$(COMPL)   -E -dM 
+	$(COMPL)   -E -dM
 predef4: A.cpp
 	$(COMPL_O2)   -E

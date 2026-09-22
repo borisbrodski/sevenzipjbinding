@@ -1,0 +1,164 @@
+/* ============================================================================
+   7-Zip-JBinding JavaDoc theme — matches the website palette (see website/src/
+   styles/global.css). Added on top of the JDK 17 default stylesheet via
+   `javadoc --add-stylesheet`, so it only overrides colors/surfaces.
+
+   Theming logic (mirrors the site):
+   - default            = light palette
+   - OS prefers dark    = dark palette (@media)
+   - <html data-jd-theme="dark"|"light">  = explicit choice, wins over @media
+     (set by theme-sync.js from the same localStorage key the site uses).
+   ========================================================================== */
+
+:root {
+  --jd-bg:          #f7f8fa;
+  --jd-bg-2:        #eef0f4;
+  --jd-surface:     #ffffff;
+  --jd-surface-2:   #f2f4f8;
+  --jd-border:      #e2e4ea;
+  --jd-border-2:    #cdd1da;
+  --jd-text:        #171922;
+  --jd-text-2:      #4b505e;
+  --jd-text-3:      #7b8090;
+  --jd-link:        #1878e0;
+  --jd-link-hover:  #0894c8;
+  --jd-nav-bg:      #14141a;   /* dark nav bar in both themes — brand-consistent */
+  --jd-nav-text:    #c9ccd6;
+  --jd-nav-text-hi: #ffffff;
+  --jd-accent:      #2898f8;
+  --jd-amber:       #c9641a;
+  --jd-code-bg:     #f4f5f8;
+  --jd-tab-active:  linear-gradient(96deg,#0aa8dc,#1878e0 55%,#5848f0);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jd-bg:        #0e0e12;
+    --jd-bg-2:      #14141a;
+    --jd-surface:   #191920;
+    --jd-surface-2: #1f1f28;
+    --jd-border:    #26262f;
+    --jd-border-2:  #33333f;
+    --jd-text:      #eceef2;
+    --jd-text-2:    #a9adb9;
+    --jd-text-3:    #7d8291;
+    --jd-link:      #2898f8;
+    --jd-link-hover:#0ac8f8;
+    --jd-nav-bg:    #08080c;
+    --jd-accent:    #2898f8;
+    --jd-amber:     #f09a4a;
+    --jd-code-bg:   #101016;
+  }
+}
+/* explicit choice (must come after the media query to win) */
+:root[data-jd-theme='dark'] {
+  --jd-bg:#0e0e12; --jd-bg-2:#14141a; --jd-surface:#191920; --jd-surface-2:#1f1f28;
+  --jd-border:#26262f; --jd-border-2:#33333f; --jd-text:#eceef2; --jd-text-2:#a9adb9;
+  --jd-text-3:#7d8291; --jd-link:#2898f8; --jd-link-hover:#0ac8f8; --jd-nav-bg:#08080c;
+  --jd-accent:#2898f8; --jd-amber:#f09a4a; --jd-code-bg:#101016;
+}
+:root[data-jd-theme='light'] {
+  --jd-bg:#f7f8fa; --jd-bg-2:#eef0f4; --jd-surface:#ffffff; --jd-surface-2:#f2f4f8;
+  --jd-border:#e2e4ea; --jd-border-2:#cdd1da; --jd-text:#171922; --jd-text-2:#4b505e;
+  --jd-text-3:#7b8090; --jd-link:#1878e0; --jd-link-hover:#0894c8; --jd-nav-bg:#14141a;
+  --jd-accent:#2898f8; --jd-amber:#c9641a; --jd-code-bg:#f4f5f8;
+}
+
+/* ---- base ---- */
+html, body { background-color: var(--jd-bg) !important; color: var(--jd-text) !important; }
+body { font-family: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif; }
+a:link, a:visited { color: var(--jd-link); }
+a:hover, a:active  { color: var(--jd-link-hover); }
+hr { border: 0; border-top: 1px solid var(--jd-border); }
+.flex-content { background-color: var(--jd-bg) !important; }
+
+/* ---- top / sub nav ---- */
+.top-nav, .bottom-nav { background-color: var(--jd-nav-bg) !important; color: var(--jd-nav-text); }
+.sub-nav { background-color: var(--jd-bg-2) !important; border-bottom: 1px solid var(--jd-border); }
+.top-nav a:link, .top-nav a:active, .top-nav a:visited { color: var(--jd-nav-text) !important; }
+.top-nav a:hover { color: var(--jd-nav-text-hi) !important; }
+.nav-bar-cell1-rev { background: var(--jd-tab-active) !important; color: #fff !important; border-radius: 6px; }
+ul.sub-nav-list-small { background-color: var(--jd-bg-2); }
+.sub-title, .sub-title a { color: var(--jd-text-2); }
+.about-language { color: var(--jd-text-3); }
+
+/* ---- headers / titles ---- */
+.title { color: var(--jd-text) !important; }
+.header h1.title, .header .sub-title { color: var(--jd-text); }
+.package-hierarchy-label, .type-name-label, .type-name-link, .search-tag-link, .preview-label { color: var(--jd-text); }
+
+/* ---- tables ---- */
+.summary-table, .details-table { background-color: var(--jd-surface); }
+.caption span {
+  background: var(--jd-tab-active) !important; color: #fff !important;
+  border-radius: 8px 8px 0 0;
+}
+.table-tabs { background: transparent; }
+div.table-tabs > button.active-table-tab { background: var(--jd-tab-active); color: #fff; }
+div.table-tabs > button.table-tab { background-color: var(--jd-surface-2); color: var(--jd-text-2); }
+.table-header { background: var(--jd-bg-2) !important; color: var(--jd-text-2); font-weight: 600; }
+.even-row-color, .even-row-color .table-header { background-color: var(--jd-surface) !important; }
+.odd-row-color,  .odd-row-color  .table-header { background-color: var(--jd-surface-2) !important; }
+.col-first, .col-second, .col-last, .col-constructor-name, .col-summary-item-name { color: var(--jd-text); }
+
+/* ---- code ---- */
+code, tt, pre, .member-signature, .snippet-container, code.snippet-markup {
+  color: var(--jd-text);
+}
+pre, .snippet-container { background-color: var(--jd-code-bg) !important; border: 1px solid var(--jd-border); border-radius: 8px; }
+code, tt { background: transparent; }
+.member-signature { background-color: var(--jd-surface-2); border-left: 3px solid var(--jd-accent); border-radius: 0 6px 6px 0; }
+.member-signature .modifiers { color: var(--jd-amber); }
+.member-signature .return-type { color: var(--jd-accent); }
+.return-type a, .member-signature a { color: var(--jd-link); }
+
+/* ---- blocks / notes / details ---- */
+.block, .description, dl.notes > dd { color: var(--jd-text-2); }
+dl.notes > dt { color: var(--jd-text); }
+.inherited-list, section[class$="-details"] .detail { border-color: var(--jd-border); }
+.deprecation-block, .notes, .preview-block { border-color: var(--jd-border-2); background-color: var(--jd-surface-2); }
+
+/* ---- search box + autocomplete ---- */
+#search-input, #reset-search, input {
+  background-color: var(--jd-surface) !important; color: var(--jd-text) !important;
+  border: 1px solid var(--jd-border-2) !important; border-radius: 6px;
+}
+#search-input::placeholder { color: var(--jd-text-3); }
+ul.ui-autocomplete { background-color: var(--jd-surface); border: 1px solid var(--jd-border-2); }
+ul.ui-autocomplete li { color: var(--jd-text); }
+.ui-autocomplete .result-item:hover, .result-highlight { background-color: var(--jd-bg-2); color: var(--jd-link); }
+.ui-autocomplete-category { color: var(--jd-text-3); border-bottom: 1px solid var(--jd-border); }
+
+/* ---- section wrappers & sub-headings (the light bands in dark mode) ---- */
+.summary section[class$="-summary"],
+.details section[class$="-details"],
+.class-uses .detail, .serialized-class-details {
+  background-color: var(--jd-surface) !important;
+  border: 1px solid var(--jd-border) !important;
+}
+body.class-declaration-page .summary h3,
+body.class-declaration-page .details h3,
+body.class-declaration-page .summary .inherited-list h2 {
+  background-color: var(--jd-bg-2) !important;
+  border: 1px solid var(--jd-border-2) !important;
+  color: var(--jd-text) !important;
+}
+.summary h2, .details h2 { color: var(--jd-text) !important; }
+.inherited-list, section[class$="-details"] .detail {
+  background-color: var(--jd-surface) !important;
+}
+.summary-table, .details-table {
+  border-color: var(--jd-border) !important;
+}
+div.table-tabs { background: transparent !important; }
+div.table-tabs > button { border-color: var(--jd-border) !important; }
+
+/* ---- help page striped tables ---- */
+table.striped { border-color: var(--jd-border-2) !important; }
+table.striped > thead { background-color: var(--jd-bg-2) !important; }
+table.striped > tbody > tr:nth-child(even) { background-color: var(--jd-surface) !important; }
+table.striped > tbody > tr:nth-child(odd)  { background-color: var(--jd-surface-2) !important; }
+table.striped > * > tr > th, table.striped > * > tr > td { border-color: var(--jd-border) !important; }
+
+/* scrollbars to match the site */
+* { scrollbar-color: var(--jd-border-2) transparent; }

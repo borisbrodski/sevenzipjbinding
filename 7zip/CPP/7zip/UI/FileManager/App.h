@@ -109,7 +109,7 @@ public:
   HRESULT Create(HWND hwnd, const UString &mainPath, const UString &arcFormat, int xSizes[2], bool needOpenArc, COpenResult &openRes);
   void Read();
   void Save();
-  void Release();
+  void ReleaseApp();
 
   // void SetFocus(int panelIndex) { Panels[panelIndex].SetFocusToList(); }
   void SetFocusToLastItem() { Panels[LastFocusedPanel].SetFocusToLastRememberedItem(); }
@@ -203,11 +203,19 @@ public:
   int GetTimestampLevel() const { return Panels[LastFocusedPanel]._timestampLevel; }
   void SetTimestampLevel(int level)
   {
-    unsigned i;
-    for (i = 0; i < kNumPanelsMax; i++)
+    for (unsigned i = 0; i < kNumPanelsMax; i++)
     {
       CPanel &panel = Panels[i];
       panel._timestampLevel = level;
+    }
+    RedrawListItems_InPanels();
+  }
+
+  void RedrawListItems_InPanels()
+  {
+    for (unsigned i = 0; i < kNumPanelsMax; i++)
+    {
+      CPanel &panel = Panels[i];
       if (panel.PanelCreated)
         panel.RedrawListItems();
     }

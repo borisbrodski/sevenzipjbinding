@@ -12,7 +12,7 @@
 namespace NArchive {
 namespace NWim {
 
-static const Int32 kNumImagesMaxUpdate = (1 << 10);
+const Int32 kNumImagesMaxUpdate = 1 << 10;
 
 Z7_CLASS_IMP_CHandler_IInArchive_5(
     IArchiveGetRawProps
@@ -23,17 +23,20 @@ Z7_CLASS_IMP_CHandler_IInArchive_5(
 )
   CDatabase _db;
   UInt32 _version;
-  bool _isOldVersion;
   UInt32 _bootIndex;
 
   CObjectVector<CVolume> _volumes;
   CObjectVector<CWimXml> _xmls;
   // unsigned _nameLenForStreams;
-  bool _xmlInComments;
-  
+ 
   unsigned _numXmlItems;
   unsigned _numIgnoreItems;
 
+  bool _isOldVersion;
+  bool _xmlInComments;
+
+  bool _error_in_PartNumber;
+  bool _volError;
   bool _xmlError;
   bool _isArc;
   bool _unsupported;
@@ -43,16 +46,17 @@ Z7_CLASS_IMP_CHandler_IInArchive_5(
   int _defaultImageNumber;
 
   bool _showImageNumber;
-
   bool _keepMode_ShowImageNumber;
+  bool _disable_Sha1Check;
 
   UInt64 _phySize;
-  int _firstVolumeIndex;
+  Int32 _firstVolumeIndex;
 
   CHandlerTimeOptions _timeOptions;
 
   void InitDefaults()
   {
+    _disable_Sha1Check = false;
     _set_use_ShowImageNumber = false;
     _set_showImageNumber = false;
     _defaultImageNumber = -1;
@@ -79,7 +83,18 @@ Z7_CLASS_IMP_CHandler_IInArchive_5(
     return true;
   }
 
-  bool ThereIsError() const { return _xmlError || _db.ThereIsError(); }
+  void ClearErrors()
+  {
+    _error_in_PartNumber = false;
+    _volError = false;
+    _xmlError = false;
+  }
+
+  bool ThereIsError() const
+  {
+    return _error_in_PartNumber || _volError || _xmlError
+      || _db.ThereIsError();
+  }
   HRESULT GetSecurity(UInt32 realIndex, const void **data, UInt32 *dataSize, UInt32 *propType);
 
   HRESULT GetOutProperty(IArchiveUpdateCallback *callback, UInt32 callbackIndex, Int32 arcIndex, PROPID propID, PROPVARIANT *value);
