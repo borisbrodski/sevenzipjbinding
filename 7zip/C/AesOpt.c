@@ -23,13 +23,10 @@ Igor Pavlov : Public domain */
         #endif
       #if defined(__clang__) && (__clang_major__ >= 8) \
           || defined(__GNUC__) && (__GNUC__ >= 8)
-// ---------------------------------
-// TODO Activate in newer 7z version
-// ---------------------------------
-        /* #define USE_INTEL_VAES */
-/*         #if !defined(__AES__) || !defined(__VAES__) || !defined(__AVX__) || !defined(__AVX2__) */
-/*           #define ATTRIB_VAES __attribute__((__target__("aes,vaes,avx,avx2"))) */
-/*         #endif */
+        #define USE_INTEL_VAES
+        #if !defined(__AES__) || !defined(__VAES__) || !defined(__AVX__) || !defined(__AVX2__)
+          #define ATTRIB_VAES __attribute__((__target__("aes,vaes,avx,avx2")))
+        #endif
       #endif
   #elif defined(_MSC_VER)
     #if (_MSC_VER > 1500) || (_MSC_FULL_VER >= 150030729)
