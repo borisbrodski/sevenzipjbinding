@@ -11,12 +11,13 @@ OPTION(STATIC_BUILD "links the dynamic library statically. Such library will not
 
 SET(MINGW32     No CACHE BOOL "Use MinGW toolchain (32 bit)")
 SET(MINGW64     No CACHE BOOL "Use MinGW toolchain (64 bit)")
+SET(MINGWARM64  No CACHE BOOL "Use llvm-mingw toolchain (Windows on Arm, aarch64)")
 SET(RUNTIME_LIB CACHE BOOL "Compiler runtime library to package and load before 7-Zip-JBinding")
 
 SET(JAVA_TMP       CACHE PATH "Path to tmp directory")
 SET(JAVA_PARAMS    CACHE STRING "Additional parameters for java")
 
-IF (MINGW32 OR MINGW64)
+IF (MINGW32 OR MINGW64 OR MINGWARM64)
     SET(MINGW Yes)
 ELSE()
     SET(MINGW No)
@@ -118,7 +119,15 @@ MACRO(CREATE_COMPILE_JAVA_CUSTOM_COMMAND
     SET(JAVAC_ARGS_FILE ${PROJECT_BINARY_DIR}/javac-args-${P_BUILD_NAME}.tmp)
     FILE(GLOB_RECURSE JAVA_SOURCE_FILES RELATIVE ${P_SRC_DIR} ${P_SRC_DIR}/*.java)
 
-    FILE(WRITE ${JAVAC_ARGS_FILE} "-source 8 -target 8\n")
+    IF(JAVA_HEADER_USE_JAVAC)
+        # Modern JDK (10+, no javah): use --release 8 so BOTH the bytecode and the API compiled against
+        # are strictly Java 8. Plain -source/-target 8 emits v52 bytecode but still compiles against the
+        # modern JDK's class library, which could pull in post-8 APIs; --release 8 forbids that, so the
+        # jar is guaranteed to run on a Java 8 runtime. (JDK 8 itself has no --release, hence the branch.)
+        FILE(WRITE ${JAVAC_ARGS_FILE} "--release 8\n")
+    ELSE()
+        FILE(WRITE ${JAVAC_ARGS_FILE} "-source 8 -target 8\n")
+    ENDIF()
     FILE(APPEND ${JAVAC_ARGS_FILE} "-encoding UTF-8\n")
     FILE(APPEND ${JAVAC_ARGS_FILE} "-d ${BIN_DIR}\n")
     IF(NOT "${ARGN}" STREQUAL "")

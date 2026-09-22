@@ -45,7 +45,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * libraries for respective one or more platforms. Here are some examples of 7-Zip-JBinding platform jar files.
  * <ul>
  * <li><code>sevenzipjbinding-Linux-i386.jar</code> with native library for exact one platform: Linux, 32 bit</li>
- * <li><code>sevenzipjbinding-AllWindows.jar</code> with native libraries for two platforms: Windows 32 and 64 bit</li>
+ * <li><code>sevenzipjbinding-AllWindows.jar</code> with native libraries for three platforms: Windows 32-bit, 64-bit and ARM64</li>
  * <li><code>sevenzipjbinding-AllPlatforms.jar</code> with native libraries for all available platforms</li>
  * </ul>
  * The single and multiple platform jar files can be determined by counting dashes in the filename. Single platform jar

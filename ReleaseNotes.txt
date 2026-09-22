@@ -1,6 +1,15 @@
 7-Zip-JBinding Release Notes
 ============================
 
+Unreleased
+----------
+
+    * New platform: Windows on Arm (arm64). A native aarch64 Windows library
+      (platform 'Windows-arm64'), built with the llvm-mingw GCC-style toolchain
+      and included in the AllWindows and AllPlatforms jars. The -all-platforms
+      jar auto-detects and loads it on a native arm64 Windows JVM.
+
+
 Known issues
 ------------
 

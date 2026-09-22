@@ -41,13 +41,13 @@ SET(JBINDING_PLATFORM_CPP_FILES)
 IF(MINGW)
     add_definitions(-include PlatformMinGW/StdAfx.h)
     include_directories(PlatformMinGW/)
-    IF(MINGW64)
+    IF(MINGW64 OR MINGWARM64)
         set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
         SET(JBINDING_PLATFORM_CPP_FILES
             #PlatformMinGW/MyWindows.cpp
             #PlatformMinGW/MyUser32.cpp
         )
-    ENDIF(MINGW64)
+    ENDIF()
 ELSE(MINGW)
     ###include_directories(PlatformUnix/)
 ENDIF(MINGW)
@@ -76,6 +76,12 @@ IF(MINGW32)
 ENDIF()
 IF(MINGW64)
     add_definitions(-DMINGW -mthreads -D_JNI_IMPLEMENTATION_ -D_OLEAUT32_ -D_USER32_)
+ENDIF()
+IF(MINGWARM64)
+    # Windows on Arm (aarch64), built with llvm-mingw (clang). Same JNI/Windows defines as the 64-bit
+    # MinGW build. _JNI_IMPLEMENTATION_ makes JNIEXPORT expand to __declspec(dllexport) so the JNI
+    # entry points are exported from the DLL. (-mthreads is a no-op flavour thing on clang/arm64.)
+    add_definitions(-DMINGW -D_JNI_IMPLEMENTATION_ -D_OLEAUT32_ -D_USER32_)
 ENDIF()
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -113,6 +119,12 @@ IF(MINGW)
         -D_UNICODE     # since 9.13
         -DBREAK_HANDLER
         -DBENCH_MT
+        # Opt out of 7-Zip's NTFS security-descriptor/privilege code (EnumDirItems.cpp ->
+        # InitLocalPrivileges(), defined only in 7-Zip's ArchiveExtractCallback.cpp/UpdateCallback.cpp
+        # which jbinding does NOT link - it uses its own CPPToJava*Callback). On a *nix build this code
+        # is never compiled (no _WIN32); defining this makes the Windows/MinGW build match and avoids
+        # 'undefined symbol: InitLocalPrivileges()' at link time. jbinding never exposes this feature.
+        -DZ7_JB_NO_SECURITY_CODE
     )
 ELSE(MINGW)
 #  -s 
@@ -525,13 +537,31 @@ SET(JAVAH_JAVA_CLASS_LIST
     net.sf.sevenzipjbinding.impl.OutArchiveImpl
 )
 
-
-add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}  
-                   DEPENDS ${SEVENZIPJBINDING_JAR}
-                   WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
-                   COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+# The same three classes as source files, for the 'javac -h' fallback (JDK 10+ has no 'javah').
+SET(JAVAH_JAVA_SRC_LIST
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/SevenZip.java
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/impl/InArchiveImpl.java
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/impl/OutArchiveImpl.java
 )
+
+IF(JAVA_HEADER_USE_JAVAC)
+    # 'javac -h <dir>' emits the JNI headers as a side effect of compiling the given sources; the full
+    # (already built) jar on the classpath resolves every dependency, and -d discards the .class files.
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+                       COMMAND ${JAVA_HEADER_COMPILE} -h ${JAVAH_OUTPUT_DIR} -d ${JAVAH_OUTPUT_DIR}/classes
+                                                      -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_SRC_LIST}
+                       DEPENDS ${SEVENZIPJBINDING_JAR}
+                       WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
+                       COMMENT "javac -h: generating JNI h-files from ${JAVAH_JAVA_CLASS_LIST}"
+    )
+ELSE()
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+                       COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}
+                       DEPENDS ${SEVENZIPJBINDING_JAR}
+                       WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
+                       COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+    )
+ENDIF()
 
 add_library(7-Zip-JBinding
             SHARED
@@ -544,8 +574,13 @@ add_library(7-Zip-JBinding
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
-IF(STATIC_BUILD) 
+IF(STATIC_BUILD)
     SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -static-libgcc -static-libstdc++ ")
+    IF(MINGWARM64)
+        # llvm-mingw: also statically link libc++ / libunwind / libwinpthread so the produced arm64
+        # DLL is fully self-contained (no runtime DLLs to ship alongside it, like the other platforms).
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -static ")
+    ENDIF()
 ENDIF()
 
 IF(MINGW)

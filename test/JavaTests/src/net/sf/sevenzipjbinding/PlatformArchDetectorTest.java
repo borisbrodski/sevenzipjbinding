@@ -96,6 +96,23 @@ public class PlatformArchDetectorTest {
         assertTrue(candidates("   ").isEmpty());
     }
 
+    // ---- platform-name composition (guards the Windows-arm64 platform) -------------------------
+
+    @Test
+    public void windowsArm64PlatformNameComposition() {
+        // getPlatformBestMatch() composes "<os.name first word>-<arch candidate>". A native arm64 JVM
+        // on Windows reports os.name="Windows 11"/"Windows Server ..." and os.arch="aarch64", so the
+        // exact platform it looks for FIRST must be "Windows-arm64" (the sevenzipjbinding-Windows-arm64
+        // jar). This locks the two halves - arch normalization + os.name split - for the new platform.
+        List<String> archCandidates = candidates("aarch64");
+        assertEquals("arm64 must be the first (preferred) candidate", "arm64", archCandidates.get(0));
+        for (String osName : new String[] { "Windows 11", "Windows Server 2025", "Windows 10" }) {
+            String system = osName.split(" ")[0];
+            assertEquals("Windows", system);
+            assertEquals("Windows-arm64", system + "-" + archCandidates.get(0));
+        }
+    }
+
     // ---- diagnostics ---------------------------------------------------------------------------
 
     @Test
