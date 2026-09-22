@@ -11,12 +11,13 @@ OPTION(STATIC_BUILD "links the dynamic library statically. Such library will not
 
 SET(MINGW32     No CACHE BOOL "Use MinGW toolchain (32 bit)")
 SET(MINGW64     No CACHE BOOL "Use MinGW toolchain (64 bit)")
+SET(MINGWARM64  No CACHE BOOL "Use llvm-mingw toolchain (Windows on Arm, aarch64)")
 SET(RUNTIME_LIB CACHE BOOL "Compiler runtime library to package and load before 7-Zip-JBinding")
 
 SET(JAVA_TMP       CACHE PATH "Path to tmp directory")
 SET(JAVA_PARAMS    CACHE STRING "Additional parameters for java")
 
-IF (MINGW32 OR MINGW64)
+IF (MINGW32 OR MINGW64 OR MINGWARM64)
     SET(MINGW Yes)
 ELSE()
     SET(MINGW No)

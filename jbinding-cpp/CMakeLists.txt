@@ -41,13 +41,13 @@ SET(JBINDING_PLATFORM_CPP_FILES)
 IF(MINGW)
     add_definitions(-include PlatformMinGW/StdAfx.h)
     include_directories(PlatformMinGW/)
-    IF(MINGW64)
+    IF(MINGW64 OR MINGWARM64)
         set_source_files_properties(PlatformMinGW/MyUser32.cpp PROPERTIES COMPILE_FLAGS -DNO_MY_STDAFX)
         SET(JBINDING_PLATFORM_CPP_FILES
             #PlatformMinGW/MyWindows.cpp
             #PlatformMinGW/MyUser32.cpp
         )
-    ENDIF(MINGW64)
+    ENDIF()
 ELSE(MINGW)
     ###include_directories(PlatformUnix/)
 ENDIF(MINGW)
@@ -76,6 +76,12 @@ IF(MINGW32)
 ENDIF()
 IF(MINGW64)
     add_definitions(-DMINGW -mthreads -D_JNI_IMPLEMENTATION_ -D_OLEAUT32_ -D_USER32_)
+ENDIF()
+IF(MINGWARM64)
+    # Windows on Arm (aarch64), built with llvm-mingw (clang). Same JNI/Windows defines as the 64-bit
+    # MinGW build. _JNI_IMPLEMENTATION_ makes JNIEXPORT expand to __declspec(dllexport) so the JNI
+    # entry points are exported from the DLL. (-mthreads is a no-op flavour thing on clang/arm64.)
+    add_definitions(-DMINGW -D_JNI_IMPLEMENTATION_ -D_OLEAUT32_ -D_USER32_)
 ENDIF()
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -562,8 +568,13 @@ add_library(7-Zip-JBinding
 #GET_TARGET_PROPERTY(SEVENZIP_JBINDING_LIB 7-Zip-JBinding LOCATION)
 #SET_PROPERTY(GLOBAL PROPERTY SEVENZIP_JBINDING_LIB ${SEVENZIP_JBINDING_LIB}) 
 
-IF(STATIC_BUILD) 
+IF(STATIC_BUILD)
     SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -static-libgcc -static-libstdc++ ")
+    IF(MINGWARM64)
+        # llvm-mingw: also statically link libc++ / libunwind / libwinpthread so the produced arm64
+        # DLL is fully self-contained (no runtime DLLs to ship alongside it, like the other platforms).
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -static ")
+    ENDIF()
 ENDIF()
 
 IF(MINGW)
