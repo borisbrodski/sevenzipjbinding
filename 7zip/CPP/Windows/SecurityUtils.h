@@ -3,7 +3,7 @@
 #ifndef ZIP7_INC_WINDOWS_SECURITY_UTILS_H
 #define ZIP7_INC_WINDOWS_SECURITY_UTILS_H
 
-#include <ntsecapi.h>
+#include <NTSecAPI.h>
 
 #include "Defs.h"
 

@@ -11,7 +11,6 @@
 #include <unistd.h>
 #include <time.h>
 #include <utime.h>
-#include <sys/time.h> // 7-Zip-JBinding: utimes()/timeval for the glibc<2.6 SetDirTime fallback
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -1101,50 +1100,9 @@ bool SetDirTime(CFSTR path, const CFiTime *cTime, const CFiTime *aTime, const CF
 
   if (!needChange)
     return true;
-  // 7-Zip-JBinding: decide whether utimensat() is available. Compute it with a NESTED #if so that
-  // __GLIBC_PREREQ(2, 6) is only referenced when __GLIBC_PREREQ is actually a defined macro. Writing
-  // `defined(__GLIBC_PREREQ) && !__GLIBC_PREREQ(2, 6)` on one line fails on non-glibc toolchains
-  // (e.g. macOS/AppleClang: "token is not a valid binary operator") because the preprocessor still
-  // parses the whole expression, and there __GLIBC_PREREQ is an undefined identifier -> 0(2, 6).
-#if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
-#  if !__GLIBC_PREREQ(2, 6)
-#    define Z7_JB_NO_UTIMENSAT
-#  endif
-#endif
-#if defined(Z7_JB_NO_UTIMENSAT)
-  // glibc < 2.6 (e.g. CentOS 5 / manylinux1 = glibc 2.5) has no utimensat() (and no
-  // UTIME_OMIT). Fall back to utimes() (microsecond precision). utimes() sets both a/m time at once
-  // and has no per-field "omit", so preserve an omitted field by reading the file's current time.
-  {
-    struct timeval tv[2];
-    struct stat st;
-    const bool haveStat = (stat(path, &st) == 0);
-    for (int i = 0; i < 2; i++)
-    {
-      const bool omit =
-        #ifdef UTIME_OMIT
-          (times[i].tv_nsec == UTIME_OMIT);
-        #else
-          (times[i].tv_sec == 0 && times[i].tv_nsec == 0);
-        #endif
-      if (omit)
-      {
-        tv[i].tv_sec = haveStat ? (i == 0 ? st.st_atime : st.st_mtime) : time(NULL);
-        tv[i].tv_usec = 0;
-      }
-      else
-      {
-        tv[i].tv_sec = times[i].tv_sec;
-        tv[i].tv_usec = (long)(times[i].tv_nsec / 1000);
-      }
-    }
-    return utimes(path, tv) == 0;
-  }
-#else
   const int flags = 0; // follow link
     // = AT_SYMLINK_NOFOLLOW; // don't follow link
   return utimensat(AT_FDCWD, path, times, flags) == 0;
-#endif
 }
 
 

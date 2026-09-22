@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.astro/
-
-# generated JavaDoc (run javadoc-theme/build-javadoc.sh)
-public/javadoc/
-public/javadoc-history/
