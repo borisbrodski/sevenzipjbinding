@@ -525,13 +525,31 @@ SET(JAVAH_JAVA_CLASS_LIST
     net.sf.sevenzipjbinding.impl.OutArchiveImpl
 )
 
-
-add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
-                   COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}  
-                   DEPENDS ${SEVENZIPJBINDING_JAR}
-                   WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
-                   COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+# The same three classes as source files, for the 'javac -h' fallback (JDK 10+ has no 'javah').
+SET(JAVAH_JAVA_SRC_LIST
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/SevenZip.java
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/impl/InArchiveImpl.java
+    ${JAVA_SOURCE_DIR}/net/sf/sevenzipjbinding/impl/OutArchiveImpl.java
 )
+
+IF(JAVA_HEADER_USE_JAVAC)
+    # 'javac -h <dir>' emits the JNI headers as a side effect of compiling the given sources; the full
+    # (already built) jar on the classpath resolves every dependency, and -d discards the .class files.
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+                       COMMAND ${JAVA_HEADER_COMPILE} -h ${JAVAH_OUTPUT_DIR} -d ${JAVAH_OUTPUT_DIR}/classes
+                                                      -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_SRC_LIST}
+                       DEPENDS ${SEVENZIPJBINDING_JAR}
+                       WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
+                       COMMENT "javac -h: generating JNI h-files from ${JAVAH_JAVA_CLASS_LIST}"
+    )
+ELSE()
+    add_custom_command(OUTPUT ${JBINDING_JAVAH_H_FILES}
+                       COMMAND ${JAVA_HEADER_COMPILE} -jni -d . -classpath ${SEVENZIPJBINDING_JAR} ${JAVAH_JAVA_CLASS_LIST}
+                       DEPENDS ${SEVENZIPJBINDING_JAR}
+                       WORKING_DIRECTORY ${JAVAH_OUTPUT_DIR}
+                       COMMENT "javah: generating h-files from java classes ${JAVAH_JAVA_CLASS_LIST}"
+    )
+ENDIF()
 
 add_library(7-Zip-JBinding
             SHARED

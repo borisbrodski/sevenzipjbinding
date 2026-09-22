@@ -167,8 +167,15 @@ IF(NOT JAVA_HEADER_COMPILE)
     
     IF(JAVA_HEADER_COMPILE)
         MESSAGE("-- Looking for java header compiler 'javah' - found: ${JAVA_HEADER_COMPILE}")
+        SET(JAVA_HEADER_USE_JAVAC No CACHE INTERNAL "Generate JNI headers with 'javac -h' instead of 'javah'")
     ELSE()
-        MESSAGE(FATAL_ERROR "Java header compiler 'javah' not found. ${HELP}")
+        # 'javah' was removed in JDK 10. Fall back to 'javac -h' (available since JDK 8), which
+        # generates identical JNI headers from the sources. This is required for toolchains where no
+        # JDK<=9 is available - e.g. Windows/arm64, for which no JDK 8 exists at all (Java 8 predates
+        # Windows-on-Arm). The produced .h files and the resulting jar stay Java-8 compatible.
+        MESSAGE("-- 'javah' not found (removed in JDK 10+) - will generate JNI headers with 'javac -h'")
+        SET(JAVA_HEADER_COMPILE "${JAVA_COMPILE}")
+        SET(JAVA_HEADER_USE_JAVAC Yes CACHE INTERNAL "Generate JNI headers with 'javac -h' instead of 'javah'")
     ENDIF()
 ENDIF()
 
