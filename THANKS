@@ -37,7 +37,7 @@ Special thanks to
   * finding some forgotten DeleteLocalRefs
 
 
-AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01-2.2 release
+AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01 releases
 (the 16.02 -> 23.01 engine upgrade, the Java 5 -> Java 8 port, the cross-platform
 build & test farm, and the website and documentation):
 

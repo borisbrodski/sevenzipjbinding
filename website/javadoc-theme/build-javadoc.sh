@@ -9,7 +9,7 @@ SRC="$REPO/jbinding-java/src"
 OUT="$HERE/../public/javadoc"
 JD="${JAVADOC:-/usr/lib/jvm/java-17-openjdk-amd64/bin/javadoc}"
 VERSION="$(sed -n 's/^SET(SEVENZIPJBINDING_VERSON \([^)]*\)).*/\1/p' "$REPO/CMakeLists.txt" | head -1)"
-[ -n "$VERSION" ] || VERSION="23.01-2.2"
+[ -n "$VERSION" ] || VERSION="23.01-2.3"
 
 echo "JavaDoc $VERSION  ->  $OUT   (javadoc: $JD)"
 rm -rf "$OUT"; mkdir -p "$OUT"

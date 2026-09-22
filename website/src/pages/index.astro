@@ -13,7 +13,7 @@ try (IInArchive archive = SevenZip.openInArchive(null, // autodetect format
     }
 }`;
 
-const V = '23.01-2.2';
+const V = '23.01-2.3';
 const G = 'net.sf.sevenzipjbinding';
 const gradleKts = `implementation("${G}:sevenzipjbinding:${V}")
 implementation("${G}:sevenzipjbinding-all-platforms:${V}")`;
@@ -27,12 +27,12 @@ const javaExampleHtml = await highlightJava(javaExample);
 const mavenDep = `<dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding</artifactId>
-    <version>23.01-2.2</version>
+    <version>23.01-2.3</version>
 </dependency>
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding-all-platforms</artifactId>
-    <version>23.01-2.2</version>
+    <version>23.01-2.3</version>
 </dependency>`;
 ---
 <Base title="7-Zip-JBinding — the 7-Zip archive engine for Java">
@@ -43,7 +43,7 @@ const mavenDep = `<dependency>
     <div class="container hero-grid">
       <div class="hero-copy">
         <div class="badges">
-          <span class="badge"><span class="dot"></span> v23.01-2.2 · all platforms green</span>
+          <span class="badge"><span class="dot"></span> v23.01-2.3 · all platforms green</span>
           <span class="badge">LGPL-2.1</span>
           <span class="badge warm">Java 8+</span>
         </div>
@@ -234,9 +234,9 @@ const mavenDep = `<dependency>
       <div class="release-strip card">
         <div>
           <div class="kicker" style="margin-bottom:4px">Latest release</div>
-          <h3 style="font-size:1.3rem; margin:0 0 6px">23.01-2.2 <span class="rel-date">· September 2026</span></h3>
-          <p style="margin:0">7-Zip engine 23.01 · Java 8 baseline · XZ compression · Apple Silicon
-            · musl/Alpine builds · runtime platform auto-detection</p>
+          <h3 style="font-size:1.3rem; margin:0 0 6px">23.01-2.3 <span class="rel-date">· September 2026</span></h3>
+          <p style="margin:0">Windows on Arm (arm64) · 7-Zip engine 23.01 · Java 8 baseline · XZ compression
+            · Apple Silicon · musl/Alpine builds · runtime platform auto-detection</p>
         </div>
         <div class="release-cta">
           <div class="release-actions">

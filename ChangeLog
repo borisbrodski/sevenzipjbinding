@@ -1,8 +1,7 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Unreleased
-----------
+Release - 23.01-2.3 (new platform: Windows on Arm, based on 7-Zip 23.01)
 
 	* New platform: Windows on Arm (arm64) - native aarch64 Windows DLL built
 	  with llvm-mingw (clang/LLD + mingw-w64; stock GNU gcc has no Windows-arm64
