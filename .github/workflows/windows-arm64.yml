@@ -1,0 +1,96 @@
+name: Windows arm64 build & test
+
+# Build the native Windows-on-Arm (aarch64) library with llvm-mingw (clang/LLD + mingw-w64 - the
+# GCC-style MinGW toolchain; stock GNU gcc has no Windows-arm64 target, and we avoid MSVC) and run the
+# full JUnit suite natively on a windows-11-arm hosted runner (free for public repos).
+#
+# The runner's native arm64 JDK is 17: JDK 10+ has no 'javah', so CMake generates the JNI headers with
+# 'javac -h' instead (see cmake/FindJavaExtended.cmake). The jar stays Java-8 targeted.
+#
+# Manual-only (workflow_dispatch):
+#   gh workflow run windows-arm64.yml --ref windows-arm64
+on:
+  workflow_dispatch:
+
+env:
+  LLVM_MINGW_VERSION: "20250709"
+
+jobs:
+  build-test:
+    name: Windows arm64 build + test (llvm-mingw, native)
+    runs-on: windows-11-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up arm64 JDK 17 (native; javah absent -> CMake uses 'javac -h')
+        uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+
+      - name: Install llvm-mingw (native aarch64 build)
+        shell: pwsh
+        run: |
+          $ver = "${env:LLVM_MINGW_VERSION}"
+          $zip = "llvm-mingw-$ver-ucrt-aarch64.zip"
+          $url = "https://github.com/mstorsjo/llvm-mingw/releases/download/$ver/$zip"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile llvm-mingw.zip
+          Expand-Archive -Path llvm-mingw.zip -DestinationPath C:\llvm-mingw-root -Force
+          $dir = (Get-ChildItem C:\llvm-mingw-root -Filter "llvm-mingw-*" -Directory | Select-Object -First 1).FullName
+          "$dir\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.6'
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v6
+
+      - name: Toolchain info
+        shell: bash
+        run: |
+          set -eux
+          aarch64-w64-mingw32-clang --version | head -1
+          cmake --version | head -1
+          ninja --version
+          echo "JAVA_HOME=$JAVA_HOME"; "$JAVA_HOME/bin/java" -version
+
+      - name: Configure + build (llvm-mingw aarch64)
+        shell: bash
+        run: |
+          set -eux
+          mkdir build && cd build
+          cmake .. -G Ninja \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DMINGWARM64=Yes \
+            -DJAVA_SYSTEM=Windows -DJAVA_ARCH=arm64 \
+            -DCMAKE_C_COMPILER=aarch64-w64-mingw32-clang \
+            -DCMAKE_CXX_COMPILER=aarch64-w64-mingw32-clang++ \
+            -DCMAKE_RC_COMPILER=aarch64-w64-mingw32-windres \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DJAVA_JDK="$JAVA_HOME"
+          cmake --build . -j
+          cmake --build . --target package
+          echo "== built =="; ls -1 sevenzipjbinding-*-Windows-arm64.* || true
+
+      - name: Verify the DLL is an arm64 PE
+        shell: bash
+        run: |
+          set -eux
+          DLL=$(find build -name '*7-Zip-JBinding.dll' | head -1)
+          test -n "$DLL"
+          llvm-readobj --file-headers "$DLL" | grep -iE 'Machine|ARM64|Aarch64'
+
+      - name: Run tests (ctest, native arm64 JVM)
+        shell: bash
+        run: cd build && ctest --output-on-failure
+
+      - name: Upload Windows arm64 platform zip
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-arm64
+          path: build/sevenzipjbinding-*-Windows-arm64.zip
+          if-no-files-found: warn
