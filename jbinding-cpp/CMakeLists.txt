@@ -594,6 +594,12 @@ IF(MINGW)
 #   TARGET_LINK_LIBRARIES(7-Zip-JBinding c)
 ELSE(MINGW)
     TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c pthread)
+    IF(NOT APPLE)
+        # 7-Zip 26.03's TimeUtils.cpp calls clock_gettime(); on old glibc (<2.17, e.g. manylinux2010
+        # and the old-glibc ARM cross toolchains) that symbol lives in librt, so link -lrt on Linux.
+        # Harmless on modern glibc (librt is a stub there); librt doesn't exist on macOS (NOT APPLE).
+        TARGET_LINK_LIBRARIES(7-Zip-JBinding rt)
+    ENDIF()
 ENDIF(MINGW)
 
 
