@@ -574,7 +574,10 @@ Are there any ways to fix the problems with arm64-wine and x64-SDE cases?
       return False;
     }
     */
-    printf("====== signal(SIGILL)\n");
+    PRF(printf("====== signal(SIGILL)\n");) // 7-Zip-JBinding: was a bare printf (upstream 26.03 bug) -
+    // unlike every other printf here it wasn't wrapped in the PRF() debug no-op, so it (a) spammed
+    // stdout at runtime from a library, and (b) broke the build on clang-20/llvm-mingw (Windows-arm64):
+    // no <stdio.h> -> implicit-function-declaration is a hard error there. Candidate to report upstream.
     signal_prev = signal(SIGILL, Sha512_signal_Handler);
     if (signal_prev == SIG_ERR)
     {
