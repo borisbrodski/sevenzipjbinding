@@ -107,6 +107,9 @@ add_definitions(
 #    -DTRACE_ON
     -fPIC
     -fexceptions
+    # Disable 7-Zip's 256-bit VAES AES path (x86/x64 only; see 7zip/C/AesOpt.c). Old MinGW binutils
+    # can't assemble the vaes* opcodes, and VAES faulted under QEMU x86_64 in CI. AES-NI stays on.
+    -DZ7_JB_DISABLE_VAES
 )
 
 IF(MINGW)

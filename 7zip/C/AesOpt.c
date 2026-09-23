@@ -50,6 +50,16 @@ Igor Pavlov : Public domain */
       // #define Z7_USE_VAES_HW_STUB // for debug
     #endif
 
+    // 7-Zip-JBinding: force-disable the 256-bit VAES path when -DZ7_JB_DISABLE_VAES is set. Needed for
+    // (a) old MinGW binutils (our Windows cross toolchain) which cannot assemble vaesdec/vaesdeclast,
+    // and (b) VAES faulting under QEMU x86_64 emulation in CI. With VAES off, 26.03 emits the stub
+    // AesCtr_Code_HW_256/AesCbc_Decode_HW_256 (Z7_USE_VAES_HW_STUB) so Aes.c still links; AES-NI
+    // (128-bit) is unaffected. Candidate to drop once our toolchains + QEMU handle VAES.
+    #if defined(Z7_JB_DISABLE_VAES) && defined(USE_INTEL_VAES)
+      #undef USE_INTEL_VAES
+      #define Z7_USE_VAES_HW_STUB
+    #endif
+
 
 #ifdef USE_INTEL_AES
 
