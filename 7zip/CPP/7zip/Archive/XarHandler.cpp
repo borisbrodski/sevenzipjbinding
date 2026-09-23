@@ -901,8 +901,13 @@ Z7_COM7F_IMF(CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
 
       case kpidIsDir: prop = item.IsDir; break;
       
-      case kpidSize:     if (item.HasData && !item.IsDir) prop = item.Size; break;
-      case kpidPackSize: if (item.HasData && !item.IsDir) prop = item.PackSize; break;
+      // 7-Zip-JBinding: report Size/PackSize = 0 for a dataless non-dir entry (e.g. an EMPTY file,
+      // which has no <data> element -> HasData=false). Upstream 26.03 added the `item.HasData` guard,
+      // which returns VT_EMPTY (=> null in Java) for empty files; that broke the API contract (files
+      // always had a numeric size in <=23.01) and makes getProperty(SIZE).longValue() NPE for callers.
+      // An empty file's size is definitively 0. (Candidate to report upstream; drop this if 7z changes.)
+      case kpidSize:     if (!item.IsDir) prop = item.HasData ? item.Size     : (UInt64)0; break;
+      case kpidPackSize: if (!item.IsDir) prop = item.HasData ? item.PackSize : (UInt64)0; break;
 
       case kpidMethod:
       {
