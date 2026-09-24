@@ -107,6 +107,9 @@ add_definitions(
 #    -DTRACE_ON
     -fPIC
     -fexceptions
+    # Disable 7-Zip's 256-bit VAES AES path (x86/x64 only; see 7zip/C/AesOpt.c). Old MinGW binutils
+    # can't assemble the vaes* opcodes, and VAES faulted under QEMU x86_64 in CI. AES-NI stays on.
+    -DZ7_JB_DISABLE_VAES
 )
 
 IF(MINGW)
@@ -275,6 +278,8 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzhDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzmsDecoder.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/LzfseDecoder.cpp
+    # New in 7-Zip 26.03: Zstandard decoder (used by ZipHandler + the .zst archive handler).
+    ${SEVEN_ZIP_SRC}/CPP/7zip/Compress/ZstdDecoder.cpp
 
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmHandler.cpp
     ${SEVEN_ZIP_SRC}/CPP/7zip/Archive/Chm/ChmIn.cpp
@@ -443,6 +448,11 @@ SET(SEVEN_ZIP_SOURCE_FILES
     ${SEVEN_ZIP_SRC}/C/XzDec.c
     ${SEVEN_ZIP_SRC}/C/XzEnc.c
     ${SEVEN_ZIP_SRC}/C/XzIn.c
+    # New in 7-Zip 26.03: SHA-512 (Xar hashing) and the Zstandard decoder (Zip/.zst).
+    ${SEVEN_ZIP_SRC}/C/Sha512.c
+    ${SEVEN_ZIP_SRC}/C/Sha512Opt.c
+    ${SEVEN_ZIP_SRC}/C/Xxh64.c
+    ${SEVEN_ZIP_SRC}/C/ZstdDec.c
 )
 
 SET(JBINDING_CPP_FILES
@@ -587,6 +597,12 @@ IF(MINGW)
 #   TARGET_LINK_LIBRARIES(7-Zip-JBinding c)
 ELSE(MINGW)
     TARGET_LINK_LIBRARIES(7-Zip-JBinding dl c pthread)
+    IF(NOT APPLE)
+        # 7-Zip 26.03's TimeUtils.cpp calls clock_gettime(); on old glibc (<2.17, e.g. manylinux2010
+        # and the old-glibc ARM cross toolchains) that symbol lives in librt, so link -lrt on Linux.
+        # Harmless on modern glibc (librt is a stub there); librt doesn't exist on macOS (NOT APPLE).
+        TARGET_LINK_LIBRARIES(7-Zip-JBinding rt)
+    ENDIF()
 ENDIF(MINGW)
 
 

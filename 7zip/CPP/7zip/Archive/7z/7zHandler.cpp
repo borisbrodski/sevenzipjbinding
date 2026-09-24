@@ -272,6 +272,7 @@ Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
         prop = true;
       break;
     }
+    default: break;
   }
   return prop.Detach(value);
   #ifndef Z7_SFX
@@ -291,7 +292,7 @@ bool CHandler::IsFolderEncrypted(CNum folderIndex) const
   if (folderIndex == kNumNoIndex)
     return false;
   const size_t startPos = _db.FoCodersDataOffset[folderIndex];
-  const Byte *p = _db.CodersData + startPos;
+  const Byte *p = _db.CodersData.ConstData() + startPos;
   const size_t size = _db.FoCodersDataOffset[folderIndex + 1] - startPos;
   CInByte2 inByte;
   inByte.Init(p, size);
@@ -308,6 +309,11 @@ bool CHandler::IsFolderEncrypted(CNum folderIndex) const
     inByte.SkipDataNoCheck(idSize);
     if (id64 == k_AES)
       return true;
+    if ((mainByte & 0x10) != 0)
+    {
+      inByte.ReadNum(); // NumInStreams
+      inByte.ReadNum(); // NumOutStreams
+    }
     if ((mainByte & 0x20) != 0)
       inByte.SkipDataNoCheck(inByte.ReadNum());
   }
@@ -350,11 +356,11 @@ Z7_COM7F_IMF(CHandler::GetRawProp(UInt32 index, PROPID propID, const void **data
   {
     if (_db.NameOffsets && _db.NamesBuf)
     {
-      size_t offset = _db.NameOffsets[index];
-      size_t size = (_db.NameOffsets[index + 1] - offset) * 2;
+      const size_t offset = _db.NameOffsets[index];
+      const size_t size = (_db.NameOffsets[index + 1] - offset) * 2;
       if (size < ((UInt32)1 << 31))
       {
-        *data = (const void *)(_db.NamesBuf + offset * 2);
+        *data = (const void *)(_db.NamesBuf.ConstData() + offset * 2);
         *dataSize = (UInt32)size;
         *propType = NPropDataType::kUtf16z;
       }
@@ -395,7 +401,7 @@ HRESULT CHandler::SetMethodToProp(CNum folderIndex, PROPVARIANT *prop) const
   temp[--pos] = 0;
  
   const size_t startPos = _db.FoCodersDataOffset[folderIndex];
-  const Byte *p = _db.CodersData + startPos;
+  const Byte *p = _db.CodersData.ConstData() + startPos;
   const size_t size = _db.FoCodersDataOffset[folderIndex + 1] - startPos;
   CInByte2 inByte;
   inByte.Init(p, size);
@@ -454,7 +460,7 @@ HRESULT CHandler::SetMethodToProp(CNum folderIndex, PROPVARIANT *prop) const
             const UInt32 lp = d % 5;
             if (lc != 3) dest = AddProp32(dest, "lc", lc);
             if (lp != 0) dest = AddProp32(dest, "lp", lp);
-            if (pb != 2) dest = AddProp32(dest, "pb", pb);
+            if (pb != 2) /* dest = */ AddProp32(dest, "pb", pb);
           }
         }
       }
@@ -482,9 +488,9 @@ HRESULT CHandler::SetMethodToProp(CNum folderIndex, PROPVARIANT *prop) const
         if (propsSize == 1)
           ConvertUInt32ToString((UInt32)props[0] + 1, s);
       }
-      else if (id == k_ARM64)
+      else if (id == k_ARM64 || id == k_RISCV)
       {
-        name = "ARM64";
+        name = id == k_ARM64 ? "ARM64" : "RISCV";
         if (propsSize == 4)
           ConvertUInt32ToString(GetUi32(props), s);
         /*
@@ -666,6 +672,7 @@ Z7_COM7F_IMF(CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
    #endif
     
     #endif
+    default: break;
   }
   // return prop.Detach(value);
   return S_OK;

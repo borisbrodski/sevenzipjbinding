@@ -16,7 +16,7 @@
 using namespace NWindows;
 
 
-static const unsigned k_NumLangLines_EN = 429;
+static const unsigned k_NumLangLines_EN = 443;
 
 #ifdef Z7_LANG
 static const UInt32 kLangIDs[] =
@@ -48,9 +48,8 @@ struct CLangListRecord
 
 static void NativeLangString(UString &dest, const wchar_t *s)
 {
-  dest += " (";
+  dest += " : ";
   dest += s;
-  dest += ')';
 }
 
 bool LangOpen(CLang &lang, CFSTR fileName);
@@ -253,8 +252,7 @@ bool CLangPage::OnInit()
       temp += "  ";
       temp += rec.Mark;
     }
-    const int index = (int)_langCombo.AddString(temp);
-    _langCombo.SetItemData(index, (LPARAM)rec.LangInfoIndex);
+    const int index = (int)_langCombo.AddString_SetItemData(temp, (LPARAM)rec.LangInfoIndex);
     if (rec.IsSelected)
       _langCombo.SetCurSel(index);
   }

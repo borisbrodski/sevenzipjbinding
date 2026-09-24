@@ -6,6 +6,29 @@
 #include "../../C/Alloc.h"
 #endif
 
+#ifdef _WIN32
+#ifdef __MINGW32_VERSION
+// #if !defined(_MSC_VER) && (__GNUC__) && (__GNUC__ < 10)
+// for old mingw
+#include <ddk/ntddk.h>
+#else
+#ifndef Z7_OLD_WIN_SDK
+  #if !defined(_M_IA64)
+    #include <winternl.h>
+  #endif
+#else
+typedef LONG NTSTATUS;
+typedef struct _IO_STATUS_BLOCK {
+    union {
+        NTSTATUS Status;
+        PVOID Pointer;
+    };
+    ULONG_PTR Information;
+} IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
+#endif
+#endif
+#endif // _WIN32
+
 // #include <stdio.h>
 
 /*
@@ -32,6 +55,48 @@ HRESULT GetLastError_noZero_HRESULT()
 #ifndef _UNICODE
 extern bool g_IsNT;
 #endif
+
+#if defined(_WIN32_WINNT) && (_WIN32_WINNT >= 0x0500) && !defined(_M_IA64)
+#define Z7_WIN_NTSTATUS  NTSTATUS
+#define Z7_WIN_IO_STATUS_BLOCK  IO_STATUS_BLOCK
+#else
+typedef LONG Z7_WIN_NTSTATUS;
+typedef struct
+{
+  union
+  {
+    Z7_WIN_NTSTATUS Status;
+    PVOID Pointer;
+  } DUMMYUNIONNAME;
+  ULONG_PTR Information;
+} Z7_WIN_IO_STATUS_BLOCK;
+#endif
+
+typedef Z7_WIN_NTSTATUS (WINAPI *Func_NtSetInformationFile)(
+    HANDLE FileHandle,
+    Z7_WIN_IO_STATUS_BLOCK *IoStatusBlock,
+    PVOID FileInformation,
+    ULONG Length,
+    Z7_WIN_FILE_INFORMATION_CLASS FileInformationClass);
+// NTAPI
+typedef ULONG (WINAPI *Func_RtlNtStatusToDosError)(Z7_WIN_NTSTATUS Status);
+
+Z7_DIAGNOSTIC_IGNORE_CAST_FUNCTION
+static Func_NtSetInformationFile g_NtSetInformationFile;
+static Func_RtlNtStatusToDosError g_RtlNtStatusToDosError;
+static struct C_Init_NtSetInformationFile
+{
+  C_Init_NtSetInformationFile()
+  {
+    const HMODULE ntdll = ::GetModuleHandleW(L"ntdll.dll");
+         g_NtSetInformationFile = Z7_GET_PROC_ADDRESS(
+      Func_NtSetInformationFile, ntdll,
+          "NtSetInformationFile");
+         g_RtlNtStatusToDosError = Z7_GET_PROC_ADDRESS(
+      Func_RtlNtStatusToDosError, ntdll,
+          "RtlNtStatusToDosError");
+  }
+} g_C_Init_NtSetInformationFile;
 
 using namespace NWindows;
 using namespace NFile;
@@ -141,8 +206,17 @@ bool CFileBase::Close() throw()
 {
   if (_handle == INVALID_HANDLE_VALUE)
     return true;
-  if (!::CloseHandle(_handle))
-    return false;
+#if 0
+  if (!IsStdStream)
+#endif
+  {
+    if (!::CloseHandle(_handle))
+      return false;
+  }
+#if 0
+  IsStdStream = false;
+  IsStdPipeStream = false;
+#endif
   _handle = INVALID_HANDLE_VALUE;
   return true;
 }
@@ -344,7 +418,7 @@ void CInFile::CalcDeviceSize(CFSTR s)
     WinXP 64-bit:
 
     HDD \\.\PhysicalDrive0 (MBR):
-      GetPartitionInfo == GeometryEx :  corrrect size? (includes tail)
+      GetPartitionInfo == GeometryEx :  correct size? (includes tail)
       Geometry   :  smaller than GeometryEx (no tail, maybe correct too?)
       MyGetDiskFreeSpace : FAIL
       Size correction is slow and block size (kClusterSize) must be small?
@@ -356,8 +430,8 @@ void CInFile::CalcDeviceSize(CFSTR s)
 
     CD-ROM drive (ISO):
       MyGetDiskFreeSpace   :  correct size. Same size can be calculated after correction
-      Geometry == CdRomGeometry  :  smaller than corrrect size
-      GetPartitionInfo == GeometryEx :  larger than corrrect size
+      Geometry == CdRomGeometry  :  smaller than correct size
+      GetPartitionInfo == GeometryEx :  larger than correct size
 
     Floppy \\.\a: (FAT):
       Geometry :  correct size.
@@ -457,7 +531,7 @@ bool CInFile::Open(CFSTR fileName)
 // for 32 MB (maybe also for 16 MB).
 // And message can be "Network connection was lost"
 
-static const UInt32 kChunkSizeMax = (1 << 22);
+static const UInt32 kChunkSizeMax = 1 << 22;
 
 bool CInFile::Read1(void *data, UInt32 size, UInt32 &processedSize) throw()
 {
@@ -469,8 +543,14 @@ bool CInFile::Read1(void *data, UInt32 size, UInt32 &processedSize) throw()
 
 bool CInFile::ReadPart(void *data, UInt32 size, UInt32 &processedSize) throw()
 {
+#if 0
+  const UInt32 chunkSizeMax = (0 || IsStdStream) ? (1 << 20) : kChunkSizeMax;
+  if (size > chunkSizeMax)
+      size = chunkSizeMax;
+#else
   if (size > kChunkSizeMax)
-    size = kChunkSizeMax;
+      size = kChunkSizeMax;
+#endif
   return Read1(data, size, processedSize);
 }
 
@@ -486,10 +566,10 @@ bool CInFile::Read(void *data, UInt32 size, UInt32 &processedSize) throw()
       return false;
     if (processedLoc == 0)
       return true;
-    data = (void *)((unsigned char *)data + processedLoc);
+    data = (void *)((Byte *)data + processedLoc);
     size -= processedLoc;
   }
-  while (size > 0);
+  while (size);
   return true;
 }
 
@@ -506,29 +586,87 @@ bool CInFile::ReadFull(void *data, size_t size, size_t &processedSize) throw()
       return false;
     if (processedLoc == 0)
       return true;
-    data = (void *)((unsigned char *)data + processedLoc);
+    data = (void *)((Byte *)data + processedLoc);
     size -= processedLoc;
   }
-  while (size > 0);
+  while (size);
   return true;
 }
 
 // ---------- COutFile ---------
 
-static inline DWORD GetCreationDisposition(bool createAlways)
-  { return createAlways? CREATE_ALWAYS: CREATE_NEW; }
-
 bool COutFile::Open(CFSTR fileName, DWORD shareMode, DWORD creationDisposition, DWORD flagsAndAttributes)
   { return CFileBase::Create(fileName, GENERIC_WRITE, shareMode, creationDisposition, flagsAndAttributes); }
 
-bool COutFile::Open(CFSTR fileName, DWORD creationDisposition)
+bool COutFile::Open_Disposition(CFSTR fileName, DWORD creationDisposition)
   { return Open(fileName, FILE_SHARE_READ, creationDisposition, FILE_ATTRIBUTE_NORMAL); }
 
-bool COutFile::Create(CFSTR fileName, bool createAlways)
-  { return Open(fileName, GetCreationDisposition(createAlways)); }
+bool COutFile::Create_ALWAYS_with_Attribs(CFSTR fileName, DWORD flagsAndAttributes)
+  { return Open(fileName, FILE_SHARE_READ, CREATE_ALWAYS, flagsAndAttributes); }
 
-bool COutFile::CreateAlways(CFSTR fileName, DWORD flagsAndAttributes)
-  { return Open(fileName, FILE_SHARE_READ, GetCreationDisposition(true), flagsAndAttributes); }
+DWORD CFileBase::Call_NtSetInformationFile_return_WinError(
+    void *data, ULONG len, Z7_WIN_FILE_INFORMATION_CLASS fileInformationClass) const
+{
+  if (!g_NtSetInformationFile)
+    return ERROR_PROC_NOT_FOUND;
+  Z7_WIN_IO_STATUS_BLOCK ioStatus;
+  Z7_memset_0_VAR(ioStatus); // optional
+  const Z7_WIN_NTSTATUS status = g_NtSetInformationFile(_handle,
+      &ioStatus, data, len, fileInformationClass);
+  if (status == 0) // MY_STATUS_SUCCESS
+    return 0;
+  if (g_RtlNtStatusToDosError)
+  {
+    const ULONG res = g_RtlNtStatusToDosError(status);
+    if (res != ERROR_MR_MID_NOT_FOUND)
+      return res;
+  }
+  return 1;
+}
+
+
+#define SET_TIME_FIELD_IF_DEFINED(dest, src) \
+{ if (src) { \
+    dest.LowPart = (src)->dwLowDateTime; \
+    dest.HighPart = (LONG)(src)->dwHighDateTime; \
+  } \
+}
+
+bool COutFile::Set_Time_and_WinAttrib(const FILETIME *cTime, const FILETIME *aTime, const FILETIME *mTime, DWORD attrib) throw()
+{
+#ifdef _WIN32
+  // similar to GetAttrib_PosixHighDetect(attrib)
+  if (attrib & 0xF0000000)
+    attrib &= 0x3FFF;
+#endif
+
+  Z7_WIN_FILE_BASIC_INFORMATION fbi;
+  Z7_memset_0_VAR(fbi);
+  SET_TIME_FIELD_IF_DEFINED (fbi.CreationTime, cTime)
+  SET_TIME_FIELD_IF_DEFINED (fbi.LastAccessTime, aTime)
+  SET_TIME_FIELD_IF_DEFINED (fbi.LastWriteTime, mTime)
+  // fbi.ChangeTime.QuadPart = 0;
+  /*
+    if (attrib == 0)
+      { win10: NtSetInformationFile() doesn't change file attribute
+    if (attrib & FILE_ATTRIBUTE_DIRECTORY)
+      { win10: NtSetInformationFile() returns (STATUS_INVALID_PARAMETER) }
+    we provide similar attribute processing as
+      SetFileAttributes():
+      - we ignore (FILE_ATTRIBUTE_DIRECTORY)
+      - we write (FILE_ATTRIBUTE_NORMAL) instead of (0)
+  */
+  attrib &= ~(DWORD)FILE_ATTRIBUTE_DIRECTORY;
+  if (attrib == 0)
+    attrib = FILE_ATTRIBUTE_NORMAL;
+  fbi.FileAttributes = attrib;
+  const DWORD wres = Call_NtSetInformationFile_return_WinError(
+      &fbi, sizeof(fbi), Z7_WIN_FileBasicInformation);
+  if (wres == 0)
+    return true;
+  SetLastError(wres);
+  return false;
+}
 
 bool COutFile::SetTime(const FILETIME *cTime, const FILETIME *aTime, const FILETIME *mTime) throw()
   { return BOOLToBool(::SetFileTime(_handle, cTime, aTime, mTime)); }
@@ -557,10 +695,10 @@ bool COutFile::Write(const void *data, UInt32 size, UInt32 &processedSize) throw
       return false;
     if (processedLoc == 0)
       return true;
-    data = (const void *)((const unsigned char *)data + processedLoc);
+    data = (const void *)((const Byte *)data + processedLoc);
     size -= processedLoc;
   }
-  while (size != 0);
+  while (size);
   return true;
 }
 
@@ -574,10 +712,10 @@ bool COutFile::WriteFull(const void *data, size_t size) throw()
       return false;
     if (processedLoc == 0)
       return (size == 0);
-    data = (const void *)((const unsigned char *)data + processedLoc);
+    data = (const void *)((const Byte *)data + processedLoc);
     size -= processedLoc;
   }
-  while (size != 0);
+  while (size);
   return true;
 }
 
@@ -619,10 +757,16 @@ bool COutFile::SetLength_KeepPosition(UInt64 length) throw()
 #include <fcntl.h>
 #include <unistd.h>
 
+extern
+bool FiTime_To_timespec(const CFiTime *ft, timespec &ts);
+
 namespace NWindows {
 namespace NFile {
 
 namespace NDir {
+
+extern C_umask g_umask;
+
 bool SetDirTime(CFSTR path, const CFiTime *cTime, const CFiTime *aTime, const CFiTime *mTime);
 }
 
@@ -635,6 +779,34 @@ bool CFileBase::OpenBinary(const char *name, int flags, mode_t mode)
   #endif
 
   Close();
+  /*
+    The mode argument specifies the file mode bits to be
+    applied when a new file is created. If neither O_CREAT nor
+    O_TMPFILE is specified in flags, then mode is ignored (and
+    can thus be specified as 0, or simply omitted).
+
+    The effective mode is modified by the process's umask in
+    the usual way: in the absence of a default ACL, the mode of
+    the created file is (mode & ~umask).
+
+    Note that mode applies only to future accesses of the newly
+    created file; the open() call that creates a read-only file
+    may well return a read/write file descriptor.
+
+    POSIX: if other bits (~0777) are set in mode : the effect is unspecified
+    Linux:
+        S_ISUID  04000 set-user-ID bit
+        S_ISGID  02000 set-group-ID bit
+        S_ISVTX  01000 sticky bit
+
+        S_ISVTX can be set, but it's useless for file in modern linux.
+        by security reasons:
+          open() ignores S_ISUID
+          open() ignores S_ISGID, if S_IXGRP is set.
+  */
+  // mode |= S_ISUID | S_ISGID | S_ISVTX; // for debug
+  // printf("\n open() mode=%o\n", (unsigned)(mode));
+
   _handle = ::open(name, flags, mode);
   return _handle != -1;
 
@@ -731,7 +903,7 @@ bool CFileBase::SeekToBegin() const throw()
 
 bool CInFile::Open(const char *name)
 {
-  return CFileBase::OpenBinary(name, O_RDONLY);
+  return CFileBase::OpenBinary(name, O_RDONLY, k_OutFile_mode_default);
 }
 
 bool CInFile::OpenShared(const char *name, bool)
@@ -786,11 +958,11 @@ bool CInFile::ReadFull(void *data, size_t size, size_t &processed) throw()
       return false;
     if (res == 0)
       break;
-    data = (void *)((unsigned char *)data + (size_t)res);
-    size -= (size_t)res;
+    data = (void *)((Byte *)data + (size_t)res);
     processed += (size_t)res;
+    size -= (size_t)res;
   }
-  while (size > 0);
+  while (size);
   return true;
 }
 
@@ -798,23 +970,63 @@ bool CInFile::ReadFull(void *data, size_t size, size_t &processed) throw()
 /////////////////////////
 // COutFile
 
-bool COutFile::Create(const char *name, bool createAlways)
+bool COutFile::OpenBinary_forWrite_oflag(const char *name, int oflag)
 {
   Path = name; // change it : set it only if open is success.
-  if (createAlways)
-  {
-    Close();
-    _handle = ::creat(name, mode_for_Create);
-    return _handle != -1;
-  }
-  return OpenBinary(name, O_CREAT | O_EXCL | O_WRONLY, mode_for_Create);
+  return OpenBinary(name, oflag, mode_for_Create);
 }
 
-bool COutFile::Open(const char *name, DWORD creationDisposition)
+
+/*
+  windows           exist  non-exist  posix
+  CREATE_NEW        Fail   Create     O_CREAT | O_EXCL
+  CREATE_ALWAYS     Trunc  Create     O_CREAT | O_TRUNC
+  OPEN_ALWAYS       Open   Create     O_CREAT
+  OPEN_EXISTING     Open   Fail       0
+  TRUNCATE_EXISTING Trunc  Fail       O_TRUNC ???
+
+  // O_CREAT = If the file exists, this flag has no effect except as noted under O_EXCL below.
+  // If O_CREAT and O_EXCL are set, open() shall fail if the file exists.
+  // O_TRUNC : If the file exists and the file is successfully opened, its length shall be truncated to 0.
+*/
+bool COutFile::Open_EXISTING(const char *name)
+  { return OpenBinary_forWrite_oflag(name, O_WRONLY); }
+bool COutFile::Create_ALWAYS(const char *name)
+  { return OpenBinary_forWrite_oflag(name, O_WRONLY | O_CREAT | O_TRUNC); }
+bool COutFile::Create_NEW(const char *name)
+  { return OpenBinary_forWrite_oflag(name, O_WRONLY | O_CREAT | O_EXCL);  }
+bool COutFile::Create_ALWAYS_or_Open_ALWAYS(const char *name, bool createAlways)
 {
-  UNUSED_VAR(creationDisposition) // FIXME
-  return Create(name, false);
+  return OpenBinary_forWrite_oflag(name,
+      createAlways ?
+        O_WRONLY | O_CREAT | O_TRUNC :
+        O_WRONLY | O_CREAT);
 }
+/*
+bool COutFile::Create_ALWAYS_or_NEW(const char *name, bool createAlways)
+{
+  return OpenBinary_forWrite_oflag(name,
+      createAlways ?
+        O_WRONLY | O_CREAT | O_TRUNC :
+        O_WRONLY | O_CREAT | O_EXCL);
+}
+bool COutFile::Open_Disposition(const char *name, DWORD creationDisposition)
+{
+  int flag;
+  switch (creationDisposition)
+  {
+    case CREATE_NEW:        flag = O_WRONLY | O_CREAT | O_EXCL;  break;
+    case CREATE_ALWAYS:     flag = O_WRONLY | O_CREAT | O_TRUNC;  break;
+    case OPEN_ALWAYS:       flag = O_WRONLY | O_CREAT;  break;
+    case OPEN_EXISTING:     flag = O_WRONLY;  break;
+    case TRUNCATE_EXISTING: flag = O_WRONLY | O_TRUNC; break;
+    default:
+      SetLastError(EINVAL);
+      return false;
+  }
+  return OpenBinary_forWrite_oflag(name, flag);
+}
+*/
 
 ssize_t COutFile::write_part(const void *data, size_t size) throw()
 {
@@ -833,11 +1045,11 @@ ssize_t COutFile::write_full(const void *data, size_t size, size_t &processed) t
       return res;
     if (res == 0)
       break;
-    data = (const void *)((const unsigned char *)data + (size_t)res);
-    size -= (size_t)res;
+    data = (const void *)((const Byte *)data + (size_t)res);
     processed += (size_t)res;
+    size -= (size_t)res;
   }
-  while (size > 0);
+  while (size);
   return (ssize_t)processed;
 }
 
@@ -854,11 +1066,64 @@ bool COutFile::SetLength(UInt64 length) throw()
   return (iret == 0);
 }
 
+// #define PRF(x) x
+#define PRF(x)
+
 bool COutFile::Close()
 {
-  const bool res = CFileBase::Close();
-  if (!res)
-    return res;
+  bool res = true;
+  if (_handle == -1)
+    return true;
+  {
+    // bool res2 = true;
+    if (mode_for_Close_defined)
+    {
+      PRF(printf("\n COutFile::Close() mode=%o\n", (unsigned)(mode_for_Close));)
+      // fchmod() function ignores the file creation mask set by umask()
+      // so we can restore any of (07777) mode bits
+      // mode_for_Close |= (0xffff << 12); // for debug
+      if (fchmod(_handle, mode_for_Close) == 0)
+      {
+        mode_for_Close_defined = false;
+        PRF(printf("\n COutFile::Close() fchmod() == 0\n");)
+      }
+      // else res2 = false;
+    }
+    {
+      if (MTime_defined || ATime_defined)
+      {
+        struct timespec times[2];
+        FiTime_To_timespec(ATime_defined ? &ATime : NULL, times[0]);
+        FiTime_To_timespec(MTime_defined ? &MTime : NULL, times[1]);
+        // futimens : POSIX.1-2008
+        if (futimens(_handle, times) == 0)
+        {
+          PRF(printf("\n futimens() OK \n");)
+          ATime_defined = false;
+          MTime_defined = false;
+        }
+        else
+        {
+          PRF(printf("\n futimens() ERROR: %d=%s\n", errno, strerror(errno));)
+        }
+      }
+    }
+    res = CFileBase::Close();
+    if (!res)
+      return res;
+    // res = res2;
+  }
+  if (mode_for_Close_defined)
+  {
+    // chmod() ignores the file creation mask set by umask()
+    // so we can restore any of (07777) mode bits
+    // const int res_chmod =
+    chmod(Path, mode_for_Close);
+    mode_for_Close_defined = false;
+    // if (res_chmod != 0 && res == true) res = false;
+    // PRF(printf("\n COutFile::Close() chmod res=%d\n", (int)res_chmod);)
+  }
+
   if (CTime_defined || ATime_defined || MTime_defined)
   {
     /* bool res2 = */ NWindows::NFile::NDir::SetDirTime(Path,
@@ -891,6 +1156,24 @@ bool COutFile::SetTime(const CFiTime *cTime, const CFiTime *aTime, const CFiTime
     return true;
   return futimens(_handle, times) == 0;
   */
+}
+
+bool COutFile::Set_Time_and_WinAttrib(
+    const CFiTime *cTime, const CFiTime *aTime, const CFiTime *mTime, DWORD attrib) throw()
+{
+  PRF(printf("\n Set_Time_and_WinAttrib() mode=%o\n", (unsigned)(attrib >> 16));)
+  SetTime(cTime, aTime, mTime);
+  // we will use fchmod() or chmod() later in Close() fucntion.
+  // fchmod() or chmod() are not limited by system umask.
+  // but for security reasons we use the system mask (g_umask.mask) derived from umask().
+  mode_t mode = k_OutFile_mode_default; // 0666
+  if (attrib & FILE_ATTRIBUTE_UNIX_EXTENSION)
+    mode = (attrib >> 16);
+  else if (attrib & FILE_ATTRIBUTE_READONLY)
+    mode &= ~(mode_t)(S_IWUSR | S_IWGRP | S_IWOTH); // octal: ~0222; // disable write permissions
+  mode_for_Close = mode & NDir::g_umask.mask;
+  mode_for_Close_defined = true;
+  return true;
 }
 
 bool COutFile::SetMTime(const CFiTime *mTime) throw()

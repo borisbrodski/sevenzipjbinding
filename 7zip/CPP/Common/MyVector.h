@@ -92,6 +92,21 @@ public:
     _size = newSize;
   }
 
+  void ChangeSize_KeepData_plus_AdditionalReserve(const unsigned newSize)
+  {
+    if (newSize > _capacity)
+    {
+      if (newSize > k_VectorSizeMax)
+        throw 2021;
+      const unsigned rem = k_VectorSizeMax - newSize;
+      unsigned add = newSize >> 2;
+      if (add > rem)
+          add = rem;
+      ReAllocForNewCapacity(newSize + add);
+    }
+    _size = newSize;
+  }
+
   void ClearAndReserve(unsigned newCapacity)
   {
     Clear();
@@ -258,7 +273,7 @@ public:
   {
     if (index != 0)
     {
-      T temp = _items[index];
+      const T temp = _items[index];
       memmove(_items + 1, _items, (size_t)index * sizeof(T));
       _items[0] = temp;
     }
@@ -268,15 +283,29 @@ public:
         T& operator[](unsigned index)       { return _items[index]; }
   const T& operator[](int index) const { return _items[(unsigned)index]; }
         T& operator[](int index)       { return _items[(unsigned)index]; }
+
+  const T* ConstData()    const { return _items; }
+        T* NonConstData() const { return _items; }
+        T* NonConstData()       { return _items; }
+
+  const T* Data() const         { return _items; }
+        T* Data()               { return _items; }
+
+  const T& FrontItem() const { return _items[0]; }
+        T& FrontItem()       { return _items[0]; }
+  /*
+  const T Front() const { return _items[0]; }
+        T Front()       { return _items[0]; }
   const T& Front() const { return _items[0]; }
         T& Front()       { return _items[0]; }
+  */
   const T& Back() const  { return _items[(size_t)_size - 1]; }
         T& Back()        { return _items[(size_t)_size - 1]; }
 
   /*
   void Swap(unsigned i, unsigned j)
   {
-    T temp = _items[i];
+    const T temp = _items[i];
     _items[i] = _items[j];
     _items[j] = temp;
   }
@@ -368,7 +397,7 @@ public:
 
   static void SortRefDown(T* p, unsigned k, unsigned size, int (*compare)(const T*, const T*, void *), void *param)
   {
-    T temp = p[k];
+    const T temp = p[k];
     for (;;)
     {
       unsigned s = (k << 1);
@@ -389,16 +418,16 @@ public:
     unsigned size = _size;
     if (size <= 1)
       return;
-    T* p = (&Front()) - 1;
+    T* p = _items - 1;
     {
       unsigned i = size >> 1;
       do
         SortRefDown(p, i, size, compare, param);
-      while (--i != 0);
+      while (--i);
     }
     do
     {
-      T temp = p[size];
+      const T temp = p[size];
       p[size--] = p[1];
       p[1] = temp;
       SortRefDown(p, 1, size, compare, param);
@@ -408,7 +437,7 @@ public:
 
   static void SortRefDown2(T* p, unsigned k, unsigned size)
   {
-    T temp = p[k];
+    const T temp = p[k];
     for (;;)
     {
       unsigned s = (k << 1);
@@ -429,16 +458,16 @@ public:
     unsigned size = _size;
     if (size <= 1)
       return;
-    T* p = (&Front()) - 1;
+    T* p = _items - 1;
     {
       unsigned i = size >> 1;
       do
         SortRefDown2(p, i, size);
-      while (--i != 0);
+      while (--i);
     }
     do
     {
-      T temp = p[size];
+      const T temp = p[size];
       p[size--] = p[1];
       p[1] = temp;
       SortRefDown2(p, 1, size);
