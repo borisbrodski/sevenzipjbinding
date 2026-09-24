@@ -8,7 +8,7 @@ Extract and create 20+ archive formats with native performance — one small lib
 [![Maven Central](https://img.shields.io/maven-central/v/net.sf.sevenzipjbinding/sevenzipjbinding?label=Maven%20Central)](https://central.sonatype.com/artifact/net.sf.sevenzipjbinding/sevenzipjbinding)
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 [![Java](https://img.shields.io/badge/Java-8%2B-orange.svg)](#requirements)
-[![7-Zip engine](https://img.shields.io/badge/7--Zip%20engine-23.01-1f8ceb.svg)](https://www.7-zip.org/)
+[![7-Zip engine](https://img.shields.io/badge/7--Zip%20engine-26.03-1f8ceb.svg)](https://www.7-zip.org/)
 [![macOS build](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml/badge.svg)](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml)
 
 [**Website**](https://sevenzipjbind.sourceforge.net/) ·
@@ -32,7 +32,7 @@ and abort at any time.
 ## ✨ Highlights
 
 - **20+ formats to extract, 6 to create/update** — see the [formats table](#-supported-formats).
-- **Native performance, in‑process** — the genuine 7‑Zip 23.01 engine via JNI.
+- **Native performance, in‑process** — the genuine 7‑Zip 26.03 engine via JNI.
 - **Callback‑driven, streaming I/O** — fully in‑memory round‑trips, partial extraction from huge
   archives, extract‑while‑downloading a remote archive, and abortable operations. No temp files
   unless you want them.
@@ -72,27 +72,27 @@ The right native library is selected automatically at runtime.
 
 ## 🚀 Install
 
-Current version: **`23.01-2.3`** (7‑Zip engine 23.01).
+Current version: **`26.03-2.4`** (7‑Zip engine 26.03).
 
 **Maven**
 ```xml
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding</artifactId>
-    <version>23.01-2.3</version>
+    <version>26.03-2.4</version>
 </dependency>
 <!-- native libraries for all platforms (auto-detected at runtime) -->
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding-all-platforms</artifactId>
-    <version>23.01-2.3</version>
+    <version>26.03-2.4</version>
 </dependency>
 ```
 
 **Gradle**
 ```groovy
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:23.01-2.3'
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:23.01-2.3'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:26.03-2.4'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:26.03-2.4'
 ```
 
 > 💡 `-all-platforms` bundles every native (largest, works everywhere). To keep your artifact small,
@@ -142,13 +142,12 @@ and in‑memory round‑trips are on the site:
 - **Java 8 or newer** at runtime.
 - No external tools — the native 7‑Zip engine is bundled in the platform jar.
 
-## 🔒 Known issue / security
+## 🔒 Security
 
-**CVE‑2024‑11477** (7‑Zip Zstandard decompression, severity HIGH, CVSS 7.8): the bundled 7‑Zip engine
-(23.01) predates the upstream fix, released in 7‑Zip 24.07, so processing **untrusted Zstandard‑
-compressed** input may be affected. **Mitigation:** do not open/extract untrusted Zstandard data. This
-will be resolved by a future engine upgrade — tracking:
-[#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72).
+No known security issues in the current release. **CVE‑2024‑11477** (7‑Zip Zstandard decompression,
+severity HIGH, CVSS 7.8), which affected the 23.01‑2.x releases, is **resolved as of `26.03‑2.4`**: the
+bundled 7‑Zip engine now postdates the upstream fix released in 7‑Zip 24.07
+([#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72)).
 
 ## 🔧 Build from source
 

@@ -4,12 +4,27 @@
 Known issues
 ------------
 
-    * CVE-2024-11477 (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8)
-        The bundled 7-Zip engine (23.01) predates the upstream fix, released in 7-Zip 24.07.
-        Processing untrusted Zstandard-compressed data may be affected. Mitigation: do not
-        open/extract untrusted Zstandard input. Planned to be addressed in a later release by
-        upgrading the bundled engine to 24.07 or newer.
-        Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
+    * None currently tracked.
+      (CVE-2024-11477, the 7-Zip Zstandard decompression issue affecting 23.01-2.x, is resolved
+      as of 26.03-2.4 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
+
+
+Main features of 26.03-2.4 (engine upgrade to 7-Zip 26.03)
+
+    * Upgraded the bundled 7-Zip engine from 23.01 to 26.03 (latest, released
+      2026-09-03), via the vendored-engine workflow. Brings the upstream format,
+      decoder and bug fixes accumulated since 23.01, including native Zstandard
+      (.zst) decompression handled inside the engine.
+
+    * Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
+      HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix released in
+      7-Zip 24.07, so the Zstandard known-issue from 23.01-2.x no longer applies.
+      Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
+
+    * No public API changes: existing Java code is unaffected. The full set of
+      supported platforms is unchanged and the complete build + runtime test
+      matrix is green on the new engine (Linux glibc & musl on arm/x86, Windows
+      x86/x64/arm64, macOS arm64 & x86_64).
 
 
 Main features of 23.01-2.3 (new platform: Windows on Arm)

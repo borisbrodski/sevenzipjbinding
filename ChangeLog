@@ -1,6 +1,27 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 26.03-2.4 (engine upgrade to 7-Zip 26.03)
+
+	* Upgraded the bundled 7-Zip engine 23.01 -> 26.03 (latest, released
+	  2026-09-03) via the vendored-engine (upstream-7zip) workflow. Picks up the
+	  upstream format/decoder/bug fixes accumulated since 23.01, including native
+	  Zstandard (.zst) decompression handled inside the engine.
+
+	* Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
+	  HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix in 7-Zip 24.07,
+	  so the Zstandard known-issue tracked for 23.01-2.x no longer applies.
+	  https://github.com/borisbrodski/sevenzipjbinding/issues/72
+
+	* No public API changes; existing code is unaffected. Supported platforms are
+	  unchanged and the full 13-platform build + runtime test matrix is green on
+	  the new engine (Linux glibc & musl on arm/x86, Windows x86/x64/arm64, macOS
+	  arm64 & x86_64).
+
+	* Internal: trimmed our custom edits to the vendored 7-Zip sources (upstream
+	  26.03 absorbed several); the remainder are documented in the project.
+
+
 Release - 23.01-2.3 (new platform: Windows on Arm, based on 7-Zip 23.01)
 
 	* New platform: Windows on Arm (arm64) - native aarch64 Windows DLL built

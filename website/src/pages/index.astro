@@ -13,7 +13,7 @@ try (IInArchive archive = SevenZip.openInArchive(null, // autodetect format
     }
 }`;
 
-const V = '23.01-2.3';
+const V = '26.03-2.4';
 const G = 'net.sf.sevenzipjbinding';
 const gradleKts = `implementation("${G}:sevenzipjbinding:${V}")
 implementation("${G}:sevenzipjbinding-all-platforms:${V}")`;
@@ -27,12 +27,12 @@ const javaExampleHtml = await highlightJava(javaExample);
 const mavenDep = `<dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding</artifactId>
-    <version>23.01-2.3</version>
+    <version>26.03-2.4</version>
 </dependency>
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding-all-platforms</artifactId>
-    <version>23.01-2.3</version>
+    <version>26.03-2.4</version>
 </dependency>`;
 ---
 <Base title="7-Zip-JBinding — the 7-Zip archive engine for Java">
@@ -43,7 +43,7 @@ const mavenDep = `<dependency>
     <div class="container hero-grid">
       <div class="hero-copy">
         <div class="badges">
-          <span class="badge"><span class="dot"></span> v23.01-2.3 · all platforms green</span>
+          <span class="badge"><span class="dot"></span> v26.03-2.4 · all platforms green</span>
           <span class="badge">LGPL-2.1</span>
           <span class="badge warm">Java 8+</span>
         </div>
@@ -65,7 +65,7 @@ const mavenDep = `<dependency>
         <div class="hero-facts">
           <div><b>12</b><span>platform builds</span></div>
           <div><b>8845</b><span>JUnit tests</span></div>
-          <div><b>23.01</b><span>7-Zip engine</span></div>
+          <div><b>26.03</b><span>7-Zip engine</span></div>
           <div><b>2007</b><span>maintained since</span></div>
         </div>
       </div>
@@ -90,7 +90,7 @@ const mavenDep = `<dependency>
           <p>7z, ZIP, RAR/RAR5, TAR, GZip, BZip2, XZ, ISO, CAB, NTFS, … — with archive-format
           auto-detection, password support and multi-volume archives.</p></div>
         <div class="card"><h3><span class="ico">⚡</span>Native performance</h3>
-          <p>The original 7-Zip 23.01 C/C++ engine, running in-process. Stream-based:
+          <p>The original 7-Zip 26.03 C/C++ engine, running in-process. Stream-based:
           extract from and compress to memory, files or your own I/O callbacks.</p></div>
         <div class="card"><h3><span class="ico">🗜️</span>Create &amp; update archives</h3>
           <p>Write 7z, ZIP, TAR, GZip, BZip2 and XZ. Update existing archives in place —
@@ -234,26 +234,25 @@ const mavenDep = `<dependency>
       <div class="release-strip card">
         <div>
           <div class="kicker" style="margin-bottom:4px">Latest release</div>
-          <h3 style="font-size:1.3rem; margin:0 0 6px">23.01-2.3 <span class="rel-date">· September 2026</span></h3>
-          <p style="margin:0">Windows on Arm (arm64) · 7-Zip engine 23.01 · Java 8 baseline · XZ compression
-            · Apple Silicon · musl/Alpine builds · runtime platform auto-detection</p>
+          <h3 style="font-size:1.3rem; margin:0 0 6px">26.03-2.4 <span class="rel-date">· September 2026</span></h3>
+          <p style="margin:0">7-Zip engine 26.03 (up from 23.01) · resolves CVE-2024-11477 · Windows on Arm (arm64)
+            · Java 8 baseline · Apple Silicon · musl/Alpine builds · runtime platform auto-detection</p>
         </div>
         <div class="release-cta">
           <div class="release-actions">
             <a class="btn btn-primary" href="https://github.com/borisbrodski/sevenzipjbinding/releases/latest">Download</a>
-            <a class="btn btn-ghost" href="https://github.com/borisbrodski/sevenzipjbinding/blob/7z-23.01/ChangeLog">Release notes</a>
+            <a class="btn btn-ghost" href="https://github.com/borisbrodski/sevenzipjbinding/blob/master/ChangeLog">Release notes</a>
           </div>
           <div class="release-alt">Also on <a href="https://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/">SourceForge</a> (mirror)</div>
         </div>
       </div>
       <div class="sec-note">
-        <span class="sec-ico">⚠️</span>
+        <span class="sec-ico">✅</span>
         <div>
-          <b>Known security issue — CVE-2024-11477</b> (7-Zip Zstandard decompression, HIGH).
-          The bundled 7-Zip engine (23.01) predates the upstream fix released in 7-Zip&nbsp;24.07;
-          processing untrusted Zstandard data may be affected — do not open/extract untrusted
-          Zstandard input. Planned to be addressed by a later engine bump.
-          <a href="https://github.com/borisbrodski/sevenzipjbinding/issues/72">Tracking: issue #72</a>.
+          <b>CVE-2024-11477 resolved</b> (7-Zip Zstandard decompression, HIGH). Fixed as of
+          <b>26.03-2.4</b>: the bundled 7-Zip engine now postdates the upstream fix released in
+          7-Zip&nbsp;24.07. No known security issues in the current release.
+          <a href="https://github.com/borisbrodski/sevenzipjbinding/issues/72">Details: issue #72</a>.
         </div>
       </div>
     </div>
