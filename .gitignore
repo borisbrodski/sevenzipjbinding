@@ -38,3 +38,6 @@ Session.vim
 /compile_commands.json
 /.cache/
 /.clangd/
+
+# Generated API docs (regenerate with the javadoc build; not checked in)
+/doc/web/javadoc/
