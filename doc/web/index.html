@@ -77,7 +77,7 @@
 	</td></tr>
 	<tr><td><a href="javadoc/index.html" class="submenu">JavaDoc</a></td></tr>
 </table></td></tr>
-<tr><td><a href="http://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/23.01-2.3/" class="menu">Download</a></td></tr>
+<tr><td><a href="http://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/26.03-2.4/" class="menu">Download</a></td></tr>
 <tr><td><a href="http://my.cdash.org/index.php?project=7-Zip-JBinding" class="menu">Test Dashboard</a></td></tr>
 <tr><td><a href="https://sourceforge.net/projects/sevenzipjbind/forums" class="menu">Forum</a></td></tr>
 <tr><td><a href="https://sourceforge.net/p/sevenzipjbind/_list/tickets?source=navbar" class="menu">Tracker</a></td></tr>
@@ -222,18 +222,18 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
                 </center>
             </span>
         </span>
-    <b>7-Zip-JBinding Release: 23.01-2.3</b>
+    <b>7-Zip-JBinding Release: 26.03-2.4</b>
 <br/><br/>
-<div style="border:1px solid #cc0000; background:#fff4f4; padding:8px; margin:8px 0;">
-    <b>Known issue &ndash; CVE-2024-11477 (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8):</b>
-    the bundled 7-Zip engine (23.01) predates the upstream fix, released in 7-Zip 24.07. Processing
-    untrusted Zstandard-compressed data may be affected &ndash; do not open/extract untrusted Zstandard
-    input. Planned to be addressed in a later release by upgrading the bundled engine to 24.07 or newer.
-    Tracking: <a href="https://github.com/borisbrodski/sevenzipjbinding/issues/72">issue #72</a>.
+<div style="border:1px solid #2e7d32; background:#f2fbf3; padding:8px; margin:8px 0;">
+    <b>CVE-2024-11477 resolved</b> (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8):
+    fixed as of 26.03-2.4 &ndash; the bundled 7-Zip engine now postdates the upstream fix released in
+    7-Zip 24.07. No known security issues in the current release.
+    Details: <a href="https://github.com/borisbrodski/sevenzipjbinding/issues/72">issue #72</a>.
 </div>
-Release, extraction &amp; compression, cross-platform, based on 7-Zip 23.01
+Release, extraction &amp; compression, cross-platform, based on 7-Zip 26.03
 <ul>
-    <li>New engine: <b>7-Zip 23.01</b> (previously 16.02) &ndash; many upstream format/bug fixes</li>
+    <li>New engine: <b>7-Zip 26.03</b> (previously 23.01) &ndash; native Zstandard decompression,
+        resolves CVE-2024-11477, and many upstream format/bug fixes</li>
     <li>7-Zip-JBinding now requires <b>Java 8</b> or higher (previously Java 1.5)</li>
     <li>New feature: <b>XZ compression &amp; update</b> support
         (<a href="javadoc/index.html?net/sf/sevenzipjbinding/IOutCreateArchiveXz.html">API</a> +
