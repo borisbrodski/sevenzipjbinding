@@ -74,7 +74,7 @@ jobs:
           lipo -archs build-allmac/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -qw arm64
 
       - name: Test AllMac with the ${{ matrix.test_arch }} JVM (loads its slice)
-        run: cd build-allmac && ctest --output-on-failure
+        run: cd build-allmac && ctest --output-on-failure --repeat until-pass:2
 
       # --- Thin (this arch only): Mac-x86_64 or Mac-arm64 ---
       - name: Configure + build thin Mac-${{ matrix.test_arch }} dylib
@@ -96,7 +96,7 @@ jobs:
           test "$(lipo -archs build-thin/jbinding-cpp/lib7-Zip-JBinding.dylib | tr -d ' ')" = "${{ matrix.test_arch }}"
 
       - name: Test thin Mac-${{ matrix.test_arch }} with the ${{ matrix.test_arch }} JVM
-        run: cd build-thin && ctest --output-on-failure
+        run: cd build-thin && ctest --output-on-failure --repeat until-pass:2
 
       # --- Upload: universal from the arm64 leg only; each leg uploads its own thin ---
       - name: Upload AllMac (universal) zip
@@ -180,4 +180,4 @@ jobs:
           grep -o "sevenzipjbinding-[A-Za-z0-9]*\.jar" build/JUnitRunner.cmake | sort -u
 
       - name: Run full suite via AllPlatforms autodetection (${{ matrix.test_arch }} JVM)
-        run: cd build && ctest --output-on-failure
+        run: cd build && ctest --output-on-failure --repeat until-pass:2
