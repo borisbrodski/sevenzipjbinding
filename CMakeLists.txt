@@ -61,11 +61,20 @@ IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin") # TODO Switch to JAVA_SYSTEM
     ENDFOREACH()
 ENDIF()
 
-# On Mac the single universal library is published as one platform named just "Mac" (no arch
-# suffix): one fat dylib serves every 64-bit Mac, so both the standalone Mac platform jar and the
-# Mac entry inside AllPlatform work on Intel and Apple Silicon alike. Other systems keep <sys>-<arch>.
+# macOS platform id depends on how many arches this build targets:
+#   * SINGLE arch  -> "Mac-x86_64" / "Mac-arm64" (a thin dylib). Customers shipping only one Mac arch
+#     use these and avoid carrying the other slice. The "Mac-<arch>" names match the runtime
+#     autodetection candidates in SevenZip.getPlatformBestMatch (arm64/aarch64, amd64/x86_64).
+#   * UNIVERSAL build (JAVA_ARCH is a list, e.g. "x86_64;arm64") -> "AllMac": one fat dylib for every
+#     64-bit Mac. AllMac is the Mac entry that goes into the AllPlatforms bundle (getPlatformBestMatch
+#     recognizes it as the Mac universal). Other systems keep <sys>-<arch>.
 IF("${JAVA_SYSTEM}" STREQUAL "Mac")
-    SET(PLATFORM ${JAVA_SYSTEM})
+    LIST(LENGTH JAVA_ARCH _MAC_ARCH_COUNT)
+    IF(_MAC_ARCH_COUNT GREATER 1)
+        SET(PLATFORM "AllMac")
+    ELSE()
+        SET(PLATFORM "Mac-${JAVA_ARCH}")
+    ENDIF()
 ELSE()
     SET(PLATFORM ${JAVA_SYSTEM}-${JAVA_ARCH})
 ENDIF()

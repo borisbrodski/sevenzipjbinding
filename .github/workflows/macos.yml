@@ -1,26 +1,29 @@
 name: macOS build & test
 
-# Build ONE universal (fat: x86_64 + arm64) macOS dylib -> a single "Mac" platform that runs on every
-# 64-bit Mac (Intel + Apple Silicon). To prove the one binary works on both, the full test suite runs
-# twice on macos-14 (Apple Silicon): once with a native arm64 JVM (loads the arm64 slice) and once
-# with an x86_64 JVM under Rosetta 2 (loads the x86_64 slice of the SAME universal lib).
+# Build THREE macOS platform artifacts on macos-14 (Apple Silicon):
+#   * AllMac      - one universal (fat: x86_64 + arm64) dylib for every 64-bit Mac. Goes into the
+#                   AllPlatforms bundle; getPlatformBestMatch() picks it as the Mac universal.
+#   * Mac-x86_64  - thin Intel-only dylib (customers shipping one arch avoid the other slice).
+#   * Mac-arm64   - thin Apple-Silicon-only dylib.
+# Each thin lib is tested on its own architecture; the universal is tested on BOTH (arm64 native +
+# x86_64 under Rosetta 2 -> proves the one fat binary works on both). One matrix leg per test arch.
 #
 # Everything runs on macos-14 because GitHub's Intel macos-13 runners are the only Intel label and are
 # heavily queue-constrained.
 # Manual-only (workflow_dispatch): trigger from the Actions tab or:
-#   gh workflow run macos.yml --ref 7z-23.01
+#   gh workflow run macos.yml --ref master
 on:
   workflow_dispatch:
 
 jobs:
   build-test:
-    name: universal build + test with ${{ matrix.test_arch }} JVM
+    name: build + test (${{ matrix.test_arch }} JVM)
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { test_arch: arm64,  jdk_arch: aarch64, rosetta: false, upload: true  }  # native
-          - { test_arch: x86_64, jdk_arch: x64,     rosetta: true,  upload: false }  # via Rosetta
+          - { test_arch: arm64,  jdk_arch: aarch64, rosetta: false, upload_universal: true  }  # native
+          - { test_arch: x86_64, jdk_arch: x64,     rosetta: true,  upload_universal: false }  # via Rosetta
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
@@ -49,44 +52,74 @@ jobs:
         with:
           cmake-version: '3.28.6'
 
-      - name: Configure + build universal Mac dylib (x86_64 + arm64)
+      # --- Universal (AllMac): one fat dylib with both slices ---
+      - name: Configure + build universal AllMac dylib (x86_64 + arm64)
         run: |
           set -eux
-          mkdir build && cd build
+          mkdir build-allmac && cd build-allmac
           cmake .. \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
             -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
           make
           make package
-          echo "== built =="; ls -1 sevenzipjbinding-*-Mac.zip
+          echo "== built =="; ls -1 sevenzipjbinding-*-AllMac.zip
           file jbinding-cpp/lib7-Zip-JBinding.dylib
 
-      - name: Verify the dylib is universal (contains both arches)
+      - name: Verify AllMac dylib is universal (both arches present)
         run: |
           set -eux
-          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib
-          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q x86_64
-          lipo -info build/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -q arm64
+          lipo -info build-allmac/jbinding-cpp/lib7-Zip-JBinding.dylib
+          lipo -archs build-allmac/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -qw x86_64
+          lipo -archs build-allmac/jbinding-cpp/lib7-Zip-JBinding.dylib | grep -qw arm64
 
-      - name: Run tests (ctest) with the ${{ matrix.test_arch }} JVM
-        # arm64: native. x86_64: the x64 JVM runs under Rosetta; both load their slice of the SAME
-        # universal lib -> proves the single Mac binary works on both architectures.
-        run: cd build && ctest --output-on-failure
+      - name: Test AllMac with the ${{ matrix.test_arch }} JVM (loads its slice)
+        run: cd build-allmac && ctest --output-on-failure
 
-      - name: Upload single Mac platform zip
-        if: always() && matrix.upload
+      # --- Thin (this arch only): Mac-x86_64 or Mac-arm64 ---
+      - name: Configure + build thin Mac-${{ matrix.test_arch }} dylib
+        run: |
+          set -eux
+          mkdir build-thin && cd build-thin
+          cmake .. \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE \
+            -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=${{ matrix.test_arch }}" \
+            -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
+          make
+          make package
+          echo "== built =="; ls -1 sevenzipjbinding-*-Mac-${{ matrix.test_arch }}.zip
+
+      - name: Verify thin dylib is single-arch (${{ matrix.test_arch }} only)
+        run: |
+          set -eux
+          lipo -info build-thin/jbinding-cpp/lib7-Zip-JBinding.dylib
+          test "$(lipo -archs build-thin/jbinding-cpp/lib7-Zip-JBinding.dylib | tr -d ' ')" = "${{ matrix.test_arch }}"
+
+      - name: Test thin Mac-${{ matrix.test_arch }} with the ${{ matrix.test_arch }} JVM
+        run: cd build-thin && ctest --output-on-failure
+
+      # --- Upload: universal from the arm64 leg only; each leg uploads its own thin ---
+      - name: Upload AllMac (universal) zip
+        if: always() && matrix.upload_universal
         uses: actions/upload-artifact@v4
         with:
-          name: mac
-          path: build/sevenzipjbinding-*-Mac.zip
+          name: all-mac
+          path: build-allmac/sevenzipjbinding-*-AllMac.zip
+          if-no-files-found: warn
+
+      - name: Upload thin Mac-${{ matrix.test_arch }} zip
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-${{ matrix.test_arch }}
+          path: build-thin/sevenzipjbinding-*-Mac-${{ matrix.test_arch }}.zip
           if-no-files-found: warn
 
   # -----------------------------------------------------------------------------------------------
-  # AllPlatforms autodetection test: prove the single cross-platform AllPlatforms jar (11 platform
-  # libs incl. the universal Mac fat dylib) autodetects + loads the Mac lib on BOTH Mac architectures
-  # (arm64 native + x86_64 via Rosetta). Runs the full ctest suite with ONLY the AllPlatforms jar on
-  # the classpath (no standalone Mac jar). The AllPlatforms jar is built locally and published as the
+  # AllPlatforms autodetection test: prove the single cross-platform AllPlatforms jar (all platform
+  # libs incl. the universal AllMac fat dylib) autodetects + loads the Mac lib on BOTH Mac
+  # architectures (arm64 native + x86_64 via Rosetta). Runs the full ctest suite with ONLY the
+  # AllPlatforms jar on the classpath. The AllPlatforms jar is built locally and published as the
   # 'ci-allplatforms-fixture' prerelease (it needs Linux/Windows/ARM natives not produced in CI).
   allplatforms-autodetect:
     name: AllPlatforms autodetect + test (${{ matrix.test_arch }} JVM)
@@ -126,7 +159,7 @@ jobs:
           unzip -q *AllPlatforms.zip
           find "$PWD" -name 'sevenzipjbinding-AllPlatforms.jar'
 
-      - name: Configure + build (produces the test harness; the built Mac lib is unused)
+      - name: Configure + build the test harness (universal AllMac; its lib is unused here)
         run: |
           set -eux
           mkdir build && cd build
@@ -141,9 +174,10 @@ jobs:
           set -eux
           APJAR="$(find "$PWD/allplatforms" -name 'sevenzipjbinding-AllPlatforms.jar' | head -1)"
           test -n "$APJAR"
-          sed -i.bak -E "s#[^:\"]*/sevenzipjbinding-Mac\.jar#${APJAR}#g" build/JUnitRunner.cmake
+          # the harness build is the universal AllMac -> its native jar is sevenzipjbinding-AllMac.jar
+          sed -i.bak -E "s#[^:\"]*/sevenzipjbinding-AllMac\.jar#${APJAR}#g" build/JUnitRunner.cmake
           echo "== runner classpath now references: =="
-          grep -o "sevenzipjbinding-[A-Za-z]*\.jar" build/JUnitRunner.cmake | sort -u
+          grep -o "sevenzipjbinding-[A-Za-z0-9]*\.jar" build/JUnitRunner.cmake | sort -u
 
       - name: Run full suite via AllPlatforms autodetection (${{ matrix.test_arch }} JVM)
         run: cd build && ctest --output-on-failure

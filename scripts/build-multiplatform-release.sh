@@ -61,7 +61,11 @@ for i in $*; do
     if [ "$target" == "src" ] ; then
         continue;
     fi
-    if [[ $target =~ All.* ]] ; then
+    # Skip multi-platform BUNDLES (AllWindows, AllPlatforms) so a bundle is never nested into another.
+    # AllMac is NOT a bundle -- it is a single universal (fat) Mac dylib and counts as one platform, so
+    # it IS included (it is the Mac entry inside AllPlatforms). The thin per-arch Mac libs
+    # (Mac-x86_64 / Mac-arm64) are kept out of AllPlatforms by the caller's input list, not here.
+    if [[ $target =~ ^All ]] && [ "$target" != "AllMac" ] ; then
         continue;
     fi
     if [ $releasename ] ; then

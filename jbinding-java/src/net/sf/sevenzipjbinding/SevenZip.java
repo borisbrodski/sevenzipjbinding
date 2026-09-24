@@ -922,10 +922,16 @@ public class SevenZip {
             }
         }
 
-        // 2) Bare system-name match. A system that ships a single universal library for every CPU
-        //    publishes it as a platform named just <system> (no arch suffix). This is how macOS works:
-        //    one fat "Mac" dylib (x86_64 + arm64) serves both Intel and Apple Silicon. Harmless for
-        //    Linux/Windows, which never define a bare-<system> platform (always <system>-<arch>).
+        // 2) Universal-library match. A system may ship a single native library that serves every CPU
+        //    of that system under a platform id without an "<arch>" suffix:
+        //      * macOS: the universal (fat) dylib with both x86_64 and arm64 slices is published as
+        //        "AllMac"; inside AllPlatforms it is the Mac entry that runs on Intel and Apple Silicon
+        //        alike (the per-arch thin libs are "Mac-x86_64" / "Mac-arm64", matched at step 1).
+        //      * a bare "<system>" id, if present, is likewise a catch-all for that system.
+        //    Harmless for Linux/Windows, which never define these (always <system>-<arch>).
+        if (system.equals("Mac") && availablePlatform.contains("AllMac")) {
+            return "AllMac";
+        }
         if (availablePlatform.contains(system)) {
             return system;
         }
