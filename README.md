@@ -66,7 +66,7 @@ Plus archive‑format **auto‑detection**, **password‑protected** archives, a
 | **Windows** | x86 · x64 · ARM64 |
 | **Linux** (glibc) | i386 · amd64 · ARMv5 · ARMv6 · ARMv7 · ARM64 |
 | **Linux** (musl / Alpine) | amd64 · ARMv7 · ARM64 |
-| **macOS** | universal — Intel (x86_64) + Apple Silicon (arm64) |
+| **macOS** | Intel (x86_64) · Apple Silicon (arm64) · universal (AllMac, both in one dylib) |
 
 The right native library is selected automatically at runtime.
 
@@ -97,7 +97,7 @@ implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:26.03-2.4
 
 > 💡 `-all-platforms` bundles every native (largest, works everywhere). To keep your artifact small,
 > depend on a single‑platform variant instead, e.g. `sevenzipjbinding-linux-amd64`,
-> `sevenzipjbinding-windows-amd64`, `sevenzipjbinding-mac`, … (see all on
+> `sevenzipjbinding-windows-amd64`, `sevenzipjbinding-mac-arm64` (or `-all-mac` for any Mac), … (see all on
 > [Maven Central](https://central.sonatype.com/namespace/net.sf.sevenzipjbinding)).
 
 **Without a build tool** — download the ZIPs (jars + native libs) from
