@@ -16,7 +16,7 @@ const ORDER = [
 ];
 const present = existsSync(HIST) ? new Set(readdirSync(HIST)) : new Set<string>();
 const versions = ORDER.filter((v) => present.has(v));
-const CURRENT = '26.03-2.4';
+const CURRENT = '26.03-2.3';
 const first = versions[0];
 ---
 <Base title="Older JavaDoc — 7-Zip-JBinding">

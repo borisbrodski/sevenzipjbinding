@@ -1,7 +1,7 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 26.03-2.4 (engine upgrade to 7-Zip 26.03)
+Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
 	* Upgraded the bundled 7-Zip engine 23.01 -> 26.03 (latest, released
 	  2026-09-03) via the vendored-engine (upstream-7zip) workflow. Picks up the
