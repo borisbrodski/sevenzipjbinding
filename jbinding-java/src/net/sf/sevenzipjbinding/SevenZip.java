@@ -192,7 +192,7 @@ public class SevenZip {
     }
 
     // Also change in /CMakeLists.txt
-    private static final String SEVENZIPJBINDING_VERSION = "26.03-2.4";
+    private static final String SEVENZIPJBINDING_VERSION = "26.03-2.3";
 
     private static final String SYSTEM_PROPERTY_TMP = "java.io.tmpdir";
     private static final String SYSTEM_PROPERTY_SEVEN_ZIP_NO_DO_PRIVILEGED_INITIALIZATION = "sevenzip.no_doprivileged_initialization";

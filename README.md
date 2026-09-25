@@ -72,27 +72,27 @@ The right native library is selected automatically at runtime.
 
 ## 🚀 Install
 
-Current version: **`26.03-2.4`** (7‑Zip engine 26.03).
+Current version: **`26.03-2.3`** (7‑Zip engine 26.03).
 
 **Maven**
 ```xml
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding</artifactId>
-    <version>26.03-2.4</version>
+    <version>26.03-2.3</version>
 </dependency>
 <!-- native libraries for all platforms (auto-detected at runtime) -->
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding-all-platforms</artifactId>
-    <version>26.03-2.4</version>
+    <version>26.03-2.3</version>
 </dependency>
 ```
 
 **Gradle**
 ```groovy
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:26.03-2.4'
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:26.03-2.4'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:26.03-2.3'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:26.03-2.3'
 ```
 
 > 💡 `-all-platforms` bundles every native (largest, works everywhere). To keep your artifact small,

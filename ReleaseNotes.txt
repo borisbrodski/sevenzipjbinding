@@ -6,10 +6,10 @@ Known issues
 
     * None currently tracked.
       (CVE-2024-11477, the 7-Zip Zstandard decompression issue affecting 23.01-2.x, is resolved
-      as of 26.03-2.4 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
+      as of 26.03-2.3 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
 
 
-Main features of 26.03-2.4 (engine upgrade to 7-Zip 26.03)
+Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
     * Upgraded the bundled 7-Zip engine from 23.01 to 26.03 (latest, released
       2026-09-03), via the vendored-engine workflow. Brings the upstream format,
