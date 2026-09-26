@@ -46,3 +46,60 @@ jobs:
           name: freebsd-amd64
           path: build/sevenzipjbinding-*-FreeBSD-amd64.zip
           if-no-files-found: warn
+
+  # Prove SevenZip.getPlatformBestMatch() selects the right native on FreeBSD in BOTH modes:
+  #   * native FreeBSD JVM (os.name=FreeBSD)  -> FreeBSD-amd64
+  #   * Linux JVM under the Linuxulator (os.name=Linux) -> Linux-amd64
+  # We give it a platforms list containing BOTH ids and check which one each JVM picks.
+  autodetect:
+    name: autodetect (native FreeBSD vs Linuxulator)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: FreeBSD VM — build API jar + probe under both JVMs
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "14.2"
+          usesh: true
+          prepare: |
+            pkg install -y cmake openjdk8 wget
+            # Linux ABI layer (Linuxulator) + a glibc Linux userland for the Linux-JVM test
+            sysrc linux_enable=YES
+            service linux start || true
+            pkg install -y linux_base-rl9 || true
+          run: |
+            set -eux
+            export JAVA_HOME=/usr/local/openjdk8
+            mkdir build && cd build
+            cmake .. -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
+            make sevenzipjbinding-jar
+            API="$(find "$PWD" -name sevenzipjbinding.jar | head -1)"; test -n "$API"
+            # platforms list with BOTH Linux-amd64 and FreeBSD-amd64 (selection only; no native load)
+            mkdir fix
+            printf 'platform.1=Linux-amd64\nplatform.2=FreeBSD-amd64\n' > fix/sevenzipjbinding-platforms.properties
+            ( cd fix && jar cf ../fixture.jar sevenzipjbinding-platforms.properties )
+            CP="$API:$PWD/fixture.jar"
+            cat > Probe.java <<'EOF'
+            public class Probe { public static void main(String[] a) throws Exception {
+              System.out.println("os.name=" + System.getProperty("os.name"));
+              System.out.println("os.arch=" + System.getProperty("os.arch"));
+              System.out.println("BEST=" + net.sf.sevenzipjbinding.SevenZip.getPlatformBestMatch());
+            }}
+            EOF
+            "$JAVA_HOME/bin/javac" -cp "$CP" Probe.java
+
+            echo "===== NATIVE FreeBSD JVM ====="
+            "$JAVA_HOME/bin/java" -cp "$CP:$PWD" Probe | tee out.native
+            grep -qx 'os.name=FreeBSD' out.native
+            grep -qx 'BEST=FreeBSD-amd64' out.native
+
+            echo "===== LINUX JVM under the Linuxulator ====="
+            wget -q -O ljdk.tgz "https://api.adoptium.net/v3/binary/latest/8/ga/linux/x64/jdk/hotspot/normal/eclipse"
+            mkdir ljdk && tar xzf ljdk.tgz -C ljdk --strip-components=1
+            file ljdk/bin/java
+            ./ljdk/bin/java -version 2>&1 | head -1 || true
+            ./ljdk/bin/java -cp "$CP:$PWD" Probe | tee out.linux
+            grep -qx 'os.name=Linux' out.linux
+            grep -qx 'BEST=Linux-amd64' out.linux
+
+            echo "===== AUTODETECT OK: FreeBSD JVM->FreeBSD-amd64, Linux(Linuxulator)->Linux-amd64 ====="
