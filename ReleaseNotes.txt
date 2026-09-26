@@ -21,10 +21,15 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       7-Zip 24.07, so the Zstandard known-issue from 23.01-2.x no longer applies.
       Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
 
-    * No public API changes: existing Java code is unaffected. The full set of
-      supported platforms is unchanged and the complete build + runtime test
-      matrix is green on the new engine (Linux glibc & musl on arm/x86, Windows
-      x86/x64/arm64, macOS arm64 & x86_64).
+    * New platform: FreeBSD (amd64). A native FreeBSD x86_64 library (platform
+      'FreeBSD-amd64'), built and tested on FreeBSD 14 (clang + OpenJDK), passing
+      the full suite. Runtime auto-detection selects it on a native FreeBSD JVM
+      (os.name=FreeBSD); it is also included in the -all-platforms jar. (Note: on
+      the Linux compatibility layer the existing Linux-amd64 library also works.)
+
+    * No public API changes: existing Java code is unaffected. The complete build
+      + runtime test matrix is green on the new engine (Linux glibc & musl on
+      arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
 
 Main features of 23.01-2.3 (new platform: Windows on Arm)
