@@ -34,7 +34,7 @@ jobs:
             echo "== built native lib =="
             file jbinding-cpp/lib7-Zip-JBinding.so
             echo "== ctest =="
-            ctest --output-on-failure || echo "!! ctest reported failures (inspect above)"
+            ctest --output-on-failure
             echo "== package =="
             make package
             ls -l sevenzipjbinding-*-FreeBSD-amd64.zip
