@@ -9,7 +9,7 @@ REPO=nexus-releases
 echo -n "Enter version: "
 read VERSION
 
-# Artifact set since 26.03-2.5:
+# Artifact set since 26.03-2.3:
 #  - AllLinux dropped (no such zip anymore; AllPlatforms covers the use case)
 #  - macOS is now THREE artifacts: -all-mac (universal fat, both arches; the Mac entry inside
 #    AllPlatforms), -mac-x86_64 (thin Intel) and -mac-arm64 (thin Apple Silicon). The old universal
