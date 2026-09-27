@@ -49,6 +49,12 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
         suite</b> — the shown output is <b>verified on every release</b>, on every platform.
         Use your browser's search (<kbd>Ctrl</kbd>+<kbd>F</kbd>) to find anything on this page.
       </p>
+      <p class="lead-note">
+        These examples favour clarity, so error handling and stream lifecycle are kept minimal — that
+        part is not the focus here and, in real code, must be done with care (close streams reliably,
+        never swallow a failing <code>close()</code>). For the robust, production-grade treatment see
+        the <a href="/performance/">Performance &amp; correct usage</a> page.
+      </p>
 
       {groups.map((g) => (
         <section class="snip-group">
@@ -92,6 +98,9 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
   <style>
     .snip-layout { display: grid; grid-template-columns: 260px 1fr; gap: 44px; align-items: start; padding-top: 40px; }
     .snip-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+    .lead-note { font-size: .9rem; color: var(--text-2); margin: -4px 0 8px; }
+    .lead-note a { color: var(--blue); }
+    .lead-note code { font: 600 .88em var(--font-mono); background: var(--surface-2); border-radius: 4px; padding: 1px 4px; }
 
     /* outline */
     .outline {

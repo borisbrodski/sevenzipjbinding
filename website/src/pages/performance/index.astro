@@ -155,22 +155,40 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
         A <code>.tar.gz</code> is not one archive but two: a GZip stream whose single item is a
         <code>.tar</code>, which in turn holds the real files. So unwrapping it is always two
         open/extract steps — open the outer GZip, pull out the inner <code>.tar</code>, then open
-        that. The only decision is <b>where the intermediate archive goes</b>:
+        that. The decision is <b>where the intermediate archive goes</b>:
       </p>
       <ul class="rules">
         <li>
           <b>In memory</b> — keep the inner archive in a <code>ByteArrayStream</code>. No temp file,
-          fastest, but the whole inner archive must fit in memory.
+          simplest, great as long as the inner archive comfortably fits in memory.
         </li>
         <li>
-          <b>Via a temporary file</b> — stream the inner archive to disk and reopen it. Constant
-          memory, the right choice for a huge inner archive.
+          <b>Via a temporary file</b> — stream the inner archive to disk and reopen it. Bounded
+          memory; the safe default for a large inner archive.
+        </li>
+        <li>
+          <b>Streamed, never materialised (advanced)</b> — you do <b>not</b> have to hold the whole
+          inner archive anywhere first. Decompress the GZip on one thread and let the <code>.tar</code>
+          reader on another thread <b>pull</b> those bytes on demand through a small in-memory pipe:
+          extraction of the inner files starts immediately, overlapping with decompression, and the two
+          run concurrently. It is genuinely tricky — the tar reader asks for the total size up front
+          (answer it cheaply from the GZip <code>ISIZE</code> trailer) and seeks backward to re-read
+          data blocks (so the pipe needs a look-behind cache). Because it is advanced we don't inline
+          it here, but it is real and proven: see the test
+          <code>ExtractNestedArchiveStreamingTest</code> for a complete, back-pressured implementation.
         </li>
       </ul>
       <p class="snip-desc">
-        The example below shows both. The same pattern works for any nesting
+        The example below shows the first two. The same pattern works for any nesting
         (<code>.cpio.gz</code>, a <code>.zip</code> inside a <code>.7z</code>, …).
       </p>
+      <div class="callout">
+        <b>Streams, done right.</b> This is a master-class example, not a copy-paste starter, so it
+        treats streams with the care production code needs: every <code>Closeable</code> is managed
+        with <b>try-with-resources</b>, and a failing <code>close()</code> on the <b>write</b> path
+        (say the last buffered block can't be flushed because the disk is full) is allowed to
+        propagate — never swallowed. A swallowed <code>close()</code> is silent data corruption.
+      </div>
       <div class="codebox">
         <div class="codebox-head">
           <span>ExtractNestedArchive.java</span>

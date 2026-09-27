@@ -27,11 +27,19 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  *   1. open the OUTER archive (GZip) and pull out its single item (the inner {@code .tar});
  *   2. open that inner {@code .tar} and read the actual files.
  *
- * The only question is WHERE the intermediate {@code .tar} goes. Two options, both shown here:
- *   - {@link #extractInMemory}  - keep the inner archive in a {@link ByteArrayStream}: no temp file,
- *                                 fastest, but the whole inner archive must fit in memory;
+ * WHERE the intermediate {@code .tar} goes gives you three options:
+ *   - {@link #extractInMemory}   - keep the inner archive in a {@link ByteArrayStream}. No temp file;
+ *                                  simplest and fast, as long as the inner archive fits in memory.
  *   - {@link #extractViaTempFile} - stream the inner archive to a temporary file and reopen it from
- *                                 disk: constant memory, good for huge inner archives.
+ *                                  disk. Bounded memory, the safe default for a huge inner archive.
+ *   - A third, advanced option avoids materialising the inner archive at all: decompress the GZip on
+ *     one thread and let the {@code .tar} reader pull those bytes on demand through a small in-memory
+ *     pipe (with a look-behind cache, because the tar reader seeks). It is genuinely tricky, so it is
+ *     not shown here - see the test {@code ExtractNestedArchiveStreamingTest} for a working proof.
+ *
+ * Note the stream handling below: everything Closeable is managed with try-with-resources, so a
+ * failing {@code close()} on the WRITE path (e.g. the last block cannot be flushed - disk full) is
+ * NOT swallowed but propagates as it must; a swallowed close is silent data corruption.
  *
  * The same idea works for any nesting (e.g. {@code .cpio.gz}, a {@code .zip} inside a {@code .7z}, ...).
  */
@@ -67,8 +75,7 @@ public class ExtractNestedArchive {
 
             public void setOperationResult(ExtractOperationResult result) throws SevenZipException {
                 if (result != ExtractOperationResult.OK) {
-                    System.err.println("Extraction error: " + result);
-                    return;
+                    throw new SevenZipException("Extraction failed: " + result);
                 }
                 boolean folder = ((Boolean) innerArchive.getProperty(index, PropID.IS_FOLDER)).booleanValue();
                 if (!folder) {
@@ -89,60 +96,52 @@ public class ExtractNestedArchive {
     }
 
     /** Variant 1: unwrap fully in memory - the inner archive lives in a ByteArrayStream, no temp file. */
-    public static void extractInMemory(String wrappedArchive) {
-        RandomAccessFile outerFile = null;
-        IInArchive outer = null;
-        IInArchive inner = null;
-        ByteArrayStream innerArchiveInMemory = new ByteArrayStream(Integer.MAX_VALUE);
-        try {
-            outerFile = new RandomAccessFile(wrappedArchive, "r");
-            outer = SevenZip.openInArchive(null, new RandomAccessFileInStream(outerFile));
+    public static void extractInMemory(String wrappedArchive) throws SevenZipException, IOException {
+        try (RandomAccessFile outerFile = new RandomAccessFile(wrappedArchive, "r");
+                IInArchive outer = SevenZip.openInArchive(null, new RandomAccessFileInStream(outerFile));
+                ByteArrayStream innerData = new ByteArrayStream(Integer.MAX_VALUE)) {
 
-            // A GZip/BZip2/XZ stream holds exactly ONE item - the inner archive. Extract it into memory.
-            outer.extractSlow(firstFileItem(outer), innerArchiveInMemory);
+            // A GZip/BZip2/XZ stream holds exactly ONE item - the inner archive. Decompress it to memory.
+            checkOk(outer.extractSlow(firstFileItem(outer), innerData));
 
             // Reopen that in-memory data as an archive and read the real files.
-            innerArchiveInMemory.rewind();
-            inner = SevenZip.openInArchive(null, (IInStream) innerArchiveInMemory);
-            listInnerContent(inner);
-        } catch (Exception e) {
-            System.err.println("Error occurs: " + e);
-        } finally {
-            closeQuietly(inner);
-            closeQuietly(outer);
-            closeQuietly(outerFile);
+            innerData.rewind();
+            try (IInArchive inner = SevenZip.openInArchive(null, (IInStream) innerData)) {
+                listInnerContent(inner);
+            }
         }
     }
 
-    /** Variant 2: unwrap through a temporary file - constant memory, good for a huge inner archive. */
-    public static void extractViaTempFile(String wrappedArchive) {
-        RandomAccessFile outerFile = null;
-        RandomAccessFile innerFile = null;
-        IInArchive outer = null;
-        IInArchive inner = null;
-        File tempTar = null;
+    /** Variant 2: unwrap through a temporary file - bounded memory, good for a huge inner archive. */
+    public static void extractViaTempFile(String wrappedArchive) throws SevenZipException, IOException {
+        File tempTar = File.createTempFile("sevenzipjbinding-inner-", ".tmp");
         try {
-            outerFile = new RandomAccessFile(wrappedArchive, "r");
-            outer = SevenZip.openInArchive(null, new RandomAccessFileInStream(outerFile));
-
-            // Stream the single inner item to a temp file instead of holding it in memory.
-            tempTar = File.createTempFile("sevenzipjbinding-inner-", ".tmp");
-            innerFile = new RandomAccessFile(tempTar, "rw");
-            outer.extractSlow(firstFileItem(outer), new RandomAccessFileOutStream(innerFile));
-
-            // Reopen the temp file as an archive (RandomAccessFileInStream seeks as needed) and read it.
-            inner = SevenZip.openInArchive(null, new RandomAccessFileInStream(innerFile));
-            listInnerContent(inner);
-        } catch (Exception e) {
-            System.err.println("Error occurs: " + e);
+            // One handle for both writing the inner archive and reading it back. try-with-resources
+            // guarantees close() runs - and, crucially, its IOException is NOT swallowed: a failed
+            // flush of the final block (e.g. disk full) must surface, or we'd read a truncated archive.
+            try (RandomAccessFile innerFile = new RandomAccessFile(tempTar, "rw")) {
+                try (RandomAccessFile outerFile = new RandomAccessFile(wrappedArchive, "r");
+                        IInArchive outer = SevenZip.openInArchive(null,
+                                new RandomAccessFileInStream(outerFile))) {
+                    checkOk(outer.extractSlow(firstFileItem(outer),
+                            new RandomAccessFileOutStream(innerFile)));
+                }
+                // Reopen the temp file (RandomAccessFileInStream seeks as needed) and read it.
+                try (IInArchive inner = SevenZip.openInArchive(null,
+                        new RandomAccessFileInStream(innerFile))) {
+                    listInnerContent(inner);
+                }
+            }
         } finally {
-            closeQuietly(inner);
-            closeQuietly(outer);
-            closeQuietly(innerFile);
-            closeQuietly(outerFile);
-            if (tempTar != null && !tempTar.delete()) {
+            if (!tempTar.delete()) {
                 tempTar.deleteOnExit();
             }
+        }
+    }
+
+    private static void checkOk(ExtractOperationResult result) throws SevenZipException {
+        if (result != ExtractOperationResult.OK) {
+            throw new SevenZipException("Unwrapping the outer archive failed: " + result);
         }
     }
 
@@ -157,40 +156,31 @@ public class ExtractNestedArchive {
         throw new SevenZipException("Wrapper archive contains no file to unwrap");
     }
 
-    private static void closeQuietly(IInArchive archive) {
-        if (archive != null) {
-            try {
-                archive.close();
-            } catch (SevenZipException e) {
-                System.err.println("Error closing archive: " + e);
-            }
-        }
-    }
-
-    private static void closeQuietly(RandomAccessFile file) {
-        if (file != null) {
-            try {
-                file.close();
-            } catch (IOException e) {
-                System.err.println("Error closing file: " + e);
-            }
-        }
-    }
-
     public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage: java ExtractNestedArchive <wrapped-archive, e.g. foo.tar.gz>");
             return;
         }
         System.out.println("== In memory ==");
-        System.out.println("   Hash   |    Size    | Filename");
-        System.out.println("----------+------------+---------");
-        extractInMemory(args[0]);
+        printHeader();
+        try {
+            extractInMemory(args[0]);
+        } catch (Exception e) {
+            System.err.println("Error occurs: " + e);
+        }
 
         System.out.println("== Via temporary file ==");
+        printHeader();
+        try {
+            extractViaTempFile(args[0]);
+        } catch (Exception e) {
+            System.err.println("Error occurs: " + e);
+        }
+    }
+
+    private static void printHeader() {
         System.out.println("   Hash   |    Size    | Filename");
         System.out.println("----------+------------+---------");
-        extractViaTempFile(args[0]);
     }
 }
 /* END_SNIPPET */
