@@ -8,6 +8,8 @@ import { loadSnippet, loadOutput, highlightJava } from '../../lib/snippets';
 // extract snippets (same simple.zip fixture), so we reuse the shared ExtractItems output fragment.
 const extractToFolderCode = await highlightJava(loadSnippet('ExtractToFolder'));
 const extractToFolderOut = loadOutput('ExtractItems');
+const extractNestedCode = await highlightJava(loadSnippet('ExtractNestedArchive'));
+const extractNestedOut = loadOutput('ExtractNestedArchive');
 ---
 <Base
   title="Performance & correct usage — 7-Zip-JBinding"
@@ -144,6 +146,47 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
       <p class="more">
         More runnable examples are on the <a href="/snippets/">Code snippets</a> page.
       </p>
+    </section>
+
+    <!-- ===================== wrapped archives ===================== -->
+    <section class="perf-sec">
+      <h2>Bonus: extract a wrapped archive (<code>.tar.gz</code>) in one go</h2>
+      <p>
+        A <code>.tar.gz</code> is not one archive but two: a GZip stream whose single item is a
+        <code>.tar</code>, which in turn holds the real files. So unwrapping it is always two
+        open/extract steps — open the outer GZip, pull out the inner <code>.tar</code>, then open
+        that. The only decision is <b>where the intermediate archive goes</b>:
+      </p>
+      <ul class="rules">
+        <li>
+          <b>In memory</b> — keep the inner archive in a <code>ByteArrayStream</code>. No temp file,
+          fastest, but the whole inner archive must fit in memory.
+        </li>
+        <li>
+          <b>Via a temporary file</b> — stream the inner archive to disk and reopen it. Constant
+          memory, the right choice for a huge inner archive.
+        </li>
+      </ul>
+      <p class="snip-desc">
+        The example below shows both. The same pattern works for any nesting
+        (<code>.cpio.gz</code>, a <code>.zip</code> inside a <code>.7z</code>, …).
+      </p>
+      <div class="codebox">
+        <div class="codebox-head">
+          <span>ExtractNestedArchive.java</span>
+          <span class="head-right">
+            <span class="badge"><span class="dot"></span> verified by ExtractNestedArchiveTest</span>
+            <button class="copy-btn" data-copy>Copy</button>
+          </span>
+        </div>
+        <div class="jd-code" set:html={extractNestedCode} />
+      </div>
+      {extractNestedOut && (
+        <div class="codebox outbox">
+          <div class="codebox-head"><span>Output</span></div>
+          <Code code={extractNestedOut} lang="text" themes={{ light: 'github-light', dark: 'one-dark-pro' }} />
+        </div>
+      )}
     </section>
   </div>
 
