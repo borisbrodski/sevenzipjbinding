@@ -37,8 +37,8 @@ and abort at any time.
   archives, extract‑while‑downloading a remote archive, and abortable operations. No temp files
   unless you want them.
 - **One jar, every platform** — Windows (x86, x64 **and** ARM64), Linux (glibc **and** musl/Alpine,
-  x86 **and** ARM v5–v8), macOS (Intel + Apple Silicon). The `-all-platforms` jar **auto‑detects** the
-  OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
+  x86 **and** ARM v5–v8), macOS (Intel + Apple Silicon) **and** FreeBSD (amd64). The `-all-platforms`
+  jar **auto‑detects** the OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
 - **Two APIs** — a beginner‑friendly *simple* interface and a full‑power *standard* interface.
 - **Encryption** — open and create password‑protected archives, including 7z encrypted headers.
 - **Battle‑tested** — maintained since 2007, exercised by ~8800 JUnit tests on every supported
@@ -67,6 +67,7 @@ Plus archive‑format **auto‑detection**, **password‑protected** archives, a
 | **Linux** (glibc) | i386 · amd64 · ARMv5 · ARMv6 · ARMv7 · ARM64 |
 | **Linux** (musl / Alpine) | amd64 · ARMv7 · ARM64 |
 | **macOS** | Intel (x86_64) · Apple Silicon (arm64) · universal (AllMac, both in one dylib) |
+| **FreeBSD** | amd64 |
 
 The right native library is selected automatically at runtime.
 

@@ -13,10 +13,14 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  so the Zstandard known-issue tracked for 23.01-2.x no longer applies.
 	  https://github.com/borisbrodski/sevenzipjbinding/issues/72
 
-	* No public API changes; existing code is unaffected. Supported platforms are
-	  unchanged and the full 13-platform build + runtime test matrix is green on
-	  the new engine (Linux glibc & musl on arm/x86, Windows x86/x64/arm64, macOS
-	  arm64 & x86_64).
+	* New platform: FreeBSD amd64 - native FreeBSD x86_64 library (platform
+	  'FreeBSD-amd64'), built and tested on FreeBSD 14 (clang + OpenJDK) via
+	  GitHub Actions (vmactions/freebsd-vm), passing the full 18-bundle suite.
+	  Auto-detected on a native FreeBSD JVM and folded into -all-platforms.
+
+	* No public API changes; existing code is unaffected. Full build + runtime
+	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
+	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
 	* Internal: trimmed our custom edits to the vendored 7-Zip sources (upstream
 	  26.03 absorbed several); the remainder are documented in the project.
