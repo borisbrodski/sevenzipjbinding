@@ -60,7 +60,8 @@ public class ExtractNestedArchiveStreamingTest {
         private long pos; // consumer position
         private long maxRequestedEnd; // furthest byte the consumer has asked for (drives back-pressure)
         private boolean aborted;
-        private int producerBlockedCount; // proof metric: how often the producer was throttled
+        private int producerBlockedCount; // info: how often the producer was throttled (look-ahead)
+        private int consumerWaitCount; // proof metric: how often the consumer waited for the producer
 
         DecompressionPipe(int totalSize) {
             this.totalSize = totalSize;
@@ -69,6 +70,12 @@ public class ExtractNestedArchiveStreamingTest {
 
         /** Producer side: append decompressed bytes, blocking while too far ahead of the consumer. */
         synchronized void feed(byte[] data, int off, int len) throws InterruptedException {
+            // Deterministic streaming: do not produce a single byte until the consumer has actually
+            // requested data. This guarantees the consumer's first read finds nothing yet and must
+            // wait for us - i.e. the data is genuinely piped, never "produced in full up front".
+            while (!aborted && maxRequestedEnd == 0) {
+                wait();
+            }
             int written = 0;
             while (written < len) {
                 while (!aborted && produced > maxRequestedEnd + LOOK_AHEAD) {
@@ -91,8 +98,8 @@ public class ExtractNestedArchiveStreamingTest {
             notifyAll();
         }
 
-        synchronized int blockedCount() {
-            return producerBlockedCount;
+        synchronized int consumerWaits() {
+            return consumerWaitCount;
         }
 
         public synchronized int read(byte[] data) throws SevenZipException {
@@ -104,6 +111,7 @@ public class ExtractNestedArchiveStreamingTest {
             notifyAll(); // let a throttled producer proceed
             try {
                 while (!aborted && produced < pos + want) {
+                    consumerWaitCount++;
                     wait(); // wait for the producer to decompress enough
                 }
             } catch (InterruptedException e) {
@@ -234,10 +242,10 @@ public class ExtractNestedArchiveStreamingTest {
             assertArrayEquals("content mismatch for " + e.getKey(), e.getValue(), extracted.get(e.getKey()));
         }
 
-        // 6. Proof of genuine streaming: the producer was throttled by the consumer at least once
-        //    (it could not simply decompress everything up front).
-        assertTrue("producer was never throttled - not actually streaming",
-                pipe.blockedCount() > 0);
+        // 6. Proof of genuine streaming: the consumer had to wait for the producer at least once,
+        //    i.e. the inner archive was consumed as it was produced - never materialised up front.
+        assertTrue("consumer never waited for the producer - data was not actually streamed",
+                pipe.consumerWaits() > 0);
     }
 
     // ---- helpers: build the in-memory .tar.gz fixture -----------------------------------------
