@@ -195,7 +195,9 @@ public class ExtractNestedArchiveStreamingTest {
                 private String path;
 
                 public ISequentialOutStream getStream(int index, ExtractAskMode mode) throws SevenZipException {
-                    path = tar.getStringProperty(index, PropID.PATH);
+                    // 7-Zip reports paths with the OS separator (backslash on Windows); normalise to
+                    // '/' so the comparison against the source paths is platform-independent.
+                    path = tar.getStringProperty(index, PropID.PATH).replace('\\', '/');
                     boolean folder = ((Boolean) tar.getProperty(index, PropID.IS_FOLDER)).booleanValue();
                     if (mode != ExtractAskMode.EXTRACT || folder) {
                         buf = null;
