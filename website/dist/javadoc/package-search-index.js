@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"net.sf.sevenzipjbinding"},{"l":"net.sf.sevenzipjbinding.impl"},{"l":"net.sf.sevenzipjbinding.simple"},{"l":"net.sf.sevenzipjbinding.simple.impl"},{"l":"net.sf.sevenzipjbinding.util"}];updateSearchResults();
