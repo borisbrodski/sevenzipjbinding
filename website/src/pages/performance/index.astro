@@ -1,0 +1,289 @@
+---
+import Base from '../../layouts/Base.astro';
+import { Code } from 'astro:components';
+import { loadSnippet, loadOutput, highlightJava } from '../../lib/snippets';
+
+// The featured example is the REAL, tested ExtractToFolder snippet (verified by ExtractToFolderTest),
+// extracted at build time exactly like the /snippets page. Its output is byte-identical to the other
+// extract snippets (same simple.zip fixture), so we reuse the shared ExtractItems output fragment.
+const extractToFolderCode = await highlightJava(loadSnippet('ExtractToFolder'));
+const extractToFolderOut = loadOutput('ExtractItems');
+const extractNestedCode = await highlightJava(loadSnippet('ExtractNestedArchive'));
+const extractNestedOut = loadOutput('ExtractNestedArchive');
+---
+<Base
+  title="Performance & correct usage — 7-Zip-JBinding"
+  description="Why 7-Zip-JBinding extraction can turn slow, and how to keep it fast: extract in a single pass (O(n)) even on solid 7z archives, and write a callback that opens each output file exactly once."
+>
+  <div class="container perf">
+    <div class="kicker">Documentation</div>
+    <h1 class="perf-h1">Performance &amp; correct usage</h1>
+    <p class="lead">
+      7-Zip-JBinding is a thin JNI layer over the same native engine as the <code>7z</code> command
+      line — extraction is essentially as fast as 7-Zip itself. When people report that extraction is
+      &ldquo;slow&rdquo; (minutes or even an hour for an archive that <code>7z x</code> unpacks in
+      seconds), the cause is almost always in the <b>calling code</b>, not the library. This page
+      explains the two traps that cause it and shows a complete, tested example that avoids both.
+    </p>
+
+    <div class="callout">
+      <b>TL;DR</b> — Extract everything in <b>one</b> call to
+      <code>inArchive.extract(indices, false, callback)</code>, and in your callback open each output
+      file <b>once</b> in <code>getStream()</code>, keep appending in <code>write()</code>, and close
+      it in <code>setOperationResult()</code>. Do no per-chunk work in the hot path.
+    </div>
+
+    <!-- ===================== 1: the O(n^2) trap ===================== -->
+    <section class="perf-sec">
+      <h2>1. The big one: don&rsquo;t extract solid archives item-by-item</h2>
+      <p>
+        7z archives are usually <b>solid</b>: many files are compressed together into one continuous
+        stream, which is what gives 7z its great ratio. The price is that to reach file <i>n</i> the
+        engine must decompress everything before it. That is fine when you extract in order in a
+        single pass — the block is streamed exactly <b>once</b>.
+      </p>
+      <p>
+        It becomes a disaster if you loop over items and extract them one at a time with
+        <code>getStream(...).extractSlow(...)</code> (or a per-item <code>extract</code> call).
+        Each call restarts decompression from the beginning of the solid block, so unpacking
+        <i>k</i> files re-decompresses the block <i>k</i> times:
+      </p>
+      <div class="cmp">
+        <div class="cmp-bad">
+          <div class="cmp-tag">✗ O(n²) — re-decompresses every time</div>
+          <pre><code>{`for (int i = 0; i < count; i++) {
+    inArchive.extractSlow(i, out); // restarts the solid block each iteration
+}`}</code></pre>
+        </div>
+        <div class="cmp-good">
+          <div class="cmp-tag">✓ O(n) — one pass over the solid block</div>
+          <pre><code>{`int[] all = ...; // indices of every file
+inArchive.extract(all, false, callback); // engine streams the block once`}</code></pre>
+        </div>
+      </div>
+      <p>
+        On a solid archive with thousands of files this is the difference between seconds and an
+        hour. Always hand the <b>full list of indices</b> to a single
+        <code>extract(int[], false, callback)</code> call and let the engine walk the archive once.
+        (<code>extractSlow</code> is a convenience for pulling out <b>one</b> item; it is the wrong
+        tool for bulk extraction.)
+      </p>
+    </section>
+
+    <!-- ===================== 2: the callback ===================== -->
+    <section class="perf-sec">
+      <h2>2. Write the callback the way the engine expects</h2>
+      <p>
+        The engine drives extraction through your <code>IArchiveExtractCallback</code>. It is a small
+        state machine, and fighting it is the second common cause of slowness and bugs. Follow these
+        rules:
+      </p>
+      <ul class="rules">
+        <li>
+          <b>Open each output file once, in <code>getStream()</code>.</b> This method is called once
+          per item, right before its data starts. That is the place to create the target file and its
+          parent directories — not inside the write loop.
+        </li>
+        <li>
+          <b><code>write(byte[])</code> is called many times per file — just append.</b> Never
+          re-open or seek to the end on every chunk. Re-opening the file for every buffer (a common
+          mistake) turns linear extraction into an avalanche of syscalls. And you <b>must</b> return
+          the number of bytes consumed (always the whole buffer).
+        </li>
+        <li>
+          <b>Close the file in <code>setOperationResult()</code>.</b> This is called once, after the
+          last chunk. One open and one close per file — never per chunk.
+        </li>
+        <li>
+          <b>Keep the hot path empty.</b> Per-chunk logging, hashing, or flushing dominates the run
+          time. Do progress reporting from <code>setCompleted()</code>, not from <code>write()</code>.
+          (The example below computes a hash only to make its output verifiable in the test suite —
+          real code should drop it.)
+        </li>
+        <li>
+          <b>Buffer your output.</b> Wrap the file stream in a <code>BufferedOutputStream</code> so
+          the many small chunks don&rsquo;t each hit the disk.
+        </li>
+      </ul>
+    </section>
+
+    <!-- ===================== 3: single-thread note ===================== -->
+    <section class="perf-sec">
+      <h2>3. One archive, one thread</h2>
+      <p>
+        A single <code>IInArchive</code> instance and its extraction are <b>not</b> thread-safe, and
+        the native codecs already use multiple cores internally where it helps. Don&rsquo;t try to
+        speed a single archive up by extracting different items from several threads — it will not go
+        faster and can corrupt state. To process many <i>separate</i> archives in parallel, give each
+        thread its own <code>IInArchive</code>.
+      </p>
+    </section>
+
+    <!-- ===================== featured snippet ===================== -->
+    <section class="perf-sec">
+      <h2>Complete example: extract a whole archive to a directory</h2>
+      <p class="snip-desc">
+        This puts all of the above together: it collects every non-folder index and extracts them in
+        one pass, writing each file to disk under a target directory. It is a real program from the
+        test suite — the output shown below is verified on every release.
+      </p>
+      <div class="codebox">
+        <div class="codebox-head">
+          <span>ExtractToFolder.java</span>
+          <span class="head-right">
+            <span class="badge"><span class="dot"></span> verified by ExtractToFolderTest</span>
+            <button class="copy-btn" data-copy>Copy</button>
+          </span>
+        </div>
+        <div class="jd-code" set:html={extractToFolderCode} />
+      </div>
+      {extractToFolderOut && (
+        <div class="codebox outbox">
+          <div class="codebox-head"><span>Output</span></div>
+          <Code code={extractToFolderOut} lang="text" themes={{ light: 'github-light', dark: 'one-dark-pro' }} />
+        </div>
+      )}
+      <p class="more">
+        More runnable examples are on the <a href="/snippets/">Code snippets</a> page.
+      </p>
+    </section>
+
+    <!-- ===================== wrapped archives ===================== -->
+    <section class="perf-sec">
+      <h2>Bonus: extract a wrapped archive (<code>.tar.gz</code>) in one go</h2>
+      <p>
+        A <code>.tar.gz</code> is not one archive but two: a GZip stream whose single item is a
+        <code>.tar</code>, which in turn holds the real files. So unwrapping it is always two
+        open/extract steps — open the outer GZip, pull out the inner <code>.tar</code>, then open
+        that. The decision is <b>where the intermediate archive goes</b>:
+      </p>
+      <ul class="rules">
+        <li>
+          <b>In memory</b> — keep the inner archive in a <code>ByteArrayStream</code>. No temp file,
+          simplest, great as long as the inner archive comfortably fits in memory.
+        </li>
+        <li>
+          <b>Via a temporary file</b> — stream the inner archive to disk and reopen it. Bounded
+          memory; the safe default for a large inner archive.
+        </li>
+        <li>
+          <b>Streamed, never materialised (advanced)</b> — you do <b>not</b> have to hold the whole
+          inner archive anywhere first. Decompress the GZip on one thread and let the <code>.tar</code>
+          reader on another thread <b>pull</b> those bytes on demand through a small in-memory pipe:
+          extraction of the inner files starts immediately, overlapping with decompression, and the two
+          run concurrently. It is genuinely tricky — the tar reader asks for the total size up front
+          (answer it cheaply from the GZip <code>ISIZE</code> trailer) and seeks backward to re-read
+          data blocks (so the pipe needs a look-behind cache). Because it is advanced we don't inline
+          it here, but it is real and proven: see the test
+          <code>ExtractNestedArchiveStreamingTest</code> for a complete, back-pressured implementation.
+        </li>
+      </ul>
+      <p class="snip-desc">
+        The example below shows the first two. The same pattern works for any nesting
+        (<code>.cpio.gz</code>, a <code>.zip</code> inside a <code>.7z</code>, …).
+      </p>
+      <div class="callout">
+        <b>Streams, done right.</b> This is a master-class example, not a copy-paste starter, so it
+        treats streams with the care production code needs: every <code>Closeable</code> is managed
+        with <b>try-with-resources</b>, and a failing <code>close()</code> on the <b>write</b> path
+        (say the last buffered block can't be flushed because the disk is full) is allowed to
+        propagate — never swallowed. A swallowed <code>close()</code> is silent data corruption.
+      </div>
+      <div class="codebox">
+        <div class="codebox-head">
+          <span>ExtractNestedArchive.java</span>
+          <span class="head-right">
+            <span class="badge"><span class="dot"></span> verified by ExtractNestedArchiveTest</span>
+            <button class="copy-btn" data-copy>Copy</button>
+          </span>
+        </div>
+        <div class="jd-code" set:html={extractNestedCode} />
+      </div>
+      {extractNestedOut && (
+        <div class="codebox outbox">
+          <div class="codebox-head"><span>Output</span></div>
+          <Code code={extractNestedOut} lang="text" themes={{ light: 'github-light', dark: 'one-dark-pro' }} />
+        </div>
+      )}
+    </section>
+  </div>
+
+  <style>
+    .perf { max-width: 860px; padding-top: 40px; padding-bottom: 40px; }
+    .perf-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); margin-bottom: 8px; }
+    .perf .lead { font-size: 1.05rem; }
+    .perf-sec { margin: 40px 0; }
+    .perf-sec h2 {
+      margin: 0 0 12px; padding-top: 26px; border-top: 1px solid var(--border);
+      font-size: 1.3rem;
+    }
+    .perf-sec p { margin: 0 0 14px; }
+    .perf code {
+      font: 600 .86em var(--font-mono); background: var(--surface-2);
+      border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px;
+    }
+    .callout {
+      background: var(--surface); border: 1px solid var(--border-strong);
+      border-left: 3px solid var(--blue); border-radius: 8px;
+      padding: 14px 18px; margin: 24px 0; font-size: .96rem; line-height: 1.6;
+    }
+    .callout code { background: var(--surface-2); }
+
+    .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; }
+    .cmp-bad, .cmp-good {
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--surface);
+    }
+    .cmp-tag { font: 600 .78rem var(--font-sans); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    .cmp-bad .cmp-tag { color: #e06c75; }
+    .cmp-good .cmp-tag { color: #98c379; }
+    .cmp pre { margin: 0; padding: 12px 14px; overflow: auto; font-size: .8rem; }
+    .cmp code { background: transparent; border: 0; padding: 0; font-weight: 500; color: var(--text-2); }
+    @media (max-width: 720px) { .cmp { grid-template-columns: 1fr; } }
+
+    .rules { margin: 0 0 14px; padding-left: 20px; }
+    .rules li { margin-bottom: 12px; line-height: 1.6; }
+
+    .snip-desc { font-size: .96rem; }
+    .codebox { margin: 14px 0 10px; }
+    .codebox pre, .jd-code pre { max-height: 620px; overflow: auto; margin: 0; padding: 16px 18px; background: transparent !important; font-size: .86rem; }
+    .codebox-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 14px; font: 600 .82rem var(--font-mono); color: var(--text-3);
+      background: var(--surface); border: 1px solid var(--border); border-bottom: 0;
+      border-radius: 8px 8px 0 0;
+    }
+    .jd-code, .codebox :global(pre.astro-code) {
+      border: 1px solid var(--border); border-top: 0; border-radius: 0 0 8px 8px;
+    }
+    .jd-code a.jd-link { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--border-strong); }
+    .jd-code a.jd-link:hover { border-bottom-color: var(--blue); color: var(--blue) !important; }
+    .jd-code a.jd-link:hover * { color: var(--blue) !important; }
+    .outbox .codebox-head { color: var(--amber-soft); }
+    .head-right { display: inline-flex; align-items: center; gap: 10px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .7rem; padding: 2px 9px; border-radius: 999px;
+      border: 1px solid var(--border-strong); color: var(--text-2);
+    }
+    .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: #3fb950; }
+    .copy-btn {
+      background: transparent; border: 1px solid var(--border-strong); color: var(--text-2);
+      border-radius: 6px; padding: 2px 10px; font: 600 .74rem var(--font-sans); cursor: pointer;
+    }
+    .copy-btn:hover { color: var(--text); border-color: var(--blue); }
+    .more { margin-top: 16px; font-size: .95rem; }
+    .more a { color: var(--blue); }
+  </style>
+
+  <script>
+    document.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const pre = btn.closest('.codebox')?.querySelector('pre');
+        if (!pre) return;
+        navigator.clipboard.writeText(pre.textContent ?? '');
+        btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = 'Copy'), 1600);
+      });
+    });
+  </script>
+</Base>
