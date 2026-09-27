@@ -10,7 +10,10 @@ SCRIPT_HOME=`echo $ME | sed 's|\(.*/\)\?[^/]*|\1|g'`
 $SCRIPT_HOME/build-multiplatform-release.sh --name AllWindows \
     sevenzipjbinding-*-Windows-*
 
+# AllPlatforms: every per-platform zip, but for macOS use ONLY the universal AllMac (one fat dylib
+# covers Intel + Apple Silicon). Exclude the thin per-arch Mac zips so they are not duplicated inside
+# AllPlatforms. build-multiplatform-release.sh skips the AllWindows/AllPlatforms bundles internally.
 $SCRIPT_HOME/build-multiplatform-release.sh \
-    sevenzipjbinding-*-*
+    $(ls sevenzipjbinding-*-*.zip 2>/dev/null | grep -vE 'sevenzipjbinding-.*-Mac-(x86_64|arm64)\.zip$')
 
 for file in sevenzipjbinding-*.zip; do cmake -DFILENAME=$file -DDESCRIPTION="Uploaded by build-all-multiplatform-releases.sh" -P $SCRIPT_HOME/upload-release.cmake; done
