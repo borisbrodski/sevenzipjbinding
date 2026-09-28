@@ -95,17 +95,30 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
           the last chunk — one open and one close per file, never per chunk.
         </li>
         <li>
-          <b>Handle failure without hiding it.</b> When an item fails (say the disk fills mid-write),
-          7-Zip-JBinding <b>saves that exception and re-throws it from <code>extract()</code></b>, so the
-          real cause surfaces at the call site — print it with
-          <code>SevenZipException.printStackTraceExtended()</code>. In the callback, be careful:
-          <code>setOperationResult()</code> still runs for the failed item (with a non-OK result) and
-          extraction <i>continues</i> to the next one, so on a failed item close the broken file
-          <b>quietly</b> — a <code>close()</code> that throws &ldquo;cannot close&rdquo; would <b>mask</b>
-          the real &ldquo;no space left on device&rdquo;. On a <i>successful</i> item, do let
-          <code>close()</code> throw: that is where the final buffered block is flushed, and a failure
-          there is genuine data loss. And close any still-open file in a <code>finally</code> at the
-          call site too — belt and braces, in case an abort path skips the callback.
+          <b>Errors arrive TWO ways — handle both, or you will lose one.</b> This is the subtle part.
+          <ol style="margin:6px 0 0; padding-left:20px;">
+            <li><b>As a thrown exception</b> — e.g. your own <code>write()</code> fails (disk full).
+              7-Zip-JBinding saves it and re-throws it from <code>extract()</code>: a <i>fatal</i> error
+              that ends the run. Catch it and print it with
+              <code>SevenZipException.printStackTraceExtended()</code>.</li>
+            <li><b>As a per-item non-OK <code>ExtractOperationResult</code></b> (CRC error, data error, …),
+              decided by the engine <b>with no exception at all</b> — <code>extract()</code> returns
+              <i>normally</i> and extraction <b>continues</b> to the healthy items. If you only catch
+              exceptions, these <b>slip silently</b>. So record every non-OK result in
+              <code>setOperationResult()</code>.</li>
+          </ol>
+          Which way a given failure takes can even change between engine versions — so treat both.
+          Practically: keep an error list, record each item problem (and a failed <code>close()</code>
+          separately), <b>keep extracting the healthy items</b>, and at the end print a report plus one
+          representative trace (the fatal error, or the first item error that carries a cause).
+        </li>
+        <li>
+          <b>Never let <code>close()</code> mask the real cause.</b> On a <i>failed</i> item, close the
+          broken file <b>quietly</b> — a &ldquo;cannot close&rdquo; thrown on top would hide the real
+          &ldquo;no space left on device&rdquo;. On a <i>successful</i> item, do let <code>close()</code>
+          surface: that is where the final buffered block is flushed, so a failure there is genuine data
+          loss. And close any still-open file in a <code>finally</code> at the call site — in case an
+          abort path skips the callback.
         </li>
         <li>
           <b>Keep the hot path empty.</b> Per-chunk logging, hashing, or flushing dominates the run
