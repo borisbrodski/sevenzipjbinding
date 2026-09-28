@@ -219,6 +219,7 @@ import net.sf.sevenzipjbinding.junit.snippets.CompressWithPasswordTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractNestedArchiveStreamingTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractNestedArchiveTest;
+import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolderErrorTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolderTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
@@ -365,6 +366,7 @@ public class AllTestSuite extends TestSuite {
             ExtractItemsTest.class, //
             ExtractNestedArchiveStreamingTest.class, //
             ExtractNestedArchiveTest.class, //
+            ExtractToFolderErrorTest.class, //
             ExtractToFolderTest.class, //
             FirstStepsSimpleSnippets.class, //
             ListItemsTest.class, //

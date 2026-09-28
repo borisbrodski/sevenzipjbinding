@@ -3,6 +3,7 @@ package net.sf.sevenzipjbinding.junit.snippets;
 /* BEGIN_SNIPPET(ExtractToFolder) */
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -31,17 +32,29 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
  * Callback rules that keep it fast AND correct:
  *   - open the output file ONCE, in getStream();
  *   - write() may be called MANY times per file - just keep appending, never re-open;
- *   - close the file in setOperationResult();
+ *   - close the file when the item is done, in setOperationResult();
  *   - do no per-chunk work (no logging, no hashing) in the hot path.
+ *
+ * Error handling - the part that is easy to get wrong (see the notes inline):
+ *   - When an item fails (e.g. the disk fills up mid-write), 7-Zip-JBinding SAVES that exception and
+ *     re-throws it from {@code extract()} itself - so the REAL cause surfaces at the call site. Do not
+ *     hide it: on a failed item, close the (already-broken) file QUIETLY, never throw a "cannot close"
+ *     that would mask "no space left on device".
+ *   - On a SUCCESSFUL item, close() is where the final buffered block is flushed - a failure there is
+ *     genuine data loss, so let it propagate.
+ *   - setOperationResult() is reliably called per item (even for a failed one, with a non-OK result),
+ *     and extraction CONTINUES to the next item - but the callback contract does not promise it in
+ *     every abort path, so main() also closes any still-open file in a finally. Belt and braces.
  */
 public class ExtractToFolder {
     public static class ExtractToFolderCallback implements IArchiveExtractCallback {
         private final IInArchive inArchive;
         private final File outputDir;
 
-        private OutputStream currentOut; // opened once per file in getStream()
+        private OutputStream currentOut; // opened once per file in getStream(); closed once per file
+        private File currentFile;        // remembered only for clear error messages
         private int currentIndex;
-        private int currentHash;         // only to make this example's output verifiable
+        private int currentHash;          // only to make this example's output verifiable
         private long currentSize;
 
         public ExtractToFolderCallback(IInArchive inArchive, File outputDir) {
@@ -51,6 +64,11 @@ public class ExtractToFolder {
 
         public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode)
                 throws SevenZipException {
+            // Defensive: if a previous item's stream was somehow left open, release it before we
+            // overwrite the field (a leak here would otherwise be invisible). It is already done or
+            // broken, so closing quietly is correct.
+            closeQuietly();
+
             currentIndex = index;
             if (extractAskMode != ExtractAskMode.EXTRACT) {
                 return null; // testing/skip pass - nothing to write
@@ -67,10 +85,11 @@ public class ExtractToFolder {
             }
             try {
                 // OPEN ONCE. Buffered so the many small write() chunks do not hit the disk each time.
-                currentOut = new BufferedOutputStream(new java.io.FileOutputStream(outFile));
+                currentOut = new BufferedOutputStream(new FileOutputStream(outFile));
             } catch (IOException e) {
                 throw new SevenZipException("Cannot open output file: " + outFile, e);
             }
+            currentFile = outFile;
             currentHash = 0;
             currentSize = 0;
 
@@ -79,7 +98,8 @@ public class ExtractToFolder {
                     try {
                         currentOut.write(data); // append - write() can fire many times per file
                     } catch (IOException e) {
-                        throw new SevenZipException("Cannot write output file", e);
+                        // The engine saves this and re-throws it from extract(); keep the OS message.
+                        throw new SevenZipException("Cannot write " + currentFile + ": " + e.getMessage(), e);
                     }
                     currentHash ^= Arrays.hashCode(data);
                     currentSize += data.length;
@@ -93,20 +113,45 @@ public class ExtractToFolder {
 
         public void setOperationResult(ExtractOperationResult extractOperationResult)
                 throws SevenZipException {
-            if (currentOut != null) {
-                try {
-                    currentOut.close(); // CLOSE HERE - one open/close per file, not per chunk
-                } catch (IOException e) {
-                    throw new SevenZipException("Cannot close output file", e);
-                }
-                currentOut = null;
-            }
             if (extractOperationResult != ExtractOperationResult.OK) {
-                System.err.println("Extraction error: " + extractOperationResult);
+                // This item failed. The underlying cause (e.g. the write error) is already recorded and
+                // WILL surface from extract(); do not throw a close error on top of it and mask it.
+                closeQuietly();
+                System.err.println("Extraction failed for "
+                        + inArchive.getStringProperty(currentIndex, PropID.PATH) + ": " + extractOperationResult);
                 return;
+            }
+            // Success: close() flushes the last buffered block. A failure HERE is real data loss
+            // (the file we just "succeeded" on is truncated) - so let it propagate.
+            OutputStream out = currentOut;
+            currentOut = null;
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    throw new SevenZipException("Cannot flush/close " + currentFile + ": " + e.getMessage(), e);
+                }
             }
             System.out.println(String.format("%9X | %10s | %s", currentHash, currentSize,
                     inArchive.getStringProperty(currentIndex, PropID.PATH)));
+        }
+
+        /**
+         * Close the current output file WITHOUT masking a prior error (best effort). Used on a failed
+         * item and as main()'s finally-time safety net. Safe to call when nothing is open.
+         */
+        public void closeQuietly() {
+            OutputStream out = currentOut;
+            currentOut = null;
+            if (out == null) {
+                return;
+            }
+            try {
+                out.close();
+            } catch (IOException e) {
+                // The real cause (the write/space error) already propagates via extract(); a close
+                // failure on an already-broken file is noise - swallow it, but don't leak the handle.
+            }
         }
 
         public void setCompleted(long completeValue) throws SevenZipException {
@@ -122,12 +167,12 @@ public class ExtractToFolder {
             return;
         }
         File outputDir = new File(args[1]);
-        RandomAccessFile randomAccessFile = null;
-        IInArchive inArchive = null;
-        try {
-            randomAccessFile = new RandomAccessFile(args[0], "r");
-            inArchive = SevenZip.openInArchive(null, // autodetect archive type
-                    new RandomAccessFileInStream(randomAccessFile));
+        ExtractToFolderCallback callback = null;
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(args[0], "r");
+                IInArchive inArchive = SevenZip.openInArchive(null, // autodetect archive type
+                        new RandomAccessFileInStream(randomAccessFile))) {
+
+            callback = new ExtractToFolderCallback(inArchive, outputDir);
 
             System.out.println("   Hash   |    Size    | Filename");
             System.out.println("----------+------------+---------");
@@ -144,24 +189,17 @@ public class ExtractToFolder {
             for (int i = 0; i < items.length; i++) {
                 items[i] = indices.get(i).intValue();
             }
-            inArchive.extract(items, false, // non-test mode: actually extract
-                    new ExtractToFolderCallback(inArchive, outputDir));
-        } catch (Exception e) {
-            System.err.println("Error occurs: " + e);
+            inArchive.extract(items, false, callback); // non-test mode: actually extract
+        } catch (SevenZipException e) {
+            // The true root cause (e.g. "no space left on device") surfaces HERE, from extract().
+            System.err.println("Extraction error: " + e.getMessage());
+            e.printStackTraceExtended(); // prints every saved cause, in order - the real diagnosis
+        } catch (IOException e) {
+            System.err.println("Cannot open archive file: " + e.getMessage());
         } finally {
-            if (inArchive != null) {
-                try {
-                    inArchive.close();
-                } catch (SevenZipException e) {
-                    System.err.println("Error closing archive: " + e);
-                }
-            }
-            if (randomAccessFile != null) {
-                try {
-                    randomAccessFile.close();
-                } catch (IOException e) {
-                    System.err.println("Error closing file: " + e);
-                }
+            // Guarantee no output file is left open, even on an abort path that skipped setOperationResult.
+            if (callback != null) {
+                callback.closeQuietly();
             }
         }
     }
