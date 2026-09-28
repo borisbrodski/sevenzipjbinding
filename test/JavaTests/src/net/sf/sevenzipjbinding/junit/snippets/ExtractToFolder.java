@@ -22,26 +22,26 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 
 /**
- * Extract a WHOLE archive to a directory the fast, correct way, with production-grade error handling.
+ * Extract a WHOLE archive to a directory the fast, correct AND safe way.
  *
  * Speed - the golden rule for 7z (and any solid archive): extract everything in ONE call to
  * {@code IInArchive.extract(indices, false, callback)}. That streams the solid block a single time
- * (O(n)). Extracting item-by-item with {@code extractSlow} re-decompresses the block up to each item,
- * which is O(n^2) and turns a 17-second job into an hour on a solid archive with many files.
+ * (O(n)); item-by-item {@code extractSlow} re-decompresses the block up to each item (O(n^2)).
  *
  * Callback rules that keep it fast: open the output file ONCE in getStream(); write() fires MANY times
  * per file, just keep appending; close it in setOperationResult(); do no per-chunk work in the hot path.
  *
- * Correctness - errors can arrive TWO different ways, and robust code handles BOTH:
- *   1. As a thrown exception (e.g. our own {@code write()} fails - disk full). 7-Zip-JBinding saves it
- *      and re-throws it from {@code extract()} - a FATAL error that ends the run.
- *   2. As a per-item {@code ExtractOperationResult} that is NOT {@code OK} (CRC error, data error, ...),
- *      decided by the 7-Zip engine WITH NO EXCEPTION AT ALL - {@code extract()} returns normally and
- *      extraction CONTINUES to the healthy items. If you only catch exceptions, these slip silently.
- * So: record every problem (per item, and a close() failure separately), keep extracting the healthy
- * items, and at the end report all of them plus one representative stack trace. Which of the two ways a
- * given failure takes can even change between 7-Zip engine versions - handling both is what keeps this
- * correct across upgrades.
+ * Correctness &amp; safety, because people copy examples:
+ *   - SECURITY (Zip Slip): an archive entry can be {@code ../../etc/passwd} or absolute. Resolve each
+ *     target's canonical path and REFUSE anything that escapes the output directory.
+ *   - Errors arrive TWO ways: as a thrown exception (re-thrown from {@code extract()} = fatal) OR as a
+ *     per-item non-OK {@code ExtractOperationResult} decided by the engine WITH NO EXCEPTION (CRC/data
+ *     error), after which extraction CONTINUES. Record both, keep the healthy items, and report.
+ *   - {@code IS_FOLDER} (and other properties) can be {@code null} for some formats: use
+ *     {@code Boolean.TRUE.equals(...)}, never {@code ((Boolean) x).booleanValue()} (that NPEs).
+ *   - Empty directories are real entries - create them, or they are lost.
+ *   - Never let a {@code close()} error mask the real cause; propagate close only on a SUCCESSFUL item.
+ *   - Exit non-zero when anything went wrong.
  */
 public class ExtractToFolder {
 
@@ -50,7 +50,7 @@ public class ExtractToFolder {
         public final int index;
         public final String path;
         public final String kind;    // human-readable: what went wrong
-        public final Throwable cause; // may be null (engine-reported result with no exception)
+        public final Throwable cause; // may be null (e.g. an engine-reported result carries no exception)
 
         ItemError(int index, String path, String kind, Throwable cause) {
             this.index = index;
@@ -82,6 +82,8 @@ public class ExtractToFolder {
     public static class ExtractToFolderCallback implements IArchiveExtractCallback {
         private final IInArchive inArchive;
         private final File outputDir;
+        private final String outputDirCanonical;       // null if it could not be resolved
+        private final String outputDirCanonicalPrefix; // outputDirCanonical + File.separator
         private final List<ItemError> itemErrors = new ArrayList<ItemError>();
 
         private OutputStream currentOut; // opened once per file in getStream(), closed in setOperationResult()
@@ -94,10 +96,66 @@ public class ExtractToFolder {
         public ExtractToFolderCallback(IInArchive inArchive, File outputDir) {
             this.inArchive = inArchive;
             this.outputDir = outputDir;
+            String canonical = null;
+            try {
+                canonical = outputDir.getCanonicalPath();
+            } catch (IOException e) {
+                canonical = null; // safeTarget() then refuses every item - we cannot validate paths
+            }
+            this.outputDirCanonical = canonical;
+            this.outputDirCanonicalPrefix = canonical == null ? null : canonical + File.separator;
         }
 
         public List<ItemError> getItemErrors() {
             return itemErrors;
+        }
+
+        /** A property can be missing (null) in some formats; treat that as "not a folder". */
+        public boolean isFolder(int index) throws SevenZipException {
+            return Boolean.TRUE.equals(inArchive.getProperty(index, PropID.IS_FOLDER));
+        }
+
+        /**
+         * Resolve a validated target File strictly under outputDir, or null (recording the problem) if the
+         * entry would escape it - the Zip Slip defence - or its path cannot be resolved.
+         */
+        private File safeTarget(int index, String path) {
+            if (outputDirCanonicalPrefix == null) {
+                record(index, "cannot resolve output directory", null);
+                return null;
+            }
+            File outFile = new File(outputDir, path);
+            String canonical;
+            try {
+                canonical = outFile.getCanonicalPath();
+            } catch (IOException e) {
+                record(index, "cannot resolve output path", e);
+                return null;
+            }
+            // Inside iff it IS the output dir (root) or lives under "<outputDir>/".
+            if (!canonical.equals(outputDirCanonical) && !canonical.startsWith(outputDirCanonicalPrefix)) {
+                record(index, "blocked unsafe path (would write outside the output directory)", null);
+                return null;
+            }
+            return outFile;
+        }
+
+        /** Create an (empty) directory entry safely - so empty directories are not lost. */
+        public void createDirectory(int index) {
+            String path;
+            try {
+                path = inArchive.getStringProperty(index, PropID.PATH);
+            } catch (SevenZipException e) {
+                record(index, "cannot read directory name", e);
+                return;
+            }
+            File dir = safeTarget(index, path);
+            if (dir == null) {
+                return; // unsafe / unresolvable - already recorded
+            }
+            if (!dir.isDirectory() && !dir.mkdirs()) {
+                record(index, "cannot create directory", null);
+            }
         }
 
         public ISequentialOutStream getStream(int index, ExtractAskMode extractAskMode)
@@ -109,12 +167,15 @@ public class ExtractToFolder {
             if (extractAskMode != ExtractAskMode.EXTRACT) {
                 return null; // testing/skip pass - nothing to write
             }
-            if (((Boolean) inArchive.getProperty(index, PropID.IS_FOLDER)).booleanValue()) {
-                return null; // directories are created lazily below, from each file's path
+            if (isFolder(index)) {
+                return null; // directories are created by createDirectory()/the file parents below
             }
 
             String path = inArchive.getStringProperty(index, PropID.PATH);
-            File outFile = new File(outputDir, path);
+            File outFile = safeTarget(index, path);
+            if (outFile == null) {
+                return null; // unsafe or unresolvable - recorded, skip so the rest still extracts
+            }
             try {
                 File parent = outFile.getParentFile();
                 if (parent != null && !parent.exists() && !parent.mkdirs()) {
@@ -124,8 +185,7 @@ public class ExtractToFolder {
                 currentOut = new BufferedOutputStream(new FileOutputStream(outFile));
                 currentFile = outFile;
             } catch (IOException e) {
-                // Record and SKIP this item (return null) so the rest of the archive still extracts.
-                // Throwing here would abort the WHOLE run for one bad output path.
+                // Record and SKIP this item (return null). Throwing here would abort the WHOLE run.
                 record(index, "cannot open output file", e);
                 return null;
             }
@@ -138,8 +198,7 @@ public class ExtractToFolder {
                         currentOut.write(data); // append - write() can fire many times per file
                     } catch (IOException e) {
                         // Record the REAL cause, then throw: we must not tell the engine "wrote N bytes"
-                        // while nothing was written (that is silent corruption). The engine saves this
-                        // and re-throws it from extract() as the fatal error.
+                        // while nothing was written. The engine saves this and re-throws it from extract().
                         record(currentIndex, "cannot write output file", e);
                         throw new SevenZipException("Cannot write " + currentFile + ": " + e.getMessage(), e);
                     }
@@ -155,8 +214,8 @@ public class ExtractToFolder {
 
         public void setOperationResult(ExtractOperationResult extractOperationResult)
                 throws SevenZipException {
-            // Close first (releases the handle and, on success, flushes the final block). Keep any
-            // close error aside - it must be RECORDED, but must not overwrite the primary cause.
+            // Close first. Keep any close error aside - it must be RECORDED, but must not overwrite the
+            // primary cause of a failed item.
             OutputStream out = currentOut;
             currentOut = null;
             IOException closeError = null;
@@ -170,8 +229,7 @@ public class ExtractToFolder {
 
             if (extractOperationResult != ExtractOperationResult.OK) {
                 // The engine decided this item failed - possibly with NO exception (CRC/data error).
-                // Capture it, or it slips silently. (If write() already recorded the real cause for
-                // this item, don't duplicate it.)
+                // Capture it, or it slips silently. (If write() already recorded the real cause, skip.)
                 if (!recordedForCurrent) {
                     record(currentIndex, "engine reported " + extractOperationResult, null);
                 }
@@ -227,29 +285,33 @@ public class ExtractToFolder {
     }
 
     /**
-     * Extract every file of an open archive into {@code outputDir}, printing one row per successfully
-     * extracted file. Never throws: a run-aborting error is captured as {@link Report#fatalError},
-     * per-item errors as {@link Report#itemErrors}. The caller decides how to react.
+     * Extract every file of an open archive into {@code outputDir}, safely; print one row per file
+     * extracted. NEVER throws: a run-aborting error is captured as {@link Report#fatalError}, per-item
+     * problems (including blocked unsafe paths) as {@link Report#itemErrors}.
      */
     public static Report extractAll(IInArchive inArchive, File outputDir) {
         ExtractToFolderCallback callback = new ExtractToFolderCallback(inArchive, outputDir);
         SevenZipException fatal = null;
         try {
             int count = inArchive.getNumberOfItems();
-            List<Integer> indices = new ArrayList<Integer>();
+            List<Integer> fileItems = new ArrayList<Integer>();
             for (int i = 0; i < count; i++) {
-                if (!((Boolean) inArchive.getProperty(i, PropID.IS_FOLDER)).booleanValue()) {
-                    indices.add(Integer.valueOf(i));
+                if (callback.isFolder(i)) {
+                    callback.createDirectory(i); // materialise (empty) directories too
+                } else {
+                    fileItems.add(Integer.valueOf(i));
                 }
             }
-            int[] items = new int[indices.size()];
+            int[] items = new int[fileItems.size()];
             for (int i = 0; i < items.length; i++) {
-                items[i] = indices.get(i).intValue();
+                items[i] = fileItems.get(i).intValue();
             }
-            // ONE call, non-test mode: solid-safe, O(n).
-            inArchive.extract(items, false, callback);
+            inArchive.extract(items, false, callback); // ONE call: solid-safe, O(n)
         } catch (SevenZipException e) {
             fatal = e; // a run-aborting error (or an item exception the engine re-raised)
+        } catch (RuntimeException e) {
+            // Keep the "never throws" promise even if a property lookup on a broken archive misbehaves.
+            fatal = new SevenZipException("Unexpected error during extraction: " + e, e);
         } finally {
             callback.closeQuietly(); // guarantee no output file is left open, even on an abort path
         }
@@ -268,8 +330,8 @@ public class ExtractToFolder {
         if (report.fatalError != null) {
             System.err.println("  FATAL (aborted the run): " + report.fatalError.getMessage());
         }
-        // The single most useful stack trace: the fatal error if there was one, otherwise the first
-        // item error that actually carries a cause (an engine-reported result may have none).
+        // The single most useful stack trace: the fatal error if there was one, otherwise the first item
+        // error that actually carries a cause (an engine-reported result may have none).
         Throwable primary = report.fatalError;
         if (primary == null) {
             for (ItemError e : report.itemErrors) {
@@ -286,10 +348,11 @@ public class ExtractToFolder {
         }
     }
 
-    public static void main(String[] args) {
+    /** Returns a process exit code: 0 = clean, 1 = something went wrong, 2 = wrong usage. */
+    public static int run(String[] args) {
         if (args.length < 2) {
             System.out.println("Usage: java ExtractToFolder <archive> <output-directory>");
-            return;
+            return 2;
         }
         File outputDir = new File(args[1]);
         try (RandomAccessFile randomAccessFile = new RandomAccessFile(args[0], "r");
@@ -301,12 +364,20 @@ public class ExtractToFolder {
 
             Report report = extractAll(inArchive, outputDir);
             printReport(report);
+            return report.isClean() ? 0 : 1;
         } catch (SevenZipException e) {
-            System.err.println("Cannot open archive: " + e.getMessage());
+            // Neutral wording: this also catches a failure while CLOSING the archive at the end.
+            System.err.println("Archive error: " + e.getMessage());
             e.printStackTraceExtended();
+            return 1;
         } catch (IOException e) {
-            System.err.println("Cannot open archive file: " + e.getMessage());
+            System.err.println("Archive error: " + e.getMessage());
+            return 1;
         }
+    }
+
+    public static void main(String[] args) {
+        System.exit(run(args));
     }
 }
 /* END_SNIPPET */

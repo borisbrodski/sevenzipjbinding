@@ -34,10 +34,12 @@ public class ExtractToFolderTest extends SnippetTest {
                 "sevenzipjbinding-extract-to-folder-" + System.nanoTime());
 
         beginSnippetTest();
-        ExtractToFolder.main(new String[] { "testdata/snippets/simple.zip", outputDir.getPath() });
+        // Call run() (not main() - main() calls System.exit, which would kill the test JVM).
+        int exitCode = ExtractToFolder.run(new String[] { "testdata/snippets/simple.zip", outputDir.getPath() });
         String output = endSnippetTest();
 
         assertEquals(expected, output);
+        assertEquals("a clean extraction must exit 0", 0, exitCode);
 
         // the files must really be on disk now, with the expected sizes
         assertFile(outputDir, "file1.txt", 4481);

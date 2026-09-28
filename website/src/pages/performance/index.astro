@@ -80,9 +80,23 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
       </p>
       <ul class="rules">
         <li>
+          <b>SECURITY — refuse path traversal (&ldquo;Zip Slip&rdquo;).</b> An archive entry's path is
+          attacker-controlled: it can be <code>../../etc/passwd</code> or absolute.
+          <code>new File(outputDir, entryPath)</code> will happily point <i>outside</i>
+          <code>outputDir</code>. Before opening anything, resolve <code>outFile.getCanonicalPath()</code>
+          and check it starts with <code>outputDir.getCanonicalPath() + File.separator</code>; if not,
+          skip the entry (record it) — never write it. People copy examples, so this one is not optional.
+        </li>
+        <li>
           <b>Open each output file once, in <code>getStream()</code>.</b> This method is called once
           per item, right before its data starts. That is the place to create the target file and its
           parent directories — not inside the write loop.
+        </li>
+        <li>
+          <b>Guard against null properties, and don't lose empty directories.</b> Some formats return
+          <code>null</code> for <code>IS_FOLDER</code> — use <code>Boolean.TRUE.equals(...)</code>, not
+          <code>((Boolean) x).booleanValue()</code> (which NPEs). And directory entries are real items:
+          create them (even the empty ones) or they vanish.
         </li>
         <li>
           <b><code>write(byte[])</code> is called many times per file — just append.</b> Never

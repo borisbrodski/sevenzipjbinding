@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.junit.snippets;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -145,5 +146,71 @@ public class ExtractToFolderErrorTest extends SnippetTest {
         String err = getSnippetErrOutput();
         assertTrue("report header expected:\n" + err, err.contains("extraction problems"));
         deleteRecursively(out);
+    }
+
+    /**
+     * SECURITY (Zip Slip): an entry with a {@code ../} path must be REFUSED, never written outside the
+     * output directory, and the safe entries must still extract.
+     */
+    @Test
+    public void zipSlipEntryIsBlockedAndNothingEscapes() throws Exception {
+        File parent = freshOutputDir("slip-parent");
+        assertTrue(parent.mkdirs());
+        File out = new File(parent, "out");
+        assertTrue(out.mkdirs());
+        // Where the malicious "../zipslip-escaped.txt" entry WOULD land if the defence failed.
+        File escaped = new File(parent, "zipslip-escaped.txt");
+
+        beginSnippetTest();
+        Report report = extract("testdata/snippets/zipslip.zip", out);
+        endSnippetTest();
+
+        assertFalse("nothing must be written outside the output dir", escaped.exists());
+        // The unsafe entry is reported (recorded), with a cause-free "unsafe path" kind.
+        ItemError slip = null;
+        for (ItemError e : report.itemErrors) {
+            if (e.kind.contains("unsafe")) {
+                slip = e;
+            }
+        }
+        assertNotNull("the ../ entry must be reported as unsafe: " + report.itemErrors, slip);
+        assertNull(report.fatalError);
+        // The safe file still extracted.
+        assertTrue("safe.txt must extract", new File(out, "safe.txt").isFile());
+        deleteRecursively(parent);
+    }
+
+    /** Empty directory entries must be materialised on disk, not lost. */
+    @Test
+    public void emptyDirectoryIsCreated() throws Exception {
+        File out = freshOutputDir("emptydir");
+        beginSnippetTest();
+        Report report = extract("testdata/snippets/emptydir.zip", out);
+        endSnippetTest();
+
+        assertTrue("clean archive, no problems: " + report.itemErrors, report.isClean());
+        assertTrue("the empty directory must exist on disk", new File(out, "emptydir").isDirectory());
+        assertTrue("the real file must extract", new File(out, "data/keep.txt").isFile());
+        deleteRecursively(out);
+    }
+
+    /** run() must exit non-zero when there were problems, and zero on a clean extraction. */
+    @Test
+    public void exitCodeReflectsProblems() {
+        File cleanOut = freshOutputDir("exit-clean");
+        File badOut = freshOutputDir("exit-bad");
+
+        beginSnippetTest();
+        int clean = ExtractToFolder.run(new String[] { "testdata/snippets/simple.zip", cleanOut.getPath() });
+        int bad = ExtractToFolder.run(new String[] { "testdata/snippets/corrupt.zip", badOut.getPath() });
+        int usage = ExtractToFolder.run(new String[] {});
+        endSnippetTest();
+
+        assertEquals("clean extraction exits 0", 0, clean);
+        assertTrue("a run with problems exits non-zero", bad != 0);
+        assertEquals("wrong usage exits 2", 2, usage);
+
+        deleteRecursively(cleanOut);
+        deleteRecursively(badOut);
     }
 }
