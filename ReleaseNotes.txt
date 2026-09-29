@@ -27,7 +27,24 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       (os.name=FreeBSD); it is also included in the -all-platforms jar. (Note: on
       the Linux compatibility layer the existing Linux-amd64 library also works.)
 
-    * No public API changes: existing Java code is unaffected. The complete build
+    * macOS: per-architecture artifacts. BREAKING for Maven/Gradle users on macOS:
+        - sevenzipjbinding-all-mac     universal library (Intel + Apple Silicon); the
+                                       macOS library inside -all-platforms
+        - sevenzipjbinding-mac-arm64   Apple Silicon only (smaller)
+        - sevenzipjbinding-mac-x86_64  Intel only (smaller)
+      The universal artifact sevenzipjbinding-mac is no longer published: depend
+      on -all-mac instead. sevenzipjbinding-mac-x86_64 was an alias of the
+      universal library and is now Intel-only - on Apple Silicon switch to
+      -all-mac or -mac-arm64. -all-platforms users are not affected.
+
+    * Documentation: new "Extraction masterclass" page - fast, safe and correct
+      extraction (one pass over solid archives, a byte-only callback, path
+      traversal/link/nameless-entry protection, complete error accounting) with
+      complete, tested examples; new snippets for extracting to a folder and for
+      wrapped archives (.tar.gz).
+
+    * No Java API changes: existing Java code is unaffected (see the macOS
+      artifact change above for Maven/Gradle coordinates). The complete build
       + runtime test matrix is green on the new engine (Linux glibc & musl on
       arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 

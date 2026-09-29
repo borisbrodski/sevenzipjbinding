@@ -18,7 +18,17 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  GitHub Actions (vmactions/freebsd-vm), passing the full 18-bundle suite.
 	  Auto-detected on a native FreeBSD JVM and folded into -all-platforms.
 
-	* No public API changes; existing code is unaffected. Full build + runtime
+	* macOS per-architecture artifacts (BREAKING for Maven/Gradle on macOS):
+	  -all-mac (universal; the Mac library inside -all-platforms), -mac-arm64
+	  and -mac-x86_64 (thin, single-architecture). The universal -mac artifact
+	  is dropped - use -all-mac. -mac-x86_64, formerly an alias of the
+	  universal library, is now Intel-only.
+
+	* Docs: "Extraction masterclass" web page and new tested snippets
+	  (ExtractToFolder, ExtractNestedArchive incl. a streaming unwrap proof).
+	  Website no longer tracks generated dist/ and node_modules/.
+
+	* No Java API changes; existing code is unaffected. Full build + runtime
 	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
 	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
