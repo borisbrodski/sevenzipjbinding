@@ -19,10 +19,18 @@ import java.util.List;
 
 import org.junit.Test;
 
+import net.sf.sevenzipjbinding.ICryptoGetTextPassword;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.IInStream;
+import net.sf.sevenzipjbinding.IOutCreateArchive7z;
+import net.sf.sevenzipjbinding.IOutCreateCallback;
+import net.sf.sevenzipjbinding.IOutItem7z;
+import net.sf.sevenzipjbinding.ISequentialInStream;
 import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.Extractor;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.ItemError;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.Report;
@@ -378,5 +386,67 @@ public class ExtractToFolderErrorTest extends SnippetTest {
         assertTrue("problems are reported", getSnippetErrOutput().contains("extraction problems"));
         deleteRecursively(clean);
         deleteRecursively(bad);
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // a verdict without any data
+    // ------------------------------------------------------------------------------------------
+
+    /**
+     * Encrypted data without a password: the engine never asks for an EXTRACT stream and only reports
+     * a verdict per item. That verdict must be recorded - an empty error list would hide the failure.
+     */
+    @Test
+    public void encryptedItemWithoutPasswordIsReportedNotSilentlyDropped() throws Exception {
+        File dir = freshDir("encrypted");
+        assertTrue(dir.mkdirs());
+        File archiveFile = new File(dir, "secret.7z");
+        writePasswordProtected7z(archiveFile, "Secret123");
+
+        beginSnippetTest();
+        Report report = extract(archiveFile.getPath(), new File(dir, "out"));
+        endSnippetTest();
+
+        assertFalse(report.isClean());
+        assertEquals("nothing can be written without the password", 0, report.filesExtracted);
+        assertEquals("every planned file received a verdict", 0, report.filesNotExtracted);
+        ItemError error = errorFor(report, "a.txt");
+        assertNotNull("the engine's verdict must be recorded: " + report.itemErrors, error);
+        assertTrue(error.kind, error.kind.startsWith("engine reported"));
+        assertTrue("the report explains that a password is needed", error.kind.contains("password"));
+        deleteRecursively(dir);
+    }
+
+    private static void writePasswordProtected7z(File archiveFile, final String password) throws Exception {
+        final byte[] content = "top secret\n".getBytes(StandardCharsets.UTF_8);
+        try (RandomAccessFile file = new RandomAccessFile(archiveFile, "rw");
+                IOutCreateArchive7z archive = SevenZip.openOutArchive7z()) {
+            class Item implements IOutCreateCallback<IOutItem7z>, ICryptoGetTextPassword {
+                public IOutItem7z getItemInformation(int index, OutItemFactory<IOutItem7z> factory) {
+                    IOutItem7z item = factory.createOutItem();
+                    item.setPropertyPath("a.txt");
+                    item.setDataSize((long) content.length);
+                    return item;
+                }
+
+                public ISequentialInStream getStream(int index) {
+                    return new ByteArrayStream(content, true);
+                }
+
+                public String cryptoGetTextPassword() {
+                    return password;
+                }
+
+                public void setOperationResult(boolean ok) {
+                }
+
+                public void setTotal(long total) {
+                }
+
+                public void setCompleted(long completed) {
+                }
+            }
+            archive.createArchive(new RandomAccessFileOutStream(file), 1, new Item());
+        }
     }
 }

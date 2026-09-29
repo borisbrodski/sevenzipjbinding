@@ -29,29 +29,42 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 /**
  * Extract a whole archive into a directory - fast, safe, and honest about what happened.
  *
- * <p>An archive is untrusted input. This example therefore works in three separate phases, and the
- * separation is the point:
+ * <p><b>Performance.</b> 7-Zip-JBinding is a thin layer over the native 7-Zip engine, so extraction
+ * runs at the engine's own speed - as long as the calling code lets it. What makes this example fast:
+ * <ul>
+ *   <li><b>One {@code extract()} call for all files, indices ascending.</b> Solid archives (7z by
+ *       default) compress many files into one continuous stream; the engine decompresses it once and
+ *       hands the files out as they appear. Requesting files one at a time ({@code extractSlow} in a
+ *       loop) restarts that stream for every request - O(n^2), the difference between seconds and
+ *       an hour on a large archive.</li>
+ *   <li><b>A callback that only moves bytes.</b> {@code getStream()} opens the output file once;
+ *       {@code write()} is called many times per file and does nothing but append to a buffered
+ *       stream; {@code setOperationResult()} closes once. No re-opening, no seeking, no logging, no
+ *       property lookups per chunk - the hot path stays empty.</li>
+ *   <li><b>Every decision made before streaming.</b> Property lookups (paths, kinds, attributes) are
+ *       native calls; they happen once per item in the plan phase, never inside the write loop.</li>
+ *   <li><b>Buffered output</b> with a generous buffer, so the engine's many small chunks do not each
+ *       become a system call.</li>
+ *   <li><b>One archive, one thread.</b> An {@code IInArchive} is not thread-safe, and the codecs
+ *       already use several cores internally. Parallelise across archives, never within one.</li>
+ * </ul>
+ *
+ * <p><b>Safety and honesty.</b> An archive is untrusted input, so the example works in three separate
+ * phases, and the separation is the point:
  * <ol>
  *   <li><b>Plan</b> - look at every item and decide, before a single byte is written, whether and
  *       where it may go. All the safety rules live here: path traversal, links, special files,
  *       nameless entries.</li>
- *   <li><b>Stream</b> - hand the engine ONE {@code extract()} call for all files. The callback does
- *       nothing but open a file once, append chunks, and close it. This is where the speed comes from.</li>
+ *   <li><b>Stream</b> - the single {@code extract()} call and the byte-moving callback.</li>
  *   <li><b>Account</b> - collect every problem, keep going where that is safe, and finish with a
  *       report and an exit code you can trust in a script.</li>
  * </ol>
  *
- * <p>Two facts about the 7-Zip engine drive the design and are worth remembering:
- * <ul>
- *   <li>Solid archives (7z by default) compress many files into one stream. Asking for the files one
- *       at a time re-decompresses that stream for every request - O(n^2). One {@code extract()} call
- *       streams it once.</li>
- *   <li>Failures reach you on two channels. An exception you throw from the callback is saved and
- *       re-thrown from {@code extract()}. But a broken item (CRC error, truncated data, ...) is
- *       reported per item as a non-OK {@link ExtractOperationResult} <em>with no exception at all</em>
- *       - {@code extract()} returns normally and continues with the next item. Code that only catches
- *       exceptions silently loses those.</li>
- * </ul>
+ * <p>Failures reach you on two channels. An exception you throw from the callback is saved and
+ * re-thrown from {@code extract()}. But a broken item (CRC error, truncated data, encrypted data
+ * without a password, ...) is reported per item as a non-OK {@link ExtractOperationResult} <em>with no
+ * exception at all</em> - {@code extract()} returns normally and continues with the next item. Code
+ * that only catches exceptions silently loses those.
  */
 public class ExtractToFolder {
 
@@ -109,6 +122,8 @@ public class ExtractToFolder {
 
     public static class Extractor implements IArchiveExtractCallback {
         private static final boolean WINDOWS = File.separatorChar == '\\';
+        /** The engine delivers data in many small chunks; batching them keeps system calls rare. */
+        private static final int OUTPUT_BUFFER_SIZE = 64 * 1024;
 
         private final IInArchive archive;
         private final File outputDir;      // canonical, absolute, exists, is a directory
@@ -278,8 +293,7 @@ public class ExtractToFolder {
 
         /** Where the bytes of one file go. Override to redirect output (tests use this). */
         protected OutputStream openOutput(File file) throws IOException {
-            // Buffered: the engine hands over many small chunks, and each unbuffered write is a syscall.
-            return new BufferedOutputStream(new FileOutputStream(file));
+            return new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE);
         }
 
         public ISequentialOutStream getStream(int index, ExtractAskMode mode) throws SevenZipException {
@@ -354,7 +368,17 @@ public class ExtractToFolder {
                 currentOut = null;
             }
             if (currentFile == null && !currentRecorded) {
-                return; // nothing was written for this item (skipped, or a test pass)
+                // Nothing was written for this item. After a disk failure that is our own doing, and
+                // the file is counted as not extracted rather than judged. Otherwise the engine never
+                // asked for the data at all - it does that when it cannot decode an item, such as
+                // encrypted data without a password - and the verdict it gives here is the only trace
+                // of the failure.
+                if (writeFailed || result == ExtractOperationResult.OK || !targets.containsKey(currentIndex)) {
+                    return;
+                }
+                filesAccounted++;
+                record(engineVerdict(result), null);
+                return;
             }
             filesAccounted++;
 
@@ -365,7 +389,7 @@ public class ExtractToFolder {
             if (result != ExtractOperationResult.OK) {
                 // This is the second failure channel: the engine judged the item bad (CRC error, data
                 // error, ...) and told us here - with no exception. Record it, or it is lost.
-                record("engine reported " + result, null);
+                record(engineVerdict(result), null);
                 if (closeError != null) {
                     record("cannot close output file", closeError);
                 }
@@ -393,6 +417,19 @@ public class ExtractToFolder {
         }
 
         public void setCompleted(long completed) {
+        }
+
+        /** The engine's verdict in words, plus the one hint that most often explains it. */
+        private String engineVerdict(ExtractOperationResult result) {
+            String verdict = "engine reported " + result;
+            try {
+                if (Boolean.TRUE.equals(archive.getProperty(currentIndex, PropID.ENCRYPTED))) {
+                    verdict += " (the item is encrypted: extracting it needs a password, see ICryptoGetTextPassword)";
+                }
+            } catch (SevenZipException e) {
+                // the verdict on its own is still correct
+            }
+            return verdict;
         }
 
         /**
@@ -571,7 +608,7 @@ public class ExtractToFolder {
         }
         if (report.filesNotExtracted > 0) {
             System.err.println("  " + report.filesNotExtracted + " of " + report.filesPlanned + " files not extracted"
-                    + (report.writeFailed ? " because writing had already failed" : " (no verdict from the engine)"));
+                    + (report.writeFailed ? " because writing had already failed" : " - the engine delivered no data for them"));
         }
         if (report.archiveError != null) {
             System.err.println("  archive error, extraction stopped: " + report.archiveError.getMessage());

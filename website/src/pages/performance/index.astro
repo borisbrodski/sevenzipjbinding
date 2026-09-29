@@ -28,9 +28,10 @@ const extractNestedOut = loadOutput('ExtractNestedArchive');
 
     <div class="callout">
       <b>TL;DR</b> — Extract everything in <b>one</b> call to
-      <code>inArchive.extract(indices, false, callback)</code>, and in your callback open each output
-      file <b>once</b> in <code>getStream()</code>, keep appending in <code>write()</code>, and close
-      it in <code>setOperationResult()</code>. Do no per-chunk work in the hot path.
+      <code>inArchive.extract(indices, false, callback)</code> with the indices ascending. In the
+      callback open each output file <b>once</b> in <code>getStream()</code>, keep appending to a
+      <b>buffered</b> stream in <code>write()</code>, and close it in <code>setOperationResult()</code>.
+      Make every decision <i>before</i> streaming, and do no work at all per chunk.
     </div>
 
     <!-- ===================== 1: the O(n^2) trap ===================== -->
@@ -68,6 +69,36 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
         (<code>extractSlow</code> is a convenience for pulling out <b>one</b> item; it is the wrong
         tool for bulk extraction.)
       </p>
+
+      <h3 class="perf-h3">The performance checklist</h3>
+      <p>
+        The engine runs at native speed; extraction is only as fast as the least disciplined line in
+        your callback. Each rule below removes a specific way of wasting the engine's work.
+      </p>
+      <ol class="rules perf-check">
+        <li><b>One <code>extract()</code> call, every file, indices ascending.</b> A solid block is
+          decompressed once and the files fall out in order. Out-of-order or repeated requests
+          re-decompress it.</li>
+        <li><b>Never <code>extractSlow()</code> in a loop.</b> It exists to pull out a single item.</li>
+        <li><b>Decide first, stream second.</b> Property lookups (<code>PATH</code>,
+          <code>IS_FOLDER</code>, attributes, …) are native calls. Do them once per item in a planning
+          pass — never inside <code>getStream()</code> or <code>write()</code>.</li>
+        <li><b>Open once, append, close once.</b> <code>write()</code> is called many times per file;
+          re-opening or seeking on each call turns a linear copy into an avalanche of system calls.</li>
+        <li><b>Buffer the output</b> — a <code>BufferedOutputStream</code> with a generous buffer
+          (the example uses 64 KB). The engine's chunks are small; without a buffer each one is a
+          system call.</li>
+        <li><b>Keep the hot path empty.</b> No logging, hashing, flushing or progress printing per
+          chunk. Progress belongs in <code>setCompleted()</code>, which the engine calls for you.</li>
+        <li><b>Open the archive from a file.</b> <code>RandomAccessFileInStream</code> lets the engine
+          seek; loading the whole archive into a byte array first costs memory and time for nothing.</li>
+        <li><b>One archive per thread.</b> <code>IInArchive</code> is not thread-safe, and the codecs
+          already use several cores internally. Parallelise across archives, never within one.</li>
+        <li><b>Only checking? Use test mode.</b> <code>extract(indices, true, callback)</code> verifies
+          items without writing a byte.</li>
+        <li><b>Measure on the real archive.</b> Solid vs non-solid, item count and item size change
+          the picture completely; the engine tells you nothing about your callback's cost.</li>
+      </ol>
     </section>
 
     <!-- ===================== 2: the callback ===================== -->
