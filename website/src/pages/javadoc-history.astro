@@ -8,26 +8,28 @@ import { resolve } from 'node:path';
 // with a version switcher, so people on older releases can still read the matching API docs.
 // process.cwd() = website/ during build (Astro 7 relocates chunks, so import.meta.dirname is unreliable here).
 const HIST = resolve(process.cwd(), 'public/javadoc-history');
-// newest first; only versions actually present are shown
+// newest first; only versions actually present are shown. The current release is listed too, as the
+// release zip shipped it, so the list is already complete when the next release comes.
 const ORDER = [
-  '23.01-2.2', '16.02-2.01', '9.20-2.00beta',
+  '26.03-2.3', '23.01-2.2', '16.02-2.01', '9.20-2.00beta',
   '4.65-1.06rc-extr-only', '4.65-1.05rc-extr-only', '4.65-1.04rc-extr-only',
   '4.65-1.03rc-extr-only', '4.65-1.02rc-extr-only', '4.65-1.01rc-extr-only', '4.65-1.0rc-extr-only',
 ];
 const present = existsSync(HIST) ? new Set(readdirSync(HIST)) : new Set<string>();
 const versions = ORDER.filter((v) => present.has(v));
 const CURRENT = '26.03-2.3';
-const first = versions[0];
+// open the newest previous release by default
+const first = versions.find((v) => v !== CURRENT) ?? versions[0];
 ---
 <Base title="Older JavaDoc — 7-Zip-JBinding">
   <div class="jh-wrap">
     <div class="jh-bar">
       <div class="jh-left">
-        <span class="jh-warn">⚠ Older version</span>
+        <span class="jh-warn" id="jh-badge">⚠ Older version</span>
         <label class="jh-pick">
           JavaDoc for release
-          <select id="jh-select">
-            {versions.map((v, i) => <option value={v} selected={i === 0}>{v}</option>)}
+          <select id="jh-select" data-current={CURRENT}>
+            {versions.map((v) => <option value={v} selected={v === first}>{v === CURRENT ? `${v} (current)` : v}</option>)}
           </select>
         </label>
       </div>
@@ -83,14 +85,20 @@ const first = versions[0];
     const sel = document.getElementById('jh-select') as HTMLSelectElement | null;
     const frame = document.getElementById('jh-frame') as HTMLIFrameElement | null;
     // deep-link support: /javadoc-history/?v=<version>
+    const badge = document.getElementById('jh-badge');
+    const updateBadge = () => {
+      if (badge && sel) badge.textContent = sel.value === sel.dataset.current ? 'Current release, as shipped' : '⚠ Older version';
+    };
     const want = new URLSearchParams(location.search).get('v');
     if (sel && want && [...sel.options].some((o) => o.value === want)) {
       sel.value = want;
       if (frame) frame.src = `/javadoc-history/${want}/index.html`;
     }
+    updateBadge();
     sel?.addEventListener('change', () => {
       if (frame) frame.src = `/javadoc-history/${sel.value}/index.html`;
       history.replaceState(null, '', `?v=${encodeURIComponent(sel.value)}`);
+      updateBadge();
     });
   </script>
 </Base>

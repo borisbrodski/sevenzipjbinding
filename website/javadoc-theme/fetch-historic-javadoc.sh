@@ -1,13 +1,45 @@
 #!/bin/bash
-# Download previous 7-Zip-JBinding releases from SourceForge and extract each one's bundled
-# javadoc into website/public/javadoc-history/<version>/ for the historic-JavaDoc viewer.
-# JavaDoc lives inside every release zip as javadoc.zip; we grab the smallest per-platform zip
-# per version. Idempotent: skips a version whose history dir already exists.
+# Historic JavaDoc for the website viewer (/javadoc-history/): the original javadoc.zip bundled in
+# every release zip, one directory per version.
+#
+# The canonical copy lives OUTSIDE the git repo, in $JAVADOC_HISTORY_ARCHIVE (default:
+# <repo>/../Javadoc-History/<version>/). This script
+#   1. fills missing versions of the archive from the SourceForge release zips (ENTRIES below),
+#   2. mirrors the archive into website/public/javadoc-history/ (generated, not tracked), which
+#      Astro serves.
+#
+# Add a new release (before or after it is uploaded anywhere) from a local release zip:
+#   fetch-historic-javadoc.sh --add 26.03-2.3 Release-Artifacts/sevenzipjbinding-26.03-2.3-Linux-i386.zip
+# and list the version in ORDER in src/pages/javadoc-history.astro.
 set -u
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="$(cd "$HERE/../.." && pwd)"
+ARCHIVE="${JAVADOC_HISTORY_ARCHIVE:-$(cd "$REPO/.." && pwd)/Javadoc-History}"
 DEST="$HERE/../public/javadoc-history"
 BASE="https://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding"
-mkdir -p "$DEST"
+mkdir -p "$ARCHIVE" "$DEST"
+
+# Extract the javadoc.zip inside release zip $2 into $ARCHIVE/$1. Returns non-zero on failure.
+extract_release_javadoc() {
+  local ver="$1" zip="$2" out="$ARCHIVE/$1" tmp jd
+  tmp="$(mktemp -d)"
+  ( cd "$tmp" && unzip -q "$zip" ) || { echo "    unzip failed"; rm -rf "$tmp"; return 1; }
+  jd="$(find "$tmp" -iname 'javadoc.zip' | head -1)"
+  if [ -z "$jd" ]; then echo "    no javadoc.zip inside"; rm -rf "$tmp"; return 1; fi
+  rm -rf "$out"; mkdir -p "$out"
+  ( cd "$out" && unzip -q "$jd" )
+  rm -rf "$tmp"
+  if [ -z "$(find "$out" -name index.html | head -1)" ]; then
+    echo "    no index.html, dropping"; rm -rf "$out"; return 1
+  fi
+  echo "    -> $out ($(find "$out" -type f | wc -l) files)"
+}
+
+if [ "${1:-}" = "--add" ]; then
+  [ $# -eq 3 ] || { echo "usage: $0 --add <version> <release-zip>" >&2; exit 2; }
+  echo "+ $2  <-  $3"
+  extract_release_javadoc "$2" "$(readlink -f "$3")" || exit 1
+fi
 
 # version : smallest zip known to carry javadoc.zip (per SF listings)
 ENTRIES=(
@@ -25,26 +57,20 @@ ENTRIES=(
 
 for e in "${ENTRIES[@]}"; do
   ver="${e%%:*}"; file="${e#*:}"
-  out="$DEST/$ver"
-  if [ -d "$out" ]; then echo "= $ver (already present, skip)"; continue; fi
+  if [ -d "$ARCHIVE/$ver" ]; then echo "= $ver (in archive)"; continue; fi
   tmp="$(mktemp -d)"
-  echo "+ $ver  <-  $file"
-  if ! curl -sfL --max-time 300 -o "$tmp/rel.zip" "$BASE/$ver/$file/download"; then
-    echo "    download failed, skipping"; rm -rf "$tmp"; continue
-  fi
-  ( cd "$tmp" && unzip -q rel.zip ) || { echo "    unzip failed"; rm -rf "$tmp"; continue; }
-  jd="$(find "$tmp" -iname 'javadoc.zip' | head -1)"
-  if [ -z "$jd" ]; then echo "    no javadoc.zip inside, skipping"; rm -rf "$tmp"; continue; fi
-  mkdir -p "$out"
-  ( cd "$out" && unzip -q "$jd" )
-  # sanity: must have an index.html
-  if [ ! -f "$out/index.html" ] && [ -z "$(find "$out" -name index.html | head -1)" ]; then
-    echo "    no index.html, dropping"; rm -rf "$out"
+  echo "+ $ver  <-  SourceForge $file"
+  if curl -sfL --max-time 300 -o "$tmp/rel.zip" "$BASE/$ver/$file/download"; then
+    extract_release_javadoc "$ver" "$tmp/rel.zip"
   else
-    echo "    -> $out ($(find "$out" -type f | wc -l) files)"
+    echo "    download failed, skipping"
   fi
   rm -rf "$tmp"
 done
 
-echo "== historic javadoc versions =="
+# Mirror the archive into the site (exactly: versions removed from the archive disappear here too).
+rm -rf "$DEST"; mkdir -p "$DEST"
+cp -a "$ARCHIVE/." "$DEST/"
+
+echo "== historic javadoc versions (archive: $ARCHIVE) =="
 ls -1 "$DEST" 2>/dev/null
