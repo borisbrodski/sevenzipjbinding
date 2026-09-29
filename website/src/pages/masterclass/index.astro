@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { Code } from 'astro:components';
 import { loadSnippet, loadOutput, highlightJava } from '../../lib/snippets';
+import { MASTERCLASS_SECTIONS } from '../../lib/masterclass';
 
 // The featured example is the REAL, tested ExtractToFolder snippet (verified by ExtractToFolderTest),
 // extracted at build time exactly like the /snippets page. Its output is byte-identical to the other
@@ -12,19 +13,35 @@ const extractNestedCode = await highlightJava(loadSnippet('ExtractNestedArchive'
 const extractNestedOut = loadOutput('ExtractNestedArchive');
 ---
 <Base
-  title="Performance & correct usage — 7-Zip-JBinding"
-  description="Why 7-Zip-JBinding extraction can turn slow, and how to keep it fast: extract in a single pass (O(n)) even on solid 7z archives, and write a callback that opens each output file exactly once."
+  title="Extraction masterclass — 7-Zip-JBinding"
+  description="Extraction done right with 7-Zip-JBinding: fast (one pass over solid archives, a byte-only callback), safe (path traversal, links, nameless entries) and honest (every failure reported, trustworthy exit codes). Complete, tested examples."
 >
   <div class="container perf">
     <div class="kicker">Documentation</div>
-    <h1 class="perf-h1">Performance &amp; correct usage</h1>
+    <h1 class="perf-h1">Extraction masterclass</h1>
+    <p class="subtitle">Fast, safe, and honest about what happened.</p>
     <p class="lead">
       7-Zip-JBinding is a thin JNI layer over the same native engine as the <code>7z</code> command
-      line — extraction is essentially as fast as 7-Zip itself. When people report that extraction is
-      &ldquo;slow&rdquo; (minutes or even an hour for an archive that <code>7z x</code> unpacks in
-      seconds), the cause is almost always in the <b>calling code</b>, not the library. This page
-      explains the two traps that cause it and shows a complete, tested example that avoids both.
+      line — extraction is essentially as fast as 7-Zip itself, as long as the calling code lets it.
+      An archive is also untrusted input, and the engine reports failures in more than one way. This
+      page shows how to get all three right — <b>speed</b>, <b>safety</b> and <b>error handling</b> —
+      and ends with complete, tested examples that put it together.
     </p>
+
+    <nav class="contents" aria-label="On this page">
+      <div class="contents-col">
+        <div class="contents-title">Topics</div>
+        {MASTERCLASS_SECTIONS.filter((s) => s.kind === 'topic').map((s) => (
+          <a href={`#${s.id}`}>{s.title}</a>
+        ))}
+      </div>
+      <div class="contents-col">
+        <div class="contents-title">Examples</div>
+        {MASTERCLASS_SECTIONS.filter((s) => s.kind === 'example').map((s) => (
+          <a href={`#${s.id}`}>{s.title}</a>
+        ))}
+      </div>
+    </nav>
 
     <div class="callout">
       <b>TL;DR</b> — Extract everything in <b>one</b> call to
@@ -35,7 +52,7 @@ const extractNestedOut = loadOutput('ExtractNestedArchive');
     </div>
 
     <!-- ===================== 1: the O(n^2) trap ===================== -->
-    <section class="perf-sec">
+    <section class="perf-sec" id="solid-archives">
       <h2>1. The big one: don&rsquo;t extract solid archives item-by-item</h2>
       <p>
         7z archives are usually <b>solid</b>: many files are compressed together into one continuous
@@ -45,7 +62,7 @@ const extractNestedOut = loadOutput('ExtractNestedArchive');
       </p>
       <p>
         It becomes a disaster if you loop over items and extract them one at a time with
-        <code>getStream(...).extractSlow(...)</code> (or a per-item <code>extract</code> call).
+        <code>inArchive.extractSlow(...)</code> (or a per-item <code>extract</code> call).
         Each call restarts decompression from the beginning of the solid block, so unpacking
         <i>k</i> files re-decompresses the block <i>k</i> times:
       </p>
@@ -70,7 +87,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
         tool for bulk extraction.)
       </p>
 
-      <h3 class="perf-h3">The performance checklist</h3>
+      <h3 class="perf-h3" id="performance-checklist">The performance checklist</h3>
       <p>
         The engine runs at native speed; extraction is only as fast as the least disciplined line in
         your callback. Each rule below removes a specific way of wasting the engine's work.
@@ -102,7 +119,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
     </section>
 
     <!-- ===================== 2: the callback ===================== -->
-    <section class="perf-sec">
+    <section class="perf-sec" id="plan-stream-account">
       <h2>2. Plan, then stream, then account</h2>
       <p>
         The engine drives extraction through your <code>IArchiveExtractCallback</code>. An archive is
@@ -207,7 +224,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
     </section>
 
     <!-- ===================== 3: single-thread note ===================== -->
-    <section class="perf-sec">
+    <section class="perf-sec" id="one-thread">
       <h2>3. One archive, one thread</h2>
       <p>
         A single <code>IInArchive</code> instance and its extraction are <b>not</b> thread-safe, and
@@ -219,7 +236,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
     </section>
 
     <!-- ===================== featured snippet ===================== -->
-    <section class="perf-sec">
+    <section class="perf-sec" id="extract-to-folder">
       <h2>Complete example: extract a whole archive to a directory</h2>
       <p class="snip-desc">
         This puts all of the above together: a <b>plan</b> phase validates every entry (traversal,
@@ -250,7 +267,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
     </section>
 
     <!-- ===================== wrapped archives ===================== -->
-    <section class="perf-sec">
+    <section class="perf-sec" id="wrapped-archives">
       <h2>Bonus: extract a wrapped archive (<code>.tar.gz</code>) in one go</h2>
       <p>
         A <code>.tar.gz</code> is not one archive but two: a GZip stream whose single item is a
@@ -311,6 +328,13 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
 
   <style>
     .perf { max-width: 860px; padding-top: 40px; padding-bottom: 40px; }
+    .subtitle { font-size: 1.15rem; color: var(--text-2); margin: 0 0 14px; font-weight: 600; }
+    .contents { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 28px; margin: 22px 0 8px; padding: 14px 18px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+    .contents-title { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 6px; }
+    .contents a { display: block; padding: 3px 0; font-size: .92rem; color: var(--text-2); }
+    .contents a:hover { color: var(--blue); }
+    [id] { scroll-margin-top: 84px; }
+    @media (max-width: 640px) { .contents { grid-template-columns: 1fr; } }
     .perf-h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); margin-bottom: 8px; }
     .perf .lead { font-size: 1.05rem; }
     .perf-sec { margin: 40px 0; }

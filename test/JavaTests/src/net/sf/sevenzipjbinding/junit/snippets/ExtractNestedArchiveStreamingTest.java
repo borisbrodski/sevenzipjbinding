@@ -45,7 +45,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  *    consumer's furthest request, so it genuinely streams (it cannot race to completion first). The
  *    test asserts the producer actually blocked, i.e. the consumer drove the producer.
  *
- * This is referenced from the Performance page for advanced users; it is intentionally involved.
+ * This is referenced from the Extraction masterclass page for advanced users; it is intentionally involved.
  */
 public class ExtractNestedArchiveStreamingTest {
 
