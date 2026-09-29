@@ -13,8 +13,8 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
     * Upgraded the bundled 7-Zip engine from 23.01 to 26.03 (latest, released
       2026-09-03), via the vendored-engine workflow. Brings the upstream format,
-      decoder and bug fixes accumulated since 23.01, including native Zstandard
-      (.zst) decompression handled inside the engine.
+      decoder and bug fixes accumulated since 23.01, including extraction of
+      Zstandard-compressed ZIP entries.
 
     * Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
       HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix released in
@@ -26,6 +26,11 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       the full suite. Runtime auto-detection selects it on a native FreeBSD JVM
       (os.name=FreeBSD); it is also included in the -all-platforms jar. (Note: on
       the Linux compatibility layer the existing Linux-amd64 library also works.)
+
+    * New platform: Windows on Arm (arm64). A native aarch64 Windows library
+      (platform 'Windows-arm64'), built with the llvm-mingw GCC-style toolchain
+      and included in the AllWindows and AllPlatforms jars. The -all-platforms
+      jar auto-detects and loads it on a native arm64 Windows JVM.
 
     * macOS: per-architecture artifacts. BREAKING for Maven/Gradle users on macOS:
         - sevenzipjbinding-all-mac     universal library (Intel + Apple Silicon); the
@@ -47,14 +52,6 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       artifact change above for Maven/Gradle coordinates). The complete build
       + runtime test matrix is green on the new engine (Linux glibc & musl on
       arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
-
-
-Main features of 23.01-2.3 (new platform: Windows on Arm)
-
-    * New platform: Windows on Arm (arm64). A native aarch64 Windows library
-      (platform 'Windows-arm64'), built with the llvm-mingw GCC-style toolchain
-      and included in the AllWindows and AllPlatforms jars. The -all-platforms
-      jar auto-detects and loads it on a native arm64 Windows JVM.
 
 
 Main features of 23.01-2.2 (Release, extraction/compression/update, cross-platform, based on 7-Zip 23.01)

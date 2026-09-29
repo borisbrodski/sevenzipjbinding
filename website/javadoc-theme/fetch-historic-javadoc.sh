@@ -11,6 +11,7 @@ mkdir -p "$DEST"
 
 # version : smallest zip known to carry javadoc.zip (per SF listings)
 ENTRIES=(
+  "23.01-2.2:sevenzipjbinding-23.01-2.2-Linux-i386.zip"
   "16.02-2.01:sevenzipjbinding-16.02-2.01-Linux-i386.zip"
   "9.20-2.00beta:sevenzipjbinding-9.20-2.00beta-Linux-i386.zip"
   "4.65-1.06rc-extr-only:sevenzipjbinding-4.65-1.06-rc-extr-only-Linux-i386.zip"

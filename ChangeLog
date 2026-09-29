@@ -5,8 +5,9 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
 	* Upgraded the bundled 7-Zip engine 23.01 -> 26.03 (latest, released
 	  2026-09-03) via the vendored-engine (upstream-7zip) workflow. Picks up the
-	  upstream format/decoder/bug fixes accumulated since 23.01, including native
-	  Zstandard (.zst) decompression handled inside the engine.
+	  upstream format/decoder/bug fixes accumulated since 23.01, including the
+	  Zstandard decoder for ZIP entries (method 93). Standalone .zst files are
+	  not an archive format of this release.
 
 	* Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
 	  HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix in 7-Zip 24.07,
@@ -17,6 +18,13 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  'FreeBSD-amd64'), built and tested on FreeBSD 14 (clang + OpenJDK) via
 	  GitHub Actions (vmactions/freebsd-vm), passing the full 18-bundle suite.
 	  Auto-detected on a native FreeBSD JVM and folded into -all-platforms.
+
+	* New platform: Windows on Arm (arm64) - native aarch64 Windows DLL built
+	  with llvm-mingw (clang/LLD + mingw-w64; stock GNU gcc has no Windows-arm64
+	  target and MSVC is avoided). Platform id 'Windows-arm64'. Folds into
+	  AllWindows and AllPlatforms; runtime auto-detection selects it on a native
+	  arm64 Windows JVM (os.arch=aarch64). Built & tested natively on GitHub
+	  Actions windows-11-arm runners.
 
 	* macOS per-architecture artifacts (BREAKING for Maven/Gradle on macOS):
 	  -all-mac (universal; the Mac library inside -all-platforms), -mac-arm64
@@ -32,22 +40,15 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
 	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
+	* Build: JNI headers are generated with 'javac -h' when 'javah' is absent
+	  (JDK 10+), required for Windows-arm64, which has no JDK 8. Modern JDKs
+	  compile with --release 8; the jars stay Java-8 compatible.
+
+	* Behavior (engine): XAR archives report Size=0 for empty files (previously
+	  null).
+
 	* Internal: trimmed our custom edits to the vendored 7-Zip sources (upstream
 	  26.03 absorbed several); the remainder are documented in the project.
-
-
-Release - 23.01-2.3 (new platform: Windows on Arm, based on 7-Zip 23.01)
-
-	* New platform: Windows on Arm (arm64) - native aarch64 Windows DLL built
-	  with llvm-mingw (clang/LLD + mingw-w64; stock GNU gcc has no Windows-arm64
-	  target and MSVC is avoided). Platform id 'Windows-arm64'. Folds into
-	  AllWindows and AllPlatforms; runtime auto-detection selects it on a native
-	  arm64 Windows JVM (os.arch=aarch64). Built & tested natively on GitHub
-	  Actions windows-11-arm runners.
-
-	* Build: JNI headers are generated with 'javac -h' when 'javah' is absent
-	  (JDK 10+). Required for Windows-arm64, which has no JDK 8. Existing JDK<=9
-	  builds are unchanged; the jar stays Java-8 compatible.
 
 
 Release - 23.01-2.2 (Release, cross-platform, based on 7-Zip 23.01)

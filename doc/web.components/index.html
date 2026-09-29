@@ -131,8 +131,25 @@ Continue with <a href="first_steps.html">first steps</a> for more examples and e
 </div>
 Release, extraction &amp; compression, cross-platform, based on 7-Zip 26.03
 <ul>
-    <li>New engine: <b>7-Zip 26.03</b> (previously 23.01) &ndash; native Zstandard decompression,
-        resolves CVE-2024-11477, and many upstream format/bug fixes</li>
+    <li>New engine: <b>7-Zip 26.03</b> (previously 23.01) &ndash; many upstream format/bug fixes,
+        Zstandard-compressed ZIP entries, resolves CVE-2024-11477</li>
+    <li>New platform: <b>Windows on Arm</b> (arm64), auto-detected on a native arm64 Windows JVM</li>
+    <li>New platform: <b>FreeBSD</b> (amd64), auto-detected on a native FreeBSD JVM</li>
+    <li>macOS per-architecture artifacts: <b>-all-mac</b> (universal), <b>-mac-arm64</b>,
+        <b>-mac-x86_64</b> (now Intel-only). The universal <b>-mac</b> artifact is replaced by
+        <b>-all-mac</b>; -all-platforms users are not affected</li>
+    <li>New documentation: <a href="https://sevenzipjbind.sourceforge.net/masterclass/">Extraction
+        masterclass</a> &ndash; fast, safe and correct extraction with complete, tested examples</li>
+    <li>No Java API changes: existing code is unaffected</li>
+    <li>15 platform builds, each tested with its own platform jar AND the AllPlatforms jar</li>
+</ul>
+<br/>
+
+    <b>7-Zip-JBinding Release: 23.01-2.2</b>
+<br/><br/>
+Release, extraction &amp; compression, cross-platform, based on 7-Zip 23.01
+<ul>
+    <li>New engine: <b>7-Zip 23.01</b> (previously 16.02) &ndash; many upstream format/bug fixes</li>
     <li>7-Zip-JBinding now requires <b>Java 8</b> or higher (previously Java 1.5)</li>
     <li>New feature: <b>XZ compression &amp; update</b> support
         (<a href="javadoc/index.html?net/sf/sevenzipjbinding/IOutCreateArchiveXz.html">API</a> +

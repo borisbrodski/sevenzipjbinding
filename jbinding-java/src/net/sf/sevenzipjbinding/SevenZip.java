@@ -48,8 +48,10 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li><code>sevenzipjbinding-AllWindows.jar</code> with native libraries for three platforms: Windows 32-bit, 64-bit and ARM64</li>
  * <li><code>sevenzipjbinding-AllPlatforms.jar</code> with native libraries for all available platforms</li>
  * </ul>
- * The single and multiple platform jar files can be determined by counting dashes in the filename. Single platform jar
- * files always contain two dashes in their names.<br>
+ * Multiple platform jar files are named <code>sevenzipjbinding-All<i>Group</i>.jar</code> (<code>AllPlatforms</code>,
+ * <code>AllWindows</code>, <code>AllMac</code>). All other platform jar files contain the native
+ * library for exactly one platform, named <code><i>System</i>-<i>Arch</i></code> with an optional variant suffix, for
+ * example <code>Linux-armv7</code>, <code>Mac-arm64</code> or <code>Linux-amd64-musl</code>.<br>
  * <br>
  * Here is a schema of the different initialization processes:
  *

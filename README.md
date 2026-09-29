@@ -41,7 +41,7 @@ and abort at any time.
   jar **auto‑detects** the OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
 - **Two APIs** — a beginner‑friendly *simple* interface and a full‑power *standard* interface.
 - **Encryption** — open and create password‑protected archives, including 7z encrypted headers.
-- **Battle‑tested** — maintained since 2007, exercised by ~8800 JUnit tests on every supported
+- **Battle‑tested** — maintained since 2007, exercised by ~8900 JUnit tests on every supported
   platform (real VMs and real ARM hardware).
 
 ## 📦 Supported formats
@@ -146,7 +146,7 @@ and in‑memory round‑trips are on the site:
 ## 🔒 Security
 
 No known security issues in the current release. **CVE‑2024‑11477** (7‑Zip Zstandard decompression,
-severity HIGH, CVSS 7.8), which affected the 23.01‑2.x releases, is **resolved as of `26.03‑2.4`**: the
+severity HIGH, CVSS 7.8), which affected the 23.01‑2.x releases, is **resolved as of `26.03‑2.3`**: the
 bundled 7‑Zip engine now postdates the upstream fix released in 7‑Zip 24.07
 ([#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72)).
 
