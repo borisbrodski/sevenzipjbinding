@@ -20,5 +20,12 @@ public enum NFileTimeType {
     /**
      * Old Microsoft DOS file time format
      */
-    DOS //
+    DOS, //
+
+    /**
+     * File time with 1 nanosecond precision (for example Linux file times in Tar archives)
+     *
+     * @since 26.03-2.3
+     */
+    NANOSECONDS //
 }

@@ -40,7 +40,25 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  longer part of the release zips; the documentation lives at
 	  https://sevenzipjbind.sourceforge.net/ . JavaDoc still ships as javadoc.zip.
 
-	* No Java API changes; existing code is unaffected. Full build + runtime
+	* PropID: added the engine properties 96-104 (ARC_FILE_NAME, IS_HASH,
+	  CHANGE_TIME, USER_ID, GROUP_ID, DEVICE_MAJOR, DEVICE_MINOR, DEV_MAJOR,
+	  DEV_MINOR). They had no Java constant: Tar/Cpio owner ids and device
+	  numbers were unreachable and getPropertyInfo() reported them as UNKNOWN
+	  (id 96 even as NUM_DEFINED). NFileTimeType: added NANOSECONDS (k1ns).
+	  Tests: PropertyIdsTest, EnumTest (native index checks).
+
+	* Initialization: failure to copy a native library into the temporary
+	  directory threw a plain RuntimeException and was not recorded as the
+	  last initialization exception; now the declared
+	  SevenZipNativeInitializationException, and a partial file is deleted.
+	  Test: InitializationCopyFailureTest (child JVM).
+
+	* JavaDoc: corrected false/outdated claims (platform selection, cached
+	  library verification, volume callback properties, reportExtractResult,
+	  per-format property lists, and more).
+
+	* Java API: additions only, binary + source compatible with 23.01-2.2
+	  (japicmp); existing code is unaffected. Full build + runtime
 	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
 	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 

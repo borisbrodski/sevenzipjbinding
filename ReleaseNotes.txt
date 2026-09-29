@@ -52,7 +52,20 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       of the old web site). Documentation: https://sevenzipjbind.sourceforge.net/
       JavaDoc still ships inside every zip as javadoc.zip.
 
-    * No Java API changes: existing Java code is unaffected (see the macOS
+    * New item properties: PropID.USER_ID, GROUP_ID (Tar/Cpio owner ids),
+      DEVICE_MAJOR/DEVICE_MINOR (Tar device entries), DEV_MAJOR/DEV_MINOR
+      (Cpio), CHANGE_TIME (NTFS/UDF), ARC_FILE_NAME, IS_HASH - the engine
+      reported them before, but Java showed them as UNKNOWN. New
+      NFileTimeType.NANOSECONDS (1 ns time precision).
+
+    * Fixed: a native library that can't be copied into the temporary
+      directory is now reported as the declared
+      SevenZipNativeInitializationException (and via
+      SevenZip.getLastInitializationException()), not a plain RuntimeException.
+      A partially written library file is removed.
+
+    * Java API: additions only, binary and source compatible with 23.01-2.2
+      (checked with japicmp): existing Java code is unaffected (see the macOS
       artifact change above for Maven/Gradle coordinates). The complete build
       + runtime test matrix is green on the new engine (Linux glibc & musl on
       arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).

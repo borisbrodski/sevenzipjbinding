@@ -85,7 +85,8 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipT
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive;
-import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationCopyFailureTest;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationRestoresBrokenArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.CHeadCacheInStreamTest;
@@ -95,6 +96,7 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
+import net.sf.sevenzipjbinding.junit.misc.PropertyIdsTest;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
@@ -495,12 +497,14 @@ public class AllTestSuite extends TestSuite {
     static Class<?>[] miscTests = { //
             ArchiveWithTwoPasswordsTest.class, //
             net.sf.sevenzipjbinding.PlatformArchDetectorTest.class, //
+            PropertyIdsTest.class, //
+            InitializationCopyFailureTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
     };
     static Class<?>[] initVerifyTests = { //
-    /*    */InitializationDoesNotVerifyArtifactsTest.class, //
+    /*    */InitializationRestoresBrokenArtifactsTest.class, //
     };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 

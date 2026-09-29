@@ -840,36 +840,22 @@ public class SevenZip {
                 + "'net.sf.sevenzipjbinding.SevenZip.init*()' in order to solve this problem] ", exception);
     }
 
-    private static void copyLibraryToFS(File toLibTmpFile, InputStream fromLibInputStream) {
-        FileOutputStream libTmpOutputStream = null;
+    private static void copyLibraryToFS(File toLibTmpFile, InputStream fromLibInputStream)
+            throws SevenZipNativeInitializationException {
         try {
-            libTmpOutputStream = new FileOutputStream(toLibTmpFile);
-            byte[] buffer = new byte[65536];
-            while (true) {
-                int read = fromLibInputStream.read(buffer);
-                if (read > 0) {
-                    libTmpOutputStream.write(buffer, 0, read);
-                } else {
-                    break;
+            try (InputStream in = fromLibInputStream;
+                    FileOutputStream out = new FileOutputStream(toLibTmpFile)) {
+                byte[] buffer = new byte[65536];
+                int read;
+                while ((read = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, read);
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error initializing SevenZipJBinding native library: "
-                    + "can't copy native library out of a resource file to the temporary location: '"
-                    + toLibTmpFile.getAbsolutePath() + "'", e);
-        } finally {
-            try {
-                fromLibInputStream.close();
-            } catch (IOException e) {
-                // Ignore errors here
-            }
-            try {
-                if (libTmpOutputStream != null) {
-                    libTmpOutputStream.close();
-                }
-            } catch (IOException e) {
-                // Ignore errors here
-            }
+        } catch (IOException e) {
+            // Never leave a truncated library behind.
+            toLibTmpFile.delete();
+            throwInitException(e, "can't copy native library out of a resource file to the temporary location: '"
+                    + toLibTmpFile.getAbsolutePath() + "'");
         }
     }
 
