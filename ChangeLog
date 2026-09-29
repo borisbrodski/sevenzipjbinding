@@ -34,7 +34,11 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
 	* Docs: "Extraction masterclass" web page and new tested snippets
 	  (ExtractToFolder, ExtractNestedArchive incl. a streaming unwrap proof).
-	  Website no longer tracks generated dist/ and node_modules/.
+	  Generated files (website build, JavaDoc) are no longer tracked in git.
+
+	* Distribution: the offline copy of the old web site (website.zip) is no
+	  longer part of the release zips; the documentation lives at
+	  https://sevenzipjbind.sourceforge.net/ . JavaDoc still ships as javadoc.zip.
 
 	* No Java API changes; existing code is unaffected. Full build + runtime
 	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,

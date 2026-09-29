@@ -48,6 +48,10 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       complete, tested examples; new snippets for extracting to a folder and for
       wrapped archives (.tar.gz).
 
+    * Distribution: release zips no longer include website.zip (an offline copy
+      of the old web site). Documentation: https://sevenzipjbind.sourceforge.net/
+      JavaDoc still ships inside every zip as javadoc.zip.
+
     * No Java API changes: existing Java code is unaffected (see the macOS
       artifact change above for Maven/Gradle coordinates). The complete build
       + runtime test matrix is green on the new engine (Linux glibc & musl on

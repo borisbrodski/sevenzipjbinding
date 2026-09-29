@@ -323,22 +323,6 @@ SET(PREPACKAGE_ACTIONS
                     WORKING_DIRECTORY .
     )
     
-    # Copy javadoc back into the source folder
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
-                                -E copy_directory
-                                .
-                                \"${PROJECT_SOURCE_DIR}/doc/web/javadoc\"
-                    WORKING_DIRECTORY \"${JAVADOC_DIR}\"
-    )
-    
-    # Generate web site
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
-                                -D SEVENZIPJBINDING_VERSION=${SEVENZIPJBINDING_VERSON}
-                                -P \"${PROJECT_SOURCE_DIR}/doc/build_html.cmake\"
-                                ${PROJECT_SOURCE_DIR}/doc/web/javadoc
-                    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/\"
-    )
-    
     COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-java/src\" \"${PREPACKAGE_TMP}/java-src/\" \"\")
     COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-cpp\" \"${PREPACKAGE_TMP}/cpp-src/\" CMakeLists.txt)
 
@@ -351,8 +335,6 @@ SET(PREPACKAGE_ACTIONS
     EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/javadoc.zip .
     WORKING_DIRECTORY ${JAVADOC_DIR})
 
-    EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/website.zip .
-    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/web\")
 "
 )
 
@@ -378,7 +360,6 @@ INSTALL(FILES   ${SEVENZIPJBINDING_JAR}
 INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
                 ${PREPACKAGE_TMP}/cpp-src.zip
                 ${PREPACKAGE_TMP}/javadoc.zip
-                ${PREPACKAGE_TMP}/website.zip
         DESTINATION .)
 
 #INSTALL(DIRECTORY ${JAVADOC_DIR}/

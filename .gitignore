@@ -3,6 +3,8 @@
 *.tmp
 *.so
 *.jar
+# test-time dependencies are checked in
+!test/JavaTests/lib/*.jar
 jbinding-java/bin
 test/JavaTests/bin
 .svn
@@ -39,5 +41,3 @@ Session.vim
 /.cache/
 /.clangd/
 
-# Generated API docs (regenerate with the javadoc build; not checked in)
-/doc/web/javadoc/
