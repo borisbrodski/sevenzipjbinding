@@ -87,6 +87,30 @@ jobs:
         shell: bash
         run: cd build && ctest --output-on-failure
 
+      # Second column: the same full suite with ONLY the AllPlatforms jar on the classpath, so the
+      # runtime autodetection has to pick Windows-arm64 among all platforms. The AllPlatforms jar needs
+      # natives CI cannot build, so it comes from the 'ci-allplatforms-fixture' prerelease.
+      - name: Download the AllPlatforms jar (CI fixture prerelease)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          New-Item -ItemType Directory -Force allplatforms | Out-Null
+          gh release download ci-allplatforms-fixture -R $env:GITHUB_REPOSITORY -p '*AllPlatforms.zip' -D allplatforms
+          Get-ChildItem allplatforms/*.zip | Expand-Archive -DestinationPath allplatforms
+
+      - name: Run full suite via AllPlatforms autodetection (native arm64 JVM)
+        shell: bash
+        run: |
+          set -eux
+          APJAR="$(cygpath -m "$(find "$PWD/allplatforms" -name 'sevenzipjbinding-AllPlatforms.jar' | head -1)")"
+          test -n "$APJAR"
+          sed -i -E "s#[^;\"]*/sevenzipjbinding-Windows-arm64\.jar#${APJAR}#g" build/JUnitRunner.cmake
+          grep -o 'sevenzipjbinding-[A-Za-z0-9_-]*\.jar' build/JUnitRunner.cmake | sort -u
+          grep -q 'sevenzipjbinding-AllPlatforms\.jar' build/JUnitRunner.cmake
+          ! grep -q 'sevenzipjbinding-Windows-arm64\.jar' build/JUnitRunner.cmake
+          cd build && ctest --output-on-failure
+
       - name: Upload Windows arm64 platform zip
         if: always()
         uses: actions/upload-artifact@v4

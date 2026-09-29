@@ -15,6 +15,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # For the second test column (AllPlatforms autodetection). Downloaded on the runner; the VM
+      # receives the whole workspace.
+      - name: Download the AllPlatforms jar (CI fixture prerelease)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eux
+          mkdir -p allplatforms && cd allplatforms
+          gh release download ci-allplatforms-fixture -R "$GITHUB_REPOSITORY" -p '*AllPlatforms.zip'
+          unzip -q *AllPlatforms.zip
+
       - name: Build + test in a FreeBSD VM
         uses: vmactions/freebsd-vm@v1
         with:
@@ -38,6 +49,13 @@ jobs:
             echo "== package =="
             make package
             ls -l sevenzipjbinding-*-FreeBSD-amd64.zip
+            echo "== AllPlatforms autodetection: full suite with ONLY the AllPlatforms jar =="
+            APJAR="$(find "$PWD/../allplatforms" -name 'sevenzipjbinding-AllPlatforms.jar' | head -1)"
+            test -n "$APJAR"
+            sed -i '' -E "s#[^:\"]*/sevenzipjbinding-FreeBSD-amd64\.jar#${APJAR}#g" JUnitRunner.cmake
+            grep -q 'sevenzipjbinding-AllPlatforms\.jar' JUnitRunner.cmake
+            ! grep -q 'sevenzipjbinding-FreeBSD-amd64\.jar' JUnitRunner.cmake
+            ctest --output-on-failure
 
       - name: Upload FreeBSD-amd64 zip
         if: always()
