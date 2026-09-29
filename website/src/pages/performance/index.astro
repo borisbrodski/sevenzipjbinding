@@ -72,77 +72,105 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
 
     <!-- ===================== 2: the callback ===================== -->
     <section class="perf-sec">
-      <h2>2. Write the callback the way the engine expects</h2>
+      <h2>2. Plan, then stream, then account</h2>
       <p>
-        The engine drives extraction through your <code>IArchiveExtractCallback</code>. It is a small
-        state machine, and fighting it is the second common cause of slowness and bugs. Follow these
-        rules:
+        The engine drives extraction through your <code>IArchiveExtractCallback</code>. An archive is
+        untrusted input, so the example keeps three jobs strictly apart: <b>plan</b> (decide what may
+        be written, and where — before a single byte lands), <b>stream</b> (the callback, which only
+        moves bytes), and <b>account</b> (say honestly what happened). Each has its own rules.
       </p>
+
+      <h3 class="perf-h3">Plan — the safety rules</h3>
       <ul class="rules">
         <li>
-          <b>SECURITY — refuse path traversal (&ldquo;Zip Slip&rdquo;).</b> An archive entry's path is
-          attacker-controlled: it can be <code>../../etc/passwd</code> or absolute.
-          <code>new File(outputDir, entryPath)</code> will happily point <i>outside</i>
-          <code>outputDir</code>. Before opening anything, resolve <code>outFile.getCanonicalPath()</code>
-          and check it starts with <code>outputDir.getCanonicalPath() + File.separator</code>; if not,
-          skip the entry (record it) — never write it. People copy examples, so this one is not optional.
+          <b>Refuse path traversal (&ldquo;Zip Slip&rdquo;) twice.</b> An entry's path is
+          attacker-controlled: <code>../../etc/passwd</code>, an absolute path, a stray backslash.
+          Split it on both separators, drop empty and <code>.</code> parts, reject <code>..</code>. Then
+          <i>also</i> check the canonical target lies inside the canonical output directory — that second
+          check is what catches a symlink that already exists inside the output directory and points
+          elsewhere. Two checks, two different attacks.
         </li>
         <li>
-          <b>Open each output file once, in <code>getStream()</code>.</b> This method is called once
-          per item, right before its data starts. That is the place to create the target file and its
-          parent directories — not inside the write loop.
+          <b>Skip links and special files — and say so.</b> A symlink extracted as a link can point
+          anywhere, and the next entry written &ldquo;through&rdquo; it escapes; extracted as a file it
+          silently holds the link target as text. Hard links, reparse points, devices and pipes are no
+          better. Detect them via <code>SYM_LINK</code> / <code>HARD_LINK</code> (a hard link carries a
+          regular file mode, so only the property reveals it) and the Unix mode bits, skip them, and
+          report them.
         </li>
         <li>
-          <b>Guard against null properties, and don't lose empty directories.</b> Some formats return
-          <code>null</code> for <code>IS_FOLDER</code> — use <code>Boolean.TRUE.equals(...)</code>, not
-          <code>((Boolean) x).booleanValue()</code> (which NPEs). And directory entries are real items:
-          create them (even the empty ones) or they vanish.
+          <b>Nameless entries exist.</b> <code>gzip</code>, <code>bzip2</code>, <code>xz</code> and a plain
+          <code>tar czf</code> store no file name: <code>PATH</code> is <code>""</code>. And
+          <code>new File(outputDir, "")</code> <i>is</i> the output directory — you would write a file over
+          it. Do what the 7-Zip command line does: derive the name from the archive's file name
+          (<code>data.gz</code> → <code>data</code>, <code>backup.tgz</code> → <code>backup.tar</code>,
+          no extension → append <code>~</code>).
         </li>
         <li>
-          <b><code>write(byte[])</code> is called many times per file — just append.</b> Never
-          re-open or seek to the end on every chunk. Re-opening the file for every buffer (a common
-          mistake) turns linear extraction into an avalanche of syscalls. And you <b>must</b> return
-          the number of bytes consumed (always the whole buffer).
+          <b>Know your host OS.</b> On Windows, <code>CON</code>, <code>NUL</code>, <code>COM1</code>…
+          (even <code>CON.txt</code>) are device names, <code>&lt;&gt;:"|?*</code> are illegal, and a
+          trailing dot or space is silently dropped. Reject those there; on Unix they are ordinary names.
         </li>
         <li>
-          <b>Close the file in <code>setOperationResult()</code>.</b> It is called once per item, after
-          the last chunk — one open and one close per file, never per chunk.
+          <b>Properties can be missing.</b> <code>IS_FOLDER</code> may be <code>null</code> — use
+          <code>Boolean.TRUE.equals(…)</code>, never <code>((Boolean) x).booleanValue()</code>. Directory
+          entries are real items: create them in the plan phase, empty ones included, or they vanish.
         </li>
         <li>
-          <b>Errors arrive TWO ways — handle both, or you will lose one.</b> This is the subtle part.
-          <ol style="margin:6px 0 0; padding-left:20px;">
-            <li><b>As a thrown exception</b> — e.g. your own <code>write()</code> fails (disk full).
-              7-Zip-JBinding saves it and re-throws it from <code>extract()</code>: a <i>fatal</i> error
-              that ends the run. Catch it and print it with
-              <code>SevenZipException.printStackTraceExtended()</code>.</li>
-            <li><b>As a per-item non-OK <code>ExtractOperationResult</code></b> (CRC error, data error, …),
-              decided by the engine <b>with no exception at all</b> — <code>extract()</code> returns
-              <i>normally</i> and extraction <b>continues</b> to the healthy items. If you only catch
-              exceptions, these <b>slip silently</b>. So record every non-OK result in
-              <code>setOperationResult()</code>.</li>
-          </ol>
-          Which way a given failure takes can even change between engine versions — so treat both.
-          Practically: keep an error list, record each item problem (and a failed <code>close()</code>
-          separately), <b>keep extracting the healthy items</b>, and at the end print a report plus one
-          representative trace (the fatal error, or the first item error that carries a cause).
+          <b>Never overwrite silently.</b> The example follows 7-Zip's <code>-aos</code> (skip existing)
+          and reports the skipped file. Overwriting is a deliberate, documented decision for an
+          application to make — not a default hidden in an example that people copy.
+        </li>
+      </ul>
+
+      <h3 class="perf-h3">Stream — the fast path</h3>
+      <ul class="rules">
+        <li>
+          <b>Open once, in <code>getStream()</code>.</b> It is called once per item, right before its
+          data. Create the file (and its parent directories) there — never inside the write loop.
         </li>
         <li>
-          <b>Never let <code>close()</code> mask the real cause.</b> On a <i>failed</i> item, close the
-          broken file <b>quietly</b> — a &ldquo;cannot close&rdquo; thrown on top would hide the real
-          &ldquo;no space left on device&rdquo;. On a <i>successful</i> item, do let <code>close()</code>
-          surface: that is where the final buffered block is flushed, so a failure there is genuine data
-          loss. And close any still-open file in a <code>finally</code> at the call site — in case an
-          abort path skips the callback.
+          <b><code>write(byte[])</code> is called many times per file — just append</b> to a
+          <code>BufferedOutputStream</code>, and return the number of bytes consumed. Re-opening the file
+          per chunk turns linear extraction into an avalanche of syscalls.
         </li>
         <li>
-          <b>Keep the hot path empty.</b> Per-chunk logging, hashing, or flushing dominates the run
-          time. Do progress reporting from <code>setCompleted()</code>, not from <code>write()</code>.
-          (The example below computes a hash only to make its output verifiable in the test suite —
-          real code should drop it.)
+          <b>Close once, in <code>setOperationResult()</code>.</b> Keep the hot path empty: no
+          per-chunk logging or hashing; progress belongs in <code>setCompleted()</code>. (The example
+          computes a small checksum only so its output can be verified by the test suite.)
+        </li>
+      </ul>
+
+      <h3 class="perf-h3">Account — errors arrive on two channels</h3>
+      <ul class="rules">
+        <li>
+          <b>Channel 1: an exception.</b> Your <code>write()</code> fails (disk full) and throws.
+          7-Zip-JBinding saves that exception and re-throws it from <code>extract()</code>. Never claim to
+          have consumed bytes you did not write — that is silent corruption.
         </li>
         <li>
-          <b>Buffer your output.</b> Wrap the file stream in a <code>BufferedOutputStream</code> so
-          the many small chunks don&rsquo;t each hit the disk.
+          <b>Channel 2: a verdict without an exception.</b> A broken item (CRC error, truncated data,
+          …) is reported per item as a non-OK <code>ExtractOperationResult</code> in
+          <code>setOperationResult()</code>; <code>extract()</code> returns <i>normally</i> and continues
+          with the next item. Code that only catches exceptions loses these entirely — and which channel
+          a failure uses can change between engine versions, so record both.
+        </li>
+        <li>
+          <b>Never let <code>close()</code> mask the real cause.</b> Keep a close failure aside and record
+          it separately; it must not replace &ldquo;no space left on device&rdquo;. On a <i>successful</i>
+          item the final flush happens in <code>close()</code>, so a failure there is real data loss.
+        </li>
+        <li>
+          <b>After a write failure, stop writing — and say exactly that.</b> The engine keeps going
+          (zip) or degrades into data errors (solid 7z). Skipping the remaining files and reporting
+          &ldquo;N files not extracted because writing had already failed&rdquo; is the truth; &ldquo;fatal
+          abort&rdquo; or &ldquo;corrupt archive&rdquo; would not be.
+        </li>
+        <li>
+          <b>Leave nothing that looks complete but isn't.</b> Remove a partially written file when its
+          item fails, keep extracting the healthy items, print every problem plus one representative stack
+          trace (<code>printStackTraceExtended()</code> shows the whole cause chain), send usage to stderr,
+          and exit non-zero whenever anything went wrong.
         </li>
       </ul>
     </section>
@@ -163,9 +191,11 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
     <section class="perf-sec">
       <h2>Complete example: extract a whole archive to a directory</h2>
       <p class="snip-desc">
-        This puts all of the above together: it collects every non-folder index and extracts them in
-        one pass, writing each file to disk under a target directory. It is a real program from the
-        test suite — the output shown below is verified on every release.
+        This puts all of the above together: a <b>plan</b> phase validates every entry (traversal,
+        links, nameless entries, OS-specific names, existing files) and creates the directories, one
+        <b>extract()</b> call streams every approved file, and a <b>report</b> with a trustworthy exit
+        code closes the run. It is a real program from the test suite — the output shown below is
+        verified on every release, and its safety rules are pinned down by a dedicated test class.
       </p>
       <div class="codebox">
         <div class="codebox-head">
@@ -258,6 +288,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
       font-size: 1.3rem;
     }
     .perf-sec p { margin: 0 0 14px; }
+    .perf-h3 { font-size: 1.02rem; margin: 22px 0 8px; color: var(--text-2); letter-spacing: .01em; }
     .perf code {
       font: 600 .86em var(--font-mono); background: var(--surface-2);
       border: 1px solid var(--border); border-radius: 5px; padding: 1px 5px;
