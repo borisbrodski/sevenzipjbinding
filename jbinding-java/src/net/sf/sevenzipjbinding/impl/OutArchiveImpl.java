@@ -22,6 +22,7 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @see OutArchiveGZipImpl
  * @see OutArchiveBZip2Impl
  * @see OutArchiveTarImpl
+ * @see OutArchiveXzImpl
  *
  * @author Boris Brodski
  * @since 9.20-2.00

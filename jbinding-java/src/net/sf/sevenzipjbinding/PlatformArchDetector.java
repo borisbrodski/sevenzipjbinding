@@ -23,10 +23,10 @@ import java.util.Set;
  * <li>the userspace <b>float ABI</b> (soft-float = <i>armel</i>, hard-float = <i>armhf</i>).</li>
  * </ul>
  * A ladder of detection methods is used, cheapest/simplest first, each failing safely to
- * {@code null}. All the Linux methods are pure-Java (reading {@code /proc}) so they also work inside
- * stripped containers that have no {@code uname}. Trying each native library in-process is
- * deliberately avoided (it would SIGSEGV with core dumps and load large libraries); see the
- * subprocess probe in {@code SevenZip} as the very last resort.
+ * {@code null}. The first method runs {@code uname -m}; all the others are pure-Java (reading
+ * {@code /proc} and ELF headers), so detection also works inside stripped containers that have no
+ * {@code uname}. Trying each native library in-process is deliberately avoided (it would SIGSEGV
+ * with core dumps and load large libraries).
  *
  * @see SevenZip#getPlatformBestMatch()
  */

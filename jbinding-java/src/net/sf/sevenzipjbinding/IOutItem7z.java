@@ -108,6 +108,8 @@ public interface IOutItem7z extends IOutItemBase {
 
     /**
      * Set property {@link PropID#COMMENT}.
+     * <p>
+     * The 7z format writer currently ignores this property.
      * 
      * @see PropID#COMMENT
      * @param comment
@@ -125,6 +127,9 @@ public interface IOutItem7z extends IOutItemBase {
 
     /**
      * Set property {@link PropID#ENCRYPTED}.
+     * <p>
+     * The 7z format writer currently ignores this property; to encrypt, provide a password
+     * through {@link ICryptoGetTextPassword}.
      * 
      * @see PropID#ENCRYPTED
      * @param encrypted
@@ -142,6 +147,8 @@ public interface IOutItem7z extends IOutItemBase {
 
     /**
      * Set property {@link PropID#CRC}.
+     * <p>
+     * The 7z format writer currently ignores this property.
      * 
      * @see PropID#CRC
      * @param crc

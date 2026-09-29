@@ -11,12 +11,13 @@ import java.util.Date;
  */
 public enum PropID {
     /**
-     * Dummy property1. First real property should have an item 2. So skip the position 2.
+     * Placeholder for the engine's property id 0 (<code>kpidNoProperty</code>). Not a real property.
      */
     NO_PROPERTY1,
 
     /**
-     * Dummy property2. First real property should have an item 2. So skip the position 1.
+     * Placeholder for the engine's property id 1 (<code>kpidMainSubfile</code>, used by the engine internally). Not
+     * a real item property.
      */
     NO_PROPERTY2,
 
@@ -35,7 +36,7 @@ public enum PropID {
     PATH, //
 
     /**
-     * In {@link IArchiveOpenCallback}: Name of the volume to get
+     * Name of an item. In {@link IArchiveOpenVolumeCallback#getProperty(PropID)}: the file name of the volume.
      */
     NAME, //
 

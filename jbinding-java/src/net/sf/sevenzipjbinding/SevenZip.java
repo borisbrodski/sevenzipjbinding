@@ -71,8 +71,8 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li>The dynamic libraries for the chosen platform are copied to the unique temporary directory using "build-ref"
  * postfix. If not passed as a parameter for one of <code>initSevenZipFromPlatformJAR(...)</code> methods, the temporary
  * directory is determined using system property <code>java.io.tmpdir</code>.</li>
- * <li>The dynamic libraries are reused, if the files are already present in the temporary directory and the hash sums
- * are verified
+ * <li>Dynamic libraries already present in the temporary directory are reused only if their SHA-1 hash matches the hash
+ * listed in <code>sevenzipjbinding-lib.properties</code>; otherwise they are overwritten.</li>
  * <li>The dynamic libraries are loaded into JVM using {@link System#load(String)} method.</li>
  * <li>7-Zip-JBinding native initialization method called to complete initialization process.</li>
  * </ul>
@@ -86,18 +86,18 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * </ul>
  *
  * <br>
- * By default the initialization occurred within the
+ * By default the native initialization call (after the libraries are loaded) runs within an
  * {@link AccessController#doPrivileged(java.security.PrivilegedAction)} block. This can be overruled by setting
  * <code>sevenzip.no_doprivileged_initialization</code> system property. For example: <blockquote>
  * <code>java -Dsevenzip.no_doprivileged_initialization=1 ...</code> </blockquote>
+ * The block only matters with a Java security manager installed (deprecated since Java 17).
  *
  * <h3>Temporary artifacts</h3>
  *
  * During automatic initialization of the 7-Zip-JBinding the native libraries from the platform jar must be extracted to
  * the disk in order to be loaded into the JVM. Since the count of the native libraries (depending on the platform) can
  * be greater than one, a temporary sub-directory is created to hold those native libraries. The path to the directory
- * for the temporary artifacts will be determined according to following rules (see <code>createOrVerifyTmpDir</code>
- * method):
+ * for the temporary artifacts will be determined according to following rules:
  * <ul>
  * <li>If path specified directly using <code>tmpDirectory</code> parameter of
  * {@link #initSevenZipFromPlatformJAR(File)} or {@link #initSevenZipFromPlatformJAR(String, File)} it will be used
@@ -107,7 +107,7 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <br>
  * The list of the temporary created artifact can be obtained with {@link #getTemporaryArtifacts()}. By default,
  * 7-Zip-JBinding doesn't delete those artifacts trying to reduce subsequent initialization overhead. If 7-Zip-JBinding
- * finds the native libraries within the temporary directory, it uses those without further verification. In order to
+ * finds the native libraries within the temporary directory, it reuses them after verifying their SHA-1 hash. In order to
  * allow smooth updates, the temporary sub-directory with the native libraries is named with a unique build reference
  * number. If 7-Zip-JBinding gets updated, a new temporary sub-directory gets created and the new native libraries will be
  * copied and used.
@@ -123,7 +123,8 @@ import net.sf.sevenzipjbinding.impl.VolumedArchiveInStream;
  * <li>{@link IArchiveOpenCallback} - base interface. Must be implemented by all call back classes</li>
  * <li>{@link ICryptoGetTextPassword} - (optional) Provides password encrypted index</li>
  * <li>{@link IArchiveOpenVolumeCallback} - (optional) Provides information about volumes in multipart archives.
- * Currently used only for multipart <code>RAR</code> archives. For opening multipart <code>7z</code> archives use
+ * Used by multi-volume formats such as <code>RAR</code>, <code>ZIP</code> (split), <code>CAB</code> and
+ * <code>Split</code> (<code>.001</code>). For opening multipart <code>7z</code> archives use
  * {@link VolumedArchiveInStream}.</li>
  * </ul>
  * </li>
@@ -353,8 +354,8 @@ public class SevenZip {
      * manually.
      *
      * @param tmpDirectory
-     *            temporary directory to copy native libraries to. This directory must be writable and contain at least
-     *            2 MB free space.
+     *            temporary directory to copy native libraries to. This directory must be writable and contain
+     *            enough free space for the native library (about 5 MB or more, depending on the platform).
      *
      * @throws SevenZipNativeInitializationException
      *             indicates problems finding a native library, copying it into the temporary directory or loading it.
@@ -379,8 +380,8 @@ public class SevenZip {
      * manually.
      *
      * @param tmpDirectory
-     *            temporary directory to copy native libraries to. This directory must be writable and contain at least
-     *            2 MB free space.
+     *            temporary directory to copy native libraries to. This directory must be writable and contain
+     *            enough free space for the native library (about 5 MB or more, depending on the platform).
      *
      * @param platform
      *            Platform to load native library for. The platform must be one of the elements of the list of available
@@ -879,22 +880,23 @@ public class SevenZip {
      * The choice is made as follows:
      * <ol>
      * <li>If only one platform is available, it is returned.</li>
-     * <li>An exact match of <code>&lt;os.name&gt;-&lt;os.arch&gt;</code> is tried first (this covers e.g.
-     * <code>Linux-amd64</code>, <code>Linux-i386</code>, <code>Windows-amd64</code>).</li>
-     * <li>Otherwise the runtime architecture is resolved to an ordered list of candidate arch suffixes
-     * (see {@link PlatformArchDetector}). This normalizes {@code os.arch} spellings
+     * <li>The runtime architecture is resolved to an ordered list of candidate arch suffixes, and the first
+     * available <code>&lt;system&gt;-&lt;candidate&gt;</code> is returned, where <code>&lt;system&gt;</code> is the first
+     * word of <code>os.name</code> (e.g. <code>Linux-amd64</code>,
+     * <code>Windows-arm64</code>, <code>FreeBSD-amd64</code>). This step normalizes {@code os.arch} spellings
      * (<code>aarch64</code>&nbsp;&rarr;&nbsp;<code>arm64</code>, <code>x86_64</code>&nbsp;&rarr;&nbsp;<code>amd64</code>,
-     * <code>i686</code>&nbsp;&rarr;&nbsp;<code>i386</code>) and, in particular, resolves the <b>32-bit ARM
-     * sub-architecture</b>: the JVM reports <code>os.arch=arm</code> for all of armv5/armv6/armv7, so the
-     * CPU architecture level and the float ABI (soft = <i>armel</i>, hard = <i>armhf</i>) are detected
-     * (via <code>uname</code>, the ELF auxiliary vector, the ELF float-ABI flags and the dynamic loader).
-     * The first candidate that is actually available is returned.</li>
+     * <code>i686</code>&nbsp;&rarr;&nbsp;<code>i386</code>), resolves the <b>32-bit ARM sub-architecture</b> (the JVM
+     * reports <code>os.arch=arm</code> for all of armv5/armv6/armv7, so the CPU architecture level and the float ABI,
+     * soft = <i>armel</i> or hard = <i>armhf</i>, are detected via <code>uname</code>, the ELF auxiliary vector, the
+     * ELF float-ABI flags and the dynamic loader) and is <b>libc-aware</b>: on a musl userspace (e.g. Alpine) only the
+     * <code>-musl</code> variants such as <code>Linux-amd64-musl</code> are candidates.</li>
+     * <li>Otherwise a library serving every CPU of the system is used: <code>AllMac</code> (the universal macOS
+     * library) on macOS, or a platform named just <code>&lt;system&gt;</code>, if available.</li>
      * </ol>
      * If nothing matches, a {@link SevenZipNativeInitializationException} is thrown with a detailed message
      * that includes the detected candidates, the available platforms and the full detection trail.
      *
      * @see #getPlatformList()
-     * @see PlatformArchDetector
      * @return the chosen platform name (e.g. <code>Linux-armv7</code>)
      * @throws SevenZipNativeInitializationException
      *             if no suitable platform could be chosen
