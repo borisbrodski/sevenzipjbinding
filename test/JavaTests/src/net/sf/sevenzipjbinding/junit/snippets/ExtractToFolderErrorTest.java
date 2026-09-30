@@ -353,11 +353,16 @@ public class ExtractToFolderErrorTest extends SnippetTest {
 
     @Test
     public void containmentCheckHandlesTheRootAndSiblingPrefixes() throws Exception {
-        File root = new File(File.listRoots()[0].getPath()).getCanonicalFile(); // "/" or "C:\"
+        File base = freshDir("contain").getCanonicalFile();
+        // The file system root holding the test directory: "/" or e.g. "C:\". (File.listRoots() can start
+        // with an empty drive such as "A:\", which can't be canonicalized.)
+        File root = base;
+        while (root.getParentFile() != null) {
+            root = root.getParentFile();
+        }
         assertTrue(Extractor.isInside(root, new File(root, "x").getCanonicalFile()));
         assertTrue(Extractor.isInside(root, root));
 
-        File base = freshDir("contain").getCanonicalFile();
         assertTrue(Extractor.isInside(base, new File(base, "child")));
         assertFalse("'/tmp/a' must not contain '/tmp/ab'", Extractor.isInside(base, new File(base.getPath() + "b")));
         assertFalse(Extractor.isInside(base, base.getParentFile()));
