@@ -53,6 +53,18 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  SevenZipNativeInitializationException, and a partial file is deleted.
 	  Test: InitializationCopyFailureTest (child JVM).
 
+	* Fixed JVM abort "FATAL ERROR: Method not found: reportExtractResult()"
+	  (present since 23.01-2.2): the JNI signature of
+	  IArchiveExtractCallback.reportExtractResult() lacked the L...; around
+	  its ReportExtractResultIndexType parameter, so every native
+	  ReportExtractResult call aborted the JVM - e.g. a 7z solid block that fails
+	  to decode after all requested files were written (wrong/missing password).
+	  Affected extract() and extractSlow(). Found on real arm64 hardware (DGX
+	  Spark). Tests: ReportExtractResultBlockErrorTest (deterministic archive),
+	  ExtractToFolderErrorTest now checks TEST_RANDOM_ARCHIVES fresh encrypted
+	  archives (default 20; raise for soak runs). ExtractToFolder snippet now
+	  records block-level results from reportExtractResult().
+
 	* JavaDoc: corrected false/outdated claims (platform selection, cached
 	  library verification, volume callback properties, reportExtractResult,
 	  per-format property lists, and more).

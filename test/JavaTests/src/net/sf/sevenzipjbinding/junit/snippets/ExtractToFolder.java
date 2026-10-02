@@ -22,6 +22,7 @@ import net.sf.sevenzipjbinding.IArchiveExtractCallback;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.ISequentialOutStream;
 import net.sf.sevenzipjbinding.PropID;
+import net.sf.sevenzipjbinding.ReportExtractResultIndexType;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -60,11 +61,13 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
  *       report and an exit code you can trust in a script.</li>
  * </ol>
  *
- * <p>Failures reach you on two channels. An exception you throw from the callback is saved and
+ * <p>Failures reach you on three channels. An exception you throw from the callback is saved and
  * re-thrown from {@code extract()}. But a broken item (CRC error, truncated data, encrypted data
  * without a password, ...) is reported per item as a non-OK {@link ExtractOperationResult} <em>with no
- * exception at all</em> - {@code extract()} returns normally and continues with the next item. Code
- * that only catches exceptions silently loses those.
+ * exception at all</em> - {@code extract()} returns normally and continues with the next item. And a
+ * problem that belongs to no single item - typically a solid block that fails to decode after every
+ * requested file was already written - arrives in {@code reportExtractResult()}, again without an
+ * exception. Code that only catches exceptions silently loses the last two.
  */
 public class ExtractToFolder {
 
@@ -410,6 +413,22 @@ public class ExtractToFolder {
             }
             System.out.println(String.format("%9X | %10s | %s", currentHash, currentSize,
                     displayNames.get(currentIndex)));
+        }
+
+        /**
+         * The third channel: a result the engine reports outside of any single item's verdict - for
+         * a 7z archive, a solid block that failed to decode after all requested files were written.
+         * The default implementation ignores it, so it must be overridden to be heard.
+         */
+        @Override
+        public void reportExtractResult(ReportExtractResultIndexType indexType, int index,
+                ExtractOperationResult result) {
+            if (result == ExtractOperationResult.OK) {
+                return;
+            }
+            String where = indexType == ReportExtractResultIndexType.BLOCK_INDEX ? "block #" + index
+                    : indexType + " #" + index;
+            itemErrors.add(new ItemError(-1, where, "engine reported " + result + " for this part of the archive", null));
         }
 
         public void setTotal(long total) {

@@ -76,12 +76,19 @@ public class TestConfiguration {
      */
     public static String TEST_PARAM__ON_LOW_MEMORY = "TEST_ON_LOW_MEMORY";
 
+    /**
+     * How many freshly generated random archives the randomized tests check (each archive gets new
+     * random data, e.g. a new AES IV, so rare engine paths come up only over many archives). Set it
+     * high for a soak run, e.g. <code>-DTEST_RANDOM_ARCHIVES=100000</code>.
+     */
+    public static String TEST_PARAM__RANDOM_ARCHIVES = "TEST_RANDOM_ARCHIVES";
+
     // @formatter:off
     private static final TestConfiguration[] PROFILES = new TestConfiguration[] { //
-        /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | */
-        new TestConfiguration(PR_MINUMAL,         2,             1,               0,      300,   false,   true), //
-        new TestConfiguration(PR_DEFAULT,         2,             2,               2,      600,   false,   true), //
-        new TestConfiguration(PR_STRESS ,        15,            10,              10,     1200,   true,   false)  //
+        /*                    name       | thread# | repeatSingle | repeatMultiple | timeout | longRun | trace | randomArchives */
+        new TestConfiguration(PR_MINUMAL,         2,             1,               0,      300,   false,   true,        1), //
+        new TestConfiguration(PR_DEFAULT,         2,             2,               2,      600,   false,   true,       20), //
+        new TestConfiguration(PR_STRESS ,        15,            10,              10,     1200,   true,   false,     1000)  //
     };
     // @formatter:off
     private static TestConfiguration currentProfile;
@@ -95,10 +102,11 @@ public class TestConfiguration {
     private boolean trace;
     private String traceFile;
     private boolean onLowMemory;
+    private int randomArchives;
 
     TestConfiguration(String name, int multiThreadedThreads, int repeatSingleThreadedTest, int repeatMultiThreadedTest,
             int singleTestTimeout,
-            boolean longRunning, boolean trace) {
+            boolean longRunning, boolean trace, int randomArchives) {
         this.name = name;
         this.multiThreadedThreads = multiThreadedThreads;
         this.repeatSingleThreadedTest = repeatSingleThreadedTest;
@@ -106,6 +114,7 @@ public class TestConfiguration {
         this.singleTestTimeout = singleTestTimeout;
         this.longRunning = longRunning;
         this.trace = trace;
+        this.randomArchives = randomArchives;
     }
 
     void overwriteFromSystemProperties() {
@@ -117,6 +126,7 @@ public class TestConfiguration {
         trace = getBoolean(TEST_PARAM__TRACE, trace);
         traceFile = getString(TEST_PARAM__TRACE, traceFile);
         onLowMemory = getBoolean(TEST_PARAM__ON_LOW_MEMORY, false);
+        randomArchives = getInt(TEST_PARAM__RANDOM_ARCHIVES, randomArchives);
     }
 
     private static int getInt(String name, int defaultValue) {
@@ -191,6 +201,14 @@ public class TestConfiguration {
         return onLowMemory;
     }
 
+    /**
+     * @return the number of random archives the randomized tests generate and check
+     * @see #TEST_PARAM__RANDOM_ARCHIVES
+     */
+    public int getRandomArchives() {
+        return randomArchives;
+    }
+
     public static TestConfiguration getCurrent() {
         return currentProfile;
     }
@@ -222,6 +240,7 @@ public class TestConfiguration {
         params.add(new ParamInfo(TEST_PARAM__LONG_RUNNING, longRunning));
         params.add(new ParamInfo(TEST_PARAM__TRACE, trace));
         params.add(new ParamInfo(TEST_PARAM__ON_LOW_MEMORY, onLowMemory));
+        params.add(new ParamInfo(TEST_PARAM__RANDOM_ARCHIVES, randomArchives));
         int padding = 0;
         for (ParamInfo paramInfo : params) {
             if (padding < paramInfo.name.length()) {

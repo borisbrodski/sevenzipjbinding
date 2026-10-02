@@ -31,6 +31,7 @@ import net.sf.sevenzipjbinding.impl.OutItemFactory;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
+import net.sf.sevenzipjbinding.junit.TestConfiguration;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.Extractor;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.ItemError;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolder.Report;
@@ -398,28 +399,53 @@ public class ExtractToFolderErrorTest extends SnippetTest {
     // ------------------------------------------------------------------------------------------
 
     /**
-     * Encrypted data without a password: the engine never asks for an EXTRACT stream and only reports
-     * a verdict per item. That verdict must be recorded - an empty error list would hide the failure.
+     * Encrypted data without a password, checked on many freshly generated archives. Each archive
+     * gets a new random AES IV, so the garbage the engine decrypts is different every time:
+     * <ul>
+     * <li>Usually the decoder rejects it at once: the engine never asks for an EXTRACT stream and
+     * only reports a verdict for the item.</li>
+     * <li>In about 1 of 300 archives the garbage decodes to a "complete" file: the engine writes it,
+     * judges it CRCERROR, and then reports a DATAERROR for the whole block through
+     * {@code reportExtractResult()} - the path that aborted the JVM up to 26.03-2.3 (see
+     * {@code ReportExtractResultBlockErrorTest} for the deterministic case).</li>
+     * </ul>
+     * On every archive the item's verdict must be recorded (an empty error list would hide the
+     * failure) and nothing may be left on disk. The archive count is
+     * {@link TestConfiguration#TEST_PARAM__RANDOM_ARCHIVES}; raise it for a soak run, e.g.
+     * {@code -DTEST_RANDOM_ARCHIVES=100000}.
      */
     @Test
     public void encryptedItemWithoutPasswordIsReportedNotSilentlyDropped() throws Exception {
-        File dir = freshDir("encrypted");
-        assertTrue(dir.mkdirs());
-        File archiveFile = new File(dir, "secret.7z");
-        writePasswordProtected7z(archiveFile, "Secret123");
+        TestConfiguration.init();
+        int archives = TestConfiguration.getCurrent().getRandomArchives();
+        int blockErrors = 0;
+        for (int i = 1; i <= archives; i++) {
+            File dir = freshDir("encrypted");
+            assertTrue(dir.mkdirs());
+            File archiveFile = new File(dir, "secret.7z");
+            writePasswordProtected7z(archiveFile, "Secret123");
+            File out = new File(dir, "out");
 
-        beginSnippetTest();
-        Report report = extract(archiveFile.getPath(), new File(dir, "out"));
-        endSnippetTest();
+            beginSnippetTest();
+            Report report = extract(archiveFile.getPath(), out);
+            endSnippetTest();
 
-        assertFalse(report.isClean());
-        assertEquals("nothing can be written without the password", 0, report.filesExtracted);
-        assertEquals("every planned file received a verdict", 0, report.filesNotExtracted);
-        ItemError error = errorFor(report, "a.txt");
-        assertNotNull("the engine's verdict must be recorded: " + report.itemErrors, error);
-        assertTrue(error.kind, error.kind.startsWith("engine reported"));
-        assertTrue("the report explains that a password is needed", error.kind.contains("password"));
-        deleteRecursively(dir);
+            String where = "random archive " + i + " of " + archives + ", errors " + report.itemErrors;
+            assertFalse(where, report.isClean());
+            assertEquals("nothing can be written without the password; " + where, 0, report.filesExtracted);
+            assertEquals("every planned file received a verdict; " + where, 0, report.filesNotExtracted);
+            ItemError error = errorFor(report, "a.txt");
+            assertNotNull("the engine's verdict must be recorded; " + where, error);
+            assertTrue(where, error.kind.startsWith("engine reported"));
+            assertTrue("the report explains that a password is needed; " + where, error.kind.contains("password"));
+            assertEquals("no partial file may stay on disk; " + where, 0, countFiles(out));
+            if (errorFor(report, "block #") != null) {
+                blockErrors++;
+            }
+            deleteRecursively(dir);
+        }
+        System.out.println("encryptedItemWithoutPasswordIsReportedNotSilentlyDropped: " + archives
+                + " random archives, " + blockErrors + " took the block-error path (reportExtractResult)");
     }
 
     private static void writePasswordProtected7z(File archiveFile, final String password) throws Exception {

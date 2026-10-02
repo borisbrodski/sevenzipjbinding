@@ -189,7 +189,7 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
         </li>
       </ul>
 
-      <h3 class="perf-h3">Account — errors arrive on two channels</h3>
+      <h3 class="perf-h3">Account — errors arrive on three channels</h3>
       <ul class="rules">
         <li>
           <b>Channel 1: an exception.</b> Your <code>write()</code> fails (disk full) and throws.
@@ -201,7 +201,13 @@ inArchive.extract(all, false, callback); // engine streams the block once`}</cod
           …) is reported per item as a non-OK <code>ExtractOperationResult</code> in
           <code>setOperationResult()</code>; <code>extract()</code> returns <i>normally</i> and continues
           with the next item. Code that only catches exceptions loses these entirely — and which channel
-          a failure uses can change between engine versions, so record both.
+          a failure uses can change between engine versions, so record every one.
+        </li>
+        <li>
+          <b>Channel 3: a result for no single item.</b> When a solid 7z block fails to decode
+          <i>after</i> every requested file was written, the engine reports it in
+          <code>reportExtractResult()</code> (<code>BLOCK_INDEX</code>, e.g. <code>DATAERROR</code>) —
+          again without an exception. The default implementation ignores it: override it to hear it.
         </li>
         <li>
           <b>Never let <code>close()</code> mask the real cause.</b> Keep a close failure aside and record

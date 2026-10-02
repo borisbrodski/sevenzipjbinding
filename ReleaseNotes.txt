@@ -64,6 +64,15 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       SevenZip.getLastInitializationException()), not a plain RuntimeException.
       A partially written library file is removed.
 
+    * Fixed (also affects 23.01-2.2): the JVM could abort during extraction
+      with "FATAL ERROR: Method not found: reportExtractResult()". The native
+      code looked up IArchiveExtractCallback.reportExtractResult() with a
+      malformed JNI signature, so the call failed whenever the engine used it -
+      e.g. when a 7z solid block fails to decode after all requested files were
+      written (seen with a wrong or missing password). Both extract() and
+      extractSlow() were affected. The block-level result now reaches
+      reportExtractResult() (BLOCK_INDEX, DATAERROR) and extraction continues.
+
     * Java API: additions only, binary and source compatible with 23.01-2.2
       (checked with japicmp): existing Java code is unaffected (see the macOS
       artifact change above for Maven/Gradle coordinates). The complete build
