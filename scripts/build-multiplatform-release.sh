@@ -122,7 +122,7 @@ find . \( -name "META-INF" -or -name "MANIFEST.MF" \) -delete
 RELEASE_VERSION=$(echo "$release" | sed -e 's/^[a-z]*-//' -e 's/-$//')
 MULTIPLATFORM_MANIFEST="$JARASSEMBLEDIR.manifest.mf"
 echo "Manifest-Version: 1.0" > "$MULTIPLATFORM_MANIFEST"
-echo "Created-By: 1.5.0" >> "$MULTIPLATFORM_MANIFEST"
+echo "Created-By: build-multiplatform-release.sh (native libraries only)" >> "$MULTIPLATFORM_MANIFEST"
 echo "Implementation-Title: 7-Zip-JBinding native lib ($multiplatformname)" >> "$MULTIPLATFORM_MANIFEST"
 echo "Implementation-Version: $RELEASE_VERSION" >> "$MULTIPLATFORM_MANIFEST"
 

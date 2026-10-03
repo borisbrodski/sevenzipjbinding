@@ -99,6 +99,12 @@ ELSE()
     SET(PATH_SEP ":")
 ENDIF()
 
+# Version of the javac that compiles the jars, for the manifest's Created-By (JDK 8 prints it to stderr).
+EXECUTE_PROCESS(COMMAND "${JAVA_COMPILE}" -version
+                OUTPUT_VARIABLE JAVAC_VERSION_OUT ERROR_VARIABLE JAVAC_VERSION_ERR
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_STRIP_TRAILING_WHITESPACE)
+STRING(REGEX REPLACE "^javac +" "" JAVAC_VERSION "${JAVAC_VERSION_OUT}${JAVAC_VERSION_ERR}")
+
 MACRO(GENERATE_MANIFEST_MF
     MANIFEST_FILE
     TITLE
@@ -107,7 +113,7 @@ MACRO(GENERATE_MANIFEST_MF
     FILE(WRITE "${MANIFEST_FILE}"
 "Manifest-Version: 1.0
 CMake: ${CMAKE_VERSION}
-Created-By: 1.6.0_33-b03 (Sun Microsystems Inc.)
+Created-By: ${JAVAC_VERSION} (7-Zip-JBinding, Java 8 target)
 Implementation-Title: ${TITLE}
 Implementation-Vendor: sevenzipjbind.sf.net
 Implementation-Version: ${SEVENZIPJBINDING_VERSON}
@@ -317,7 +323,9 @@ SET(PREPACKAGE_ACTIONS
     FILE(MAKE_DIRECTORY \"${JAVADOC_DIR}\")
     EXECUTE_PROCESS(COMMAND \"${JAVA_DOC}\"
                                 -public -version -author -quiet
-                                -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
+                                -windowtitle \"7-Zip-JBinding ${SEVENZIPJBINDING_VERSON} API\"
+                                -doctitle \"7-Zip-JBinding ${SEVENZIPJBINDING_VERSON} API\"
+                                -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src
                                 -subpackages net.sf.sevenzipjbinding 
                                 -d ${JAVADOC_DIR}
                     WORKING_DIRECTORY .
@@ -346,6 +354,7 @@ INSTALL(FILES   AUTHORS
                 ChangeLog
                 COPYING
                 LGPL
+                License.txt
                 README.md
                 ReleaseNotes.txt
                 THANKS

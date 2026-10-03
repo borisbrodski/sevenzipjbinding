@@ -164,7 +164,8 @@ make package       # build the distribution ZIP
 
 Windows builds use MinGW (recommended) or Cygwin; the full cross‑platform release matrix
 (Linux glibc/musl, ARM, Windows, macOS) is produced with the helper scripts under
-[`scripts/`](scripts/) (DockCross / Alpine / QEMU). See the scripts for details.
+[`scripts/`](https://github.com/borisbrodski/sevenzipjbinding/tree/master/scripts) (DockCross / Alpine / QEMU) in the
+source repository. See the scripts for details.
 
 ## 🤝 Contributing
 
@@ -174,10 +175,11 @@ compression bug, please include the archive format, platform, and a minimal repr
 
 ## 📄 License
 
-7‑Zip‑JBinding, together with the bundled 7‑Zip/p7zip binaries, is licensed under the
-**GNU LGPL‑2.1**. The 7‑Zip RAR decompression code additionally carries the **unRAR license
-restriction** (it may not be used to develop a program that recreates the RAR compression algorithm).
-See [`COPYING`](COPYING), [`LGPL`](LGPL) and [`License.txt`](License.txt).
+7‑Zip‑JBinding, together with the bundled 7‑Zip engine, is licensed under the **GNU LGPL‑2.1**.
+The 7‑Zip RAR decompression code additionally carries the **unRAR license restriction** (it may not
+be used to develop a program that recreates the RAR compression algorithm), and a few engine files
+(Zstandard and LZFSE decoders, xxHash) are under BSD licenses.
+See [`COPYING`](COPYING), [`LGPL`](LGPL) and [`License.txt`](License.txt) (the 7‑Zip engine license).
 
 ## 🙏 Acknowledgements
 
@@ -199,4 +201,3 @@ The full credits are in [`THANKS`](THANKS), also shown on the
 [website](https://sevenzipjbind.sourceforge.net/acknowledgements/).
 
 If this library helps you, consider [sponsoring the project](https://github.com/sponsors/borisbrodski). ❤
-</content>

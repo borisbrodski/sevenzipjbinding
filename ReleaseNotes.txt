@@ -50,7 +50,9 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 
     * Distribution: release zips no longer include website.zip (an offline copy
       of the old web site). Documentation: https://sevenzipjbind.sourceforge.net/
-      JavaDoc still ships inside every zip as javadoc.zip.
+      JavaDoc still ships inside every zip as javadoc.zip. Every zip now also
+      contains License.txt (the 7-Zip engine license: LGPL with the unRAR
+      restriction, and BSD licenses for a few decoder files).
 
     * New item properties: PropID.USER_ID, GROUP_ID (Tar/Cpio owner ids),
       DEVICE_MAJOR/DEVICE_MINOR (Tar device entries), DEV_MAJOR/DEV_MINOR

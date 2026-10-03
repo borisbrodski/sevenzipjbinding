@@ -39,6 +39,9 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	* Distribution: the offline copy of the old web site (website.zip) is no
 	  longer part of the release zips; the documentation lives at
 	  https://sevenzipjbind.sourceforge.net/ . JavaDoc still ships as javadoc.zip.
+	  License.txt (the 7-Zip engine license: LGPL + unRAR restriction, BSD parts)
+	  now ships in every zip; JavaDoc gets a proper window title; jar manifests
+	  name the real javac (Created-By) instead of 1.6.0_33/1.5.0.
 
 	* PropID: added the engine properties 96-104 (ARC_FILE_NAME, IS_HASH,
 	  CHANGE_TIME, USER_ID, GROUP_ID, DEVICE_MAJOR, DEVICE_MINOR, DEV_MAJOR,
@@ -131,9 +134,6 @@ Release - 16.02-2.02 (Release, cross-platform, based on zip/p7zip 16.02)
 	* Bugfix #5 RandomAccessFileOutStream should implement Closeable
 		(https://github.com/borisbrodski/sevenzipjbinding/issues/5)
 
-
-Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
-
 	* Bugfix: Fix crash on read errors caused by wrong throw()
 		RAR and maybe other archive formats were affected by the bug.
 		Java exception from a data reading method could have caused a JVM crash.
@@ -156,7 +156,7 @@ Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 	
 	* ARM Builds (WARNING: Not a part of -AllPlatforms or -AllLinux packages!!!)
 		* ARMv5 (armel)
-		* ARMv6 (RaspberryPi 2)
+		* ARMv6 (Raspberry Pi 1 / Zero)
 		* ARMv7 (armhf)
 		* ARM64
 
@@ -177,7 +177,7 @@ Release - 16.02-2.01 (Release, cross-platform, based on zip/p7zip 16.02)
 	* Support for FAT (file system)
 
 	* Support for HFS (file system)
-	  (No only as a subsystem of ISO)
+	  (Not only as a subsystem of ISO)
 
 	* Support for SYM_LINK & HARD_LINK properties
 
