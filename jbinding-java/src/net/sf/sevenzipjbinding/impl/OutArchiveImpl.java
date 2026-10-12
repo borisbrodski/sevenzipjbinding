@@ -66,16 +66,25 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     }
 
     protected void applyFeatures() throws SevenZipException {
-        ensureOpened();
-        if (compressionLevel != -1) {
-            nativeSetLevel(compressionLevel);
-        }
-        if (headerEncryption != null) {
-            nativeSetHeaderEncryption(headerEncryption.booleanValue());
-        }
+        applyFeatures(null, false);
+    }
 
-        if (threadCount >= 0) {
-            nativeSetMultithreading(threadCount);
+    /**
+     * Apply all configured output properties in one native call. 7-Zip resets
+     * its complete property set on every ISetProperties.setProperties() call,
+     * so applying these settings separately makes each setting erase the ones
+     * that preceded it.
+     */
+    protected final void applyFeatures(String solidBlockSpec, boolean solidBlockSpecDefined)
+            throws SevenZipException {
+        ensureOpened();
+        int headerEncryptionValue = -1;
+        if (headerEncryption != null) {
+            headerEncryptionValue = headerEncryption.booleanValue() ? 1 : 0;
+        }
+        if (compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0 || solidBlockSpecDefined) {
+            nativeSetProperties(compressionLevel, headerEncryptionValue, threadCount, solidBlockSpec,
+                    solidBlockSpecDefined);
         }
     }
 
@@ -90,22 +99,8 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         this.archiveFormat = archiveFormat;
     }
 
-    protected native void nativeSetHeaderEncryption(boolean encryptHeader) throws SevenZipException;
-
-    protected native void nativeSetLevel(int compressionLevel) throws SevenZipException;
-
-    /**
-     * Set solid features.
-     *
-     * @param solidBlockSpec
-     *            <code>null</code> - turn solid off
-     * @throws SevenZipException
-     *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
-     *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.
-     */
-    protected native void nativeSetSolidSpec(String solidBlockSpec) throws SevenZipException;
-
-    protected native void nativeSetMultithreading(int threadCount) throws SevenZipException;
+    private native void nativeSetProperties(int compressionLevel, int headerEncryption, int threadCount,
+            String solidBlockSpec, boolean solidBlockSpecDefined) throws SevenZipException;
 
     private native void nativeUpdateItems(ISequentialOutStream outStream, int numberOfItems,
             Object archiveUpdateCallback) throws SevenZipException;
