@@ -55,8 +55,6 @@ public class OutArchive7zImpl extends OutArchiveImpl<IOutItem7z> implements IOut
 
     @Override
     protected void applyFeatures() throws SevenZipException {
-        super.applyFeatures();
-
         StringBuilder stringBuilder = new StringBuilder();
         if (solidExtension) {
             stringBuilder.append("E");
@@ -69,14 +67,20 @@ public class OutArchive7zImpl extends OutArchiveImpl<IOutItem7z> implements IOut
             stringBuilder.append(countOfBytesPerBlock);
             stringBuilder.append("B");
         }
+        String solidBlockSpec = null;
+        boolean solidBlockSpecDefined = false;
         if (stringBuilder.length() > 0) {
-            nativeSetSolidSpec(stringBuilder.toString());
+            solidBlockSpec = stringBuilder.toString();
+            solidBlockSpecDefined = true;
         }
 
         // Set solid block configuration
         if (!solid) {
-            nativeSetSolidSpec(null);
+            solidBlockSpec = null;
+            solidBlockSpecDefined = true;
         }
+
+        super.applyFeatures(solidBlockSpec, solidBlockSpecDefined);
     }
 
     /**
