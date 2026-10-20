@@ -607,6 +607,12 @@ IF(MINGW)
 ELSE(MINGW)
     IF(NOT APPLE)
         SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--gc-sections -Wl,-z,defs -Wl,--no-undefined ") # GC dead sections, then check for missing symbols
+        # Export only the JNI entry points. With STATIC_BUILD the C++ runtime is linked in, and exported
+        # it collides with the host's libstdc++ (GNU_UNIQUE locale ids bind process-wide): any C++ code
+        # loaded after the binding that formats a number through std::ostream then crashes.
+        SET(JBINDING_VERSION_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/PlatformUnix/lib7-Zip-JBinding.map)
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND_STRING PROPERTY LINK_FLAGS " -Wl,--version-script=${JBINDING_VERSION_SCRIPT} ")
+        SET_PROPERTY(TARGET 7-Zip-JBinding APPEND PROPERTY LINK_DEPENDS ${JBINDING_VERSION_SCRIPT})
     ENDIF()
 ENDIF(MINGW)
 
