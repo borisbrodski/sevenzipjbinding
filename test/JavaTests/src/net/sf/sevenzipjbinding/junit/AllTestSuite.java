@@ -99,6 +99,7 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
+import net.sf.sevenzipjbinding.junit.misc.JniReferencesTest;
 import net.sf.sevenzipjbinding.junit.misc.NativeLibraryExportsTest;
 import net.sf.sevenzipjbinding.junit.misc.PropertyIdsTest;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
@@ -507,6 +508,7 @@ public class AllTestSuite extends TestSuite {
             PropertyIdsTest.class, //
             InitializationCopyFailureTest.class, //
             NativeLibraryExportsTest.class, //
+            JniReferencesTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //

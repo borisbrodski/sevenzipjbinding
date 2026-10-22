@@ -758,6 +758,7 @@ protected:
         jclass clazz = env->GetObjectClass(object);
         FATALIF(!clazz, "JInterface::checkObject(): GetObjectClass() failed")
         MY_ASSERT(env->IsSameObject(_jclass, clazz))
+        env->DeleteLocalRef(clazz);
     }
 #endif // USE_MY_ASSERTS
 public:

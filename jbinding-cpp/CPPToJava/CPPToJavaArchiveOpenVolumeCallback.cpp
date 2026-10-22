@@ -23,11 +23,13 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetProperty(PROPID propID, PROP
 
     jobject result = _iArchiveOpenVolumeCallback->getProperty(jniEnvInstance, _javaImplementation,
             propIDObject);
+    jniEnvInstance->DeleteLocalRef(propIDObject);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
 
     ObjectToPropVariant(jniEnvInstance, result, value);
+    jniEnvInstance->DeleteLocalRef(result);
 
     return S_OK;
 }
@@ -59,6 +61,7 @@ STDMETHODIMP CPPToJavaArchiveOpenVolumeCallback::GetStream(const wchar_t *name,
 
             CMyComPtr<IInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
+            jniEnvInstance->DeleteLocalRef(inStreamImpl);
         } else {
             // Volume not found. Handlers probe for the next volume (e.g. the split handler asks for
             // "x.7z.005" after the last one) and expect S_FALSE, as returned by 7-Zip's own clients.

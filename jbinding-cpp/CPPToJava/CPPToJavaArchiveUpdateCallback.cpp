@@ -81,6 +81,7 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
             jobject newDataObject = jni::OutItem::updateIsNewData_Get(jniEnvInstance, _outItem);
             if (newDataObject) {
                 *newData = jni::Boolean::booleanValue(jniEnvInstance, newDataObject);
+                jniEnvInstance->DeleteLocalRef(newDataObject);
                 if (jniEnvInstance.exceptionCheck()) {
                     return S_FALSE;
                 }
@@ -106,6 +107,7 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
             jobject newPropertiesObject = jni::OutItem::updateIsNewProperties_Get(jniEnvInstance, _outItem);
             if (newPropertiesObject) {
                 *newProperties = jni::Boolean::booleanValue(jniEnvInstance, newPropertiesObject);
+                jniEnvInstance->DeleteLocalRef(newPropertiesObject);
                 if (jniEnvInstance.exceptionCheck()) {
                     return S_FALSE;
                 }
@@ -131,6 +133,7 @@ UInt32 *indexInArchive /* -1 if there is no in archive, or if doesn't matter */
             jobject oldArchiveItemIndexObject = jni::OutItem::updateOldArchiveItemIndex_Get(jniEnvInstance, _outItem);
             if (oldArchiveItemIndexObject) {
                 *indexInArchive = (UInt32) jni::Integer::intValue(jniEnvInstance, oldArchiveItemIndexObject);
+                jniEnvInstance->DeleteLocalRef(oldArchiveItemIndexObject);
                 if (jniEnvInstance.exceptionCheck()) {
                     return S_FALSE;
                 }
@@ -350,6 +353,7 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
         }
+        jniEnvInstance->DeleteLocalRef(inStreamInterface);
         jniEnvInstance->DeleteLocalRef(inStreamImpl);
     }
 

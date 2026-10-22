@@ -36,7 +36,7 @@ public:
 		    _outItemLastIndex(-1),
 		    _archiveFormatIndex(archiveFormatIndex),
 		    _outItem(NULL),
-		    _outArchive(outArchive),
+		    _outArchive(initEnv->NewGlobalRef(outArchive)),
 		    _isInArchiveAttached(isInArchiveAttached),
             _isICryptoGetTextPasswordImplemented(-1),
             _cryptoGetTextPassword(NULL)
@@ -45,6 +45,13 @@ public:
 
         _isICryptoGetTextPasswordImplemented = jni::ICryptoGetTextPassword::_isInstance(initEnv, _javaImplementation);
 		JNIEnvInstance jniEnvInstance(_jbindingSession);
+    }
+
+    virtual ~CPPToJavaArchiveUpdateCallback() {
+        // 7-Zip calls the update callback from its worker threads too, where the local reference
+        // to the OutArchiveImpl passed to nativeUpdateItems() isn't valid: keep a global one.
+        JNIEnvInstance jniEnvInstance(_jbindingSession);
+        jniEnvInstance->DeleteGlobalRef(_outArchive);
     }
 
     // STDMETHOD(GetUpdateItemInfo)(UInt32 index, Int32 *newData, /*1 - new data, 0 - old data */
