@@ -12,6 +12,7 @@ import net.sf.sevenzipjbinding.junit.bug.CallMethodsOnClosedOutStreamTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
 import net.sf.sevenzipjbinding.junit.bug.ReportExtractResultBlockErrorTest;
+import net.sf.sevenzipjbinding.junit.bug.OpenSplitArchiveWithVolumeCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
 import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
@@ -272,6 +273,7 @@ public class AllTestSuite extends TestSuite {
             CallMethodsOnClosedInStreamTest.class, //
             CallMethodsOnClosedOutStreamTest.class, //
             ReportExtractResultBlockErrorTest.class, //
+            OpenSplitArchiveWithVolumeCallbackTest.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //
