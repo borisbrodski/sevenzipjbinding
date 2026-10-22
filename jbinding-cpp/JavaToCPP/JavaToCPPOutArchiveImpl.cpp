@@ -115,37 +115,53 @@ JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl_nativeSe
     const wchar_t *names[4];
     NWindows::NCOM::CPropVariant propValues[4];
     UInt32 size = 0;
+    AString description; // The properties as sent, to tell in the error message which one 7-Zip rejected
 
     if (compressionLevel != -1) {
         names[size] = L"X";
         propValues[size++] = (UInt32)compressionLevel;
+        description += "X=";
+        description.Add_UInt32((UInt32)compressionLevel);
     }
     if (headerEncryption != -1) {
         names[size] = L"HE";
         propValues[size++] = (headerEncryption != 0);
+        description.Add_Space_if_NotEmpty();
+        description += headerEncryption ? "HE=on" : "HE=off";
     }
     if (threadCount >= 0) {
         names[size] = L"MT";
+        description.Add_Space_if_NotEmpty();
         // Zero means to use the count of available processors.
         if (threadCount == 0) {
             propValues[size++] = true;
+            description += "MT=on";
         } else {
             propValues[size++] = (UInt32)threadCount;
+            description += "MT=";
+            description.Add_UInt32((UInt32)threadCount);
         }
     }
     if (solidSpecDefined) {
         names[size] = L"S";
+        description.Add_Space_if_NotEmpty();
         if (solidSpec == NULL) {
             propValues[size++] = false;
+            description += "S=off";
         } else {
-            propValues[size++] = UString(FromJChar(env, solidSpec));
+            UString solidSpecString(FromJChar(env, solidSpec));
+            propValues[size++] = solidSpecString;
+            description += "S=";
+            for (unsigned i = 0; i < solidSpecString.Len(); i++) {
+                description.Add_Char((char)solidSpecString[i]); // Built by OutArchive7zImpl: ASCII only
+            }
         }
     }
 
     result = setProperties->SetProperties(names, propValues, size);
     if (result) {
-        TRACE("Error setting archive properties. Result: 0x" << std::hex << result)
-        jniNativeCallContext.reportError(result, "Error setting archive properties.");
+        TRACE("Error setting archive properties (" << description.Ptr() << "). Result: 0x" << std::hex << result)
+        jniNativeCallContext.reportError(result, "Error setting archive properties: %s", description.Ptr());
         return;
     }
 }
