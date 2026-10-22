@@ -41,6 +41,9 @@ Special thanks to
 
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
 
+- Alexandru Sclearuc (RocketRide) for hiding the statically linked C++ runtime of the ELF native
+  library, which crashed C++ code loaded later into the same process (pull request #95)
+
 
 AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01 releases
 (the 16.02 -> 23.01 engine upgrade, the Java 5 -> Java 8 port, the cross-platform

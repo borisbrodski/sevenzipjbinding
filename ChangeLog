@@ -82,6 +82,18 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  create and update, features read back from the archive; random
 	  combinations: TEST_RANDOM_ARCHIVES x 5), StandaloneCompressSevenZipTest.
 
+	* Linux/FreeBSD (ELF): the native library exports only its JNI entry
+	  points (linker version script PlatformUnix/lib7-Zip-JBinding.map).
+	  Before, it exported ~9,600 symbols including the statically linked
+	  libstdc++; its GNU-unique symbols (locale facet ids) bind process-wide,
+	  so C++ code loaded into the JVM after the binding (another JNI library,
+	  an embedding process) could crash formatting a number with
+	  std::ostream. Also affects 23.01-2.2 and 16.02-2.01. Host requirements
+	  unchanged (runtime still linked statically, just hidden); the library
+	  shrinks by about a third. Contributed by Alexandru Sclearuc (pull
+	  request #95). Test: NativeLibraryExportsTest (reads the export table of
+	  the library in the platform jar).
+
 	* JavaDoc: corrected false/outdated claims (platform selection, cached
 	  library verification, volume callback properties, reportExtractResult,
 	  per-format property lists, and more).

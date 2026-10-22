@@ -84,6 +84,13 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       now get all of them - expect different sizes than before. Fixed by mrjo118
       (pull request #93). https://github.com/borisbrodski/sevenzipjbinding/issues/77
 
+    * Fixed crashes of other C++ code in the same process (Linux; also affects 23.01-2.2
+      and earlier): the native library exported its statically linked C++ runtime,
+      whose process-wide (GNU-unique) symbols clashed with the system libstdc++.so.6
+      loaded later, e.g. by another JNI library. The Linux and FreeBSD libraries now
+      export only their JNI entry points and are about a third smaller; system
+      requirements are unchanged. Contributed by Alexandru Sclearuc (pull request #95).
+
     * Java API: additions only, binary and source compatible with 23.01-2.2
       (checked with japicmp): existing Java code is unaffected (see the macOS
       artifact change above for Maven/Gradle coordinates). One exception: the
