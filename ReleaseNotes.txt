@@ -75,9 +75,20 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       extractSlow() were affected. The block-level result now reaches
       reportExtractResult() (BLOCK_INDEX, DATAERROR) and extraction continues.
 
+    * Fixed bug #77 (also affects 23.01-2.2 and all previous releases): 7z compression
+      features set together canceled each other out - of compression level, header
+      encryption, thread count and solid settings only the last applied one took
+      effect. Security-relevant: setHeaderEncryption(true) was silently lost as soon as
+      the thread count or a solid setting was set too, so the file names stayed
+      readable without the password. Archives created with several of these features
+      now get all of them - expect different sizes than before. Fixed by mrjo118
+      (pull request #93). https://github.com/borisbrodski/sevenzipjbinding/issues/77
+
     * Java API: additions only, binary and source compatible with 23.01-2.2
       (checked with japicmp): existing Java code is unaffected (see the macOS
-      artifact change above for Maven/Gradle coordinates). The complete build
+      artifact change above for Maven/Gradle coordinates). One exception: the
+      internal class impl.OutArchiveImpl lost its four protected native setters
+      (bug #77 fix), which matters only for code subclassing it. The complete build
       + runtime test matrix is green on the new engine (Linux glibc & musl on
       arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 

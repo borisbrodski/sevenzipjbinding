@@ -36,6 +36,11 @@ Special thanks to
   * amazing Android-integration (not yet integrated in the official release, but available at https://github.com/seven332/sevenzipjbinding/)
   * finding some forgotten DeleteLocalRefs
 
+- mrjo118 for fixing 7z compression features that canceled each other out: header encryption,
+  compression level, thread count and solid settings set together (pull request #93, bug #77)
+
+- WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
+
 
 AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01 releases
 (the 16.02 -> 23.01 engine upgrade, the Java 5 -> Java 8 port, the cross-platform

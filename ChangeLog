@@ -68,12 +68,30 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  archives (default 20; raise for soak runs). ExtractToFolder snippet now
 	  records block-level results from reportExtractResult().
 
+	* Fixed bug #77 (present in all previous releases): 7z compression
+	  features set together canceled each other out - of compression level,
+	  header encryption, thread count and solid settings only the last applied
+	  one took effect. 7-Zip resets all output properties on every
+	  SetProperties() call; now they are sent in one call. Security-relevant:
+	  setHeaderEncryption(true) was lost as soon as the thread count or a
+	  solid setting was set too, leaving the file names readable without the
+	  password. Fixed by mrjo118 (pull request #93). The error message now
+	  names the properties sent (e.g. "X=3 HE=on MT=2 S=-5F").
+	  https://github.com/borisbrodski/sevenzipjbinding/issues/77
+	  Tests: CompressFeatureCombinations7zTest (all features combined, on
+	  create and update, features read back from the archive; random
+	  combinations: TEST_RANDOM_ARCHIVES x 5), StandaloneCompressSevenZipTest.
+
 	* JavaDoc: corrected false/outdated claims (platform selection, cached
 	  library verification, volume callback properties, reportExtractResult,
 	  per-format property lists, and more).
 
 	* Java API: additions only, binary + source compatible with 23.01-2.2
-	  (japicmp); existing code is unaffected. Full build + runtime
+	  (japicmp); existing code is unaffected. Exception: the internal class
+	  impl.OutArchiveImpl lost its four protected native setters
+	  (nativeSetLevel, nativeSetHeaderEncryption, nativeSetMultithreading,
+	  nativeSetSolidSpec; bug #77 fix) - this affects only code subclassing
+	  it. Full build + runtime
 	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
 	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
