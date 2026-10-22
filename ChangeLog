@@ -94,6 +94,28 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  request #95). Test: NativeLibraryExportsTest (reads the export table of
 	  the library in the platform jar).
 
+	* JNI references: the update callback used the local reference to its
+	  OutArchiveImpl on 7-Zip's encoder threads (multithreaded 7z
+	  compression). JNI local references are valid only in their own thread;
+	  HotSpot happens to tolerate it, a checking JVM aborts ("Bad global or
+	  local ref passed to JNI" with -Xcheck:jni). Now a global
+	  reference. Also affects 23.01-2.2 and earlier.
+	  Also fixed per-item JNI local reference leaks (they piled up until the
+	  native call returned): extract callback (getStream, prepareOperation,
+	  setOperationResult, reportExtractResult), update callback
+	  (getUpdateItemInfo, getStream) and volume callback (getProperty,
+	  getStream). Follow-up to PR #66 by Brendan Thomas.
+	  Tests: JniReferencesTest (300-item extract/create/update/volume
+	  scenarios in a child JVM with -Xcheck:jni). The complete JUnit suite
+	  runs clean under -Xcheck:jni (JDK 17).
+
+	* Fixed regression of 23.01-2.2: split archives (x.7z.001, x.7z.002,
+	  ...) couldn't be opened with an IArchiveOpenVolumeCallback. The split
+	  handler asks for the next volume until there is none; the native code
+	  turned the callback's null into an error ("returns stream=null for
+	  volume 'x.7z.005'"). A missing volume is S_FALSE again, as in 16.02
+	  and in 7-Zip itself. Test: OpenSplitArchiveWithVolumeCallbackTest.
+
 	* JavaDoc: corrected false/outdated claims (platform selection, cached
 	  library verification, volume callback properties, reportExtractResult,
 	  per-format property lists, and more).

@@ -57,6 +57,8 @@ Special thanks to
 - Fredrik Claesson (omicronapps) for the Android JNI and Java support (android branch,
   pull requests #38, #39)
 
+- Anna for making the native code compile with gcc 4.0.1
+
 - Damiano Albani and Chad Gorshing for typo fixes (pull requests #14, #1)
 
 

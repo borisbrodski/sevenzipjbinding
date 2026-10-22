@@ -91,6 +91,16 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       export only their JNI entry points and are about a third smaller; system
       requirements are unchanged. Contributed by Alexandru Sclearuc (pull request #95).
 
+    * Fixed JNI reference handling (also affects 23.01-2.2 and earlier): multithreaded 7z
+      compression used a thread-local JNI reference on 7-Zip's worker threads. HotSpot
+      tolerates it, but JVMs that check references (e.g. -Xcheck:jni) abort. Per-item
+      local reference leaks in the extract, update and volume callbacks are fixed too
+      (follow-up to pull request #66).
+
+    * Fixed regression of 23.01-2.2: split archives (x.7z.001, x.7z.002, ...) couldn't be
+      opened with an IArchiveOpenVolumeCallback - opening failed with "returns stream=null
+      for volume 'x.7z.005'" after the last volume.
+
     * Java API: additions only, binary and source compatible with 23.01-2.2
       (checked with japicmp): existing Java code is unaffected (see the macOS
       artifact change above for Maven/Gradle coordinates). One exception: the
