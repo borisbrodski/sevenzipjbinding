@@ -40,10 +40,19 @@ jobs:
           $dir = (Get-ChildItem C:\llvm-mingw-root -Filter "llvm-mingw-*" -Directory | Select-Object -First 1).FullName
           "$dir\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
+      # Downloaded directly: actions-setup-cmake looks the version up in the Kitware/CMake release
+      # list, which the GitHub API returns empty since 2026-10 ("Unable to find version matching").
       - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.28.6'
+        shell: pwsh
+        run: |
+          $v = "3.28.6"
+          $url = "https://github.com/Kitware/CMake/releases/download/v$v/cmake-$v-windows-arm64.zip"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile cmake.zip
+          Expand-Archive -Path cmake.zip -DestinationPath C:\cmake-root -Force
+          Remove-Item cmake.zip
+          "C:\cmake-root\cmake-$v-windows-arm64\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          & "C:\cmake-root\cmake-$v-windows-arm64\bin\cmake.exe" --version
 
       - name: Set up Ninja
         uses: seanmiddleditch/gha-setup-ninja@v6

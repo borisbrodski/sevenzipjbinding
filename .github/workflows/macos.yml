@@ -47,10 +47,16 @@ jobs:
           echo "JAVA_HOME=$JAVA_HOME"; file "$JAVA_HOME/bin/java"
           "$JAVA_HOME/bin/javac" -version; ls "$JAVA_HOME/bin/javah"
 
+      # Downloaded directly: actions-setup-cmake looks the version up in the Kitware/CMake release
+      # list, which the GitHub API returns empty since 2026-10 ("Unable to find version matching").
       - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.28.6'
+        run: |
+          set -eux
+          v=3.28.6
+          curl -fsSL -o cmake.tar.gz "https://github.com/Kitware/CMake/releases/download/v$v/cmake-$v-macos-universal.tar.gz"
+          mkdir -p "$RUNNER_TEMP/cmake" && tar -xzf cmake.tar.gz -C "$RUNNER_TEMP/cmake" && rm cmake.tar.gz
+          echo "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin/cmake" --version | head -1
 
       # --- Universal (AllMac): one fat dylib with both slices ---
       - name: Configure + build universal AllMac dylib (x86_64 + arm64)
@@ -144,10 +150,16 @@ jobs:
           java-version: '8'
           architecture: ${{ matrix.jdk_arch }}
 
+      # Downloaded directly: actions-setup-cmake looks the version up in the Kitware/CMake release
+      # list, which the GitHub API returns empty since 2026-10 ("Unable to find version matching").
       - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: '3.28.6'
+        run: |
+          set -eux
+          v=3.28.6
+          curl -fsSL -o cmake.tar.gz "https://github.com/Kitware/CMake/releases/download/v$v/cmake-$v-macos-universal.tar.gz"
+          mkdir -p "$RUNNER_TEMP/cmake" && tar -xzf cmake.tar.gz -C "$RUNNER_TEMP/cmake" && rm cmake.tar.gz
+          echo "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin" >> "$GITHUB_PATH"
+          "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin/cmake" --version | head -1
 
       - name: Download the AllPlatforms jar (CI fixture prerelease)
         env:
