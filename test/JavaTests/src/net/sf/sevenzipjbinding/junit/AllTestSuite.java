@@ -23,6 +23,7 @@ import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedAr
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevelRatioImpact;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureCombinations7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
@@ -448,6 +449,7 @@ public class AllTestSuite extends TestSuite {
             CompressFeatureSetLevelRatioImpact.class, //
             CompressFeatureSetSolid.class, //
             CompressFeatureSetThreadCount.class, //
+            CompressFeatureCombinations7zTest.class, //
 
             CompressGenericSingleFile7zPassHeaderTest.class, //
             CompressGenericSingleFile7zPassNullTest.class, //
