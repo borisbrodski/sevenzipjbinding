@@ -107,7 +107,7 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  getStream). Follow-up to PR #66 by Brendan Thomas.
 	  Tests: JniReferencesTest (300-item extract/create/update/volume
 	  scenarios in a child JVM with -Xcheck:jni). The complete JUnit suite
-	  runs clean under -Xcheck:jni (JDK 17).
+	  runs clean under -Xcheck:jni (JDK 8 and 17).
 
 	* Fixed regression of 23.01-2.2: split archives (x.7z.001, x.7z.002,
 	  ...) couldn't be opened with an IArchiveOpenVolumeCallback. The split

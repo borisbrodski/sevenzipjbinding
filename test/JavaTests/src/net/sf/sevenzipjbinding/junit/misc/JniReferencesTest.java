@@ -51,8 +51,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * global or local ref passed to JNI").
  * <p>
  * Each scenario runs {@value #ITEM_COUNT} items in a child JVM with <code>-Xcheck:jni</code>, which reports a growing
- * local reference table ("JNI local refs: N, exceeds capacity") and invalid references ("Bad global or local ref
- * passed to JNI"; both seen on JDK 8 and 17). JVMs without these checks pass trivially.
+ * local reference table ("JNI local refs: N, exceeds capacity"; JDK 8, JDK 17 doesn't report it) and invalid
+ * references ("Bad global or local ref passed to JNI"; JDK 8 and 17). JVMs without these checks pass trivially. A
+ * local reference warning the JVM raises outside 7-Zip-JBinding (its stack has no 7-Zip-JBinding frame, as at the
+ * startup of old Windows JDK 8 builds) doesn't count.
  */
 public class JniReferencesTest {
     private static final int ITEM_COUNT = 300;
@@ -99,9 +101,26 @@ public class JniReferencesTest {
         assertTrue("child JVM timed out", process.waitFor(CHILD_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
         List<String> problems = new ArrayList<String>();
-        for (String line : output.split("\r?\n")) {
-            if (line.contains("JNI local refs") || line.contains("FATAL ERROR") || line.contains("Bad global or local ref")) {
-                problems.add(line.trim());
+        String[] lines = output.split("\r?\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("FATAL ERROR") || lines[i].contains("Bad global or local ref")) {
+                problems.add(lines[i].trim());
+            } else if (lines[i].contains("JNI local refs")) {
+                // The JVM prints the Java stack below the warning. Old Windows JDK 8 builds warn once at startup
+                // in java.lang.System.initProperties: a warning whose stack has no 7-Zip-JBinding frame isn't ours.
+                // Without a stack (7-Zip's native threads) it counts.
+                StringBuilder warning = new StringBuilder(lines[i].trim());
+                int frames = 0;
+                boolean inBinding = false;
+                while (i + 1 < lines.length && lines[i + 1].trim().startsWith("at ")) {
+                    String frame = lines[++i].trim();
+                    warning.append(" | ").append(frame);
+                    frames++;
+                    inBinding |= frame.startsWith("at net.sf.sevenzipjbinding.");
+                }
+                if (frames == 0 || inBinding) {
+                    problems.add(warning.toString());
+                }
             }
         }
         assertEquals("checked JNI reports problems (scenario " + scenario + "), first 5: "
