@@ -90,9 +90,9 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  an embedding process) could crash formatting a number with
 	  std::ostream. Also affects 23.01-2.2 and 16.02-2.01. Host requirements
 	  unchanged (runtime still linked statically, just hidden); the library
-	  shrinks by about a third. Contributed by Alexandru Sclearuc (pull
-	  request #95). Test: NativeLibraryExportsTest (reads the export table of
-	  the library in the platform jar).
+	  shrinks by 16-35% depending on the platform. Contributed by Alexandru
+	  Sclearuc (pull request #95). Test: NativeLibraryExportsTest (reads the
+	  export table of the library in the platform jar).
 
 	* JNI references: the update callback used the local reference to its
 	  OutArchiveImpl on 7-Zip's encoder threads (multithreaded 7z
@@ -125,9 +125,9 @@ Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
 	  impl.OutArchiveImpl lost its four protected native setters
 	  (nativeSetLevel, nativeSetHeaderEncryption, nativeSetMultithreading,
 	  nativeSetSolidSpec; bug #77 fix) - this affects only code subclassing
-	  it. Full build + runtime
-	  test matrix is green on the new engine (Linux glibc & musl on arm/x86,
-	  Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
+	  it. Full build + runtime test matrix is green on the new engine (Linux
+	  glibc & musl on arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64,
+	  FreeBSD amd64).
 
 	* Build: JNI headers are generated with 'javac -h' when 'javah' is absent
 	  (JDK 10+), required for Windows-arm64, which has no JDK 8. Modern JDKs

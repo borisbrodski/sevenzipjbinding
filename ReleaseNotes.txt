@@ -88,8 +88,9 @@ Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
       and earlier): the native library exported its statically linked C++ runtime,
       whose process-wide (GNU-unique) symbols clashed with the system libstdc++.so.6
       loaded later, e.g. by another JNI library. The Linux and FreeBSD libraries now
-      export only their JNI entry points and are about a third smaller; system
-      requirements are unchanged. Contributed by Alexandru Sclearuc (pull request #95).
+      export only their JNI entry points and are 16-35% smaller, depending on the
+      platform; system requirements are unchanged. Contributed by Alexandru Sclearuc
+      (pull request #95).
 
     * Fixed JNI reference handling (also affects 23.01-2.2 and earlier): multithreaded 7z
       compression used a thread-local JNI reference on 7-Zip's worker threads. HotSpot
