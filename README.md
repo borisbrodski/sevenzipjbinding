@@ -11,7 +11,7 @@ mechanical, low-risk `git merge` instead of a manual re-port.
 - `7zip/` — the exact 7-Zip source, converted to LF (this repo's convention; see `.gitattributes`).
 - `.gitattributes` — kept so git normalizes new drops to LF identically to `master`.
 - `update-vendor-7zip.sh` — the update helper (below).
-- Current version: **7-Zip 23.01** (`7z2301-src.7z`, 7-zip.org, 2023-06-20).
+- Current version: **7-Zip 26.05** (`7z2605-src.7z` from the ip7z/7zip GitHub release 26.05, 2026-10-21, sha256 `fa081a1a…`; identical tree to `7z2605-src.tar.xz`). Earlier drops: 26.03 (2026-09-03), 23.01 (2023-06-20).
 
 ## The vendor-branch idea
 `master`'s `7zip/` = *this pristine tree* **+** a small set of local edits (8 files as of 23.01 —
