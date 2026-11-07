@@ -19,7 +19,7 @@ import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import org.junit.Test;
 
 /**
- * Up to 26.03-2.3 (and in 23.01-2.2) the native code declared the JNI signature of
+ * Up to 26.05-2.3 (and in 23.01-2.2) the native code declared the JNI signature of
  * {@link IArchiveExtractCallback#reportExtractResult(ReportExtractResultIndexType, int, ExtractOperationResult)}
  * without the <code>L...;</code> around its first parameter type. The method lookup could never succeed, so
  * every time the engine called <code>ReportExtractResult</code> the JVM was aborted ("Method not found:

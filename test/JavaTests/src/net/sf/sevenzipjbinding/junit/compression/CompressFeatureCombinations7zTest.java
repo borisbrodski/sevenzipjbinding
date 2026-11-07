@@ -47,7 +47,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * All 7z output features set together - compression level, header encryption, thread count, solid, solid files, solid
  * size, solid extension - with and without a password, on create and on update. 7-Zip resets all output properties
  * on every <code>ISetProperties::SetProperties()</code> call, so each feature must survive the others (up to
- * 26.03-2.3 only the last applied one did, see PR #93).<br>
+ * 26.05-2.3 only the last applied one did, see PR #93).<br>
  * <br>
  * Every feature is read back from the archive, not trusted from the call:
  * <ul>
@@ -61,7 +61,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * for a soak run, e.g. <code>-DTEST_RANDOM_ARCHIVES=100000</code>.
  *
  * @author Boris Brodski
- * @since 26.03-2.3
+ * @since 26.05-2.3
  */
 public class CompressFeatureCombinations7zTest extends JUnitNativeTestBase<VoidContext> {
     private static final long SEED = 0x7A93L;

@@ -6,18 +6,19 @@ Known issues
 
     * None currently tracked.
       (CVE-2024-11477, the 7-Zip Zstandard decompression issue affecting 23.01-2.x, is resolved
-      as of 26.03-2.3 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
+      as of 26.05-2.3 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
 
 
-Main features of 26.03-2.3 (engine upgrade to 7-Zip 26.03)
+Main features of 26.05-2.3 (engine upgrade to 7-Zip 26.05)
 
-    * Upgraded the bundled 7-Zip engine from 23.01 to 26.03 (latest, released
-      2026-09-03), via the vendored-engine workflow. Brings the upstream format,
+    * Upgraded the bundled 7-Zip engine from 23.01 to 26.05 (latest, released
+      2026-10-21), via the vendored-engine workflow. Brings the upstream format,
       decoder and bug fixes accumulated since 23.01, including extraction of
-      Zstandard-compressed ZIP entries.
+      Zstandard-compressed ZIP entries and, from 7-Zip 26.04/26.05, further bug
+      and vulnerability fixes and improved unpacking of Z archives and Mach-O files.
 
     * Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
-      HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix released in
+      HIGH, CVSS 7.8). The 26.05 engine postdates the upstream fix released in
       7-Zip 24.07, so the Zstandard known-issue from 23.01-2.x no longer applies.
       Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
 

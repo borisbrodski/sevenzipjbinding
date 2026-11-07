@@ -34,7 +34,7 @@ public class PropertyIdsTest extends JUnitNativeTestBase<VoidContext> {
 
     @Test
     public void propertyIdsMatchEngineIndexes() {
-        // kpidArcFileName ... kpidDevMinor, kpid_NUM_DEFINED (7-Zip 26.03 PropID.h)
+        // kpidArcFileName ... kpidDevMinor, kpid_NUM_DEFINED (7-Zip 26.05 PropID.h)
         assertEquals(96, PropID.ARC_FILE_NAME.getPropIDIndex());
         assertEquals(97, PropID.IS_HASH.getPropIDIndex());
         assertEquals(98, PropID.CHANGE_TIME.getPropIDIndex());

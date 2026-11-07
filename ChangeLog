@@ -1,16 +1,17 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 26.03-2.3 (engine upgrade to 7-Zip 26.03)
+Release - 26.05-2.3 (engine upgrade to 7-Zip 26.05)
 
-	* Upgraded the bundled 7-Zip engine 23.01 -> 26.03 (latest, released
-	  2026-09-03) via the vendored-engine (upstream-7zip) workflow. Picks up the
+	* Upgraded the bundled 7-Zip engine 23.01 -> 26.05 (latest, released
+	  2026-10-21) via the vendored-engine (upstream-7zip) workflow. Picks up the
 	  upstream format/decoder/bug fixes accumulated since 23.01, including the
-	  Zstandard decoder for ZIP entries (method 93). Standalone .zst files are
-	  not an archive format of this release.
+	  Zstandard decoder for ZIP entries (method 93) and, from 26.04/26.05, further
+	  bug and vulnerability fixes plus improved unpacking of Z archives and Mach-O
+	  files. Standalone .zst files are not an archive format of this release.
 
 	* Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
-	  HIGH, CVSS 7.8). The 26.03 engine postdates the upstream fix in 7-Zip 24.07,
+	  HIGH, CVSS 7.8). The 26.05 engine postdates the upstream fix in 7-Zip 24.07,
 	  so the Zstandard known-issue tracked for 23.01-2.x no longer applies.
 	  https://github.com/borisbrodski/sevenzipjbinding/issues/72
 

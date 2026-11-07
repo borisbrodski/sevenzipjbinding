@@ -45,7 +45,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * <p>
  * Local references live until the native method returns, so every reference a per-item callback forgets to delete
  * stays alive for the whole extraction. For the output streams (PR #66) that kept all of them in memory and could
- * exhaust the heap on archives with very many files. Up to 26.03-2.3 the extract, update and volume callbacks still
+ * exhaust the heap on archives with very many files. Up to 26.05-2.3 the extract, update and volume callbacks still
  * leaked one to three references per item, and the update callback used the local reference to its
  * <code>OutArchiveImpl</code> on 7-Zip's encoder threads, which only HotSpot tolerates (a checking JVM aborts: "Bad
  * global or local ref passed to JNI").

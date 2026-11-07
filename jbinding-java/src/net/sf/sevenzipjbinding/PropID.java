@@ -235,7 +235,7 @@ public enum PropID {
      * Name of the archive file itself, as reported by some handlers.<br>
      * Type: {@link String}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     ARC_FILE_NAME, //
 
@@ -243,7 +243,7 @@ public enum PropID {
      * Flag indicating a hash archive (checksum file).<br>
      * Type: {@link Boolean}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     IS_HASH, //
 
@@ -251,7 +251,7 @@ public enum PropID {
      * Change time of the item's metadata (for example the NTFS MFT record change time or the UDF attribute time).<br>
      * Type: {@link java.util.Date}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     CHANGE_TIME, //
 
@@ -259,7 +259,7 @@ public enum PropID {
      * Numeric user id of the item owner, for example from Tar and Cpio archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     USER_ID, //
 
@@ -267,7 +267,7 @@ public enum PropID {
      * Numeric group id of the item owner, for example from Tar and Cpio archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     GROUP_ID, //
 
@@ -275,7 +275,7 @@ public enum PropID {
      * Major device number of a device item (character or block device), for example from Tar archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     DEVICE_MAJOR, //
 
@@ -283,7 +283,7 @@ public enum PropID {
      * Minor device number of a device item (character or block device), for example from Tar archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     DEVICE_MINOR, //
 
@@ -291,7 +291,7 @@ public enum PropID {
      * Major number of the device containing the item, for example from Cpio archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     DEV_MAJOR, //
 
@@ -299,7 +299,7 @@ public enum PropID {
      * Minor number of the device containing the item, for example from Cpio archives.<br>
      * Type: {@link Integer}
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     DEV_MINOR, //
 

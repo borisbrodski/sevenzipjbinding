@@ -406,7 +406,7 @@ public class ExtractToFolderErrorTest extends SnippetTest {
      * only reports a verdict for the item.</li>
      * <li>In about 1 of 300 archives the garbage decodes to a "complete" file: the engine writes it,
      * judges it CRCERROR, and then reports a DATAERROR for the whole block through
-     * {@code reportExtractResult()} - the path that aborted the JVM up to 26.03-2.3 (see
+     * {@code reportExtractResult()} - the path that aborted the JVM up to 26.05-2.3 (see
      * {@code ReportExtractResultBlockErrorTest} for the deterministic case).</li>
      * </ul>
      * On every archive the item's verdict must be recorded (an empty error list would hide the

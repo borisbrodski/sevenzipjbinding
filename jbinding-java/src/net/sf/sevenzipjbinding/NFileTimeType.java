@@ -25,7 +25,7 @@ public enum NFileTimeType {
     /**
      * File time with 1 nanosecond precision (for example Linux file times in Tar archives)
      *
-     * @since 26.03-2.3
+     * @since 26.05-2.3
      */
     NANOSECONDS //
 }
