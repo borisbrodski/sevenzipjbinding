@@ -1,1 +1,0 @@
-function e(e,t){throw Error(`serialize() is not yet implemented in the Rust compiler`)}export{e as serialize};

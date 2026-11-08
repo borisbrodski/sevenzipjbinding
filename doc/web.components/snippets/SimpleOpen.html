@@ -1,8 +1,0 @@
-<span class="java-keyword">public</span> <span class="java-keyword">void</span> openArchive(String archiveFilename) 
-        <span class="java-keyword">throws</span> SevenZipException, FileNotFoundException {
-
-    <span class="java-field">randomAccessFile</span> = <span class="java-keyword">new</span> RandomAccessFile(archiveFilename, <span class="java-string">"r"</span>);
-
-    <span class="java-field">inArchive</span> = SevenZip.<span class="java-staticmethod">openInArchive</span>(<span class="java-keyword">null</span>, <span class="java-comment">// Choose format automatically</span>
-            <span class="java-keyword">new</span> RandomAccessFileInStream(randomAccessFile));
-}

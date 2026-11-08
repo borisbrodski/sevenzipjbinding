@@ -74,6 +74,6 @@ fi
 
 echo
 echo ">> done. Next:"
-echo "     git add -A && git commit -m 'Original 7-zip <VER> (<YYYY-MM-DD>)'"
-echo "     git checkout master && git merge upstream-7zip"
+echo "     git add 7zip README.md && git commit -m 'Original 7-zip <VER> (<YYYY-MM-DD>) — pristine vendor drop'"
+echo "     cd <main checkout> && git merge --no-ff upstream-7zip   # README.md conflict -> git checkout --ours README.md"
 echo "     # resolve real conflicts, then re-check '7-Zip Source Modifications.md'"

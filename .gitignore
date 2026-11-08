@@ -1,0 +1,9 @@
+# upstream-7zip is the pristine 7-Zip vendor branch: only 7zip/ and these few helper files are tracked.
+# Everything else (left over from a master/candidate checkout: website/node_modules, dist, doc/web, IDE
+# files) is ignored so that a careless `git add -A` can never pollute a drop commit again (it did in 26.03).
+/*
+!/7zip/
+!/.gitattributes
+!/.gitignore
+!/README.md
+!/update-vendor-7zip.sh
