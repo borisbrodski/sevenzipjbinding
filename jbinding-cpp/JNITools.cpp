@@ -149,6 +149,9 @@ jobject BooleanToObject(JNIEnv * env, bool value) {
 
     jobject result = env->CallStaticObjectMethod(g_BooleanClass, g_BooleanValueOf,
             (jboolean) (value != VARIANT_FALSE));
+    if (env->ExceptionCheck()) {
+        return NULL; // pending exception (e.g. OutOfMemoryError) propagates to the caller
+    }
     FATALIF1(result == NULL, "Error getting Boolean object for value %i", value);
     return result;
 }
@@ -160,6 +163,9 @@ jobject IntToObject(JNIEnv * env, jint value) {
     localinit(env);
 
     jobject result = env->CallStaticObjectMethod(g_IntegerClass, g_IntegerValueOf, value);
+    if (env->ExceptionCheck()) {
+        return NULL; // pending exception (e.g. OutOfMemoryError) propagates to the caller
+    }
     FATALIF1(result == NULL, "Error getting Integer object for value %i", value);
     return result;
 }
@@ -171,6 +177,9 @@ jobject LongToObject(JNIEnv * env, LONGLONG value) {
     localinit(env);
 
     jobject result = env->CallStaticObjectMethod(g_LongClass, g_LongValueOf, (jlong) value);
+    if (env->ExceptionCheck()) {
+        return NULL; // pending exception (e.g. OutOfMemoryError) propagates to the caller
+    }
     FATALIF1(result == NULL, "Error getting Long object for value %li", value);
     return result;
 }
@@ -181,7 +190,10 @@ jobject LongToObject(JNIEnv * env, LONGLONG value) {
 jobject DoubleToObject(JNIEnv * env, double value) {
     localinit(env);
 
-    jobject result = env->CallStaticObjectMethod(g_DoubleClass, g_DoubleValueOf, (jint) value);
+    jobject result = env->CallStaticObjectMethod(g_DoubleClass, g_DoubleValueOf, (jdouble) value);
+    if (env->ExceptionCheck()) {
+        return NULL; // pending exception (e.g. OutOfMemoryError) propagates to the caller
+    }
     FATALIF1(result == NULL, "Error getting Double object for value %f", value);
     return result;
 }

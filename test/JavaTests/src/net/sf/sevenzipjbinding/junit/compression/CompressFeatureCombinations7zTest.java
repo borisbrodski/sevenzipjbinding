@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * All 7z output features set together - compression level, header encryption, thread count, solid, solid files, solid
  * size, solid extension - with and without a password, on create and on update. 7-Zip resets all output properties
  * on every <code>ISetProperties::SetProperties()</code> call, so each feature must survive the others (up to
- * 26.05-2.3 only the last applied one did, see PR #93).<br>
+ * 26.06-2.3 only the last applied one did, see PR #93).<br>
  * <br>
  * Every feature is read back from the archive, not trusted from the call:
  * <ul>
@@ -61,9 +62,10 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * for a soak run, e.g. <code>-DTEST_RANDOM_ARCHIVES=100000</code>.
  *
  * @author Boris Brodski
- * @since 26.05-2.3
+ * @since 26.06-2.3
  */
 public class CompressFeatureCombinations7zTest extends JUnitNativeTestBase<VoidContext> {
+    private static final Date FIXED_TIME = new Date(1700000000000L); // 2023-11-14, arbitrary
     private static final long SEED = 0x7A93L;
     private static final int COMBINATIONS_PER_RANDOM_ARCHIVE = 5;
     private static final String[] WORDS = { "alpha ", "beta ", "gamma ", "delta ", "epsilon ", "zeta ", "eta ",
@@ -472,6 +474,10 @@ public class CompressFeatureCombinations7zTest extends JUnitNativeTestBase<VoidC
             IOutItem7z outItem = outItemFactory.createOutItem();
             outItem.setPropertyPath(items.get(index).path);
             outItem.setDataSize(Long.valueOf(items.get(index).content.length));
+            // Fixed time: without it the engine stamps "now" into every item, and the size comparisons below
+            // (same features -> same archive size) become a lottery - with header encryption the packed header
+            // crosses a 16-byte AES block boundary every now and then (seen on slow emulated platforms).
+            outItem.setPropertyLastModificationTime(FIXED_TIME);
             return outItem;
         }
 
