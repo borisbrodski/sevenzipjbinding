@@ -1,17 +1,19 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 26.05-2.3 (engine upgrade to 7-Zip 26.05)
+Release - 26.06-2.3 (engine upgrade to 7-Zip 26.06)
 
-	* Upgraded the bundled 7-Zip engine 23.01 -> 26.05 (latest, released
-	  2026-10-21) via the vendored-engine (upstream-7zip) workflow. Picks up the
-	  upstream format/decoder/bug fixes accumulated since 23.01, including the
-	  Zstandard decoder for ZIP entries (method 93) and, from 26.04/26.05, further
-	  bug and vulnerability fixes plus improved unpacking of Z archives and Mach-O
-	  files. Standalone .zst files are not an archive format of this release.
+	* Upgraded the bundled 7-Zip engine 23.01 -> 26.06 (released 2026-11-06)
+	  via the vendored-engine (upstream-7zip) workflow. Picks up the upstream
+	  format/decoder/bug fixes accumulated since 23.01, including the
+	  Zstandard decoder for ZIP entries (method 93), the bug and vulnerability
+	  fixes of 26.04 to 26.06, improved unpacking of Z archives and Mach-O
+	  files (26.05) and improved support for split files created by the
+	  Linux "split" utility (26.06). Standalone .zst files are not an
+	  archive format of this release.
 
 	* Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
-	  HIGH, CVSS 7.8). The 26.05 engine postdates the upstream fix in 7-Zip 24.07,
+	  HIGH, CVSS 7.8). The 26.06 engine postdates the upstream fix in 7-Zip 24.07,
 	  so the Zstandard known-issue tracked for 23.01-2.x no longer applies.
 	  https://github.com/borisbrodski/sevenzipjbinding/issues/72
 
@@ -85,8 +87,8 @@ Release - 26.05-2.3 (engine upgrade to 7-Zip 26.05)
 
 	* Linux/FreeBSD (ELF): the native library exports only its JNI entry
 	  points (linker version script PlatformUnix/lib7-Zip-JBinding.map).
-	  Before, it exported ~9,600 symbols including the statically linked
-	  libstdc++; its GNU-unique symbols (locale facet ids) bind process-wide,
+	  Before, it exported 9,602 symbols (Linux-amd64) including the statically
+	  linked libstdc++; its GNU-unique symbols (locale facet ids) bind process-wide,
 	  so C++ code loaded into the JVM after the binding (another JNI library,
 	  an embedding process) could crash formatting a number with
 	  std::ostream. Also affects 23.01-2.2 and 16.02-2.01. Host requirements
@@ -106,9 +108,15 @@ Release - 26.05-2.3 (engine upgrade to 7-Zip 26.05)
 	  setOperationResult, reportExtractResult), update callback
 	  (getUpdateItemInfo, getStream) and volume callback (getProperty,
 	  getStream). Follow-up to PR #66 by Brendan Thomas.
+	  Also, boxing property values and open-callback progress numbers
+	  (Integer/Long/Boolean.valueOf called from native code) now checks for
+	  a pending Java exception before the next JNI call, as the JNI
+	  specification requires; -Xcheck:jni reported every such call ("JNI
+	  call made without checking exceptions when required to").
 	  Tests: JniReferencesTest (300-item extract/create/update/volume
 	  scenarios in a child JVM with -Xcheck:jni). The complete JUnit suite
-	  runs clean under -Xcheck:jni (JDK 8 and 17).
+	  runs under -Xcheck:jni (JDK 8 and 17) without JNI errors, reference
+	  leaks or exception-check warnings from the binding.
 
 	* Fixed regression of 23.01-2.2: split archives (x.7z.001, x.7z.002,
 	  ...) couldn't be opened with an IArchiveOpenVolumeCallback. The split
