@@ -1,5 +1,5 @@
 /* Ppmd7Enc.c -- Ppmd7z (PPMdH with 7z Range Coder) Encoder
-2023-04-02 : Igor Pavlov : Public domain
+: Igor Pavlov : Public domain
 This code is based on:
   PPMd var.H (2001): Dmitry Shkarin : Public domain */
 
@@ -35,7 +35,10 @@ static void Ppmd7z_RangeEnc_ShiftLow(CPpmd7 *p)
     R->Cache = (Byte)((UInt32)R->Low >> 24);
   }
   R->CacheSize++;
-  R->Low = (UInt32)((UInt32)R->Low << 8);
+  {
+    const UInt32 low2 = (UInt32)R->Low << 8;
+    R->Low = low2;
+  }
 }
 
 #define RC_NORM_BASE(p) if (R->Range < kTopValue) { R->Range <<= 8;  Ppmd7z_RangeEnc_ShiftLow(p);
@@ -82,7 +85,7 @@ void Ppmd7z_Flush_RangeEnc(CPpmd7 *p)
 
 void Ppmd7_UpdateModel(CPpmd7 *p);
 
-#define MASK(sym) ((unsigned char *)charMask)[sym]
+#define MASK(sym)  ((Byte *)charMask)[sym]
 
 Z7_FORCE_INLINE
 static
@@ -139,8 +142,8 @@ void Ppmd7z_EncodeSymbol(CPpmd7 *p, int symbol)
       MASK(s->Symbol) = 0;
       do
       {
-        unsigned sym0 = s2[0].Symbol;
-        unsigned sym1 = s2[1].Symbol;
+        const unsigned sym0 = s2[0].Symbol;
+        const unsigned sym1 = s2[1].Symbol;
         s2 += 2;
         MASK(sym0) = 0;
         MASK(sym1) = 0;
@@ -265,16 +268,15 @@ void Ppmd7z_EncodeSymbol(CPpmd7 *p, int symbol)
         if (num2 != 0)
         {
           s += i;
-          for (;;)
+          do
           {
-            unsigned sym0 = s[0].Symbol;
-            unsigned sym1 = s[1].Symbol;
+            const unsigned sym0 = s[0].Symbol;
+            const unsigned sym1 = s[1].Symbol;
             s += 2;
             sum += (s[-2].Freq & (unsigned)(MASK(sym0)));
             sum += (s[-1].Freq & (unsigned)(MASK(sym1)));
-            if (--num2 == 0)
-              break;
           }
+          while (--num2);
         }
 
         

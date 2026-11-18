@@ -161,6 +161,7 @@ struct CItem
       case NFileHeader::NLinkFlag::kPax_2:
       case NFileHeader::NLinkFlag::kGlobal:
         return true;
+      default: break;
     }
     return false;
   }
@@ -195,6 +196,7 @@ struct CItem
       case NFileHeader::NLinkFlag::kCharacter:  return MY_LIN_S_IFCHR;
       case NFileHeader::NLinkFlag::kFIFO:       return MY_LIN_S_IFIFO;
       // case return MY_LIN_S_IFSOCK;
+      default: break;
     }
 
     if (IsDir())
@@ -218,6 +220,7 @@ struct CItem
         // we also do it
         return Name.Back() == '/';
         // return NItemName::HasTailSlash(Name, CP_OEMCP);
+      default: break;
     }
     return false;
   }
@@ -319,6 +322,7 @@ struct CPaxExtra
 struct CItemEx: public CItem
 {
   bool HeaderError;
+  bool Method_Error;
   
   bool IsSignedChecksum;
   bool Prefix_WasUsed;
@@ -347,6 +351,7 @@ struct CItemEx: public CItem
   
   UInt64 Num_Pax_Records;
   CPaxExtra PaxExtra;
+  AString SCHILY_fflags;
 
   CEncodingCharacts EncodingCharacts;
 

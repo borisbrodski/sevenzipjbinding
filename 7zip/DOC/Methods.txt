@@ -1,8 +1,7 @@
 7-Zip method IDs for 7z and xz archives
 ---------------------------------------
 
-Version: 23.01
-Date: 2023-06-30
+Version: 26.04
 
 Each compression or crypto method in 7z is associated with unique binary value (ID).
 The length of ID in bytes is arbitrary but it can not exceed 63 bits (8 bytes).
@@ -38,6 +37,7 @@ List of defined IDs
 08 - ARMT (little-endian)
 09 - SPARC
 0A - ARM64
+0B - RISCV
 
 21 - LZMA2
           
@@ -136,12 +136,13 @@ List of defined IDs
          05 - LZ5
          06 - LIZARD
 
-      12 xx - reserverd (Denis Anisimov)
-        
+      12 xx - reserved (Denis Anisimov)
          01 - WavPack2
          FE - eSplitter 
          FF - RawSplitter
- 
+
+      13 xx - reserved (plokijuter at github)   
+         01 - Transpose
 
 06.. - Crypto 
 
@@ -170,7 +171,7 @@ List of defined IDs
 
       07 - [7z]
          01 - 7zAES (AES-256 + SHA-256)
-
+         02-FF - reserved
 
 ---
 End of document

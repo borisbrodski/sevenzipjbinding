@@ -9,16 +9,12 @@ package net.sf.sevenzipjbinding;
 public interface IArchiveOpenVolumeCallback {
 
     /**
-     * Get a property of the volume file. An implementation must support at least the following PropIDs:
+     * Get a property of the volume file. The engine asks for:
      * <ul>
-     * <li>{@link PropID#NAME} (Type: String)</li>
-     * <li>{@link PropID#IS_FOLDER} (Type: Boolean)</li>
-     * <li>{@link PropID#SIZE} (Type: Long)</li>
-     * <li>{@link PropID#ATTRIBUTES} (Type: int)</li>
-     * <li>{@link PropID#LAST_ACCESS_TIME} (Type: Date)</li>
-     * <li>{@link PropID#CREATION_TIME} (Type: Date)</li>
-     * <li>{@link PropID#LAST_MODIFICATION_TIME} (Type: Date)</li>
+     * <li>{@link PropID#NAME} (Type: String) - required by all multi-volume formats</li>
+     * <li>{@link PropID#SIZE} (Type: Long) - used by the <code>Split</code> format</li>
      * </ul>
+     * Return <code>null</code> for any other property.
      * 
      * @param propID
      *            property

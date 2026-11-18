@@ -22,8 +22,8 @@ CFLAGS_BASE_LIST = -c
 # for ASM file
 # CFLAGS_BASE_LIST = -S
 
-FLAGS_FLTO =
 FLAGS_FLTO = -flto
+FLAGS_FLTO =
 
 CFLAGS_BASE = $(MY_ARCH_2) -O2 $(CFLAGS_BASE_LIST) $(CFLAGS_WARN_WALL) $(CFLAGS_WARN) \
  -DNDEBUG -D_REENTRANT -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
@@ -105,13 +105,11 @@ MY_MKDIR=mkdir
 DEL_OBJ_EXE = -$(RM) $(O)\*.o $(O)\$(PROG).exe $(O)\$(PROG).dll
 endif
 
-
-LIB2 = -lOle32 -loleaut32 -luuid -ladvapi32 -lUser32 -lShell32
+LIB2 = -lole32 -loleaut32 -luuid -ladvapi32 -luser32 -lshell32
 
 CFLAGS_EXTRA = -DUNICODE -D_UNICODE
 # -Wno-delete-non-virtual-dtor
 
- 
 else
 
 RM = rm -f
@@ -157,7 +155,15 @@ ifneq ($(CC), $(CROSS_COMPILE)clang)
 LFLAGS_STRIP = -s
 endif
 
-LFLAGS_ALL = $(LFLAGS_STRIP) $(MY_ARCH_2) $(LDFLAGS) $(FLAGS_FLTO) $(LD_arch) $(OBJS) $(MY_LIBS) $(LIB2)
+ifdef MACOS_MODE
+VERSION_HDR = ../../7zVersion.h
+SRC_VER_MAJOR := $(shell awk '/\#define MY_VER_MAJOR/ {print $$3}' $(VERSION_HDR))
+SRC_VER_MINOR := $(shell awk '/\#define MY_VER_MINOR/ {print $$3}' $(VERSION_HDR))
+SRC_VER := $(SRC_VER_MAJOR).$(SRC_VER_MINOR)
+LFLAGS_SRC_VER := -Wl,-source_version,$(SRC_VER)
+endif
+
+LFLAGS_ALL = $(LFLAGS_STRIP) $(MY_ARCH_2) $(LDFLAGS) $(FLAGS_FLTO) $(LD_arch) $(LFLAGS_SRC_VER) $(OBJS) $(MY_LIBS) $(LIB2)
 $(PROGPATH): $(OBJS)
 	$(CC) -o $(PROGPATH) $(LFLAGS_ALL)
 
@@ -329,7 +335,7 @@ endif
 
 ifdef IS_ARM64
 $O/LzmaDecOpt.o: ../../../Asm/arm64/LzmaDecOpt.S ../../../Asm/arm64/7zAsm.S
-	$(CC) $(CFLAGS) $<
+	$(CC) $(CFLAGS) $(ASM_FLAGS) $<
 endif
 
 $O/LzmaDec.o: ../../LzmaDec.c

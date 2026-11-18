@@ -15,7 +15,6 @@ import net.sf.sevenzipjbinding.SevenZipException;
  * @since 4.65-1
  */
 @Deprecated
-// TODO Remove in the next release
 public class SequentialInStreamImpl implements ISequentialInStream {
     private InputStream inputStream;
 
@@ -57,8 +56,9 @@ public class SequentialInStreamImpl implements ISequentialInStream {
         return inputStream;
     }
 
+    /**
+     * Does nothing: the wrapped {@link InputStream} is not closed.
+     */
     public void close() throws IOException {
-        // TODO Auto-generated method stub
-
     }
 }

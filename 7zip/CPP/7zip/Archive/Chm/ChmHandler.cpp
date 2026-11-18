@@ -2,6 +2,7 @@
 
 #include "StdAfx.h"
 
+#include "../../../Common/AutoPtr.h"
 #include "../../../Common/ComTry.h"
 #include "../../../Common/StringConvert.h"
 #include "../../../Common/UTFConvert.h"
@@ -402,7 +403,7 @@ HRESULT CChmFolderOutStream::FlushCorrupted(UInt64 maxSize)
 
 
 Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
-    Int32 testModeSpec, IArchiveExtractCallback *extractCallback))
+    const Int32 testMode, IArchiveExtractCallback *extractCallback))
 {
   COM_TRY_BEGIN
   const bool allFilesMode = (numItems == (UInt32)(Int32)-1);
@@ -414,21 +415,15 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       m_Database.Indices.Size());
   if (numItems == 0)
     return S_OK;
-  bool testMode = (testModeSpec != 0);
+
+  NCompress::CCopyCoderBase copyCoder;
+  CMyComPtr2_Create<ICompressProgressInfo, CLocalProgress> lps;
+  lps->Init(extractCallback, false);
+  CMyComPtr2_Create<ISequentialInStream, CLimitedSequentialInStream> inStream;
+  inStream->SetStream(m_Stream);
 
   UInt64 currentTotalSize = 0;
-
-  NCompress::CCopyCoder *copyCoderSpec = new NCompress::CCopyCoder;
-  CMyComPtr<ICompressCoder> copyCoder = copyCoderSpec;
   UInt32 i;
-
-  CLocalProgress *lps = new CLocalProgress;
-  CMyComPtr<ICompressProgressInfo> progress = lps;
-  lps->Init(extractCallback, false);
-
-  CLimitedSequentialInStream *streamSpec = new CLimitedSequentialInStream;
-  CMyComPtr<ISequentialInStream> inStream(streamSpec);
-  streamSpec->SetStream(m_Stream);
 
   if (m_Database.LowLevel)
   {
@@ -441,15 +436,17 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       for (i = 0; i < numItems; i++)
         totalSize += m_Database.Items[allFilesMode ? i : indices[i]].Size;
     
-    extractCallback->SetTotal(totalSize);
+    RINOK(extractCallback->SetTotal(totalSize))
     
     for (i = 0; i < numItems; i++, currentTotalSize += currentItemSize)
     {
       currentItemSize = 0;
-      lps->InSize = currentTotalSize; // Change it
-      lps->OutSize = currentTotalSize;
-
-      RINOK(lps->SetCur())
+      {
+        CLocalProgress *lps2 = lps.ClsPtr();
+        lps2->InSize = currentTotalSize; // Change it
+        lps2->OutSize = currentTotalSize;
+        RINOK(lps2->SetCur())
+      }
       CMyComPtr<ISequentialOutStream> realOutStream;
       const Int32 askMode= testMode ?
           NExtract::NAskMode::kTest :
@@ -465,7 +462,7 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
           continue;
         if (!testMode)
         {
-          UInt32 size = m_Database.NewFormatString.Len();
+          const unsigned size = m_Database.NewFormatString.Len();
           RINOK(WriteStream(realOutStream, (const char *)m_Database.NewFormatString, size))
         }
         RINOK(extractCallback->SetOperationResult(NExtract::NOperationResult::kOK))
@@ -492,18 +489,18 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       }
       
       RINOK(InStream_SeekSet(m_Stream, m_Database.ContentOffset + item.Offset))
-      streamSpec->Init(item.Size);
+      inStream->Init(item.Size);
       
-      RINOK(copyCoder->Code(inStream, realOutStream, NULL, NULL, progress))
+      RINOK(copyCoder.Code(inStream, realOutStream, NULL, lps))
       realOutStream.Release();
-      RINOK(extractCallback->SetOperationResult((copyCoderSpec->TotalSize == item.Size) ?
+      RINOK(extractCallback->SetOperationResult((copyCoder.TotalSize == item.Size) ?
           NExtract::NOperationResult::kOK:
           NExtract::NOperationResult::kDataError))
     }
     return S_OK;
   }
   
-  UInt64 lastFolderIndex = ((UInt64)0 - 1);
+  UInt64 lastFolderIndex = (UInt64)0 - 1;
   
   for (i = 0; i < numItems; i++)
   {
@@ -536,10 +533,8 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
 
   RINOK(extractCallback->SetTotal(currentTotalSize))
 
-  NCompress::NLzx::CDecoder *lzxDecoderSpec = NULL;
-  CMyComPtr<IUnknown> lzxDecoder;
-  CChmFolderOutStream *chmFolderOutStream = NULL;
-  CMyComPtr<ISequentialOutStream> outStream;
+  CMyUniquePtr<NCompress::NLzx::CDecoder> lzxDecoder;
+  CMyComPtr2_Create<ISequentialOutStream, CChmFolderOutStream> chmFolderOutStream;
 
   currentTotalSize = 0;
 
@@ -558,7 +553,7 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
     i++;
     const CItem &item = m_Database.Items[m_Database.Indices[index]];
     const UInt64 sectionIndex = item.Section;
-    Int32 askMode= testMode ?
+    const Int32 askMode= testMode ?
         NExtract::NAskMode::kTest :
         NExtract::NAskMode::kExtract;
     
@@ -572,8 +567,11 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       continue;
     }
 
-    lps->InSize = currentTotalSize; // Change it
-    lps->OutSize = currentTotalSize;
+    {
+      CLocalProgress *lps2 = lps.ClsPtr();
+      lps2->InSize = currentTotalSize; // Change it
+      lps2->OutSize = currentTotalSize;
+    }
 
     if (item.Size == 0 || sectionIndex == 0)
     {
@@ -586,9 +584,9 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       if (!testMode && item.Size != 0)
       {
         RINOK(InStream_SeekSet(m_Stream, m_Database.ContentOffset + item.Offset))
-        streamSpec->Init(item.Size);
-        RINOK(copyCoder->Code(inStream, realOutStream, NULL, NULL, progress))
-        if (copyCoderSpec->TotalSize != item.Size)
+        inStream->Init(item.Size);
+        RINOK(copyCoder.Code(inStream, realOutStream, NULL, lps))
+        if (copyCoder.TotalSize != item.Size)
           opRes = NExtract::NOperationResult::kDataError;
       }
       realOutStream.Release();
@@ -624,24 +622,14 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
 
     const CLzxInfo &lzxInfo = section.Methods[0].LzxInfo;
 
-    if (!chmFolderOutStream)
-    {
-      chmFolderOutStream = new CChmFolderOutStream;
-      outStream = chmFolderOutStream;
-    }
+    chmFolderOutStream->Init(&m_Database, extractCallback, testMode != 0);
 
-    chmFolderOutStream->Init(&m_Database, extractCallback, testMode);
-
-    if (!lzxDecoderSpec)
-    {
-      lzxDecoderSpec = new NCompress::NLzx::CDecoder;
-      lzxDecoder = lzxDecoderSpec;
-    }
+    lzxDecoder.Create_if_Empty();
 
     UInt64 folderIndex = m_Database.GetFolder(index);
 
     const UInt64 compressedPos = m_Database.ContentOffset + section.Offset;
-    RINOK(lzxDecoderSpec->SetParams_and_Alloc(lzxInfo.GetNumDictBits()))
+    RINOK(lzxDecoder->Set_DictBits_and_Alloc(lzxInfo.GetNumDictBits()))
 
     const CItem *lastItem = &item;
     extractStatuses.Clear();
@@ -651,12 +639,12 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
     {
       RINOK(extractCallback->SetCompleted(&currentTotalSize))
 
-      UInt64 startPos = lzxInfo.GetFolderPos(folderIndex);
+      const UInt64 startPos = lzxInfo.GetFolderPos(folderIndex);
       UInt64 finishPos = lastItem->Offset + lastItem->Size;
-      UInt64 limitFolderIndex = lzxInfo.GetFolder(finishPos);
+      const UInt64 limitFolderIndex = lzxInfo.GetFolder(finishPos);
 
       lastFolderIndex = m_Database.GetLastFolder(index);
-      UInt64 folderSize = lzxInfo.GetFolderSize();
+      const UInt64 folderSize = lzxInfo.GetFolderSize();
       UInt64 unPackSize = folderSize;
       
       if (extractStatuses.IsEmpty())
@@ -697,9 +685,9 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
       
       try
       {
-        UInt64 startBlock = lzxInfo.GetBlockIndexFromFolderIndex(folderIndex);
+        const UInt64 startBlock = lzxInfo.GetBlockIndexFromFolderIndex(folderIndex);
         const CResetTable &rt = lzxInfo.ResetTable;
-        UInt32 numBlocks = (UInt32)rt.GetNumBlocks(unPackSize);
+        const UInt32 numBlocks = (UInt32)rt.GetNumBlocks(unPackSize);
         
         for (UInt32 b = 0; b < numBlocks; b++)
         {
@@ -708,33 +696,37 @@ Z7_COM7F_IMF(CHandler::Extract(const UInt32 *indices, UInt32 numItems,
           UInt64 bCur = startBlock + b;
           if (bCur >= rt.ResetOffsets.Size())
             return E_FAIL;
-          UInt64 offset = rt.ResetOffsets[(unsigned)bCur];
+          const UInt64 offset = rt.ResetOffsets[(unsigned)bCur];
           UInt64 compressedSize;
           rt.GetCompressedSizeOfBlock(bCur, compressedSize);
           
           // chm writes full blocks. So we don't need to use reduced size for last block
 
           RINOK(InStream_SeekSet(m_Stream, compressedPos + offset))
-          streamSpec->SetStream(m_Stream);
-          streamSpec->Init(compressedSize);
+          inStream->Init(compressedSize);
           
-          lzxDecoderSpec->SetKeepHistory(b > 0);
+          lzxDecoder->Set_KeepHistory(b > 0);
       
-          size_t compressedSizeT = (size_t)compressedSize;
-          if (compressedSizeT != compressedSize)
-            throw 2;
-          packBuf.AllocAtLeast(compressedSizeT);
-
-          HRESULT res = ReadStream_FALSE(inStream, packBuf, compressedSizeT);
-          
-          if (res == S_OK)
+          HRESULT res = S_FALSE;
+          if (compressedSize <= (1u << 30))
           {
-            lzxDecoderSpec->KeepHistoryForNext = true;
-            res = lzxDecoderSpec->Code(packBuf, compressedSizeT, kBlockSize); // rt.BlockSize;
+            const unsigned kAdditionalInputSize = 32;
+            const size_t compressedSizeT = (size_t)compressedSize;
+            const size_t allocSize = compressedSizeT + kAdditionalInputSize;
+            if (allocSize <= compressedSize)
+              throw 2;
+            packBuf.AllocAtLeast(allocSize);
+            res = ReadStream_FALSE(inStream, packBuf, compressedSizeT);
             if (res == S_OK)
-              res = WriteStream(chmFolderOutStream,
-                  lzxDecoderSpec->GetUnpackData(),
-                  lzxDecoderSpec->GetUnpackSize());
+            {
+              memset(packBuf + compressedSizeT, 0xff, kAdditionalInputSize);
+              lzxDecoder->Set_KeepHistoryForNext(true);
+              res = lzxDecoder->Code_WithExceedReadWrite(packBuf, compressedSizeT, kBlockSize); // rt.BlockSize;
+              if (res == S_OK)
+                res = WriteStream(chmFolderOutStream,
+                  lzxDecoder->GetUnpackData(),
+                  lzxDecoder->GetUnpackSize());
+            }
           }
           
           if (res != S_OK)

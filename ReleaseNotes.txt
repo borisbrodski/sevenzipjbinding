@@ -1,24 +1,118 @@
 7-Zip-JBinding Release Notes
 ============================
 
-Unreleased
-----------
+Known issues
+------------
+
+    * None currently tracked.
+      (CVE-2024-11477, the 7-Zip Zstandard decompression issue affecting 23.01-2.x, is resolved
+      as of 26.06-2.3 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
+
+
+Main features of 26.06-2.3 (engine upgrade to 7-Zip 26.06)
+
+    * Upgraded the bundled 7-Zip engine from 23.01 to 26.06 (released 2026-11-06),
+      via the vendored-engine workflow. Brings the upstream format, decoder and
+      bug fixes accumulated since 23.01, including extraction of
+      Zstandard-compressed ZIP entries, the bug and vulnerability fixes of 7-Zip
+      26.04 to 26.06, improved unpacking of Z archives and Mach-O files (26.05)
+      and improved support for split files created by the Linux "split" utility
+      (26.06).
+
+    * Security: resolves CVE-2024-11477 (7-Zip Zstandard decompression, severity
+      HIGH, CVSS 7.8). The 26.06 engine postdates the upstream fix released in
+      7-Zip 24.07, so the Zstandard known-issue from 23.01-2.x no longer applies.
+      Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
+
+    * New platform: FreeBSD (amd64). A native FreeBSD x86_64 library (platform
+      'FreeBSD-amd64'), built and tested on FreeBSD 14 (clang + OpenJDK), passing
+      the full suite. Runtime auto-detection selects it on a native FreeBSD JVM
+      (os.name=FreeBSD); it is also included in the -all-platforms jar. (Note: on
+      the Linux compatibility layer the existing Linux-amd64 library also works.)
 
     * New platform: Windows on Arm (arm64). A native aarch64 Windows library
       (platform 'Windows-arm64'), built with the llvm-mingw GCC-style toolchain
       and included in the AllWindows and AllPlatforms jars. The -all-platforms
       jar auto-detects and loads it on a native arm64 Windows JVM.
 
+    * macOS: per-architecture artifacts. BREAKING for Maven/Gradle users on macOS:
+        - sevenzipjbinding-all-mac     universal library (Intel + Apple Silicon); the
+                                       macOS library inside -all-platforms
+        - sevenzipjbinding-mac-arm64   Apple Silicon only (smaller)
+        - sevenzipjbinding-mac-x86_64  Intel only (smaller)
+      The universal artifact sevenzipjbinding-mac is no longer published: depend
+      on -all-mac instead. sevenzipjbinding-mac-x86_64 was an alias of the
+      universal library and is now Intel-only - on Apple Silicon switch to
+      -all-mac or -mac-arm64. -all-platforms users are not affected.
 
-Known issues
-------------
+    * Documentation: new "Extraction masterclass" page - fast, safe and correct
+      extraction (one pass over solid archives, a byte-only callback, path
+      traversal/link/nameless-entry protection, complete error accounting) with
+      complete, tested examples; new snippets for extracting to a folder and for
+      wrapped archives (.tar.gz).
 
-    * CVE-2024-11477 (7-Zip Zstandard decompression, severity HIGH, CVSS 7.8)
-        The bundled 7-Zip engine (23.01) predates the upstream fix, released in 7-Zip 24.07.
-        Processing untrusted Zstandard-compressed data may be affected. Mitigation: do not
-        open/extract untrusted Zstandard input. Planned to be addressed in a later release by
-        upgrading the bundled engine to 24.07 or newer.
-        Tracking: https://github.com/borisbrodski/sevenzipjbinding/issues/72
+    * Distribution: release zips no longer include website.zip (an offline copy
+      of the old web site). Documentation: https://sevenzipjbind.sourceforge.net/
+      JavaDoc still ships inside every zip as javadoc.zip. Every zip now also
+      contains License.txt (the 7-Zip engine license: LGPL with the unRAR
+      restriction, and BSD licenses for a few decoder files).
+
+    * New item properties: PropID.USER_ID, GROUP_ID (Tar/Cpio owner ids),
+      DEVICE_MAJOR/DEVICE_MINOR (Tar device entries), DEV_MAJOR/DEV_MINOR
+      (Cpio), CHANGE_TIME (NTFS/UDF), ARC_FILE_NAME, IS_HASH - the engine
+      reported them before, but Java showed them as UNKNOWN. New
+      NFileTimeType.NANOSECONDS (1 ns time precision).
+
+    * Fixed: a native library that can't be copied into the temporary
+      directory is now reported as the declared
+      SevenZipNativeInitializationException (and via
+      SevenZip.getLastInitializationException()), not a plain RuntimeException.
+      A partially written library file is removed.
+
+    * Fixed (also affects 23.01-2.2): the JVM could abort during extraction
+      with "FATAL ERROR: Method not found: reportExtractResult()". The native
+      code looked up IArchiveExtractCallback.reportExtractResult() with a
+      malformed JNI signature, so the call failed whenever the engine used it -
+      e.g. when a 7z solid block fails to decode after all requested files were
+      written (seen with a wrong or missing password). Both extract() and
+      extractSlow() were affected. The block-level result now reaches
+      reportExtractResult() (BLOCK_INDEX, DATAERROR) and extraction continues.
+
+    * Fixed bug #77 (also affects 23.01-2.2 and all previous releases): 7z compression
+      features set together canceled each other out - of compression level, header
+      encryption, thread count and solid settings only the last applied one took
+      effect. Security-relevant: setHeaderEncryption(true) was silently lost as soon as
+      the thread count or a solid setting was set too, so the file names stayed
+      readable without the password. Archives created with several of these features
+      now get all of them - expect different sizes than before. Fixed by mrjo118
+      (pull request #93). https://github.com/borisbrodski/sevenzipjbinding/issues/77
+
+    * Fixed crashes of other C++ code in the same process (Linux; also affects 23.01-2.2
+      and earlier): the native library exported its statically linked C++ runtime,
+      whose process-wide (GNU-unique) symbols clashed with the system libstdc++.so.6
+      loaded later, e.g. by another JNI library. The Linux and FreeBSD libraries now
+      export only their JNI entry points and are 16-35% smaller, depending on the
+      platform; system requirements are unchanged. Contributed by Alexandru Sclearuc
+      (pull request #95).
+
+    * Fixed JNI reference handling (also affects 23.01-2.2 and earlier): multithreaded 7z
+      compression used a thread-local JNI reference on 7-Zip's worker threads. HotSpot
+      tolerates it, but JVMs that check references (e.g. -Xcheck:jni) abort. Per-item
+      local reference leaks in the extract, update and volume callbacks are fixed too
+      (follow-up to pull request #66), and boxing property values from native code
+      now checks for a pending exception as the JNI specification requires.
+
+    * Fixed regression of 23.01-2.2: split archives (x.7z.001, x.7z.002, ...) couldn't be
+      opened with an IArchiveOpenVolumeCallback - opening failed with "returns stream=null
+      for volume 'x.7z.005'" after the last volume.
+
+    * Java API: additions only, binary and source compatible with 23.01-2.2
+      (checked with japicmp): existing Java code is unaffected (see the macOS
+      artifact change above for Maven/Gradle coordinates). One exception: the
+      internal class impl.OutArchiveImpl lost its four protected native setters
+      (bug #77 fix), which matters only for code subclassing it. The complete build
+      + runtime test matrix is green on the new engine (Linux glibc & musl on
+      arm/x86, Windows x86/x64/arm64, macOS arm64 & x86_64, FreeBSD amd64).
 
 
 Main features of 23.01-2.2 (Release, extraction/compression/update, cross-platform, based on 7-Zip 23.01)

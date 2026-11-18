@@ -11,6 +11,8 @@ import net.sf.sevenzipjbinding.junit.bug.CallMethodsOnClosedInStreamTest;
 import net.sf.sevenzipjbinding.junit.bug.CallMethodsOnClosedOutStreamTest;
 import net.sf.sevenzipjbinding.junit.bug.OpenMultipartCabWithNonVolumedCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.RarPasswordToLongCrash;
+import net.sf.sevenzipjbinding.junit.bug.ReportExtractResultBlockErrorTest;
+import net.sf.sevenzipjbinding.junit.bug.OpenSplitArchiveWithVolumeCallbackTest;
 import net.sf.sevenzipjbinding.junit.bug.SevenZipInTar;
 import net.sf.sevenzipjbinding.junit.bug.Ticket18NullAsPassword;
 import net.sf.sevenzipjbinding.junit.bug.WrongCRCGetterInSimpleInterface;
@@ -22,6 +24,7 @@ import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedAr
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevelRatioImpact;
+import net.sf.sevenzipjbinding.junit.compression.CompressFeatureCombinations7zTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetSolid;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetThreadCount;
 import net.sf.sevenzipjbinding.junit.compression.CompressGenericSingleFile7zPassHeaderTest;
@@ -85,7 +88,8 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipT
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive;
-import net.sf.sevenzipjbinding.junit.initialization.InitializationDoesNotVerifyArtifactsTest;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationCopyFailureTest;
+import net.sf.sevenzipjbinding.junit.initialization.InitializationRestoresBrokenArtifactsTest;
 import net.sf.sevenzipjbinding.junit.initialization.StandardInitializationTest;
 import net.sf.sevenzipjbinding.junit.initialization.VersionTest;
 import net.sf.sevenzipjbinding.junit.jbindingtools.CHeadCacheInStreamTest;
@@ -95,6 +99,9 @@ import net.sf.sevenzipjbinding.junit.jbindingtools.JBindingTest;
 import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
+import net.sf.sevenzipjbinding.junit.misc.JniReferencesTest;
+import net.sf.sevenzipjbinding.junit.misc.NativeLibraryExportsTest;
+import net.sf.sevenzipjbinding.junit.misc.PropertyIdsTest;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength100;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength2;
@@ -217,6 +224,10 @@ import net.sf.sevenzipjbinding.junit.snippets.CompressNonGenericZipTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressWithErrorTest;
 import net.sf.sevenzipjbinding.junit.snippets.CompressWithPasswordTest;
 import net.sf.sevenzipjbinding.junit.snippets.ExtractItemsTest;
+import net.sf.sevenzipjbinding.junit.snippets.ExtractNestedArchiveStreamingTest;
+import net.sf.sevenzipjbinding.junit.snippets.ExtractNestedArchiveTest;
+import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolderErrorTest;
+import net.sf.sevenzipjbinding.junit.snippets.ExtractToFolderTest;
 import net.sf.sevenzipjbinding.junit.snippets.FirstStepsSimpleSnippets;
 import net.sf.sevenzipjbinding.junit.snippets.GetNumberOfItemInArchive;
 import net.sf.sevenzipjbinding.junit.snippets.ListItemsTest;
@@ -262,6 +273,8 @@ public class AllTestSuite extends TestSuite {
             SevenZipInTar.class, //
             CallMethodsOnClosedInStreamTest.class, //
             CallMethodsOnClosedOutStreamTest.class, //
+            ReportExtractResultBlockErrorTest.class, //
+            OpenSplitArchiveWithVolumeCallbackTest.class, //
     };
 
     static Class<?>[] multipleFilesTests = { //
@@ -360,6 +373,10 @@ public class AllTestSuite extends TestSuite {
     static Class<?>[] snippetsTests = { //
     /*    */GetNumberOfItemInArchive.class, //
             ExtractItemsTest.class, //
+            ExtractNestedArchiveStreamingTest.class, //
+            ExtractNestedArchiveTest.class, //
+            ExtractToFolderErrorTest.class, //
+            ExtractToFolderTest.class, //
             FirstStepsSimpleSnippets.class, //
             ListItemsTest.class, //
             OpenMultipartArchive7zTest.class, //
@@ -436,6 +453,7 @@ public class AllTestSuite extends TestSuite {
             CompressFeatureSetLevelRatioImpact.class, //
             CompressFeatureSetSolid.class, //
             CompressFeatureSetThreadCount.class, //
+            CompressFeatureCombinations7zTest.class, //
 
             CompressGenericSingleFile7zPassHeaderTest.class, //
             CompressGenericSingleFile7zPassNullTest.class, //
@@ -487,12 +505,16 @@ public class AllTestSuite extends TestSuite {
     static Class<?>[] miscTests = { //
             ArchiveWithTwoPasswordsTest.class, //
             net.sf.sevenzipjbinding.PlatformArchDetectorTest.class, //
+            PropertyIdsTest.class, //
+            InitializationCopyFailureTest.class, //
+            NativeLibraryExportsTest.class, //
+            JniReferencesTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //
     };
     static Class<?>[] initVerifyTests = { //
-    /*    */InitializationDoesNotVerifyArtifactsTest.class, //
+    /*    */InitializationRestoresBrokenArtifactsTest.class, //
     };
     static SortedMap<String, Class<?>[]> tests = new TreeMap<String, Class<?>[]>();
 

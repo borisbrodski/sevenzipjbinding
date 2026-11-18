@@ -106,8 +106,8 @@ JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IArchiveExtractCallback)
 	JT_INTERFACE_METHOD(Void, setOperationResult, JT_EXTRACT_OPERATION_RESULT(extractOperationResult, _))
 
 	// public default void reportExtractResult(ReportExtractResultIndexType indexType, int index, ExtractOperationResult extractOperationResult)
-	JT_INTERFACE_METHOD(Void, reportExtractResult, 
-			JT_PARAM(Object, SEVEN_ZIP_PACKAGE "/ReportExtractResultIndexType", indexType, 
+	JT_INTERFACE_METHOD(Void, reportExtractResult,
+			JT_REPORT_EXTRACT_RESULT_INDEX_TYPE(indexType,
 				JT_INT(index, JT_EXTRACT_OPERATION_RESULT(extractOperationResult, _))))
 JT_END_INTERFACE
 

@@ -80,14 +80,8 @@ public interface ISimpleInArchiveItem {
     /**
      * Return item attributes.<br>
      * <br>
-     * Supported by the following formats:
-     * <ul>
-     * <li> <code>Zip</code>
-     * <li> <code>7Z</code>
-     * <li> <code>Arj</code>
-     * <li> <code>Cab</code>
-     * <li> <code>Rar</code>
-     * </ul>
+     * Availability depends on the archive format and on what the archive stores (for example 7z, Zip, Rar, Tar
+     * and file system images such as NTFS provide it; stream formats such as BZip2 usually do not).
      * 
      * @return attributes of item<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
@@ -101,11 +95,8 @@ public interface ISimpleInArchiveItem {
     /**
      * Return creation date and time of the item.<br>
      * <br>
-     * Supported by the following formats:
-     * <ul>
-     * <li> <code>7Z</code>
-     * <li> <code>Rar</code>
-     * </ul>
+     * Availability depends on the archive format and on what the archive stores (for example 7z, Zip, Rar, Tar
+     * and file system images such as NTFS provide it; stream formats such as BZip2 usually do not).
      * 
      * @return creation date and time of the item<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
@@ -119,11 +110,8 @@ public interface ISimpleInArchiveItem {
     /**
      * Return last access date and time of the item.<br>
      * <br>
-     * Supported by the following formats:
-     * <ul>
-     * <li> <code>7Z</code>
-     * <li> <code>Rar</code>
-     * </ul>
+     * Availability depends on the archive format and on what the archive stores (for example 7z, Zip, Rar, Tar
+     * and file system images such as NTFS provide it; stream formats such as BZip2 usually do not).
      * 
      * @return last access date and time of the item.<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.
@@ -137,14 +125,7 @@ public interface ISimpleInArchiveItem {
     /**
      * Return last write date and time of the item.<br>
      * <br>
-     * Supported by all formats <b>except</b> the following:
-     * <ul>
-     * <li> <code>BZ2</code>
-     * <li> <code>Chm</code>
-     * <li> <code>RPM</code>
-     * <li> <code>Split</code>
-     * <li> <code>Z</code>
-     * </ul>
+     * Supported by most formats. Not available e.g. for BZip2, Chm, Split and Z.
      * 
      * @return last write date and time of the item<br>
      *         <code>null</code> will be returned, if current archive type doesn't support this property.

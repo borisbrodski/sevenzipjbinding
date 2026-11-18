@@ -3,6 +3,8 @@
 *.tmp
 *.so
 *.jar
+# test-time dependencies are checked in
+!test/JavaTests/lib/*.jar
 jbinding-java/bin
 test/JavaTests/bin
 .svn
@@ -38,3 +40,4 @@ Session.vim
 /compile_commands.json
 /.cache/
 /.clangd/
+

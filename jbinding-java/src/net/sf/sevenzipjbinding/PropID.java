@@ -11,12 +11,13 @@ import java.util.Date;
  */
 public enum PropID {
     /**
-     * Dummy property1. First real property should have an item 2. So skip the position 2.
+     * Placeholder for the engine's property id 0 (<code>kpidNoProperty</code>). Not a real property.
      */
     NO_PROPERTY1,
 
     /**
-     * Dummy property2. First real property should have an item 2. So skip the position 1.
+     * Placeholder for the engine's property id 1 (<code>kpidMainSubfile</code>, used by the engine internally). Not
+     * a real item property.
      */
     NO_PROPERTY2,
 
@@ -35,7 +36,7 @@ public enum PropID {
     PATH, //
 
     /**
-     * In {@link IArchiveOpenCallback}: Name of the volume to get
+     * Name of an item. In {@link IArchiveOpenVolumeCallback#getProperty(PropID)}: the file name of the volume.
      */
     NAME, //
 
@@ -230,9 +231,83 @@ public enum PropID {
     OUT_NAME, //
     COPY_LINK, //
 
+    /**
+     * Name of the archive file itself, as reported by some handlers.<br>
+     * Type: {@link String}
+     *
+     * @since 26.06-2.3
+     */
+    ARC_FILE_NAME, //
+
+    /**
+     * Flag indicating a hash archive (checksum file).<br>
+     * Type: {@link Boolean}
+     *
+     * @since 26.06-2.3
+     */
+    IS_HASH, //
+
+    /**
+     * Change time of the item's metadata (for example the NTFS MFT record change time or the UDF attribute time).<br>
+     * Type: {@link java.util.Date}
+     *
+     * @since 26.06-2.3
+     */
+    CHANGE_TIME, //
+
+    /**
+     * Numeric user id of the item owner, for example from Tar and Cpio archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    USER_ID, //
+
+    /**
+     * Numeric group id of the item owner, for example from Tar and Cpio archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    GROUP_ID, //
+
+    /**
+     * Major device number of a device item (character or block device), for example from Tar archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    DEVICE_MAJOR, //
+
+    /**
+     * Minor device number of a device item (character or block device), for example from Tar archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    DEVICE_MINOR, //
+
+    /**
+     * Major number of the device containing the item, for example from Cpio archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    DEV_MAJOR, //
+
+    /**
+     * Minor number of the device containing the item, for example from Cpio archives.<br>
+     * Type: {@link Integer}
+     *
+     * @since 26.06-2.3
+     */
+    DEV_MINOR, //
+
+    /**
+     * Number of properties defined by the 7-Zip engine. Not a real property.
+     */
     NUM_DEFINED, //
 
-    // TODO Add test to ensure "kpidLink"(c++) == "LINK" (java)
 
     USER_DEFINED(0x10000), //
 

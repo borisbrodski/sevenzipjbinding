@@ -3,7 +3,6 @@
 #ifndef ZIP7_WINDOWS_SHELL_H
 #define ZIP7_WINDOWS_SHELL_H
 
-#include "../Common/Common.h"
 #include "../Common/MyWindows.h"
 #if defined(__MINGW32__) || defined(__MINGW64__)
 #include <shlobj.h>
@@ -13,7 +12,7 @@
 
 #include "../Common/MyString.h"
 
-#include "Defs.h"
+#include "WinDefs.h"
 
 namespace NWindows {
 namespace NShell {
@@ -45,7 +44,7 @@ public:
   }
   operator LPITEMIDLIST() { return m_Object;}
   operator LPCITEMIDLIST() const { return m_Object;}
-  LPITEMIDLIST* operator&() { return &m_Object; }
+  LPITEMIDLIST* operator&() Z7_lifetimebound { return &m_Object; }
   LPITEMIDLIST operator->() { return m_Object; }
 
   // CItemIDList& operator=(LPCITEMIDLIST object);

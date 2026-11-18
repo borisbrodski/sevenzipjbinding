@@ -40,7 +40,7 @@ INCLUDE(cmake/FindJavaExtended.cmake)
 
 
 # Change version also in SevenZip.SEVENZIPJBINDING_VERSION
-SET(SEVENZIPJBINDING_VERSON 23.01-2.2)
+SET(SEVENZIPJBINDING_VERSON 26.06-2.3)
 
 
 
@@ -61,11 +61,20 @@ IF("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin") # TODO Switch to JAVA_SYSTEM
     ENDFOREACH()
 ENDIF()
 
-# On Mac the single universal library is published as one platform named just "Mac" (no arch
-# suffix): one fat dylib serves every 64-bit Mac, so both the standalone Mac platform jar and the
-# Mac entry inside AllPlatform work on Intel and Apple Silicon alike. Other systems keep <sys>-<arch>.
+# macOS platform id depends on how many arches this build targets:
+#   * SINGLE arch  -> "Mac-x86_64" / "Mac-arm64" (a thin dylib). Customers shipping only one Mac arch
+#     use these and avoid carrying the other slice. The "Mac-<arch>" names match the runtime
+#     autodetection candidates in SevenZip.getPlatformBestMatch (arm64/aarch64, amd64/x86_64).
+#   * UNIVERSAL build (JAVA_ARCH is a list, e.g. "x86_64;arm64") -> "AllMac": one fat dylib for every
+#     64-bit Mac. AllMac is the Mac entry that goes into the AllPlatforms bundle (getPlatformBestMatch
+#     recognizes it as the Mac universal). Other systems keep <sys>-<arch>.
 IF("${JAVA_SYSTEM}" STREQUAL "Mac")
-    SET(PLATFORM ${JAVA_SYSTEM})
+    LIST(LENGTH JAVA_ARCH _MAC_ARCH_COUNT)
+    IF(_MAC_ARCH_COUNT GREATER 1)
+        SET(PLATFORM "AllMac")
+    ELSE()
+        SET(PLATFORM "Mac-${JAVA_ARCH}")
+    ENDIF()
 ELSE()
     SET(PLATFORM ${JAVA_SYSTEM}-${JAVA_ARCH})
 ENDIF()
@@ -90,6 +99,12 @@ ELSE()
     SET(PATH_SEP ":")
 ENDIF()
 
+# Version of the javac that compiles the jars, for the manifest's Created-By (JDK 8 prints it to stderr).
+EXECUTE_PROCESS(COMMAND "${JAVA_COMPILE}" -version
+                OUTPUT_VARIABLE JAVAC_VERSION_OUT ERROR_VARIABLE JAVAC_VERSION_ERR
+                OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_STRIP_TRAILING_WHITESPACE)
+STRING(REGEX REPLACE "^javac +" "" JAVAC_VERSION "${JAVAC_VERSION_OUT}${JAVAC_VERSION_ERR}")
+
 MACRO(GENERATE_MANIFEST_MF
     MANIFEST_FILE
     TITLE
@@ -98,7 +113,7 @@ MACRO(GENERATE_MANIFEST_MF
     FILE(WRITE "${MANIFEST_FILE}"
 "Manifest-Version: 1.0
 CMake: ${CMAKE_VERSION}
-Created-By: 1.6.0_33-b03 (Sun Microsystems Inc.)
+Created-By: ${JAVAC_VERSION} (7-Zip-JBinding, Java 8 target)
 Implementation-Title: ${TITLE}
 Implementation-Vendor: sevenzipjbind.sf.net
 Implementation-Version: ${SEVENZIPJBINDING_VERSON}
@@ -308,26 +323,12 @@ SET(PREPACKAGE_ACTIONS
     FILE(MAKE_DIRECTORY \"${JAVADOC_DIR}\")
     EXECUTE_PROCESS(COMMAND \"${JAVA_DOC}\"
                                 -public -version -author -quiet
-                                -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src 
+                                -windowtitle \"7-Zip-JBinding ${SEVENZIPJBINDING_VERSON} API\"
+                                -doctitle \"7-Zip-JBinding ${SEVENZIPJBINDING_VERSON} API\"
+                                -sourcepath ${PROJECT_SOURCE_DIR}/jbinding-java/src
                                 -subpackages net.sf.sevenzipjbinding 
                                 -d ${JAVADOC_DIR}
                     WORKING_DIRECTORY .
-    )
-    
-    # Copy javadoc back into the source folder
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
-                                -E copy_directory
-                                .
-                                \"${PROJECT_SOURCE_DIR}/doc/web/javadoc\"
-                    WORKING_DIRECTORY \"${JAVADOC_DIR}\"
-    )
-    
-    # Generate web site
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND}
-                                -D SEVENZIPJBINDING_VERSION=${SEVENZIPJBINDING_VERSON}
-                                -P \"${PROJECT_SOURCE_DIR}/doc/build_html.cmake\"
-                                ${PROJECT_SOURCE_DIR}/doc/web/javadoc
-                    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/\"
     )
     
     COPY_FROM_SRC(\"${PROJECT_SOURCE_DIR}/jbinding-java/src\" \"${PREPACKAGE_TMP}/java-src/\" \"\")
@@ -342,8 +343,6 @@ SET(PREPACKAGE_ACTIONS
     EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/javadoc.zip .
     WORKING_DIRECTORY ${JAVADOC_DIR})
 
-    EXECUTE_PROCESS(COMMAND \"${JAVA_ARCHIVE}\" cMf ${PREPACKAGE_TMP}/website.zip .
-    WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/doc/web\")
 "
 )
 
@@ -355,6 +354,7 @@ INSTALL(FILES   AUTHORS
                 ChangeLog
                 COPYING
                 LGPL
+                License.txt
                 README.md
                 ReleaseNotes.txt
                 THANKS
@@ -369,7 +369,6 @@ INSTALL(FILES   ${SEVENZIPJBINDING_JAR}
 INSTALL(FILES   ${PREPACKAGE_TMP}/java-src.zip
                 ${PREPACKAGE_TMP}/cpp-src.zip
                 ${PREPACKAGE_TMP}/javadoc.zip
-                ${PREPACKAGE_TMP}/website.zip
         DESTINATION .)
 
 #INSTALL(DIRECTORY ${JAVADOC_DIR}/

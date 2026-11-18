@@ -2,6 +2,8 @@
 
 #include "StdAfx.h"
 
+#include "../../../C/CpuArch.h"
+
 #include "../../Common/Defs.h"
 
 #include "QuantumDecoder.h"
@@ -11,184 +13,333 @@ namespace NQuantum {
 
 static const unsigned kNumLenSymbols = 27;
 static const unsigned kMatchMinLen = 3;
-static const unsigned kNumSimplePosSlots = 4;
 static const unsigned kNumSimpleLenSlots = 6;
 
-static const UInt16 kUpdateStep = 8;
-static const UInt16 kFreqSumMax = 3800;
-static const unsigned kReorderCountStart = 4;
+static const unsigned kUpdateStep = 8;
+static const unsigned kFreqSumMax = 3800;
+static const unsigned kReorderCount_Start = 4;
 static const unsigned kReorderCount = 50;
 
-void CModelDecoder::Init(unsigned numItems)
-{
-  NumItems = numItems;
-  ReorderCount = kReorderCountStart;
-  for (unsigned i = 0; i < numItems; i++)
-  {
-    Freqs[i] = (UInt16)(numItems - i);
-    Vals[i] = (Byte)i;
-  }
-  Freqs[numItems] = 0;
-}
 
-unsigned CModelDecoder::Decode(CRangeDecoder *rc)
+class CRangeDecoder
 {
-  const UInt32 threshold = rc->GetThreshold(Freqs[0]);
-  unsigned i;
-  for (i = 1; Freqs[i] > threshold; i++);
+  UInt32 Code;
+  UInt32 Range;
+  UInt32 Low;
+
+  unsigned _bitOffset;
+  const Byte *_buf;
+  const Byte *_bufLim;
+
+public:
+
+  Z7_FORCE_INLINE
+  void Init(const Byte *inData, size_t inSize)
+  {
+    Code = ((UInt32)*inData << 8) | inData[1];
+    Range = 1 << 16;
+    Low = 0;
+    _bitOffset = 0;
+    _buf = inData + 2;
+    _bufLim = inData + inSize;
+  }
+
+  Z7_FORCE_INLINE
+  bool WasExtraRead() const
+  {
+    return _buf > _bufLim;
+  }
+
+  Z7_FORCE_INLINE
+  UInt32 ReadBits(unsigned numBits) // numBits > 0
+  {
+    unsigned bitOffset = _bitOffset;
+    const Byte *buf = _buf;
+    const UInt32 res = GetBe32(buf) << bitOffset;
+    bitOffset += numBits;
+    _buf = buf + (bitOffset >> 3);
+    _bitOffset = bitOffset & 7;
+    return res >> (32 - numBits);
+  }
+
+  Z7_FORCE_INLINE
+  bool Finish() const
+  {
+    // if ((Low + Code) & 0x3fff) return false; // do we need this additional check?
+    const unsigned bitOffset = _bitOffset;
+    const Byte *buf = _buf;
+    if ((Byte)(buf[0] << bitOffset))
+      return false;
+    buf++;
+    if (bitOffset > 8 - 2)
+    {
+      if (*buf)
+        return false;
+      buf++;
+    }
+    return buf == _bufLim;
+  }
+
+  Z7_FORCE_INLINE
+  UInt32 GetThreshold(UInt32 total) const
+  {
+    return ((Code + 1) * total - 1) / Range;
+  }
   
-  rc->Decode(Freqs[i], Freqs[(size_t)i - 1], Freqs[0]);
-  const unsigned res = Vals[--i];
-  
-  do
-    Freqs[i] = (UInt16)(Freqs[i] + kUpdateStep);
-  while (i--);
-  
+  Z7_FORCE_INLINE
+  void Decode(UInt32 start, UInt32 end, UInt32 total)
+  {
+    UInt32 hi = Low + end * Range / total;
+    hi = 0 - hi; // hi = ~(hi - 1);
+    UInt32 lo = start * Range / total;
+    Code -= lo;
+    lo += Low;
+    unsigned numBits = 0;
+    lo ^= hi;
+    while (lo & (1u << 15))
+    {
+      lo <<= 1;
+      hi <<= 1;
+      numBits++;
+    }
+    lo ^= hi;
+    UInt32 an = lo & hi;
+    while (an & (1u << 14))
+    {
+      an <<= 1;
+      lo <<= 1;
+      hi <<= 1;
+      numBits++;
+    }
+    Low = lo;
+    Range = 0u - hi - lo; // Range = ~hi - lo + 1;
+    if (numBits)
+      Code = (Code << numBits) + ReadBits(numBits); // numBits <= 16
+  }
+};
+
+
+// Z7_FORCE_INLINE
+Z7_NO_INLINE
+unsigned CModelDecoder::Decode(CRangeDecoder *rc) throw()
+{
   if (Freqs[0] > kFreqSumMax)
   {
     if (--ReorderCount == 0)
     {
       ReorderCount = kReorderCount;
-      for (i = 0; i < NumItems; i++)
-        Freqs[i] = (UInt16)(((Freqs[i] - Freqs[(size_t)i + 1]) + 1) >> 1);
-      for (i = 0; i < NumItems - 1; i++)
-        for (unsigned j = i + 1; j < NumItems; j++)
-          if (Freqs[i] < Freqs[j])
-          {
-            const UInt16 tmpFreq = Freqs[i];
-            const Byte tmpVal = Vals[i];
-            Freqs[i] = Freqs[j];
-            Vals[i] = Vals[j];
-            Freqs[j] = tmpFreq;
-            Vals[j] = tmpVal;
-          }
-      
+      {
+        unsigned i = NumItems;
+        unsigned next = 0;
+        UInt16 *freqs = &Freqs[i];
+        do
+        {
+          const unsigned freq = *--freqs;
+          *freqs = (UInt16)((freq - next + 1) >> 1);
+          next = freq;
+        }
+        while (--i);
+      }
+      {
+        const unsigned numItems_minus1 = NumItems - 1;
+        for (unsigned i = 0; i < numItems_minus1; i++)
+        {
+          UInt16 freq = Freqs[i];
+          unsigned k = i + 1;
+          do
+            if (freq < Freqs[k])
+            {
+              const UInt16 freq2 = Freqs[k];
+              Freqs[k] = freq;
+              Freqs[i] = freq2;
+              freq = freq2;
+              const Byte val = Vals[i];
+              Vals[i] = Vals[k];
+              Vals[k] = val;
+            }
+          while (++k <= numItems_minus1);
+        }
+      }
+      unsigned i = NumItems;
+      unsigned freq = 0;
+      UInt16 *freqs = &Freqs[i];
       do
-        Freqs[i] = (UInt16)(Freqs[i] + Freqs[(size_t)i + 1]);
-      while (i--);
+      {
+        freq += *--freqs;
+        *freqs = (UInt16)freq;
+      }
+      while (--i);
     }
     else
     {
-      i = NumItems - 1;
+      unsigned i = NumItems;
+      unsigned next = 1;
+      UInt16 *freqs = &Freqs[i];
       do
       {
-        Freqs[i] = (UInt16)(Freqs[i] >> 1);
-        if (Freqs[i] <= Freqs[(size_t)i + 1])
-          Freqs[i] = (UInt16)(Freqs[(size_t)i + 1] + 1);
+        unsigned freq = *--freqs >> 1;
+        if (freq < next)
+          freq = next;
+        *freqs = (UInt16)freq;
+        next = freq + 1;
       }
-      while (i--);
+      while (--i);
     }
   }
-  
-  return res;
+  {
+    const unsigned freq0 = Freqs[0];
+    const unsigned threshold = rc->GetThreshold(freq0);
+    UInt16 *freqs = &Freqs[0];
+    unsigned freq = freq0;
+    do
+    {
+      *freqs++ = (UInt16)(freq + kUpdateStep);
+      freq = *freqs;
+    }
+    while (freq > threshold);
+    const unsigned res = Vals[freqs - Freqs - 1];
+    rc->Decode(freq, freqs[-1] - kUpdateStep, freq0);
+    return res;
+  }
 }
 
 
-void CDecoder::Init()
+Z7_NO_INLINE
+void CModelDecoder::Init(unsigned numItems, unsigned startVal) throw()
 {
-  m_Selector.Init(kNumSelectors);
-  unsigned i;
-  for (i = 0; i < kNumLitSelectors; i++)
-    m_Literals[i].Init(kNumLitSymbols);
-  const unsigned numItems = (_numDictBits == 0 ? 1 : (_numDictBits << 1));
-  const unsigned kNumPosSymbolsMax[kNumMatchSelectors] = { 24, 36, 42 };
-  for (i = 0; i < kNumMatchSelectors; i++)
-    m_PosSlot[i].Init(MyMin(numItems, kNumPosSymbolsMax[i]));
-  m_LenSlot.Init(kNumLenSymbols);
+  NumItems = numItems;
+  ReorderCount = kReorderCount_Start;
+  UInt16 *freqs = Freqs;
+  freqs[numItems] = 0;
+  Byte *vals = Vals;
+  do
+  {
+    *freqs++ = (UInt16)numItems;
+    *vals++ = (Byte)startVal;
+    startVal++;
+  }
+  while (--numItems);
 }
 
 
-HRESULT CDecoder::CodeSpec(const Byte *inData, size_t inSize, UInt32 outSize)
+HRESULT CDecoder::CodeChunk_32KB_ExceedRead_Solid(const Byte *inData, size_t inSize, UInt32 outSize) throw()
 {
   if (inSize < 2)
     return S_FALSE;
-
   CRangeDecoder rc;
-  rc.Stream.SetStreamAndInit(inData, inSize);
-  rc.Init();
+  rc.Init(inData, inSize);
+  const UInt32 winSize = _winSize;
+  Byte *pos;
+  {
+    UInt32 winPos = _winPos;
+    if (winPos == winSize)
+    {
+      winPos = 0;
+      _winPos = winPos;
+      _overWin = true;
+    }
+    if (outSize > winSize - winPos)
+      return S_FALSE;
+    pos = _win + winPos;
+  }
 
   while (outSize != 0)
   {
-    if (rc.Stream.WasExtraRead())
+    if (rc.WasExtraRead())
       return S_FALSE;
 
-    unsigned selector = m_Selector.Decode(&rc);
+    const unsigned selector = m_Selector.Decode(&rc);
     
     if (selector < kNumLitSelectors)
     {
-      const Byte b = (Byte)((selector << (8 - kNumLitSelectorBits)) + m_Literals[selector].Decode(&rc));
-      _outWindow.PutByte(b);
-      outSize--;
+      *pos++ = (Byte)m_Literals[selector].Decode(&rc);
+      --outSize;
     }
     else
     {
-      selector -= kNumLitSelectors;
-      unsigned len = selector + kMatchMinLen;
+      unsigned len = selector - kNumLitSelectors + kMatchMinLen;
     
-      if (selector == 2)
+      if (selector == kNumLitSelectors + kNumMatchSelectors - 1)
       {
-        unsigned lenSlot = m_LenSlot.Decode(&rc);
-        if (lenSlot >= kNumSimpleLenSlots)
+        len = m_LenSlot.Decode(&rc);
+        if (len >= kNumSimpleLenSlots + kMatchMinLen + kNumMatchSelectors - 1)
         {
-          lenSlot -= 2;
-          const unsigned numDirectBits = (unsigned)(lenSlot >> 2);
-          len += ((4 | (lenSlot & 3)) << numDirectBits) - 2;
+          len -= kNumSimpleLenSlots - 4 + kMatchMinLen + kNumMatchSelectors - 1;
+          const unsigned numDirectBits = (unsigned)(len >> 2);
+          len = ((4 | (len & 3)) << numDirectBits) - (4 << 1)
+              + kNumSimpleLenSlots
+              + kMatchMinLen + kNumMatchSelectors - 1;
           if (numDirectBits < 6)
-            len += rc.Stream.ReadBits(numDirectBits);
+            len += rc.ReadBits(numDirectBits);
         }
-        else
-          len += lenSlot;
       }
       
-      UInt32 dist = m_PosSlot[selector].Decode(&rc);
-      
-      if (dist >= kNumSimplePosSlots)
+      UInt32 dist = m_PosSlot[(size_t)selector - kNumLitSelectors].Decode(&rc);
+      if (dist >= 4)
       {
-        unsigned numDirectBits = (unsigned)((dist >> 1) - 1);
-        dist = ((2 | (dist & 1)) << numDirectBits) + rc.Stream.ReadBits(numDirectBits);
+        const unsigned numDirectBits = (unsigned)((dist - 2) >> 1);
+        dist = ((2 | (dist & 1)) << numDirectBits) + rc.ReadBits(numDirectBits);
       }
       
-      unsigned locLen = len;
-      if (len > outSize)
-        locLen = (unsigned)outSize;
-      if (!_outWindow.CopyBlock(dist, locLen))
+      if ((Int32)(outSize -= len) < 0)
         return S_FALSE;
-      outSize -= locLen;
-      len -= locLen;
-      if (len != 0)
-        return S_FALSE;
+
+      ptrdiff_t srcPos = (ptrdiff_t)(pos - _win) - (ptrdiff_t)dist - 1;
+      if (srcPos < 0)
+      {
+        if (!_overWin)
+          return S_FALSE;
+        UInt32 rem = (UInt32)-srcPos;
+        srcPos += winSize;
+        if (rem < len)
+        {
+          const Byte *src = _win + srcPos;
+          len -= rem;
+          do
+            *pos++ = *src++;
+          while (--rem);
+          srcPos = 0;
+        }
+      }
+      const Byte *src = _win + srcPos;
+      do
+        *pos++ = *src++;
+      while (--len);
     }
   }
 
+  _winPos = (UInt32)(size_t)(pos - _win);
   return rc.Finish() ? S_OK : S_FALSE;
 }
 
-HRESULT CDecoder::Code(const Byte *inData, size_t inSize,
-      ISequentialOutStream *outStream, UInt32 outSize,
-      bool keepHistory)
-{
-  try
-  {
-    _outWindow.SetStream(outStream);
-    _outWindow.Init(keepHistory);
-    if (!keepHistory)
-      Init();
-    
-    const HRESULT res = CodeSpec(inData, inSize, outSize);
-    const HRESULT res2 = _outWindow.Flush();
-    return res != S_OK ? res : res2;
-  }
-  catch(const CLzOutWindowException &e) { return e.ErrorCode; }
-  catch(...) { return S_FALSE; }
-}
 
-HRESULT CDecoder::SetParams(unsigned numDictBits)
+HRESULT CDecoder::SetParams_and_Init(const unsigned numDictBits) throw()
 {
-  if (numDictBits > 21)
+  _winPos = 0;
+  _overWin = false;
+  if (numDictBits < 10 || numDictBits > 21)
     return E_INVALIDARG;
-  _numDictBits = numDictBits;
-  if (!_outWindow.Create((UInt32)1 << _numDictBits))
-    return E_OUTOFMEMORY;
+  _winSize = (UInt32)1 << MyMax(numDictBits, 15u); // don't change (15), because (1 << 15) is chunk size
+  if (!_win || _winSize > _winSize_allocated)
+  {
+    MidFree(_win);
+    _win = (Byte *)MidAlloc(_winSize);
+    if (!_win)
+      return E_OUTOFMEMORY;
+    _winSize_allocated = _winSize;
+  }
+
+  m_Selector.Init(kNumSelectors, 0);
+  unsigned i;
+  for (i = 0; i < kNumLitSelectors; i++)
+    m_Literals[i].Init(kNumLitSymbols, i * kNumLitSymbols);
+  const unsigned numItems = numDictBits << 1;
+  for (i = 0; i < kNumMatchSelectors; i++)
+  {
+    const unsigned num = (Byte)(0x2a2418 >> (i << 3)); // 24, 36, 42
+    m_PosSlot[i].Init(MyMin(num, numItems), 0);
+  }
+  m_LenSlot.Init(kNumLenSymbols, kMatchMinLen + kNumMatchSelectors - 1);
   return S_OK;
 }
 

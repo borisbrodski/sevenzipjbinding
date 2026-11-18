@@ -83,6 +83,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::GetStream(UInt32 index,
     // public SequentialOutStream getStream(int index, ExtractAskMode extractAskMode);
     jobject result = _iArchiveExtractCallback->getStream(jniEnvInstance, _javaImplementation,
             (jint) index, askExtractModeObject);
+    jniEnvInstance->DeleteLocalRef(askExtractModeObject);
     if (jniEnvInstance.exceptionCheck()) {
         return S_FALSE;
     }
@@ -114,6 +115,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::PrepareOperation(Int32 askExtractM
     // public void prepareOperation(ExtractAskMode extractAskMode);
     _iArchiveExtractCallback->prepareOperation(jniEnvInstance, _javaImplementation,
             askExtractModeObject);
+    jniEnvInstance->DeleteLocalRef(askExtractModeObject);
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
@@ -133,6 +135,7 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::SetOperationResult(Int32 resultEOp
     // public void setOperationResult(ExtractOperationResult extractOperationResult);
     _iArchiveExtractCallback->setOperationResult(jniEnvInstance, _javaImplementation,
             resultEOperationResultObject);
+    jniEnvInstance->DeleteLocalRef(resultEOperationResultObject);
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }
@@ -151,12 +154,15 @@ STDMETHODIMP CPPToJavaArchiveExtractCallback::ReportExtractResult(UInt32 indexTy
     // Convert opRes to ExtractOperationResult enum
     jobject opResObject = jni::ExtractOperationResult::getOperationResult(jniEnvInstance, (jint) opRes);
     if (jniEnvInstance.exceptionCheck()) {
+        jniEnvInstance->DeleteLocalRef(indexTypeObject);
         return S_FALSE;
     }
 
     // Call the Java method: reportExtractResult(ReportExtractResultIndexType indexType, int index, ExtractOperationResult extractOperationResult)
     _iArchiveExtractCallback->reportExtractResult(jniEnvInstance, _javaImplementation,
             indexTypeObject, (jint) index, opResObject);
+    jniEnvInstance->DeleteLocalRef(indexTypeObject);
+    jniEnvInstance->DeleteLocalRef(opResObject);
 
     return jniEnvInstance.exceptionCheck() ? S_FALSE : S_OK;
 }

@@ -116,9 +116,11 @@ static bool ParseInt64(const char *p, Int64 &val, bool &isBin)
 static bool ParseInt64_MTime(const char *p, Int64 &val, bool &isBin)
 {
   // rare case tar : ZEROs in Docker-Windows TARs
+  // rare case tar : pax record : single ZERO byte followed by junk data
   // rare case tar : spaces
   isBin = false;
-  if (GetUi32(p) != 0)
+  // if (GetUi32(p))
+  if (p[0])
   for (unsigned i = 0; i < 12; i++)
     if (p[i] != ' ')
       return ParseInt64(p, val, isBin);
@@ -181,6 +183,7 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
 {
   char buf[NFileHeader::kRecordSize];
 
+  item.Method_Error = false;
   error = k_ErrorType_OK;
   filled = false;
 
@@ -218,10 +221,7 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
       break;
     item.HeaderSize += NFileHeader::kRecordSize;
     thereAreEmptyRecords = true;
-    if (OpenCallback)
-    {
-      RINOK(Progress(item, 0))
-    }
+    RINOK(Progress(item, 0))
   }
   if (thereAreEmptyRecords)
   {
@@ -282,7 +282,7 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
   {
     item.Prefix_WasUsed = true;
     ReadString(p, NFileHeader::kPrefixSize, item.Name);
-    item.Name += '/';
+    item.Name.Add_Slash();
     unsigned i;
     for (i = 0; i < NFileHeader::kNameSize; i++)
       if (buf[i] == 0)
@@ -335,37 +335,60 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
 
   if (item.LinkFlag == NFileHeader::NLinkFlag::kSparse)
   {
-    Byte isExtended = (Byte)buf[482];
-    if (isExtended != 0 && isExtended != 1)
-      return S_OK;
+    // OLD GNU format: parse sparse file information:
+    // PackSize = cumulative size of all non-empty blocks of the file.
+    // We read actual file size from 'realsize' member of oldgnu_header:
     RIF(ParseSize(buf + 483, item.Size, item.Size_IsBin))
-    UInt64 min = 0;
-    for (unsigned i = 0; i < 4; i++)
-    {
-      p = buf + 386 + 24 * i;
-      if (GetBe32(p) == 0)
-      {
-        if (isExtended != 0)
-          return S_OK;
-        break;
-      }
-      CSparseBlock sb;
-      RIF(ParseSize(p, sb.Offset))
-      RIF(ParseSize(p + 12, sb.Size))
-      item.SparseBlocks.Add(sb);
-      if (sb.Offset < min || sb.Offset > item.Size)
-        return S_OK;
-      if ((sb.Offset & 0x1FF) != 0 || (sb.Size & 0x1FF) != 0)
-        return S_OK;
-      min = sb.Offset + sb.Size;
-      if (min < sb.Offset)
-        return S_OK;
-    }
-    if (min > item.Size)
+    if (item.Size < item.PackSize) // additional check
       return S_OK;
 
-    while (isExtended != 0)
+    p = buf + 386;
+    
+    UInt64 end = 0, packSum = 0;
+    unsigned numRecords = 4;
+    unsigned isExtended = (Byte)p[4 * 24]; // (Byte)p[numRecords * 24];
+    // the list of blocks contains non-empty blocks. All another data is empty.
+
+    for (;;)
     {
+      // const unsigned isExtended = (Byte)p[numRecords * 24];
+      if (isExtended > 1)
+        return S_OK;
+      do
+      {
+        if (GetBe32(p) == 0)
+        {
+          if (isExtended)
+            return S_OK;
+          break;
+        }
+        CSparseBlock sb;
+        RIF(ParseSize(p, sb.Offset))
+        RIF(ParseSize(p + 12, sb.Size))
+        p += 24;
+        /* for all non-last blocks we expect :
+             ((sb.Size & 0x1ff) == 0) && ((sb.Offset & 0x1ff) == 0)
+           for last block : (sb.Size == 0) is possible.
+        */
+        if (sb.Offset < end
+            || item.Size < sb.Offset
+            || item.Size - sb.Offset < sb.Size)
+          return S_OK;
+        // optional check:
+        if (sb.Size && ((end & 0x1ff) || (sb.Offset & 0x1ff)))
+        {
+          item.Method_Error = true; // relaxed check
+          // return S_OK;
+        }
+        end = sb.Offset + sb.Size;
+        packSum += sb.Size;
+        item.SparseBlocks.Add(sb);
+      }
+      while (--numRecords);
+
+      if (!isExtended)
+        break;
+
       size_t processedSize = NFileHeader::kRecordSize;
       RINOK(ReadStream(SeqStream, buf, &processedSize))
       if (processedSize != NFileHeader::kRecordSize)
@@ -373,46 +396,22 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
         error = k_ErrorType_UnexpectedEnd;
         return S_OK;
       }
-
       item.HeaderSize += NFileHeader::kRecordSize;
-
-      if (OpenCallback)
-      {
-        RINOK(Progress(item, 0))
-      }
-
-      isExtended = (Byte)buf[21 * 24];
-      if (isExtended != 0 && isExtended != 1)
-        return S_OK;
-      for (unsigned i = 0; i < 21; i++)
-      {
-        p = buf + 24 * i;
-        if (GetBe32(p) == 0)
-        {
-          if (isExtended != 0)
-            return S_OK;
-          break;
-        }
-        CSparseBlock sb;
-        RIF(ParseSize(p, sb.Offset))
-        RIF(ParseSize(p + 12, sb.Size))
-        item.SparseBlocks.Add(sb);
-        if (sb.Offset < min || sb.Offset > item.Size)
-          return S_OK;
-        if ((sb.Offset & 0x1FF) != 0 || (sb.Size & 0x1FF) != 0)
-          return S_OK;
-        min = sb.Offset + sb.Size;
-        if (min < sb.Offset)
-          return S_OK;
-      }
+      RINOK(Progress(item, 0))
+      p = buf;
+      numRecords = 21;
+      isExtended = (Byte)p[21 * 24]; // (Byte)p[numRecords * 24];
     }
-    if (min > item.Size)
-      return S_OK;
+    // optional checks for strict size consistency:
+    if (end != item.Size || packSum != item.PackSize)
+    {
+      item.Method_Error = true; // relaxed check
+      // return S_OK;
+    }
   }
  
-  if (item.PackSize >= (UInt64)1 << 63)
+  if (item.PackSize >= (UInt64)1 << 63) // optional check. It was checked in ParseSize() already
     return S_OK;
-
   filled = true;
   error = k_ErrorType_OK;
   return S_OK;
@@ -421,6 +420,8 @@ HRESULT CArchive::GetNextItemReal(CItemEx &item)
 
 HRESULT CArchive::Progress(const CItemEx &item, UInt64 posOffset)
 {
+  if (!OpenCallback)
+    return S_OK;
   const UInt64 pos = item.Get_DataPos() + posOffset;
   if (NumFiles - NumFiles_Prev < (1 << 16)
       // && NumRecords - NumRecords_Prev < (1 << 16)
@@ -500,10 +501,7 @@ HRESULT CArchive::ReadDataToBuffer(const CItemEx &item,
 
   do
   {
-    if (OpenCallback)
-    {
-      RINOK(Progress(item, pos))
-    }
+    RINOK(Progress(item, pos))
 
     unsigned size = kBufSize;
     if (size > packSize)
@@ -541,6 +539,7 @@ struct CPaxInfo: public CPaxTimes
   bool Link_Defined;
   bool User_Defined;
   bool Group_Defined;
+  bool SCHILY_fflags_Defined;
   
   UInt64 Size;
   UInt32 UID;
@@ -551,6 +550,7 @@ struct CPaxInfo: public CPaxTimes
   AString User;
   AString Group;
   AString UnknownLines;
+  AString SCHILY_fflags;
   
   bool ParseID(const AString &val, bool &defined, UInt32 &res)
   {
@@ -648,6 +648,7 @@ bool CPaxInfo::ParsePax(const CTempBuffer &tb, bool isFile)
   Link_Defined = false;
   User_Defined = false;
   Group_Defined = false;
+  SCHILY_fflags_Defined = false;
   
   // CPaxTimes::Clear();
 
@@ -759,6 +760,14 @@ bool CPaxInfo::ParsePax(const CTempBuffer &tb, bool isFile)
         { parsed = ParsePaxTime(val, ATime, DoubleTagError); }
       else if (name.IsEqualTo("ctime"))
         { parsed = ParsePaxTime(val, CTime, DoubleTagError); }
+      else if (name.IsEqualTo("SCHILY.fflags"))
+      {
+        if (SCHILY_fflags_Defined)
+          DoubleTagError = true;
+        SCHILY_fflags = val;
+        SCHILY_fflags_Defined = true;
+        parsed = true;
+      }
       else
         isDetectedName = false;
       if (isDetectedName && !parsed)
@@ -802,6 +811,7 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
   item.LongLink_WasUsed_2 = false;
 
   item.HeaderError = false;
+  item.Method_Error = false;
   item.IsSignedChecksum = false;
   item.Prefix_WasUsed = false;
   
@@ -812,6 +822,7 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
   item.pax_size_WasUsed = false;
   
   item.PaxExtra.Clear();
+  item.SCHILY_fflags.Empty();
 
   item.EncodingCharacts.Clear();
   
@@ -826,13 +837,8 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
 
   for (;;)
   {
-    if (OpenCallback)
-    {
-      RINOK(Progress(item, 0))
-    }
-
+    RINOK(Progress(item, 0))
     RINOK(GetNextItemReal(item))
-
     // NumRecords++;
 
     if (!filled)
@@ -1032,6 +1038,11 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
         item.Group = paxInfo.Group;
         // item.pax_gname_WasUsed = true;
       }
+      if (paxInfo.SCHILY_fflags_Defined)
+      {
+        item.SCHILY_fflags = paxInfo.SCHILY_fflags;
+        // item.SCHILY_fflags_WasUsed = true;
+      }
       if (paxInfo.UID_Defined)
       {
         item.UID = (UInt32)paxInfo.UID;
@@ -1047,9 +1058,14 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
         // GNU TAR ignores (item.Size) in that case
         if (item.Size != 0 && item.Size != piSize)
           item.Pax_Error = true;
-        item.Size = piSize;
-        item.PackSize = piSize;
-        item.pax_size_WasUsed = true;
+        if (piSize >= ((UInt64)1 << 63))
+          item.Pax_Error = true;
+        else
+        {
+          item.Size = piSize;
+          item.PackSize = piSize;
+          item.pax_size_WasUsed = true;
+        }
       }
       
       item.PaxTimes = paxInfo;
@@ -1070,6 +1086,8 @@ HRESULT CArchive::ReadItem2(CItemEx &item)
 
 HRESULT CArchive::ReadItem(CItemEx &item)
 {
+  error = k_ErrorType_OK;
+  filled = false;
   item.HeaderPos = _phySize;
   
   const HRESULT res = ReadItem2(item);
@@ -1098,6 +1116,7 @@ HRESULT CArchive::ReadItem(CItemEx &item)
     if (item.PaxTimes.MTime.IsDefined())  _are_mtime = true;
     if (item.PaxTimes.ATime.IsDefined())  _are_atime = true;
     if (item.PaxTimes.CTime.IsDefined())  _are_ctime = true;
+    if (!item.SCHILY_fflags.IsEmpty())  _are_SCHILY_fflags = true;
 
     if (item.pax_path_WasUsed)
       _are_pax_path = true;

@@ -23,7 +23,7 @@ public enum ReportExtractResultIndexType {
     IN_ARCHIVE_INDEX,
 
     /**
-     * Block index. Used for multi-volume or compressed block-level operations.
+     * Block index: the index of a solid block (7z folder, CAB folder), for errors that affect a whole block.
      */
     BLOCK_INDEX,
 

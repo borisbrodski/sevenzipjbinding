@@ -2,6 +2,8 @@ PROG = 7zFM.exe
 CFLAGS = $(CFLAGS) \
   -DZ7_EXTERNAL_CODECS \
 
+# -DZ7_NO_LARGE_PAGES
+
 !include "FM.mak"
 
 COMMON_OBJS = \
@@ -102,7 +104,7 @@ AR_COMMON_OBJS = \
 C_OBJS = $(C_OBJS) \
   $O\Alloc.obj \
   $O\CpuArch.obj \
-  $O\Sort.obj \
   $O\Threads.obj \
 
+!include "../../Sort.mak"
 !include "../../7zip.mak"

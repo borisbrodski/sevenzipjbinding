@@ -7,7 +7,7 @@ CFLAGS = $(CFLAGS) \
 LIBS = $(LIBS) ceshell.lib Commctrl.lib
 !ELSE
 LIBS = $(LIBS) comctl32.lib htmlhelp.lib comdlg32.lib gdi32.lib
-CFLAGS = $(CFLAGS) -DZ7_LONG_PATH -DZ7_LARGE_PAGES -DZ7_DEVICE_FILE
+CFLAGS = $(CFLAGS) -DZ7_DEVICE_FILE
 !ENDIF
 
 GUI_OBJS = \
@@ -114,6 +114,7 @@ FM_OBJS = \
   $O\HelpUtils.obj \
   $O\LangUtils.obj \
   $O\ListViewDialog.obj \
+  $O\MemDialog.obj \
   $O\OpenCallback.obj \
   $O\ProgramLocation.obj \
   $O\PropertyName.obj \
@@ -139,10 +140,9 @@ C_OBJS = \
   $O\Alloc.obj \
   $O\CpuArch.obj \
   $O\DllSecur.obj \
-  $O\Sort.obj \
   $O\Threads.obj \
 
 !include "../../Crc.mak"
-
+!include "../../Sort.mak"
 
 !include "../../7zip.mak"

@@ -143,8 +143,8 @@ public interface IOutItemTar extends IOutItemBase {
      * Set property {@link PropID#HARD_LINK}.
      *
      * @see PropID#HARD_LINK
-     * @param symLink
+     * @param hardLink
      *            see {@link PropID#HARD_LINK}
      */
-    public void setPropertyHardLink(String symLink);
+    public void setPropertyHardLink(String hardLink);
 }

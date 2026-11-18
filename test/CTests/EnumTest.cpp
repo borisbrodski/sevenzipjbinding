@@ -35,4 +35,34 @@ Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getPropertyIndexCopyLi
     return kpidCopyLink;
 }
 
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getPropertyIndexArcFileName(JNIEnv * env, jclass thiz) {
+    return kpidArcFileName;
+}
+
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getPropertyIndexUserId(JNIEnv * env, jclass thiz) {
+    return kpidUserId;
+}
+
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getPropertyIndexDevMinor(JNIEnv * env, jclass thiz) {
+    return kpidDevMinor;
+}
+
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getPropertyIndexNumDefined(JNIEnv * env, jclass thiz) {
+    return kpid_NUM_DEFINED;
+}
+
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getFileTimeTypeDos(JNIEnv * env, jclass thiz) {
+    return NFileTimeType::kDOS;
+}
+
+JBINDING_JNIEXPORT jint JNICALL
+Java_net_sf_sevenzipjbinding_junit_jbindingtools_EnumTest_getFileTimeType1ns(JNIEnv * env, jclass thiz) {
+    return NFileTimeType::k1ns;
+}
+
 #endif

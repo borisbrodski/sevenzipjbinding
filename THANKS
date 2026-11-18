@@ -36,8 +36,33 @@ Special thanks to
   * amazing Android-integration (not yet integrated in the official release, but available at https://github.com/seven332/sevenzipjbinding/)
   * finding some forgotten DeleteLocalRefs
 
+- mrjo118 for fixing 7z compression features that canceled each other out: header encryption,
+  compression level, thread count and solid settings set together (pull request #93, bug #77)
 
-AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01-2.2 release
+- WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
+
+- Alexandru Sclearuc (RocketRide) for hiding the statically linked C++ runtime of the ELF native
+  library, which crashed C++ code loaded later into the same process (pull request #95)
+
+- Brendan Thomas for fixing a JNI local reference leak during extraction that kept every output
+  stream alive until the end and could exhaust the heap on archives with very many files
+  (pull request #66)
+
+- Luis Nassif for fixing the hash conversion from byte[] to hex String (pull request #34, bug #31)
+
+- Ivan (IvanShift) for fixing a C++17 build error in the WIM handler (pull request #59)
+
+- John Nash for fixing the threaded library initialization (pull request #2)
+
+- Fredrik Claesson (omicronapps) for the Android JNI and Java support (android branch,
+  pull requests #38, #39)
+
+- Anna for making the native code compile with gcc 4.0.1
+
+- Damiano Albani and Chad Gorshing for typo fixes (pull requests #14, #1)
+
+
+AI coding assistants that helped modernize 7-Zip-JBinding for the 23.01 releases
 (the 16.02 -> 23.01 engine upgrade, the Java 5 -> Java 8 port, the cross-platform
 build & test farm, and the website and documentation):
 

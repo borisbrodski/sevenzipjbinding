@@ -89,7 +89,8 @@ static int GetColumnAlign(PROPID propID, VARTYPE varType)
 
 static int ItemProperty_Compare_NameFirst(void *const *a1, void *const *a2, void * /* param */)
 {
-  return (*(*((const CPropColumn *const *)a1))).Compare_NameFirst(*(*((const CPropColumn *const *)a2)));
+  return (*(*((const CPropColumn *const *)a1))).Compare_NameFirst
+         (*(*((const CPropColumn *const *)a2)));
 }
 
 HRESULT CPanel::InitColumns()
@@ -125,7 +126,7 @@ HRESULT CPanel::InitColumns()
 
   _columns.Clear();
 
-  bool isFsFolder = IsFSFolder() || IsAltStreamsFolder();
+  const bool isFsFolder = IsFSFolder() || IsAltStreamsFolder();
 
   {
     UInt32 numProps;
@@ -182,7 +183,7 @@ HRESULT CPanel::InitColumns()
     {
       CMyComBSTR name;
       PROPID propID;
-      HRESULT res = _folderRawProps->GetRawPropInfo(i, &name, &propID);
+      const HRESULT res = _folderRawProps->GetRawPropInfo(i, &name, &propID);
       if (res != S_OK)
         continue;
       CPropColumn prop;
@@ -550,7 +551,7 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
   {
     NCOM::CPropVariant prop;
     _isDirVector.ClearAndSetSize(numItems);
-    bool *vec = (bool *)&_isDirVector.Front();
+    bool *vec = _isDirVector.NonConstData();
     HRESULT hres = S_OK;
     unsigned i;
     for (i = 0; i < numItems; i++)
@@ -582,8 +583,13 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
   int cursorIndex = -1;
 
   CMyComPtr<IFolderGetSystemIconIndex> folderGetSystemIconIndex;
+#if 1 // 0 : for debug local icons loading
   if (!Is_Slow_Icon_Folder() || _showRealFileIcons)
     _folder.QueryInterface(IID_IFolderGetSystemIconIndex, &folderGetSystemIconIndex);
+#endif
+
+  const bool isFSDrivesFolder = IsFSDrivesFolder();
+  const bool isArcFolder = IsArcFolder();
 
   if (!IsFSFolder())
   {
@@ -630,10 +636,11 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
     #else
     item.pszText = LPSTR_TEXTCALLBACKW;
     #endif
-    const UInt32 attrib = FILE_ATTRIBUTE_DIRECTORY;
-    item.iImage = _extToIconMap.GetIconIndex(attrib, itemName);
+    // const UInt32 attrib = FILE_ATTRIBUTE_DIRECTORY;
+    item.iImage = g_Ext_to_Icon_Map.GetIconIndex_DIR();
+        // g_Ext_to_Icon_Map.GetIconIndex(attrib, itemName);
     if (item.iImage < 0)
-      item.iImage = 0;
+        item.iImage = 0;
     if (_listView.InsertItem(&item) == -1)
       return E_FAIL;
     listViewItemCount++;
@@ -641,9 +648,28 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
   
   // OutputDebugStringA("S1\n");
 
-  UString correctedName;
-  UString itemName;
-  UString relPath;
+  UString correctedName, itemName, relPath, focusedNamePure, selectedName;
+  bool needCheckSlash = false;
+  if (state.FocusedName_Defined)
+  {
+    focusedNamePure = state.FocusedName;
+    const int pos = focusedNamePure.ReverseFind_PathSepar();
+    if (pos >= 0)
+    {
+      focusedNamePure.DeleteFrontal((unsigned)pos + 1);
+      needCheckSlash = true;
+    }
+  }
+  if (state.SelectedNames.Size() == 1)
+  {
+    selectedName = state.SelectedNames[0];
+    const int pos = selectedName.ReverseFind_PathSepar();
+    if (pos >= 0)
+    {
+      selectedName.DeleteFrontal((unsigned)pos + 1);
+      needCheckSlash = true;
+    }
+  }
   
   for (UInt32 i = 0; i < numItems; i++)
   {
@@ -660,8 +686,11 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
     }
   
     bool selected = false;
-    
-    if (state.FocusedName_Defined || !state.SelectedNames.IsEmpty())
+
+    if (state.SelectedNames.Size() > 1
+        || (state.SelectedNames.Size() == 1 && selectedName == name)
+        || (state.FocusedName_Defined && focusedNamePure == name)
+        || (needCheckSlash && NWindows::NFile::NName::FindSepar(name) >= 0))
     {
       relPath.Empty();
       // relPath += GetItemPrefix(i);
@@ -754,11 +783,52 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
     }
 
     bool defined = false;
+    item.iImage = -1;
   
     if (folderGetSystemIconIndex)
     {
-      folderGetSystemIconIndex->GetSystemIconIndex(i, &item.iImage);
-      defined = (item.iImage > 0);
+      const HRESULT res = folderGetSystemIconIndex->GetSystemIconIndex(i, &item.iImage);
+      if (res == S_OK)
+      {
+        // item.iImage = -1; // for debug
+        defined = (item.iImage > 0);
+#if 0 // 0: can be slower: 2 attempts for some paths.
+      // 1: faster, but we can get default icon for some cases (where non default icon is possible)
+
+        if (item.iImage == 0)
+        {
+          // (item.iImage == 0) means default icon.
+          // But (item.iImage == 0) also can be returned for exe/ico files,
+          // if filePath is LONG PATH (path_len() >= MAX_PATH).
+          // Also we want to show split icon (.001) for any split extension: 001 002 003.
+          // Are there another cases for (item.iImage == 0) for files with known extensions?
+          // We don't want to do second attempt to request icon,
+          // if it also will return (item.iImage == 0).
+
+          int dotPos = -1;
+          for (unsigned k = 0;; k++)
+          {
+            const wchar_t c = name[k];
+            if (c == 0)
+              break;
+            if (c == '.')
+              dotPos = (int)i;
+            // we don't need IS_PATH_SEPAR check, because we have only (fileName) doesn't include path prefix.
+            // if (IS_PATH_SEPAR(c) || c == ':') dotPos = -1;
+          }
+          defined = true;
+          if (dotPos >= 0)
+          {
+#if 0
+            const wchar_t *ext = name + dotPos;
+            if (StringsAreEqualNoCase_Ascii(ext, ".exe") ||
+                StringsAreEqualNoCase_Ascii(ext, ".ico"))
+#endif
+              defined = false;
+          }
+        }
+#endif
+      }
     }
 
     if (!defined)
@@ -768,26 +838,37 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
         NCOM::CPropVariant prop;
         RINOK(_folder->GetProperty(i, kpidAttrib, &prop))
         if (prop.vt == VT_UI4)
+        {
           attrib = prop.ulVal;
+          if (isArcFolder)
+          {
+            // if attrib (high 16-bits) is supposed from posix,
+            // we keep only low bits (basic Windows attrib flags):
+            if (attrib & 0xF0000000)
+              attrib &= 0x3FFF;
+          }
+        }
       }
       if (IsItem_Folder(i))
         attrib |= FILE_ATTRIBUTE_DIRECTORY;
-
-      if (_currentFolderPrefix.IsEmpty())
-      {
-        int iconIndexTemp;
-        GetRealIconIndex(us2fs((UString)name) + FCHAR_PATH_SEPARATOR, attrib, iconIndexTemp);
-        item.iImage = iconIndexTemp;
-      }
       else
+        attrib &= ~(UInt32)FILE_ATTRIBUTE_DIRECTORY;
+
+      item.iImage = -1;
+      if (isFSDrivesFolder)
       {
-        item.iImage = _extToIconMap.GetIconIndex(attrib, name);
+        FString fs (us2fs((UString)name));
+        fs.Add_PathSepar();
+        item.iImage = Shell_GetFileInfo_SysIconIndex_for_Path(fs, attrib);
+        // item.iImage = 0; // for debug
       }
+      if (item.iImage < 0) // <= 0 check?
+        item.iImage = g_Ext_to_Icon_Map.GetIconIndex(attrib, name);
     }
     
+    // item.iImage = -1; // for debug
     if (item.iImage < 0)
-      item.iImage = 0;
-
+        item.iImage = 0; // default image
     if (_listView.InsertItem(&item) == -1)
       return E_FAIL;
     listViewItemCount++;
@@ -816,10 +897,10 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
     SetFocusedSelectedItem(cursorIndex, state.SelectFocused);
 
   Print_OnNotify("after SetFocusedSelectedItem");
-  
+  // OutputDebugStringA("Sort before");
   SetSortRawStatus();
   _listView.SortItems(CompareItems, (LPARAM)this);
-  
+  // OutputDebugStringA("=== Sort after");
   Print_OnNotify("after  Sort");
 
   if (cursorIndex < 0 && _listView.GetItemCount() > 0)
@@ -857,8 +938,8 @@ HRESULT CPanel::RefreshListCtrl(const CSelectedState &state)
   sprintf(s,
       // "attribMap = %5d, extMap = %5d, "
       "delete = %5d, load = %5d, list = %5d, sort = %5d, end = %5d",
-      // _extToIconMap._attribMap.Size(),
-      // _extToIconMap._extMap.Size(),
+      // g_Ext_to_Icon_Map._attribMap.Size(),
+      // g_Ext_to_Icon_Map._extMap.Size(),
       tickCount1 - tickCount0,
       tickCount2 - tickCount1,
       tickCount3 - tickCount2,
@@ -892,7 +973,7 @@ void CPanel::Get_ItemIndices_Selected(CRecordVector<UInt32> &indices) const
   }
   HeapSort(&indices.Front(), indices.Size());
   */
-  const bool *v = &_selectedStatusVector.Front();
+  const bool *v = _selectedStatusVector.ConstData();
   const unsigned size = _selectedStatusVector.Size();
   for (unsigned i = 0; i < size; i++)
     if (v[i])
@@ -926,7 +1007,7 @@ void CPanel::Get_ItemIndices_All(CRecordVector<UInt32> &indices) const
   if (_folder->GetNumberOfItems(&numItems) != S_OK)
     return;
   indices.ClearAndSetSize(numItems);
-  UInt32 *vec = (UInt32 *)&indices.Front();
+  UInt32 *vec = indices.NonConstData();
   for (UInt32 i = 0; i < numItems; i++)
     vec[i] = i;
 }
@@ -1030,19 +1111,19 @@ void CPanel::OpenSelectedItems(bool tryInternal)
       indices.Insert(0, realIndex);
   }
 
-  bool dirIsStarted = false;
+  // bool dirIsStarted = false;
   FOR_VECTOR (i, indices)
   {
     UInt32 index = indices[i];
     // CFileInfo &aFile = m_Files[index];
     if (IsItem_Folder(index))
     {
-      if (!dirIsStarted)
+      // if (!dirIsStarted)
       {
         if (tryInternal)
         {
           OpenFolder(index);
-          dirIsStarted = true;
+          // dirIsStarted = true;
           break;
         }
         else
@@ -1103,14 +1184,15 @@ void CPanel::GetItemName(unsigned itemIndex, UString &s) const
 
 UString CPanel::GetItemPrefix(unsigned itemIndex) const
 {
-  if (itemIndex == kParentIndex)
-    return UString();
-  NCOM::CPropVariant prop;
-  if (_folder->GetProperty(itemIndex, kpidPrefix, &prop) != S_OK)
-    throw 2723400;
   UString prefix;
-  if (prop.vt == VT_BSTR)
-    prefix.SetFromBstr(prop.bstrVal);
+  if (itemIndex != kParentIndex)
+  {
+    NCOM::CPropVariant prop;
+    if (_folder->GetProperty(itemIndex, kpidPrefix, &prop) != S_OK)
+      throw 2723400;
+    if (prop.vt == VT_BSTR)
+      prefix.SetFromBstr(prop.bstrVal);
+  }
   return prefix;
 }
 
@@ -1258,7 +1340,7 @@ void CPanel::SaveListViewInfo()
   CListViewInfo viewInfo;
   
   // PROPID sortPropID = _columns[_sortIndex].ID;
-  PROPID sortPropID = _sortID;
+  const PROPID sortPropID = _sortID;
   
   // we save columns as "sorted by order" to registry
 
@@ -1300,9 +1382,9 @@ void CPanel::SaveListViewInfo()
 }
 
 
-bool CPanel::OnRightClick(MY_NMLISTVIEW_NMITEMACTIVATE *itemActiveate, LRESULT &result)
+bool CPanel::OnRightClick(MY_NMLISTVIEW_NMITEMACTIVATE *itemActivate, LRESULT &result)
 {
-  if (itemActiveate->hdr.hwndFrom == HWND(_listView))
+  if (itemActivate->hdr.hwndFrom == HWND(_listView))
     return false;
   POINT point;
   ::GetCursorPos(&point);
@@ -1379,13 +1461,16 @@ void CPanel::OnTimer()
     return;
   if (!AutoRefresh_Mode)
     return;
-  CMyComPtr<IFolderWasChanged> folderWasChanged;
-  if (_folder.QueryInterface(IID_IFolderWasChanged, &folderWasChanged) != S_OK)
+  if (!_folder) // it's unexpected case, but we use it as additional protection.
     return;
-  Int32 wasChanged;
-  if (folderWasChanged->WasChanged(&wasChanged) != S_OK)
-    return;
-  if (wasChanged == 0)
-    return;
+  {
+    CMyComPtr<IFolderWasChanged> folderWasChanged;
+    _folder.QueryInterface(IID_IFolderWasChanged, &folderWasChanged);
+    if (!folderWasChanged)
+      return;
+    Int32 wasChanged;
+    if (folderWasChanged->WasChanged(&wasChanged) != S_OK || wasChanged == 0)
+      return;
+  }
   OnReload(true); // onTimer
 }

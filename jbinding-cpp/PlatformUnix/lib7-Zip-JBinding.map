@@ -1,0 +1,9 @@
+/* ELF export list: only the JNI entry points. Everything else, including the statically linked C++
+   runtime, stays local to the library. Wildcards only: lld rejects names that are not defined. */
+{
+  global:
+    Java_*;
+    JNI_On*;
+  local:
+    *;
+};

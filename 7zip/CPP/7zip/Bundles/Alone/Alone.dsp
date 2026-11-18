@@ -44,7 +44,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /Gr /MT /W4 /WX /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "_MBCS" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_LARGE_PAGES" /D "Z7_DEVICE_FILE" /FAcs /Yu"StdAfx.h" /FD /c
+# ADD CPP /nologo /Gr /MT /W4 /WX /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "_MBCS" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_DEVICE_FILE" /FAcs /Yu"StdAfx.h" /FD /c
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
 # ADD RSC /l 0x419 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -69,8 +69,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ /c
-# ADD CPP /nologo /Gz /MDd /W4 /Gm /GX /ZI /Od /I "..\..\..\\" /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_LARGE_PAGES" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /GZ /c
-# SUBTRACT CPP /WX
+# ADD CPP /nologo /Gz /MDd /W4 /WX /Gm /GX /ZI /Od /I "..\..\..\\" /D "_DEBUG" /D "_MBCS" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
 # ADD RSC /l 0x419 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -95,7 +94,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /Yu"StdAfx.h" /FD /c
-# ADD CPP /nologo /Gz /MD /W4 /WX /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "UNICODE" /D "_UNICODE" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_LARGE_PAGES" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /c
+# ADD CPP /nologo /Gz /MD /W4 /WX /GX /O1 /I "..\..\..\\" /D "NDEBUG" /D "UNICODE" /D "_UNICODE" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /c
 # ADD BASE RSC /l 0x419 /d "NDEBUG"
 # ADD RSC /l 0x419 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -122,7 +121,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "_DEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /Yu"StdAfx.h" /FD /GZ /c
-# ADD CPP /nologo /Gz /MDd /W4 /WX /Gm /GX /ZI /Od /I "..\..\..\\" /D "_DEBUG" /D "_UNICODE" /D "UNICODE" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_LARGE_PAGES" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /GZ /c
+# ADD CPP /nologo /Gz /MDd /W4 /WX /Gm /GX /ZI /Od /I "..\..\..\\" /D "_DEBUG" /D "_UNICODE" /D "UNICODE" /D "WIN32" /D "_CONSOLE" /D "Z7_LONG_PATH" /D "Z7_DEVICE_FILE" /Yu"StdAfx.h" /FD /GZ /c
 # ADD BASE RSC /l 0x419 /d "_DEBUG"
 # ADD RSC /l 0x419 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -194,6 +193,7 @@ SOURCE=..\..\UI\Console\List.h
 # Begin Source File
 
 SOURCE=..\..\UI\Console\Main.cpp
+# ADD CPP /D "Z7_PROG_VARIANT_A"
 # End Source File
 # Begin Source File
 
@@ -271,6 +271,10 @@ SOURCE=..\..\..\Common\CommandLineParser.h
 # Begin Source File
 
 SOURCE=..\..\..\Common\Common.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Common\Common0.h
 # End Source File
 # Begin Source File
 
@@ -447,6 +451,10 @@ SOURCE=..\..\..\Common\Wildcard.cpp
 # Begin Source File
 
 SOURCE=..\..\..\Common\Wildcard.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\Common\Xxh64Reg.cpp
 # End Source File
 # Begin Source File
 
@@ -1140,26 +1148,6 @@ SOURCE=..\..\Compress\PpmdZip.cpp
 SOURCE=..\..\Compress\PpmdZip.h
 # End Source File
 # End Group
-# Begin Group "RangeCoder"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=..\..\Compress\RangeCoder.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\Compress\RangeCoderBit.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\Compress\RangeCoderBitTree.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\Compress\RangeCoderOpt.h
-# End Source File
-# End Group
 # Begin Group "Shrink"
 
 # PROP Default_Filter ""
@@ -1190,6 +1178,20 @@ SOURCE=..\..\Compress\Lzx.h
 # Begin Source File
 
 SOURCE=..\..\Compress\LzxDecoder.cpp
+
+!IF  "$(CFG)" == "Alone - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 ReleaseU"
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 DebugU"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -1202,6 +1204,20 @@ SOURCE=..\..\Compress\LzxDecoder.h
 # Begin Source File
 
 SOURCE=..\..\Compress\QuantumDecoder.cpp
+
+!IF  "$(CFG)" == "Alone - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 ReleaseU"
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 DebugU"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
@@ -1299,6 +1315,14 @@ SOURCE=..\..\Compress\XzEncoder.cpp
 # Begin Source File
 
 SOURCE=..\..\Compress\XzEncoder.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\ZstdDecoder.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Compress\ZstdDecoder.h
 # End Source File
 # End Group
 # Begin Group "Archive"
@@ -1486,6 +1510,8 @@ SOURCE=..\..\Archive\Zip\ZipCompressionMode.h
 # Begin Source File
 
 SOURCE=..\..\Archive\Zip\ZipHandler.cpp
+# ADD CPP /D "Z7_ZIP_LZFSE_DISABLE"
+# SUBTRACT CPP /YX /Yc /Yu
 # End Source File
 # Begin Source File
 
@@ -1691,6 +1717,10 @@ SOURCE=..\..\Archive\SplitHandler.cpp
 # Begin Source File
 
 SOURCE=..\..\Archive\XzHandler.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\Archive\ZstdHandler.cpp
 # End Source File
 # End Group
 # Begin Group "UI Common"
@@ -3077,6 +3107,10 @@ SOURCE=..\..\..\..\C\Ppmd8Enc.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\C\Precomp.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\C\RotateDefs.h
 # End Source File
 # Begin Source File
@@ -3228,6 +3262,62 @@ SOURCE=..\..\..\..\C\Threads.c
 # Begin Source File
 
 SOURCE=..\..\..\..\C\Threads.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Xxh64.c
+
+!IF  "$(CFG)" == "Alone - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 ReleaseU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 DebugU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\Xxh64.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\ZstdDec.c
+
+!IF  "$(CFG)" == "Alone - Win32 Release"
+
+# ADD CPP /O2
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 Debug"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 ReleaseU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ELSEIF  "$(CFG)" == "Alone - Win32 DebugU"
+
+# SUBTRACT CPP /YX /Yc /Yu
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\C\ZstdDec.h
 # End Source File
 # End Group
 # End Target

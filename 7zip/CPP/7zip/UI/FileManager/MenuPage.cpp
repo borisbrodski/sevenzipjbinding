@@ -123,9 +123,9 @@ bool CMenuPage::OnInit()
       bit64.Replace(L"64", L"32");
     #endif
     s.Add_Space();
-    s += '(';
+    s.Add_Char('(');
     s += bit64;
-    s += ')';
+    s.Add_Char(')');
     SetItemText(IDX_SYSTEM_INTEGRATE_TO_MENU_2, s);
   }
 
@@ -222,8 +222,7 @@ bool CMenuPage::OnInit()
         s.Add_UInt32(val);
       if (i == 0)
         s.Insert(0, L"* ");
-      const int index = (int)_zoneCombo.AddString(s);
-      _zoneCombo.SetItemData(index, (LPARAM)val);
+      const int index = (int)_zoneCombo.AddString_SetItemData(s, (LPARAM)val);
       if (val == wz)
         _zoneCombo.SetCurSel(index);
     }

@@ -1,12 +1,12 @@
 /**
- * Build-time snippet extraction — the successor of doc/build_html.cmake.
+ * Build-time snippet extraction — the successor of the old CMake site generator.
  *
  * Snippets are REAL, TESTED programs living in
  *   test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippets/<Name>.java
  * between `/* BEGIN_SNIPPET(Name) *​/` … `/* END_SNIPPET *​/` markers, with
  * formatting markers (`/*f*​/x/* *​/`, trailing `//`) that keep the source
- * pretty in the IDE. Expected outputs (verified by the paired <Name>Test)
- * live in doc/web.components/output/<Name>.html.
+ * pretty in the IDE. Example outputs live in website/snippet-output/<Name>.html;
+ * they are maintained by hand and must match what the paired <Name>Test asserts.
  *
  * Everything here runs at BUILD time (Astro frontmatter) — the site fails to
  * build if a referenced snippet disappears, keeping code on the page honest.
@@ -20,9 +20,9 @@ import { codeToHtml } from 'shiki';
 const REPO_ROOT = resolve(process.cwd(), '..');
 const JAVADOC_DIR = resolve(REPO_ROOT, 'website/public/javadoc');
 const SNIPPET_DIR = resolve(REPO_ROOT, 'test/JavaTests/src/net/sf/sevenzipjbinding/junit/snippets');
-const OUTPUT_DIR = resolve(REPO_ROOT, 'doc/web.components/output');
+const OUTPUT_DIR = resolve(REPO_ROOT, 'website/snippet-output');
 
-/** Strip the marker syntax exactly like build_html.cmake did. */
+/** Strip the marker syntax exactly like the old CMake site generator did. */
 function cleanLine(line: string): string {
   return line
     .replace(/\/\/$/, '') //                  trailing continuation marker
@@ -117,7 +117,7 @@ export interface SnippetDef {
   id: string;          // anchor id
   title: string;
   className: string;   // Java class in the snippets package
-  output?: string;     // output fragment name (doc/web.components/output/<name>.html)
+  output?: string;     // output fragment name (website/snippet-output/<name>.html)
   desc: string;
 }
 
@@ -143,6 +143,8 @@ export const CATALOGUE: SnippetGroup[] = [
       { id: 'extract-simple', title: 'Extract items (simple interface)', className: 'ExtractItemsSimple', output: 'ExtractItems', desc: 'Extract every item and consume the data through a callback — no temp files involved.' },
       { id: 'extract-standard', title: 'Extract items (standard interface)', className: 'ExtractItemsStandard', output: 'ExtractItems', desc: 'Sequential extraction with the standard interface for maximum control and speed.' },
       { id: 'extract-standard-cb', title: 'Extract items (standard interface, callback)', className: 'ExtractItemsStandardCallback', output: 'ExtractItems', desc: 'The standard extraction driven entirely by your IArchiveExtractCallback — full control over data sinks and progress.' },
+      { id: 'extract-to-folder', title: 'Extract a whole archive to disk (fast &amp; correct)', className: 'ExtractToFolder', output: 'ExtractItems', desc: 'The recommended way to unpack an entire archive to a directory: a single extract() call that stays O(n) even on solid 7z. The Extraction masterclass explains every rule behind it.' },
+      { id: 'extract-nested', title: 'Extract a wrapped archive (tar.gz) in one go', className: 'ExtractNestedArchive', output: 'ExtractNestedArchive', desc: 'Unwrap an archive nested inside another (e.g. .tar.gz = a .tar inside a GZip) in two open/extract steps — shown both fully in memory (ByteArrayStream, no temp file) and via a temporary file for huge inner archives.' },
       { id: 'multipart-7z', title: 'Open multi-part 7z archives (7z.001, …)', className: 'OpenMultipartArchive7z', output: 'OpenMultipart7zArchiveOutput', desc: 'Combine volume files transparently with IArchiveOpenVolumeCallback.' },
       { id: 'multipart-rar', title: 'Open multi-part RAR archives (.part1.rar, …)', className: 'OpenMultipartArchiveRar', output: 'OpenMultipartRarArchiveOutput', desc: 'RAR volumes use their own naming scheme; this callback resolves them.' },
     ],

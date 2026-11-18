@@ -148,7 +148,7 @@ static inline bool IsSpaceChar(char c)
   return (c == ' ' || c == '\t');
 }
 
-static const char *SkipSpaces(const char *s)
+static const char *SkipSpaces(const char *s Z7_lifetimebound)
 {
   for (;; s++)
   {
@@ -160,7 +160,7 @@ static const char *SkipSpaces(const char *s)
 
 #define SKIP_SPACES(s) s = SkipSpaces(s);
 
-static const char *GetNextWord(const char *s, AString &dest)
+static const char *GetNextWord(const char *s Z7_lifetimebound, AString &dest)
 {
   dest.Empty();
   SKIP_SPACES(s)
@@ -176,7 +176,7 @@ static const char *GetNextWord(const char *s, AString &dest)
   }
 }
 
-static const char *GetNextNumber(const char *s, UInt64 &val)
+static const char *GetNextNumber(const char *s Z7_lifetimebound, UInt64 &val)
 {
   SKIP_SPACES(s)
   if (*s == 0)
@@ -202,9 +202,12 @@ struct CExtentInfo
   // PartitionUUID
   // DeviceIdentifier
 
-  bool IsType_ZERO() const { return Type == "ZERO"; }
-  // bool IsType_FLAT() const { return Type == "FLAT"; }
-  bool IsType_Flat() const { return Type == "FLAT" || Type == "VMFS" || Type == "VMFSRAW"; }
+  bool IsType_ZERO() const { return Type.IsEqualTo("ZERO"); }
+  // bool IsType_FLAT() const { return Type.IsEqualTo("FLAT"); }
+  bool IsType_Flat() const
+    { return Type.IsEqualTo("FLAT")
+          || Type.IsEqualTo("VMFS")
+          || Type.IsEqualTo("VMFSRAW"); }
   
   bool Parse(const char *s);
 };
@@ -815,7 +818,7 @@ Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
 
       bool zlib = false;
       bool marker = false;
-      int algo = -1;
+      Int32 algo = -1;
 
       FOR_VECTOR (i, _extents)
       {
@@ -829,7 +832,7 @@ Z7_COM7F_IMF(CHandler::GetArchiveProperty(PROPID propID, PROPVARIANT *value))
         {
           if (h.algo == 1)
             zlib = true;
-          else if (algo != (int)h.algo)
+          else if (algo != h.algo)
           {
             s.Add_Space_if_NotEmpty();
             s.Add_UInt32(h.algo);

@@ -75,11 +75,21 @@ HRESULT CPanelCopyThread::ProcessVirt()
 
   if (FolderOperations)
   {
-    CMyComPtr<IFolderSetZoneIdMode> setZoneMode;
-    FolderOperations.QueryInterface(IID_IFolderSetZoneIdMode, &setZoneMode);
-    if (setZoneMode)
     {
-      RINOK(setZoneMode->SetZoneIdMode(options->ZoneIdMode))
+      CMyComPtr<IFolderSetZoneIdMode> setZoneMode;
+      FolderOperations.QueryInterface(IID_IFolderSetZoneIdMode, &setZoneMode);
+      if (setZoneMode)
+      {
+        RINOK(setZoneMode->SetZoneIdMode(options->ZoneIdMode))
+      }
+    }
+    {
+      CMyComPtr<IFolderSetZoneIdFile> setZoneFile;
+      FolderOperations.QueryInterface(IID_IFolderSetZoneIdFile, &setZoneFile);
+      if (setZoneFile)
+      {
+        RINOK(setZoneFile->SetZoneIdFile(options->ZoneBuf, (UInt32)options->ZoneBuf.Size()))
+      }
     }
   }
 
@@ -102,7 +112,7 @@ HRESULT CPanelCopyThread::ProcessVirt()
     NExtract::NPathMode::EEnum pathMode =
         NExtract::NPathMode::kCurPaths;
         // NExtract::NPathMode::kFullPathnames;
-    result2 = archiveFolder->Extract(&Indices.Front(), Indices.Size(),
+    result2 = archiveFolder->Extract(Indices.ConstData(), Indices.Size(),
         BoolToInt(options->includeAltStreams),
         BoolToInt(options->replaceAltStreamChars),
         pathMode, NExtract::NOverwriteMode::kAsk,
@@ -111,7 +121,7 @@ HRESULT CPanelCopyThread::ProcessVirt()
   else
     result2 = FolderOperations->CopyTo(
       BoolToInt(options->moveMode),
-      &Indices.Front(), Indices.Size(),
+      Indices.ConstData(), Indices.Size(),
       BoolToInt(options->includeAltStreams),
       BoolToInt(options->replaceAltStreamChars),
       options->folder, ExtractCallback);
@@ -143,6 +153,32 @@ static void ThrowException_if_Error(HRESULT res)
 #endif
 */
 
+void CPanel::Get_ZoneId_Stream_from_ParentFolders(CByteBuffer &buf)
+{
+  // we suppose that ZoneId of top parent has priority over ZoneId from childs.
+  FOR_VECTOR (i, _parentFolders)
+  {
+    // _parentFolders[0] = is top level archive
+    // _parentFolders[1 ... ].isVirtual == true is possible
+    //           if extracted size meets size conditions derived from g_RAM_Size.
+    const CFolderLink &fl = _parentFolders[i];
+    if (fl.IsVirtual)
+    {
+      if (fl.ZoneBuf.Size() != 0)
+      {
+        buf = fl.ZoneBuf;
+        return;
+      }
+    }
+    else if (!fl.FilePath.IsEmpty())
+    {
+      ReadZoneFile_Of_BaseFile(fl.FilePath, buf);
+      if (buf.Size() != 0)
+        return;
+    }
+  }
+}
+
 HRESULT CPanel::CopyTo(CCopyToOptions &options,
     const CRecordVector<UInt32> &indices,
     UStringVector *messages,
@@ -156,6 +192,10 @@ HRESULT CPanel::CopyTo(CCopyToOptions &options,
     if (ci.WriteZone != (UInt32)(Int32)-1)
       options.ZoneIdMode = (NExtract::NZoneIdMode::EEnum)(int)(Int32)ci.WriteZone;
   }
+
+  if (options.ZoneBuf.Size() == 0
+      && options.ZoneIdMode != NExtract::NZoneIdMode::kNone)
+    Get_ZoneId_Stream_from_ParentFolders(options.ZoneBuf);
 
   if (IsHashFolder())
   {
@@ -189,7 +229,9 @@ HRESULT CPanel::CopyTo(CCopyToOptions &options,
 
   extracter.ExtractCallbackSpec = new CExtractCallbackImp;
   extracter.ExtractCallback = extracter.ExtractCallbackSpec;
-
+  extracter.ExtractCallbackSpec->Src_Is_IO_FS_Folder =
+      IsFSFolder() || IsAltStreamsFolder();
+      // options.src_Is_IO_FS_Folder;
   extracter.options = &options;
   extracter.ExtractCallbackSpec->ProgressDialog = &extracter;
   extracter.CompressingMode = false;
@@ -203,9 +245,9 @@ HRESULT CPanel::CopyTo(CCopyToOptions &options,
     extracter.Hash.MainName = extracter.Hash.FirstFileName;
   }
 
-  if (options.VirtFileSystem)
+  if (options.VirtFileSystemSpec)
   {
-    extracter.ExtractCallbackSpec->VirtFileSystem = options.VirtFileSystem;
+    extracter.ExtractCallbackSpec->VirtFileSystem = options.VirtFileSystemSpec;
     extracter.ExtractCallbackSpec->VirtFileSystemSpec = options.VirtFileSystemSpec;
   }
   extracter.ExtractCallbackSpec->ProcessAltStreams = options.includeAltStreams;
@@ -242,7 +284,7 @@ HRESULT CPanel::CopyTo(CCopyToOptions &options,
       if (options.hashMethods.Size() == 1)
       {
         const UString &s = options.hashMethods[0];
-        if (s != L"*")
+        if (!s.IsEqualTo("*"))
           title = s;
       }
     }
@@ -316,7 +358,7 @@ struct CThreadUpdate
       Result = FolderOperations->CopyFrom(
         MoveMode,
         FolderPrefix,
-        &FileNamePointers.Front(),
+        FileNamePointers.ConstData(),
         FileNamePointers.Size(),
         UpdateCallback);
     }

@@ -7,7 +7,7 @@
 
 #include "../Common/MyTypes.h"
 
-#include "Defs.h"
+#include "WinDefs.h"
 
 #ifdef _WIN32
 #include "Handle.h"
@@ -177,7 +177,7 @@ class CCriticalSectionLock  MY_UNCOPYABLE
   CCriticalSection *_object;
   void Unlock()  { _object->Leave(); }
 public:
-  CCriticalSectionLock(CCriticalSection &object): _object(&object) {_object->Enter(); }
+  CCriticalSectionLock(CCriticalSection &object Z7_lifetimebound): _object(&object) {_object->Enter(); }
   ~CCriticalSectionLock() { Unlock(); }
 };
 
@@ -234,6 +234,11 @@ public:
   }
   WRes Enter()
   {
+#if defined(Z7_LLVM_CLANG_VERSION) && (__clang_major__ == 13) \
+      && defined(__FreeBSD__)
+  #pragma GCC diagnostic ignored "-Wthread-safety-negative"
+  #pragma GCC diagnostic ignored "-Wthread-safety-analysis"
+#endif
     return ::pthread_mutex_lock(&_mutex);
   }
   WRes Leave()
@@ -270,7 +275,7 @@ struct CBaseHandle_WFMO  MY_UNCOPYABLE
   CBaseHandle_WFMO(): _sync(NULL) {}
   virtual ~CBaseHandle_WFMO();
 
-  operator CHandle_WFMO() { return this; }
+  operator CHandle_WFMO() Z7_lifetimebound { return this; }
   virtual bool IsSignaledAndUpdate() = 0;
 };
 

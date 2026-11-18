@@ -19,6 +19,13 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetCompleted(const UInt64 *files, con
         bytesLongObject = LongToObject(jniEnvInstance, *bytes);
     }
 
+    if (jniEnvInstance.exceptionCheck()) { // boxing failed (e.g. OutOfMemoryError)
+        if (filesLongObject) {
+            jniEnvInstance->DeleteLocalRef(filesLongObject);
+        }
+        return S_FALSE;
+    }
+
     _iArchiveOpenCallback->setCompleted(jniEnvInstance, _javaImplementation, filesLongObject,
             bytesLongObject);
 
@@ -47,6 +54,13 @@ STDMETHODIMP CPPToJavaArchiveOpenCallback::SetTotal(const UInt64 *files, const U
 
     if (bytes) {
         bytesLongObject = LongToObject(jniEnvInstance, *bytes);
+    }
+
+    if (jniEnvInstance.exceptionCheck()) { // boxing failed (e.g. OutOfMemoryError)
+        if (filesLongObject) {
+            jniEnvInstance->DeleteLocalRef(filesLongObject);
+        }
+        return S_FALSE;
     }
 
     _iArchiveOpenCallback->setTotal(jniEnvInstance, _javaImplementation, filesLongObject, bytesLongObject);

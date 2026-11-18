@@ -7,12 +7,12 @@ Extract and create 20+ archive formats with native performance — one small lib
 
 [![Maven Central](https://img.shields.io/maven-central/v/net.sf.sevenzipjbinding/sevenzipjbinding?label=Maven%20Central)](https://central.sonatype.com/artifact/net.sf.sevenzipjbinding/sevenzipjbinding)
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
-[![Java](https://img.shields.io/badge/Java-8%2B-orange.svg)](#requirements)
-[![7-Zip engine](https://img.shields.io/badge/7--Zip%20engine-23.01-1f8ceb.svg)](https://www.7-zip.org/)
+[![Java](https://img.shields.io/badge/Java-8%2B-orange.svg)](#-requirements)
+[![7-Zip engine](https://img.shields.io/badge/7--Zip%20engine-26.06-1f8ceb.svg)](https://www.7-zip.org/)
 [![macOS build](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml/badge.svg)](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml)
 
 [**Website**](https://sevenzipjbind.sourceforge.net/) ·
-[**Quick start**](#quick-start) ·
+[**Quick start**](#-quick-start) ·
 [**Snippets**](https://sevenzipjbind.sourceforge.net/snippets/) ·
 [**JavaDoc**](https://sevenzipjbind.sourceforge.net/javadoc/) ·
 [**Download**](https://sourceforge.net/projects/sevenzipjbind/files/7-Zip-JBinding/) ·
@@ -32,16 +32,16 @@ and abort at any time.
 ## ✨ Highlights
 
 - **20+ formats to extract, 6 to create/update** — see the [formats table](#-supported-formats).
-- **Native performance, in‑process** — the genuine 7‑Zip 23.01 engine via JNI.
+- **Native performance, in‑process** — the genuine 7‑Zip 26.06 engine via JNI.
 - **Callback‑driven, streaming I/O** — fully in‑memory round‑trips, partial extraction from huge
   archives, extract‑while‑downloading a remote archive, and abortable operations. No temp files
   unless you want them.
 - **One jar, every platform** — Windows (x86, x64 **and** ARM64), Linux (glibc **and** musl/Alpine,
-  x86 **and** ARM v5–v8), macOS (Intel + Apple Silicon). The `-all-platforms` jar **auto‑detects** the
-  OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
+  x86 **and** ARM v5–v8), macOS (Intel + Apple Silicon) **and** FreeBSD (amd64). The `-all-platforms`
+  jar **auto‑detects** the OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
 - **Two APIs** — a beginner‑friendly *simple* interface and a full‑power *standard* interface.
 - **Encryption** — open and create password‑protected archives, including 7z encrypted headers.
-- **Battle‑tested** — maintained since 2007, exercised by ~8800 JUnit tests on every supported
+- **Battle‑tested** — maintained since 2007, exercised by ~8900 JUnit tests on every supported
   platform (real VMs and real ARM hardware).
 
 ## 📦 Supported formats
@@ -66,38 +66,39 @@ Plus archive‑format **auto‑detection**, **password‑protected** archives, a
 | **Windows** | x86 · x64 · ARM64 |
 | **Linux** (glibc) | i386 · amd64 · ARMv5 · ARMv6 · ARMv7 · ARM64 |
 | **Linux** (musl / Alpine) | amd64 · ARMv7 · ARM64 |
-| **macOS** | universal — Intel (x86_64) + Apple Silicon (arm64) |
+| **macOS** | Intel (x86_64) · Apple Silicon (arm64) · universal (AllMac, both in one dylib) |
+| **FreeBSD** | amd64 |
 
 The right native library is selected automatically at runtime.
 
 ## 🚀 Install
 
-Current version: **`23.01-2.2`** (7‑Zip engine 23.01).
+Current version: **`26.06-2.3`** (7‑Zip engine 26.06).
 
 **Maven**
 ```xml
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding</artifactId>
-    <version>23.01-2.2</version>
+    <version>26.06-2.3</version>
 </dependency>
 <!-- native libraries for all platforms (auto-detected at runtime) -->
 <dependency>
     <groupId>net.sf.sevenzipjbinding</groupId>
     <artifactId>sevenzipjbinding-all-platforms</artifactId>
-    <version>23.01-2.2</version>
+    <version>26.06-2.3</version>
 </dependency>
 ```
 
 **Gradle**
 ```groovy
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:23.01-2.2'
-implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:23.01-2.2'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding:26.06-2.3'
+implementation 'net.sf.sevenzipjbinding:sevenzipjbinding-all-platforms:26.06-2.3'
 ```
 
 > 💡 `-all-platforms` bundles every native (largest, works everywhere). To keep your artifact small,
 > depend on a single‑platform variant instead, e.g. `sevenzipjbinding-linux-amd64`,
-> `sevenzipjbinding-windows-amd64`, `sevenzipjbinding-mac`, … (see all on
+> `sevenzipjbinding-windows-amd64`, `sevenzipjbinding-mac-arm64` (or `-all-mac` for any Mac), … (see all on
 > [Maven Central](https://central.sonatype.com/namespace/net.sf.sevenzipjbinding)).
 
 **Without a build tool** — download the ZIPs (jars + native libs) from
@@ -142,13 +143,12 @@ and in‑memory round‑trips are on the site:
 - **Java 8 or newer** at runtime.
 - No external tools — the native 7‑Zip engine is bundled in the platform jar.
 
-## 🔒 Known issue / security
+## 🔒 Security
 
-**CVE‑2024‑11477** (7‑Zip Zstandard decompression, severity HIGH, CVSS 7.8): the bundled 7‑Zip engine
-(23.01) predates the upstream fix, released in 7‑Zip 24.07, so processing **untrusted Zstandard‑
-compressed** input may be affected. **Mitigation:** do not open/extract untrusted Zstandard data. This
-will be resolved by a future engine upgrade — tracking:
-[#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72).
+No known security issues in the current release. **CVE‑2024‑11477** (7‑Zip Zstandard decompression,
+severity HIGH, CVSS 7.8), which affected the 23.01‑2.x releases, is **resolved as of `26.06‑2.3`**: the
+bundled 7‑Zip engine now postdates the upstream fix released in 7‑Zip 24.07
+([#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72)).
 
 ## 🔧 Build from source
 
@@ -164,7 +164,8 @@ make package       # build the distribution ZIP
 
 Windows builds use MinGW (recommended) or Cygwin; the full cross‑platform release matrix
 (Linux glibc/musl, ARM, Windows, macOS) is produced with the helper scripts under
-[`scripts/`](scripts/) (DockCross / Alpine / QEMU). See the scripts for details.
+[`scripts/`](https://github.com/borisbrodski/sevenzipjbinding/tree/master/scripts) (DockCross / Alpine / QEMU) in the
+source repository. See the scripts for details.
 
 ## 🤝 Contributing
 
@@ -174,10 +175,11 @@ compression bug, please include the archive format, platform, and a minimal repr
 
 ## 📄 License
 
-7‑Zip‑JBinding, together with the bundled 7‑Zip/p7zip binaries, is licensed under the
-**GNU LGPL‑2.1**. The 7‑Zip RAR decompression code additionally carries the **unRAR license
-restriction** (it may not be used to develop a program that recreates the RAR compression algorithm).
-See [`COPYING`](COPYING), [`LGPL`](LGPL) and [`License.txt`](License.txt).
+7‑Zip‑JBinding, together with the bundled 7‑Zip engine, is licensed under the **GNU LGPL‑2.1**.
+The 7‑Zip RAR decompression code additionally carries the **unRAR license restriction** (it may not
+be used to develop a program that recreates the RAR compression algorithm), and a few engine files
+(Zstandard and LZFSE decoders, xxHash) are under BSD licenses.
+See [`COPYING`](COPYING), [`LGPL`](LGPL) and [`License.txt`](License.txt) (the 7‑Zip engine license).
 
 ## 🙏 Acknowledgements
 
@@ -199,4 +201,3 @@ The full credits are in [`THANKS`](THANKS), also shown on the
 [website](https://sevenzipjbind.sourceforge.net/acknowledgements/).
 
 If this library helps you, consider [sponsoring the project](https://github.com/sponsors/borisbrodski). ❤
-</content>

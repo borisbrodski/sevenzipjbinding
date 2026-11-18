@@ -66,7 +66,10 @@ bool CInBufferBase::ReadBlock()
   ErrorCode = result;
   #else
   if (result != S_OK)
+  {
+    _wasFinished = true;
     throw CInBufferException(result);
+  }
   #endif
   _bufLim = _buf + processed;
   _wasFinished = (processed == 0);
@@ -94,6 +97,24 @@ Byte CInBufferBase::ReadByte_FromNewBlock()
     return 0xFF;
   }
   return *_buf++;
+}
+
+size_t CInBufferBase::ReadBytesPart(Byte *buf, size_t size)
+{
+  if (size == 0)
+    return 0;
+  size_t rem = (size_t)(_bufLim - _buf);
+  if (rem == 0)
+  {
+    if (!ReadBlock())
+      return 0;
+    rem = (size_t)(_bufLim - _buf);
+  }
+  if (size > rem)
+      size = rem;
+  memcpy(buf, _buf, size);
+  _buf += size;
+  return size;
 }
 
 size_t CInBufferBase::ReadBytes(Byte *buf, size_t size)
