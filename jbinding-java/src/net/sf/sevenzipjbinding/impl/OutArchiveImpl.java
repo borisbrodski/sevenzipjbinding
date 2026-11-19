@@ -48,6 +48,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     private int compressionLevel = -1;
     private int threadCount = -1;
     private long dictionarySize = -1;
+    private boolean propertiesApplied;
     private PrintStream tracePrintStream;
     private boolean trace; // Read by native code
 
@@ -106,10 +107,16 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
                 // The 'b' suffix makes 7-Zip read the value as bytes. A plain number would be read as a power of two.
                 dictionarySizeSpec = dictionarySize + "b";
             }
-            if (compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0 || solidBlockSpecDefined
-                    || dictionarySizeSpec != null) {
+            boolean anyPropertySet = compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0
+                    || solidBlockSpecDefined || dictionarySizeSpec != null;
+            // 7-Zip keeps the properties until the next call. If an earlier operation on this archive object sent some,
+            // an empty property list is still needed to reset them to the defaults.
+            if (anyPropertySet || propertiesApplied) {
+                // A failing call may still have applied the properties before the rejected one
+                propertiesApplied = true;
                 nativeSetProperties(compressionLevel, headerEncryptionValue, threadCount, solidBlockSpec,
                         solidBlockSpecDefined, dictionarySizeSpec);
+                propertiesApplied = anyPropertySet;
             }
         } finally {
             unlockAfterCall();
