@@ -89,4 +89,11 @@ public class OutArchive7zImpl extends OutArchiveImpl<IOutItem7z> implements IOut
     public void setThreadCount(int threadCount) {
         featureSetThreadCount(threadCount);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDictionarySize(long dictionarySize) {
+        featureSetDictionarySize(dictionarySize);
+    }
 }

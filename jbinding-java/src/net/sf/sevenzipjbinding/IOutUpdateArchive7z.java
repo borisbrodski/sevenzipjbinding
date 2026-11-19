@@ -34,5 +34,6 @@ public interface IOutUpdateArchive7z extends IOutUpdateArchive<IOutItem7z>, //
         IOutFeatureSetLevel, //
         IOutFeatureSetSolid, //
         IOutFeatureSetMultithreading, //
-        IOutFeatureSetEncryptHeader {
+        IOutFeatureSetEncryptHeader, //
+        IOutFeatureSetDictionarySize {
 }

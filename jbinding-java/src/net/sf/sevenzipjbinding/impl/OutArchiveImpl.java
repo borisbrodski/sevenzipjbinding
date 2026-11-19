@@ -46,6 +46,8 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     private Boolean headerEncryption;
     private int compressionLevel = -1;
     private int threadCount = -1;
+    private long dictionarySize = -1;
+    private boolean propertiesApplied;
     private PrintStream tracePrintStream;
     private boolean trace; // Read by native code
     private boolean closed;
@@ -66,6 +68,13 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         this.threadCount = threadCount;
     }
 
+    protected void featureSetDictionarySize(long dictionarySize) {
+        if (dictionarySize != -1 && dictionarySize <= 0) {
+            throw new IllegalArgumentException("Dictionary size must be positive or -1 (default): " + dictionarySize);
+        }
+        this.dictionarySize = dictionarySize;
+    }
+
     protected void applyFeatures() throws SevenZipException {
         applyFeatures(null, false);
     }
@@ -83,9 +92,22 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         if (headerEncryption != null) {
             headerEncryptionValue = headerEncryption.booleanValue() ? 1 : 0;
         }
-        if (compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0 || solidBlockSpecDefined) {
+        String dictionarySizeSpec = null;
+        // Level 0 means no compression (Copy). With a dictionary size 7-Zip would compress with LZMA2 instead.
+        if (dictionarySize != -1 && compressionLevel != 0) {
+            // The 'b' suffix makes 7-Zip read the value as bytes. A plain number would be read as a power of two.
+            dictionarySizeSpec = dictionarySize + "b";
+        }
+        boolean anyPropertySet = compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0
+                || solidBlockSpecDefined || dictionarySizeSpec != null;
+        // 7-Zip keeps the properties until the next call. If an earlier operation on this archive object sent some,
+        // an empty property list is still needed to reset them to the defaults.
+        if (anyPropertySet || propertiesApplied) {
+            // A failing call may still have applied the properties before the rejected one
+            propertiesApplied = true;
             nativeSetProperties(compressionLevel, headerEncryptionValue, threadCount, solidBlockSpec,
-                    solidBlockSpecDefined);
+                    solidBlockSpecDefined, dictionarySizeSpec);
+            propertiesApplied = anyPropertySet;
         }
     }
 
@@ -101,7 +123,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     }
 
     private native void nativeSetProperties(int compressionLevel, int headerEncryption, int threadCount,
-            String solidBlockSpec, boolean solidBlockSpecDefined) throws SevenZipException;
+            String solidBlockSpec, boolean solidBlockSpecDefined, String dictionarySizeSpec) throws SevenZipException;
 
     private native void nativeUpdateItems(ISequentialOutStream outStream, int numberOfItems,
             Object archiveUpdateCallback) throws SevenZipException;
