@@ -11,6 +11,8 @@ Extract and create 20+ archive formats with native performance — one small lib
 [![7-Zip engine](https://img.shields.io/badge/7--Zip%20engine-26.06-1f8ceb.svg)](https://www.7-zip.org/)
 [![macOS build](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml/badge.svg)](https://github.com/borisbrodski/sevenzipjbinding/actions/workflows/macos.yml)
 
+[![Download 7-Zip-JBinding](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/sevenzipjbind/files/latest/download)
+
 [**Website**](https://sevenzipjbind.sourceforge.net/) ·
 [**Quick start**](#-quick-start) ·
 [**Snippets**](https://sevenzipjbind.sourceforge.net/snippets/) ·
