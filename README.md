@@ -19,6 +19,8 @@ Extract and create 20+ archive formats with native performance — one small lib
 [**Issues**](https://github.com/borisbrodski/sevenzipjbinding/issues) ·
 [**Sponsor** ❤](https://github.com/sponsors/borisbrodski)
 
+<a href="https://sourceforge.net/projects/sevenzipjbind/"><img alt="SourceForge Open Source Excellence award" src="https://sourceforge.net/cdn/syndication/badge_img/210915/oss-open-source-excellence-white?achievement=oss-open-source-excellence" width="123"></a>
+
 </div>
 
 ---
