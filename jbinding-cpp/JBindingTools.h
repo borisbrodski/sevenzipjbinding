@@ -16,6 +16,12 @@
 
 #define NO_HRESULT -1
 
+/**
+ * Resolve every Java class and interface the native code uses (jni:: namespace) while still on the Java thread that
+ * initializes the binding. Called once from nativeInitSevenZipLibrary(). See jni::findClass() for why.
+ */
+void initializeJavaClasses(JNIEnv * env);
+
 class JNINativeCallContext;
 class JBindingSession;
 class JNIEnvInstance;
@@ -67,6 +73,12 @@ public:
 private:
 #endif
 
+    /**
+     * The context class loader captured by a running native call of this session (see
+     * JNINativeCallContext::captureContextClassLoader()), or NULL. Call under _threadContextMapCriticalSection.
+     */
+    jobject findContextClassLoader();
+
     void registerNativeContext(JNIEnv * initEnv, JNINativeCallContext * jniNativeCallContext) {
         ThreadId threadId = PlatformGetCurrentThreadId();
         _threadContextMapCriticalSection.Enter();
@@ -105,8 +117,10 @@ private:
     JNIEnv * beginCallback(JNINativeCallContext ** jniNativeCallContext) {
         _threadContextMapCriticalSection.Enter();
         ThreadContext & threadContext = _threadContextMap[PlatformGetCurrentThreadId()];
+        bool attach = !threadContext._javaNativeContext.size() && !threadContext._env;
+        jobject contextClassLoader = attach ? findContextClassLoader() : NULL;
         _threadContextMapCriticalSection.Leave();
-        if (!threadContext._javaNativeContext.size() && !threadContext._env) {
+        if (attach) {
             // Attach new thread
             TRACE("Attaching current thread to VM.")
 #ifdef USE_MY_ASSERTS
@@ -125,6 +139,10 @@ private:
             }
             threadContext._wasAttached = true;
             TRACE("Thread attached. New env=" << (void *)threadContext._env);
+            if (contextClassLoader) {
+                // A thread 7-Zip created: give the user's callbacks the class loader of the calling Java thread
+                jni::setContextClassLoader(threadContext._env, contextClassLoader);
+            }
         }
         if (threadContext._javaNativeContext.size()) {
             *jniNativeCallContext = *threadContext._javaNativeContext.begin();
@@ -214,6 +232,7 @@ class JNINativeCallContext {
     JBindingSession & _jbindingSession;
     JNIEnv * _jniCallOriginalEnv;
     char * _errorMessage;
+    jobject _contextClassLoader; // Global reference or NULL, see captureContextClassLoader()
 
     JNINativeCallContext(JNINativeCallContext const &);
     void * operator new(size_t i);
@@ -255,11 +274,21 @@ public:
     JNINativeCallContext(JBindingSession & _jbindingSession, JNIEnv * initEnv) :
         _jbindingSession(_jbindingSession), _jniCallOriginalEnv(initEnv), _firstThrownException(
                 NULL), _lastThrownException(NULL), _firstThrownExceptionInOtherThread(NULL),
-                _lastThrownExceptionInOtherThread(NULL), _errorMessage(NULL) {
+                _lastThrownExceptionInOtherThread(NULL), _errorMessage(NULL), _contextClassLoader(NULL) {
         _jbindingSession.registerNativeContext(initEnv, this);
     }
 
     ~JNINativeCallContext();
+
+    /**
+     * Remember the context class loader of the calling Java thread, to pass it on to the threads 7-Zip creates during
+     * this native call (JBindingSession::beginCallback()). Called by the native methods during which 7-Zip may create
+     * threads: open, extract and update. It costs two JNI calls, which the small property getters don't need to pay.
+     */
+    void captureContextClassLoader() {
+        MY_ASSERT(!_contextClassLoader);
+        _contextClassLoader = jni::newContextClassLoaderGlobalRef(_jniCallOriginalEnv);
+    }
 
     bool exceptionCheck(JNIEnv * env) {
         jni::prepareExceptionCheck(env);

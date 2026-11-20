@@ -1,6 +1,36 @@
 7-Zip-JBinding ChangeLog
 ========================
 
+Release - 26.06-2.4 (in preparation)
+
+	* Fixed: JVM abort when 7-Zip-JBinding is loaded by a class loader the
+	  system class loader can't see (servlet containers, Spring Boot fat jars,
+	  OSGi, IDE plug-ins; issues #7, #15, #35). 7-Zip's own encoder and decoder
+	  threads have no Java frames, so a JNI class lookup on them went through
+	  the system class loader, failed and aborted the JVM ("Class
+	  net/sf/sevenzipjbinding/IInStream not found", "Error finding class
+	  'net/sf/sevenzipjbinding/ExtractOperationResult'"). Hit by 7z compression
+	  with default settings from about 1 MB of data and by extraction of 7z
+	  archives with several LZMA2 blocks. All Java classes the native code uses
+	  are now resolved once at initialization, on the Java thread; a lookup that
+	  still fails falls back to the binding's own class loader.
+	  https://github.com/borisbrodski/sevenzipjbinding/issues/35
+
+	* Fixed: the threads 7-Zip creates had no context class loader (null), so
+	  user callbacks and streams running on them couldn't resolve classes or
+	  resources through it. They now get the context class loader of the thread
+	  that called 7-Zip-JBinding (open, extract, update).
+
+	* Docs: the callback and stream interfaces now document that 7-Zip may call
+	  them on its own worker threads and which context class loader they see.
+
+	* Tests: new Spring Boot test project (test/spring-boot-test, Gradle, Spring
+	  Boot 4) built against the jars of the current build. Its packaged jar
+	  loads the binding through Spring Boot's own class loader and creates,
+	  extracts and updates 7z and zip archives with callbacks that resolve
+	  Spring and application classes, use ServiceLoader and call Spring beans
+	  from 7-Zip's threads. Run on the build host once per test campaign.
+
 Release - 26.06-2.3 (engine upgrade to 7-Zip 26.06)
 
 	* Upgraded the bundled 7-Zip engine 23.01 -> 26.06 (released 2026-11-06)

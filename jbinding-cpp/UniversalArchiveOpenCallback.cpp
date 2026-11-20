@@ -19,15 +19,7 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
 
     _simulateArchiveOpenVolumeCallback = false;
 
-    jclass cryptoGetTextPasswordClass = initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
-    FATALIF(cryptoGetTextPasswordClass == NULL,
-            "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
-
-    jclass archiveOpenVolumeCallbackClass = initEnv->FindClass(ARCHIVEOPENVOLUMECALLBACK_CLASS);
-    FATALIF(archiveOpenVolumeCallbackClass == NULL,
-            "Can't find class " ARCHIVEOPENVOLUMECALLBACK_CLASS);
-
-    if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, cryptoGetTextPasswordClass))
+    if (jni::ICryptoGetTextPassword::_isInstance(initEnv, archiveOpenCallbackImpl))
     {
     	TRACE("implements ICryptoGetTextPassword")
         CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr =
@@ -35,7 +27,7 @@ void UniversalArchiveOpencallback::Init(JBindingSession & jbindingSession, JNIEn
         _cryptoGetTextPassword = cryptoGetTextPasswordComPtr.Detach();
     }
 
-    if (initEnv->IsInstanceOf(archiveOpenCallbackImpl, archiveOpenVolumeCallbackClass))
+    if (jni::IArchiveOpenVolumeCallback::_isInstance(initEnv, archiveOpenCallbackImpl))
     {
     	TRACE("implements IArchiveOpenVolumeCallback")
         CMyComPtr<IArchiveOpenVolumeCallback> archiveOpenVolumeCallbackComPtr =

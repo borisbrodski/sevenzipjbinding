@@ -11,6 +11,7 @@
 #include <cstring>
 
 #include "JBindingTools.h"
+#include "JavaStatInfos/JavaPackageSevenZip.h"
 
 JT_BEGIN_CLASS("net/sf/sevenzipjbinding", SevenZipException)
 /*    */JT_CLASS_VIRTUAL_METHOD_OBJECT("Ljava/lang/Throwable;", initCause, JT_THROWABLE(cause,_))
@@ -122,8 +123,25 @@ bool JNINativeCallContext::willExceptionBeThrown() {
             || _firstThrownExceptionInOtherThread || _lastThrownExceptionInOtherThread; // TODO Test it
 }
 
+jobject JBindingSession::findContextClassLoader() {
+    ThreadContextMap::iterator threadContextIterator = _threadContextMap.begin();
+    while (threadContextIterator != _threadContextMap.end()) {
+        std::list<JNINativeCallContext *> & jniNativeCallContextList =
+                threadContextIterator->second._javaNativeContext;
+        if (jniNativeCallContextList.size() && (*jniNativeCallContextList.begin())->_contextClassLoader) {
+            return (*jniNativeCallContextList.begin())->_contextClassLoader;
+        }
+        threadContextIterator++;
+    }
+    return NULL;
+}
+
 JNINativeCallContext::~JNINativeCallContext() {
     _jbindingSession.unregisterNativeContext(*this);
+    if (_contextClassLoader) {
+        _jniCallOriginalEnv->DeleteGlobalRef(_contextClassLoader);
+        _contextClassLoader = NULL;
+    }
 
     //jthrowable firstThrownException = NULL;
     //jthrowable lastThrownException = NULL;
@@ -198,6 +216,48 @@ JNINativeCallContext::~JNINativeCallContext() {
     // - throw SevenZipException directly
     // - throw all other exceptions wrapped in SevenZipException
     // - set lastThrownException
+}
+
+void initializeJavaClasses(JNIEnv * env) {
+    // Keep this list complete: every JT_BEGIN_CLASS / JT_BEGIN_INTERFACE declaration. A missing entry is resolved
+    // lazily on first use, which Debug builds report (jni::findClass() asserts when that happens on a 7-Zip thread).
+
+    // JavaStandardLibrary.h
+    jni::Date::_initialize(env);
+    jni::Integer::_initialize(env);
+    jni::Long::_initialize(env);
+    jni::Boolean::_initialize(env);
+    jni::NoSuchMethodError::_initialize(env);
+    jni::ExceptionInInitializerError::_initialize(env);
+    jni::OutOfMemoryError::_initialize(env);
+
+    // JavaPackageSevenZip.h
+    jni::ISequentialInStream::_initialize(env);
+    jni::IInStream::_initialize(env);
+    jni::IArchiveOpenCallback::_initialize(env);
+    jni::IArchiveOpenVolumeCallback::_initialize(env);
+    jni::ICryptoGetTextPassword::_initialize(env);
+    jni::IProgress::_initialize(env);
+    jni::IArchiveExtractCallback::_initialize(env);
+    jni::ISequentialOutStream::_initialize(env);
+    jni::IOutStream::_initialize(env);
+    jni::ISeekableStream::_initialize(env);
+    jni::IOutCreateCallback::_initialize(env);
+    jni::OutItemFactory::_initialize(env);
+    jni::OutItem::_initialize(env);
+    jni::InArchiveImpl::_initialize(env);
+    jni::OutArchiveImpl::_initialize(env);
+    jni::PropertyInfo::_initialize(env);
+    jni::PropID::_initialize(env);
+    jni::ExtractAskMode::_initialize(env);
+    jni::ExtractOperationResult::_initialize(env);
+    jni::ReportExtractResultIndexType::_initialize(env);
+    jni::ArchiveFormat::_initialize(env);
+
+    // JBindingTools.cpp
+    jni::SevenZipException::_initialize(env);
+
+    jni::classInitializationDone();
 }
 
 #ifdef USE_MY_ASSERTS

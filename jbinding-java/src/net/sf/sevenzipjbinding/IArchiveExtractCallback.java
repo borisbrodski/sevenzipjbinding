@@ -5,6 +5,13 @@ package net.sf.sevenzipjbinding;
  * <p>
  * To provide a password for extracting encrypted files, additionally implement {@link ICryptoGetTextPassword} in your
  * {@code IArchiveExtractCallback} implementation.
+ * <p>
+ * <b>Threading:</b> 7-Zip-JBinding may invoke the methods of this interface on threads created by 7-Zip, for example
+ * during multithreaded 7z compression or LZMA2 decompression, not only on the thread that called the binding, and
+ * different items may be processed on different threads. Don't rely on the identity of the calling thread or on
+ * thread-confined resources such as {@link ThreadLocal} values, a JDBC connection bound to the caller or a UI toolkit
+ * thread. Such a thread gets the context class loader of the thread that called 7-Zip-JBinding, so code that resolves
+ * classes or resources through it (service loaders, logging, dependency injection) works as on the calling thread.
  *
  * @author Boris Brodski
  * @since 4.65-1

@@ -50,6 +50,7 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveImpl_
 
     JBindingSession & jbindingSession = GetJBindingSession(env, thiz);
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    jniNativeCallContext.captureContextClassLoader();
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     CMyComPtr<IInArchive> archive(GetArchive(env, thiz));

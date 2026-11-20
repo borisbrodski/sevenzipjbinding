@@ -1,0 +1,48 @@
+// A small Spring Boot application using 7-Zip-JBinding. The binding comes from the freshly built jars named by
+// -PsevenZipJBindingJars (see run.sh), never from a repository, so the test always covers the current build.
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.2.0'
+}
+
+group = 'net.sf.sevenzipjbinding'
+version = '0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+def sevenZipJBindingJars = (findProperty('sevenZipJBindingJars') ?: '').toString().split(File.pathSeparator).findAll { it }
+if (sevenZipJBindingJars.isEmpty()) {
+    throw new GradleException("Pass -PsevenZipJBindingJars=<sevenzipjbinding.jar>${File.pathSeparator}<platform jar> (run.sh does)")
+}
+sevenZipJBindingJars.each { jar ->
+    if (!file(jar).isFile()) {
+        throw new GradleException("7-Zip-JBinding jar not found: $jar")
+    }
+}
+
+dependencies {
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation files(sevenZipJBindingJars)
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 17
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+tasks.named('bootJar') {
+    archiveFileName = 'sevenzipjbinding-spring-boot-test.jar'
+}

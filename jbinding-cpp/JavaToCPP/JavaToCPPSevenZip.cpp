@@ -56,7 +56,9 @@ Java_net_sf_sevenzipjbinding_SevenZip_nativeInitSevenZipLibrary(JNIEnv * env, jc
 
 	codecTools.init();
 
-    jni::OutOfMemoryError::_initialize(env);
+    // Resolve every Java class now, on the Java thread: 7-Zip's own threads can't (see jni::findClass())
+    jni::initializeClassLoader(env, thiz);
+    initializeJavaClasses(env);
 
     //if (msg) {
     //	TRACE1("Error initializing 7-zip library: %s", msg)
@@ -149,6 +151,7 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
     DeleteInErrorCase<JBindingSession> deleteInErrorCase(jbindingSession);
 
     JNINativeCallContext jniNativeCallContext(jbindingSession, env);
+    jniNativeCallContext.captureContextClassLoader();
     JNIEnvInstance jniEnvInstance(jbindingSession, jniNativeCallContext, env);
 
     int index = -1;

@@ -339,11 +339,8 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
     }
 
     if (inStreamImpl) {
-
-        jclass inStreamInterface = jniEnvInstance->FindClass(INSTREAM_CLASS);
-        FATALIF(!inStreamInterface, "Class " INSTREAM_CLASS " not found");
-
-        if (jniEnvInstance->IsInstanceOf(inStreamImpl, inStreamInterface)) {
+        // No FindClass() here: GetStream() runs on 7-Zip's encoder threads (#35), use the class cached at init
+        if (jni::IInStream::_isInstance(jniEnvInstance, inStreamImpl)) {
             CPPToJavaInStream * newInStream = new CPPToJavaInStream(_jbindingSession, jniEnvInstance, inStreamImpl);
             CMyComPtr<IInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
@@ -353,7 +350,6 @@ STDMETHODIMP CPPToJavaArchiveUpdateCallback::GetStream(UInt32 index, ISequential
             CMyComPtr<ISequentialInStream> inStreamComPtr = newInStream;
             *inStream = inStreamComPtr.Detach();
         }
-        jniEnvInstance->DeleteLocalRef(inStreamInterface);
         jniEnvInstance->DeleteLocalRef(inStreamImpl);
     }
 

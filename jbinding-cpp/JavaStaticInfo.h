@@ -624,6 +624,44 @@
 
 namespace jni {
 
+/**
+ * Remember the class loader of the binding (the loader of net.sf.sevenzipjbinding.SevenZip) and the java.lang.Thread
+ * methods needed to pass a context class loader on to the threads 7-Zip creates. Called once from
+ * nativeInitSevenZipLibrary() on the Java thread that initializes the binding.
+ */
+void initializeClassLoader(JNIEnv * env, jclass sevenZipClass);
+
+/**
+ * Called by initializeJavaClasses() once every class is resolved. From then on Debug builds treat a call of findClass()
+ * as a bug: a class missing from the eager list in initializeJavaClasses().
+ */
+void classInitializationDone();
+
+/**
+ * Resolve a class by its JNI name ("net/sf/sevenzipjbinding/IInStream"). Returns a local reference or NULL.
+ *
+ * FindClass() alone isn't enough: on a thread 7-Zip created itself (encoder and decoder threads, attached by
+ * JBindingSession::beginCallback()) there is no Java frame, so FindClass() resolves through the system class
+ * loader, which doesn't see the binding when it is loaded by an application class loader (servlet containers,
+ * Spring Boot, OSGi, IDE plug-ins; issues #7, #15, #35). If FindClass() fails, this method asks the class loader
+ * remembered by initializeClassLoader(). Normally every class is resolved eagerly by initializeJavaClasses() at
+ * initialization time anyway; Debug builds assert that no class is resolved lazily after that.
+ */
+jclass findClass(JNIEnv * env, const char * name);
+
+/**
+ * Global reference to the context class loader of the current (Java) thread, or NULL if it has none. The caller
+ * releases it with DeleteGlobalRef().
+ */
+jobject newContextClassLoaderGlobalRef(JNIEnv * env);
+
+/**
+ * Set the context class loader of the current thread. The JVM attaches the threads 7-Zip created without a context
+ * class loader (null); the user's callbacks and streams running there get the loader of the thread that called the
+ * binding, so that their code resolves classes the same way as on the calling thread.
+ */
+void setContextClassLoader(JNIEnv * env, jobject classLoader);
+
 inline void expectExceptionCheck(JNIEnv * env) {
 #ifdef JNI_TOOLS_DEBUG_CALL_AND_EXCEPTION_CLEAR_BEHAVIOR
     TRACE("Expect exception check")
@@ -689,8 +727,8 @@ private:
         _initCriticalSection.Leave();
     }
     void init(JNIEnv * env) {
-        TRACE ("env->FindClass() for " << T::getName())
-        jclass clazz = env->FindClass(T::getName());
+        TRACE ("jni::findClass() for " << T::getName())
+        jclass clazz = findClass(env, T::getName());
         FATALIF1(!clazz, "Error finding class '%s'", T::getName())
         _jclass = static_cast<jclass> (env->NewGlobalRef(clazz));
         env->DeleteLocalRef(clazz);
@@ -767,12 +805,15 @@ public:
     }
     static jclass _getClassObject(JNIEnv * env) {
         if (_classObject == NULL) {
-            jclass objectClass = env->FindClass(T::_getName());
+            jclass objectClass = findClass(env, T::_getName());
             FATALIF1(!objectClass, "Error finding class '%s'", T::_getName());
             _classObject = (jclass) env->NewGlobalRef(objectClass);
             env->DeleteLocalRef(objectClass);
         }
         return _classObject;
+    }
+    static void _initialize(JNIEnv * env) {
+        _getClassObject(env);
     }
     /*
      * true  - if "object instanceof Class" yields true.

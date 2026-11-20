@@ -4,7 +4,13 @@ import java.io.Closeable;
 
 /**
  * Interface used to operate with a sequential input stream.
- * 
+ * <p>
+ * <b>Threading:</b> 7-Zip-JBinding may call this method on threads created by 7-Zip, for example during multithreaded
+ * 7z or zip compression and LZMA2 decompression, not only on the thread that called the binding. Streams of different
+ * archive items may be used concurrently, each from its own thread. Don't rely on the identity of the calling thread or
+ * on thread-confined resources such as {@link ThreadLocal} values. Such a thread gets the context class loader of the
+ * thread that called 7-Zip-JBinding.
+ *
  * @author Boris Brodski
  * @since 4.65-1
  */

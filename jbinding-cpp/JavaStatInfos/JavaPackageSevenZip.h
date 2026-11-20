@@ -60,6 +60,11 @@ JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ISequentialInStream)
 	JT_INTERFACE_METHOD(Int, read, JT_BYTE_ARRAY(data,_))
 JT_END_CLASS
 
+// Marker only: used to tell IInStream implementations from plain ISequentialInStream ones (see
+// CPPToJavaArchiveUpdateCallback::GetStream()). The methods are called through CPPToJavaInStream.
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IInStream)
+JT_END_INTERFACE
+
 
 JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IArchiveOpenCallback)
 	// public void setTotal(Long files, Long bytes)

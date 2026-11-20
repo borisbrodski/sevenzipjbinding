@@ -26,13 +26,7 @@ public:
                 initEnv, archiveExtractCallbackImpl)) {
     TRACE_OBJECT_CREATION("CPPToJavaArchiveExtractCallback")
 
-    jclass cryptoGetTextPasswordClass =
-        initEnv->FindClass(CRYPTOGETTEXTPASSWORD_CLASS);
-    FATALIF(cryptoGetTextPasswordClass == NULL,
-            "Can't find class " CRYPTOGETTEXTPASSWORD_CLASS);
-
-    if (initEnv->IsInstanceOf(_javaImplementation,
-                              cryptoGetTextPasswordClass)) {
+    if (jni::ICryptoGetTextPassword::_isInstance(initEnv, _javaImplementation)) {
       CMyComPtr<ICryptoGetTextPassword> cryptoGetTextPasswordComPtr =
           new CPPToJavaCryptoGetTextPassword(_jbindingSession, initEnv,
                                              _javaImplementation);

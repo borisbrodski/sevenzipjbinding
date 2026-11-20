@@ -41,3 +41,8 @@ Session.vim
 /.cache/
 /.clangd/
 
+
+# Spring Boot test project (test/spring-boot-test)
+!/test/spring-boot-test/gradle/wrapper/gradle-wrapper.jar
+/test/spring-boot-test/.gradle/
+/test/spring-boot-test/build/
