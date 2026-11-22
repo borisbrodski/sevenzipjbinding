@@ -59,7 +59,8 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
  * thread.</li>
  * </ul>
  * The native library can be loaded by only one class loader per JVM, so each scenario runs in a child JVM. Its system
- * class path holds a single class, {@link Launcher}; the test classes and the binding jars go into a
+ * class path holds a single class, {@link ClassLoaderIsolationLauncher} (top level: the macOS launcher resolves the
+ * enclosing class of a nested main class); the test classes and the binding jars go into a
  * <code>URLClassLoader</code> with no parent (an isolated plug-in) or with the system class loader as parent (the fat
  * jar and web application shape: parent delegation, but the jars aren't on the system class path). The launcher
  * checks that the system class loader indeed can't see the binding, then runs {@link Child} through the custom loader.
@@ -82,53 +83,6 @@ public class ClassLoaderIsolationTest {
      */
     private static final String FILTERED_7Z = "testdata/misc/classloader/bcj-lzma2.7z";
     private static final int FILTERED_7Z_ITEM_SIZE = 256 * KB;
-
-    /**
-     * The only class on the child JVM's system class path. Must reference nothing but the JDK (the outer class isn't
-     * loadable there).
-     * <p>
-     * <code>Launcher &lt;isolated|delegating&gt; &lt;class path&gt; &lt;main class&gt; &lt;args...&gt;</code>: builds a
-     * <code>URLClassLoader</code> over the class path with no parent (isolated) or the system class loader as parent
-     * (delegating), makes it the context class loader like a container would, and runs the main class through it.
-     */
-    public static class Launcher {
-        public static final String OK = "LAUNCHER-OK";
-        public static final String ISOLATED = "isolated";
-        public static final String DELEGATING = "delegating";
-
-        public static void main(String[] args) throws Exception {
-            String shape = args[0];
-            String[] classPath = args[1].split(File.pathSeparator);
-            String mainClass = args[2];
-
-            try {
-                Class.forName("net.sf.sevenzipjbinding.SevenZip");
-                System.out.println("FAILED: the system class loader sees the binding, the test proves nothing");
-                System.exit(2);
-            } catch (ClassNotFoundException expected) {
-                // The whole point
-            }
-
-            URL[] urls = new URL[classPath.length];
-            for (int i = 0; i < classPath.length; i++) {
-                urls[i] = new File(classPath[i]).toURI().toURL();
-            }
-            ClassLoader parent = shape.equals(DELEGATING) ? ClassLoader.getSystemClassLoader() : null;
-            URLClassLoader loader = new URLClassLoader(urls, parent);
-            Thread.currentThread().setContextClassLoader(loader);
-
-            Class<?> clazz = Class.forName(mainClass, true, loader);
-            if (clazz.getClassLoader() != loader) {
-                System.out.println("FAILED: " + mainClass + " was defined by " + clazz.getClassLoader());
-                System.exit(2);
-            }
-            System.out.println(OK + " " + shape + " loader, parent " + parent);
-
-            Method main = clazz.getMethod("main", String[].class);
-            String[] rest = Arrays.copyOfRange(args, 3, args.length);
-            main.invoke(null, (Object) rest);
-        }
-    }
 
     /**
      * Whether a scenario must see callbacks on 7-Zip's own threads to prove anything.
@@ -497,53 +451,53 @@ public class ClassLoaderIsolationTest {
 
     @Test
     public void create7zTwoThreadsIsolatedLoader() throws Exception {
-        runChild(Launcher.ISOLATED, Scenario.CREATE_7Z_TWO_THREADS);
+        runChild(ClassLoaderIsolationLauncher.ISOLATED, Scenario.CREATE_7Z_TWO_THREADS);
     }
 
     @Test
     public void create7zTwoThreadsDelegatingLoader() throws Exception {
-        runChild(Launcher.DELEGATING, Scenario.CREATE_7Z_TWO_THREADS);
+        runChild(ClassLoaderIsolationLauncher.DELEGATING, Scenario.CREATE_7Z_TWO_THREADS);
     }
 
     @Test
     public void extractMultiBlock7zIsolatedLoader() throws Exception {
-        runChild(Launcher.ISOLATED, Scenario.EXTRACT_7Z_MULTI_BLOCK);
+        runChild(ClassLoaderIsolationLauncher.ISOLATED, Scenario.EXTRACT_7Z_MULTI_BLOCK);
     }
 
     @Test
     public void extractMultiBlock7zDelegatingLoader() throws Exception {
-        runChild(Launcher.DELEGATING, Scenario.EXTRACT_7Z_MULTI_BLOCK);
+        runChild(ClassLoaderIsolationLauncher.DELEGATING, Scenario.EXTRACT_7Z_MULTI_BLOCK);
     }
 
     @Test
     public void extractFiltered7zIsolatedLoader() throws Exception {
-        runChild(Launcher.ISOLATED, Scenario.EXTRACT_7Z_FILTERED);
+        runChild(ClassLoaderIsolationLauncher.ISOLATED, Scenario.EXTRACT_7Z_FILTERED);
     }
 
     @Test
     public void extractFiltered7zDelegatingLoader() throws Exception {
-        runChild(Launcher.DELEGATING, Scenario.EXTRACT_7Z_FILTERED);
+        runChild(ClassLoaderIsolationLauncher.DELEGATING, Scenario.EXTRACT_7Z_FILTERED);
     }
 
     @Test
     public void createAndExtractZipIsolatedLoader() throws Exception {
-        runChild(Launcher.ISOLATED, Scenario.ZIP);
+        runChild(ClassLoaderIsolationLauncher.ISOLATED, Scenario.ZIP);
     }
 
     @Test
     public void createAndExtractZipDelegatingLoader() throws Exception {
-        runChild(Launcher.DELEGATING, Scenario.ZIP);
+        runChild(ClassLoaderIsolationLauncher.DELEGATING, Scenario.ZIP);
     }
 
     private static void runChild(String loaderShape, Scenario scenario) throws Exception {
         File workDir = Files.createTempDirectory("sevenzipjbinding-classloader").toFile();
         try {
             File launcherDir = new File(workDir, "launcher");
-            copyClassFile(Launcher.class, launcherDir);
+            copyClassFile(ClassLoaderIsolationLauncher.class, launcherDir);
 
             String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             List<String> command = new ArrayList<String>(Arrays.asList(java, "-Xmx128m", "-cp",
-                    launcherDir.getPath(), Launcher.class.getName(), loaderShape,
+                    launcherDir.getPath(), ClassLoaderIsolationLauncher.class.getName(), loaderShape,
                     System.getProperty("java.class.path"), Child.class.getName(), scenario.name()));
             if (scenario.archive != null) {
                 File archive = new File(workDir, "archive");
@@ -562,7 +516,7 @@ public class ClassLoaderIsolationTest {
                     + (finished ? "exit code " + process.exitValue() : "timed out") + ", output:\n" + output.text()
                     + crashLogs(workDir);
             assertTrue(report, finished);
-            assertTrue(report, output.text().contains(Launcher.OK));
+            assertTrue(report, output.text().contains(ClassLoaderIsolationLauncher.OK));
             assertEquals(report, 0, process.exitValue());
             assertTrue(report, output.text().contains(Child.OK));
         } finally {
