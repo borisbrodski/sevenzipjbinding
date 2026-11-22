@@ -498,7 +498,7 @@ public class ClassLoaderIsolationTest {
             String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
             List<String> command = new ArrayList<String>(Arrays.asList(java, "-Xmx128m", "-cp",
                     launcherDir.getPath(), ClassLoaderIsolationLauncher.class.getName(), loaderShape,
-                    System.getProperty("java.class.path"), Child.class.getName(), scenario.name()));
+                    absoluteClassPath(), Child.class.getName(), scenario.name()));
             if (scenario.archive != null) {
                 File archive = new File(workDir, "archive");
                 Files.write(archive.toPath(), scenario.archive.bytes());
@@ -539,6 +539,24 @@ public class ClassLoaderIsolationTest {
      * Copy the class file of <code>clazz</code> into <code>dir</code> (package directories included), so that a JVM
      * with <code>-cp dir</code> sees exactly this one class.
      */
+    /**
+     * This JVM's class path with every entry made absolute: the child runs in a temporary directory, and the
+     * integration test pack starts the suite with relative jar paths (<code>lib/...</code>).
+     */
+    private static String absoluteClassPath() {
+        StringBuilder classPath = new StringBuilder();
+        for (String entry : System.getProperty("java.class.path").split(File.pathSeparator)) {
+            if (entry.length() == 0) {
+                continue;
+            }
+            if (classPath.length() > 0) {
+                classPath.append(File.pathSeparator);
+            }
+            classPath.append(new File(entry).getAbsolutePath());
+        }
+        return classPath.toString();
+    }
+
     private static void copyClassFile(Class<?> clazz, File dir) throws IOException {
         String path = clazz.getName().replace('.', '/') + ".class";
         File target = new File(dir, path);
