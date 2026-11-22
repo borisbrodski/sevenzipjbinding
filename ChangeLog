@@ -21,8 +21,19 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  resources through it. They now get the context class loader of the thread
 	  that called 7-Zip-JBinding (open, extract, update).
 
+	* Fixed: creating or updating a 7z, zip or tar archive into a plain
+	  ISequentialOutStream (no seek) aborted the JVM ("Method not found:
+	  seek()"), because every output stream was handed to 7-Zip as seekable.
+	  Only an IOutStream is seekable now: zip, tar, gzip, bzip2 and xz are
+	  written sequentially, 7z throws a SevenZipException that names the
+	  requirement.
+
 	* Docs: the callback and stream interfaces now document that 7-Zip may call
 	  them on its own worker threads and which context class loader they see.
+	  IOutUpdateArchive.updateItems() documents that 7z stores the items of the
+	  updated archive in a different order than the indices passed (unchanged
+	  items keep their old solid blocks, re-compressed ones follow), so results
+	  have to be matched by path.
 
 	* Tests: new Spring Boot test project (test/spring-boot-test, Gradle, Spring
 	  Boot 4) built against the jars of the current build. Its packaged jar

@@ -22,6 +22,7 @@ import net.sf.sevenzipjbinding.junit.common.JUnitInitializationTest;
 import net.sf.sevenzipjbinding.junit.common.TestBaseTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetConnectedArchiveTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressExceptionGetItemInformationTest;
+import net.sf.sevenzipjbinding.junit.compression.CompressSequentialOutStreamTest;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevel;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureSetLevelRatioImpact;
 import net.sf.sevenzipjbinding.junit.compression.CompressFeatureCombinations7zTest;
@@ -430,6 +431,7 @@ public class AllTestSuite extends TestSuite {
     };
     static Class<?>[] compressionTests = { //
             CompressExceptionGetItemInformationTest.class, //
+            CompressSequentialOutStreamTest.class, //
             CompressExceptionGetConnectedArchiveTest.class, //
 
             TraceCompressionTest.class, //

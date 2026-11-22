@@ -63,12 +63,13 @@ public interface IOutCreateArchive<T extends IOutItemBase> extends IOutArchiveBa
      * The <code>outCreateCallback</code> is designed to provide necessary information about new archive items and to
      * receive information about the progress of the operation.<br>
      * <br>
-     * <i>Note:</i> the 7z and Zip formats require a seekable {@link IOutStream} (instead of an
-     * {@link ISequentialOutStream}) to be passed.
+     * <i>Note:</i> the 7z format requires a seekable {@link IOutStream} (instead of a plain
+     * {@link ISequentialOutStream}) and reports a {@link SevenZipException} otherwise. Zip, Tar, GZip, BZip2 and XZ
+     * are written sequentially if the stream isn't an {@link IOutStream}.
      *
      * @param outStream
      *            output stream to receive the new archive. An implementation of the {@link IOutStream} interface is
-     *            required for some archive formats.
+     *            required for the 7z format.
      * @param numberOfItems
      *            number of items in the new archive
      * @param outCreateCallback

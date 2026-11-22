@@ -34,6 +34,19 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       a fat jar now runs on the build host in every test campaign; it reproduces
       the abort on 26.06-2.3 and passes with this release.
 
+    * Fixed: JVM abort when a 7z, zip or tar archive was written to an output
+      stream that implements only ISequentialOutStream (no seek()). Every output
+      stream was wrapped as a seekable IOutStream, so 7-Zip's first Seek() looked
+      up seek() on the Java class and the binding aborted the JVM ("Method not
+      found: seek()"). The wrapper now follows the Java type: zip, tar, gzip,
+      bzip2 and xz are written sequentially, 7z fails with a SevenZipException
+      stating that it needs a seekable IOutStream (RandomAccessFileOutStream,
+      ByteArrayStream). Regression test: CompressSequentialOutStreamTest.
+
+    * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
+      state which formats need a seekable output stream and that 7z may reorder
+      items on update (unchanged items keep their solid block).
+
     * Java API and binaries: no API changes; binary and source compatible with
       26.06-2.3. Maven coordinates unchanged.
 

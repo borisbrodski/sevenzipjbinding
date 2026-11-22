@@ -38,10 +38,18 @@ package net.sf.sevenzipjbinding;
 public interface IOutUpdateArchive<T extends IOutItemBase> extends IOutArchiveBase {
 
     /**
-     * Update items in archive (actually creating a new one based on the old one).
+     * Update items in archive (actually creating a new one based on the old one).<br>
+     * <br>
+     * <i>Note:</i> the items of the new archive are not necessarily stored in the order of the indices passed to the
+     * callback. 7z keeps unchanged items in their old solid blocks and appends re-compressed items after them, so
+     * identify items of the result by path, not by index.<br>
+     * <br>
+     * <i>Note:</i> the 7z format requires a seekable {@link IOutStream} (instead of a plain
+     * {@link ISequentialOutStream}) and reports a {@link SevenZipException} otherwise.
      *
      * @param outStream
-     *            output stream to get the new archive
+     *            output stream to get the new archive. An implementation of the {@link IOutStream} interface is
+     *            required for the 7z format.
      * @param numberOfItems
      *            number of items in the new archive
      * @param outCreateCallback

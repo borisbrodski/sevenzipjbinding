@@ -6,6 +6,7 @@
 #include "CodecTools.h"
 
 #include "CPPToJava/CPPToJavaOutStream.h"
+#include "CPPToJava/CPPToJavaSequentialOutStream.h"
 #include "CPPToJava/CPPToJavaArchiveUpdateCallback.h"
 
 #include "UnicodeHelper.h"
@@ -60,8 +61,17 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 	    }
 	}
 
-	CMyComPtr<IOutStream> cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env,
-			outStream);
+	// Only a Java IOutStream gets the seekable wrapper. A plain ISequentialOutStream used to be wrapped as
+	// IOutStream too, so 7-Zip's first Seek() looked up a seek() method the object doesn't have and aborted
+	// the JVM ("Method not found: seek()"). Without IOutStream 7-Zip writes zip, tar, gzip, bzip2 and xz
+	// sequentially and fails 7z with E_NOTIMPL, which is reported below.
+	bool isSeekableOutStream = jni::IOutStream::_isInstance(env, outStream);
+	CMyComPtr<ISequentialOutStream> cppToJavaOutStream;
+	if (isSeekableOutStream) {
+		cppToJavaOutStream = new CPPToJavaOutStream(jbindingSession, env, outStream);
+	} else {
+		cppToJavaOutStream = new CPPToJavaSequentialOutStream(jbindingSession, env, outStream);
+	}
 
 	CPPToJavaArchiveUpdateCallback * cppToJavaArchiveUpdateCallback = new CPPToJavaArchiveUpdateCallback(
 	        jbindingSession, env,
@@ -74,7 +84,13 @@ JBINDING_JNIEXPORT void JNICALL Java_net_sf_sevenzipjbinding_impl_OutArchiveImpl
 
 	HRESULT hresult  = outArchive->UpdateItems(cppToJavaOutStream, numberOfItems,
 			cppToJavaArchiveUpdateCallback);
-	if (hresult) {
+	if (hresult == E_NOTIMPL && !isSeekableOutStream) {
+		jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items: this archive format "
+				"needs a seekable output stream. Pass an IOutStream (for example RandomAccessFileOutStream or "
+				"ByteArrayStream) instead of a plain ISequentialOutStream",
+				(const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name,
+				(int) numberOfItems);
+	} else if (hresult) {
 		jniEnvInstance.reportError(hresult, "Error creating '%S' archive with %i items",
 				(const wchar_t*) codecTools.codecs.Formats[archiveFormatIndex].Name,
 				(int) numberOfItems);
