@@ -46,6 +46,7 @@ const mavenDep = `<dependency>
           <span class="badge"><span class="dot"></span> v26.06-2.3 · all platforms green</span>
           <span class="badge">LGPL-2.1</span>
           <span class="badge warm">Java 8+</span>
+          <span class="badge">Spring Boot · servlet containers · OSGi</span>
         </div>
         <h1>The 7-Zip engine,<br /><span class="brand-text">bound to Java.</span></h1>
         <p class="hero-sub">
@@ -98,7 +99,8 @@ const mavenDep = `<dependency>
         <div class="card"><h3><span class="ico warm">☕</span>One jar, every platform</h3>
           <p>Windows (x86, x64 &amp; ARM64), Linux (glibc &amp; musl/Alpine, x86 &amp; ARM v5–v8), macOS
           (Intel, Apple Silicon, or a universal AllMac binary) and FreeBSD (amd64). Runtime auto-detection picks the right
-          native library.</p></div>
+          native library. Runs inside Spring Boot fat jars, servlet containers (Tomcat, Jetty), OSGi
+          bundles and IDE plug-ins: 7-Zip's worker threads see your class loader.</p></div>
         <div class="card"><h3><span class="ico">🔒</span>Encryption support</h3>
           <p>Open and create password-protected archives, including 7z header encryption
           and encrypted RAR5 archives.</p></div>
@@ -223,6 +225,7 @@ const mavenDep = `<dependency>
       <div class="plat-note">
         <span class="badge"><span class="dot"></span> every build: 18/18 test bundles green</span>
         <span class="badge">runtime detection: OS · arch · ARM level · glibc/musl</span>
+        <span class="badge">application class loaders: Spring Boot · Tomcat/Jetty · OSGi · IDE plug-ins</span>
       </div>
     </div>
   </section>

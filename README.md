@@ -41,6 +41,10 @@ and abort at any time.
 - **One jar, every platform** — Windows (x86, x64 **and** ARM64), Linux (glibc **and** musl/Alpine,
   x86 **and** ARM v5–v8), macOS (Intel + Apple Silicon) **and** FreeBSD (amd64). The `-all-platforms`
   jar **auto‑detects** the OS, architecture, ARM level, and glibc‑vs‑musl at runtime.
+- **Runs inside your platform** — Spring Boot fat jars, servlet containers (Tomcat, Jetty, …), OSGi
+  bundles, IDE plug‑ins and other hosts with their own class loaders. 7‑Zip's worker threads resolve
+  your classes and see your context class loader, so callbacks can use `ServiceLoader`, Spring beans
+  or OSGi services (since `26.06‑2.4`).
 - **Two APIs** — a beginner‑friendly *simple* interface and a full‑power *standard* interface.
 - **Encryption** — open and create password‑protected archives, including 7z encrypted headers.
 - **Battle‑tested** — maintained since 2007, exercised by ~8900 JUnit tests on every supported

@@ -1,7 +1,7 @@
 7-Zip-JBinding ChangeLog
 ========================
 
-Release - 26.06-2.4 (in preparation)
+Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers, OSGi)
 
 	* Fixed: JVM abort when 7-Zip-JBinding is loaded by a class loader the
 	  system class loader can't see (servlet containers, Spring Boot fat jars,

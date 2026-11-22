@@ -9,6 +9,35 @@ Known issues
       as of 26.06-2.3 - the bundled engine now postdates the upstream fix in 7-Zip 24.07.)
 
 
+Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet containers, OSGi)
+
+    * Fixed: JVM abort when 7-Zip-JBinding is loaded by a class loader the system
+      class loader can't see - Spring Boot fat jars, servlet containers (Tomcat,
+      Jetty), OSGi, IDE plug-ins and similar hosts (issues #7, #15, #35). 7-Zip's
+      encoder and decoder threads have no Java frames, so a JNI class lookup on
+      them went through the system class loader, failed and aborted the JVM
+      ("Class net/sf/sevenzipjbinding/IInStream not found"). Hit by 7z compression
+      with default settings from about 1 MB of data and by extraction of 7z
+      archives with several LZMA2 blocks. All Java classes used by the native code
+      are now resolved once at initialization, on the Java thread.
+
+    * Fixed: 7-Zip's worker threads had no context class loader (null). Callbacks
+      and streams running on them now see the context class loader of the thread
+      that called 7-Zip-JBinding (open, extract, update), so ServiceLoader,
+      resource lookups and framework code (Spring beans, OSGi services) work from
+      every callback.
+
+    * Docs: the callback and stream interfaces document that 7-Zip may call them
+      on its own worker threads and which context class loader they see.
+
+    * Tests: a Spring Boot 4 test application (test/spring-boot-test) packaged as
+      a fat jar now runs on the build host in every test campaign; it reproduces
+      the abort on 26.06-2.3 and passes with this release.
+
+    * Java API and binaries: no API changes; binary and source compatible with
+      26.06-2.3. Maven coordinates unchanged.
+
+
 Main features of 26.06-2.3 (engine upgrade to 7-Zip 26.06)
 
     * Upgraded the bundled 7-Zip engine from 23.01 to 26.06 (released 2026-11-06),
