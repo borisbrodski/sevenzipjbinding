@@ -69,6 +69,12 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  (issue #56, based on pull request #36 by Ethan Roseman). Other formats
 	  return null.
 
+	* New: net.sf.sevenzipjbinding.util.ItemType classifies an item as regular
+	  file, directory, symbolic link, hard link, reparse point, device, fifo or
+	  socket from IS_FOLDER, SYM_LINK, HARD_LINK, POSIX_ATTRIB and ATTRIBUTES,
+	  with the bit constants in UnixMode and WindowsAttributes; the
+	  ExtractToFolder example uses it instead of hex literals (issue #91).
+
 	* Website: astro 7.3.3 -> 7.4.7 (dependabot, pull request #100), which
 	  closes two advisories of the site generator; building the site needs
 	  Node.js 22.23.4 or newer (website/package.json pins it for volta).

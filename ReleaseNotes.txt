@@ -78,6 +78,12 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       charset if that fails (issue #56; based on pull request #36 by Ethan
       Roseman). Other formats return null.
 
+    * New: ItemType.of(inArchive, index) tells whether an item is a regular
+      file, directory, symbolic link, hard link, reparse point, device, fifo
+      or socket, and ItemType.unixMode() gives the Unix mode wherever the
+      format stores one (POSIX_ATTRIB, or the upper 16 bits of ATTRIBUTES).
+      UnixMode and WindowsAttributes hold the named bit constants (issue #91).
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).

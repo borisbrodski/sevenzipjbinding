@@ -26,6 +26,7 @@ import net.sf.sevenzipjbinding.ReportExtractResultIndexType;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.util.ItemType;
 
 /**
  * Extract a whole archive into a directory - fast, safe, and honest about what happened.
@@ -195,16 +196,18 @@ public class ExtractToFolder {
 
         private void planItem(int index) throws SevenZipException, IOException {
             String path = stringProperty(index, PropID.PATH);
-            // Properties are optional in some formats: a missing IS_FOLDER is null, never assume Boolean.
-            boolean directory = Boolean.TRUE.equals(archive.getProperty(index, PropID.IS_FOLDER));
+            // ItemType combines IS_FOLDER, the link properties and the Unix mode / Windows attribute
+            // bits, which differ by format and are optional.
+            ItemType type = ItemType.of(archive, index);
+            boolean directory = type == ItemType.DIRECTORY;
 
             // Links and special files are skipped by design. A symbolic link extracted as a link can
             // point anywhere - including outside the output directory - and a later item written
             // "through" it would escape. Extracting it as a file instead would silently produce a file
             // containing the link target, which is not what anyone wants. Skip, and say so.
-            String special = directory ? null : specialEntryKind(index);
-            if (special != null) {
-                itemErrors.add(new ItemError(index, path, "skipped: " + special + " entries are not extracted", null));
+            if (!directory && type != ItemType.REGULAR_FILE && type != ItemType.UNKNOWN) {
+                String kind = type.name().toLowerCase(Locale.ROOT).replace('_', ' ');
+                itemErrors.add(new ItemError(index, path, "skipped: " + kind + " entries are not extracted", null));
                 return;
             }
 
@@ -246,43 +249,6 @@ public class ExtractToFolder {
             targets.put(index, target);
             displayNames.put(index, displayName);
             filesPlanned++;
-        }
-
-        /** Names the kind of entry that must not be written as a plain file, or null for a regular file. */
-        private String specialEntryKind(int index) throws SevenZipException {
-            if (!stringProperty(index, PropID.SYM_LINK).isEmpty()) {
-                return "symbolic link";
-            }
-            if (!stringProperty(index, PropID.HARD_LINK).isEmpty()) {
-                return "hard link"; // carries a regular file mode, so only the property reveals it
-            }
-            Object attributes = archive.getProperty(index, PropID.ATTRIBUTES);
-            if (attributes instanceof Integer && (((Integer) attributes) & 0x400) != 0) {
-                return "reparse point"; // FILE_ATTRIBUTE_REPARSE_POINT: a Windows link or junction
-            }
-            int mode = unixMode(index);
-            if (mode >= 0) {
-                int type = mode & 0xF000; // S_IFMT; zero when the format stores permissions only
-                if (type != 0 && type != 0x8000 /* S_IFREG */ && type != 0x4000 /* S_IFDIR */) {
-                    return type == 0xA000 /* S_IFLNK */ ? "symbolic link" : "device, pipe or socket";
-                }
-            }
-            return null;
-        }
-
-        /** The Unix mode bits, from POSIX_ATTRIB or from the high half of ATTRIBUTES, or -1 if unknown. */
-        private int unixMode(int index) throws SevenZipException {
-            Object posix = archive.getProperty(index, PropID.POSIX_ATTRIB);
-            if (posix instanceof Integer) {
-                return (Integer) posix;
-            }
-            // Zip and 7z store Unix bits in the upper 16 bits of the Windows attributes when the
-            // 0x8000 "unix extension" flag is set - the 7-Zip convention.
-            Object attributes = archive.getProperty(index, PropID.ATTRIBUTES);
-            if (attributes instanceof Integer && (((Integer) attributes) & 0x8000) != 0) {
-                return ((Integer) attributes) >>> 16;
-            }
-            return -1;
         }
 
         private String stringProperty(int index, PropID propID) throws SevenZipException {
