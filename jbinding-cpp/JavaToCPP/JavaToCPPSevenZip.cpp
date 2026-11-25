@@ -209,12 +209,31 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_SevenZip_nativeO
 		}
 		stream = cheadCacheInStream;
 
-        // Try all known codecs
+        // Try all known codecs, in registration order except that UDF comes before ISO, as in 7-Zip's own
+        // autodetection (CPP/7zip/UI/Common/OpenArchive.cpp): a hybrid ISO-9660/UDF image opens with both
+        // handlers, but only the UDF tree stores file sizes of 4 GiB and more (issue #55).
+        CRecordVector<unsigned> codecOrder;
+        int isoPosition = -1;
+        int udfPosition = -1;
+        for (unsigned i = 0; i < codecTools.codecs.Formats.Size(); i++) {
+            codecOrder.Add(i);
+            if (codecTools.codecs.Formats[i].Name.IsEqualTo_Ascii_NoCase("iso")) {
+                isoPosition = (int) i;
+            } else if (codecTools.codecs.Formats[i].Name.IsEqualTo_Ascii_NoCase("udf")) {
+                udfPosition = (int) i;
+            }
+        }
+        if (isoPosition >= 0 && udfPosition > isoPosition) {
+            codecOrder[(unsigned) isoPosition] = (unsigned) udfPosition;
+            codecOrder[(unsigned) udfPosition] = (unsigned) isoPosition;
+        }
+
 		bool success = false;
 		for (UInt32 pos = 0; !success && pos <= MAX_CHECK_START_POSITION; pos += MAX_CHECK_START_POSITION) {
 			TRACE("Iterating through all available codecs with MAX_CHECK_START_POSITION=" << pos);
 
-			for (int i = 0; i < codecTools.codecs.Formats.Size(); i++) {
+			for (unsigned k = 0; k < codecOrder.Size(); k++) {
+				const unsigned i = codecOrder[k];
 				TRACE("Trying codec " << codecTools.codecs.Formats[i].Name);
 
 				stream->Seek(0, STREAM_SEEK_SET, NULL);

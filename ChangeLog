@@ -55,6 +55,13 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  property list was only sent to 7-Zip when at least one property was set
 	  (pull request #101 by drakeet).
 
+	* Fixed: archive format autodetection now tries UDF before ISO, as 7-Zip
+	  does. A hybrid ISO-9660/UDF image (genisoimage -udf, the usual way to put
+	  files of 4 GiB and more on a DVD image) was opened as ISO, whose directory
+	  records store 32-bit sizes only: a 4.00 GB file appeared as 8 MB (issue
+	  #55). Such images now open as UDF with the real sizes; ArchiveFormat.ISO
+	  still opens them as ISO on request.
+
 	* Website: astro 7.3.3 -> 7.4.7 (dependabot, pull request #100), which
 	  closes two advisories of the site generator; building the site needs
 	  Node.js 22.23.4 or newer (website/package.json pins it for volta).

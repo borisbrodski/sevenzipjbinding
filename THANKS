@@ -43,6 +43,8 @@ Special thanks to
   and for fixing output properties that stuck to an archive object after being reset to the defaults
   (pull request #101, issue #61)
 
+- hnviradiya for reporting the 4 GB file that came out as 8 MB from a hybrid ISO/UDF image (issue #55)
+
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
 
 - dev747368 for the reproducer of bug #70 (JVM crash when one thread reads item properties while

@@ -68,6 +68,10 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       defaults before a second archive (for example setSolid(false), then
       setSolid(true)) still applied to the second archive (pull request #101).
 
+    * Fixed: hybrid ISO-9660/UDF images (DVD images with files of 4 GiB and
+      more) opened as ISO and showed sizes modulo 4 GiB (a 4.00 GB file as
+      8 MB). Autodetection now tries UDF before ISO, as 7-Zip does (issue #55).
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).
