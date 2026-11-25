@@ -134,17 +134,24 @@ public class ItemTypeTest extends JUnitNativeTestBase<VoidContext> {
     private static Map<String, ItemType> types(IInArchive inArchive) throws Exception {
         Map<String, ItemType> types = new LinkedHashMap<String, ItemType>();
         for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-            types.put(inArchive.getStringProperty(i, PropID.PATH), ItemType.of(inArchive, i));
+            types.put(path(inArchive, i), ItemType.of(inArchive, i));
         }
         return types;
     }
 
     private static int index(IInArchive inArchive, String path) throws Exception {
         for (int i = 0; i < inArchive.getNumberOfItems(); i++) {
-            if (path.equals(inArchive.getStringProperty(i, PropID.PATH))) {
+            if (path.equals(path(inArchive, i))) {
                 return i;
             }
         }
         throw new AssertionError(path + " not in the archive");
+    }
+
+    /**
+     * 7-Zip reports paths with the separator of the running OS ('\\' on Windows).
+     */
+    private static String path(IInArchive inArchive, int index) throws Exception {
+        return inArchive.getStringProperty(index, PropID.PATH).replace('\\', '/');
     }
 }
