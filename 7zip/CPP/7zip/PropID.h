@@ -115,6 +115,10 @@ enum
 
   kpid_NUM_DEFINED,
 
+  // 7-Zip-JBinding: raw, undecoded bytes of the item name (Java PropID.PATH_BYTES). Outside the engine's own ids and
+  // below kpidUserDefined; served by the Zip handler.
+  kpidPathBytes = 0xFF00,
+
   kpidUserDefined = 0x10000
 };
 

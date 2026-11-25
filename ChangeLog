@@ -62,6 +62,13 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  #55). Such images now open as UDF with the real sizes; ArchiveFormat.ISO
 	  still opens them as ISO on request.
 
+	* New: PropID.PATH_BYTES - the stored bytes of a Zip item name, undecoded,
+	  as byte[]. Zip archives from older tools store names in a legacy code page
+	  (GBK, Shift_JIS, CP437, ...) without saying so and PATH comes back
+	  garbled; the caller can now decode the bytes with the right charset
+	  (issue #56, based on pull request #36 by Ethan Roseman). Other formats
+	  return null.
+
 	* Website: astro 7.3.3 -> 7.4.7 (dependabot, pull request #100), which
 	  closes two advisories of the site generator; building the site needs
 	  Node.js 22.23.4 or newer (website/package.json pins it for volta).

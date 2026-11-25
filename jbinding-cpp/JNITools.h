@@ -79,6 +79,12 @@ jobject DoubleToObject(JNIEnv * env, double value);
 jobject BSTRToObject(JNIEnv * env, BSTR value);
 
 /**
+ * Get byte[] from a string whose characters are zero-extended bytes (0..255), as the Zip handler builds it for
+ * kpidPathBytes (PropID.PATH_BYTES). NULL for a NULL value, or with a pending OutOfMemoryError.
+ */
+jobject ByteStringToByteArray(JNIEnv * env, BSTR value);
+
+/**
  * Get java.util.Date object from date in FILETIME format
  */
 jobject FILETIMEToObject(JNIEnv * env, FILETIME filetime);

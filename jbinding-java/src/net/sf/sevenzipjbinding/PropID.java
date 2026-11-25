@@ -309,6 +309,23 @@ public enum PropID {
     NUM_DEFINED, //
 
 
+    /**
+     * Raw bytes of the item path as stored in the archive, without any character decoding. Zip archives created by
+     * older tools store names in a legacy code page (GBK, Shift_JIS, CP437, ...) without saying so, and
+     * {@link #PATH} then comes back garbled. This property hands out the stored bytes, so the caller can decode them
+     * with the charset it knows to be right, for example strictly as UTF-8 first and with the legacy charset if that
+     * fails. The path separator is the stored one; Zip stores '/'.<br>
+     * Provided by the Zip format. Other formats return <code>null</code>.<br>
+     * {@link IInArchive#getStringProperty(int, PropID)} returns the bytes as an ISO-8859-1 string (one char per
+     * byte).<br>
+     * <br>
+     * Type: <code>byte[]</code>. <code>null</code> will be returned, if the current archive type doesn't support this
+     * property.
+     *
+     * @since 26.06-2.4
+     */
+    PATH_BYTES(0xFF00),
+
     USER_DEFINED(0x10000), //
 
     /**

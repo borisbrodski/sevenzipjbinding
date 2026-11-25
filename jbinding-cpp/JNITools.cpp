@@ -207,6 +207,28 @@ jobject BSTRToObject(JNIEnv * env, BSTR value) {
     return ToJChar(value).toNewString(env);
 }
 
+jobject ByteStringToByteArray(JNIEnv * env, BSTR value) {
+    if (value == NULL) {
+        return NULL;
+    }
+    jsize length = (jsize) SysStringLen(value);
+    jbyteArray result = env->NewByteArray(length);
+    if (result == NULL) {
+        return NULL; // OutOfMemoryError pending
+    }
+    if (length > 0) {
+        jbyte * bytes = env->GetByteArrayElements(result, NULL);
+        if (bytes == NULL) {
+            return NULL; // Exception pending
+        }
+        for (jsize i = 0; i < length; i++) {
+            bytes[i] = (jbyte) value[i]; // Each character is one byte (0..255)
+        }
+        env->ReleaseByteArrayElements(result, bytes, 0);
+    }
+    return result;
+}
+
 /**
  * Get java.util.Date object from date in FILETIME format
  */

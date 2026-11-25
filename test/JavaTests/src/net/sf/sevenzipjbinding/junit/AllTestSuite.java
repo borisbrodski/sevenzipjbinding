@@ -88,6 +88,7 @@ import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericXzTes
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericGZipTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericTarTest;
 import net.sf.sevenzipjbinding.junit.compression.UpdateSingleFileNonGenericZipTest;
+import net.sf.sevenzipjbinding.junit.encoding.PathBytesTest;
 import net.sf.sevenzipjbinding.junit.encoding.UnicodeFilenamesInArchive;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationCopyFailureTest;
 import net.sf.sevenzipjbinding.junit.initialization.InitializationRestoresBrokenArtifactsTest;
@@ -268,6 +269,7 @@ public class AllTestSuite extends TestSuite {
 
     static Class<?>[] encodingArchiveTests = { //
             /*    */UnicodeFilenamesInArchive.class, //
+            PathBytesTest.class, //
     };
 
     static Class<?>[] bugArchiveTests = { //

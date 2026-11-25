@@ -72,6 +72,12 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       more) opened as ISO and showed sizes modulo 4 GiB (a 4.00 GB file as
       8 MB). Autodetection now tries UDF before ISO, as 7-Zip does (issue #55).
 
+    * New: PropID.PATH_BYTES returns the stored, undecoded name bytes of a Zip
+      item as byte[], so names in a legacy code page (GBK, Shift_JIS, CP437)
+      can be decoded by the caller: strictly as UTF-8 first, with the legacy
+      charset if that fails (issue #56; based on pull request #36 by Ethan
+      Roseman). Other formats return null.
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).

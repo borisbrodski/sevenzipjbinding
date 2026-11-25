@@ -389,6 +389,11 @@ JBINDING_JNIEXPORT jobject JNICALL Java_net_sf_sevenzipjbinding_impl_InArchiveIm
 
     CHECK_HRESULT2(jniNativeCallContext, archive->GetProperty(index, propID, &propVariant), "Error getting property with propID=%lu for item %i", propID, index);
 
+    if (propID == kpidPathBytes) {
+        // The Zip handler stores the name bytes as a string of zero-extended bytes (see ZipHandler.cpp)
+        return ByteStringToByteArray(jniEnvInstance, propVariant.vt == VT_BSTR ? propVariant.bstrVal : NULL);
+    }
+
     return PropVariantToObject(jniEnvInstance, &propVariant);
 
 }

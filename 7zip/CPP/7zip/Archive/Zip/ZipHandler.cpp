@@ -409,6 +409,18 @@ Z7_COM7F_IMF(CHandler::GetProperty(UInt32 index, PROPID propID, PROPVARIANT *val
       break;
     }
     
+    // 7-Zip-JBinding: the stored name bytes, undecoded. Each byte becomes one wide character (0..255), the JNI layer
+    // turns the string back into a byte[] (JavaToCPPInArchiveImpl::nativeGetProperty).
+    case kpidPathBytes:
+    {
+      const AString &name = item.Name;
+      UString res;
+      for (unsigned i = 0; i < name.Len(); i++)
+        res += (wchar_t)(Byte)name[i];
+      prop = res;
+      break;
+    }
+
     case kpidIsDir:  prop = item.IsDir(); break;
     case kpidSize:
     {

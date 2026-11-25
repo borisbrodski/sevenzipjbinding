@@ -46,6 +46,9 @@ public class PropertyIdsTest extends JUnitNativeTestBase<VoidContext> {
         assertEquals(104, PropID.DEV_MINOR.getPropIDIndex());
         assertEquals(105, PropID.NUM_DEFINED.getPropIDIndex());
         assertEquals(0x10000, PropID.USER_DEFINED.getPropIDIndex());
+        // 7-Zip-JBinding's own property id (kpidPathBytes), outside the engine's range
+        assertEquals(0xFF00, PropID.PATH_BYTES.getPropIDIndex());
+        assertSame(PropID.PATH_BYTES, PropID.getPropIDByIndex(0xFF00));
     }
 
     @Test
