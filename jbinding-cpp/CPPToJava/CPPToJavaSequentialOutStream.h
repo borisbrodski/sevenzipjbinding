@@ -11,6 +11,11 @@ class CPPToJavaSequentialOutStream : public CPPToJavaAbstract,
                                      public CMyUnknownImp {
 private:
   jni::ISequentialOutStream *_iSequentialOutStream;
+  // Set if the Java object implements IReusableBufferOutStream: Write() then hands it the same byte[] (_buffer, a
+  // global reference grown on demand) with the chunk length instead of a new array per call (issue #69).
+  jni::IReusableBufferOutStream *_iReusableBufferOutStream;
+  jbyteArray _buffer;
+  jsize _bufferLength;
 
 public:
   CPPToJavaSequentialOutStream(JBindingSession &jbindingSession,
@@ -19,11 +24,21 @@ public:
       : CPPToJavaAbstract(jbindingSession, initEnv,
                           javaSequentialOutStreamImpl),
         _iSequentialOutStream(jni::ISequentialOutStream::_getInstanceFromObject(
-            initEnv, javaSequentialOutStreamImpl)) {
+            initEnv, javaSequentialOutStreamImpl)),
+        _iReusableBufferOutStream(
+            jni::IReusableBufferOutStream::_isInstance(initEnv, javaSequentialOutStreamImpl)
+                ? jni::IReusableBufferOutStream::_getInstanceFromObject(initEnv, javaSequentialOutStreamImpl)
+                : NULL),
+        _buffer(NULL), _bufferLength(0) {
     TRACE_OBJECT_CREATION("CPPToJavaSequentialOutStream")
   }
 
-  virtual ~CPPToJavaSequentialOutStream() {}
+  virtual ~CPPToJavaSequentialOutStream() {
+    if (_buffer) {
+      JNIEnvInstance jniEnvInstance(_jbindingSession);
+      jniEnvInstance->DeleteGlobalRef(_buffer);
+    }
+  }
 
   Z7_IFACE_COM7_IMP_NONFINAL(ISequentialOutStream)
 

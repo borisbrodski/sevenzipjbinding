@@ -47,6 +47,8 @@ Special thanks to
   re-implemented on 7-Zip 26.06 for 26.06-2.4) and asthagarg2428 for reporting the garbled Chinese
   file names behind it (issue #56)
 
+- Alexei Osipov for pointing out the byte[] allocation per chunk in the output streams (issue #69)
+
 - hnviradiya for reporting the 4 GB file that came out as 8 MB from a hybrid ISO/UDF image (issue #55)
 
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)

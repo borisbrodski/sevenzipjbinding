@@ -106,6 +106,7 @@ import net.sf.sevenzipjbinding.junit.misc.ClassLoaderIsolationTest;
 import net.sf.sevenzipjbinding.junit.misc.ConcurrentCloseTest;
 import net.sf.sevenzipjbinding.junit.misc.ItemTypeTest;
 import net.sf.sevenzipjbinding.junit.misc.JniReferencesTest;
+import net.sf.sevenzipjbinding.junit.misc.ReusableBufferOutStreamTest;
 import net.sf.sevenzipjbinding.junit.misc.NativeLibraryExportsTest;
 import net.sf.sevenzipjbinding.junit.misc.PropertyIdsTest;
 import net.sf.sevenzipjbinding.junit.misc.ByteArrayStreamTest.ByteArrayStreamTestWithBufferLength1;
@@ -521,6 +522,7 @@ public class AllTestSuite extends TestSuite {
             ConcurrentCloseTest.class, //
             AutodetectFormatOrderTest.class, //
             ItemTypeTest.class, //
+            ReusableBufferOutStreamTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //

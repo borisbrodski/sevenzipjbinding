@@ -75,6 +75,12 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  with the bit constants in UnixMode and WindowsAttributes; the
 	  ExtractToFolder example uses it instead of hex literals (issue #91).
 
+	* New: IReusableBufferOutStream - an output stream that receives every chunk
+	  in one reused byte[] with offset and length, instead of a new array per
+	  chunk (issue #69). Opt-in: implement it instead of ISequentialOutStream.
+	  The native wrapper also checks the result of NewByteArray and reports a
+	  non-positive write() result before touching the processed size.
+
 	* Website: astro 7.3.3 -> 7.4.7 (dependabot, pull request #100), which
 	  closes two advisories of the site generator; building the site needs
 	  Node.js 22.23.4 or newer (website/package.json pins it for volta).

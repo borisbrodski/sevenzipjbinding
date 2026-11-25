@@ -240,6 +240,7 @@ void initializeJavaClasses(JNIEnv * env) {
     jni::IProgress::_initialize(env);
     jni::IArchiveExtractCallback::_initialize(env);
     jni::ISequentialOutStream::_initialize(env);
+    jni::IReusableBufferOutStream::_initialize(env);
     jni::IOutStream::_initialize(env);
     jni::ISeekableStream::_initialize(env);
     jni::IOutCreateCallback::_initialize(env);

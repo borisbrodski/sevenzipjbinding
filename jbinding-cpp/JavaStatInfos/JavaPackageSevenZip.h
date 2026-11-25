@@ -123,6 +123,12 @@ JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, ISequentialOutStream)
 JT_END_INTERFACE
 
 
+JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IReusableBufferOutStream)
+	// public int write(byte[] buffer, int offset, int length)
+	JT_INTERFACE_METHOD(Int, write, JT_BYTE_ARRAY(buffer, JT_INT(offset, JT_INT(length, _))))
+JT_END_INTERFACE
+
+
 JT_BEGIN_INTERFACE(SEVEN_ZIP_PACKAGE, IOutStream)
 	// public void setSize(long newSize)
 	JT_INTERFACE_METHOD(Void, setSize, JT_LONG(newSize, _))

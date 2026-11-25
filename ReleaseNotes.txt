@@ -84,6 +84,12 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       format stores one (POSIX_ATTRIB, or the upper 16 bits of ATTRIBUTES).
       UnixMode and WindowsAttributes hold the named bit constants (issue #91).
 
+    * New: IReusableBufferOutStream - implement it instead of
+      ISequentialOutStream and 7-Zip-JBinding hands every chunk over in one
+      reused byte[] (write(buffer, offset, length)) instead of allocating a
+      new array per chunk; useful for very large extractions and small heaps
+      (issue #69).
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).

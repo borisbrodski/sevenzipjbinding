@@ -93,7 +93,8 @@ const mavenDep = `<dependency>
           link, device) and raw Zip name bytes for legacy code pages come as plain Java API.</p></div>
         <div class="card"><h3><span class="ico">⚡</span>Native performance</h3>
           <p>The original 7-Zip 26.06 C/C++ engine, running in-process. Stream-based:
-          extract from and compress to memory, files or your own I/O callbacks.</p></div>
+          extract from and compress to memory, files or your own I/O callbacks, with an opt-in
+          reused output buffer for allocation-free extraction.</p></div>
         <div class="card"><h3><span class="ico">🗜️</span>Create &amp; update archives</h3>
           <p>Write 7z, ZIP, TAR, GZip, BZip2 and XZ. Update existing archives in place —
           add, replace and remove items without repacking everything. Tune 7z: level, solid
