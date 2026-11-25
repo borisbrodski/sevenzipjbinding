@@ -7,6 +7,10 @@ package net.sf.sevenzipjbinding;
  *
  * @see IOutCreateArchive7z
  * @see IOutUpdateArchive7z
+ * @see IOutFeatureSetLevel
+ *
+ * @author Drakeet
+ * @since 26.06-2.4
  */
 public interface IOutFeatureSetDictionarySize {
 

@@ -55,6 +55,19 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       supported; extraction and update still run one at a time per archive.
       Regression test: ConcurrentCloseTest.
 
+    * New: set the dictionary size of 7z archives independently of the
+      compression level (IOutFeatureSetDictionarySize.setDictionarySize(long),
+      on IOutCreateArchive7z and IOutUpdateArchive7z; issue #61, pull request
+      #101 by drakeet). A smaller dictionary needs much less memory to compress
+      and to extract and, with LZMA2, splits one large file into more blocks
+      for the parallel compression. Reported for a 190 MB database at level 5
+      with a 1 MiB dictionary: 28 s -> 6 s and +987 MB -> +284 MB on a 20-thread
+      desktop, 56 s -> 23 s and +878 MB -> +64 MB on a phone, archive 46 -> 52 MB.
+
+    * Fixed: output properties set on an archive object and then reset to the
+      defaults before a second archive (for example setSolid(false), then
+      setSolid(true)) still applied to the second archive (pull request #101).
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).

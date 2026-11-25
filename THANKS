@@ -39,6 +39,10 @@ Special thanks to
 - mrjo118 for fixing 7z compression features that canceled each other out: header encryption,
   compression level, thread count and solid settings set together (pull request #93, bug #77)
 
+- drakeet (Pure Writer) for the dictionary size setting of 7z archives (IOutFeatureSetDictionarySize)
+  and for fixing output properties that stuck to an archive object after being reset to the defaults
+  (pull request #101, issue #61)
+
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
 
 - dev747368 for the reproducer of bug #70 (JVM crash when one thread reads item properties while

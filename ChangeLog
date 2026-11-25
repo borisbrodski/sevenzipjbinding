@@ -42,6 +42,19 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  same archive throws instead of deadlocking.
 	  https://github.com/borisbrodski/sevenzipjbinding/issues/70
 
+	* New: IOutFeatureSetDictionarySize - set the dictionary size of 7z
+	  archives (IOutCreateArchive7z, IOutUpdateArchive7z) independently of the
+	  compression level: less memory for compression and extraction, and with
+	  LZMA2 more blocks for the parallel compression of one large file (issue
+	  #61, pull request #101 by drakeet). Sent as the "0d" property together
+	  with the other output properties; ignored with level 0 (Copy).
+
+	* Fixed: an archive object that created an archive with some properties and
+	  a second one with all of them back to the defaults (setSolid(false), then
+	  setSolid(true)) kept the settings of the first archive, because the
+	  property list was only sent to 7-Zip when at least one property was set
+	  (pull request #101 by drakeet).
+
 	* Docs: the callback and stream interfaces now document that 7-Zip may call
 	  them on its own worker threads and which context class loader they see.
 	  IOutUpdateArchive.updateItems() documents that 7z stores the items of the
