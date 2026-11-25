@@ -110,6 +110,11 @@ add_definitions(
     # Disable 7-Zip's 256-bit VAES AES path (x86/x64 only; see 7zip/C/AesOpt.c). Old MinGW binutils
     # can't assemble the vaes* opcodes, and VAES faulted under QEMU x86_64 in CI. AES-NI stays on.
     -DZ7_JB_DISABLE_VAES
+    # Atomic AddRef()/Release() for 7-Zip's COM-like objects (7-Zip's own switch, see CPP/Common/MyCom.h).
+    # Java threads reference the same archive object concurrently (property reads while another thread extracts
+    # or closes); with the plain ++/-- reference count two concurrent calls lost an update, the count hit zero
+    # early and the archive handler was deleted while in use (issue #70).
+    -DZ7_COM_USE_ATOMIC
 )
 
 IF(MINGW)

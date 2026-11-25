@@ -1,6 +1,7 @@
 package net.sf.sevenzipjbinding;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * The central interface to create new archives. To update an existing archive open it first and then use
@@ -55,6 +56,17 @@ import java.io.Closeable;
  *
  */
 public interface IOutCreateArchive<T extends IOutItemBase> extends IOutArchiveBase, Closeable {
+    /**
+     * Close the archive and free the native resources. Afterwards every other method throws a
+     * {@link SevenZipException} ("OutArchive closed"). If another thread is still inside
+     * {@link #createArchive(ISequentialOutStream, int, IOutCreateCallback)}, <code>close()</code> waits for it to
+     * return. <code>close()</code> must not be called from a callback of this archive (on the thread running the
+     * creation): it throws a {@link SevenZipException} instead of deadlocking.
+     *
+     * @throws IOException
+     *             7-Zip or 7-Zip-JBinding error occurs (a {@link SevenZipException})
+     */
+    public void close() throws IOException;
 
     /**
      * Create new archive. To update an existing archive open it first and then use

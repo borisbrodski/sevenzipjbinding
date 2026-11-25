@@ -100,7 +100,9 @@ const mavenDep = `<dependency>
           <p>Windows (x86, x64 &amp; ARM64), Linux (glibc &amp; musl/Alpine, x86 &amp; ARM v5–v8), macOS
           (Intel, Apple Silicon, or a universal AllMac binary) and FreeBSD (amd64). Runtime auto-detection picks the right
           native library. Runs inside Spring Boot fat jars, servlet containers (Tomcat, Jetty), OSGi
-          bundles and IDE plug-ins: 7-Zip's worker threads see your class loader.</p></div>
+          bundles and IDE plug-ins: 7-Zip's worker threads see your class loader. Safe to share
+          between threads: property reads run in parallel, <code>close()</code> waits for running
+          calls instead of crashing the JVM.</p></div>
         <div class="card"><h3><span class="ico">🔒</span>Encryption support</h3>
           <p>Open and create password-protected archives, including 7z header encryption
           and encrypted RAR5 archives.</p></div>
@@ -226,6 +228,7 @@ const mavenDep = `<dependency>
         <span class="badge"><span class="dot"></span> every build: 18/18 test bundles green</span>
         <span class="badge">runtime detection: OS · arch · ARM level · glibc/musl</span>
         <span class="badge">application class loaders: Spring Boot · Tomcat/Jetty · OSGi · IDE plug-ins</span>
+        <span class="badge">thread-safe close(): no JVM crash on concurrent use</span>
       </div>
     </div>
   </section>

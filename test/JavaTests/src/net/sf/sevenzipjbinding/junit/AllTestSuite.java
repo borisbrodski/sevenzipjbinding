@@ -101,6 +101,7 @@ import net.sf.sevenzipjbinding.junit.jnitools.JNIToolsTest;
 import net.sf.sevenzipjbinding.junit.jnitools.ParamSpecTest;
 import net.sf.sevenzipjbinding.junit.misc.ArchiveWithTwoPasswordsTest;
 import net.sf.sevenzipjbinding.junit.misc.ClassLoaderIsolationTest;
+import net.sf.sevenzipjbinding.junit.misc.ConcurrentCloseTest;
 import net.sf.sevenzipjbinding.junit.misc.JniReferencesTest;
 import net.sf.sevenzipjbinding.junit.misc.NativeLibraryExportsTest;
 import net.sf.sevenzipjbinding.junit.misc.PropertyIdsTest;
@@ -513,6 +514,7 @@ public class AllTestSuite extends TestSuite {
             NativeLibraryExportsTest.class, //
             JniReferencesTest.class, //
             ClassLoaderIsolationTest.class, //
+            ConcurrentCloseTest.class, //
     };
     static Class<?>[] initStdTests = { //
     /*    */StandardInitializationTest.class, //

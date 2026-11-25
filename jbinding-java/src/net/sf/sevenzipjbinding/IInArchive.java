@@ -20,8 +20,15 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 public interface IInArchive extends Closeable {
     /**
      * Close archive. This method should be the last one called on the implementation of this interface. After this call
-     * no more methods should be called.
-     * 
+     * every other method throws a {@link SevenZipException} ("InArchive closed").
+     * <p>
+     * Calls to this archive are serialized against <code>close()</code>: if another thread is still inside a method of
+     * this archive (or of its connected out-archive), <code>close()</code> waits for that call to return, and a call
+     * that starts afterwards throws instead of touching the closed archive. Reading properties from several threads at
+     * once is fine; extraction and update must run one at a time. <code>close()</code> must not be called from a
+     * callback of this archive (on the thread running the extraction or update): it throws a
+     * {@link SevenZipException} instead of deadlocking.
+     *
      * @throws SevenZipException
      *             7-Zip or 7-Zip-JBinding error occurs. Use {@link SevenZipException#printStackTraceExtended()} to get
      *             stack traces of this SevenZipException and of all thrown 'caused by' exceptions.

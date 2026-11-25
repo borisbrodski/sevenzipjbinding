@@ -28,6 +28,20 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  written sequentially, 7z throws a SevenZipException that names the
 	  requirement.
 
+	* Fixed: JVM crash (SIGSEGV, "double free or corruption") when several
+	  threads used one archive at the same time, for example a Swing renderer
+	  reading item properties while another thread extracted or closed the
+	  archive (issues #70, #62). Two causes: every native call did AddRef()/
+	  Release() on 7-Zip's non-atomic reference count, so concurrent calls lost
+	  updates and the archive handler was deleted while in use; and close()
+	  released the native session under a call still running on another thread.
+	  The native library now builds with 7-Zip's atomic reference counts
+	  (Z7_COM_USE_ATOMIC), and IInArchive/IOutArchive serialize close() against
+	  running calls: close() waits for them, later calls throw
+	  SevenZipException("InArchive closed"), and close() from a callback of the
+	  same archive throws instead of deadlocking.
+	  https://github.com/borisbrodski/sevenzipjbinding/issues/70
+
 	* Docs: the callback and stream interfaces now document that 7-Zip may call
 	  them on its own worker threads and which context class loader they see.
 	  IOutUpdateArchive.updateItems() documents that 7z stores the items of the

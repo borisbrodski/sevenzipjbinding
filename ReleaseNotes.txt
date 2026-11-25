@@ -43,6 +43,18 @@ Main features of 26.06-2.4 (application class loaders: Spring Boot, servlet cont
       stating that it needs a seekable IOutStream (RandomAccessFileOutStream,
       ByteArrayStream). Regression test: CompressSequentialOutStreamTest.
 
+    * Fixed: JVM crash when one archive was used from several threads at the
+      same time - item properties read by one thread (a GUI renderer, a
+      scanner) while another thread extracts or closes the archive (issues
+      #70, #62: SIGSEGV or "double free or corruption" in
+      nativeGetStringProperty). The native library now uses 7-Zip's atomic
+      reference counts, and close() is serialized against running calls: it
+      waits for them, later calls throw SevenZipException("InArchive closed"),
+      and a close() from a callback of the same archive throws instead of
+      deadlocking. Reading properties from several threads at once is
+      supported; extraction and update still run one at a time per archive.
+      Regression test: ConcurrentCloseTest.
+
     * Docs: IOutCreateArchive.createArchive() and IOutUpdateArchive.updateItems()
       state which formats need a seekable output stream and that 7z may reorder
       items on update (unchanged items keep their solid block).

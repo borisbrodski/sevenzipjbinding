@@ -41,6 +41,9 @@ Special thanks to
 
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
 
+- dev747368 for the reproducer of bug #70 (JVM crash when one thread reads item properties while
+  another closes the archive) and ahadas (muCommander) for reporting the same crash on macOS (bug #62)
+
 - Alexandru Sclearuc (RocketRide) for hiding the statically linked C++ runtime of the ELF native
   library, which crashed C++ code loaded later into the same process (pull request #95)
 

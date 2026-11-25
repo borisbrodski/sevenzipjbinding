@@ -1,5 +1,7 @@
 package net.sf.sevenzipjbinding.impl;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.ExtractAskMode;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
@@ -109,25 +111,40 @@ public final class InArchiveImpl implements IInArchive {
     private int numberOfItems = -1;
 
     private ArchiveFormat archiveFormat;
-    private boolean closed;
+
+    /**
+     * Serializes {@link #close()} against the native calls: every method calling into 7-Zip holds the read lock,
+     * <code>close()</code> takes the write lock and so waits for calls running on other threads. Reentrant: callbacks
+     * running on the calling thread may use the archive. Shared with the connected {@link OutArchiveImpl}.
+     */
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private boolean closed; // Guarded by lock
 
     /**
      * {@inheritDoc}
      */
     public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
             throws SevenZipException {
-        ensureOpened();
-        nativeExtract(indices, testMode, extractCallback);
+        lockForCall();
+        try {
+            nativeExtract(indices, testMode, extractCallback);
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException {
-        ensureOpened();
-        ExtractSlowCallback extractCallback = new ExtractSlowCallback(outStream);
-        nativeExtract(new int[] { index }, false, extractCallback);
-        return extractCallback.getExtractOperationResult();
+        lockForCall();
+        try {
+            ExtractSlowCallback extractCallback = new ExtractSlowCallback(outStream);
+            nativeExtract(new int[] { index }, false, extractCallback);
+            return extractCallback.getExtractOperationResult();
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
@@ -136,10 +153,14 @@ public final class InArchiveImpl implements IInArchive {
 
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
             throws SevenZipException {
-        ensureOpened();
-        ExtractSlowCryptoCallback extractCallback = new ExtractSlowCryptoCallback(outStream, password);
-        nativeExtract(new int[] { index }, false, extractCallback);
-        return extractCallback.getExtractOperationResult();
+        lockForCall();
+        try {
+            ExtractSlowCryptoCallback extractCallback = new ExtractSlowCryptoCallback(outStream, password);
+            nativeExtract(new int[] { index }, false, extractCallback);
+            return extractCallback.getExtractOperationResult();
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native void nativeExtract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
@@ -151,8 +172,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException {
-        ensureOpened();
-        return nativeGetArchiveProperty(propID.getPropIDIndex());
+        lockForCall();
+        try {
+            return nativeGetArchiveProperty(propID.getPropIDIndex());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native String nativeGetStringArchiveProperty(int propID) throws SevenZipException;
@@ -161,8 +186,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public String getStringArchiveProperty(PropID propID) throws SevenZipException {
-        ensureOpened();
-        return nativeGetStringArchiveProperty(propID.getPropIDIndex());
+        lockForCall();
+        try {
+            return nativeGetStringArchiveProperty(propID.getPropIDIndex());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native PropertyInfo nativeGetArchivePropertyInfo(int index) throws SevenZipException;
@@ -171,8 +200,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException {
-        ensureOpened();
-        return nativeGetArchivePropertyInfo(index);
+        lockForCall();
+        try {
+            return nativeGetArchivePropertyInfo(index);
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native int nativeGetNumberOfArchiveProperties() throws SevenZipException;
@@ -181,8 +214,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public int getNumberOfArchiveProperties() throws SevenZipException {
-        ensureOpened();
-        return nativeGetNumberOfArchiveProperties();
+        lockForCall();
+        try {
+            return nativeGetNumberOfArchiveProperties();
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native int nativeGetNumberOfProperties() throws SevenZipException;
@@ -191,8 +228,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public int getNumberOfProperties() throws SevenZipException {
-        ensureOpened();
-        return nativeGetNumberOfProperties();
+        lockForCall();
+        try {
+            return nativeGetNumberOfProperties();
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native PropertyInfo nativeGetPropertyInfo(int index) throws SevenZipException;
@@ -201,8 +242,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
-        ensureOpened();
-        return nativeGetPropertyInfo(index);
+        lockForCall();
+        try {
+            return nativeGetPropertyInfo(index);
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private native void nativeClose() throws SevenZipException;
@@ -211,11 +256,20 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public void close() throws SevenZipException {
-        if (closed) {
-            return;
+        if (lock.getReadHoldCount() > 0) {
+            // A read-to-write upgrade would deadlock
+            throw new SevenZipException("InArchive can't be closed from within a callback of this archive");
         }
-        closed = true;
-        nativeClose();
+        lock.writeLock().lock();
+        try {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            nativeClose();
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     private native int nativeGetNumberOfItems() throws SevenZipException;
@@ -224,11 +278,15 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public int getNumberOfItems() throws SevenZipException {
-        ensureOpened();
-        if (numberOfItems == -1) {
-            numberOfItems = nativeGetNumberOfItems();
+        lockForCall();
+        try {
+            if (numberOfItems == -1) {
+                numberOfItems = nativeGetNumberOfItems();
+            }
+            return numberOfItems;
+        } finally {
+            unlockAfterCall();
         }
-        return numberOfItems;
     }
 
     private native Object nativeGetProperty(int index, int propID) throws SevenZipException;
@@ -237,45 +295,49 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public Object getProperty(int index, PropID propID) throws SevenZipException {
-        ensureOpened();
-        if (index < 0 || index >= getNumberOfItems()) {
-            throw new SevenZipException(
-                    "Index out of range. Index: " + index + ", NumberOfItems: " + getNumberOfItems());
-        }
-        // Correct some returned values
-        Object returnValue = nativeGetProperty(index, propID.getPropIDIndex());
-        switch (propID) {
-        case SIZE:
-        case PACKED_SIZE:
-            // ARJ archive returns integer sizes (32 bit).
-            // Correcting it here, since every other archive returns Long (64 bit).
-            if (returnValue instanceof Integer) {
-                return Long.valueOf(((Integer) returnValue).longValue());
+        lockForCall();
+        try {
+            if (index < 0 || index >= getNumberOfItems()) {
+                throw new SevenZipException(
+                        "Index out of range. Index: " + index + ", NumberOfItems: " + getNumberOfItems());
             }
+            // Correct some returned values
+            Object returnValue = nativeGetProperty(index, propID.getPropIDIndex());
+            switch (propID) {
+            case SIZE:
+            case PACKED_SIZE:
+                // ARJ archive returns integer sizes (32 bit).
+                // Correcting it here, since every other archive returns Long (64 bit).
+                if (returnValue instanceof Integer) {
+                    return Long.valueOf(((Integer) returnValue).longValue());
+                }
 
-            if (returnValue == null && archiveFormat != null && archiveFormat == ArchiveFormat.NSIS) {
-                return Long.valueOf(0);
+                if (returnValue == null && archiveFormat != null && archiveFormat == ArchiveFormat.NSIS) {
+                    return Long.valueOf(0);
+                }
+                break;
+            case IS_FOLDER:
+                // Some stream archive formats doesn't set this property.
+                if (returnValue == null) {
+                    return Boolean.FALSE;
+                }
+                break;
+            case ENCRYPTED:
+                // Some stream archive formats doesn't set this property either.
+                if (returnValue == null) {
+                    return Boolean.FALSE;
+                }
+                break;
+            case TIME_TYPE:
+                if (returnValue != null) {
+                    return NFileTimeType.values()[((Integer) returnValue).intValue()];
+                }
+                break;
             }
-            break;
-        case IS_FOLDER:
-            // Some stream archive formats doesn't set this property.
-            if (returnValue == null) {
-                return Boolean.FALSE;
-            }
-            break;
-        case ENCRYPTED:
-            // Some stream archive formats doesn't set this property either.
-            if (returnValue == null) {
-                return Boolean.FALSE;
-            }
-            break;
-        case TIME_TYPE:
-            if (returnValue != null) {
-                return NFileTimeType.values()[((Integer) returnValue).intValue()];
-            }
-            break;
+            return returnValue;
+        } finally {
+            unlockAfterCall();
         }
-        return returnValue;
     }
 
     private native String nativeGetStringProperty(int index, int propID) throws SevenZipException;
@@ -284,12 +346,16 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public String getStringProperty(int index, PropID propID) throws SevenZipException {
-        ensureOpened();
-        if (index < 0 || index >= getNumberOfItems()) {
-            throw new SevenZipException(
-                    "Index out of range. Index: " + index + ", NumberOfItems: " + getNumberOfItems());
+        lockForCall();
+        try {
+            if (index < 0 || index >= getNumberOfItems()) {
+                throw new SevenZipException(
+                        "Index out of range. Index: " + index + ", NumberOfItems: " + getNumberOfItems());
+            }
+            return nativeGetStringProperty(index, propID.getPropIDIndex());
+        } finally {
+            unlockAfterCall();
         }
-        return nativeGetStringProperty(index, propID.getPropIDIndex());
     }
 
     /**
@@ -325,8 +391,12 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException {
-        ensureOpened();
-        return getConnectedOutArchiveIntern();
+        lockForCall();
+        try {
+            return getConnectedOutArchiveIntern();
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -341,54 +411,78 @@ public final class InArchiveImpl implements IInArchive {
      * {@inheritDoc}
      */
     public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.SEVEN_ZIP);
-        return (IOutUpdateArchive7z) (this.<IOutItem7z> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.SEVEN_ZIP);
+            return (IOutUpdateArchive7z) (this.<IOutItem7z> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.ZIP);
-        return (IOutUpdateArchiveZip) (this.<IOutItemZip> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.ZIP);
+            return (IOutUpdateArchiveZip) (this.<IOutItemZip> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.TAR);
-        return (IOutUpdateArchiveTar) (this.<IOutItemTar> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.TAR);
+            return (IOutUpdateArchiveTar) (this.<IOutItemTar> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.GZIP);
-        return (IOutUpdateArchiveGZip) (this.<IOutItemGZip> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.GZIP);
+            return (IOutUpdateArchiveGZip) (this.<IOutItemGZip> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.BZIP2);
-        return (IOutUpdateArchiveBZip2) (this.<IOutItemBZip2> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.BZIP2);
+            return (IOutUpdateArchiveBZip2) (this.<IOutItemBZip2> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public IOutUpdateArchiveXz getConnectedOutArchiveXz() throws SevenZipException {
-        ensureOpened();
-        ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.XZ);
-        return (IOutUpdateArchiveXz) (this.<IOutItemXz> getConnectedOutArchiveIntern());
+        lockForCall();
+        try {
+            ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.XZ);
+            return (IOutUpdateArchiveXz) (this.<IOutItemXz> getConnectedOutArchiveIntern());
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private void ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat archiveFormat)
@@ -418,10 +512,24 @@ public final class InArchiveImpl implements IInArchive {
         nativeConnectOutArchive(outArchiveImpl, archiveFormat);
     }
 
-    void ensureOpened() throws SevenZipException {
+    /**
+     * Take the read lock for a call into the native code and check that the archive is still open. On return the read
+     * lock is held and {@link #unlockAfterCall()} must be called (<code>finally</code>).
+     */
+    void lockForCall() throws SevenZipException {
+        lock.readLock().lock();
         if (closed) {
+            lock.readLock().unlock();
             throw new SevenZipException("InArchive closed");
         }
+    }
+
+    void unlockAfterCall() {
+        lock.readLock().unlock();
+    }
+
+    ReentrantReadWriteLock getLock() {
+        return lock;
     }
 
     private native void nativeConnectOutArchive(OutArchiveImpl<?> outArchiveImpl, ArchiveFormat archiveFormat)

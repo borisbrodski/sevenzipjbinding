@@ -2,6 +2,7 @@ package net.sf.sevenzipjbinding.impl;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
 import net.sf.sevenzipjbinding.IInArchive;
@@ -48,10 +49,17 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     private int threadCount = -1;
     private PrintStream tracePrintStream;
     private boolean trace; // Read by native code
-    private boolean closed;
+
+    /**
+     * See {@link InArchiveImpl}: read lock around every native call, write lock in {@link #close()}. A connected
+     * out-archive uses the lock of its in-archive, since it shares the native session with it.
+     */
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private boolean closed; // Guarded by lock
 
     protected void setInArchive(IInArchive inArchive) {
         this.inArchive = inArchive;
+        lock = ((InArchiveImpl) inArchive).getLock();
     }
 
     protected void featureSetHeaderEncryption(boolean enabled) {
@@ -78,14 +86,18 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     protected final void applyFeatures(String solidBlockSpec, boolean solidBlockSpecDefined)
             throws SevenZipException {
-        ensureOpened();
-        int headerEncryptionValue = -1;
-        if (headerEncryption != null) {
-            headerEncryptionValue = headerEncryption.booleanValue() ? 1 : 0;
-        }
-        if (compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0 || solidBlockSpecDefined) {
-            nativeSetProperties(compressionLevel, headerEncryptionValue, threadCount, solidBlockSpec,
-                    solidBlockSpecDefined);
+        lockForCall();
+        try {
+            int headerEncryptionValue = -1;
+            if (headerEncryption != null) {
+                headerEncryptionValue = headerEncryption.booleanValue() ? 1 : 0;
+            }
+            if (compressionLevel != -1 || headerEncryptionValue != -1 || threadCount >= 0 || solidBlockSpecDefined) {
+                nativeSetProperties(compressionLevel, headerEncryptionValue, threadCount, solidBlockSpec,
+                        solidBlockSpecDefined);
+            }
+        } finally {
+            unlockAfterCall();
         }
     }
 
@@ -110,14 +122,23 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      * {@inheritDoc}
      */
     public void close() throws IOException {
-        if (closed) {
-            return;
+        if (lock.getReadHoldCount() > 0) {
+            // A read-to-write upgrade would deadlock
+            throw new SevenZipException("OutArchive can't be closed from within a callback of this archive");
         }
-        closed = true;
-        if (inArchive != null) {
-            return; // In case of connected OutArchive no explicit closing necessary.
+        lock.writeLock().lock();
+        try {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            if (inArchive != null) {
+                return; // In case of connected OutArchive no explicit closing necessary.
+            }
+            nativeClose();
+        } finally {
+            lock.writeLock().unlock();
         }
-        nativeClose();
     }
 
     private native void nativeClose() throws SevenZipException;
@@ -127,8 +148,12 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outUpdateCallback)
             throws SevenZipException {
-        ensureOpened();
-        doUpdateItems(outStream, numberOfItems, outUpdateCallback);
+        lockForCall();
+        try {
+            doUpdateItems(outStream, numberOfItems, outUpdateCallback);
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     private void doUpdateItems(ISequentialOutStream outStream, int numberOfItems,
@@ -142,8 +167,12 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
      */
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends T> outCreateCallback) throws SevenZipException {
-        ensureOpened();
-        doUpdateItems(outStream, numberOfItems, outCreateCallback);
+        lockForCall();
+        try {
+            doUpdateItems(outStream, numberOfItems, outCreateCallback);
+        } finally {
+            unlockAfterCall();
+        }
     }
 
     /**
@@ -192,12 +221,24 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         return trace;
     }
 
-    private void ensureOpened() throws SevenZipException {
+    /**
+     * Take the read lock for a call into the native code and check that this archive and, for a connected out-archive,
+     * the in-archive are still open. On return the read lock is held and {@link #unlockAfterCall()} must be called
+     * (<code>finally</code>).
+     */
+    private void lockForCall() throws SevenZipException {
+        if (inArchive != null) {
+            ((InArchiveImpl) inArchive).lockForCall(); // Same lock
+        } else {
+            lock.readLock().lock();
+        }
         if (closed) {
+            lock.readLock().unlock();
             throw new SevenZipException("OutArchive closed");
         }
-        if (inArchive != null) {
-            ((InArchiveImpl) inArchive).ensureOpened();
-        }
+    }
+
+    private void unlockAfterCall() {
+        lock.readLock().unlock();
     }
 }
