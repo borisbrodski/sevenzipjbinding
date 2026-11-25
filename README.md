@@ -151,10 +151,14 @@ and in‑memory round‑trips are on the site:
 
 ## 🔒 Security
 
-No known security issues in the current release. **CVE‑2024‑11477** (7‑Zip Zstandard decompression,
-severity HIGH, CVSS 7.8), which affected the 23.01‑2.x releases, is **resolved as of `26.06‑2.3`**: the
-bundled 7‑Zip engine now postdates the upstream fix released in 7‑Zip 24.07
-([#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72)).
+No known security issues in the current release. **Only the `26.06‑2.x` releases are supported.**
+Every earlier release bundles an outdated 7‑Zip engine with known vulnerabilities and must not be used
+on untrusted archives: `23.01‑2.x` (7‑Zip 23.01) is affected by **CVE‑2024‑11477** (Zstandard, CVSS 7.8,
+[#72](https://github.com/borisbrodski/sevenzipjbinding/issues/72)), CVE‑2026‑14266 (XZ) and the other
+7‑Zip fixes up to 26.06; `16.02‑2.01` and older (7‑Zip 16.02, 2016) additionally by the RAR, Zip, 7z and
+SquashFS decoder issues fixed in 7‑Zip 16.03 to 23.01
+([#97](https://github.com/borisbrodski/sevenzipjbinding/issues/97)). The complete list and how to report
+a vulnerability: [SECURITY.md](SECURITY.md).
 
 ## 🔧 Build from source
 

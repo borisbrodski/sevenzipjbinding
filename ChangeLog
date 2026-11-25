@@ -81,6 +81,10 @@ Release - 26.06-2.4 (application class loaders: Spring Boot, servlet containers,
 	  The native wrapper also checks the result of NewByteArray and reports a
 	  non-positive write() result before touching the processed size.
 
+	* Security: SECURITY.md lists the supported releases and the 7-Zip
+	  vulnerabilities affecting 23.01-2.x and 16.02-2.01, and how to report
+	  (issue #97); README points to it.
+
 	* Website: astro 7.3.3 -> 7.4.7 (dependabot, pull request #100), which
 	  closes two advisories of the site generator; building the site needs
 	  Node.js 22.23.4 or newer (website/package.json pins it for volta).

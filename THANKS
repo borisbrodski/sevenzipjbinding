@@ -49,6 +49,8 @@ Special thanks to
 
 - Alexei Osipov for pointing out the byte[] allocation per chunk in the output streams (issue #69)
 
+- sn0x-sharma for pushing for a security policy and advisories for the outdated releases (issue #97)
+
 - hnviradiya for reporting the 4 GB file that came out as 8 MB from a hybrid ISO/UDF image (issue #55)
 
 - WirelessAlien (ZipXtract) for reporting bug #77 (7z header encryption doesn't work)
