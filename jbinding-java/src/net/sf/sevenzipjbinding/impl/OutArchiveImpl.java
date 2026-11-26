@@ -96,6 +96,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     protected final void applyFeatures(String solidBlockSpec, boolean solidBlockSpecDefined)
             throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             int headerEncryptionValue = -1;
             if (headerEncryption != null) {
@@ -118,8 +119,11 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
                         solidBlockSpecDefined, dictionarySizeSpec);
                 propertiesApplied = anyPropertySet;
             }
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -149,6 +153,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
             throw new SevenZipException("OutArchive can't be closed from within a callback of this archive");
         }
         lock.writeLock().lock();
+        Throwable thrown = null;
         try {
             if (closed) {
                 return;
@@ -158,8 +163,11 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
                 return; // In case of connected OutArchive no explicit closing necessary.
             }
             nativeClose();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            lock.writeLock().unlock();
+            InArchiveImpl.unlock(lock.writeLock(), thrown);
         }
     }
 
@@ -171,10 +179,14 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     public void updateItems(ISequentialOutStream outStream, int numberOfItems, IOutCreateCallback<T> outUpdateCallback)
             throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             doUpdateItems(outStream, numberOfItems, outUpdateCallback);
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -190,10 +202,14 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
     public void createArchive(ISequentialOutStream outStream, int numberOfItems,
             IOutCreateCallback<? extends T> outCreateCallback) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             doUpdateItems(outStream, numberOfItems, outCreateCallback);
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -245,7 +261,7 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
 
     /**
      * Take the read lock for a call into the native code and check that this archive and, for a connected out-archive,
-     * the in-archive are still open. On return the read lock is held and {@link #unlockAfterCall()} must be called
+     * the in-archive are still open. On return the read lock is held and {@link #unlockAfterCall(Throwable)} must be called
      * (<code>finally</code>).
      */
     private void lockForCall() throws SevenZipException {
@@ -260,7 +276,11 @@ public class OutArchiveImpl<T extends IOutItemBase> implements IOutArchive<T> {
         }
     }
 
-    private void unlockAfterCall() {
-        lock.readLock().unlock();
+    /**
+     * Release the read lock taken by {@link #lockForCall()}; <code>thrown</code> is the exception leaving the native
+     * call or <code>null</code>, see {@link InArchiveImpl#unlock(java.util.concurrent.locks.Lock, Throwable)}.
+     */
+    private void unlockAfterCall(Throwable thrown) {
+        InArchiveImpl.unlock(lock.readLock(), thrown);
     }
 }

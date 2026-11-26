@@ -1,5 +1,6 @@
 package net.sf.sevenzipjbinding.impl;
 
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import net.sf.sevenzipjbinding.ArchiveFormat;
@@ -126,10 +127,14 @@ public final class InArchiveImpl implements IInArchive {
     public void extract(int[] indices, boolean testMode, IArchiveExtractCallback extractCallback)
             throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             nativeExtract(indices, testMode, extractCallback);
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -138,12 +143,16 @@ public final class InArchiveImpl implements IInArchive {
      */
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ExtractSlowCallback extractCallback = new ExtractSlowCallback(outStream);
             nativeExtract(new int[] { index }, false, extractCallback);
             return extractCallback.getExtractOperationResult();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -154,12 +163,16 @@ public final class InArchiveImpl implements IInArchive {
     public ExtractOperationResult extractSlow(int index, ISequentialOutStream outStream, String password)
             throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ExtractSlowCryptoCallback extractCallback = new ExtractSlowCryptoCallback(outStream, password);
             nativeExtract(new int[] { index }, false, extractCallback);
             return extractCallback.getExtractOperationResult();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -173,10 +186,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public Object getArchiveProperty(PropID propID) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetArchiveProperty(propID.getPropIDIndex());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -187,10 +204,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public String getStringArchiveProperty(PropID propID) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetStringArchiveProperty(propID.getPropIDIndex());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -201,10 +222,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public PropertyInfo getArchivePropertyInfo(int index) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetArchivePropertyInfo(index);
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -215,10 +240,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public int getNumberOfArchiveProperties() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetNumberOfArchiveProperties();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -229,10 +258,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public int getNumberOfProperties() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetNumberOfProperties();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -243,10 +276,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public PropertyInfo getPropertyInfo(int index) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return nativeGetPropertyInfo(index);
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -261,14 +298,18 @@ public final class InArchiveImpl implements IInArchive {
             throw new SevenZipException("InArchive can't be closed from within a callback of this archive");
         }
         lock.writeLock().lock();
+        Throwable thrown = null;
         try {
             if (closed) {
                 return;
             }
             closed = true;
             nativeClose();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            lock.writeLock().unlock();
+            InArchiveImpl.unlock(lock.writeLock(), thrown);
         }
     }
 
@@ -279,13 +320,17 @@ public final class InArchiveImpl implements IInArchive {
      */
     public int getNumberOfItems() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             if (numberOfItems == -1) {
                 numberOfItems = nativeGetNumberOfItems();
             }
             return numberOfItems;
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -296,6 +341,7 @@ public final class InArchiveImpl implements IInArchive {
      */
     public Object getProperty(int index, PropID propID) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             if (index < 0 || index >= getNumberOfItems()) {
                 throw new SevenZipException(
@@ -335,8 +381,11 @@ public final class InArchiveImpl implements IInArchive {
                 break;
             }
             return returnValue;
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -347,14 +396,18 @@ public final class InArchiveImpl implements IInArchive {
      */
     public String getStringProperty(int index, PropID propID) throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             if (index < 0 || index >= getNumberOfItems()) {
                 throw new SevenZipException(
                         "Index out of range. Index: " + index + ", NumberOfItems: " + getNumberOfItems());
             }
             return nativeGetStringProperty(index, propID.getPropIDIndex());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -392,10 +445,14 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchive<IOutItemAllFormats> getConnectedOutArchive() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             return getConnectedOutArchiveIntern();
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -412,11 +469,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchive7z getConnectedOutArchive7z() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.SEVEN_ZIP);
             return (IOutUpdateArchive7z) (this.<IOutItem7z> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -425,11 +486,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchiveZip getConnectedOutArchiveZip() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.ZIP);
             return (IOutUpdateArchiveZip) (this.<IOutItemZip> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -438,11 +503,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchiveTar getConnectedOutArchiveTar() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.TAR);
             return (IOutUpdateArchiveTar) (this.<IOutItemTar> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -451,11 +520,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchiveGZip getConnectedOutArchiveGZip() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.GZIP);
             return (IOutUpdateArchiveGZip) (this.<IOutItemGZip> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -464,11 +537,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchiveBZip2 getConnectedOutArchiveBZip2() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.BZIP2);
             return (IOutUpdateArchiveBZip2) (this.<IOutItemBZip2> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -477,11 +554,15 @@ public final class InArchiveImpl implements IInArchive {
      */
     public IOutUpdateArchiveXz getConnectedOutArchiveXz() throws SevenZipException {
         lockForCall();
+        Throwable thrown = null;
         try {
             ensureArchiveFormatForArchiveFormatSpecificUpdateAPI(ArchiveFormat.XZ);
             return (IOutUpdateArchiveXz) (this.<IOutItemXz> getConnectedOutArchiveIntern());
+        } catch (Throwable t) {
+            thrown = t;
+            throw t;
         } finally {
-            unlockAfterCall();
+            unlockAfterCall(thrown);
         }
     }
 
@@ -524,8 +605,37 @@ public final class InArchiveImpl implements IInArchive {
         }
     }
 
-    void unlockAfterCall() {
-        lock.readLock().unlock();
+    /**
+     * Release the read lock taken by {@link #lockForCall()}.
+     *
+     * @param thrown
+     *            the exception leaving the native call, or <code>null</code> if it completed normally. An exception
+     *            from the unlock itself must not replace it, see {@link #unlock(Lock, Throwable)}.
+     */
+    void unlockAfterCall(Throwable thrown) {
+        unlock(lock.readLock(), thrown);
+    }
+
+    /**
+     * Unlock in a <code>finally</code> block without masking the exception that is already on its way. If
+     * <code>lock.unlock()</code> throws while <code>thrown</code> is in flight, the new exception is attached to
+     * <code>thrown</code> as a suppressed exception (shown by <code>printStackTrace()</code>) instead of replacing it;
+     * without an exception in flight it propagates.
+     *
+     * @param lock
+     *            lock to release
+     * @param thrown
+     *            the exception leaving the guarded block, or <code>null</code>
+     */
+    static void unlock(Lock lock, Throwable thrown) {
+        try {
+            lock.unlock();
+        } catch (RuntimeException e) {
+            if (thrown == null) {
+                throw e;
+            }
+            thrown.addSuppressed(e);
+        }
     }
 
     ReentrantReadWriteLock getLock() {
