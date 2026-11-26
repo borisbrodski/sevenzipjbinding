@@ -536,10 +536,6 @@ public class ClassLoaderIsolationTest {
     }
 
     /**
-     * Copy the class file of <code>clazz</code> into <code>dir</code> (package directories included), so that a JVM
-     * with <code>-cp dir</code> sees exactly this one class.
-     */
-    /**
      * This JVM's class path with every entry made absolute: the child runs in a temporary directory, and the
      * integration test pack starts the suite with relative jar paths (<code>lib/...</code>).
      */
@@ -557,6 +553,10 @@ public class ClassLoaderIsolationTest {
         return classPath.toString();
     }
 
+    /**
+     * Copy the class file of <code>clazz</code> into <code>dir</code> (package directories included), so that a JVM
+     * with <code>-cp dir</code> sees exactly this one class.
+     */
     private static void copyClassFile(Class<?> clazz, File dir) throws IOException {
         String path = clazz.getName().replace('.', '/') + ".class";
         File target = new File(dir, path);
