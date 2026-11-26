@@ -53,6 +53,7 @@ import net.sf.sevenzipjbinding.util.ByteArrayStream;
 public class ConcurrentCloseTest extends JUnitNativeTestBase<VoidContext> {
     private static final int ITEM_COUNT = 200;
     private static final int READER_THREADS = 8;
+    private static final int READS_BEFORE_CLOSE = 100;
     private static final long TIMEOUT_SECONDS = 60;
 
     /**
@@ -243,11 +244,14 @@ public class ConcurrentCloseTest extends JUnitNativeTestBase<VoidContext> {
     /**
      * Reporter's scenario from issue #70: threads spinning on item properties while the archive gets closed. Every
      * thread must see successful reads, then only "InArchive closed", and the JVM must survive.
+     * <p>
+     * No timing involved: the readers loop until the archive is closed, and <code>close()</code> is called once every
+     * reader has completed {@link #READS_BEFORE_CLOSE} rounds, that is while all of them are hammering the archive.
      */
     @Test
     public void closeWhileReadingProperties() throws Exception {
         final IInArchive inArchive = open(createArchive(ArchiveFormat.ZIP, ITEM_COUNT));
-        final CountDownLatch allReading = new CountDownLatch(READER_THREADS);
+        final CountDownLatch halfway = new CountDownLatch(READER_THREADS);
         final AtomicInteger successfulReads = new AtomicInteger();
         final AtomicInteger closedReads = new AtomicInteger();
         final AtomicReference<Throwable> failure = new AtomicReference<Throwable>();
@@ -266,20 +270,19 @@ public class ConcurrentCloseTest extends JUnitNativeTestBase<VoidContext> {
                             return;
                         }
                         successfulReads.incrementAndGet();
-                        if (i == 0) {
-                            allReading.countDown();
+                        if (i == READS_BEFORE_CLOSE - 1) {
+                            halfway.countDown();
                         }
                     }
                 }
             }, failure);
         }
-        assertTrue("Readers didn't start", allReading.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
-        Thread.sleep(200); // Let the readers hammer the archive while it gets closed
+        assertTrue("Readers didn't get halfway", halfway.await(TIMEOUT_SECONDS, TimeUnit.SECONDS));
         inArchive.close();
         joinAll();
         assertNoFailure(failure);
         assertEquals("Every reader ends with 'InArchive closed'", READER_THREADS, closedReads.get());
-        assertTrue(successfulReads.get() >= READER_THREADS);
+        assertTrue(successfulReads.get() >= READER_THREADS * READS_BEFORE_CLOSE);
     }
 
     /**
