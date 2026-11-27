@@ -40,6 +40,9 @@ typedef struct _IO_STATUS_BLOCK {
 */
 
 #include "FileIO.h"
+#if defined(__APPLE__)
+#include <AvailabilityMacros.h>
+#endif
 #include "FileName.h"
 
 HRESULT GetLastError_noZero_HRESULT()
@@ -1090,7 +1093,13 @@ bool COutFile::Close()
       // else res2 = false;
     }
     {
+      // 7-Zip-JBinding: futimens() exists only since macOS 10.13. On older deployment targets
+      // the times stay pending and SetDirTime() below sets them by path after the close.
+#if defined(__APPLE__) && MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+      if (false)
+#else
       if (MTime_defined || ATime_defined)
+#endif
       {
         struct timespec times[2];
         FiTime_To_timespec(ATime_defined ? &ATime : NULL, times[0]);

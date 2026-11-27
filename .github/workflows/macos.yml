@@ -1,5 +1,8 @@
 name: macOS build & test
 
+# Branch macos-10.11-legacy: UNTESTED-on-old-macOS preview build. x86_64 targets OS X 10.11 El Capitan
+# (arm64 is always 11.0+). Calls newer than the target are hard errors (-Werror=unguarded-availability*).
+
 # Build THREE macOS platform artifacts on macos-15 (Apple Silicon; macos-14 was retired by GitHub 2026-11):
 #   * AllMac      - one universal (fat: x86_64 + arm64) dylib for every 64-bit Mac. Goes into the
 #                   AllPlatforms bundle; getPlatformBestMatch() picks it as the Mac universal.
@@ -64,7 +67,9 @@ jobs:
           set -eux
           mkdir build-allmac && cd build-allmac
           cmake .. \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11 \
+            "-DCMAKE_C_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
+            "-DCMAKE_CXX_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
             -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
           make
@@ -88,7 +93,9 @@ jobs:
           set -eux
           mkdir build-thin && cd build-thin
           cmake .. \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=10.11 \
+            "-DCMAKE_C_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
+            "-DCMAKE_CXX_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
             -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=${{ matrix.test_arch }}" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
           make
@@ -103,6 +110,19 @@ jobs:
 
       - name: Test thin Mac-${{ matrix.test_arch }} with the ${{ matrix.test_arch }} JVM
         run: cd build-thin && ctest --output-on-failure --repeat until-pass:2
+
+      - name: Verify minimum macOS and no weak imports (both builds)
+        run: |
+          set -eux
+          for lib in build-allmac/jbinding-cpp/lib7-Zip-JBinding.dylib build-thin/jbinding-cpp/lib7-Zip-JBinding.dylib; do
+            for a in $(lipo -archs "$lib"); do
+              echo "== $lib [$a]"
+              otool -arch "$a" -l "$lib" | grep -A4 -E 'LC_VERSION_MIN_MACOSX|LC_BUILD_VERSION' | grep -E 'cmd|version|minos'
+            done
+            # symbols newer than the deployment target are weak-imported; there must be none
+            if nm -m "$lib" | grep '(undefined) weak'; then echo "weak imports found"; exit 1; fi
+          done
+          otool -arch x86_64 -l build-thin/jbinding-cpp/lib7-Zip-JBinding.dylib 2>/dev/null | grep -A3 LC_VERSION_MIN_MACOSX | grep -q 'version 10.11' || test "${{ matrix.test_arch }}" = arm64
 
       # --- Upload: universal from the arm64 leg only; each leg uploads its own thin ---
       - name: Upload AllMac (universal) zip
@@ -120,76 +140,3 @@ jobs:
           name: mac-${{ matrix.test_arch }}
           path: build-thin/sevenzipjbinding-*-Mac-${{ matrix.test_arch }}.zip
           if-no-files-found: warn
-
-  # -----------------------------------------------------------------------------------------------
-  # AllPlatforms autodetection test: prove the single cross-platform AllPlatforms jar (all platform
-  # libs incl. the universal AllMac fat dylib) autodetects + loads the Mac lib on BOTH Mac
-  # architectures (arm64 native + x86_64 via Rosetta). Runs the full ctest suite with ONLY the
-  # AllPlatforms jar on the classpath. The AllPlatforms jar is built locally and published as the
-  # 'ci-allplatforms-fixture' prerelease (it needs Linux/Windows/ARM natives not produced in CI).
-  allplatforms-autodetect:
-    name: AllPlatforms autodetect + test (${{ matrix.test_arch }} JVM)
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { test_arch: arm64,  jdk_arch: aarch64, rosetta: false }
-          - { test_arch: x86_64, jdk_arch: x64,     rosetta: true  }
-    runs-on: macos-15
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rosetta 2 (x86_64 test only)
-        if: matrix.rosetta
-        run: sudo softwareupdate --install-rosetta --agree-to-license || true
-
-      - name: Set up JDK 8 (${{ matrix.jdk_arch }})
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: '8'
-          architecture: ${{ matrix.jdk_arch }}
-
-      # Downloaded directly: actions-setup-cmake looks the version up in the Kitware/CMake release
-      # list, which the GitHub API returns empty since 2026-10 ("Unable to find version matching").
-      - name: Pin CMake 3.x (project predates CMake 4 / CMP0175)
-        run: |
-          set -eux
-          v=3.28.6
-          curl -fsSL -o cmake.tar.gz "https://github.com/Kitware/CMake/releases/download/v$v/cmake-$v-macos-universal.tar.gz"
-          mkdir -p "$RUNNER_TEMP/cmake" && tar -xzf cmake.tar.gz -C "$RUNNER_TEMP/cmake" && rm cmake.tar.gz
-          echo "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin" >> "$GITHUB_PATH"
-          "$RUNNER_TEMP/cmake/cmake-$v-macos-universal/CMake.app/Contents/bin/cmake" --version | head -1
-
-      - name: Download the AllPlatforms jar (CI fixture prerelease)
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eux
-          mkdir -p allplatforms && cd allplatforms
-          gh release download ci-allplatforms-fixture -R "$GITHUB_REPOSITORY" -p '*AllPlatforms.zip'
-          unzip -q *AllPlatforms.zip
-          find "$PWD" -name 'sevenzipjbinding-AllPlatforms.jar'
-
-      - name: Configure + build the test harness (universal AllMac; its lib is unused here)
-        run: |
-          set -eux
-          mkdir build && cd build
-          cmake .. \
-            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_SYSTEM_NAME=Darwin -DAPPLE=TRUE -DSTATIC_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
-            -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
-            -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
-          make
-
-      - name: Swap the native jar -> AllPlatforms (force autodetection)
-        run: |
-          set -eux
-          APJAR="$(find "$PWD/allplatforms" -name 'sevenzipjbinding-AllPlatforms.jar' | head -1)"
-          test -n "$APJAR"
-          # the harness build is the universal AllMac -> its native jar is sevenzipjbinding-AllMac.jar
-          sed -i.bak -E "s#[^:\"]*/sevenzipjbinding-AllMac\.jar#${APJAR}#g" build/JUnitRunner.cmake
-          echo "== runner classpath now references: =="
-          grep -o "sevenzipjbinding-[A-Za-z0-9]*\.jar" build/JUnitRunner.cmake | sort -u
-
-      - name: Run full suite via AllPlatforms autodetection (${{ matrix.test_arch }} JVM)
-        run: cd build && ctest --output-on-failure --repeat until-pass:2

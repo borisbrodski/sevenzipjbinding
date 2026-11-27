@@ -13,6 +13,14 @@
 #include <utime.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#if defined(__APPLE__)
+// 7-Zip-JBinding: utimensat() exists only since macOS 10.13 (see SetFileTime_Base()).
+#include <AvailabilityMacros.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#define Z7_JBINDING_MACOS_NO_utimensat
+#include <sys/time.h>
+#endif
+#endif
 #include <sys/types.h>
 
 #include "../Common/C_FileIO.h"
@@ -1232,7 +1240,39 @@ static bool SetFileTime_Base(CFSTR path, const CFiTime *cTime, const CFiTime *aT
   // if (mTime) { printf("\n time = %ld.%9ld\n", mTime->tv_sec, mTime->tv_nsec);  }
   if (!needChange)
     return true;
+#ifdef Z7_JBINDING_MACOS_NO_utimensat
+  {
+    // utimes()/lutimes() take both times with microsecond precision: an omitted time keeps
+    // its current value (read with stat()/lstat()), UTIME_NOW becomes the current time.
+    struct stat st;
+    const bool noFollow = (flags & AT_SYMLINK_NOFOLLOW) != 0;
+    if ((noFollow ? lstat(path, &st) : stat(path, &st)) != 0)
+      return false;
+    const struct timespec current[2] = { st.st_atimespec, st.st_mtimespec };
+    struct timeval now;
+    if (gettimeofday(&now, NULL) != 0)
+      return false;
+    struct timeval tv[2];
+    for (unsigned i = 0; i < 2; i++)
+    {
+      if (times[i].tv_nsec == UTIME_OMIT)
+      {
+        tv[i].tv_sec = current[i].tv_sec;
+        tv[i].tv_usec = (suseconds_t)(current[i].tv_nsec / 1000);
+      }
+      else if (times[i].tv_nsec == UTIME_NOW)
+        tv[i] = now;
+      else
+      {
+        tv[i].tv_sec = times[i].tv_sec;
+        tv[i].tv_usec = (suseconds_t)(times[i].tv_nsec / 1000);
+      }
+    }
+    return (noFollow ? lutimes(path, tv) : utimes(path, tv)) == 0;
+  }
+#else
   return utimensat(AT_FDCWD, path, times, flags) == 0;
+#endif
 }
 
 bool SetDirTime(CFSTR path, const CFiTime *cTime, const CFiTime *aTime, const CFiTime *mTime)

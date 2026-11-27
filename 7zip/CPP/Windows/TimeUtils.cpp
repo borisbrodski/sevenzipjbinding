@@ -260,10 +260,22 @@ bool GetSecondsSince1601(unsigned year, unsigned month, unsigned day,
       Cygwin 2.9, mingw, MSVC 14, Android 9.0.
   Android NDK defines TIME_UTC but doesn't have the timespec_get().
 */
-#if defined(TIME_UTC) && !defined(__ANDROID__)
+// 7-Zip-JBinding: older macOS deployment targets lack timespec_get() (macOS 10.15+) and
+// clock_gettime() (macOS 10.12+), although the SDK headers declare them. Use gettimeofday() there.
+#if defined(__APPLE__)
+#include <AvailabilityMacros.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101500
+#define Z7_JBINDING_MACOS_NO_timespec_get
+#endif
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101200
+#define Z7_JBINDING_MACOS_NO_clock_gettime
+#endif
+#endif
+
+#if defined(TIME_UTC) && !defined(__ANDROID__) && !defined(Z7_JBINDING_MACOS_NO_timespec_get)
 #define ZIP7_USE_timespec_get
 // #pragma message("ZIP7_USE_timespec_get")
-#elif defined(CLOCK_REALTIME)
+#elif defined(CLOCK_REALTIME) && !defined(Z7_JBINDING_MACOS_NO_clock_gettime)
 #define ZIP7_USE_clock_gettime
 // #pragma message("ZIP7_USE_clock_gettime")
 #endif
