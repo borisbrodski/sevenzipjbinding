@@ -72,7 +72,7 @@ jobs:
             "-DCMAKE_CXX_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
             -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=x86_64;arm64" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
-          make
+          make -k
           make package
           echo "== built =="; ls -1 sevenzipjbinding-*-AllMac.zip
           file jbinding-cpp/lib7-Zip-JBinding.dylib
@@ -98,7 +98,7 @@ jobs:
             "-DCMAKE_CXX_FLAGS=-Werror=unguarded-availability -Werror=unguarded-availability-new" \
             -DJAVA_SYSTEM=Mac "-DJAVA_ARCH=${{ matrix.test_arch }}" \
             -DCMAKE_BUILD_TYPE=Release -DJAVA_JDK="$JAVA_HOME"
-          make
+          make -k
           make package
           echo "== built =="; ls -1 sevenzipjbinding-*-Mac-${{ matrix.test_arch }}.zip
 
